@@ -1,0 +1,36 @@
+{
+  "schema": "native-readonly-runtime-observation-v1",
+  "observed_unix": 1794063527.8139496,
+  "commit": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+  "driver_state": "running",
+  "driver_wall_seconds": 3142.6299958229065,
+  "requested_whole_job_timeout_seconds": 14400,
+  "command_timeout_seconds": null,
+  "limits_or_source_changed": false,
+  "steps": [
+    {
+      "label": "node-lib-allfeatures",
+      "state": "running",
+      "wall_seconds": 3083.128148317337
+    }
+  ],
+  "node_process": {
+    "pid": 253144,
+    "exe": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/target/debug/deps/trnm_pon_node-3d075b189916f208",
+    "wall_seconds": 2881.2399999999907,
+    "user_cpu_seconds": 2454.62,
+    "system_cpu_seconds": 11.95,
+    "waited_children_user_seconds": 0.91,
+    "waited_children_system_seconds": 0.14,
+    "rss_bytes": 538386432
+  },
+  "last_announced_test": "test store::continuity_tests::actual_capacity_reclaimed_after_refund_admits_new_account_and_reorganizes ... ",
+  "failure_lines": [],
+  "raw_log_bytes": 6673112,
+  "qualification": {
+    "original_history_business_gate": false,
+    "original_attack_pressure_gate": false,
+    "release": false,
+    "production_activation": false
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "base_commit": "53e1b98a7955898b9feff4778f7136c0fd0199c8",
+  "candidate_files": {
+    "config/pon/pq-root-dependency-register-v3.json": "3a832d2cd7e18704f7ab9c3521ba290aba1fc90acbcbef29e95c02ca75667d70",
+    "docs/security/PQ_ROOT_DEPENDENCY_REGISTER_V3.md": "48bc8f65ab096553000a11da5be10de4af69c02a7ff395bc51c4aef7732a5075",
+    "scripts/ci/pq_root_dependency_register.py": "49cdc7edb1a1b48b97df2053aa8a1999e9140c22e83231d3fe1d3469ad26a757",
+    "scripts/ci/test_pq_root_dependency_register.py": "1273a78f6f5745d27ba6fe05824ab1589d6dcf222f38c010fd36a5e9341949e8"
+  },
+  "candidate_scope": "four listed working-tree file hashes, not a committed candidate native execution",
+  "commands": [
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "scope": "isolated task branch on exact base before edits"
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_pq_root_dependency_register.py"
+      ],
+      "errors": 1,
+      "exit_code": 1,
+      "failures": 4,
+      "scope": "unchanged original base",
+      "stderr": "before-tests.stderr.txt",
+      "tests": 42
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_pq_root_dependency_register.py"
+      ],
+      "errors": 0,
+      "exit_code": 0,
+      "failures": 0,
+      "scope": "listed candidate working bytes",
+      "stderr": "after-tests.stderr.txt",
+      "tests": 43
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/pq_root_dependency_register.py",
+        "--root",
+        "."
+      ],
+      "exit_code": 0,
+      "scope": "listed candidate source map/checker",
+      "stdout": "register-result.json"
+    }
+  ],
+  "members": {
+    "after-tests.stderr.txt": {
+      "bytes": 142,
+      "sha256": "554373cbc50b86ac23d61602bd10cd5e3b0e7c06a0723fa611166dd3e423c6a5"
+    },
+    "before-tests.stderr.txt": {
+      "bytes": 5185,
+      "sha256": "50eebfc48cdd728f53306423afe00e653408a553e842d1047be1d9cfb3e5f659"
+    },
+    "register-result.json": {
+      "bytes": 7023,
+      "sha256": "832640580dc37892b8e9feb791bdd5d679ba61e443c6788bfee96f1a4f5fc66a"
+    },
+    "review.json": {
+      "bytes": 12724,
+      "sha256": "3d62eeb15a86e5455def1bdacdc3bc3d55c371026e4dde5d6414ee88e3c33ede"
+    }
+  },
+  "native_execution_performed": false,
+  "original_service_gates_executed": false,
+  "production_activation": false,
+  "schema": "trnm-root-source-rebind-local-validation-v1",
+  "source_revision_bound": false,
+  "whole_chain_pq_qualified": false
+}

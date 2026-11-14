@@ -1,0 +1,288 @@
+{
+  "actual_4s_host_gate": null,
+  "archive": {
+    "all_original_listed_sha256_verified": true,
+    "listed_member_count": 1765,
+    "verified_uncompressed_member_bytes": 703462423,
+    "zip_sha256": "f004b1cf52aca7f84b2eb24c75d6a43fd5dd95a7c0ff86cbb97a31afd0c575d5"
+  },
+  "confirmed_unique_business_tps": null,
+  "distinct_reported_positive_transaction_hashes": 1,
+  "full_window_not_timely_rounds": 9,
+  "incomplete_or_conflicting_rounds": 0,
+  "observations": [
+    {
+      "attacker_processes_ready": 0,
+      "attacker_processes_requested": 0,
+      "costs_observed_not_additive": {
+        "accepted_connections": 23,
+        "completed_submit": 14,
+        "credited_refill_ns": 918478652,
+        "executor_refusals": 0,
+        "mutation_cpu_charged_ns": 923231536,
+        "mutation_dispatch_excluding_work_cpu_ns": 904464642,
+        "mutation_full_work_cpu_ns": 18766894,
+        "paid_cpu_debit_ns": 923231536,
+        "whole_parent_phase_cpu_ns": 8181443752,
+        "whole_parent_phase_wall_ns": 34083647830
+      },
+      "genuine_budget_depletion_observed": false,
+      "mode": "baseline",
+      "observation_statuses": [
+        "timely_positive",
+        "not_timely_at_full_window",
+        "not_observed"
+      ],
+      "original_phase_gate_met": false,
+      "receiver_client_state_equal": false,
+      "run": 1,
+      "verifier_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ]
+    },
+    {
+      "attacker_processes_ready": 24,
+      "attacker_processes_requested": 24,
+      "costs_observed_not_additive": {
+        "accepted_connections": 2612,
+        "completed_submit": 7,
+        "credited_refill_ns": 2963487888,
+        "executor_refusals": 2578,
+        "mutation_cpu_charged_ns": 2964149772,
+        "mutation_dispatch_excluding_work_cpu_ns": 2317818461,
+        "mutation_full_work_cpu_ns": 646331311,
+        "paid_cpu_debit_ns": 2964149772,
+        "whole_parent_phase_cpu_ns": 8711490634,
+        "whole_parent_phase_wall_ns": 35120414476
+      },
+      "genuine_budget_depletion_observed": false,
+      "mode": "from-zero",
+      "observation_statuses": [
+        "not_timely_at_full_window",
+        "not_observed",
+        "not_observed"
+      ],
+      "original_phase_gate_met": false,
+      "receiver_client_state_equal": false,
+      "run": 1,
+      "verifier_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ]
+    },
+    {
+      "attacker_processes_ready": 24,
+      "attacker_processes_requested": 24,
+      "costs_observed_not_additive": {
+        "accepted_connections": 2607,
+        "completed_submit": 7,
+        "credited_refill_ns": 3046099994,
+        "executor_refusals": 2572,
+        "mutation_cpu_charged_ns": 3046465931,
+        "mutation_dispatch_excluding_work_cpu_ns": 2299192744,
+        "mutation_full_work_cpu_ns": 747273187,
+        "paid_cpu_debit_ns": 3046465931,
+        "whole_parent_phase_cpu_ns": 8695209173,
+        "whole_parent_phase_wall_ns": 35299560769
+      },
+      "genuine_budget_depletion_observed": false,
+      "mode": "late-product",
+      "observation_statuses": [
+        "not_timely_at_full_window",
+        "not_observed",
+        "not_observed"
+      ],
+      "original_phase_gate_met": false,
+      "receiver_client_state_equal": false,
+      "run": 1,
+      "verifier_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ]
+    },
+    {
+      "attacker_processes_ready": 0,
+      "attacker_processes_requested": 0,
+      "costs_observed_not_additive": {
+        "accepted_connections": 23,
+        "completed_submit": 14,
+        "credited_refill_ns": 869864510,
+        "executor_refusals": 0,
+        "mutation_cpu_charged_ns": 881094182,
+        "mutation_dispatch_excluding_work_cpu_ns": 862351986,
+        "mutation_full_work_cpu_ns": 18742196,
+        "paid_cpu_debit_ns": 881094182,
+        "whole_parent_phase_cpu_ns": 8175862184,
+        "whole_parent_phase_wall_ns": 34094572319
+      },
+      "genuine_budget_depletion_observed": false,
+      "mode": "baseline",
+      "observation_statuses": [
+        "timely_positive",
+        "not_timely_at_full_window",
+        "not_observed"
+      ],
+      "original_phase_gate_met": false,
+      "receiver_client_state_equal": false,
+      "run": 2,
+      "verifier_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ]
+    },
+    {
+      "attacker_processes_ready": 24,
+      "attacker_processes_requested": 24,
+      "costs_observed_not_additive": {
+        "accepted_connections": 2662,
+        "completed_submit": 7,
+        "credited_refill_ns": 2969063157,
+        "executor_refusals": 2627,
+        "mutation_cpu_charged_ns": 2969585244,
+        "mutation_dispatch_excluding_work_cpu_ns": 2312794957,
+        "mutation_full_work_cpu_ns": 656790287,
+        "paid_cpu_debit_ns": 2969585244,
+        "whole_parent_phase_cpu_ns": 8703032278,
+        "whole_parent_phase_wall_ns": 35289733913
+      },
+      "genuine_budget_depletion_observed": false,
+      "mode": "from-zero",
+      "observation_statuses": [
+        "not_timely_at_full_window",
+        "not_observed",
+        "not_observed"
+      ],
+      "original_phase_gate_met": false,
+      "receiver_client_state_equal": false,
+      "run": 2,
+      "verifier_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ]
+    },
+    {
+      "attacker_processes_ready": 24,
+      "attacker_processes_requested": 24,
+      "costs_observed_not_additive": {
+        "accepted_connections": 2558,
+        "completed_submit": 7,
+        "credited_refill_ns": 3005335154,
+        "executor_refusals": 2523,
+        "mutation_cpu_charged_ns": 3005611763,
+        "mutation_dispatch_excluding_work_cpu_ns": 2278819808,
+        "mutation_full_work_cpu_ns": 726791955,
+        "paid_cpu_debit_ns": 3005611763,
+        "whole_parent_phase_cpu_ns": 8720346413,
+        "whole_parent_phase_wall_ns": 35594464173
+      },
+      "genuine_budget_depletion_observed": false,
+      "mode": "late-product",
+      "observation_statuses": [
+        "not_timely_at_full_window",
+        "not_observed",
+        "not_observed"
+      ],
+      "original_phase_gate_met": false,
+      "receiver_client_state_equal": false,
+      "run": 2,
+      "verifier_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ]
+    },
+    {
+      "attacker_processes_ready": 0,
+      "attacker_processes_requested": 0,
+      "costs_observed_not_additive": {
+        "accepted_connections": 23,
+        "completed_submit": 14,
+        "credited_refill_ns": 899092867,
+        "executor_refusals": 0,
+        "mutation_cpu_charged_ns": 900299869,
+        "mutation_dispatch_excluding_work_cpu_ns": 881336385,
+        "mutation_full_work_cpu_ns": 18963484,
+        "paid_cpu_debit_ns": 900299869,
+        "whole_parent_phase_cpu_ns": 8141943758,
+        "whole_parent_phase_wall_ns": 33907291857
+      },
+      "genuine_budget_depletion_observed": false,
+      "mode": "baseline",
+      "observation_statuses": [
+        "timely_positive",
+        "not_timely_at_full_window",
+        "not_observed"
+      ],
+      "original_phase_gate_met": false,
+      "receiver_client_state_equal": false,
+      "run": 3,
+      "verifier_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ]
+    },
+    {
+      "attacker_processes_ready": 24,
+      "attacker_processes_requested": 24,
+      "costs_observed_not_additive": {
+        "accepted_connections": 2660,
+        "completed_submit": 7,
+        "credited_refill_ns": 3011701379,
+        "executor_refusals": 2625,
+        "mutation_cpu_charged_ns": 3011901971,
+        "mutation_dispatch_excluding_work_cpu_ns": 2341865041,
+        "mutation_full_work_cpu_ns": 670036930,
+        "paid_cpu_debit_ns": 3011901971,
+        "whole_parent_phase_cpu_ns": 8745749184,
+        "whole_parent_phase_wall_ns": 35593743385
+      },
+      "genuine_budget_depletion_observed": false,
+      "mode": "from-zero",
+      "observation_statuses": [
+        "not_timely_at_full_window",
+        "not_observed",
+        "not_observed"
+      ],
+      "original_phase_gate_met": false,
+      "receiver_client_state_equal": false,
+      "run": 3,
+      "verifier_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ]
+    },
+    {
+      "attacker_processes_ready": 24,
+      "attacker_processes_requested": 24,
+      "costs_observed_not_additive": {
+        "accepted_connections": 2573,
+        "completed_submit": 7,
+        "credited_refill_ns": 3055141094,
+        "executor_refusals": 2540,
+        "mutation_cpu_charged_ns": 3060316467,
+        "mutation_dispatch_excluding_work_cpu_ns": 2320446888,
+        "mutation_full_work_cpu_ns": 739869579,
+        "paid_cpu_debit_ns": 3060316467,
+        "whole_parent_phase_cpu_ns": 8714062002,
+        "whole_parent_phase_wall_ns": 35113653496
+      },
+      "genuine_budget_depletion_observed": false,
+      "mode": "late-product",
+      "observation_statuses": [
+        "not_timely_at_full_window",
+        "not_observed",
+        "not_observed"
+      ],
+      "original_phase_gate_met": false,
+      "receiver_client_state_equal": false,
+      "run": 3,
+      "verifier_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ]
+    }
+  ],
+  "original_campaign_complete_success": false,
+  "original_head": "81f00ca62d9ce53483d56d2f2ec12fb871a0b3ae",
+  "original_three_run_gate_met": false,
+  "original_tree": "ddd05172f0ff481ac2a02329ab03ea7eabc59473",
+  "planned_confirmation_rounds": 27,
+  "production_activation": false,
+  "qualification": "HOLD_NO_GO",
+  "reported_positive_native_rounds": 3,
+  "schema": "trnm-native-campaign-zip-diagnostic-v1",
+  "scope": "exact ZIP manifest, original native diagnostic and phase CPU; no independent operation identity, source custody, business census or qualified TPS",
+  "unique_independent_business_transactions": null,
+  "unobserved_round_slots": 15
+}

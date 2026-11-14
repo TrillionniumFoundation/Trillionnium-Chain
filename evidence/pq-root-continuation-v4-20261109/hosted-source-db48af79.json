@@ -1,0 +1,144 @@
+{
+  "source": "db48af79b9686f2c7bb50ff7dde9b2233fe32fb8",
+  "observed_utc": "2026-11-09 09:04:24 UTC",
+  "total_count": 12,
+  "counts": {
+    "success": 3,
+    "failure": 9
+  },
+  "runs": [
+    {
+      "id": 42580306419,
+      "name": "PoN original large-state CPU acceptance",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42580306419",
+      "head_sha": "db48af79b9686f2c7bb50ff7dde9b2233fe32fb8",
+      "run_attempt": 1,
+      "event": "pull_request",
+      "updated_at": "2026-11-09T07:44:33Z"
+    },
+    {
+      "id": 42580306428,
+      "name": "PoN baseline diagnostic readback",
+      "status": "completed",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42580306428",
+      "head_sha": "db48af79b9686f2c7bb50ff7dde9b2233fe32fb8",
+      "run_attempt": 1,
+      "event": "pull_request",
+      "updated_at": "2026-11-09T07:45:04Z"
+    },
+    {
+      "id": 42580306429,
+      "name": "PoN original native campaign",
+      "status": "completed",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42580306429",
+      "head_sha": "db48af79b9686f2c7bb50ff7dde9b2233fe32fb8",
+      "run_attempt": 1,
+      "event": "pull_request",
+      "updated_at": "2026-11-09T07:45:16Z"
+    },
+    {
+      "id": 42580306387,
+      "name": "PoN W1 transparent candidate observations",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42580306387",
+      "head_sha": "db48af79b9686f2c7bb50ff7dde9b2233fe32fb8",
+      "run_attempt": 1,
+      "event": "pull_request",
+      "updated_at": "2026-11-09T07:42:18Z"
+    },
+    {
+      "id": 42580306373,
+      "name": "Release finality reference and native baseline",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42580306373",
+      "head_sha": "db48af79b9686f2c7bb50ff7dde9b2233fe32fb8",
+      "run_attempt": 1,
+      "event": "pull_request",
+      "updated_at": "2026-11-09T07:42:49Z"
+    },
+    {
+      "id": 42580306400,
+      "name": "PoN owned process cleanup",
+      "status": "completed",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42580306400",
+      "head_sha": "db48af79b9686f2c7bb50ff7dde9b2233fe32fb8",
+      "run_attempt": 1,
+      "event": "pull_request",
+      "updated_at": "2026-11-09T07:39:07Z"
+    },
+    {
+      "id": 42580306411,
+      "name": "CodeQL exact-source analysis export",
+      "status": "completed",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42580306411",
+      "head_sha": "db48af79b9686f2c7bb50ff7dde9b2233fe32fb8",
+      "run_attempt": 1,
+      "event": "pull_request",
+      "updated_at": "2026-11-09T07:58:52Z"
+    },
+    {
+      "id": 42580306418,
+      "name": "PoN original workspace test-profile CPU acceptance",
+      "status": "completed",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42580306418",
+      "head_sha": "db48af79b9686f2c7bb50ff7dde9b2233fe32fb8",
+      "run_attempt": 1,
+      "event": "pull_request",
+      "updated_at": "2026-11-09T07:59:31Z"
+    },
+    {
+      "id": 42580306430,
+      "name": "PoN W1 work security observations",
+      "status": "completed",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42580306430",
+      "head_sha": "db48af79b9686f2c7bb50ff7dde9b2233fe32fb8",
+      "run_attempt": 1,
+      "event": "pull_request",
+      "updated_at": "2026-11-09T08:06:03Z"
+    },
+    {
+      "id": 42580306406,
+      "name": "trnm-required-baseline",
+      "status": "completed",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42580306406",
+      "head_sha": "db48af79b9686f2c7bb50ff7dde9b2233fe32fb8",
+      "run_attempt": 1,
+      "event": "pull_request",
+      "updated_at": "2026-11-09T08:46:37Z"
+    },
+    {
+      "id": 42580306439,
+      "name": "PoN PQ network and rollback witness",
+      "status": "completed",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42580306439",
+      "head_sha": "db48af79b9686f2c7bb50ff7dde9b2233fe32fb8",
+      "run_attempt": 1,
+      "event": "pull_request",
+      "updated_at": "2026-11-09T08:19:37Z"
+    },
+    {
+      "id": 42580306518,
+      "name": "PoN priority acceptance",
+      "status": "completed",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42580306518",
+      "head_sha": "db48af79b9686f2c7bb50ff7dde9b2233fe32fb8",
+      "run_attempt": 1,
+      "event": "pull_request",
+      "updated_at": "2026-11-09T08:40:37Z"
+    }
+  ],
+  "all_hosted_gates_passed": false
+}

@@ -1,0 +1,911 @@
+[
+  {
+    "args": [
+      "python3",
+      "-B",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+      "--output",
+      "/home/qian-qi/work/chain-next-architecture-security-20261108-8720-validation/attempt-4/source-before.json"
+    ],
+    "elapsed_wall_ns": 4728288494,
+    "exit_code": 0,
+    "name": "source-before",
+    "source_commit": "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+    "started_utc": "2026-11-08T06:42:07.714369+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "source-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 423,
+      "path": "source-before.stdout",
+      "sha256": "e75735e4c04118bd8d20acb997ac04a04a28280749ca4d4aa27c4e8537d4c4e0"
+    },
+    "timeout": false
+  },
+  {
+    "args": [
+      "bash",
+      "scripts/project-preflight.sh",
+      "--audit"
+    ],
+    "elapsed_wall_ns": 115454127,
+    "exit_code": 0,
+    "name": "preflight",
+    "source_commit": "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+    "started_utc": "2026-11-08T06:42:12.443363+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 182,
+      "path": "preflight.stdout",
+      "sha256": "514b844999c0da279411dc1474f0f55aa23b09253a2c5b29f95e524f2a568f4e"
+    },
+    "timeout": false
+  },
+  {
+    "args": [
+      "cargo",
+      "+1.95.0",
+      "metadata",
+      "--offline",
+      "--locked",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--format-version",
+      "1"
+    ],
+    "elapsed_wall_ns": 1619800891,
+    "exit_code": 0,
+    "name": "cargo-graph",
+    "source_commit": "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+    "started_utc": "2026-11-08T06:42:12.611507+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "cargo-graph.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 833513,
+      "path": "cargo-graph.stdout",
+      "sha256": "f8670b60fc81bffe4fcc44f76cfc95c06e588d7a46955415eb9f90f60bae260e"
+    },
+    "timeout": false
+  },
+  {
+    "args": [
+      "cargo",
+      "+1.95.0",
+      "fmt",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "elapsed_wall_ns": 21377563651,
+    "exit_code": 0,
+    "name": "format",
+    "source_commit": "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+    "started_utc": "2026-11-08T06:42:14.372832+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "format.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "path": "format.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "timeout": false
+  },
+  {
+    "args": [
+      "python3",
+      "-B",
+      "scripts/ci/check_repository.py"
+    ],
+    "elapsed_wall_ns": 103997438377,
+    "exit_code": 0,
+    "name": "repository",
+    "source_commit": "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+    "started_utc": "2026-11-08T06:42:35.778709+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "repository.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 307,
+      "path": "repository.stdout",
+      "sha256": "2395a1798d346b9d23f8b40554b223421639e75c06be39462b79cea571fce104"
+    },
+    "timeout": false
+  },
+  {
+    "args": [
+      "python3",
+      "-B",
+      "scripts/ci/test_ci_source_integrity.py"
+    ],
+    "elapsed_wall_ns": 48148688029,
+    "exit_code": 0,
+    "name": "source-negative-controls",
+    "source_commit": "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+    "started_utc": "2026-11-08T06:44:19.865655+00:00",
+    "stderr": {
+      "bytes": 6415,
+      "path": "source-negative-controls.stderr",
+      "sha256": "561b0c647ff67e897cf98d20f929a35cffecd7d9468ca0a46c8c3aaece444003"
+    },
+    "stdout": {
+      "bytes": 484,
+      "path": "source-negative-controls.stdout",
+      "sha256": "fc74e6f4e6191f449c98a92cb973a5c6f80783bed183f0a1861b17d8b5da8ad3"
+    },
+    "timeout": false
+  },
+  {
+    "args": [
+      "python3",
+      "-B",
+      "scripts/ci/check_pq_research_integration.py"
+    ],
+    "elapsed_wall_ns": 1720619575,
+    "exit_code": 0,
+    "name": "pq-source-composition",
+    "source_commit": "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+    "started_utc": "2026-11-08T06:45:08.119151+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "pq-source-composition.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 557,
+      "path": "pq-source-composition.stdout",
+      "sha256": "f65bc5ea91172760781cb6ab7539abbedd86aff238055be21d3e011ce4c1c49c"
+    },
+    "timeout": false
+  },
+  {
+    "args": [
+      "python3",
+      "-B",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "formal/next-architecture-security",
+      "-p",
+      "test_*.py",
+      "-v"
+    ],
+    "elapsed_wall_ns": 954107341,
+    "exit_code": 0,
+    "name": "python-controls",
+    "source_commit": "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+    "started_utc": "2026-11-08T06:45:09.917845+00:00",
+    "stderr": {
+      "bytes": 4997,
+      "path": "python-controls.stderr",
+      "sha256": "5fb77c9eb3e68a84f3e34bc3e87fdc8f9d78f845a751bc3b625c6926d07cccb0"
+    },
+    "stdout": {
+      "bytes": 0,
+      "path": "python-controls.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "timeout": false
+  },
+  {
+    "args": [
+      "python3",
+      "-B",
+      "formal/next-architecture-security/counterexamples.py",
+      "--check-fixture"
+    ],
+    "elapsed_wall_ns": 115456211,
+    "exit_code": 0,
+    "name": "exact-research-fixture",
+    "source_commit": "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+    "started_utc": "2026-11-08T06:45:10.875802+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "exact-research-fixture.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 110,
+      "path": "exact-research-fixture.stdout",
+      "sha256": "7a941affd4a8bb4da8185cda32a027ecf7b4c9df67933bcf80657874b6af5f71"
+    },
+    "timeout": false
+  },
+  {
+    "args": [
+      "cargo",
+      "+1.95.0",
+      "test",
+      "--offline",
+      "--locked",
+      "--release",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--test",
+      "accepted_task_observation",
+      "--",
+      "--test-threads=1"
+    ],
+    "elapsed_wall_ns": 114927795776,
+    "exit_code": 0,
+    "name": "native-settlement-cold-readback",
+    "source_commit": "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+    "started_utc": "2026-11-08T06:45:11.105531+00:00",
+    "stderr": {
+      "bytes": 378,
+      "path": "native-settlement-cold-readback.stderr",
+      "sha256": "a5c7d9a7be1bd497a7cf544208406527e9ab614ee7b30d357f20c4ff2c0f298b"
+    },
+    "stdout": {
+      "bytes": 434,
+      "path": "native-settlement-cold-readback.stdout",
+      "sha256": "c1b08cf7c0f6ab9900767a525fd76fba7868ac6f8f357e11ca02f9762883bd55"
+    },
+    "timeout": false
+  },
+  {
+    "args": [
+      "cargo",
+      "+1.95.0",
+      "test",
+      "--offline",
+      "--locked",
+      "--release",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--test",
+      "native_packet_observer",
+      "--",
+      "--test-threads=1"
+    ],
+    "elapsed_wall_ns": 101611784999,
+    "exit_code": 0,
+    "name": "native-packet-observer",
+    "source_commit": "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+    "started_utc": "2026-11-08T06:47:06.035892+00:00",
+    "stderr": {
+      "bytes": 235,
+      "path": "native-packet-observer.stderr",
+      "sha256": "e376ccbeb792b975a41103eec6e21ce2a8bbe341a58293755de7127ed22c0711"
+    },
+    "stdout": {
+      "bytes": 848,
+      "path": "native-packet-observer.stdout",
+      "sha256": "75009d444b710671a40f830570b0ed0bbdcd66d3bb99977ed6329895668af4ad"
+    },
+    "timeout": false
+  },
+  {
+    "args": [
+      "cargo",
+      "+1.95.0",
+      "test",
+      "--offline",
+      "--locked",
+      "--release",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-data-availability",
+      "--",
+      "--test-threads=1"
+    ],
+    "elapsed_wall_ns": 720326585258,
+    "exit_code": 101,
+    "name": "p2p-complete",
+    "source_commit": "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+    "started_utc": "2026-11-08T06:48:47.648549+00:00",
+    "stderr": {
+      "bytes": 292,
+      "path": "p2p-complete.stderr",
+      "sha256": "ddb7abed4a707613d623994177d588cec2cab72848a43090472ddd8be05cee70"
+    },
+    "stdout": {
+      "bytes": 42462,
+      "path": "p2p-complete.stdout",
+      "sha256": "fdce818e1fb34d035eaed7d25c80f346451101093c22dee3f66b028ee1cf6556"
+    },
+    "timeout": false
+  },
+  {
+    "args": [
+      "cargo",
+      "+1.95.0",
+      "test",
+      "--offline",
+      "--locked",
+      "--release",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--test",
+      "native_node",
+      "packet_status",
+      "--",
+      "--test-threads=1"
+    ],
+    "elapsed_wall_ns": 7736746968,
+    "exit_code": 0,
+    "name": "native-node-packet-status",
+    "source_commit": "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+    "started_utc": "2026-11-08T07:00:47.977052+00:00",
+    "stderr": {
+      "bytes": 349,
+      "path": "native-node-packet-status.stderr",
+      "sha256": "1ad05b4f2e7c4d7ab57bafb58b55d569d88c2c34c1faaae0fb478859a603fed6"
+    },
+    "stdout": {
+      "bytes": 300,
+      "path": "native-node-packet-status.stdout",
+      "sha256": "9f873c805716d3dfede0a6136ddb898e2fe81c0ff6a3ba21bf497f7428a5de35"
+    },
+    "timeout": false
+  },
+  {
+    "args": [
+      "cargo",
+      "+1.95.0",
+      "test",
+      "--offline",
+      "--locked",
+      "--release",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--test",
+      "native_node",
+      "test_every_reorg_process_cut_and_admission_gap_recovers_once",
+      "--",
+      "--exact",
+      "--test-threads=1"
+    ],
+    "elapsed_wall_ns": 6434580776,
+    "exit_code": 0,
+    "name": "test_every_reorg_process_cut_and_admission_gap_recovers_once",
+    "source_commit": "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+    "started_utc": "2026-11-08T07:00:55.715461+00:00",
+    "stderr": {
+      "bytes": 213,
+      "path": "test_every_reorg_process_cut_and_admission_gap_recovers_once.stderr",
+      "sha256": "3e084980e04c2f22681c94c1d284278da81c810af287edd70158cb8d839b3724"
+    },
+    "stdout": {
+      "bytes": 186,
+      "path": "test_every_reorg_process_cut_and_admission_gap_recovers_once.stdout",
+      "sha256": "55e1284d6c0163acdc22f9ab40b5acd9e5d86bce8f6bc5099de468931b965b28"
+    },
+    "timeout": false
+  },
+  {
+    "args": [
+      "cargo",
+      "+1.95.0",
+      "test",
+      "--offline",
+      "--locked",
+      "--release",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--test",
+      "native_node",
+      "test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner",
+      "--",
+      "--exact",
+      "--test-threads=1"
+    ],
+    "elapsed_wall_ns": 4277132628,
+    "exit_code": 101,
+    "name": "test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner",
+    "source_commit": "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+    "started_utc": "2026-11-08T07:01:02.152000+00:00",
+    "stderr": {
+      "bytes": 285,
+      "path": "test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner.stderr",
+      "sha256": "85cf0698118e00ea527bc2466d9c2be7f5b38103edfffd70222eb34acf41ffd1"
+    },
+    "stdout": {
+      "bytes": 637,
+      "path": "test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner.stdout",
+      "sha256": "af445254345225d61a853f461d4dd1673418dffbc9ead9cd73a1fe57fec6e2bb"
+    },
+    "timeout": false
+  },
+  {
+    "args": [
+      "cargo",
+      "+1.95.0",
+      "test",
+      "--offline",
+      "--locked",
+      "--release",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--test",
+      "native_node",
+      "test_confirmed_transfer_is_removed_by_a_real_heavier_fork",
+      "--",
+      "--exact",
+      "--test-threads=1"
+    ],
+    "elapsed_wall_ns": 13103047386,
+    "exit_code": 0,
+    "name": "test_confirmed_transfer_is_removed_by_a_real_heavier_fork",
+    "source_commit": "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+    "started_utc": "2026-11-08T07:01:06.580448+00:00",
+    "stderr": {
+      "bytes": 213,
+      "path": "test_confirmed_transfer_is_removed_by_a_real_heavier_fork.stderr",
+      "sha256": "527b4a38b21489af8ccf7cbd92b93e74d9e7f5ad148ee3f0cc1d18ef70a26c2c"
+    },
+    "stdout": {
+      "bytes": 184,
+      "path": "test_confirmed_transfer_is_removed_by_a_real_heavier_fork.stdout",
+      "sha256": "69381cd8324df0c67cf981417de6f82cd8027d363f0f15de43d0782edb2875f0"
+    },
+    "timeout": false
+  },
+  {
+    "args": [
+      "cargo",
+      "+1.95.0",
+      "test",
+      "--offline",
+      "--locked",
+      "--release",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "native_growth_v2_exact_packet_observation",
+      "--",
+      "--test-threads=1"
+    ],
+    "elapsed_wall_ns": 377614313417,
+    "exit_code": 0,
+    "name": "native_growth_v2_exact_packet_observation",
+    "source_commit": "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+    "started_utc": "2026-11-08T07:01:19.685310+00:00",
+    "stderr": {
+      "bytes": 352,
+      "path": "native_growth_v2_exact_packet_observation.stderr",
+      "sha256": "ceade36890ba4d559f840793e0de4a2ca2beee652637eac0f2fbfc006ec092a9"
+    },
+    "stdout": {
+      "bytes": 330,
+      "path": "native_growth_v2_exact_packet_observation.stdout",
+      "sha256": "dae9a6c35b9e7ec8923fc31075f989fdbcc2f39cf4a532165f0264d894f7862d"
+    },
+    "timeout": false
+  },
+  {
+    "args": [
+      "cargo",
+      "+1.95.0",
+      "test",
+      "--offline",
+      "--locked",
+      "--release",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "native_growth_v2_packet_observer",
+      "--",
+      "--test-threads=1"
+    ],
+    "elapsed_wall_ns": 616044953,
+    "exit_code": 0,
+    "name": "native_growth_v2_packet_observer",
+    "source_commit": "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+    "started_utc": "2026-11-08T07:07:37.301334+00:00",
+    "stderr": {
+      "bytes": 215,
+      "path": "native_growth_v2_packet_observer.stderr",
+      "sha256": "65b91fe2f7a5255573fd321422274aeb52fc5ea5bffa35e2ca5411effa2d932b"
+    },
+    "stdout": {
+      "bytes": 217,
+      "path": "native_growth_v2_packet_observer.stdout",
+      "sha256": "1e38b7245b641a199b5f9a6834581ef70b8ae71825cc835fc2e2bf465d9b9859"
+    },
+    "timeout": false
+  },
+  {
+    "args": [
+      "cargo",
+      "+1.95.0",
+      "test",
+      "--offline",
+      "--locked",
+      "--release",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "native_growth_v2_cold_observer",
+      "--",
+      "--test-threads=1"
+    ],
+    "elapsed_wall_ns": 2820682805,
+    "exit_code": 0,
+    "name": "native_growth_v2_cold_observer",
+    "source_commit": "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+    "started_utc": "2026-11-08T07:07:37.919045+00:00",
+    "stderr": {
+      "bytes": 215,
+      "path": "native_growth_v2_cold_observer.stderr",
+      "sha256": "94fd7e9a25a70febf5071892993bf05323d35fa0ccf3d26e4b261351793f3bf0"
+    },
+    "stdout": {
+      "bytes": 650,
+      "path": "native_growth_v2_cold_observer.stdout",
+      "sha256": "67f18351273c5a79020be0602240620f363fca0106fdf7d573cd2966f6a2f29a"
+    },
+    "timeout": false
+  },
+  {
+    "args": [
+      "cargo",
+      "+1.95.0",
+      "test",
+      "--offline",
+      "--locked",
+      "--release",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--test",
+      "native_growth_cli",
+      "native_growth_v2_cli_signed_packet_remote_admission_and_cold_current_snapshot",
+      "--",
+      "--exact",
+      "--test-threads=1"
+    ],
+    "elapsed_wall_ns": 4574667976,
+    "exit_code": 0,
+    "name": "growth-cli-packet-cold",
+    "source_commit": "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+    "started_utc": "2026-11-08T07:07:40.741908+00:00",
+    "stderr": {
+      "bytes": 361,
+      "path": "growth-cli-packet-cold.stderr",
+      "sha256": "8cb6e922bd68a20bf49722c08b0162cd79862eb9830d44087ad1b0e1f917f288"
+    },
+    "stdout": {
+      "bytes": 202,
+      "path": "growth-cli-packet-cold.stdout",
+      "sha256": "e41401b31eac5b6a48c7111ff3f12b050ec79b3edc77b7462457f18720146959"
+    },
+    "timeout": false
+  },
+  {
+    "args": [
+      "cargo",
+      "+1.95.0",
+      "test",
+      "--offline",
+      "--locked",
+      "--release",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-research-protocol",
+      "--test",
+      "protocol_v1",
+      "hepta_",
+      "--",
+      "--test-threads=1"
+    ],
+    "elapsed_wall_ns": 31144311899,
+    "exit_code": 0,
+    "name": "hepta-classical-receiver",
+    "source_commit": "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+    "started_utc": "2026-11-08T07:07:45.318397+00:00",
+    "stderr": {
+      "bytes": 929,
+      "path": "hepta-classical-receiver.stderr",
+      "sha256": "b9b1f0cac139e3edd2fb2046198c6a678c9fa03ec6106786dafe884d01b57afa"
+    },
+    "stdout": {
+      "bytes": 412,
+      "path": "hepta-classical-receiver.stdout",
+      "sha256": "2ba9e7fe3d10775f89b824ad6ad5fef3e1bd38ecdecaa17050b3fcebbb8f7575"
+    },
+    "timeout": false
+  },
+  {
+    "args": [
+      "cargo",
+      "+1.95.0",
+      "test",
+      "--offline",
+      "--locked",
+      "--release",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-research-protocol",
+      "--test",
+      "hepta_handoff_pq",
+      "--",
+      "--test-threads=1"
+    ],
+    "elapsed_wall_ns": 916792944,
+    "exit_code": 0,
+    "name": "hepta-pq-receiver",
+    "source_commit": "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+    "started_utc": "2026-11-08T07:08:16.464491+00:00",
+    "stderr": {
+      "bytes": 377,
+      "path": "hepta-pq-receiver.stderr",
+      "sha256": "75a75af1949bfc2033d2bfa215c6ddf8c80e4523305c9e88083f9240d2efd1e0"
+    },
+    "stdout": {
+      "bytes": 546,
+      "path": "hepta-pq-receiver.stdout",
+      "sha256": "8e4247814e289d4f4e53ac2a2f4dd933d25d983727975198e2a48ea937d45161"
+    },
+    "timeout": false
+  },
+  {
+    "args": [
+      "cargo",
+      "+1.95.0",
+      "test",
+      "--offline",
+      "--locked",
+      "--release",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "store::task_observation::tests::",
+      "--",
+      "--test-threads=1"
+    ],
+    "elapsed_wall_ns": 1718798121,
+    "exit_code": 0,
+    "name": "native-accepted-task",
+    "source_commit": "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+    "started_utc": "2026-11-08T07:08:17.382486+00:00",
+    "stderr": {
+      "bytes": 215,
+      "path": "native-accepted-task.stderr",
+      "sha256": "65b91fe2f7a5255573fd321422274aeb52fc5ea5bffa35e2ca5411effa2d932b"
+    },
+    "stdout": {
+      "bytes": 465,
+      "path": "native-accepted-task.stdout",
+      "sha256": "f8002b00faff467f80498a80e742e57f5cb81e11470fd0d60128f3972d38b868"
+    },
+    "timeout": false
+  },
+  {
+    "args": [
+      "cargo",
+      "+1.95.0",
+      "test",
+      "--offline",
+      "--locked",
+      "--release",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "store::authenticated_replay_tests::",
+      "--",
+      "--test-threads=1"
+    ],
+    "elapsed_wall_ns": 13501825372,
+    "exit_code": 0,
+    "name": "transport-replay",
+    "source_commit": "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+    "started_utc": "2026-11-08T07:08:19.103439+00:00",
+    "stderr": {
+      "bytes": 215,
+      "path": "transport-replay.stderr",
+      "sha256": "94fd7e9a25a70febf5071892993bf05323d35fa0ccf3d26e4b261351793f3bf0"
+    },
+    "stdout": {
+      "bytes": 600,
+      "path": "transport-replay.stdout",
+      "sha256": "caa4c356d3036100eda627f218dab8e1f7f9225dcc809b346127eab47bc9575e"
+    },
+    "timeout": false
+  },
+  {
+    "args": [
+      "cargo",
+      "+1.95.0",
+      "clippy",
+      "--offline",
+      "--locked",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-data-availability",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "elapsed_wall_ns": 46594416480,
+    "exit_code": 0,
+    "name": "clippy-trnm-data-availability",
+    "source_commit": "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+    "started_utc": "2026-11-08T07:08:32.607148+00:00",
+    "stderr": {
+      "bytes": 2981,
+      "path": "clippy-trnm-data-availability.stderr",
+      "sha256": "bcaddd17497eacce7ab93a9c26224f04031f01f1c0b8cd28fa11665d1f17b7f8"
+    },
+    "stdout": {
+      "bytes": 0,
+      "path": "clippy-trnm-data-availability.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "timeout": false
+  },
+  {
+    "args": [
+      "cargo",
+      "+1.95.0",
+      "clippy",
+      "--offline",
+      "--locked",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "elapsed_wall_ns": 67253825827,
+    "exit_code": 0,
+    "name": "clippy-trnm-pon-node",
+    "source_commit": "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+    "started_utc": "2026-11-08T07:09:19.204032+00:00",
+    "stderr": {
+      "bytes": 1788,
+      "path": "clippy-trnm-pon-node.stderr",
+      "sha256": "036b8723862c9e9b14fe2b9a29d58a923fa7bbafb8d71302c0008df7b57512e9"
+    },
+    "stdout": {
+      "bytes": 0,
+      "path": "clippy-trnm-pon-node.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "timeout": false
+  },
+  {
+    "args": [
+      "cargo",
+      "+1.95.0",
+      "run",
+      "--offline",
+      "--locked",
+      "--release",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-data-availability",
+      "--example",
+      "cell_bep52_cost_v1"
+    ],
+    "elapsed_wall_ns": 20317631923,
+    "exit_code": 0,
+    "name": "cell_bep52_cost_v1",
+    "source_commit": "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+    "started_utc": "2026-11-08T07:10:26.460226+00:00",
+    "stderr": {
+      "bytes": 186,
+      "path": "cell_bep52_cost_v1.stderr",
+      "sha256": "e3e09fcf010cc692a16fe4d181b3ae75e489eca8662cc7338e261d5a3e7213a4"
+    },
+    "stdout": {
+      "bytes": 170997,
+      "path": "cell_bep52_cost_v1.stdout",
+      "sha256": "ebddd0a380e37ae119cc1ff7582b2d1eb1dab314f80abfe3c8465a6cc8b98233"
+    },
+    "timeout": false
+  },
+  {
+    "args": [
+      "cargo",
+      "+1.95.0",
+      "run",
+      "--offline",
+      "--locked",
+      "--release",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-data-availability",
+      "--example",
+      "cell_rs46_cost_v1"
+    ],
+    "elapsed_wall_ns": 37873635885,
+    "exit_code": 0,
+    "name": "cell_rs46_cost_v1",
+    "source_commit": "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+    "started_utc": "2026-11-08T07:10:46.781852+00:00",
+    "stderr": {
+      "bytes": 185,
+      "path": "cell_rs46_cost_v1.stderr",
+      "sha256": "94254cb49577f6fbe3d4855f92d0b66f0d2701039cd681acb593e252f7e7e8cf"
+    },
+    "stdout": {
+      "bytes": 126971,
+      "path": "cell_rs46_cost_v1.stdout",
+      "sha256": "30ce0312da864baf1c614a4c7f0c5d78e2a2532140f3ba1fa78fd2c1d820d6a9"
+    },
+    "timeout": false
+  },
+  {
+    "args": [
+      "python3",
+      "-B",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+      "--output",
+      "/home/qian-qi/work/chain-next-architecture-security-20261108-8720-validation/attempt-4/source-after.json"
+    ],
+    "elapsed_wall_ns": 32457545184,
+    "exit_code": 0,
+    "name": "source-after",
+    "source_commit": "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+    "started_utc": "2026-11-08T07:11:24.659877+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "source-after.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 423,
+      "path": "source-after.stdout",
+      "sha256": "e75735e4c04118bd8d20acb997ac04a04a28280749ca4d4aa27c4e8537d4c4e0"
+    },
+    "timeout": false
+  }
+]

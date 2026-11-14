@@ -1,0 +1,40 @@
+{
+  "io_pressure": "some avg10=43.48 avg60=48.58 avg300=49.20 total=52244304253\nfull avg10=42.22 avg60=46.94 avg300=46.56 total=49150352015\n",
+  "tree": [
+    {
+      "children": [
+        "3496512"
+      ],
+      "fd5_info": "pos:\t0\nflags:\t012600000\nmnt_id:\t27\nino:\t49938433\n",
+      "fd5_target": "/home/qian-qi",
+      "name": "python3",
+      "pid": 3496470,
+      "wchan": "hrtimer_nanosleep"
+    },
+    {
+      "children": [
+        "3496594"
+      ],
+      "name": "sh",
+      "pid": 3496512,
+      "wchan": "do_wait"
+    },
+    {
+      "children": [
+        "3550653"
+      ],
+      "name": "python3",
+      "pid": 3496594,
+      "wchan": "hrtimer_nanosleep"
+    },
+    {
+      "children": [],
+      "fd5_info": "pos:\t0\nflags:\t02504000\nmnt_id:\t27\nino:\t4612995\n",
+      "fd5_target": "/home/qian-qi/work/chain-next-architecture-security-20261108-8720/evidence/pq-workflow-continuation-20261104/quantum-clock.json",
+      "name": "python3",
+      "pid": 3550653,
+      "wchan": "folio_wait_bit_common"
+    }
+  ],
+  "utc": "2026-11-08T06:39:10.757520+00:00"
+}

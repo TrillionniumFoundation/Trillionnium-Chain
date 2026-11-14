@@ -1,0 +1,267 @@
+{
+  "branch": "fix/chain-w1-oracle-evidence-20261110-0776",
+  "build_policy": {
+    "automatic_dependency_fetch": false,
+    "cargo_build_jobs": 2,
+    "cargo_incremental": 0,
+    "encoded_flags_and_wrappers_removed": true,
+    "offline": true,
+    "rustdocflags": "",
+    "rustflags": "",
+    "toolchain": "1.95.0"
+  },
+  "bundle": {
+    "input": {
+      "bytes": 150042,
+      "mode": 384,
+      "path": "/home/qian-qi/worktrees/chain-w1-oracle-evidence-0776-source-6e39f27357ce.bundle",
+      "sha256": "961b7e0f160218613fe37b95f12d686b9a6dcceade2492904d00e8ca68fdf73a"
+    },
+    "private_copy": {
+      "bytes": 150042,
+      "mode": 384,
+      "path": "/home/qian-qi/worktrees/chain-w1-oracle-evidence-0776-validation-6e39f27357ce-rmrwkc51/input.bundle",
+      "sha256": "961b7e0f160218613fe37b95f12d686b9a6dcceade2492904d00e8ca68fdf73a"
+    }
+  },
+  "cargo_target_dir": "/home/qian-qi/worktrees/chain-w1-oracle-evidence-0776-validation-6e39f27357ce-rmrwkc51/cargo-target",
+  "errors": [],
+  "expected_base": "e4abb172147e941b62483652b0ceabaae4317624",
+  "finished_utc": "2026-11-11T02:06:28.132561+00:00",
+  "native_tests_executed": false,
+  "production_activation": false,
+  "provider": {
+    "build_environment": {
+      "LD_LIBRARY_PATH": "/home/qian-qi/chain-stark-route-validation-7e8b/provider-clippy-eeeaafbc742d-retry01/trnm-pq-provider-3.5.9.wUXuiklK/install/lib:/home/qian-qi/chain-stark-route-validation-7e8b/provider-clippy-eeeaafbc742d-retry01/trnm-pq-provider-3.5.9.wUXuiklK/install/lib64",
+      "OPENSSL_CONF": "/dev/null",
+      "OPENSSL_DIR": "/home/qian-qi/chain-stark-route-validation-7e8b/provider-clippy-eeeaafbc742d-retry01/trnm-pq-provider-3.5.9.wUXuiklK/install",
+      "OPENSSL_INCLUDE_DIR": "/home/qian-qi/chain-stark-route-validation-7e8b/provider-clippy-eeeaafbc742d-retry01/trnm-pq-provider-3.5.9.wUXuiklK/install/include",
+      "OPENSSL_LIB_DIR": "/home/qian-qi/chain-stark-route-validation-7e8b/provider-clippy-eeeaafbc742d-retry01/trnm-pq-provider-3.5.9.wUXuiklK/install/lib",
+      "OPENSSL_MODULES": "/home/qian-qi/chain-stark-route-validation-7e8b/provider-clippy-eeeaafbc742d-retry01/trnm-pq-provider-3.5.9.wUXuiklK/install/lib/ossl-modules",
+      "OPENSSL_NO_VENDOR": "1",
+      "OPENSSL_STATIC": "1",
+      "TRNM_PQ_OPENSSL": "/home/qian-qi/chain-stark-route-validation-7e8b/provider-clippy-eeeaafbc742d-retry01/trnm-pq-provider-3.5.9.wUXuiklK/install/bin/openssl",
+      "TRNM_PQ_OPENSSL_SHA256": "65b8f0423f3031a5f0eea5e3d571a24bcaaf79fb8a1b3ee68ad2e7438b3dbac0",
+      "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+    },
+    "files": {
+      "bin/openssl": {
+        "bytes": 8933408,
+        "mode": 493,
+        "path": "/home/qian-qi/chain-stark-route-validation-7e8b/provider-clippy-eeeaafbc742d-retry01/trnm-pq-provider-3.5.9.wUXuiklK/install/bin/openssl",
+        "sha256": "65b8f0423f3031a5f0eea5e3d571a24bcaaf79fb8a1b3ee68ad2e7438b3dbac0"
+      },
+      "include/openssl/configuration.h": {
+        "bytes": 4729,
+        "mode": 420,
+        "path": "/home/qian-qi/chain-stark-route-validation-7e8b/provider-clippy-eeeaafbc742d-retry01/trnm-pq-provider-3.5.9.wUXuiklK/install/include/openssl/configuration.h",
+        "sha256": "406c26f93511299b264062f9f3faf0760e7a0506e91a61717c491f3c92e1a996"
+      },
+      "include/openssl/opensslv.h": {
+        "bytes": 3449,
+        "mode": 420,
+        "path": "/home/qian-qi/chain-stark-route-validation-7e8b/provider-clippy-eeeaafbc742d-retry01/trnm-pq-provider-3.5.9.wUXuiklK/install/include/openssl/opensslv.h",
+        "sha256": "9647fc99758cf83e3bcf11ae310894fd4911ad62bff22d8213a614df89cfedda"
+      },
+      "lib/libcrypto.a": {
+        "bytes": 12381776,
+        "mode": 420,
+        "path": "/home/qian-qi/chain-stark-route-validation-7e8b/provider-clippy-eeeaafbc742d-retry01/trnm-pq-provider-3.5.9.wUXuiklK/install/lib/libcrypto.a",
+        "sha256": "b4bf11b6c0308d7342a2e332b9ddc95096aae3e7159e40ee06662889a457b2c5"
+      },
+      "lib/libssl.a": {
+        "bytes": 2123138,
+        "mode": 420,
+        "path": "/home/qian-qi/chain-stark-route-validation-7e8b/provider-clippy-eeeaafbc742d-retry01/trnm-pq-provider-3.5.9.wUXuiklK/install/lib/libssl.a",
+        "sha256": "f355167951857505b5b0305fd2e8ea8f224fa29d780211175d32767b07234727"
+      }
+    },
+    "prefix": "/home/qian-qi/chain-stark-route-validation-7e8b/provider-clippy-eeeaafbc742d-retry01/trnm-pq-provider-3.5.9.wUXuiklK/install",
+    "scope": "existing installed bytes/version; no new build"
+  },
+  "provider_unchanged": true,
+  "published": false,
+  "records": "/home/qian-qi/worktrees/chain-w1-oracle-evidence-0776-validation-6e39f27357ce-rmrwkc51",
+  "runner": {
+    "bytes": 22050,
+    "mode": 384,
+    "path": "/home/qian-qi/worktrees/chain-w1-oracle-evidence-0776-runner-3e36463fd96a.py",
+    "sha256": "3e36463fd96a7af1a5b0746cbb2b758a8bb19d158b1480c82fc1646630dc7ae5"
+  },
+  "schema": "trnm-w1-oracle-desktop-validation-v1",
+  "security_qualified": false,
+  "skipped": [],
+  "source_after": {
+    "base": null,
+    "candidate": "6e39f27357ce7c030f5662ada3d524fecb58d63e",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "6e39f27357ce7c030f5662ada3d524fecb58d63e",
+    "tested_tree": "f36683afd74fa9811bddf21787ab2386900ea70b",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2553814149,
+    "tracked_entries": 27892,
+    "tracked_worktree_verified": true
+  },
+  "source_before": {
+    "base": null,
+    "candidate": "6e39f27357ce7c030f5662ada3d524fecb58d63e",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "6e39f27357ce7c030f5662ada3d524fecb58d63e",
+    "tested_tree": "f36683afd74fa9811bddf21787ab2386900ea70b",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2553814149,
+    "tracked_entries": 27892,
+    "tracked_worktree_verified": true
+  },
+  "source_commit": "6e39f27357ce7c030f5662ada3d524fecb58d63e",
+  "source_unchanged": true,
+  "started_utc": "2026-11-11T01:59:12.050057+00:00",
+  "status": "VALIDATION_PASSED",
+  "steps": [
+    {
+      "elapsed_seconds": 1.784291559131816,
+      "exit_code": 0,
+      "name": "github-login",
+      "passed": true,
+      "timed_out": false
+    },
+    {
+      "elapsed_seconds": 0.06691818288527429,
+      "exit_code": 0,
+      "name": "canonical-origin",
+      "passed": true,
+      "timed_out": false
+    },
+    {
+      "elapsed_seconds": 0.005930373910814524,
+      "exit_code": 1,
+      "name": "branch-absent",
+      "passed": true,
+      "timed_out": false
+    },
+    {
+      "elapsed_seconds": 0.011904388898983598,
+      "exit_code": 0,
+      "name": "bundle-verify",
+      "passed": true,
+      "timed_out": false
+    },
+    {
+      "elapsed_seconds": 0.006056451005861163,
+      "exit_code": 0,
+      "name": "bundle-heads",
+      "passed": true,
+      "timed_out": false
+    },
+    {
+      "elapsed_seconds": 5.432825380936265,
+      "exit_code": 0,
+      "name": "bundle-unbundle",
+      "passed": true,
+      "timed_out": false
+    },
+    {
+      "elapsed_seconds": 0.007126131094992161,
+      "exit_code": 0,
+      "name": "base-ancestry",
+      "passed": true,
+      "timed_out": false
+    },
+    {
+      "elapsed_seconds": 210.64095442392863,
+      "exit_code": 0,
+      "name": "create-worktree",
+      "passed": true,
+      "timed_out": false
+    },
+    {
+      "elapsed_seconds": 0.12970873899757862,
+      "exit_code": 0,
+      "name": "project-preflight",
+      "passed": true,
+      "timed_out": false
+    },
+    {
+      "elapsed_seconds": 7.251704542897642,
+      "exit_code": 0,
+      "name": "source-before",
+      "passed": true,
+      "timed_out": false
+    },
+    {
+      "elapsed_seconds": 0.03440367104485631,
+      "exit_code": 0,
+      "name": "rustc-version",
+      "passed": true,
+      "timed_out": false
+    },
+    {
+      "elapsed_seconds": 0.01840044790878892,
+      "exit_code": 0,
+      "name": "cargo-version",
+      "passed": true,
+      "timed_out": false
+    },
+    {
+      "elapsed_seconds": 0.005921918898820877,
+      "exit_code": 0,
+      "name": "provider-version",
+      "passed": true,
+      "timed_out": false
+    },
+    {
+      "elapsed_seconds": 0.21886613708920777,
+      "exit_code": 0,
+      "name": "metadata-default",
+      "passed": true,
+      "timed_out": false
+    },
+    {
+      "elapsed_seconds": 0.2196979890577495,
+      "exit_code": 0,
+      "name": "metadata-all-features",
+      "passed": true,
+      "timed_out": false
+    },
+    {
+      "elapsed_seconds": 0.21948937885463238,
+      "exit_code": 0,
+      "name": "metadata-fuzz",
+      "passed": true,
+      "timed_out": false
+    },
+    {
+      "elapsed_seconds": 21.94108300213702,
+      "exit_code": 0,
+      "name": "format",
+      "passed": true,
+      "timed_out": false
+    },
+    {
+      "elapsed_seconds": 181.24977065389976,
+      "exit_code": 0,
+      "name": "strict-clippy",
+      "passed": true,
+      "timed_out": false
+    },
+    {
+      "elapsed_seconds": 0.11911437404341996,
+      "exit_code": 0,
+      "name": "project-preflight-after",
+      "passed": true,
+      "timed_out": false
+    },
+    {
+      "elapsed_seconds": 6.258557206019759,
+      "exit_code": 0,
+      "name": "source-after",
+      "passed": true,
+      "timed_out": false
+    }
+  ],
+  "worktree": "/home/qian-qi/worktrees/chain-w1-oracle-evidence-0776"
+}

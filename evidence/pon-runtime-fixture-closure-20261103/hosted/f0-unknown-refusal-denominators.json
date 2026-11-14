@@ -1,0 +1,46 @@
+{
+  "schema": "b280-f0-unknown-refusal-denominators-v1",
+  "head": "b28098c092dca72165c0d26054fce95a8636d777",
+  "run_id": 41708486800,
+  "job_id": 126178548474,
+  "artifact_id": 13269380609,
+  "phase": "valid-work-root",
+  "stages": {
+    "work": {
+      "rejected": 3,
+      "recorded_error_codes": {
+        "PUBLIC_REQUEST_CANCELLED": 3
+      },
+      "without_recorded_error_code": 0
+    },
+    "admission_prepare": {
+      "rejected": 33,
+      "recorded_error_codes": {
+        "PUBLIC_REQUEST_CANCELLED": 33
+      },
+      "without_recorded_error_code": 0
+    },
+    "execution": {
+      "rejected": 309,
+      "recorded_error_codes": {
+        "PUBLIC_REQUEST_CANCELLED": 3
+      },
+      "without_recorded_error_code": 306
+    },
+    "commit": {
+      "rejected": 4,
+      "recorded_error_codes": {
+        "PUBLIC_REQUEST_CANCELLED": 4
+      },
+      "without_recorded_error_code": 0
+    },
+    "root_commitment": {
+      "rejected": 3,
+      "recorded_error_codes": {
+        "PUBLIC_REQUEST_CANCELLED": 3
+      },
+      "without_recorded_error_code": 0
+    }
+  },
+  "scope": "All server records in the phase, including honest and hostile. Missing error code is not classified as ROOT or as a specific server cause."
+}

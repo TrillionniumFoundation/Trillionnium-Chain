@@ -1,0 +1,28 @@
+{
+  "archive": "/home/qian-qi/work/w1-baseline-9082-evidence-165d.tar.xz",
+  "archive_bytes": 4591284,
+  "archive_integrity_is_not_test_success": true,
+  "archive_sha256": "1f3f04c393e43c1c36fbb8b1569f810d9b8c9b31013d5389410ff2787a252a83",
+  "campaign_phase_success": true,
+  "checks_phase_success": false,
+  "declared_input_snapshot_complete": true,
+  "elapsed_seconds": 36.56881642341614,
+  "head": "165d286b687e0a73d7fe68148d2179274fc0c0b8",
+  "manifest_bytes": 368282,
+  "manifest_sha256": "57ff2f46de6d8167431736191ab5b08e7471158ab76912dd794f514f31279e56",
+  "member_count": 784,
+  "missing_inputs": [],
+  "production_activation": false,
+  "result": "COMPLETE_BYTE_VERIFIED_ARCHIVE",
+  "schema": "TRNM-W1-ZERO-PAIRED-LAZY-ARCHIVE-READBACK1",
+  "security_qualified": false,
+  "written_tar": {
+    "bytes": 67256320,
+    "sha256": "f46817e836c7404bbf55f76ec84fdffd970622c281e6dc017a856c81cf4786ea"
+  },
+  "xz": {
+    "bytes": 67256320,
+    "sha256": "f46817e836c7404bbf55f76ec84fdffd970622c281e6dc017a856c81cf4786ea",
+    "single_complete_xz_stream": true
+  }
+}

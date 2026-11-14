@@ -1,0 +1,153 @@
+[
+  {
+    "name": "job",
+    "args": [
+      "gh",
+      "api",
+      "--method",
+      "GET",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128580281336"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 1.6073686550371349,
+    "stdout_sha256": "f342d9978da1d3fb35226b8682abda3edacc4ac4686a294bd806cabf10a5203e",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "run",
+    "args": [
+      "gh",
+      "api",
+      "--method",
+      "GET",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42431209882"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 1.6078822549898177,
+    "stdout_sha256": "c1b3bb7a67ab9d0a80aa11bcc50ba697db0398733f251133327e4d01b1226d5c",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "local-head",
+    "args": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.0031910198740661144,
+    "stdout_sha256": "57e20688f670e165e5ab6559ee3cc8cb46826ec9bfe5aa82347895f05540c886",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "local-status-before",
+    "args": [
+      "git",
+      "status",
+      "--porcelain=v1",
+      "--untracked-files=all"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.03156228316947818,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "check-run",
+    "args": [
+      "gh",
+      "api",
+      "--method",
+      "GET",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128580281336"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 1.60631707101129,
+    "stdout_sha256": "9163d2a6d97ae02d984888c4dbc30b03e8b9ac9136e39eb5e3e3cda1f0dce623",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "annotations-1",
+    "args": [
+      "gh",
+      "api",
+      "--method",
+      "GET",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128580281336/annotations?per_page=100&page=1"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 1.6002523889765143,
+    "stdout_sha256": "1372766cdb895a3bf11a1c6a22244b1221806439931161c842071fb692ee320c",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "job-log",
+    "args": [
+      "gh",
+      "api",
+      "--method",
+      "GET",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128580281336/logs"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 4.4187860989477485,
+    "stdout_sha256": "6df992419d0e6befc204ef2550eb06a3989d30907565e2573fe6233eac7644cd",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "workflow-head",
+    "args": [
+      "git",
+      "show",
+      "b5c655ebe9611b3d62cf739e61e6867decc053e3:.github/workflows/pon-priority-acceptance.yml"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.006039810134097934,
+    "stdout_sha256": "6a7eeb14bc2fe1a005d0ee7403e1c6d2e5ba41e941c51892baf35002ecdd62fb",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "workflow-base",
+    "args": [
+      "git",
+      "show",
+      "cb314bb4656e5da4844325cd83994ab4764fe8e9:.github/workflows/pon-priority-acceptance.yml"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.004088622983545065,
+    "stdout_sha256": "6a7eeb14bc2fe1a005d0ee7403e1c6d2e5ba41e941c51892baf35002ecdd62fb",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "workflow-diff",
+    "args": [
+      "git",
+      "diff",
+      "cb314bb4656e5da4844325cd83994ab4764fe8e9",
+      "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+      "--",
+      ".github/workflows/pon-priority-acceptance.yml"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.004371994873508811,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "workflow-history",
+    "args": [
+      "git",
+      "log",
+      "-n",
+      "6",
+      "--format=%H %cI %s",
+      "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+      "--",
+      ".github/workflows/pon-priority-acceptance.yml"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.007285811007022858,
+    "stdout_sha256": "e9d8b1e9664cb6b82cfc7e6c29df15f3f3809f1551da1019b62b4c8794b8dbe0",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

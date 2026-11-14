@@ -1,0 +1,381 @@
+{
+  "schema": "pon-complete-legal-verifier-resource-observation-v2",
+  "qualification_status": "HOLD",
+  "baseline_commit": "af064bf751ed92c82da0b113682a7dfff3225d97",
+  "candidate_source_state": "working-tree-exact-primitive-sha256",
+  "verifications_per_timed_variant": 49152,
+  "independent_scalar_checks_per_process": 24,
+  "clock_ticks_per_second": 100,
+  "variants": {
+    "baseline": {
+      "allocations_per_complete_verification": 18,
+      "requested_bytes_per_complete_verification": 153600,
+      "timed_verifications": 49152,
+      "thread_cpu_ticks": 2850,
+      "verification_wall_ns": 28501197272,
+      "process_cpu_seconds": 28.831370999999997,
+      "proofs": [
+        [
+          0,
+          0,
+          "03015829636629822cbe40184682854a045d360a6c08c0172f804c7576e8861e"
+        ],
+        [
+          1,
+          0,
+          "72e91a44b8f300af7acc492252df187a0752bfdc77e62f428d7de9f3ec6f39c3"
+        ],
+        [
+          2,
+          0,
+          "fa49bb7da1139a9e9dd4ea5ebae41a394c5e7504473f0154f38512cc8c48aacf"
+        ],
+        [
+          1,
+          1,
+          "c95615bb2eeb430cd67ce1c087ff4ac41e62cbfca2881ed00b65d180192fe2d7"
+        ],
+        [
+          2,
+          1,
+          "7ea4163938c99fcc8a11167d552130dac024e74499903680ab92214f7c4fd981"
+        ],
+        [
+          0,
+          1,
+          "cc3d76ea809bcd6bb60ce865257375c3a0ccaca8013d0783659b66f430c664f2"
+        ],
+        [
+          2,
+          2,
+          "ae69276ea1a9488ea08f0c04b64e5969c6fb9548b834597ca89af8e1b5501c30"
+        ],
+        [
+          0,
+          2,
+          "430e3162e054eea8b3bcca5182635ac3047330f7546f5d03f02083ecbafd850c"
+        ],
+        [
+          1,
+          2,
+          "653b8e3657d6574051ef10edd9e57da2fde4b2202d7532a38a0c25920117a16a"
+        ],
+        [
+          0,
+          3,
+          "ba0e2667fca2be8d914e284c9af0d811a7dcab11925f5f0f79145b3294db7355"
+        ],
+        [
+          1,
+          3,
+          "f9b47f305030e1a0275ac93cfd13e494fbdd7f6cbfb8d2b99744f4d6c2079eb4"
+        ],
+        [
+          2,
+          3,
+          "383c57c017c9796654246bbdf48bb8037b976000b0d8598286774fcfad42399a"
+        ],
+        [
+          1,
+          4,
+          "a6168408edd836f0ed3dc79dba14ca2a7d6754a5aea052295bd772e0c48c81a7"
+        ],
+        [
+          2,
+          4,
+          "8baebe5fe101d57e9f9190ff427b07c2732035f037350fce8fc95c231222a8c8"
+        ],
+        [
+          0,
+          4,
+          "27bdd495c1fcfe6ac84d07ab48a7bd48829daa54dc022f816d12a0a4929d2111"
+        ],
+        [
+          2,
+          5,
+          "e296ef259d67ce01a0f83f71888ff248ae6b537f05d0823a125f30707419b7e7"
+        ],
+        [
+          0,
+          5,
+          "8df85e917ee4e7c7166939b253ad594c07a3850f078f61b74594020a2a0aea28"
+        ],
+        [
+          1,
+          5,
+          "cb72cfec73eeacb935a12273ca8bbab268b72e78711891615b477f76b1cf4286"
+        ],
+        [
+          0,
+          6,
+          "59a3ddf59a15b9839b3ac6cc382c71ebad85935c532dc951f1842643c7a91373"
+        ],
+        [
+          1,
+          6,
+          "699976be75cc03db9fd0cc1c48906819a479ed459f4ba8d7c4ba745d8def711d"
+        ],
+        [
+          2,
+          6,
+          "e718052a382744b94817fb7fd70a55d642245a6cc1ae7fca1319ca60b5b78366"
+        ],
+        [
+          1,
+          7,
+          "052281456523b39699975b488e82da4d21cd91505c1223a55c83bc24ec5cf3e6"
+        ],
+        [
+          2,
+          7,
+          "a270ee4738487c6d3dce2ca029422f8178b821a21795af6d75286b7c9b9f647d"
+        ],
+        [
+          0,
+          7,
+          "00277d6fd4b4c953ac9331aea7a8f56a031605aca4387c5446a401770cb217ee"
+        ]
+      ],
+      "artifact": {
+        "source_baseline": "af064bf751ed92c82da0b113682a7dfff3225d97",
+        "source_state": "archived-clean-baseline",
+        "pon_work_sha256": "a605dd18d967ec945ea7a4ae7d40549ee8d1ef9b9ce525c5214f5854e35123dc",
+        "cargo_lock_sha256": "fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69",
+        "observer_sha256": "6de123ce524fbf2ef6b4e7a3af965800886fa7d3cd162e8ae0da966c056b4760",
+        "library_sha256": "fa56eb1794ce233e6fe42951f19784652df99290c617d26202f00835eac3caaa",
+        "binary_sha256": "f07cf6278c1e4da143a5fe991bd115170aba375656608f6f67a92810ce0e4dc2",
+        "artifact": {
+          "reason": "compiler-artifact",
+          "package_id": "path+file:///dev/shm/pon-consensus-baseline-20261103/trillionnium/crates/trnm-crypto-primitives#0.1.0",
+          "manifest_path": "/dev/shm/pon-consensus-baseline-20261103/trillionnium/crates/trnm-crypto-primitives/Cargo.toml",
+          "target": {
+            "kind": [
+              "lib"
+            ],
+            "crate_types": [
+              "lib"
+            ],
+            "name": "trnm_crypto_primitives",
+            "src_path": "/dev/shm/pon-consensus-baseline-20261103/trillionnium/crates/trnm-crypto-primitives/src/lib.rs",
+            "edition": "2021",
+            "doc": true,
+            "doctest": true,
+            "test": true
+          },
+          "profile": {
+            "opt_level": "3",
+            "debuginfo": 0,
+            "debug_assertions": false,
+            "overflow_checks": false,
+            "test": false
+          },
+          "features": [
+            "default"
+          ],
+          "filenames": [
+            "/dev/shm/pon-consensus-isolated-target-20261103/baseline/release/libtrnm_crypto_primitives.rlib",
+            "/dev/shm/pon-consensus-isolated-target-20261103/baseline/release/deps/libtrnm_crypto_primitives-255ab5653fb2b5e1.rmeta"
+          ],
+          "executable": null,
+          "fresh": false
+        },
+        "execution_authenticated": false
+      }
+    },
+    "candidate": {
+      "allocations_per_complete_verification": 15,
+      "requested_bytes_per_complete_verification": 104448,
+      "timed_verifications": 49152,
+      "thread_cpu_ticks": 2620,
+      "verification_wall_ns": 26219972349,
+      "process_cpu_seconds": 26.489553,
+      "proofs": [
+        [
+          0,
+          0,
+          "03015829636629822cbe40184682854a045d360a6c08c0172f804c7576e8861e"
+        ],
+        [
+          1,
+          0,
+          "72e91a44b8f300af7acc492252df187a0752bfdc77e62f428d7de9f3ec6f39c3"
+        ],
+        [
+          2,
+          0,
+          "fa49bb7da1139a9e9dd4ea5ebae41a394c5e7504473f0154f38512cc8c48aacf"
+        ],
+        [
+          1,
+          1,
+          "c95615bb2eeb430cd67ce1c087ff4ac41e62cbfca2881ed00b65d180192fe2d7"
+        ],
+        [
+          2,
+          1,
+          "7ea4163938c99fcc8a11167d552130dac024e74499903680ab92214f7c4fd981"
+        ],
+        [
+          0,
+          1,
+          "cc3d76ea809bcd6bb60ce865257375c3a0ccaca8013d0783659b66f430c664f2"
+        ],
+        [
+          2,
+          2,
+          "ae69276ea1a9488ea08f0c04b64e5969c6fb9548b834597ca89af8e1b5501c30"
+        ],
+        [
+          0,
+          2,
+          "430e3162e054eea8b3bcca5182635ac3047330f7546f5d03f02083ecbafd850c"
+        ],
+        [
+          1,
+          2,
+          "653b8e3657d6574051ef10edd9e57da2fde4b2202d7532a38a0c25920117a16a"
+        ],
+        [
+          0,
+          3,
+          "ba0e2667fca2be8d914e284c9af0d811a7dcab11925f5f0f79145b3294db7355"
+        ],
+        [
+          1,
+          3,
+          "f9b47f305030e1a0275ac93cfd13e494fbdd7f6cbfb8d2b99744f4d6c2079eb4"
+        ],
+        [
+          2,
+          3,
+          "383c57c017c9796654246bbdf48bb8037b976000b0d8598286774fcfad42399a"
+        ],
+        [
+          1,
+          4,
+          "a6168408edd836f0ed3dc79dba14ca2a7d6754a5aea052295bd772e0c48c81a7"
+        ],
+        [
+          2,
+          4,
+          "8baebe5fe101d57e9f9190ff427b07c2732035f037350fce8fc95c231222a8c8"
+        ],
+        [
+          0,
+          4,
+          "27bdd495c1fcfe6ac84d07ab48a7bd48829daa54dc022f816d12a0a4929d2111"
+        ],
+        [
+          2,
+          5,
+          "e296ef259d67ce01a0f83f71888ff248ae6b537f05d0823a125f30707419b7e7"
+        ],
+        [
+          0,
+          5,
+          "8df85e917ee4e7c7166939b253ad594c07a3850f078f61b74594020a2a0aea28"
+        ],
+        [
+          1,
+          5,
+          "cb72cfec73eeacb935a12273ca8bbab268b72e78711891615b477f76b1cf4286"
+        ],
+        [
+          0,
+          6,
+          "59a3ddf59a15b9839b3ac6cc382c71ebad85935c532dc951f1842643c7a91373"
+        ],
+        [
+          1,
+          6,
+          "699976be75cc03db9fd0cc1c48906819a479ed459f4ba8d7c4ba745d8def711d"
+        ],
+        [
+          2,
+          6,
+          "e718052a382744b94817fb7fd70a55d642245a6cc1ae7fca1319ca60b5b78366"
+        ],
+        [
+          1,
+          7,
+          "052281456523b39699975b488e82da4d21cd91505c1223a55c83bc24ec5cf3e6"
+        ],
+        [
+          2,
+          7,
+          "a270ee4738487c6d3dce2ca029422f8178b821a21795af6d75286b7c9b9f647d"
+        ],
+        [
+          0,
+          7,
+          "00277d6fd4b4c953ac9331aea7a8f56a031605aca4387c5446a401770cb217ee"
+        ]
+      ],
+      "artifact": {
+        "source_baseline": "af064bf751ed92c82da0b113682a7dfff3225d97",
+        "source_state": "candidate-working-tree",
+        "pon_work_sha256": "da3c6d28be39effcdb0d792e858d11aabbe83cafaaff326c45c9133cb4b818c7",
+        "cargo_lock_sha256": "fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69",
+        "observer_sha256": "6de123ce524fbf2ef6b4e7a3af965800886fa7d3cd162e8ae0da966c056b4760",
+        "library_sha256": "4e8d9ea80b6f3c64341b379e05a6e752664ab136209c9cb5ab0122ec7a285fe4",
+        "binary_sha256": "a529d2fad39c0a944d882b2e63dd78f3cc8fc05503838a5484de6900f6bfad35",
+        "artifact": {
+          "reason": "compiler-artifact",
+          "package_id": "path+file:///dev/shm/pon-consensus-safety-20261103/trillionnium/crates/trnm-crypto-primitives#0.1.0",
+          "manifest_path": "/dev/shm/pon-consensus-safety-20261103/trillionnium/crates/trnm-crypto-primitives/Cargo.toml",
+          "target": {
+            "kind": [
+              "lib"
+            ],
+            "crate_types": [
+              "lib"
+            ],
+            "name": "trnm_crypto_primitives",
+            "src_path": "/dev/shm/pon-consensus-safety-20261103/trillionnium/crates/trnm-crypto-primitives/src/lib.rs",
+            "edition": "2021",
+            "doc": true,
+            "doctest": true,
+            "test": true
+          },
+          "profile": {
+            "opt_level": "3",
+            "debuginfo": 0,
+            "debug_assertions": false,
+            "overflow_checks": false,
+            "test": false
+          },
+          "features": [
+            "default"
+          ],
+          "filenames": [
+            "/dev/shm/pon-consensus-isolated-target-20261103/candidate/release/libtrnm_crypto_primitives.rlib",
+            "/dev/shm/pon-consensus-isolated-target-20261103/candidate/release/deps/libtrnm_crypto_primitives-255ab5653fb2b5e1.rmeta"
+          ],
+          "executable": null,
+          "fresh": false
+        },
+        "execution_authenticated": false
+      }
+    }
+  },
+  "requested_bytes_reduction_fraction": {
+    "numerator": 49152,
+    "denominator": 153600
+  },
+  "thread_cpu_reduction_observed_fraction": {
+    "numerator": 230,
+    "denominator": 2850
+  },
+  "peak_rss_measured": false,
+  "public_service_measured": false,
+  "invalid_rejection_cpu_measured": false,
+  "work_hardness_accepted": false,
+  "notes": [
+    "Process CPU includes legal fixture setup, scalar verification and observer overhead; per-fixture thread ticks and wall time cover only complete native verification loops.",
+    "Four runs per variant in two consecutive ABBA groups; 24 fixed legal fixtures and 512 complete verifications per fixture. Same fixtures are reused and are not independent challenges.",
+    "Thread CPU resolution is 10 milliseconds; timing variation is retained. One local x86_64 environment does not establish a performance bound or other hardware results.",
+    "Initial shared-target comparison reused the baseline library and is invalid as a candidate comparison.",
+    "An intermediate candidate saved allocations but used two general reductions; its slower observation is retained separately.",
+    "All candidate and baseline proof fingerprints match; actual results agree with the independent scalar verifier."
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "base_commit": "8cd374d2679a7a7efbc4a0713185e790260f414a",
+  "local_validated_source": "6665c7a923a5401b67bd663869b6b95765a735c2",
+  "local_validated_tree": "10c8245d4860bd9d42430e6cfeface421991b754",
+  "toolchain": "Rust 1.95.0, locked dependencies, original Cargo test profile, default features, one build job",
+  "binary_sha256": "a082235fc6f29258affdc85aaa9308fb533bafd3d23d683c19aa8e82fab3f563",
+  "native_passed": {
+    "initialization_marker": 4,
+    "native_authenticated": 96,
+    "mining_owner": 6,
+    "continuous_owner": 14,
+    "pq_startup": 14,
+    "task_observation": 3,
+    "admission_wire": 2,
+    "request_observation": 22
+  },
+  "distinct_ordinary_tests_passed": 161,
+  "failed": 0,
+  "existing_ignored": 1,
+  "subprocess_entry": {
+    "ignored_from_parent_discovery": true,
+    "actually_executed_by_parent": true,
+    "standalone_raw_log_run_passed": 1,
+    "special_file_cases": 16,
+    "not_double_counted": true
+  },
+  "strict_workspace_all_target_all_feature_clippy": "PASS",
+  "formatting": "PASS",
+  "source_controls": 37,
+  "ci_controls": 100,
+  "source_pins": 526,
+  "inline_pins": 26,
+  "source_repository_check": {
+    "result": "PASS",
+    "local_links": 3334,
+    "packages": 26,
+    "state": "committed-clean"
+  },
+  "raw_validation_sha256": "560ef5e7d1124f73bdf1c07161e4eec04edd8347d99e634615a92396bae51cd7",
+  "global_qualification": "HOLD"
+}

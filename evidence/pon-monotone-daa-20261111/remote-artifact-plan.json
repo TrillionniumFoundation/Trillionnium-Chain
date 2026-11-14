@@ -1,0 +1,44 @@
+{
+  "artifacts": [
+    {
+      "bytes": 4657951,
+      "destination": "native/native-run-d23488c5-v1.tar.gz",
+      "sha256": "6c33da56842862608e365acb7c69d72175538556a2a76b74254f7b0357de9c81",
+      "source": "native-run-d23488c5-v1.tar.gz"
+    },
+    {
+      "bytes": 10199,
+      "destination": "publication/publication-d23488c5-v1.tar.gz",
+      "sha256": "08756a6b12b0d871c482f3a1a448f824aaa6e49dabc9f75c0df92baae1cf8b0e",
+      "source": "publication-d23488c5-v1.tar.gz"
+    },
+    {
+      "bytes": 44877,
+      "destination": "recovery/runtime-recovery-v1.tar.gz",
+      "sha256": "12f6084bc0096137249f6164699f0adfff3c2b4a90f16fc28ab8ad36229dea46",
+      "source": "daa-runtime-recovery-v1.tar.gz"
+    },
+    {
+      "bytes": 4993378,
+      "destination": "python/work-time-recovery.tar.gz",
+      "sha256": "6ca719903024582514448e447b84a676919d475eb21c8cd9030aed0eb09108ea",
+      "source": "work-time-recovery.tar.gz"
+    },
+    {
+      "bytes": 16912,
+      "destination": "publication/native-intermediate-publication-recovery-v1.tar.gz",
+      "sha256": "3524211db0622411f2f31105c4df549b45f3b7cee25bd8c200d32a5747fd0f23",
+      "source": "native-intermediate-publication-recovery-v1.tar.gz"
+    },
+    {
+      "bytes": 1027003,
+      "destination": "ci/source-head-diagnosis.tar.gz",
+      "sha256": "32d47db9ae014badf460c086d993a678f3eb5492f276ac356ae14884095594e7",
+      "source": "source-head-diagnosis.tar.gz"
+    }
+  ],
+  "reader_artifact_in_final_delta": "readers/four-profile-recovery-v2.tar.gz",
+  "reader_artifact_pending": false,
+  "root": "/home/qian-qi/chain-daa-monotone-20261111-7f73",
+  "schema": "pon-monotone-remote-artifact-plan-v1"
+}

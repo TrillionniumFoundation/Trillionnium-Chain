@@ -1,0 +1,63 @@
+{
+  "schema": "trnm.pq-root-recovery-native-evidence.v2",
+  "status": "HOLD",
+  "implementation_commit": "aa7ba29a5485a6b04ccb909e34bb3d8ae2528669",
+  "implementation_tree": "15c3a8c10b7406ec9919fa5f36d2f3a1dbba1833",
+  "base_commit": "0788c44f4139c74772a8a9d7d475821f56e5b727",
+  "generated_utc": "2026-11-08T17:36:08.999916+00:00",
+  "source_before_after_equal": true,
+  "tracked_entries": 11282,
+  "tracked_bytes": 1116951243,
+  "native_suites": {
+    "signatures": 14,
+    "provider_readback": 6,
+    "durable_journal": 14
+  },
+  "structural_suites": {
+    "signatures": 17,
+    "provider_readback": 15,
+    "legacy_policy": 26
+  },
+  "retained_suites": {
+    "lifetime": 58,
+    "claim_guard": 49,
+    "authority_effect": 18,
+    "authority_scan": 15,
+    "pq_source_integrity": 55,
+    "ci_contract": 107,
+    "provider_ci": 9,
+    "raw_source_integrity": 43,
+    "repository_negatives": 50,
+    "default_crypto_library": 165,
+    "default_release_library": 43
+  },
+  "initial_campaign": {
+    "native_commands_passed": 3,
+    "static_commands_passed": 20,
+    "rust_commands_passed": 7,
+    "rust_commands_failed": 1,
+    "total_command_attempts": 31
+  },
+  "corrected_required_gate": {
+    "name": "strict workspace all-target all-feature Clippy",
+    "source": "aa7ba29a5485a6b04ccb909e34bb3d8ae2528669",
+    "exit_code": 0,
+    "receipt": "committed-aa7ba29/rust-clippy-multiarch.json",
+    "retained_failure": "committed-aa7ba29/rust-05.log",
+    "reason": "Explicit /usr prefix selects generic lib/lib64; installed Debian multiarch libraries are under /usr/lib/x86_64-linux-gnu. Set OPENSSL_LIB_DIR and OPENSSL_INCLUDE_DIR to the installed files. No source/dependency/feature/budget changes."
+  },
+  "all_selected_command_requirements_passed_after_environment_correction": true,
+  "root_operator_and_anchor_fully_rolled_back": "real signed counterexample accepted restored operation; retained evidence of unqualified independence, not a resistance PASS",
+  "same_host_fixture": true,
+  "trusted_now_height": "caller-supplied research observation; no native clock integration claim",
+  "provider_outcome_semantics": "authenticated declaration only; not-applied means terminal non-execution/cancellation, not absent-now",
+  "native_m15_integration_complete": false,
+  "production_activation": false,
+  "custody_verified": false,
+  "anchor_independence_verified": false,
+  "actual_external_effects_verified": false,
+  "actual_lifetime_failure_bound": null,
+  "whole_chain_pq_qualified": false,
+  "composition_coverage_proved": false,
+  "hosted_full_acceptance_claimed": false
+}

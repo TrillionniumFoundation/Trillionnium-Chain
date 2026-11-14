@@ -1,0 +1,65 @@
+{
+  "schema": "trnm-exact-commit-gate-archive-summary-v1",
+  "packaged_utc": "2026-11-03T23:28:22.317099+00:00",
+  "commit": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+  "tree": "3e141fb9bcec9bf2a49d55647f46f12bd3ca28bb",
+  "status": "PASS",
+  "source": "/workspace/scratch/b5a148b09b11/next-validation/final-publication/committed-check-b4bdf142f513081715ecc8d1f9674291e85302cc",
+  "original_summary": {
+    "schema": "trnm-exact-commit-static-graph-verification-v1",
+    "status": "PASS",
+    "expected_commit": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+    "finished_utc": "2026-11-03T22:36:13.591148+00:00",
+    "worktree": "/workspace/scratch/b5a148b09b11/fixture-committed-check",
+    "source_before": {
+      "head": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+      "tree": "3e141fb9bcec9bf2a49d55647f46f12bd3ca28bb",
+      "status": "",
+      "detached": true,
+      "locks": {
+        "trillionnium/Cargo.lock": {
+          "sha256": "fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69",
+          "bytes": 39745
+        },
+        "tests/fuzz/Cargo.lock": {
+          "sha256": "8102aabc115e12470a5eee89735b3f3094134e1b3701cb61209e45b3129214a2",
+          "bytes": 33374
+        }
+      }
+    },
+    "source_after": {
+      "head": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+      "tree": "3e141fb9bcec9bf2a49d55647f46f12bd3ca28bb",
+      "status": "",
+      "detached": true,
+      "locks": {
+        "trillionnium/Cargo.lock": {
+          "sha256": "fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69",
+          "bytes": 39745
+        },
+        "tests/fuzz/Cargo.lock": {
+          "sha256": "8102aabc115e12470a5eee89735b3f3094134e1b3701cb61209e45b3129214a2",
+          "bytes": 33374
+        }
+      }
+    },
+    "error": null,
+    "command_count": 28,
+    "native_compilation_executed": false,
+    "native_tests_executed": false,
+    "new_target_directory_requested": false,
+    "current_development_worktree_mutated_by_driver": false,
+    "all_service_blockers_closed": false,
+    "scope": "Exact-commit source/static/metadata checks only. Previously completed native execution remains separately bound by its actual source/ELF receipts."
+  },
+  "records": 98,
+  "unique_raw_blobs": 57,
+  "archive": {
+    "path": "exact-commit-gates.json.gz",
+    "bytes": 288323,
+    "sha256": "792fc6816d8216f6cac63eb7634eb1878b39945f6a1f4a8cd691670b32738fb5"
+  },
+  "native_compilation_or_execution": false,
+  "all_original_file_bytes_verified_after_archive": true,
+  "later_head_results_inherited": false
+}

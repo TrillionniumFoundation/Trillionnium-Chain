@@ -1,0 +1,16 @@
+{
+  "schema": "publication-payload-pattern-scan-v1",
+  "observed_at_utc": "2026-11-09T17:25:58.771249+00:00",
+  "scope": "current retained files and decompressed members, prior to M6 native delivery; bounded pattern scan only, not complete secret discovery",
+  "statistics": {
+    "outer_files": 409,
+    "logical_files": 1096,
+    "logical_bytes": 29283337,
+    "compressed_members": 691
+  },
+  "matched_rules": [],
+  "all_selected_patterns_absent": true,
+  "source_commit": "4dbeae12fa756fd662cc074390fcb628abe970ad",
+  "M6_native_delivery_included": false,
+  "input_manifest_sha256": "f1a6c5763dd172cba84053a8930ad31b99e907f78025129531015eb40af2834c"
+}

@@ -1,0 +1,1359 @@
+{
+  "schema": "chain-fixed-remote-object-finalization-v1",
+  "target_commit": "549c5a26616113c6aeee76a62f34dd780d729b75",
+  "target_tree": "3b3371727893db6789a50f18300307f63ea99b84",
+  "base_commit": "cbead1508ce8b6d9deb2a86b4bc3181da09694e7",
+  "completed_at": "2026-11-05T11:32:32.537961+00:00",
+  "before": {
+    "head": "1d6a9f9b5e8abd9e86457f45199a4922f9376360",
+    "tree": "4a0314e72ebc45659986d03e7ca2f96cab9399ea",
+    "index_path": "/workspace/scratch/aea25ba345a8/chain/.git/worktrees/chain/index",
+    "index_sha256": "f5c55f3f7aaab983373ec4ea1ef712bdfee9ca458a56b57c78d681bb5158505e",
+    "head_file_sha256": "d5f5ba3c41da1c942501db125b808496de2f54b45b72526bd556364817e32eeb",
+    "refs_sha256": "ff0aa117e106fb93a4c44a42404de33a9c078a66e1e5153d3ba97ad7f9f87b25",
+    "status_porcelain": ""
+  },
+  "after": {
+    "head": "1d6a9f9b5e8abd9e86457f45199a4922f9376360",
+    "tree": "4a0314e72ebc45659986d03e7ca2f96cab9399ea",
+    "index_path": "/workspace/scratch/aea25ba345a8/chain/.git/worktrees/chain/index",
+    "index_sha256": "f5c55f3f7aaab983373ec4ea1ef712bdfee9ca458a56b57c78d681bb5158505e",
+    "head_file_sha256": "d5f5ba3c41da1c942501db125b808496de2f54b45b72526bd556364817e32eeb",
+    "refs_sha256": "ff0aa117e106fb93a4c44a42404de33a9c078a66e1e5153d3ba97ad7f9f87b25",
+    "status_porcelain": ""
+  },
+  "head_index_refs_clean_unchanged": true,
+  "prior_preparation": {
+    "path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-object-preparation.json",
+    "sha256": "e74797e66fef539bb1b1dca464e07bc0215830e76ab6c86d533d2cda9a1f6fec"
+  },
+  "missing_blob_manifest": {
+    "path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-missing-blobs.json",
+    "sha256": "42d42ee3c4dd839d29afbea327ac73941ba9e07e3bdf9426cf4a0d454b6c1374"
+  },
+  "imported_incoming_blobs": [
+    {
+      "sha": "591578a24b4e93e54fb1c7b186700d4c7320c2d5",
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "bytes": 96573,
+      "sha256": "a24de8e08e8066aba8ce4e0fdd86233534e226c809b0602e6a1db91c08fe7347",
+      "incoming_path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-incoming/591578a24b4e93e54fb1c7b186700d4c7320c2d5.blob"
+    },
+    {
+      "sha": "91ec3596b615148e3bbc97896c46eeece698def7",
+      "path": "evidence/pon-w1-full-v2-20261105/README.md",
+      "bytes": 4488,
+      "sha256": "be9f0013e7a2231906b420057d61109f75d091cbece2a83585b7a3160ca76228",
+      "incoming_path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-incoming/91ec3596b615148e3bbc97896c46eeece698def7.blob"
+    },
+    {
+      "sha": "3c95ecd1a031600a27493eaefcd01a58c7d60d8b",
+      "path": "evidence/pon-w1-full-v2-20261105/asset-sha256.json",
+      "bytes": 1711,
+      "sha256": "7d2c18644129310e9816b89a49b586be252dee8d17c84ca71fcf70b2a00f366f",
+      "incoming_path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-incoming/3c95ecd1a031600a27493eaefcd01a58c7d60d8b.blob"
+    },
+    {
+      "sha": "54f240b65b39eb940afa7bfca15de34005787879",
+      "path": "evidence/pon-w1-full-v2-20261105/controls-3-repaired.tar.xz",
+      "bytes": 269452,
+      "sha256": "0bdc390cd790f9e6493690db22658f12f40f4eb086c0499ba490623e8c16b1b1",
+      "incoming_path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-incoming/54f240b65b39eb940afa7bfca15de34005787879.blob"
+    },
+    {
+      "sha": "bf70f857fd96077347d18f268cd44760b312f412",
+      "path": "evidence/pon-w1-full-v2-20261105/controls-3.tar.gz",
+      "bytes": 1089,
+      "sha256": "fa9f84a3b7fa44e5b1e8ea2f8776a6e4b37adbca7d799c1c00a82b0516e40df5",
+      "incoming_path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-incoming/bf70f857fd96077347d18f268cd44760b312f412.blob"
+    },
+    {
+      "sha": "8c1d64fbfa2c38f7d685c6a52f75cde17ed3eca4",
+      "path": "evidence/pon-w1-full-v2-20261105/controls-result.json",
+      "bytes": 216585,
+      "sha256": "11c684ed2a1e3dd63a6076b85bd6a21417a02d882f097e411eb0959301726d44",
+      "incoming_path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-incoming/8c1d64fbfa2c38f7d685c6a52f75cde17ed3eca4.blob"
+    },
+    {
+      "sha": "18c937ce4993d84021c8df95ff4ad325e736931c",
+      "path": "evidence/pon-w1-full-v2-20261105/executed-source.bundle",
+      "bytes": 23795,
+      "sha256": "3fec57ad77fd68dc922d5aa24a7d4b9ffcac5b45b77992e598f8b39418ab08d5",
+      "incoming_path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-incoming/18c937ce4993d84021c8df95ff4ad325e736931c.blob"
+    },
+    {
+      "sha": "7452c0d2f180eb2a88719aaf09da74f1e03b52a8",
+      "path": "evidence/pon-w1-full-v2-20261105/guest.bin",
+      "bytes": 375928,
+      "sha256": "25718312ec3c6f5219d832e3516adfb5f82983156f669c5e7daa15bd22d1798f",
+      "incoming_path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-incoming/7452c0d2f180eb2a88719aaf09da74f1e03b52a8.blob"
+    },
+    {
+      "sha": "ca7968f36a5eda63979bd3b1f5319c1f7c903bc4",
+      "path": "evidence/pon-w1-full-v2-20261105/integration/README.md",
+      "bytes": 1248,
+      "sha256": "26d068a6142ce4cae600e03d4810475df7ad7d4ce614b149a605394785e816b0",
+      "incoming_path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-incoming/ca7968f36a5eda63979bd3b1f5319c1f7c903bc4.blob"
+    },
+    {
+      "sha": "b5ffcfed481d52d04e14945a1424620be41464ea",
+      "path": "evidence/pon-w1-full-v2-20261105/integration/observer.txt",
+      "bytes": 129,
+      "sha256": "5cc9c6b49ddb003b9321da3dd757f2e19de620b389c99b43b7f5e1a83f01d876",
+      "incoming_path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-incoming/b5ffcfed481d52d04e14945a1424620be41464ea.blob"
+    },
+    {
+      "sha": "a7e126dcf028cbd7a48263454c4a09e041e1d60e",
+      "path": "evidence/pon-w1-full-v2-20261105/integration/receipt-controls.txt",
+      "bytes": 9547,
+      "sha256": "4bf5dc19a1a114f0079c84b62db6bdaef003690a895dad73689a2240cf251b76",
+      "incoming_path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-incoming/a7e126dcf028cbd7a48263454c4a09e041e1d60e.blob"
+    },
+    {
+      "sha": "bd4eb37e65ab49f6235b9cba5b2565814a2e4b1d",
+      "path": "evidence/pon-w1-full-v2-20261105/integration/source-controls.txt",
+      "bytes": 626,
+      "sha256": "08c0fd68c811b0015e4994d4aef07826036f55ad5672aaf7c9e9ae092698cccc",
+      "incoming_path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-incoming/bd4eb37e65ab49f6235b9cba5b2565814a2e4b1d.blob"
+    },
+    {
+      "sha": "b0c9b3bdb9e935a7179bc6c3390ea877922af332",
+      "path": "evidence/pon-w1-full-v2-20261105/integration/source-pin-failure.txt",
+      "bytes": 367,
+      "sha256": "56cfa52c34aebf62096706425ab64a9a5965057d146687182e7e4869443981a9",
+      "incoming_path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-incoming/b0c9b3bdb9e935a7179bc6c3390ea877922af332.blob"
+    },
+    {
+      "sha": "99d8942ba67c232394e4251af4739907557d6598",
+      "path": "evidence/pon-w1-full-v2-20261105/observation-3.tar.gz",
+      "bytes": 942985,
+      "sha256": "9d5a1bad69a6279c64986c690f1e23ac6a38eed1c9e16f52b33fae15d83a450a",
+      "incoming_path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-incoming/99d8942ba67c232394e4251af4739907557d6598.blob"
+    },
+    {
+      "sha": "74c47175280ce527672a02fc1dadddbcf5ec1197",
+      "path": "evidence/pon-w1-full-v2-20261105/original-controls-failure.log",
+      "bytes": 145,
+      "sha256": "dc2186516e340c4f1bf95fbbdab3f462ebfc205703eb0b79117a6e7f631fabf0",
+      "incoming_path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-incoming/74c47175280ce527672a02fc1dadddbcf5ec1197.blob"
+    },
+    {
+      "sha": "882a48d27c8ad7848c7a9e7eb6b2efcc6459e76a",
+      "path": "evidence/pon-w1-full-v2-20261105/proof-result.json",
+      "bytes": 198014,
+      "sha256": "a2bbd9ed141b87823ea6d50322c0d65f706e32aca028d1b5ab19f1327c1194cc",
+      "incoming_path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-incoming/882a48d27c8ad7848c7a9e7eb6b2efcc6459e76a.blob"
+    },
+    {
+      "sha": "a9dbcde9c0843399c720bf0ab1b32c9d8b3ef0fa",
+      "path": "evidence/pon-w1-full-v2-20261105/raw-index.json",
+      "bytes": 129365,
+      "sha256": "1dac23ede827023ef16156a91c8b46b0c1349170f1ead02577c89da310c0406d",
+      "incoming_path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-incoming/a9dbcde9c0843399c720bf0ab1b32c9d8b3ef0fa.blob"
+    },
+    {
+      "sha": "b406d90892c277fede192978af9811f4d12e62d0",
+      "path": "evidence/pon-w1-full-v2-20261105/succinct.bin",
+      "bytes": 257014,
+      "sha256": "6c72828c9d05a62175e08fa3e7e1d0d5e85e785ad96b5beb5ec7a2e2490c26ee",
+      "incoming_path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-incoming/b406d90892c277fede192978af9811f4d12e62d0.blob"
+    },
+    {
+      "sha": "3382e484a64be0ed8ee3e9de1b82f226fbad7ccf",
+      "path": "evidence/pon-w1-join-diagnostic-20261105/README.md",
+      "bytes": 2104,
+      "sha256": "381b347bf89a7a0e932acdd8bf862c16cbbd87f21a1276ecdb5508bd49e6e008",
+      "incoming_path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-incoming/3382e484a64be0ed8ee3e9de1b82f226fbad7ccf.blob"
+    },
+    {
+      "sha": "dab5994744dc0049b89ce9b09cb1612df5b1435b",
+      "path": "evidence/pon-w1-join-diagnostic-20261105/build.log",
+      "bytes": 1148,
+      "sha256": "4d150cf15d0fce53155827acf0df81aa32d17beb1e8f0a20b1cbbb687cf6cd59",
+      "incoming_path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-incoming/dab5994744dc0049b89ce9b09cb1612df5b1435b.blob"
+    },
+    {
+      "sha": "11edb54495eb6c9b758a9dbe46976f7d6560937b",
+      "path": "evidence/pon-w1-join-diagnostic-20261105/raw-diagnostics.tar.gz",
+      "bytes": 17329,
+      "sha256": "e56769db6b372c0e26dde2506fc87e1d97cc8b9f66026e2e6c96baed8389b207",
+      "incoming_path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-incoming/11edb54495eb6c9b758a9dbe46976f7d6560937b.blob"
+    },
+    {
+      "sha": "62e1cd75a407b2d5c32747bdb4218190c47a6cdb",
+      "path": "evidence/pon-w1-join-diagnostic-20261105/results.json",
+      "bytes": 15924,
+      "sha256": "9fc8d97af310898add2645ead5f86a79e56f5cab22f2302858cea014a9cd5b4b",
+      "incoming_path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-incoming/62e1cd75a407b2d5c32747bdb4218190c47a6cdb.blob"
+    },
+    {
+      "sha": "4b2780d16c1ce355ca46046a44fa8cc317b710b2",
+      "path": "evidence/pon-w1-join-diagnostic-20261105/tool/Cargo.lock",
+      "bytes": 67615,
+      "sha256": "2a029f0372a18f5fef3faa07df1defe65e11b85016a6f1e8f4e541602c1a74d8",
+      "incoming_path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-incoming/4b2780d16c1ce355ca46046a44fa8cc317b710b2.blob"
+    },
+    {
+      "sha": "d6b2c62780dfcedf607659f4968bd1529765f6ef",
+      "path": "evidence/pon-w1-join-diagnostic-20261105/tool/Cargo.toml",
+      "bytes": 313,
+      "sha256": "efa940664b4164bff420214bef8d4c5dc1a55dc107cf41f4fdf9936c4992ba11",
+      "incoming_path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-incoming/d6b2c62780dfcedf607659f4968bd1529765f6ef.blob"
+    },
+    {
+      "sha": "b3dac5aba1ca7cf981b7d6c746da4292ab4a12a9",
+      "path": "evidence/pon-w1-join-diagnostic-20261105/tool/src/main.rs",
+      "bytes": 1987,
+      "sha256": "b31bbda146dce9e876722d298126fc4dfdea59aa1553d033823eac0919971282",
+      "incoming_path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-incoming/b3dac5aba1ca7cf981b7d6c746da4292ab4a12a9.blob"
+    },
+    {
+      "sha": "a2c17aa4d01aa75e6e8567a46cf9170cf126771d",
+      "path": "evidence/pon-w1-pinned-rebuild-20261105/README.md",
+      "bytes": 1911,
+      "sha256": "5f4386ad9f77a083e544b6a6f967faa183a532b414ae4c062c3049619e444d17",
+      "incoming_path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-incoming/a2c17aa4d01aa75e6e8567a46cf9170cf126771d.blob"
+    },
+    {
+      "sha": "613e703e6fc6f103e1b728643c7f06fffcde2e3b",
+      "path": "evidence/pon-w1-pinned-rebuild-20261105/cargo-wrapper.py",
+      "bytes": 374,
+      "sha256": "5c4451fbca557209f91de1a957056ce40922c60a72a135ddaceb4f904f7f91fd",
+      "incoming_path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-incoming/613e703e6fc6f103e1b728643c7f06fffcde2e3b.blob"
+    },
+    {
+      "sha": "2341662e34bf63ca3d9da6a51185f4abc55749cf",
+      "path": "evidence/pon-w1-pinned-rebuild-20261105/exact-source-path-build.log",
+      "bytes": 671,
+      "sha256": "dca5e5900a535b095830e582eee7101288188400074ac42a2ff55023a2cb719e",
+      "incoming_path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-incoming/2341662e34bf63ca3d9da6a51185f4abc55749cf.blob"
+    },
+    {
+      "sha": "b622537e6b77e09bcda615d56fef6e23d843fe67",
+      "path": "evidence/pon-w1-pinned-rebuild-20261105/reproduction.json",
+      "bytes": 2155,
+      "sha256": "636fc77494c548f9a8d5779c8097711b265eae39bb3dc9801c509be7b05342f3",
+      "incoming_path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-incoming/b622537e6b77e09bcda615d56fef6e23d843fe67.blob"
+    },
+    {
+      "sha": "4004df2d582e12725756f12c76e9ddb166be9eb9",
+      "path": "evidence/pon-w1-pinned-rebuild-20261105/source-remap-attempt.log",
+      "bytes": 335,
+      "sha256": "fb5d196accfb26f682a3c911f9cc2735dfb0bf9cb777407fd9f501c2f476a4d8",
+      "incoming_path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-incoming/4004df2d582e12725756f12c76e9ddb166be9eb9.blob"
+    },
+    {
+      "sha": "944687ba699f065563e24b9662844730116b654a",
+      "path": "evidence/pon-w1-v2-deadline-20261105/README.md",
+      "bytes": 3623,
+      "sha256": "6f28005ee636ca1ba397e9f0c2ac95468b59283c21c94f2ac01ae077b9208b81",
+      "incoming_path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-incoming/944687ba699f065563e24b9662844730116b654a.blob"
+    },
+    {
+      "sha": "ecc2823fea6f5fc4a3c21e0bb48c00655c6993dc",
+      "path": "evidence/pon-w1-v2-deadline-20261105/checkpoint-index.json",
+      "bytes": 23898,
+      "sha256": "7596d3eef964d311d88836f794f216761ac4f21b1b65b3e952bba6e63108d8ae",
+      "incoming_path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-incoming/ecc2823fea6f5fc4a3c21e0bb48c00655c6993dc.blob"
+    },
+    {
+      "sha": "c4f9f3064b57c015ff13ef9dd0372d9b473a42c4",
+      "path": "evidence/pon-w1-v2-deadline-20261105/compression-result.json.gz",
+      "bytes": 1467,
+      "sha256": "6e572b5b27e5d37c53f815093d3bef6310b3ac2d15a78657cc44fe2d4f8cbc19",
+      "incoming_path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-incoming/c4f9f3064b57c015ff13ef9dd0372d9b473a42c4.blob"
+    },
+    {
+      "sha": "600749664222da926d293fac98919d4fabfe7b3e",
+      "path": "evidence/pon-w1-v2-deadline-20261105/compression-stderr.log.gz",
+      "bytes": 43,
+      "sha256": "6683181ebc3cfa0d01265762bdac654516faf6466dd570a11d73b78e3935f061",
+      "incoming_path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-incoming/600749664222da926d293fac98919d4fabfe7b3e.blob"
+    },
+    {
+      "sha": "b241e472a0d05b5e3a6c51ad7855da250537464d",
+      "path": "evidence/pon-w1-v2-deadline-20261105/compression-stdout.log.gz",
+      "bytes": 6583,
+      "sha256": "10691b6225f104b8d943544f7873192b63806f3436a1a98b7444e32e3ca6ed3b",
+      "incoming_path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-incoming/b241e472a0d05b5e3a6c51ad7855da250537464d.blob"
+    },
+    {
+      "sha": "ece44df661df59d7171ca012b3d6780f1b55d56e",
+      "path": "evidence/pon-w1-v2-deadline-20261105/declaration.json.gz",
+      "bytes": 922,
+      "sha256": "761cddd59f537e3b7015825cd32d1dd30a3dfac104f31c34e2d2f0a0953a8d08",
+      "incoming_path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-incoming/ece44df661df59d7171ca012b3d6780f1b55d56e.blob"
+    },
+    {
+      "sha": "e6726f255dfd0ca8fd811edd3c5a31f7d83a2a16",
+      "path": "evidence/pon-w1-v2-deadline-20261105/events.jsonl.gz",
+      "bytes": 1952,
+      "sha256": "5368f61d4be67b9dd42013707da906f9fb2d5495dadc9faecaad9dfd0c70bda7",
+      "incoming_path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-incoming/e6726f255dfd0ca8fd811edd3c5a31f7d83a2a16.blob"
+    },
+    {
+      "sha": "abed3a6393809245ce3a0bc63d2bc9dc5a02cbab",
+      "path": "evidence/pon-w1-v2-deadline-20261105/local-checkpoint-archive.json",
+      "bytes": 259,
+      "sha256": "c7ae2d976e17a2d275be8773aabf7fdb845fe037eb15bc9c7d14eec8a38c2647",
+      "incoming_path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-incoming/abed3a6393809245ce3a0bc63d2bc9dc5a02cbab.blob"
+    },
+    {
+      "sha": "68531125e24f91e8329a34366197131c6da5cf19",
+      "path": "evidence/pon-w1-v2-deadline-20261105/manifest.json",
+      "bytes": 8463,
+      "sha256": "755f3c29c82d87972540d0a24344d118c203d9326bb971bc5af150a61e32db79",
+      "incoming_path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-incoming/68531125e24f91e8329a34366197131c6da5cf19.blob"
+    },
+    {
+      "sha": "d451616d284948d1023db5937d2e99b34c107ec8",
+      "path": "evidence/pon-w1-v2-deadline-20261105/observer-gaps.json",
+      "bytes": 7470,
+      "sha256": "05773728bf8051a7dd05cba056f1d3dfa0c3b722b804850ff1805d1d9bd6fe9b",
+      "incoming_path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-incoming/d451616d284948d1023db5937d2e99b34c107ec8.blob"
+    },
+    {
+      "sha": "b17d5701ef18b0998211ec4a145591b0539a4bcb",
+      "path": "evidence/pon-w1-v2-deadline-20261105/raw-index.json",
+      "bytes": 35106,
+      "sha256": "66970b6e57eccf8bcae4e22a9f369a13413437535b582dd0d791d2da77e0ac67",
+      "incoming_path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-incoming/b17d5701ef18b0998211ec4a145591b0539a4bcb.blob"
+    },
+    {
+      "sha": "17f3ccec81b38576056c3d7f0b960b62a2abda41",
+      "path": "evidence/pon-w1-v2-deadline-20261105/raw-observations.tar.gz",
+      "bytes": 361232,
+      "sha256": "67ef89a2e61fe24dbbe644d5655b1a0f2c035b41e359398b00b84fe6231086f3",
+      "incoming_path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-incoming/17f3ccec81b38576056c3d7f0b960b62a2abda41.blob"
+    },
+    {
+      "sha": "46ec6a13510938a8f5b68c5af4724604c9480bdd",
+      "path": "evidence/pon-w1-v2-deadline-20261105/recursion-resource-analysis.json",
+      "bytes": 26376,
+      "sha256": "1988f00985347aa941a5d3dfa370850c0b6f3bd1cde1b3d1e0e8869775355514",
+      "incoming_path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-incoming/46ec6a13510938a8f5b68c5af4724604c9480bdd.blob"
+    },
+    {
+      "sha": "1ae861693bf4bd4ac54a8027d17c61bc752e9078",
+      "path": "evidence/pon-w1-v2-deadline-20261105/result.json.gz",
+      "bytes": 13741,
+      "sha256": "032dffd0241d6ddd183b41e4353e154dd9787cef69d208eff4a8edda903773ff",
+      "incoming_path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-incoming/1ae861693bf4bd4ac54a8027d17c61bc752e9078.blob"
+    },
+    {
+      "sha": "f378e7103760beed202afbb162c1c04d6e960e96",
+      "path": "evidence/pon-w1-v2-deadline-20261105/stages.jsonl.gz",
+      "bytes": 9208,
+      "sha256": "cae4e6aed29096011186ab769593b9cbf60353dc8569dc223f5b716a5ee3bba4",
+      "incoming_path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-incoming/f378e7103760beed202afbb162c1c04d6e960e96.blob"
+    },
+    {
+      "sha": "3ca7f68098800c63e8b1c03c816e848db15af69d",
+      "path": "evidence/pon-w1-v2-deadline-20261105/summary.json",
+      "bytes": 1295,
+      "sha256": "33f202f7530f7ea35287df99be29564f33b2325db824820a130e11813b3e7636",
+      "incoming_path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-incoming/3ca7f68098800c63e8b1c03c816e848db15af69d.blob"
+    },
+    {
+      "sha": "f0e30ded5417e9aab8d5e3a7b24fd47a889eab61",
+      "path": "scripts/ci/test_w1_staged_observer.py",
+      "bytes": 28852,
+      "sha256": "4a0e6d8ee682950f23251d6e8f8d94835cb8b2b37f704efaf30a036962a8eae4",
+      "incoming_path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-incoming/f0e30ded5417e9aab8d5e3a7b24fd47a889eab61.blob"
+    },
+    {
+      "sha": "6c0369081013550e861c48d9d906b0c72fc815d8",
+      "path": "scripts/w1_v2_receipt_controls.py",
+      "bytes": 23014,
+      "sha256": "ef68fc78226d0eee314d7457a4f2b54235be0fadf3786f79493b974c8f5569c3",
+      "incoming_path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-incoming/6c0369081013550e861c48d9d906b0c72fc815d8.blob"
+    }
+  ],
+  "imported_blob_count": 48,
+  "imported_blob_bytes": 3194431,
+  "target_commit_raw_sha_verified": true,
+  "final_snapshot_complete": true,
+  "final_snapshot_missing_objects": [],
+  "final_snapshot_tree_count_including_root": 1173,
+  "final_snapshot_blob_path_count": 10245,
+  "commit_range": [
+    {
+      "sha": "549c5a26616113c6aeee76a62f34dd780d729b75",
+      "parents": [
+        "c69cf2beef9aac6a53ba9fc140cfd09f2e623fc6",
+        "27c85251031c6efb048b1cc7af587214f7990941"
+      ]
+    },
+    {
+      "sha": "27c85251031c6efb048b1cc7af587214f7990941",
+      "parents": [
+        "6dbb956ba381bdaed0134022ee720e3c1dea4603"
+      ]
+    },
+    {
+      "sha": "c69cf2beef9aac6a53ba9fc140cfd09f2e623fc6",
+      "parents": [
+        "fcc8f8a73d9f9463601b3f720afdd2b7f56ed920",
+        "0da4b6cecf55fa4c868ce744567ae5019a9905bb"
+      ]
+    },
+    {
+      "sha": "0da4b6cecf55fa4c868ce744567ae5019a9905bb",
+      "parents": [
+        "61acfab2427277416f120072091c39b1f18cdcee"
+      ]
+    },
+    {
+      "sha": "61acfab2427277416f120072091c39b1f18cdcee",
+      "parents": [
+        "cbead1508ce8b6d9deb2a86b4bc3181da09694e7"
+      ]
+    },
+    {
+      "sha": "fcc8f8a73d9f9463601b3f720afdd2b7f56ed920",
+      "parents": [
+        "cbead1508ce8b6d9deb2a86b4bc3181da09694e7",
+        "dd10f0aee7de54cbbf6e67c78bf85a5e1d59244d"
+      ]
+    },
+    {
+      "sha": "dd10f0aee7de54cbbf6e67c78bf85a5e1d59244d",
+      "parents": [
+        "32c3d63c907d0060a5b02cd678c74b01e54ec0f9",
+        "96ae5fb7d599368366672f97e7401e075a65dd85"
+      ]
+    },
+    {
+      "sha": "96ae5fb7d599368366672f97e7401e075a65dd85",
+      "parents": [
+        "4e42b620ed1ce306bca6e7d5da3819417aa0f397"
+      ]
+    },
+    {
+      "sha": "6dbb956ba381bdaed0134022ee720e3c1dea4603",
+      "parents": [
+        "4c23fcdaf151de86e9868f4456c82aec223d67c1"
+      ]
+    },
+    {
+      "sha": "4c23fcdaf151de86e9868f4456c82aec223d67c1",
+      "parents": [
+        "f5fcc8067d103be87ca2f5b891aec4d68dee7e81"
+      ]
+    },
+    {
+      "sha": "f5fcc8067d103be87ca2f5b891aec4d68dee7e81",
+      "parents": [
+        "a635200956843f0d2f335f929977d602b48b36ec"
+      ]
+    }
+  ],
+  "remaining_history_root_trees": [
+    {
+      "sha": "21eec0a14631db0de94cabad07a1d4c14bfe0388",
+      "type": "tree",
+      "final_tree_paths": []
+    },
+    {
+      "sha": "3364b2dc9b1e5e3fa604831f8f8299aa6830cbce",
+      "type": "tree",
+      "final_tree_paths": []
+    },
+    {
+      "sha": "4240037a0901e70ef05e9edbc17641ee1382ae1f",
+      "type": "tree",
+      "final_tree_paths": []
+    },
+    {
+      "sha": "4a4c8002951da699ae99eee9c1f82641eb0f6174",
+      "type": "tree",
+      "final_tree_paths": []
+    },
+    {
+      "sha": "5cd0da53f0829d9a99e5b00912355cc1e6ad8b5c",
+      "type": "tree",
+      "final_tree_paths": []
+    },
+    {
+      "sha": "fa44ee5a76971aba4a94c1675f24f4e2ee931383",
+      "type": "tree",
+      "final_tree_paths": []
+    }
+  ],
+  "complete_all_history_object_closure": false,
+  "compare_metadata": {
+    "path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-remote-549-compare-summary.json",
+    "sha256": "2565aae933830c2e9bcd97f62255fc229b8004af09072074d66f38b6df3830b1"
+  },
+  "changes": [
+    {
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "5e430a54ea595e8896fe945ea00997cbe678413c",
+      "new_blob": "591578a24b4e93e54fb1c7b186700d4c7320c2d5"
+    },
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "ae2b5193ca7bce349b39ea659cb3e9f326ef453e",
+      "new_blob": "f0149bf2742e3e30b0ac652c25a4c5a00ef17ce3"
+    },
+    {
+      "path": "docs/development/specs/pon/WORK_EXPENSIVE_RESEARCH_V1.md",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "abdb66bd9b4b7ea3dcf3acc956a8133f36f3997d"
+    },
+    {
+      "path": "evidence/pon-ordered-request-cost-20261105/README.md",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "0a4a88ec54dafe05423eb4ca005f499ba8e5f7ae"
+    },
+    {
+      "path": "evidence/pon-ordered-request-cost-20261105/SHA256SUMS",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "2cf66014d1f5f66a04a779a15223a8be17488e50"
+    },
+    {
+      "path": "evidence/pon-ordered-request-cost-20261105/concurrent-publication.json",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "9350296357b45ebe9e35e8c44bec3b9cbf8b3e78"
+    },
+    {
+      "path": "evidence/pon-ordered-request-cost-20261105/delivery-checks.json",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "4dba322f2843aec01b5219db74e92fd626241ba0"
+    },
+    {
+      "path": "evidence/pon-ordered-request-cost-20261105/from_zero_cpu_coverage.json",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "e07255af826888278dd0c688c402a9dcc32c0624"
+    },
+    {
+      "path": "evidence/pon-ordered-request-cost-20261105/from_zero_cpu_coverage.md",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "9d925cfbd9c87754c74418be13eafead9ece1b80"
+    },
+    {
+      "path": "evidence/pon-ordered-request-cost-20261105/from_zero_host_parent_audit.json",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "8c540c4d8b620ecdd5f798ddbe50a4d65b982230"
+    },
+    {
+      "path": "evidence/pon-ordered-request-cost-20261105/from_zero_host_parent_audit.md",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "bdb039742989becc20635f082010281dccab3b61"
+    },
+    {
+      "path": "evidence/pon-ordered-request-cost-20261105/from_zero_native_audit.json",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "9130fb3dfb53518b65d8b61220a292e844c179da"
+    },
+    {
+      "path": "evidence/pon-ordered-request-cost-20261105/from_zero_native_audit.md",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "e528da757f5a6b04b73164aadd3e0d5ee4147fd7"
+    },
+    {
+      "path": "evidence/pon-ordered-request-cost-20261105/growth_scale_audit.json",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "dd983ffa3a1aa59361570010379c9b21bec1633f"
+    },
+    {
+      "path": "evidence/pon-ordered-request-cost-20261105/growth_scale_audit.md",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "21b18cd06a1aa39939f144eb7891cad89cb19ec6"
+    },
+    {
+      "path": "evidence/pon-ordered-request-cost-20261105/raw-records.tar.gz",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "6e27f4ae412ab2a179f9f59a335028f0186ec34d"
+    },
+    {
+      "path": "evidence/pon-ordered-request-cost-20261105/records-index.json",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "143dfd122d542a5940f8dca9b09c55a4fe3ea1a2"
+    },
+    {
+      "path": "evidence/pon-ordered-request-cost-20261105/request_scope.md",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "38e5cfb1b1024a147683ab22878ea4bc33829f4a"
+    },
+    {
+      "path": "evidence/pon-ordered-request-cost-20261105/source-combination-facts.json",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "111014fc3509dd160a78a4a02c8ac0b2c3c0000c"
+    },
+    {
+      "path": "evidence/pon-ordered-request-cost-20261105/source-combination-facts.md",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "7cbcd9bc6e4fe75f2f6deb0807f7bdaa3bee28c4"
+    },
+    {
+      "path": "evidence/pon-ordered-request-cost-20261105/verification.json",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "42adc8c9849c66008b450427e25574b293c52eef"
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/README.md",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "91ec3596b615148e3bbc97896c46eeece698def7"
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/asset-sha256.json",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "3c95ecd1a031600a27493eaefcd01a58c7d60d8b"
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/controls-3-repaired.tar.xz",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "54f240b65b39eb940afa7bfca15de34005787879"
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/controls-3.tar.gz",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "bf70f857fd96077347d18f268cd44760b312f412"
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/controls-result.json",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "8c1d64fbfa2c38f7d685c6a52f75cde17ed3eca4"
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/executed-source.bundle",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "18c937ce4993d84021c8df95ff4ad325e736931c"
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/expected-artifacts.bin",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "8a1e552cc362202bb9829e49912f241497bfd4f8"
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/guest.bin",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "7452c0d2f180eb2a88719aaf09da74f1e03b52a8"
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/header.bin",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "7e84b7b2e9c47b23569d6c98916e25a172b3e7ec"
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/input.bin",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "d4a4d2f9af938e85df5f3b85a8ad8764b1f7420a"
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/integration/README.md",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "ca7968f36a5eda63979bd3b1f5319c1f7c903bc4"
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/integration/observer.txt",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "b5ffcfed481d52d04e14945a1424620be41464ea"
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/integration/receipt-controls.txt",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "a7e126dcf028cbd7a48263454c4a09e041e1d60e"
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/integration/source-controls.txt",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "bd4eb37e65ab49f6235b9cba5b2565814a2e4b1d"
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/integration/source-pin-failure.txt",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "b0c9b3bdb9e935a7179bc6c3390ea877922af332"
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/observation-3.tar.gz",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "99d8942ba67c232394e4251af4739907557d6598"
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/original-controls-failure.log",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "74c47175280ce527672a02fc1dadddbcf5ec1197"
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/proof-result.json",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "882a48d27c8ad7848c7a9e7eb6b2efcc6459e76a"
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/raw-index.json",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "a9dbcde9c0843399c720bf0ab1b32c9d8b3ef0fa"
+    },
+    {
+      "path": "evidence/pon-w1-full-v2-20261105/succinct.bin",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "b406d90892c277fede192978af9811f4d12e62d0"
+    },
+    {
+      "path": "evidence/pon-w1-join-diagnostic-20261105/README.md",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "3382e484a64be0ed8ee3e9de1b82f226fbad7ccf"
+    },
+    {
+      "path": "evidence/pon-w1-join-diagnostic-20261105/build.log",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "dab5994744dc0049b89ce9b09cb1612df5b1435b"
+    },
+    {
+      "path": "evidence/pon-w1-join-diagnostic-20261105/raw-diagnostics.tar.gz",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "11edb54495eb6c9b758a9dbe46976f7d6560937b"
+    },
+    {
+      "path": "evidence/pon-w1-join-diagnostic-20261105/results.json",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "62e1cd75a407b2d5c32747bdb4218190c47a6cdb"
+    },
+    {
+      "path": "evidence/pon-w1-join-diagnostic-20261105/tool/Cargo.lock",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "4b2780d16c1ce355ca46046a44fa8cc317b710b2"
+    },
+    {
+      "path": "evidence/pon-w1-join-diagnostic-20261105/tool/Cargo.toml",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "d6b2c62780dfcedf607659f4968bd1529765f6ef"
+    },
+    {
+      "path": "evidence/pon-w1-join-diagnostic-20261105/tool/src/main.rs",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "b3dac5aba1ca7cf981b7d6c746da4292ab4a12a9"
+    },
+    {
+      "path": "evidence/pon-w1-pinned-rebuild-20261105/README.md",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "a2c17aa4d01aa75e6e8567a46cf9170cf126771d"
+    },
+    {
+      "path": "evidence/pon-w1-pinned-rebuild-20261105/cargo-wrapper.py",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100755",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "613e703e6fc6f103e1b728643c7f06fffcde2e3b"
+    },
+    {
+      "path": "evidence/pon-w1-pinned-rebuild-20261105/exact-source-path-build.log",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "2341662e34bf63ca3d9da6a51185f4abc55749cf"
+    },
+    {
+      "path": "evidence/pon-w1-pinned-rebuild-20261105/reproduction.json",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "b622537e6b77e09bcda615d56fef6e23d843fe67"
+    },
+    {
+      "path": "evidence/pon-w1-pinned-rebuild-20261105/source-remap-attempt.log",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "4004df2d582e12725756f12c76e9ddb166be9eb9"
+    },
+    {
+      "path": "evidence/pon-w1-v2-deadline-20261105/README.md",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "944687ba699f065563e24b9662844730116b654a"
+    },
+    {
+      "path": "evidence/pon-w1-v2-deadline-20261105/checkpoint-index.json",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "ecc2823fea6f5fc4a3c21e0bb48c00655c6993dc"
+    },
+    {
+      "path": "evidence/pon-w1-v2-deadline-20261105/compression-result.json.gz",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "c4f9f3064b57c015ff13ef9dd0372d9b473a42c4"
+    },
+    {
+      "path": "evidence/pon-w1-v2-deadline-20261105/compression-stderr.log.gz",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "600749664222da926d293fac98919d4fabfe7b3e"
+    },
+    {
+      "path": "evidence/pon-w1-v2-deadline-20261105/compression-stdout.log.gz",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "b241e472a0d05b5e3a6c51ad7855da250537464d"
+    },
+    {
+      "path": "evidence/pon-w1-v2-deadline-20261105/declaration.json.gz",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "ece44df661df59d7171ca012b3d6780f1b55d56e"
+    },
+    {
+      "path": "evidence/pon-w1-v2-deadline-20261105/events.jsonl.gz",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "e6726f255dfd0ca8fd811edd3c5a31f7d83a2a16"
+    },
+    {
+      "path": "evidence/pon-w1-v2-deadline-20261105/local-checkpoint-archive.json",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "abed3a6393809245ce3a0bc63d2bc9dc5a02cbab"
+    },
+    {
+      "path": "evidence/pon-w1-v2-deadline-20261105/manifest.json",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "68531125e24f91e8329a34366197131c6da5cf19"
+    },
+    {
+      "path": "evidence/pon-w1-v2-deadline-20261105/observer-gaps.json",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "d451616d284948d1023db5937d2e99b34c107ec8"
+    },
+    {
+      "path": "evidence/pon-w1-v2-deadline-20261105/raw-index.json",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "b17d5701ef18b0998211ec4a145591b0539a4bcb"
+    },
+    {
+      "path": "evidence/pon-w1-v2-deadline-20261105/raw-observations.tar.gz",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "17f3ccec81b38576056c3d7f0b960b62a2abda41"
+    },
+    {
+      "path": "evidence/pon-w1-v2-deadline-20261105/recursion-resource-analysis.json",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "46ec6a13510938a8f5b68c5af4724604c9480bdd"
+    },
+    {
+      "path": "evidence/pon-w1-v2-deadline-20261105/result.json.gz",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "1ae861693bf4bd4ac54a8027d17c61bc752e9078"
+    },
+    {
+      "path": "evidence/pon-w1-v2-deadline-20261105/stages.jsonl.gz",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "f378e7103760beed202afbb162c1c04d6e960e96"
+    },
+    {
+      "path": "evidence/pon-w1-v2-deadline-20261105/summary.json",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "3ca7f68098800c63e8b1c03c816e848db15af69d"
+    },
+    {
+      "path": "evidence/pon-work-expensive-v1-20261105/README.md",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "a0275e9c439a02638ebabfaf54cd59193b5f15cd"
+    },
+    {
+      "path": "evidence/pon-work-expensive-v1-20261105/composition.json",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "60335b22cd47afa9deefc0d202dffd481f650b1b"
+    },
+    {
+      "path": "evidence/pon-work-expensive-v1-20261105/execution-source-commit.txt",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "30d67fc3c13afffe6c2592396a0a591c6cd07872"
+    },
+    {
+      "path": "evidence/pon-work-expensive-v1-20261105/historical-v1.json",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "7a3275f3c597072ce8f1085a0512725aea6ed741"
+    },
+    {
+      "path": "evidence/pon-work-expensive-v1-20261105/reproduction-v1.json",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "a7935971905f2237a3031e3e9b9009f1a4259961"
+    },
+    {
+      "path": "evidence/pon-work-expensive-v1-20261105/reproduction.json",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "3d7786976af8eb2b18a2ab20e56bc10b27ff28ec"
+    },
+    {
+      "path": "evidence/pon-work-expensive-v1-20261105/source-publication.json",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "ef151fdf160a7684846edf82fe60b490c5b58194"
+    },
+    {
+      "path": "evidence/pon-work-expensive-v1-20261105/summary.json",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "be9d130ad312d51e93677e7c3625ca11ca362b61"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_work_expensive_mode_a.py",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "45a34597b9fd8d6f8a631b9fd62eacdb55b90318"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/work_expensive_mode_a.py",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "4f2a4baf6100a4a818227ed3c5f8661f801378ba"
+    },
+    {
+      "path": "scripts/ci/run_work_expensive_campaign_v1.py",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "dba09f0efa05ef56595dc764c9a89c8595b58063"
+    },
+    {
+      "path": "scripts/ci/run_work_expensive_verifier_v1.py",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "07700ba956e11ea252ccf6e7038725cde4b85c02"
+    },
+    {
+      "path": "scripts/ci/test_pon_work_expensive_reader_v1.py",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "b450c5e13eaf5c53427b6bd5c1448c7e67baaafc"
+    },
+    {
+      "path": "scripts/ci/test_w1_staged_observer.py",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "54e119d085612e5870778f572d7ceb049612ef05",
+      "new_blob": "f0e30ded5417e9aab8d5e3a7b24fd47a889eab61"
+    },
+    {
+      "path": "scripts/ci/test_work_expensive_verifier_v1.py",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "24c467087faaec4861d75497e31c8d79c960e15b"
+    },
+    {
+      "path": "scripts/pon_work_expensive_reader_v1.py",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "ead1eed53c01c5d8d78112515f95a79e89669f58"
+    },
+    {
+      "path": "scripts/w1_v2_receipt_controls.py",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "47e9148b19f4642b7b6211d9ee98cfe2ea4c7c9c",
+      "new_blob": "6c0369081013550e861c48d9d906b0c72fc815d8"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_work_expensive_v1.rs",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "c258df9b422991ed29b56d03d7f43c7b6d125a9d"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_work_expensive_verifier_v1.rs",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "97cd83b6df80e51cc652cd841860d01b0e0d36f4"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "4becc2bbe7dccefc04663d4aecfce166f197879c",
+      "new_blob": "a16c67726f7bba29c349c487cb42eb56467380cc"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "98f27b597f5438ea70bf4de42365b8afc4c97e62",
+      "new_blob": "8210411b21e805de81c73c12a66a493ad4bcfd69"
+    }
+  ],
+  "change_count": 90,
+  "change_status_counts": {
+    "M": 6,
+    "A": 84
+  },
+  "change_top_directory_counts": {
+    "config": 1,
+    "docs": 2,
+    "evidence": 74,
+    "formal": 2,
+    "scripts": 7,
+    "trillionnium": 4
+  },
+  "non_evidence_changes": [
+    {
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "5e430a54ea595e8896fe945ea00997cbe678413c",
+      "new_blob": "591578a24b4e93e54fb1c7b186700d4c7320c2d5"
+    },
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "ae2b5193ca7bce349b39ea659cb3e9f326ef453e",
+      "new_blob": "f0149bf2742e3e30b0ac652c25a4c5a00ef17ce3"
+    },
+    {
+      "path": "docs/development/specs/pon/WORK_EXPENSIVE_RESEARCH_V1.md",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "abdb66bd9b4b7ea3dcf3acc956a8133f36f3997d"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_work_expensive_mode_a.py",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "45a34597b9fd8d6f8a631b9fd62eacdb55b90318"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/work_expensive_mode_a.py",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "4f2a4baf6100a4a818227ed3c5f8661f801378ba"
+    },
+    {
+      "path": "scripts/ci/run_work_expensive_campaign_v1.py",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "dba09f0efa05ef56595dc764c9a89c8595b58063"
+    },
+    {
+      "path": "scripts/ci/run_work_expensive_verifier_v1.py",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "07700ba956e11ea252ccf6e7038725cde4b85c02"
+    },
+    {
+      "path": "scripts/ci/test_pon_work_expensive_reader_v1.py",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "b450c5e13eaf5c53427b6bd5c1448c7e67baaafc"
+    },
+    {
+      "path": "scripts/ci/test_w1_staged_observer.py",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "54e119d085612e5870778f572d7ceb049612ef05",
+      "new_blob": "f0e30ded5417e9aab8d5e3a7b24fd47a889eab61"
+    },
+    {
+      "path": "scripts/ci/test_work_expensive_verifier_v1.py",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "24c467087faaec4861d75497e31c8d79c960e15b"
+    },
+    {
+      "path": "scripts/pon_work_expensive_reader_v1.py",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "ead1eed53c01c5d8d78112515f95a79e89669f58"
+    },
+    {
+      "path": "scripts/w1_v2_receipt_controls.py",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "47e9148b19f4642b7b6211d9ee98cfe2ea4c7c9c",
+      "new_blob": "6c0369081013550e861c48d9d906b0c72fc815d8"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_work_expensive_v1.rs",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "c258df9b422991ed29b56d03d7f43c7b6d125a9d"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_work_expensive_verifier_v1.rs",
+      "status": "A",
+      "old_mode": "000000",
+      "new_mode": "100644",
+      "old_blob": "0000000000000000000000000000000000000000",
+      "new_blob": "97cd83b6df80e51cc652cd841860d01b0e0d36f4"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "4becc2bbe7dccefc04663d4aecfce166f197879c",
+      "new_blob": "a16c67726f7bba29c349c487cb42eb56467380cc"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "status": "M",
+      "old_mode": "100644",
+      "new_mode": "100644",
+      "old_blob": "98f27b597f5438ea70bf4de42365b8afc4c97e62",
+      "new_blob": "8210411b21e805de81c73c12a66a493ad4bcfd69"
+    }
+  ],
+  "node_src_paths_changed": [],
+  "pool_or_architecture_integration_tests_changed": [],
+  "native_builds_or_tests_run": false,
+  "source_index_head_ref_writes": false,
+  "floating_ref_or_network_reads": false,
+  "scope": "Object identity and path audit only. The final fixed 549 snapshot is available; six intermediate historical root trees remain absent. Native execution still belongs to fixed 1d, and does not transfer to 549."
+}

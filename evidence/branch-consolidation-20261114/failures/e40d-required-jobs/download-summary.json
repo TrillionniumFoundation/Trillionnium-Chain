@@ -1,0 +1,166 @@
+{
+  "run_id": 43551533528,
+  "source_head": "e40d7071c4724e6600deef8a2820bf35c1982289",
+  "observed_at": "2026-11-14T05:32:05.219056+00:00",
+  "jobs": [
+    {
+      "job_id": 132340218555,
+      "name": "prospective-merge (repository-truth)",
+      "argv": [
+        "gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/132340218555/logs"
+      ],
+      "started_at": "2026-11-14T05:30:45.138078+00:00",
+      "finished_at": "2026-11-14T05:31:19.786042+00:00",
+      "exit_code": 0,
+      "complete": true,
+      "size_limit_bytes": 67108864,
+      "size_limit_reached": false,
+      "timed_out": false,
+      "path": "/private/tmp/chain-ci-required-pr-trigger-review-20261114/e40d-four-failed-job-original-logs-v1/132340218555.log",
+      "bytes": 488022,
+      "sha256": "ec1e2b5dc60d7f234e465d19a4d271068e7018e6ea0ac46b12973d3e164bbe47",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "body_format": "plain-text",
+      "line_count": 4409,
+      "error_pattern_count": 4,
+      "excerpt_path": "/private/tmp/chain-ci-required-pr-trigger-review-20261114/e40d-four-failed-job-original-logs-v1/132340218555-failure-excerpts.txt",
+      "excerpt_sha256": "b4819091019ce8ff50004a916346b644d2302b3a64229fed0b5aaf89bbe4a95e",
+      "first_error_candidates": [
+        {
+          "line": 4308,
+          "text": "ERROR: setUpClass (__main__.CurrentCiTests)"
+        },
+        {
+          "line": 4310,
+          "text": "Traceback (most recent call last):"
+        },
+        {
+          "line": 4325,
+          "text": "FAILED (errors=1)"
+        },
+        {
+          "line": 4326,
+          "text": "##[error]Process completed with exit code 5."
+        }
+      ]
+    },
+    {
+      "job_id": 132340218732,
+      "name": "repository-truth",
+      "argv": [
+        "gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/132340218732/logs"
+      ],
+      "started_at": "2026-11-14T05:30:45.138233+00:00",
+      "finished_at": "2026-11-14T05:32:05.206293+00:00",
+      "exit_code": 0,
+      "complete": true,
+      "size_limit_bytes": 67108864,
+      "size_limit_reached": false,
+      "timed_out": false,
+      "path": "/private/tmp/chain-ci-required-pr-trigger-review-20261114/e40d-four-failed-job-original-logs-v1/132340218732.log",
+      "bytes": 487262,
+      "sha256": "b735017ece0ee901608745cadbfed4299947e40dd7b65587593db286ea601130",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "body_format": "plain-text",
+      "line_count": 4418,
+      "error_pattern_count": 4,
+      "excerpt_path": "/private/tmp/chain-ci-required-pr-trigger-review-20261114/e40d-four-failed-job-original-logs-v1/132340218732-failure-excerpts.txt",
+      "excerpt_sha256": "8bdc11f94872919f95cb345756fcdc573829084de837bdfc57243f471b271324",
+      "first_error_candidates": [
+        {
+          "line": 4321,
+          "text": "ERROR: setUpClass (__main__.CurrentCiTests)"
+        },
+        {
+          "line": 4323,
+          "text": "Traceback (most recent call last):"
+        },
+        {
+          "line": 4338,
+          "text": "FAILED (errors=1)"
+        },
+        {
+          "line": 4339,
+          "text": "##[error]Process completed with exit code 5."
+        }
+      ]
+    },
+    {
+      "job_id": 132340218585,
+      "name": "cross-arch-cost (arm64)",
+      "argv": [
+        "gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/132340218585/logs"
+      ],
+      "started_at": "2026-11-14T05:30:45.138317+00:00",
+      "finished_at": "2026-11-14T05:31:04.197280+00:00",
+      "exit_code": 0,
+      "complete": true,
+      "size_limit_bytes": 67108864,
+      "size_limit_reached": false,
+      "timed_out": false,
+      "path": "/private/tmp/chain-ci-required-pr-trigger-review-20261114/e40d-four-failed-job-original-logs-v1/132340218585.log",
+      "bytes": 183981,
+      "sha256": "be942db27b7a5635d3092f98add03875ba13c820de2ac2bc9c5fa1c793c8f02d",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "body_format": "plain-text",
+      "line_count": 1423,
+      "error_pattern_count": 1,
+      "excerpt_path": "/private/tmp/chain-ci-required-pr-trigger-review-20261114/e40d-four-failed-job-original-logs-v1/132340218585-failure-excerpts.txt",
+      "excerpt_sha256": "0f7de8733dcc2b0167790e9a810b0ffff42ad65565fc33ea8baf62262f5f45e7",
+      "first_error_candidates": [
+        {
+          "line": 1343,
+          "text": "##[error]Process completed with exit code 1."
+        }
+      ]
+    },
+    {
+      "job_id": 132340219408,
+      "name": "cross-arch-cost (x64)",
+      "argv": [
+        "gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/132340219408/logs"
+      ],
+      "started_at": "2026-11-14T05:30:45.138375+00:00",
+      "finished_at": "2026-11-14T05:30:59.493745+00:00",
+      "exit_code": 0,
+      "complete": true,
+      "size_limit_bytes": 67108864,
+      "size_limit_reached": false,
+      "timed_out": false,
+      "path": "/private/tmp/chain-ci-required-pr-trigger-review-20261114/e40d-four-failed-job-original-logs-v1/132340219408.log",
+      "bytes": 184439,
+      "sha256": "9a83af309b353809bcaf4bd528b10d7509338fd4fc1302c0ac7f5716f85ce7f9",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "body_format": "plain-text",
+      "line_count": 1432,
+      "error_pattern_count": 1,
+      "excerpt_path": "/private/tmp/chain-ci-required-pr-trigger-review-20261114/e40d-four-failed-job-original-logs-v1/132340219408-failure-excerpts.txt",
+      "excerpt_sha256": "3d6abda8183384a3d5295ba845275281b3d13b45e87e3eaa7e9c6556102718d4",
+      "first_error_candidates": [
+        {
+          "line": 1352,
+          "text": "##[error]Process completed with exit code 1."
+        }
+      ]
+    }
+  ],
+  "download_only": true,
+  "retries_or_remote_mutations": false,
+  "regex_candidates_require_source_context_review": true
+}

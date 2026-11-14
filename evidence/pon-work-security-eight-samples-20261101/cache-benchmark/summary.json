@@ -1,0 +1,698 @@
+{
+  "schema": "pon-arithmetic-cache-selected-source-diagnostic-summary-v1",
+  "run_order": [
+    [
+      1,
+      "baseline"
+    ],
+    [
+      1,
+      "candidate"
+    ],
+    [
+      2,
+      "candidate"
+    ],
+    [
+      2,
+      "baseline"
+    ],
+    [
+      3,
+      "baseline"
+    ],
+    [
+      3,
+      "candidate"
+    ]
+  ],
+  "runs": 6,
+  "measurement_rows": 144,
+  "complete_calls": 18432,
+  "semantic_alerts": 0,
+  "actual_transcript_replays": 11520,
+  "actual_products_completed": 9216,
+  "distinct_seed_materials": 3,
+  "distinct_challenges_per_seed": 2,
+  "repeated_rounds_are_not_new_independent_samples": true,
+  "platform": {
+    "system": "Linux",
+    "node": "2e2145b2a411",
+    "release": "6.18.57",
+    "version": "#1 SMP Tue Oct 20 21:56:04 UTC 2026",
+    "machine": "x86_64",
+    "processor": "x86_64"
+  },
+  "cpu_model": "AMD EPYC 9V74 80-Core Processor",
+  "logical_cpus": 9,
+  "cases": {
+    "capacity1_alternating_challenge_eviction": {
+      "paired_rounds": [
+        {
+          "round": 1,
+          "calls_per_variant": 384,
+          "baseline_cpu_ns": 324066725,
+          "candidate_cpu_ns": 245875324,
+          "candidate_over_baseline_cpu": 0.7587182053325592,
+          "candidate_over_baseline_wall": 0.7631052967718059
+        },
+        {
+          "round": 2,
+          "calls_per_variant": 384,
+          "baseline_cpu_ns": 305905835,
+          "candidate_cpu_ns": 202404963,
+          "candidate_over_baseline_cpu": 0.6616577385652026,
+          "candidate_over_baseline_wall": 0.6001138503808344
+        },
+        {
+          "round": 3,
+          "calls_per_variant": 384,
+          "baseline_cpu_ns": 309192798,
+          "candidate_cpu_ns": 228662176,
+          "candidate_over_baseline_cpu": 0.7395456086917005,
+          "candidate_over_baseline_wall": 0.8217426693817194
+        }
+      ],
+      "paired_seed_rounds": [
+        {
+          "round": 1,
+          "seed": 7,
+          "candidate_over_baseline_cpu": 0.6572121670246363
+        },
+        {
+          "round": 1,
+          "seed": 19,
+          "candidate_over_baseline_cpu": 0.8326283980463638
+        },
+        {
+          "round": 1,
+          "seed": 43,
+          "candidate_over_baseline_cpu": 0.7840312328611266
+        },
+        {
+          "round": 2,
+          "seed": 7,
+          "candidate_over_baseline_cpu": 0.6170357162033476
+        },
+        {
+          "round": 2,
+          "seed": 19,
+          "candidate_over_baseline_cpu": 0.6900551074941832
+        },
+        {
+          "round": 2,
+          "seed": 43,
+          "candidate_over_baseline_cpu": 0.6756119045633875
+        },
+        {
+          "round": 3,
+          "seed": 7,
+          "candidate_over_baseline_cpu": 0.7191664787679711
+        },
+        {
+          "round": 3,
+          "seed": 19,
+          "candidate_over_baseline_cpu": 0.600281264959851
+        },
+        {
+          "round": 3,
+          "seed": 43,
+          "candidate_over_baseline_cpu": 0.9510044216503437
+        }
+      ],
+      "minimum_round_cpu_ratio": 0.6616577385652026,
+      "maximum_round_cpu_ratio": 0.7587182053325592,
+      "median_round_cpu_ratio": 0.7395456086917005,
+      "total_calls_per_variant": 1152
+    },
+    "cold_false_trace": {
+      "paired_rounds": [
+        {
+          "round": 1,
+          "calls_per_variant": 384,
+          "baseline_cpu_ns": 246674300,
+          "candidate_cpu_ns": 181012259,
+          "candidate_over_baseline_cpu": 0.7338107739638868,
+          "candidate_over_baseline_wall": 0.72130288378842
+        },
+        {
+          "round": 2,
+          "calls_per_variant": 384,
+          "baseline_cpu_ns": 213693485,
+          "candidate_cpu_ns": 156924688,
+          "candidate_over_baseline_cpu": 0.7343447461676241,
+          "candidate_over_baseline_wall": 0.7382878929796609
+        },
+        {
+          "round": 3,
+          "calls_per_variant": 384,
+          "baseline_cpu_ns": 245905419,
+          "candidate_cpu_ns": 179610953,
+          "candidate_over_baseline_cpu": 0.7304066487448981,
+          "candidate_over_baseline_wall": 0.8150257837156366
+        }
+      ],
+      "paired_seed_rounds": [
+        {
+          "round": 1,
+          "seed": 7,
+          "candidate_over_baseline_cpu": 0.6353141074195133
+        },
+        {
+          "round": 1,
+          "seed": 19,
+          "candidate_over_baseline_cpu": 0.7513271183719944
+        },
+        {
+          "round": 1,
+          "seed": 43,
+          "candidate_over_baseline_cpu": 0.8132993686908109
+        },
+        {
+          "round": 2,
+          "seed": 7,
+          "candidate_over_baseline_cpu": 0.9906025220734248
+        },
+        {
+          "round": 2,
+          "seed": 19,
+          "candidate_over_baseline_cpu": 0.7361720472203819
+        },
+        {
+          "round": 2,
+          "seed": 43,
+          "candidate_over_baseline_cpu": 0.5634578352313176
+        },
+        {
+          "round": 3,
+          "seed": 7,
+          "candidate_over_baseline_cpu": 1.046793744458546
+        },
+        {
+          "round": 3,
+          "seed": 19,
+          "candidate_over_baseline_cpu": 0.5577719495544639
+        },
+        {
+          "round": 3,
+          "seed": 43,
+          "candidate_over_baseline_cpu": 0.6963016952742034
+        }
+      ],
+      "minimum_round_cpu_ratio": 0.7304066487448981,
+      "maximum_round_cpu_ratio": 0.7343447461676241,
+      "median_round_cpu_ratio": 0.7338107739638868,
+      "total_calls_per_variant": 1152
+    },
+    "cold_last_product": {
+      "paired_rounds": [
+        {
+          "round": 1,
+          "calls_per_variant": 384,
+          "baseline_cpu_ns": 313441334,
+          "candidate_cpu_ns": 265715153,
+          "candidate_over_baseline_cpu": 0.8477348842574796,
+          "candidate_over_baseline_wall": 0.9364125366804865
+        },
+        {
+          "round": 2,
+          "calls_per_variant": 384,
+          "baseline_cpu_ns": 268063956,
+          "candidate_cpu_ns": 209683979,
+          "candidate_over_baseline_cpu": 0.7822162372325804,
+          "candidate_over_baseline_wall": 0.7727891004193042
+        },
+        {
+          "round": 3,
+          "calls_per_variant": 384,
+          "baseline_cpu_ns": 332092783,
+          "candidate_cpu_ns": 233894040,
+          "candidate_over_baseline_cpu": 0.70430329104743,
+          "candidate_over_baseline_wall": 0.7421669320174744
+        }
+      ],
+      "paired_seed_rounds": [
+        {
+          "round": 1,
+          "seed": 7,
+          "candidate_over_baseline_cpu": 0.8996622199404267
+        },
+        {
+          "round": 1,
+          "seed": 19,
+          "candidate_over_baseline_cpu": 0.8886473325915482
+        },
+        {
+          "round": 1,
+          "seed": 43,
+          "candidate_over_baseline_cpu": 0.7657353863586811
+        },
+        {
+          "round": 2,
+          "seed": 7,
+          "candidate_over_baseline_cpu": 0.9419620642334781
+        },
+        {
+          "round": 2,
+          "seed": 19,
+          "candidate_over_baseline_cpu": 0.8653673182420016
+        },
+        {
+          "round": 2,
+          "seed": 43,
+          "candidate_over_baseline_cpu": 0.6150854885105133
+        },
+        {
+          "round": 3,
+          "seed": 7,
+          "candidate_over_baseline_cpu": 0.6955603100208742
+        },
+        {
+          "round": 3,
+          "seed": 19,
+          "candidate_over_baseline_cpu": 0.5280063344900351
+        },
+        {
+          "round": 3,
+          "seed": 43,
+          "candidate_over_baseline_cpu": 0.9378352339243774
+        }
+      ],
+      "minimum_round_cpu_ratio": 0.70430329104743,
+      "maximum_round_cpu_ratio": 0.8477348842574796,
+      "median_round_cpu_ratio": 0.7822162372325804,
+      "total_calls_per_variant": 1152
+    },
+    "cold_valid": {
+      "paired_rounds": [
+        {
+          "round": 1,
+          "calls_per_variant": 384,
+          "baseline_cpu_ns": 292635833,
+          "candidate_cpu_ns": 268554067,
+          "candidate_over_baseline_cpu": 0.917707391630334,
+          "candidate_over_baseline_wall": 0.9960107041656336
+        },
+        {
+          "round": 2,
+          "calls_per_variant": 384,
+          "baseline_cpu_ns": 257525606,
+          "candidate_cpu_ns": 218893057,
+          "candidate_over_baseline_cpu": 0.8499856010434939,
+          "candidate_over_baseline_wall": 0.8176732809469327
+        },
+        {
+          "round": 3,
+          "calls_per_variant": 384,
+          "baseline_cpu_ns": 313280264,
+          "candidate_cpu_ns": 224281711,
+          "candidate_over_baseline_cpu": 0.7159139491787456,
+          "candidate_over_baseline_wall": 0.7209992936815504
+        }
+      ],
+      "paired_seed_rounds": [
+        {
+          "round": 1,
+          "seed": 7,
+          "candidate_over_baseline_cpu": 0.9021768490511172
+        },
+        {
+          "round": 1,
+          "seed": 19,
+          "candidate_over_baseline_cpu": 0.7492023156955308
+        },
+        {
+          "round": 1,
+          "seed": 43,
+          "candidate_over_baseline_cpu": 1.1639442552585306
+        },
+        {
+          "round": 2,
+          "seed": 7,
+          "candidate_over_baseline_cpu": 1.1596294238468197
+        },
+        {
+          "round": 2,
+          "seed": 19,
+          "candidate_over_baseline_cpu": 0.6579682159752608
+        },
+        {
+          "round": 2,
+          "seed": 43,
+          "candidate_over_baseline_cpu": 0.7893939065273861
+        },
+        {
+          "round": 3,
+          "seed": 7,
+          "candidate_over_baseline_cpu": 0.802406084074013
+        },
+        {
+          "round": 3,
+          "seed": 19,
+          "candidate_over_baseline_cpu": 0.643906575431492
+        },
+        {
+          "round": 3,
+          "seed": 43,
+          "candidate_over_baseline_cpu": 0.7279046063030511
+        }
+      ],
+      "minimum_round_cpu_ratio": 0.7159139491787456,
+      "maximum_round_cpu_ratio": 0.917707391630334,
+      "median_round_cpu_ratio": 0.8499856010434939,
+      "total_calls_per_variant": 1152
+    },
+    "trace_only_upgrade": {
+      "paired_rounds": [
+        {
+          "round": 1,
+          "calls_per_variant": 384,
+          "baseline_cpu_ns": 306954383,
+          "candidate_cpu_ns": 223858174,
+          "candidate_over_baseline_cpu": 0.7292880844773603,
+          "candidate_over_baseline_wall": 0.6626448392087556
+        },
+        {
+          "round": 2,
+          "calls_per_variant": 384,
+          "baseline_cpu_ns": 282620442,
+          "candidate_cpu_ns": 214609497,
+          "candidate_over_baseline_cpu": 0.7593558890549043,
+          "candidate_over_baseline_wall": 0.7784752374670899
+        },
+        {
+          "round": 3,
+          "calls_per_variant": 384,
+          "baseline_cpu_ns": 302431306,
+          "candidate_cpu_ns": 239391982,
+          "candidate_over_baseline_cpu": 0.7915582059484279,
+          "candidate_over_baseline_wall": 0.9237560614854886
+        }
+      ],
+      "paired_seed_rounds": [
+        {
+          "round": 1,
+          "seed": 7,
+          "candidate_over_baseline_cpu": 0.6782087518140717
+        },
+        {
+          "round": 1,
+          "seed": 19,
+          "candidate_over_baseline_cpu": 0.7724945009363345
+        },
+        {
+          "round": 1,
+          "seed": 43,
+          "candidate_over_baseline_cpu": 0.7376245119889112
+        },
+        {
+          "round": 2,
+          "seed": 7,
+          "candidate_over_baseline_cpu": 0.9220862857500693
+        },
+        {
+          "round": 2,
+          "seed": 19,
+          "candidate_over_baseline_cpu": 0.8005737431402353
+        },
+        {
+          "round": 2,
+          "seed": 43,
+          "candidate_over_baseline_cpu": 0.6017242215015414
+        },
+        {
+          "round": 3,
+          "seed": 7,
+          "candidate_over_baseline_cpu": 0.7998382620643908
+        },
+        {
+          "round": 3,
+          "seed": 19,
+          "candidate_over_baseline_cpu": 0.6836865124813464
+        },
+        {
+          "round": 3,
+          "seed": 43,
+          "candidate_over_baseline_cpu": 0.9309963639381684
+        }
+      ],
+      "minimum_round_cpu_ratio": 0.7292880844773603,
+      "maximum_round_cpu_ratio": 0.7915582059484279,
+      "median_round_cpu_ratio": 0.7593558890549043,
+      "total_calls_per_variant": 1152
+    },
+    "warm_false_trace": {
+      "paired_rounds": [
+        {
+          "round": 1,
+          "calls_per_variant": 384,
+          "baseline_cpu_ns": 11579684,
+          "candidate_cpu_ns": 11554528,
+          "candidate_over_baseline_cpu": 0.9978275745693924,
+          "candidate_over_baseline_wall": 1.0010160461803728
+        },
+        {
+          "round": 2,
+          "calls_per_variant": 384,
+          "baseline_cpu_ns": 10270423,
+          "candidate_cpu_ns": 11280993,
+          "candidate_over_baseline_cpu": 1.0983961420089514,
+          "candidate_over_baseline_wall": 1.2083776804624031
+        },
+        {
+          "round": 3,
+          "calls_per_variant": 384,
+          "baseline_cpu_ns": 12657333,
+          "candidate_cpu_ns": 11175286,
+          "candidate_over_baseline_cpu": 0.8829100095573056,
+          "candidate_over_baseline_wall": 0.9367213126565727
+        }
+      ],
+      "paired_seed_rounds": [
+        {
+          "round": 1,
+          "seed": 7,
+          "candidate_over_baseline_cpu": 1.0115636791251248
+        },
+        {
+          "round": 1,
+          "seed": 19,
+          "candidate_over_baseline_cpu": 0.9839732524169166
+        },
+        {
+          "round": 1,
+          "seed": 43,
+          "candidate_over_baseline_cpu": 0.9979320710275231
+        },
+        {
+          "round": 2,
+          "seed": 7,
+          "candidate_over_baseline_cpu": 1.2341261390562506
+        },
+        {
+          "round": 2,
+          "seed": 19,
+          "candidate_over_baseline_cpu": 0.9610628851156016
+        },
+        {
+          "round": 2,
+          "seed": 43,
+          "candidate_over_baseline_cpu": 1.113889831423756
+        },
+        {
+          "round": 3,
+          "seed": 7,
+          "candidate_over_baseline_cpu": 0.9062359151272874
+        },
+        {
+          "round": 3,
+          "seed": 19,
+          "candidate_over_baseline_cpu": 0.8002349291996542
+        },
+        {
+          "round": 3,
+          "seed": 43,
+          "candidate_over_baseline_cpu": 0.9540006071735687
+        }
+      ],
+      "minimum_round_cpu_ratio": 0.8829100095573056,
+      "maximum_round_cpu_ratio": 1.0983961420089514,
+      "median_round_cpu_ratio": 0.9978275745693924,
+      "total_calls_per_variant": 1152
+    },
+    "warm_last_product": {
+      "paired_rounds": [
+        {
+          "round": 1,
+          "calls_per_variant": 384,
+          "baseline_cpu_ns": 15345347,
+          "candidate_cpu_ns": 15263475,
+          "candidate_over_baseline_cpu": 0.9946647019451564,
+          "candidate_over_baseline_wall": 1.1132224219927063
+        },
+        {
+          "round": 2,
+          "calls_per_variant": 384,
+          "baseline_cpu_ns": 12551513,
+          "candidate_cpu_ns": 14410310,
+          "candidate_over_baseline_cpu": 1.1480934609237945,
+          "candidate_over_baseline_wall": 1.2584241170492454
+        },
+        {
+          "round": 3,
+          "calls_per_variant": 384,
+          "baseline_cpu_ns": 14975507,
+          "candidate_cpu_ns": 14405453,
+          "candidate_over_baseline_cpu": 0.9619342436953887,
+          "candidate_over_baseline_wall": 0.8163438477131734
+        }
+      ],
+      "paired_seed_rounds": [
+        {
+          "round": 1,
+          "seed": 7,
+          "candidate_over_baseline_cpu": 1.0140910394960192
+        },
+        {
+          "round": 1,
+          "seed": 19,
+          "candidate_over_baseline_cpu": 0.9914143621690863
+        },
+        {
+          "round": 1,
+          "seed": 43,
+          "candidate_over_baseline_cpu": 0.9787625942653045
+        },
+        {
+          "round": 2,
+          "seed": 7,
+          "candidate_over_baseline_cpu": 1.4168677342322609
+        },
+        {
+          "round": 2,
+          "seed": 19,
+          "candidate_over_baseline_cpu": 1.0703766052311956
+        },
+        {
+          "round": 2,
+          "seed": 43,
+          "candidate_over_baseline_cpu": 0.9675633983958493
+        },
+        {
+          "round": 3,
+          "seed": 7,
+          "candidate_over_baseline_cpu": 0.982465343657132
+        },
+        {
+          "round": 3,
+          "seed": 19,
+          "candidate_over_baseline_cpu": 0.8231389938207326
+        },
+        {
+          "round": 3,
+          "seed": 43,
+          "candidate_over_baseline_cpu": 1.096295372552492
+        }
+      ],
+      "minimum_round_cpu_ratio": 0.9619342436953887,
+      "maximum_round_cpu_ratio": 1.1480934609237945,
+      "median_round_cpu_ratio": 0.9946647019451564,
+      "total_calls_per_variant": 1152
+    },
+    "warm_valid": {
+      "paired_rounds": [
+        {
+          "round": 1,
+          "calls_per_variant": 384,
+          "baseline_cpu_ns": 17917920,
+          "candidate_cpu_ns": 21825128,
+          "candidate_over_baseline_cpu": 1.21806147142079,
+          "candidate_over_baseline_wall": 1.2632031076817893
+        },
+        {
+          "round": 2,
+          "calls_per_variant": 384,
+          "baseline_cpu_ns": 14478832,
+          "candidate_cpu_ns": 15707714,
+          "candidate_over_baseline_cpu": 1.0848743876577889,
+          "candidate_over_baseline_wall": 1.6701757687210939
+        },
+        {
+          "round": 3,
+          "calls_per_variant": 384,
+          "baseline_cpu_ns": 18926894,
+          "candidate_cpu_ns": 17250260,
+          "candidate_over_baseline_cpu": 0.9114152591545132,
+          "candidate_over_baseline_wall": 1.1043711216451066
+        }
+      ],
+      "paired_seed_rounds": [
+        {
+          "round": 1,
+          "seed": 7,
+          "candidate_over_baseline_cpu": 1.604110926991319
+        },
+        {
+          "round": 1,
+          "seed": 19,
+          "candidate_over_baseline_cpu": 1.0257395724426983
+        },
+        {
+          "round": 1,
+          "seed": 43,
+          "candidate_over_baseline_cpu": 1.0132219133836602
+        },
+        {
+          "round": 2,
+          "seed": 7,
+          "candidate_over_baseline_cpu": 1.1808153391197562
+        },
+        {
+          "round": 2,
+          "seed": 19,
+          "candidate_over_baseline_cpu": 1.0268101142699047
+        },
+        {
+          "round": 2,
+          "seed": 43,
+          "candidate_over_baseline_cpu": 1.0505688730258258
+        },
+        {
+          "round": 3,
+          "seed": 7,
+          "candidate_over_baseline_cpu": 0.9458507896217186
+        },
+        {
+          "round": 3,
+          "seed": 19,
+          "candidate_over_baseline_cpu": 0.8243544675103079
+        },
+        {
+          "round": 3,
+          "seed": 43,
+          "candidate_over_baseline_cpu": 0.9757596520083958
+        }
+      ],
+      "minimum_round_cpu_ratio": 0.9114152591545132,
+      "maximum_round_cpu_ratio": 1.21806147142079,
+      "median_round_cpu_ratio": 1.0848743876577889,
+      "total_calls_per_variant": 1152
+    }
+  },
+  "qualification": {
+    "selected_source_diagnostic_only": true,
+    "whole_workspace": false,
+    "fixed_host": false,
+    "attacker_cost": false,
+    "service": false
+  },
+  "limitations": [
+    "Only selected W1 sources, not the original full workspace or deployed binary.",
+    "Unmodified default Cargo release with exact workspace registry versions; all source and ELF hashes retained.",
+    "One local x86 host; no ARM, physical power, fixed public Host, WAN or full service measurement.",
+    "All-ff diagnostic target, fixture construction/prefill recorded separately; no grinding or cheapest-attacker cost claim.",
+    "Capacity-1 eviction alternates two exact challenges; it is not a growing unique challenge campaign.",
+    "Result vectors are preallocated, complete outputs retained during timing; exact result/path checks run after timing.",
+    "No acceptance threshold or proof-of-work security claim follows from implementation ratios."
+  ]
+}

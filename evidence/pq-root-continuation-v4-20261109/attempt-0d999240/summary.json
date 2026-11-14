@@ -1,0 +1,18 @@
+{
+  "schema": "trnm-root-v4-recovered-exact-source-campaign",
+  "source": "0d99924005b70b1308bf3e62c53e9300fbb4aac4",
+  "source_unchanged": true,
+  "continuous_source_immutability_proved": false,
+  "commands_passed": 42,
+  "commands_total": 42,
+  "status": "HOLD",
+  "actual_lifetime_failure_bound": null,
+  "whole_chain_pq_qualified": false,
+  "composition_coverage_proved": false,
+  "independent_custody_established": false,
+  "actual_external_effects_verified": false,
+  "migration_runtime_qualified": false,
+  "production_activation": false,
+  "full_protocol_lane_executed": false,
+  "full_workspace_tests_executed": false
+}

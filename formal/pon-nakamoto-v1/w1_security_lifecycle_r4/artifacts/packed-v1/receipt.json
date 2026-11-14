@@ -1,0 +1,642 @@
+{
+  "adversary_query_upper_bound": null,
+  "component": 4,
+  "concrete_noninteractive_bits": null,
+  "counter_semantics": "total scalar-equivalent evaluations, including repeated inputs and SIMD padding; all three roles share one permutation",
+  "degree_bits": 14,
+  "expected_artifacts_sha256": "802adcdd951cfb4cd7271df22c3bca6af66fee9f40454c74f8b5ff2c98a1b683",
+  "expected_header_sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+  "fri_rounds": 14,
+  "instrumented_positive_verified": true,
+  "instrumented_serialization_identical": true,
+  "native_positive_verified": true,
+  "negative_controls": [
+    {
+      "bytes": 453861,
+      "changed_byte_offsets": [
+        453853
+      ],
+      "error": "InvalidProofShape(NonCanonicalOodPowWitness)",
+      "field": "ood",
+      "file": "ood-one.proof.bin",
+      "native_rejected": true,
+      "panic": false,
+      "sha256": "3d689443771673b8d5cf43deb2f16bf441702cea5c2c854f1689d6f74bf54012",
+      "structural_admission": true,
+      "value": 1
+    },
+    {
+      "bytes": 453861,
+      "changed_byte_offsets": [
+        8957
+      ],
+      "error": "InvalidOpeningArgument(NonCanonicalPowWitness { phase: Batch })",
+      "field": "batch",
+      "file": "batch-one.proof.bin",
+      "native_rejected": true,
+      "panic": false,
+      "sha256": "e5d0ad7205ebaee1b164a2a99b393189eb93c653658c6fa9c5acfc24d362e4fc",
+      "structural_admission": true,
+      "value": 1
+    },
+    {
+      "bytes": 453861,
+      "changed_byte_offsets": [
+        9541
+      ],
+      "error": "InvalidOpeningArgument(NonCanonicalPowWitness { phase: CommitPhase })",
+      "field": "commit-first",
+      "file": "commit-first-one.proof.bin",
+      "native_rejected": true,
+      "panic": false,
+      "sha256": "15f796eae17743618f8ab26f33b033f82a94cd7852224470329cc6b08c29d386",
+      "structural_admission": true,
+      "value": 1
+    },
+    {
+      "bytes": 453861,
+      "changed_byte_offsets": [
+        9645
+      ],
+      "error": "InvalidOpeningArgument(NonCanonicalPowWitness { phase: CommitPhase })",
+      "field": "commit-last",
+      "file": "commit-last-one.proof.bin",
+      "native_rejected": true,
+      "panic": false,
+      "sha256": "61890f61f92eb5e4d33261c1db71800f4185d8063fadcde63aedfb6ad45be3df",
+      "structural_admission": true,
+      "value": 1
+    },
+    {
+      "bytes": 453861,
+      "changed_byte_offsets": [
+        453837
+      ],
+      "error": "InvalidOpeningArgument(NonCanonicalPowWitness { phase: Query })",
+      "field": "query",
+      "file": "query-one.proof.bin",
+      "native_rejected": true,
+      "panic": false,
+      "sha256": "7721ea659af5bb2ad55bef8187793936811966dd9d01b1e433253595a9f27eda",
+      "structural_admission": true,
+      "value": 1
+    }
+  ],
+  "permutation_evaluations": {
+    "cold_verification_total": {
+      "branch_compressor": 70628,
+      "leaf_sponge": 2958663,
+      "shared_total": 3029638,
+      "transcript": 347
+    },
+    "config_initialization": {
+      "branch_compressor": 0,
+      "leaf_sponge": 0,
+      "shared_total": 12,
+      "transcript": 12
+    },
+    "independent_preprocessing": {
+      "branch_compressor": 65535,
+      "leaf_sponge": 2949120,
+      "shared_total": 3014655,
+      "transcript": 0
+    },
+    "one_verification": {
+      "branch_compressor": 5093,
+      "leaf_sponge": 9543,
+      "shared_total": 14971,
+      "transcript": 335
+    },
+    "same_proof_reverification": {
+      "branch_compressor": 5093,
+      "leaf_sponge": 9543,
+      "shared_total": 14971,
+      "transcript": 335
+    }
+  },
+  "preprocessed_commitment_identical": true,
+  "proof_bytes": 453861,
+  "proof_sha256": "2b96cb7c32e34ab22ba39e1de424281b6d20b7811cff24ba769cf2e6cb67a988",
+  "proves_new_false_statement_attack": false,
+  "qualification": "HOLD_NO_GO",
+  "quantum_bits": null,
+  "repeated_challenge_values_identical": true,
+  "repeated_evaluation_counts_identical": true,
+  "schema": "trnm-w1-native-lifecycle-probe-v1",
+  "source_base": "cc836dfc13ef0006eb0878abd8cb5eca9a76bec0",
+  "statement_sha256": "d8b06f64c5e3ff0242e1fe30110280be56fe9eca9cfb55086f7ed7ab5bdb3b6c",
+  "transcript_including_initialization": {
+    "diagnostic_stream_sha256": "19b966b88f07c1445bfc59d6846ff6b8c745106bf428c383c91728b2c345ba42",
+    "index_samples": [
+      [
+        16,
+        49512
+      ],
+      [
+        16,
+        4632
+      ],
+      [
+        16,
+        51380
+      ],
+      [
+        16,
+        23903
+      ],
+      [
+        16,
+        1109
+      ],
+      [
+        16,
+        40097
+      ],
+      [
+        16,
+        49454
+      ],
+      [
+        16,
+        8902
+      ],
+      [
+        16,
+        15169
+      ],
+      [
+        16,
+        44334
+      ],
+      [
+        16,
+        40085
+      ],
+      [
+        16,
+        61201
+      ],
+      [
+        16,
+        59783
+      ],
+      [
+        16,
+        47755
+      ],
+      [
+        16,
+        38611
+      ],
+      [
+        16,
+        43912
+      ],
+      [
+        16,
+        9487
+      ],
+      [
+        16,
+        4468
+      ],
+      [
+        16,
+        53830
+      ],
+      [
+        16,
+        28960
+      ],
+      [
+        16,
+        59066
+      ],
+      [
+        16,
+        3547
+      ],
+      [
+        16,
+        42164
+      ],
+      [
+        16,
+        9887
+      ],
+      [
+        16,
+        18594
+      ],
+      [
+        16,
+        6259
+      ],
+      [
+        16,
+        1946
+      ],
+      [
+        16,
+        25884
+      ],
+      [
+        16,
+        57317
+      ],
+      [
+        16,
+        41771
+      ],
+      [
+        16,
+        32235
+      ],
+      [
+        16,
+        40454
+      ],
+      [
+        16,
+        37641
+      ],
+      [
+        16,
+        10152
+      ],
+      [
+        16,
+        6403
+      ],
+      [
+        16,
+        22881
+      ],
+      [
+        16,
+        47180
+      ],
+      [
+        16,
+        47553
+      ],
+      [
+        16,
+        56867
+      ],
+      [
+        16,
+        39715
+      ],
+      [
+        16,
+        47511
+      ],
+      [
+        16,
+        2238
+      ],
+      [
+        16,
+        6927
+      ],
+      [
+        16,
+        43015
+      ],
+      [
+        16,
+        32635
+      ],
+      [
+        16,
+        63205
+      ],
+      [
+        16,
+        24204
+      ],
+      [
+        16,
+        53620
+      ],
+      [
+        16,
+        33734
+      ],
+      [
+        16,
+        36416
+      ],
+      [
+        16,
+        18458
+      ],
+      [
+        16,
+        46899
+      ],
+      [
+        16,
+        58602
+      ],
+      [
+        16,
+        30273
+      ],
+      [
+        16,
+        29583
+      ],
+      [
+        16,
+        28085
+      ],
+      [
+        16,
+        33804
+      ],
+      [
+        16,
+        57713
+      ],
+      [
+        16,
+        20961
+      ],
+      [
+        16,
+        65127
+      ],
+      [
+        16,
+        59027
+      ],
+      [
+        16,
+        46004
+      ],
+      [
+        16,
+        47337
+      ],
+      [
+        16,
+        23886
+      ]
+    ],
+    "observed_base_fields": 1324,
+    "operations": [
+      {
+        "fields": 87,
+        "kind": "absorb"
+      },
+      {
+        "fields": 2,
+        "kind": "squeeze"
+      },
+      {
+        "fields": 4,
+        "kind": "absorb"
+      },
+      {
+        "fields": 2,
+        "kind": "squeeze"
+      },
+      {
+        "fields": 1132,
+        "kind": "absorb"
+      },
+      {
+        "fields": 2,
+        "kind": "squeeze"
+      },
+      {
+        "fields": 47,
+        "kind": "absorb"
+      },
+      {
+        "fields": 2,
+        "kind": "squeeze"
+      },
+      {
+        "fields": 4,
+        "kind": "absorb"
+      },
+      {
+        "fields": 2,
+        "kind": "squeeze"
+      },
+      {
+        "fields": 4,
+        "kind": "absorb"
+      },
+      {
+        "fields": 2,
+        "kind": "squeeze"
+      },
+      {
+        "fields": 4,
+        "kind": "absorb"
+      },
+      {
+        "fields": 2,
+        "kind": "squeeze"
+      },
+      {
+        "fields": 4,
+        "kind": "absorb"
+      },
+      {
+        "fields": 2,
+        "kind": "squeeze"
+      },
+      {
+        "fields": 4,
+        "kind": "absorb"
+      },
+      {
+        "fields": 2,
+        "kind": "squeeze"
+      },
+      {
+        "fields": 4,
+        "kind": "absorb"
+      },
+      {
+        "fields": 2,
+        "kind": "squeeze"
+      },
+      {
+        "fields": 4,
+        "kind": "absorb"
+      },
+      {
+        "fields": 2,
+        "kind": "squeeze"
+      },
+      {
+        "fields": 4,
+        "kind": "absorb"
+      },
+      {
+        "fields": 2,
+        "kind": "squeeze"
+      },
+      {
+        "fields": 4,
+        "kind": "absorb"
+      },
+      {
+        "fields": 2,
+        "kind": "squeeze"
+      },
+      {
+        "fields": 4,
+        "kind": "absorb"
+      },
+      {
+        "fields": 2,
+        "kind": "squeeze"
+      },
+      {
+        "fields": 4,
+        "kind": "absorb"
+      },
+      {
+        "fields": 2,
+        "kind": "squeeze"
+      },
+      {
+        "fields": 4,
+        "kind": "absorb"
+      },
+      {
+        "fields": 2,
+        "kind": "squeeze"
+      },
+      {
+        "fields": 4,
+        "kind": "absorb"
+      },
+      {
+        "fields": 2,
+        "kind": "squeeze"
+      },
+      {
+        "fields": 2,
+        "kind": "absorb"
+      },
+      {
+        "fields": 64,
+        "kind": "squeeze"
+      }
+    ],
+    "pow_check_bits": [],
+    "sampled_base_fields_including_index_samples": 98,
+    "sampled_values": [
+      [
+        7122777674411799468
+      ],
+      [
+        15250885724468968837
+      ],
+      [
+        13569680077664616240
+      ],
+      [
+        2944930239262893008
+      ],
+      [
+        901617287902864396
+      ],
+      [
+        6406398278680835142
+      ],
+      [
+        11948181582351716931
+      ],
+      [
+        18238966246970147798
+      ],
+      [
+        2352045877935620198
+      ],
+      [
+        8822655918539356013
+      ],
+      [
+        4670671324407150712
+      ],
+      [
+        3786527109962288339
+      ],
+      [
+        2427462543934825685
+      ],
+      [
+        5446008879643714048
+      ],
+      [
+        10977717956318154480
+      ],
+      [
+        7040178617782894928
+      ],
+      [
+        18233652420174926096
+      ],
+      [
+        9230366613292210504
+      ],
+      [
+        3394820242293094594
+      ],
+      [
+        1052787859970099044
+      ],
+      [
+        15389031704963126057
+      ],
+      [
+        17425462439178872523
+      ],
+      [
+        11197214665677001584
+      ],
+      [
+        15670969294664067302
+      ],
+      [
+        7834026652543032778
+      ],
+      [
+        9215442341011605555
+      ],
+      [
+        10878224746348514417
+      ],
+      [
+        12423879751084773047
+      ],
+      [
+        13911982988830165150
+      ],
+      [
+        4875469219114495199
+      ],
+      [
+        15490670576744438550
+      ],
+      [
+        9647624599275038013
+      ],
+      [
+        576016082204756411
+      ],
+      [
+        8739032427922301782
+      ]
+    ]
+  }
+}

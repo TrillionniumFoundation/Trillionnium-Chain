@@ -1,0 +1,6 @@
+   Compiling trnm-crypto-primitives v0.1.0 (/workspace/scratch/7318d5f890d1/chain-throughput/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/workspace/scratch/7318d5f890d1/chain-throughput/trillionnium/crates/trnm-sqlite-io-boundary)
+   Compiling trnm-mvcc-fee v0.1.0 (/workspace/scratch/7318d5f890d1/chain-throughput/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-data-availability v0.1.0 (/workspace/scratch/7318d5f890d1/chain-throughput/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-pon-node v0.1.0 (/workspace/scratch/7318d5f890d1/chain-throughput/trillionnium/crates/trnm-pon-node)
+error: could not compile `trnm-pon-node` (lib test) due to 3 previous errors

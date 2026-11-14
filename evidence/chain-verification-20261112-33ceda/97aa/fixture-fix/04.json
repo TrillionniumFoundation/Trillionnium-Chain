@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "git",
+    "hash-object",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/output_reservation_tests.rs"
+  ],
+  "exit_code": 0,
+  "stdout": "0c90eec073d298dd0b69fc43c3ed8810f1975ba9\n",
+  "stderr": ""
+}

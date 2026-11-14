@@ -1,0 +1,955 @@
+{
+  "archive": "raw-observations.tar.xz",
+  "archive_bytes": 248968,
+  "archive_sha256": "5db20537cc9076a673e3f06d59e329efb56acb4775c5438c41a642172d2f8128",
+  "archive_sha512": "f4376487d3351e58a603bdc426013eef32d260daf775565c4cb70447a7163c7b995584578426ca6e77a9a306e1a55831a0ec71f652970ea43ef695f78ca86ae5",
+  "member_count": 133,
+  "members": [
+    {
+      "bytes": 11369,
+      "member": "archiver/README.template.md",
+      "original_location": "/home/qq/chain-source-incentive-archive-staging-eb070ca2/README.template.md",
+      "sha256": "b5f2f8af19f90a639e9c5d2a489a1d3161ea5cb11b41db5b440dcb2aff87222e",
+      "sha512": "bafea9d5730b1665c538dc7f385bdd87bdbc427e10e72a3f4f2e9d1751320ea1c21c6158f944480637db218f8252231e0578699a614f9d35d55ef20614006bce"
+    },
+    {
+      "bytes": 38677,
+      "member": "archiver/prepare_source_incentive_archive.py",
+      "original_location": "/home/qq/chain-source-incentive-archive-staging-eb070ca2/prepare_source_incentive_archive.py",
+      "sha256": "2195a90ced6d5c760109dbf4e2e7a5bc7b01e0aefcde0e8ab18dd15eb394fd96",
+      "sha512": "f6c637db925602f780e2f799f26f325b04647318243da420dda94f277d954f17cdb45d7b3c1956638e85bcbcbe58578642edf6ac23137f9a5abbefb4bbbfb127"
+    },
+    {
+      "bytes": 8889,
+      "member": "drivers/freeze_and_validate.py",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/freeze_and_validate.py",
+      "sha256": "dc0975f0d475ab0cdb5d1251554284c0d233e01e202421b61890d3ee6e2d35d1",
+      "sha512": "b0e42b1ef87722f9b8318b486bef957561665f840504fe7973eb5fa18d0224bb139da3109a73a21cf534792f73822e0d537e873665c9c4dd06df35722a43b651"
+    },
+    {
+      "bytes": 14811,
+      "member": "drivers/source-validation-phase2.py",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/source-validation-phase2.py",
+      "sha256": "0d8fce3e3365f5b0ada0aca3b15bf1c04111bcb082421a8bf3750a0fa49e05ed",
+      "sha512": "6121672aec3569f0883a600fb3499aad79becbb444d9f164c72af36dde01ef96955b8750619a2009b29811233c4a407e498f2d73bcaa4fb0986db94ced37af3e"
+    },
+    {
+      "bytes": 199212,
+      "member": "historical-v4/native.json",
+      "original_location": "4a59131acdf9b8c3210c9b6cd728aeb6c48291fc:evidence/chain-incentive-counterexamples-20261112/node-genesis-split/native.json",
+      "sha256": "07c11a04880eab6303a66000d23082748a8f8568f8e1defe92d91c0a8b30db40",
+      "sha512": "4494e176c2f56d912cdce91c7ca540e65957ce525b8918d610e7bffac622cd78449fba67e22cc51ec1e439c3cde40b69a5772294fe1bcd0c92d72c6dcbbdbe7d"
+    },
+    {
+      "bytes": 459,
+      "member": "preliminary/preliminary-check.json",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/preliminary-check.json",
+      "sha256": "9b8d1119412761d05fd8097f81d65a877bbc4f2eaa428b19df2f1fcc511be5c1",
+      "sha512": "6b2e30fdb94f54eec6a42347cc6766a71986be1533fd9ac3985986e71cb85d5e72190208ef72404ef2f12a2e8bf27bb49c40d1c3d5517d3a37f56a383f1ab190"
+    },
+    {
+      "bytes": 2893,
+      "member": "preliminary/preliminary-check.log",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/preliminary-check.log",
+      "sha256": "9f45b15a9f8bae7040987995d97a731de461b25c19e5863ff1059bf90dd9a8b8",
+      "sha512": "98af49817a73c70c7e32ca4c7247c407d071ece8d298011e096cc07216abe4bd967c6f2928b16cfbe7b24395218e8e649022a1f67aca1948c00b12e3e595d6be"
+    },
+    {
+      "bytes": 4742,
+      "member": "preliminary/preliminary-node-test-compile.json",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/preliminary-node-test-compile.json",
+      "sha256": "53b2af835036878c2f279c929dd6685b558f8914aafa9b54dfc1c39ceb434ff4",
+      "sha512": "2db345750f6624cbaea92658fdd010a1a8c86e55a1fd769ba59324381c83972c1141351cb07388f7d0ee234bb82a15370f8199ee4a017872921d964d0e7fbf21"
+    },
+    {
+      "bytes": 4100,
+      "member": "preliminary/preliminary-node-test-compile.log",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/preliminary-node-test-compile.log",
+      "sha256": "f743c33ddc7b024c3cebd6cdd5e7607403c9e75e7e286eddf4f27c60c3cd161c",
+      "sha512": "8fe857877b6f9a9b3f723cae173f776c4805f26a023de480d505f35a9adbfd39e535dd7ec2b214f5236f4634fd4eaffe10dcaef0543824a96bee4a83d3bba97e"
+    },
+    {
+      "bytes": 1407,
+      "member": "preliminary/preliminary-task-test-compile.json",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/preliminary-task-test-compile.json",
+      "sha256": "5e747769518c0c2f5ea0a05f4a88378f66c023e16d332da06a31915c93b7cff0",
+      "sha512": "be8d042ff250b254b0d2f87b0a1e59331bfb8b35db9f213c7f367534d9019f012f02baf85f34db0101a52fabd9b8860dca9a4e13513a5483cd807b1e9c7e4f4a"
+    },
+    {
+      "bytes": 859,
+      "member": "preliminary/preliminary-task-test-compile.log",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/preliminary-task-test-compile.log",
+      "sha256": "57f7d9381a86196d99512894c6e34d3949ff2b1169448cf3930decb6f6c07ecf",
+      "sha512": "547bd038eac295cbb122abb9564070c6a1f7284a4aa8e3df8eb85921f349e098a95b3839e918b3d50f283635a1e957561230b4e2698924c9a443022ec2fe8d0d"
+    },
+    {
+      "bytes": 46412,
+      "member": "reader-history/01-read_source_incentive_native_v6_final.py",
+      "original_location": "/home/qq/chain-incentive-reader-staging-eb070ca2/read_source_incentive_native_v6_final.py",
+      "resolved_from": "retained-file",
+      "sha256": "331be2321efb6ffa5b740ec338349e733d4ad54c94e2caca5c03d8f12cf13212",
+      "sha512": "92c973a8fe769fea53ad4593447f4ba1808aada8bac670f0b60a6e670a7895d06efc06d126261fc73aec68fc0e335f768fad3267cab5044634e788654043c652"
+    },
+    {
+      "bytes": 46422,
+      "member": "reader-history/02-read_source_incentive_native_v6_final_v2.py",
+      "original_location": "/home/qq/chain-incentive-reader-staging-eb070ca2/read_source_incentive_native_v6_final_v2.py",
+      "resolved_from": "retained-file",
+      "sha256": "d908324e50158b24ff4f9d810884b44ecaa2f5c2f9ab3484845c97da4610d7f8",
+      "sha512": "ed7dc94dcf64d53a1ac8b17a25aba34f51293af15a56c62efeed49ce2f03838e2dabbd084ddda2e52605f959669cf822fe65a97bd5d5c481990fd7113f6153eb"
+    },
+    {
+      "bytes": 6743,
+      "member": "reader-history/03-verify_native_v6_legacy_release_rejection.py",
+      "original_location": "/home/qq/chain-incentive-reader-staging-eb070ca2/verify_native_v6_legacy_release_rejection.py",
+      "resolved_from": "retained-file",
+      "sha256": "f1b025e6cb010e9ad89eea435397157a6686a3f145a92423c656e3ab7e93dcaa",
+      "sha512": "f9b234a79b3872a0fef60ba449c9ea663d060c084121733ffc9f25cfa72b899b178142ee02b84393d0ae5a55ce565a5099cb626ced24f46c618efc24c39fe09d"
+    },
+    {
+      "bytes": 1076,
+      "member": "reader-history/04-native-v6-independent-readback-frozen-source-1.json",
+      "original_location": "/home/qq/chain-incentive-reader-staging-eb070ca2/native-v6-independent-readback-frozen-source-1.json",
+      "resolved_from": "retained-file",
+      "sha256": "ce3c60faed7e5a8d384ad01975eeb84a10e7a355955501829ddf691dcb071113",
+      "sha512": "336bc94720170bca5e90b04df01b648836b8227500b5d1c19f350b0feec081f89d654b12a84a946ae707a12359e46b37f7cfba5e3fc18cf6a5f14eaaaa64cf06"
+    },
+    {
+      "bytes": 30276,
+      "member": "reader-history/05-native-v6-independent-readback-frozen-source-1-attempt2.json",
+      "original_location": "/home/qq/chain-incentive-reader-staging-eb070ca2/native-v6-independent-readback-frozen-source-1-attempt2.json",
+      "resolved_from": "retained-file",
+      "sha256": "b9877567e87528e78c6a9d63e2353fc1597387a84e72ee1c92c2ea89c16d48c8",
+      "sha512": "e795766a3855f33e2be6618e38ae88e8c59cfe44ccfef44e0dc147d86df4f732ace7cff67b5ea5eab05f1374056c5a0e72c9a874367c4fd5f231510286e63fa6"
+    },
+    {
+      "bytes": 1295,
+      "member": "reader-history/06-native-v6-negative-readback-frozen-source-1.json",
+      "original_location": "/home/qq/chain-incentive-reader-staging-eb070ca2/native-v6-negative-readback-frozen-source-1.json",
+      "resolved_from": "retained-file",
+      "sha256": "a38c565e494abde6ca4ec0696ce317bb72e897063c86100c6a071cdfe7da421e",
+      "sha512": "3af0edab1a8061d8a78456678a845f052fa63dda273a027ba1ae28416ad91cc08ab48ed794d9bb6d989ba88d6836fafc9059b9505cb5481a1a2acc2a86eec323"
+    },
+    {
+      "bytes": 1719,
+      "member": "reader-history/07-native-v6-legacy-release-negative-frozen-source-1.json",
+      "original_location": "/home/qq/chain-incentive-reader-staging-eb070ca2/native-v6-legacy-release-negative-frozen-source-1.json",
+      "resolved_from": "retained-file",
+      "sha256": "795950043c876f436ed75f25ac3d01b2fd8ac725883179bdd94849164a7a494d",
+      "sha512": "266aa71a33e195b1b09cd432bc66f26f1bbbd3dfbe5fa2feee9ea648acb21b141d081f13777661eb4660d0fb9a3b1b49b7dc13658a6c2c773117718bba031e15"
+    },
+    {
+      "bytes": 0,
+      "member": "reader-history/08-native-v6-independent-readback-frozen-source-1.stderr.txt",
+      "original_location": "/home/qq/chain-incentive-reader-staging-eb070ca2/native-v6-independent-readback-frozen-source-1.stderr.txt",
+      "resolved_from": "retained-file",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha512": "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e"
+    },
+    {
+      "bytes": 0,
+      "member": "reader-history/09-native-v6-independent-readback-frozen-source-1-attempt2.stderr.txt",
+      "original_location": "/home/qq/chain-incentive-reader-staging-eb070ca2/native-v6-independent-readback-frozen-source-1-attempt2.stderr.txt",
+      "resolved_from": "retained-file",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha512": "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e"
+    },
+    {
+      "bytes": 388576,
+      "member": "reader-history/10-native-v6.log",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-1/native-v6.log",
+      "resolved_from": "retained-file",
+      "sha256": "9ef825930a18ff006152633e0b31ed24045982603213346bda825ceeaa73a562",
+      "sha512": "8e186a0b896cf7a1d0b38ec8bdd37c18897224c1c794b7283d61cabf9a6d4362521384f5138c624f8cf1c24410b9bfef231498122dcdc9d4e167f66b172afecd"
+    },
+    {
+      "bytes": 33519,
+      "member": "reader-history/11-source_incentive_reference_v6.py",
+      "original_location": "/home/qq/chain-source-settlement-20261112-eb070ca2/scripts/experiments/source_incentive_reference_v6.py",
+      "resolved_from": "retained-file",
+      "sha256": "a1a71366f5a56227fd904fe4e8f9d4f6cb8dab147a5bc91518365cb5b6b3e478",
+      "sha512": "a262909042f1d4835b60d964483d23d07baf16be52794518bded7b6b404a3a4f974f09f44f456c902bfc716c0332d6af8d684410369bc6fcb4f59ef57e514ce9"
+    },
+    {
+      "bytes": 17692,
+      "member": "reader-history/12-SOURCE_INCENTIVE_RESEARCH_CONTRACT_20261112.md",
+      "original_location": "/home/qq/chain-source-settlement-20261112-eb070ca2/docs/development/SOURCE_INCENTIVE_RESEARCH_CONTRACT_20261112.md",
+      "resolved_from": "git:8cb8b743bccd93a5fac49a072990d18e0d4b4a21:docs/development/SOURCE_INCENTIVE_RESEARCH_CONTRACT_20261112.md",
+      "sha256": "db4c6ebc27f31c929cdc4ca13e6bfddb04ca15f19c20f64ee817ed23620c5167",
+      "sha512": "5134009c6eb2eae4848c6e9b73f02ee1c815f337c2b9c3c5c19cd98fa2981e048f37f8b1d848d728bfc6d1f4e0a54b09ae7a5f5dddace15a8fb9ae06aaf4e504"
+    },
+    {
+      "bytes": 7923,
+      "member": "reader-history/reader-artifact-manifest-frozen-source-1.json",
+      "original_location": "/home/qq/chain-incentive-reader-staging-eb070ca2/reader-artifact-manifest-frozen-source-1.json",
+      "sha256": "818c7314c92ce20b94e618dcb6c22c7a1f181e31a45a33cc26b77a62726c4ca2",
+      "sha512": "be3255393d2262a4d707e6a70b4aa2c836403abf42a3053438e9797cbf2e2482d8d46f86509876bcc1eac6b9cb2d2dad6f9c58afc66ba9fbca060d4b00297ec0"
+    },
+    {
+      "bytes": 2236,
+      "member": "source-1/build-native-v6.json",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-1/build-native-v6.json",
+      "sha256": "6e040af00534cb49f4753cf77aedd4aa545e42e60dd9606c27d51a067c29ed0d",
+      "sha512": "ab4623174eb3cac41ac3054be64d4a33fe9998ed05108987d0b858012b89ffecb97ce127f00e895a2acad8fb8cfc2f0ed0c242ab71129004950881db3ab94325"
+    },
+    {
+      "bytes": 107480,
+      "member": "source-1/build-native-v6.log",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-1/build-native-v6.log",
+      "sha256": "c39d16fcbc61eed9c9e33f7b35019d54d8c933b6abf7080544907c16fb92cc23",
+      "sha512": "322bc6e746a4dbf3ebeed8954867543ad4ddf5ac21fe8c9e33f4edff6406d3d51d4e8277aa324f817a101a31c1a09b33d3a49d9f3906ff8497f71778b9efee21"
+    },
+    {
+      "bytes": 2104,
+      "member": "source-1/fmt.json",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-1/fmt.json",
+      "sha256": "e64b266881581ac4296c14457e848544d8b1a84e6d77463caebf29042790f81b",
+      "sha512": "5283197668402ac045abfbb37a07032af2eeb12817415ca1c4a0e504c3a981d5d303e979cc79dee0477e5c509f358c93439d908427856a314ae14811dddaf91d"
+    },
+    {
+      "bytes": 0,
+      "member": "source-1/fmt.log",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-1/fmt.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha512": "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e"
+    },
+    {
+      "bytes": 2109,
+      "member": "source-1/independent-math-self-tests.json",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-1/independent-math-self-tests.json",
+      "sha256": "214c26333ddaafe76aa3cd80cd99cdd01c550fb98ddc33f936d138d6312f28e1",
+      "sha512": "4d3c8f7cfa1bd7dbbf917de2c6264abada83650282f69b990d2d7b3d7fa9dc78bc50c96605a85b13f70022d7087ba661e2651f9ed98f7966de4d331f958a78e8"
+    },
+    {
+      "bytes": 6014,
+      "member": "source-1/independent-math-self-tests.log",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-1/independent-math-self-tests.log",
+      "sha256": "c006440cc5d9bee18a8b829e72449e4ce41f6c80c3ce138c54071047aee98fdc",
+      "sha512": "2f46be6867a853f5a49d02616a1e7097f3af21669d4cd5fdc3a276517fdf46ff9c801190da7496ea7a832c7009b4f69ac0d071d4b94e01b80924395e4a66afd6"
+    },
+    {
+      "bytes": 2182,
+      "member": "source-1/metadata-all-features.json",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-1/metadata-all-features.json",
+      "sha256": "baedda5c51ced72626894c40ebb148d8a58a28f1b1e4b31ad6ceed27e031b840",
+      "sha512": "3086e36f74f2224368b88b146c4df65d6919a630243023e0bdd141f12224f2249253d90c1d33df9fcd0ebaa3840525c5f8e5dc3d96508be51489ab3ccb48ea8c"
+    },
+    {
+      "bytes": 864463,
+      "member": "source-1/metadata-all-features.log",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-1/metadata-all-features.log",
+      "sha256": "c8618b543fe3860d6820618d8c922d1305d41d917b7fdc9705ad0f24dabd5219",
+      "sha512": "68916383ee5b99ba86fafc3ea42490c908cd0f1ed0873e3a7080f839170ce76444040bf9def1a7d8589cd3b3f9730b9a18fa22322f20b6406a26837bd7b4991e"
+    },
+    {
+      "bytes": 2147,
+      "member": "source-1/metadata.json",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-1/metadata.json",
+      "sha256": "ced319e19ef1667d274bd52bb18b1b69ececaf44e87501ed6d8b8898721e41f8",
+      "sha512": "f71e97ef8f06855af905c18fb11b64451bb59acfd29cbc966da0b56a878ab4115b8a5b50a21e36ed721539cee33d7c32c3429cbc303630e396b3e25ee7ab280e"
+    },
+    {
+      "bytes": 849492,
+      "member": "source-1/metadata.log",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-1/metadata.log",
+      "sha256": "07f9c6bf25c157d84a6370ebb909d402b47d1db385a1fa89e5f552897ac2937d",
+      "sha512": "c29e4f2e10abf47839e77242e4fd1035321cb2cec6a0be7583f53da90531146f026a3a578688949c7f6377cd5bf7f7f7b087983b2e479299996fc04dc1085de6"
+    },
+    {
+      "bytes": 2216,
+      "member": "source-1/mvcc-fee-retained.json",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-1/mvcc-fee-retained.json",
+      "sha256": "dd9a817d5177b0b9db6cb2723869da26541d3a934e85d396f534ebd6ec43a3f8",
+      "sha512": "76182c086939ea0720b5ec7b8fe8522320e0522d44df323f69c00c3e8efb03d694c4257b7ff5e72b9731179e32825affd4718021dcbd731ea0db266b6f6372db"
+    },
+    {
+      "bytes": 22351,
+      "member": "source-1/mvcc-fee-retained.log",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-1/mvcc-fee-retained.log",
+      "sha256": "c14935d57e3c4a110229238a27eaee0e29a0dd88595c2015e2f065d66562259d",
+      "sha512": "ec60456f12d6944e02e192d8d9a44f4e4a6e4c25dd0e51ac13eea407d0cd1632a6f51bf685bc4f0a755d3631463fb29e0d7e7392fa618cad8d0eb1a63ad68b27"
+    },
+    {
+      "bytes": 2291,
+      "member": "source-1/native-source-errors.json",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-1/native-source-errors.json",
+      "sha256": "4299f30176d0b08734f5f3c585fc130f6e8ef1eb925996d15122d771f451d09d",
+      "sha512": "05670b67cd6b7e0b02772553a3bc7320248cfbacd32457c1b1ed25286de3798bc25ec3cd97ef5070de4ffcc94c9a2ece90416e50789dedb7fab95494f1d4981c"
+    },
+    {
+      "bytes": 1261,
+      "member": "source-1/native-source-errors.log",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-1/native-source-errors.log",
+      "sha256": "b3049d20bc30ce4c960ac2c9d60cec74c1a7852432ff5bbc04b10d715bca813c",
+      "sha512": "02ae5e9d5422f28ecaaacfd590d13ce6d5e1f23f7368c42ea748f4ba111da96f83fef516151418a7930fbf4b9ff3112a77ed192194bf39d4dc721ec59d328230"
+    },
+    {
+      "bytes": 2247,
+      "member": "source-1/native-v4-retained.json",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-1/native-v4-retained.json",
+      "sha256": "9ffe4a13f533740e5ea4d8a982fc6265d99ae7ddc5a38573877c635703325142",
+      "sha512": "b1505fdcb54537763f84aa9bf8de06990f034dd1300d9c436dc827cfb22751fcb3492ceef7a7bc8bd9bd7d9dd7f44933c58fa1cb45be1eb08b2009d3d45ffd0b"
+    },
+    {
+      "bytes": 199465,
+      "member": "source-1/native-v4-retained.log",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-1/native-v4-retained.log",
+      "sha256": "666bac4acb29a2d3691d994b2965878208ba4fe8ddd2567162ab25f954b4cb90",
+      "sha512": "eddad0938efe0b63cc4e8efb38169a45d6d8d1cbf45801e2d7f7cb9bb35fc0969c74e639aa87e09581dda1bc93660fe40deca60c51fc0d1b2948fa107a1e7cee"
+    },
+    {
+      "bytes": 3806,
+      "member": "source-1/native-v6.json",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-1/native-v6.json",
+      "sha256": "7cfe09021cbcbbd3afb976b68a8431d223388002eeb57619a7c921bc3747692d",
+      "sha512": "6016ede1c141b26db5b4f223a87d9df17cf93df7fe68adc82ce3413451fa0d832a8f4349a86587d38e65da4df39947cee3430c78e868bbaaccc6af31ec4294e8"
+    },
+    {
+      "bytes": 388576,
+      "member": "source-1/native-v6.log",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-1/native-v6.log",
+      "sha256": "9ef825930a18ff006152633e0b31ed24045982603213346bda825ceeaa73a562",
+      "sha512": "8e186a0b896cf7a1d0b38ec8bdd37c18897224c1c794b7283d61cabf9a6d4362521384f5138c624f8cf1c24410b9bfef231498122dcdc9d4e167f66b172afecd"
+    },
+    {
+      "bytes": 2057,
+      "member": "source-1/repository-links.json",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-1/repository-links.json",
+      "sha256": "2a23daad0205c8b74bb8fbc6ccd9feedc59d368763547a1e539836b9fbc4d91c",
+      "sha512": "bd93cb764bfdb992c0335754727a5a8cd06936a9be30c2c4f9ec5735a3889db5eb174ea32ed89bf0c0ade38284726f972a5d238ade5b281f29a85a41bbe52fdd"
+    },
+    {
+      "bytes": 307,
+      "member": "source-1/repository-links.log",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-1/repository-links.log",
+      "sha256": "b091af0094276a00abbc55916d0a798776a509799d62e4544373eaacd09a5354",
+      "sha512": "9bac370471d1715339b8b95b8ba30683e37788ce3053fde9cb04ad8caf6dadbd0c45b397e1cf9abf93ea271e1b4ddf8a5d5e82beceb9bbf5b264b9eea23b1492"
+    },
+    {
+      "bytes": 2066,
+      "member": "source-1/source-corpus.json",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-1/source-corpus.json",
+      "sha256": "32c1919d8b48f688e49aecb7df47f73465becb291050f1455b99af94c5a269f5",
+      "sha512": "d06f83392269273ce2340c1052ffc8f60f5bc53378124167fecf7076f2504e75c69a804d6e4686ed9f2d05fe77aab3d4f7f7c21b1b979da763c9777f772e6af7"
+    },
+    {
+      "bytes": 558,
+      "member": "source-1/source-corpus.log",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-1/source-corpus.log",
+      "sha256": "a945d9a542993f7be226b940b6745512b033675deee40b2b510887e0fbebe1a3",
+      "sha512": "a906ffb11e19499a30932d735224b4873b62d54d41f232a98dc03248c1a2870f985056cff2bf36c68f250a5823b7f1328cf5de3ea17663d2c279db2a121d0073"
+    },
+    {
+      "bytes": 2152,
+      "member": "source-1/source-identity.json",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-1/source-identity.json",
+      "sha256": "3b71fd641e80f65d3f40bd4648259008001eed2be3f7f1bc356efffd3beb3467",
+      "sha512": "771fddfe7b6cd7796a19182243b4457874ebcb6d89f33edaa4ef72da8c30fcbcca7737acb3376df92c474a13f2efa38ab00421d2345e5b444fffb61fa2cdb3f4"
+    },
+    {
+      "bytes": 423,
+      "member": "source-1/source-identity.log",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-1/source-identity.log",
+      "sha256": "a5e856bec582468589ad72144d3fcb6f02225b1d6371ba84b2dc4cc36d4db450",
+      "sha512": "20ab81c3ae91ff7b1beeaca559baf5790a751f24c632a3ab2fb2ca0e7d05bc15ab655dc5be6a55ed32758f7d5c58871012dfa04f47341337cbc9248ff56022db"
+    },
+    {
+      "bytes": 2075,
+      "member": "source-1/source-integrity-negatives.json",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-1/source-integrity-negatives.json",
+      "sha256": "b76534a8aaf7cdcb93faff182937260b88cf221f6dadafcd4ca3c40fb654aeee",
+      "sha512": "2093ba31c7621dc99bbb65ed0d9a3af68366af0c25b5579dd9106ce82487312331313f1909baffec580457400860100d4a45fa27d8ebfd0da7b31fa800c01ca3"
+    },
+    {
+      "bytes": 6898,
+      "member": "source-1/source-integrity-negatives.log",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-1/source-integrity-negatives.log",
+      "sha256": "73f600fc695d2d7c1e1f0881a2d8f1d13fe4061e6074ad3cb624d82b9991cb3e",
+      "sha512": "1a010aef663a518ec43ce701a913ab97ea216ba889208bc231bb538989e65546e5319ea2cccf7c0b1bbbb5d055c1f235fbbc1e4aec6557b1566efc87f9af5c35"
+    },
+    {
+      "bytes": 11703,
+      "member": "source-1/source-validation-summary.json",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/source-validation-summary.json",
+      "sha256": "fc4ca78f9beb29cf3f74f7d9a0ddd59cbafe36be036cb00fbe22aa54704b95d6",
+      "sha512": "77707787e336e61920f10dfd6a6530be7aa66fed0de30da2465387bc3d406316a7b87c89f223a9135d35b13cd93775d13e71c869bf45854b24ef61aad2980546"
+    },
+    {
+      "bytes": 2214,
+      "member": "source-1/strict-clippy.json",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-1/strict-clippy.json",
+      "sha256": "2be6ed03e544a506a2c80b5d5ef70be8888a986d71509ae7008f3cafd90b57b0",
+      "sha512": "fd2f93129b4c1021f16b430ac24d4e4a61ae30c0a24d8f72163a231cae43100198cee22de52955aa90a1f3f158fc9c7e3bc014310cacf9042913bb01050fbe11"
+    },
+    {
+      "bytes": 4985,
+      "member": "source-1/strict-clippy.log",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-1/strict-clippy.log",
+      "sha256": "ddaa0fc7d3ef4c4b6a132accb4c545ba56e9e01281524a7d9f746e23d6467264",
+      "sha512": "ec0cc6865e1b4986b86b2de3fafd39163adb471b1b61ecf777583e51e7868f8a63295a98d24ea1742dfd8a68837feeac409f267b598f30e036edf969a5a86541"
+    },
+    {
+      "bytes": 2220,
+      "member": "source-1/task-kernel-retained.json",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-1/task-kernel-retained.json",
+      "sha256": "15ad6e621653bf7c8799fa199203c1dfaef0c8c5817554dc984c249f144b39c5",
+      "sha512": "a2ec23011c3dc63ef2f375ab41958a24d890bbbb7d006046dfd57e43c6d5fdbcb5361c0c9a5ed018a0db5e909d472cf0f24065546ea047aebbf1156a3649d1ad"
+    },
+    {
+      "bytes": 3411,
+      "member": "source-1/task-kernel-retained.log",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-1/task-kernel-retained.log",
+      "sha256": "66980790e4dd4c99d33ba574836c909137002acab87fcafed5443469c0f98839",
+      "sha512": "3d5c24a5c16162da96a8318cafcf167317b5296f68c7fe842355e9282a28e845b727737024bd31e381d6b64f4fcdd6e661e9c57ee2bc509e0be63792539d93d0"
+    },
+    {
+      "bytes": 2083,
+      "member": "source-2/authority-source-negatives.json",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/authority-source-negatives.json",
+      "sha256": "36db551aba784687a57682e7fd6703a023c1bccc87f7ae46738f6c52aabb9733",
+      "sha512": "f38cb08bb4c3c3925f24a2675c5e7f93badc543f68b346e496bfc8bb68505750241c7a09c511134cf15e225114395160e5269081b4b9564254b1673a9fc64190"
+    },
+    {
+      "bytes": 117,
+      "member": "source-2/authority-source-negatives.log",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/authority-source-negatives.log",
+      "sha256": "f10ec9ad7e06e8c5f41a75ab1f59b65505def0a0a9d05a795a2c958278cdb60e",
+      "sha512": "ac91dd072944b171142217f78ef919ce0ec93aa7738789e98268aa96733bbb8556745e81391b2fc0e4c7fd962f547705613532c8aa9b6fe35617783c3a3592e3"
+    },
+    {
+      "bytes": 2079,
+      "member": "source-2/authority-source-register.json",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/authority-source-register.json",
+      "sha256": "5b0824cefa5050c2ec6e6927e1f736890b1a30cf134da3fd126adb995225fd3b",
+      "sha512": "3684788cf174fc2ae0484fd86e8a06f0f47fcc3004c432f863123fd50ebcea5c94225a69a0a2960f2c0b6f4e393482aa0e0121be8a072d5c8e5bebeac1e62de9"
+    },
+    {
+      "bytes": 13223,
+      "member": "source-2/authority-source-register.log",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/authority-source-register.log",
+      "sha256": "4aa9ec014905b173dc48afb5f0b18633c17544eedc49b02f655888d20d10d68c",
+      "sha512": "bbcae84b000d6b91c2c6b013f2804d224c77bb26aebffb398ccb6ce98f009b17f9eddd60e76ebe37ca5bcf613152d4a0f1373576f88de8bd0ca13dd0073b8ece"
+    },
+    {
+      "bytes": 2235,
+      "member": "source-2/build-native-v6.json",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/build-native-v6.json",
+      "sha256": "bc30d019b7ab8bb4b996d9a475e765afefee040df47808d2a375ce80ec0ac173",
+      "sha512": "f27cb62734ea4cdb6e57c9841221dbe0d5302f5d80b759319fe900cd78150656c0450594cd8e3e58a51804d279094db86edd15199fed94a7d43b58d23a909cbf"
+    },
+    {
+      "bytes": 107335,
+      "member": "source-2/build-native-v6.log",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/build-native-v6.log",
+      "sha256": "196a0294561e367dd65200efc297fddbe3956ee6a656af56f66f2584f31b9977",
+      "sha512": "362e2c4fee65a5d1e77e63cc153d3f40877661e21cf1ed2134fe2355272f8f95a250060ce3bdd1a699325993f68631ffa1df77a86d5e76acf8c339cfa4c91146"
+    },
+    {
+      "bytes": 2105,
+      "member": "source-2/fmt.json",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/fmt.json",
+      "sha256": "f53c0e7c88970b0d2c25abcadb3732efc1df91b61066f6c06ca43a34301535b1",
+      "sha512": "cd369e2fdf8eb638b42287f15ed90134097dad1213e0d1114f4b90479c06d43c436cb2af6e645f484c747283000cc2aaea36e8bbc67a4ff64aaf8288113b8ff0"
+    },
+    {
+      "bytes": 0,
+      "member": "source-2/fmt.log",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/fmt.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha512": "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e"
+    },
+    {
+      "bytes": 2109,
+      "member": "source-2/independent-math-self-tests.json",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/independent-math-self-tests.json",
+      "sha256": "96c6d1ed2dd72e76f749b47f566ddedb8e4f2f2094728d21dac06be805721aae",
+      "sha512": "8dd7c1c4f525243a8d6d9c2f5134c8bde1fb779e6c7d3bd008ac5a2174d9f371d76fb9f175c020e06e47eaa4bffeb27cc43ab863c7f100e1695426579bb43942"
+    },
+    {
+      "bytes": 6014,
+      "member": "source-2/independent-math-self-tests.log",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/independent-math-self-tests.log",
+      "sha256": "c006440cc5d9bee18a8b829e72449e4ce41f6c80c3ce138c54071047aee98fdc",
+      "sha512": "2f46be6867a853f5a49d02616a1e7097f3af21669d4cd5fdc3a276517fdf46ff9c801190da7496ea7a832c7009b4f69ac0d071d4b94e01b80924395e4a66afd6"
+    },
+    {
+      "bytes": 2284,
+      "member": "source-2/independent-native-readback.json",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/independent-native-readback.json",
+      "sha256": "76bfd6f7ea644959d030fbad76b513517c37ab868922b5cdf3c18b4541935d01",
+      "sha512": "2db908d4ea9b02bd6d78b9c753352c3e79de7322eb746483b8ab8f495cbe2cff33c795faf50c08c056e7c3feb9e8c458ddabdad5905489c900befe64311d86d8"
+    },
+    {
+      "bytes": 30596,
+      "member": "source-2/independent-native-readback.log",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/independent-native-readback.log",
+      "sha256": "10c65b732603f7021f1cc5561e35ff230232856b09435770896294d566d50cc8",
+      "sha512": "47b798f9658236602eac013ee0c5fc9e1aa25b7dda6147c5a6c144ef69622a3805061a2727d9a1d8099af86ce78e4e645186665cf6fe0a01245341e26b7ae59b"
+    },
+    {
+      "bytes": 2182,
+      "member": "source-2/metadata-all-features.json",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/metadata-all-features.json",
+      "sha256": "eff0f012fca23584debdd8da13829d3aa6a623c2e910365e3423b9fa627923ca",
+      "sha512": "fd5c3b07a2b17531cb56f7ef0f2c886af506672ee4aa9af5acb9661a569a6ef0667c29f38c3c349a0c0e7a99d78b3f93d87f99db045bb9ff345fc92967bec0ab"
+    },
+    {
+      "bytes": 864463,
+      "member": "source-2/metadata-all-features.log",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/metadata-all-features.log",
+      "sha256": "c8618b543fe3860d6820618d8c922d1305d41d917b7fdc9705ad0f24dabd5219",
+      "sha512": "68916383ee5b99ba86fafc3ea42490c908cd0f1ed0873e3a7080f839170ce76444040bf9def1a7d8589cd3b3f9730b9a18fa22322f20b6406a26837bd7b4991e"
+    },
+    {
+      "bytes": 2147,
+      "member": "source-2/metadata.json",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/metadata.json",
+      "sha256": "1db7f0379cff7f8a9f610c6a6e675ab9edda49e82529bd319bf0da3417ffa821",
+      "sha512": "87809c5e9653ee29c2134acf7ce1ac3c397ea22af12be6134b8788f738ff36115653d7bee61cd179fe57815795799f2f89f1cac8c1ac8390755e5c4aeb5f1672"
+    },
+    {
+      "bytes": 849492,
+      "member": "source-2/metadata.log",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/metadata.log",
+      "sha256": "07f9c6bf25c157d84a6370ebb909d402b47d1db385a1fa89e5f552897ac2937d",
+      "sha512": "c29e4f2e10abf47839e77242e4fd1035321cb2cec6a0be7583f53da90531146f026a3a578688949c7f6377cd5bf7f7f7b087983b2e479299996fc04dc1085de6"
+    },
+    {
+      "bytes": 2216,
+      "member": "source-2/mvcc-fee-retained.json",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/mvcc-fee-retained.json",
+      "sha256": "cb8ac2d01cdce59876e9a4ae9b2a4e06c8efd546dc37fc9affd8e42975b2b0b3",
+      "sha512": "771ff6e6cf9162b3e43723d84f56f1f7111627c1257ed26ab8b915ca87693a48a19f3d4adbdbfb40907ea148f365cc25abdc4f51130f362e8cb71ae8e68e7764"
+    },
+    {
+      "bytes": 21747,
+      "member": "source-2/mvcc-fee-retained.log",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/mvcc-fee-retained.log",
+      "sha256": "12198da07b1e36e4ab9f3d6cf9069c7323380c483a00c495052f366bc01d9763",
+      "sha512": "94564bfc0cbe956f033f7e2cfed37a032bdf7cd685c20e107fa9c1d3c8ba5774a4fdd473ac3356601596b9e48df77f8c507118bf5334209332ae35e140e9d523"
+    },
+    {
+      "bytes": 2240,
+      "member": "source-2/native-error-registry.json",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/native-error-registry.json",
+      "sha256": "58ec9cc14f54f672606c90877a075747078ed4ae2444073eaf87a4c262f08615",
+      "sha512": "612b20236549338a848e200b1e9395908f0fe81adc0d8043e138daaa2bcfa84ccbde13f952bda95631961af2c003e35229c0d1ce32d65ce98269f82a3f10c221"
+    },
+    {
+      "bytes": 2186,
+      "member": "source-2/native-error-registry.log",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/native-error-registry.log",
+      "sha256": "5c126838be42de1316f3efc487d38d08152083d1a6f37d520e37e6a819a81bf8",
+      "sha512": "33d1352f66886682113373c48035715565bfd26ac1761452a51ea0400d66d31c7ab5fa712f669c5aecab96e6dbcfe38fc60a10be627e128a2359e1163b86bc02"
+    },
+    {
+      "bytes": 2247,
+      "member": "source-2/native-v4-retained.json",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/native-v4-retained.json",
+      "sha256": "d871a47f20c831f9b8b1402a2112e6ae9889ad012e2fdfc42847f844a71784f5",
+      "sha512": "1291e2d0ff03eb27f4498276fdc99cb37ad65f82d99466e5adaf9784bcfb9cf7cf4eb4104d627c53908ce03d5300cff9f76e7b5f2916a6421b5dbda055b6bb25"
+    },
+    {
+      "bytes": 199344,
+      "member": "source-2/native-v4-retained.log",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/native-v4-retained.log",
+      "sha256": "865bb808c66692d26480323ee4d0c31193eace8f4358a9843bdd19e9b3fa6f85",
+      "sha512": "46474d91f99e6098e55332d449c0de9123c1ac3314f4142feb2b6f635927ea5c506dcd34a7857c04cf095e9c65ea2e79399c066e6c5c0c8c86d28cdf2199aff8"
+    },
+    {
+      "bytes": 3805,
+      "member": "source-2/native-v6.json",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/native-v6.json",
+      "sha256": "b9bc56c320b795fa5baa1066782d15248e7cc04ea990198726cbcf426605f78a",
+      "sha512": "af57712130b500968b58ecf7a2a590f95e3f518b25c6f935edba2efc83748dc63b726a6993cdc148fa64bf84851db49b4b60dba2f79408b5dcdd1441c78428c8"
+    },
+    {
+      "bytes": 388762,
+      "member": "source-2/native-v6.log",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/native-v6.log",
+      "sha256": "a9cffa09ecde14f4cf9d2645c15c7c47acbcfbd7420309a50934bcc93b8fe80c",
+      "sha512": "3e4cd76ff5b941e69b4efcdcf9f172245a74c06f860de29348314230064b9860e2a931a677d7265f5f6fd06949cc6fbb216f8bfe49016c4bf4e8bd2c1914e92d"
+    },
+    {
+      "bytes": 2057,
+      "member": "source-2/repository-links.json",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/repository-links.json",
+      "sha256": "e0465f722b7abbfa7873bf852076546ff112ecbd7921f4e2ca4d5573cd0ebc5f",
+      "sha512": "bdc802c8872a2714cb8d939c3c55d4c85c98c71aef75ab709a07732f1019f6c986077a9e961c53fabe5a1b4aa27ceefeb51ea9d771ebbe14d8dfd0c3c80ea07f"
+    },
+    {
+      "bytes": 307,
+      "member": "source-2/repository-links.log",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/repository-links.log",
+      "sha256": "2fd37015c03889ce7d85fc4eff0998eb8449dbd86616c8eaecec1b2f17243bc7",
+      "sha512": "f5022e91566d7842ac1154a6806cd0be8fce24024a285ab8f80392fe213bbfa63181e831b94fd7765cd4e241cdce0ad5d01f9ab33f8227bd932af5216de08419"
+    },
+    {
+      "bytes": 2066,
+      "member": "source-2/source-corpus.json",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/source-corpus.json",
+      "sha256": "79524477150a9a59185350c4c8ccf82dc59efce4ae62d3b3e27acb3cdb0834f3",
+      "sha512": "3aca962e910cbc908ff329be7ffcea4da8970d1f5eae655f9328a18fbde3775d86366e8364b5a1db0c8053c29817eaaf2c2ab0fc96f06c033015fe6c48ae4622"
+    },
+    {
+      "bytes": 558,
+      "member": "source-2/source-corpus.log",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/source-corpus.log",
+      "sha256": "70a3627ac685637eededb38820de96eeb008528d380d07d71ff8d8b297edaff6",
+      "sha512": "ef7f50b8a3460be079a9f07da37b488e432c0835d0d0342adbaeaea4163030ea0f89c78cd9baf21fc2986841e6e68dc8cdd5782b518ec2097666ecb41835429a"
+    },
+    {
+      "bytes": 2152,
+      "member": "source-2/source-identity.json",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/source-identity.json",
+      "sha256": "5d2d9d3032fd60b27bcf16941f6c5adfee45aa728f4e78b7672f2aa68eddf873",
+      "sha512": "9d1a3308ba2d91a8c87b4f9f4ef19625ffb0dda01f83e5022f4f5e2896e100e234982b52f478f8db7b5294bac8a67735bb5de2d3e011625b15a5af9c6f92f2c9"
+    },
+    {
+      "bytes": 423,
+      "member": "source-2/source-identity.log",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/source-identity.log",
+      "sha256": "9aea3e2bb60e3e45f6e1d10d27369062438f19d0ad5eb019f7eb9d326bd65340",
+      "sha512": "b2ba02528662e9698010cba221af334fe3f03a29ea9a4f75d225dfec197cbf3b7f581bde0e09c246d30ca2dde10ab60564b34d9b3bf6a7d39f62d291ed8332a6"
+    },
+    {
+      "bytes": 2075,
+      "member": "source-2/source-integrity-negatives.json",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/source-integrity-negatives.json",
+      "sha256": "f638f6a39ae5bf1c41ff96d9936a98bec063796c0c118671a89efb4416ed8cf9",
+      "sha512": "61904da643a0ae9b6404139dd6cab35d9444f1f0e77c9b0575e11cc9bf4de93ceccdddaf0fbf6532139035013d7b56bfefd99b875a948ea125802147e4ed5089"
+    },
+    {
+      "bytes": 6898,
+      "member": "source-2/source-integrity-negatives.log",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/source-integrity-negatives.log",
+      "sha256": "7fd62a14dccecda081d45cb2c3dade350e9d52d358847ccb357f8b962e12518f",
+      "sha512": "501281c5c2ec22deace45d97801e27df3fa3a670a55d4dee7bd138a5205beec14080a9a058ead026d76fd8a1b75032e56db4ac27a3661f2860d5c86650f4353b"
+    },
+    {
+      "bytes": 2087,
+      "member": "source-2/source-inventory.json",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/source-inventory.json",
+      "sha256": "c43a65ede017f3cda572de203bf295e3475916fbea3b6a7880c4c18348fd576a",
+      "sha512": "9185db4bc52d0dd20374de12d09e0bd545c275dec0faaf156bf48bbb46397cfc98cbcfbdfea210c8f7654f00339aef48b326cc3d12214cc0bbcf0bfeccaa718f"
+    },
+    {
+      "bytes": 35,
+      "member": "source-2/source-inventory.log",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/source-inventory.log",
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "sha512": "ddacf380827225d975c12577cbfdea81e8181606fb58c856669390092ab92b27474922b4a9dd2b48202fb0a7212b51b81dd388761ef56ae963466cb8bb267958"
+    },
+    {
+      "bytes": 733,
+      "member": "source-2/source-validation-phase2-terminal.json",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/source-validation-phase2-terminal.json",
+      "sha256": "3b3583b3a3cae374145590ea1e72db6bde7a96373f345ab767e3015b3a60f657",
+      "sha512": "28d14da733afe1b30b73a0fad81eabc27e0df7a190dfe824b91a63add7626fb15758c5068c457ece53986e8e5b1939e1df5092ebb33776643d60cb267b9aec3a"
+    },
+    {
+      "bytes": 12688,
+      "member": "source-2/source-validation-summary-2.json",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/source-validation-summary-2.json",
+      "sha256": "1e426def36448f75be046f30dd01b1765b07b88e96dbe5a01c1e84cf0001e838",
+      "sha512": "5b9bafd640a244a2b234e02bad5ade759ec9c4879f74b2afc533617bac1e60842a25c5f80f3f4d55f5a83b1890a691ba57e682d0b0521c2c6e42d7eb95bd2813"
+    },
+    {
+      "bytes": 2213,
+      "member": "source-2/strict-clippy.json",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/strict-clippy.json",
+      "sha256": "92f1bb2885acd68510ae6fe6c324b291a4a2d712679daf751ebbcb5169a3f901",
+      "sha512": "b3b9b99ea88bdb2a4ed3dfe4c8b7909a736896bebb6b2fb8adeef7c52a1a19c20dc45518044b3c47c25f807ee3f426d31fb216ebfb921ed412447a81d205845f"
+    },
+    {
+      "bytes": 194,
+      "member": "source-2/strict-clippy.log",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/strict-clippy.log",
+      "sha256": "92e26dc8770de87f5ce13690582bdb57d8ee1765b106366ece491423db678597",
+      "sha512": "20c217086b242509146ce98d861eb078166f83e6085e16bafff690f87642458f29a279804c7fe339f15afcd18515bd66f8ab42a6ed217404fb1e8d124b471fc3"
+    },
+    {
+      "bytes": 2220,
+      "member": "source-2/task-kernel-retained.json",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/task-kernel-retained.json",
+      "sha256": "3989722f26d03a71cf6e70b31cc2d39e5c29b87b31ef5d8312e4f7a591d08ff1",
+      "sha512": "ee546177f1bd9c65765f3ffcd49613aecafeb5d61a4c243be3ce6cbbbebc14f15e277d743126c2feac78b28e893101f9f58d5149c48d3e8bab9b9fd370560de1"
+    },
+    {
+      "bytes": 3411,
+      "member": "source-2/task-kernel-retained.log",
+      "original_location": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/task-kernel-retained.log",
+      "sha256": "0d1cd6c22fc120bc070865e2b1f7f99dacb042469bb459ac2946f159c68f323e",
+      "sha512": "a57c8fcba182fb2f967204e4ecc4e756505dd4848f7bb4797f552593d11ca1622e31e125d6ccd42ebffc57c7fa56cb1a080d9fd2d9111f823d20459a9b93de1e"
+    },
+    {
+      "bytes": 14465,
+      "member": "source-gate-review-and-apply/apply-8cb8b743/actual.patch",
+      "original_location": "/home/qq/chain-source-incentive-gate-staging-eb070ca2/apply-8cb8b743/actual.patch",
+      "sha256": "8277e375b79d128270a9e4358d87fb045cc4c84026bea89223d73f25a9e6341e",
+      "sha512": "606381d1c624fd76d617b06bcb8639cd9f027e9f9c7f30c51f31206b3bee584183916da0376f9a06166cdf228162e508538470bab092b0e98a841cfc03336115"
+    },
+    {
+      "bytes": 0,
+      "member": "source-gate-review-and-apply/apply-8cb8b743/apply-reviewed-patch.stderr",
+      "original_location": "/home/qq/chain-source-incentive-gate-staging-eb070ca2/apply-8cb8b743/apply-reviewed-patch.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha512": "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e"
+    },
+    {
+      "bytes": 0,
+      "member": "source-gate-review-and-apply/apply-8cb8b743/apply-reviewed-patch.stdout",
+      "original_location": "/home/qq/chain-source-incentive-gate-staging-eb070ca2/apply-8cb8b743/apply-reviewed-patch.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha512": "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e"
+    },
+    {
+      "bytes": 0,
+      "member": "source-gate-review-and-apply/apply-8cb8b743/authority-reader.stderr",
+      "original_location": "/home/qq/chain-source-incentive-gate-staging-eb070ca2/apply-8cb8b743/authority-reader.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha512": "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e"
+    },
+    {
+      "bytes": 13223,
+      "member": "source-gate-review-and-apply/apply-8cb8b743/authority-reader.stdout",
+      "original_location": "/home/qq/chain-source-incentive-gate-staging-eb070ca2/apply-8cb8b743/authority-reader.stdout",
+      "sha256": "4aa9ec014905b173dc48afb5f0b18633c17544eedc49b02f655888d20d10d68c",
+      "sha512": "bbcae84b000d6b91c2c6b013f2804d224c77bb26aebffb398ccb6ce98f009b17f9eddd60e76ebe37ca5bcf613152d4a0f1373576f88de8bd0ca13dd0073b8ece"
+    },
+    {
+      "bytes": 117,
+      "member": "source-gate-review-and-apply/apply-8cb8b743/authority-test.stderr",
+      "original_location": "/home/qq/chain-source-incentive-gate-staging-eb070ca2/apply-8cb8b743/authority-test.stderr",
+      "sha256": "dd359fa40526893fad559ad847525fcce619b3bae28da79c059f80fa36f5cb01",
+      "sha512": "8df393b39429ee88e320ed16b3192b813aee0f48364de2cd34b288a48d84e315fee9dcaf23f2164d2b5206f83311936ca0476f521ec0b68ed8035fd9430d0f07"
+    },
+    {
+      "bytes": 0,
+      "member": "source-gate-review-and-apply/apply-8cb8b743/authority-test.stdout",
+      "original_location": "/home/qq/chain-source-incentive-gate-staging-eb070ca2/apply-8cb8b743/authority-test.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha512": "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e"
+    },
+    {
+      "bytes": 14196,
+      "member": "source-gate-review-and-apply/apply-8cb8b743/before/config/pon/pq-authority-effects-v1.json",
+      "original_location": "/home/qq/chain-source-incentive-gate-staging-eb070ca2/apply-8cb8b743/before/config/pon/pq-authority-effects-v1.json",
+      "sha256": "8cf4befdf2a71719c63bb9704f29b64a1aadfdda5a92fd234518718fbdf2fdb1",
+      "sha512": "b7311a4af2ff629453d070c96165db591594eef02f51613f4435863ccb861b8c50b484b3b06ef2e6b7c7dbaced5908675d1ddc0d313d61274f2aa960a6d8d95e"
+    },
+    {
+      "bytes": 323400,
+      "member": "source-gate-review-and-apply/apply-8cb8b743/before/config/pon/pq-cross-branch-corpus-v1.json",
+      "original_location": "/home/qq/chain-source-incentive-gate-staging-eb070ca2/apply-8cb8b743/before/config/pon/pq-cross-branch-corpus-v1.json",
+      "sha256": "53eb6553ac82cb07fb58b466f6916622cb71eca79422f5c8e0602711b0b31725",
+      "sha512": "ec9446e60253a56a690371c15440aabde0671c0bc07752612fc7b7683dc4e0193051f3a44f9962a19baadc9a550d090dfd4d835014effd9423a630ae719f39a0"
+    },
+    {
+      "bytes": 22435,
+      "member": "source-gate-review-and-apply/apply-8cb8b743/before/docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md",
+      "original_location": "/home/qq/chain-source-incentive-gate-staging-eb070ca2/apply-8cb8b743/before/docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md",
+      "sha256": "178ac9edd42623737bb6b6c0b595d4e6ac73c476becfde16e4e2a245ad0924ad",
+      "sha512": "82b5db38ea68d7b2a3c30bd660c5e32a203610b5bf8772390fa8a260e4294a5eaa5bf9e456a7fc41c53c7b06bc09c1ccb35cfb360f04b1bd5e58c8e15f192941"
+    },
+    {
+      "bytes": 11127,
+      "member": "source-gate-review-and-apply/apply-8cb8b743/before/scripts/ci/pq_authority_effect_register.py",
+      "original_location": "/home/qq/chain-source-incentive-gate-staging-eb070ca2/apply-8cb8b743/before/scripts/ci/pq_authority_effect_register.py",
+      "sha256": "a8aeb30b64e3a3d28fb05424cf9e9ec2c5e8de98c878fd07c692f3a17b2cadd1",
+      "sha512": "f5818fadc0bdf18a9e3d25ecd2ec81ca913ea6e7f7c10656ffbd46d9fa9f4c3f0deb61acfcecd7cf07c692cf6d38be18a197261d670250d1f2b70dc67b841f18"
+    },
+    {
+      "bytes": 14870,
+      "member": "source-gate-review-and-apply/apply-8cb8b743/before/scripts/ci/test_pq_authority_effect_register.py",
+      "original_location": "/home/qq/chain-source-incentive-gate-staging-eb070ca2/apply-8cb8b743/before/scripts/ci/test_pq_authority_effect_register.py",
+      "sha256": "11d3f2dc7ea30ee34839482ff19b6de28bc0168d3f78d26af72eea59a4dee577",
+      "sha512": "f7a369af8e540d55542cec3179192bab2f3d258db26eb19f82f5c912aadc66c85ddce626da760d9d820c73938adece0e855cae21efeb69460f0f91f7e0784dbc"
+    },
+    {
+      "bytes": 440873,
+      "member": "source-gate-review-and-apply/apply-8cb8b743/before/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "original_location": "/home/qq/chain-source-incentive-gate-staging-eb070ca2/apply-8cb8b743/before/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "sha256": "fc6261fc832163f984f51c2cc83a9a7862fd5c515ccb840f2772d88679913b03",
+      "sha512": "7c48f257caf715fcf6240a8214db7a2f508651005cb88537174a46e173e6fa7b5d55aa76ecb6f29dc276722d8efd4bfdb89780a6fbbdfb5222441a575e4adb4a"
+    },
+    {
+      "bytes": 2316,
+      "member": "source-gate-review-and-apply/apply-8cb8b743/commands.jsonl",
+      "original_location": "/home/qq/chain-source-incentive-gate-staging-eb070ca2/apply-8cb8b743/commands.jsonl",
+      "sha256": "9d3d4d933cc708e063f58efcb605850dba6b82f6b154c58fbc93590db553352a",
+      "sha512": "70ea01280d531de43a4831dffd64f6494637e17b7450629b0a2aa25f98a346343951a62ced5254a87b2262888aef37f80cfc8ff10764c705883d9b7fbb1d821a"
+    },
+    {
+      "bytes": 454,
+      "member": "source-gate-review-and-apply/apply-8cb8b743/diff-stat.txt",
+      "original_location": "/home/qq/chain-source-incentive-gate-staging-eb070ca2/apply-8cb8b743/diff-stat.txt",
+      "sha256": "415e3e4cf4e50b4d738357b6db3dcf3becbc2fd4cb57b4139094f33cce7861c3",
+      "sha512": "e97dd524a397b597bb362c8671200fe2ee4a51c9b02ecce82657a78ba1605586a62aa58bc33b8626089fe1f2cbbd79eef5d0f8e08c9cb9976c355051a197f399"
+    },
+    {
+      "bytes": 0,
+      "member": "source-gate-review-and-apply/apply-8cb8b743/diff-whitespace.stderr",
+      "original_location": "/home/qq/chain-source-incentive-gate-staging-eb070ca2/apply-8cb8b743/diff-whitespace.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha512": "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e"
+    },
+    {
+      "bytes": 0,
+      "member": "source-gate-review-and-apply/apply-8cb8b743/diff-whitespace.stdout",
+      "original_location": "/home/qq/chain-source-incentive-gate-staging-eb070ca2/apply-8cb8b743/diff-whitespace.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha512": "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e"
+    },
+    {
+      "bytes": 8397,
+      "member": "source-gate-review-and-apply/apply-8cb8b743/driver.py",
+      "original_location": "/home/qq/chain-source-incentive-gate-staging-eb070ca2/apply-8cb8b743/driver.py",
+      "sha256": "524ce8ec1647a22f774b32bcf824aa487f27c698de443a885b124b5872db5537",
+      "sha512": "a71d10ceba7cbb9c5abec6077ec3093a62225af5697cc7bdb2040f05010427e81294d8c8b751116c978d8a12381937d642d53bddd26ba638a1fa973f5dcece91"
+    },
+    {
+      "bytes": 0,
+      "member": "source-gate-review-and-apply/apply-8cb8b743/patch-check.stderr",
+      "original_location": "/home/qq/chain-source-incentive-gate-staging-eb070ca2/apply-8cb8b743/patch-check.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha512": "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e"
+    },
+    {
+      "bytes": 0,
+      "member": "source-gate-review-and-apply/apply-8cb8b743/patch-check.stdout",
+      "original_location": "/home/qq/chain-source-incentive-gate-staging-eb070ca2/apply-8cb8b743/patch-check.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha512": "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e"
+    },
+    {
+      "bytes": 323,
+      "member": "source-gate-review-and-apply/apply-8cb8b743/post-status.txt",
+      "original_location": "/home/qq/chain-source-incentive-gate-staging-eb070ca2/apply-8cb8b743/post-status.txt",
+      "sha256": "36ee9be8763da8c14be0ecd482830f0cd0b2b0116f46e51f1c8a435dfc510a98",
+      "sha512": "bef8676d648499df590c0884f9f91a195d3406c1a9707ea2d767635b13f4cf98490951e62d8fb698ae07a15c513d0add353a5a904a3a3ffd14823042f4debda5"
+    },
+    {
+      "bytes": 0,
+      "member": "source-gate-review-and-apply/apply-8cb8b743/preflight.stderr",
+      "original_location": "/home/qq/chain-source-incentive-gate-staging-eb070ca2/apply-8cb8b743/preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha512": "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e"
+    },
+    {
+      "bytes": 176,
+      "member": "source-gate-review-and-apply/apply-8cb8b743/preflight.stdout",
+      "original_location": "/home/qq/chain-source-incentive-gate-staging-eb070ca2/apply-8cb8b743/preflight.stdout",
+      "sha256": "bdc7bbb8ed0cf70f89bf0bb6debc2b41688865c8e7cc0201d1219a59fbd6e11e",
+      "sha512": "88fe47b3c5a84af56736b0d4382d65c14b7c56e9d978ac7db3b7e8ee2585c4502325e4f45d4f3cf4594b84a7f031f7c2695f41df427ddac6e91ad04433939481"
+    },
+    {
+      "bytes": 0,
+      "member": "source-gate-review-and-apply/apply-8cb8b743/source-inventory.stderr",
+      "original_location": "/home/qq/chain-source-incentive-gate-staging-eb070ca2/apply-8cb8b743/source-inventory.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha512": "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e"
+    },
+    {
+      "bytes": 35,
+      "member": "source-gate-review-and-apply/apply-8cb8b743/source-inventory.stdout",
+      "original_location": "/home/qq/chain-source-incentive-gate-staging-eb070ca2/apply-8cb8b743/source-inventory.stdout",
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "sha512": "ddacf380827225d975c12577cbfdea81e8181606fb58c856669390092ab92b27474922b4a9dd2b48202fb0a7212b51b81dd388761ef56ae963466cb8bb267958"
+    },
+    {
+      "bytes": 5305,
+      "member": "source-gate-review-and-apply/apply-8cb8b743/summary.json",
+      "original_location": "/home/qq/chain-source-incentive-gate-staging-eb070ca2/apply-8cb8b743/summary.json",
+      "sha256": "f57650aa59599fb94ce99db30ac48edca8f1b543df908eb5c262177d46ff29cd",
+      "sha512": "1b07d6577f272ed63dbb43dc86cc9249263c715b9c8182d8a3c409ba2f671f2cc4ed7c7943184b585cd07bced4ad4c325df5fd64d6fcfd3b831ceeb81530f9a2"
+    },
+    {
+      "bytes": 242,
+      "member": "source-gate-review-and-apply/prepare-script-status.json",
+      "original_location": "/home/qq/chain-source-incentive-gate-staging-eb070ca2/prepare-script-status.json",
+      "sha256": "d88305eacc466f66c9ed79e08e90f7a80b816c1f7205b64d2da45724adcad578",
+      "sha512": "22e9d13e0481d17ac25045772d4fda341a5b82f61f29ca48907ca072ff58ecf27e77bfa7b7b29113c57f91b896661030e9bd62b917b41f7b700419419b90d612"
+    },
+    {
+      "bytes": 11678,
+      "member": "source-gate-review-and-apply/prepare_source_gate_rebind.py",
+      "original_location": "/home/qq/chain-source-incentive-gate-staging-eb070ca2/prepare_source_gate_rebind.py",
+      "sha256": "a9aab20c3ff3e2837ac2a351ce3cd6ff3b8e1b1920ba9b884acaed644a9e2c56",
+      "sha512": "7dff1c9381b125fb9c336546b8e3adfb8dd4abb74a475fdcda5526de7b0cae200637579a16d2c3ef953de56a56d4bf767c86b72b8dbdfcc0d2b03bcfeb7ebd95"
+    },
+    {
+      "bytes": 14196,
+      "member": "source-gate-review-and-apply/review-8cb8b743/files/config/pon/pq-authority-effects-v1.json",
+      "original_location": "/home/qq/chain-source-incentive-gate-staging-eb070ca2/review-8cb8b743/files/config/pon/pq-authority-effects-v1.json",
+      "sha256": "32e0d871d2c83a0ce27af3a310c910062d141d11ad6675c8faaeefba2171d8d0",
+      "sha512": "7a7423868f4ddb2a7a46137959d2445ec4802d66b72c4c6bacb5e99f075b6b04224bca5b79d93c5920fbdaeb50f229084531d701e41692927312f1b9b57ce19a"
+    },
+    {
+      "bytes": 24328,
+      "member": "source-gate-review-and-apply/review-8cb8b743/files/docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md",
+      "original_location": "/home/qq/chain-source-incentive-gate-staging-eb070ca2/review-8cb8b743/files/docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md",
+      "sha256": "b0967aa9db444288921e2995a1be0fc84c330162cd353701efca4e18e77149c1",
+      "sha512": "1cf39de83329790eefe61eee3ac424837929bb321f293a78261a5d9b305da21aa6e18be2b9604a47699f4ae19c6275c5f782b746efdcaf2fdc2025b8c890cdde"
+    },
+    {
+      "bytes": 11127,
+      "member": "source-gate-review-and-apply/review-8cb8b743/files/scripts/ci/pq_authority_effect_register.py",
+      "original_location": "/home/qq/chain-source-incentive-gate-staging-eb070ca2/review-8cb8b743/files/scripts/ci/pq_authority_effect_register.py",
+      "sha256": "2d67830bc1c2e443321d465652f11d61d5515df218e22e2532844f2e249a1a3d",
+      "sha512": "501947e2ce75b20541a548c17bea89c1528e8b9f27869f90094579da6d0b0ed5e0cd39e487d398efd8bfc1f2546d251afd7b48b91f1695b6b757313281970d42"
+    },
+    {
+      "bytes": 14964,
+      "member": "source-gate-review-and-apply/review-8cb8b743/files/scripts/ci/test_pq_authority_effect_register.py",
+      "original_location": "/home/qq/chain-source-incentive-gate-staging-eb070ca2/review-8cb8b743/files/scripts/ci/test_pq_authority_effect_register.py",
+      "sha256": "abd7806f66b953fffaa2951dd8aec7a84218ac81a14e3a16a03cca1a8ea53386",
+      "sha512": "f6db8137865b351cab66b0172aa0083ecd59c60fb04ae8cbe8c7a11139e8ffa3825367b68b2351fdf7f0874d3430595323123213dce0faed29adda874e6c03d1"
+    },
+    {
+      "bytes": 441839,
+      "member": "source-gate-review-and-apply/review-8cb8b743/files/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "original_location": "/home/qq/chain-source-incentive-gate-staging-eb070ca2/review-8cb8b743/files/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "sha256": "dc08a7ee1f7a0cc54acc19d6af70a56c9524fa7f0e88d40b986861db9667b103",
+      "sha512": "d673eee5d1418deb04634c8720c1b59c40e13d349562e10ae94dd02e04d616b41b4f2c2d789ed800e2a1b3d61ca5e0e27b86f395998cec7380548e686ba18054"
+    },
+    {
+      "bytes": 3457,
+      "member": "source-gate-review-and-apply/review-8cb8b743/preparation.json",
+      "original_location": "/home/qq/chain-source-incentive-gate-staging-eb070ca2/review-8cb8b743/preparation.json",
+      "sha256": "c721889a0f5392d6e861849b7760ae64dd4f61b3acce918cb9f8412f0e70d885",
+      "sha512": "3755eb96dd39e5e36946c57dffa5e05f9a1543e34d0a95b1e6662232780f5ba79ab6c03088e69c8aa10ba3acc1d85c377dcfcfc179aa1df7671955ba2fee20e4"
+    },
+    {
+      "bytes": 164,
+      "member": "source-gate-review-and-apply/review-8cb8b743/prior-reader.stderr",
+      "original_location": "/home/qq/chain-source-incentive-gate-staging-eb070ca2/review-8cb8b743/prior-reader.stderr",
+      "sha256": "ae5eac2f2035823a1209825d086bd9a3e49b5da7c313dab2c76719490333c537",
+      "sha512": "248f38db3470a726d42a843b7b707850dcc844e981f8dc74f2f7874c092aad79e28a73f6ce0c4ae6bac45ea1d250597cc9dc9768591e365ca9ce61cab64cf0ee"
+    },
+    {
+      "bytes": 0,
+      "member": "source-gate-review-and-apply/review-8cb8b743/prior-reader.stdout",
+      "original_location": "/home/qq/chain-source-incentive-gate-staging-eb070ca2/review-8cb8b743/prior-reader.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha512": "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e"
+    },
+    {
+      "bytes": 11241,
+      "member": "source-gate-review-and-apply/review-8cb8b743/reviewed-executor.patch",
+      "original_location": "/home/qq/chain-source-incentive-gate-staging-eb070ca2/review-8cb8b743/reviewed-executor.patch",
+      "sha256": "699d5245ec17168ac8eb06f0edbc28f547549b061b726e31f84a99349d4da1cc",
+      "sha512": "fc9903437c24bacc5057d5bdd927ef8b2448cdaa63903d91c93bf1c8265284370925acdaecb77468f42f467d2ccfc2e7dbb2f524dd5ca4555ee88369e641a8a6"
+    },
+    {
+      "bytes": 8617,
+      "member": "source-gate-review-and-apply/review-8cb8b743/source-gate-continuation.patch",
+      "original_location": "/home/qq/chain-source-incentive-gate-staging-eb070ca2/review-8cb8b743/source-gate-continuation.patch",
+      "sha256": "f6958f7b16cc054f0b2ad12494310803f1313b03b15c71bbf88f37dce4bba6c3",
+      "sha512": "add82573089b45c1d5009950d977774ebec87a4dd596245b122487aaee34aad8306f81c4291d9584a1024b2c3cff1d5337aad263cbc71d570c0b90e681fc5d39"
+    }
+  ],
+  "raw_bytes_preserved": true,
+  "schema": "source-incentive-raw-artifact-manifest-v1",
+  "uncompressed_member_bytes": 7335273
+}

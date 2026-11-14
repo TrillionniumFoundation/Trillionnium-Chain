@@ -1,0 +1,11 @@
+{
+  "base_head": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+  "executable_sha256": "dd6a1dee07568ba26022ccd690933af13788696e1925e442fe3ba471927f856f",
+  "executable_unchanged": true,
+  "finished_at": "2026-11-04T07:41:01.331413+00:00",
+  "passed": 5,
+  "scope": "Complete Node all-features lib test ELF compiled; only five named transport controls executed, no complete Node suite or hosted service rerun",
+  "source_manifest_sha256": "f56cc35bd9c9462c931776cc4e08fedeeaa7c73df5f00b2907cc2a057bc81381",
+  "source_unchanged": true,
+  "tests": 5
+}

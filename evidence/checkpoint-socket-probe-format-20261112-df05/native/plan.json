@@ -1,0 +1,177 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "name": "preflight",
+      "outer_timeout_seconds": 120
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+        "-Vv"
+      ],
+      "name": "rustc-version",
+      "outer_timeout_seconds": 120
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "-V"
+      ],
+      "name": "cargo-version",
+      "outer_timeout_seconds": 120
+    },
+    {
+      "argv": [
+        "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN/install/bin/openssl",
+        "version",
+        "-a"
+      ],
+      "name": "openssl-version",
+      "outer_timeout_seconds": 120
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1",
+        "--manifest-path",
+        "trillionnium/Cargo.toml"
+      ],
+      "name": "metadata-default",
+      "outer_timeout_seconds": 300
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1",
+        "--all-features",
+        "--manifest-path",
+        "trillionnium/Cargo.toml"
+      ],
+      "name": "metadata-all-features",
+      "outer_timeout_seconds": 300
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1",
+        "--manifest-path",
+        "tests/fuzz/Cargo.toml"
+      ],
+      "name": "metadata-fuzz",
+      "outer_timeout_seconds": 300
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "name": "format",
+      "outer_timeout_seconds": 300
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_ci_source_integrity.py",
+        "-v"
+      ],
+      "name": "source-integrity-controls",
+      "outer_timeout_seconds": 600
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/check_repository.py"
+      ],
+      "name": "repository-links",
+      "outer_timeout_seconds": 600
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "name": "research-corpus",
+      "outer_timeout_seconds": 600
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "name": "source-inventory",
+      "outer_timeout_seconds": 300
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-checkpoint-store",
+        "--",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "name": "checkpoint-package",
+      "outer_timeout_seconds": 1200
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "name": "strict-workspace-clippy",
+      "outer_timeout_seconds": 3600
+    }
+  ],
+  "original_test_and_internal_transport_timeouts_unchanged": true,
+  "outer_owner": "unchanged scripts/ci/ci_observation.py::run with process-group cleanup",
+  "parent_evidence": "b62cb86d22405dd9e5b441970639b6e5dd44a8b8",
+  "root_s879_native_qualification_reused": false,
+  "source": "00b3a848009460e425d58b62f9edc9abe9603b78",
+  "tree": "e3428012a36210087f5a260f2cf1720d0086fa9e"
+}

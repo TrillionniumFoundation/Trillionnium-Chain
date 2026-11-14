@@ -1,0 +1,15 @@
+{
+  "schema": "trnm-evaluation-same-owner-activation-applied-v1",
+  "applied_utc": "2026-11-03T21:42:30.331786+00:00",
+  "head": "8ebded733d90bf74e7d8e3adbd2458ad8b572159",
+  "file": "trillionnium/crates/trnm-pon-node/tests/evaluation_sync_observation.rs",
+  "before_sha256": "bd2a3c2886d4a866e71a0f5579c5c2d054ecebb40c9fc60ed379cb8e400c8b21",
+  "after_sha256": "402f29fa7ef75e4ba3b406290890a960db335d084620125d95c9cc539e857b04",
+  "patch_sha256": "ddb71e205a061322bede39aa18bcc70733fd6ea9b158042f618ca3e798f51c03",
+  "prior_full_node_result_sha256": "df7569112d88355a13dc720f45691a49ff8f318bacaee18eb5db15a4e0762fdd",
+  "original_974_completed_before_source_edit": true,
+  "two_original_activation_calls_replaced": true,
+  "old_fixture_assertions_and_budgets_preserved": true,
+  "new_local_control_passed_before_apply": true,
+  "full_hosted_fixture_qualified": false
+}

@@ -1,0 +1,18 @@
+diff --git a/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs b/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs
+index bde787508..cfa760a7e 100644
+--- a/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs
++++ b/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs
+@@ -5775,6 +5775,13 @@ pub const FILES: &[(&str, &[u8])] = &[
+             "/../../../trillionnium/crates/trnm-pon-node/tests/growth_persistence_cancellation.rs"
+         )),
+     ),
++    (
++        "trillionnium/crates/trnm-pon-node/tests/history_stage_diagnostic.rs",
++        include_bytes!(concat!(
++            env!("CARGO_MANIFEST_DIR"),
++            "/../../../trillionnium/crates/trnm-pon-node/tests/history_stage_diagnostic.rs"
++        )),
++    ),
+     (
+         "trillionnium/crates/trnm-pon-node/tests/integer_factor_candidate_v2.rs",
+         include_bytes!(concat!(

@@ -1,0 +1,594 @@
+{
+  "cases": [
+    {
+      "case_id": "proportional-exact",
+      "input": {
+        "points": [
+          {
+            "classical": {
+              "lower": "1",
+              "scope": {
+                "competitive_scope": "finite-demo-all-scales-v1",
+                "resource_model": "declared-additive-resource-v1",
+                "success_contract": "complete-accepted-winner-v1"
+              },
+              "upper": "1"
+            },
+            "quantum": {
+              "lower": "2",
+              "scope": {
+                "competitive_scope": "finite-demo-all-scales-v1",
+                "resource_model": "declared-additive-resource-v1",
+                "success_contract": "complete-accepted-winner-v1"
+              },
+              "upper": "2"
+            },
+            "scale": 1
+          },
+          {
+            "classical": {
+              "lower": "4",
+              "scope": {
+                "competitive_scope": "finite-demo-all-scales-v1",
+                "resource_model": "declared-additive-resource-v1",
+                "success_contract": "complete-accepted-winner-v1"
+              },
+              "upper": "4"
+            },
+            "quantum": {
+              "lower": "8",
+              "scope": {
+                "competitive_scope": "finite-demo-all-scales-v1",
+                "resource_model": "declared-additive-resource-v1",
+                "success_contract": "complete-accepted-winner-v1"
+              },
+              "upper": "8"
+            },
+            "scale": 4
+          },
+          {
+            "classical": {
+              "lower": "16",
+              "scope": {
+                "competitive_scope": "finite-demo-all-scales-v1",
+                "resource_model": "declared-additive-resource-v1",
+                "success_contract": "complete-accepted-winner-v1"
+              },
+              "upper": "16"
+            },
+            "quantum": {
+              "lower": "32",
+              "scope": {
+                "competitive_scope": "finite-demo-all-scales-v1",
+                "resource_model": "declared-additive-resource-v1",
+                "success_contract": "complete-accepted-winner-v1"
+              },
+              "upper": "32"
+            },
+            "scale": 16
+          }
+        ],
+        "rho": "1",
+        "schema": "pon-credit-envelope-input-v1",
+        "scope": {
+          "competitive_scope": "finite-demo-all-scales-v1",
+          "resource_model": "declared-additive-resource-v1",
+          "success_contract": "complete-accepted-winner-v1"
+        }
+      },
+      "witness": {
+        "credits": [
+          {
+            "credit": "1",
+            "scale": 1
+          },
+          {
+            "credit": "4",
+            "scale": 4
+          },
+          {
+            "credit": "16",
+            "scale": 16
+          }
+        ],
+        "status": "FEASIBLE_FOR_DECLARED_RECTANGULAR_ENVELOPES",
+        "worst_case_efficiency_spread": {
+          "classical": "1",
+          "quantum": "1"
+        }
+      }
+    },
+    {
+      "case_id": "exponent-mismatch-rho-three-halves",
+      "input": {
+        "points": [
+          {
+            "classical": {
+              "lower": "1",
+              "scope": {
+                "competitive_scope": "finite-demo-all-scales-v1",
+                "resource_model": "declared-additive-resource-v1",
+                "success_contract": "complete-accepted-winner-v1"
+              },
+              "upper": "1"
+            },
+            "quantum": {
+              "lower": "1",
+              "scope": {
+                "competitive_scope": "finite-demo-all-scales-v1",
+                "resource_model": "declared-additive-resource-v1",
+                "success_contract": "complete-accepted-winner-v1"
+              },
+              "upper": "1"
+            },
+            "scale": 1
+          },
+          {
+            "classical": {
+              "lower": "16",
+              "scope": {
+                "competitive_scope": "finite-demo-all-scales-v1",
+                "resource_model": "declared-additive-resource-v1",
+                "success_contract": "complete-accepted-winner-v1"
+              },
+              "upper": "16"
+            },
+            "quantum": {
+              "lower": "4",
+              "scope": {
+                "competitive_scope": "finite-demo-all-scales-v1",
+                "resource_model": "declared-additive-resource-v1",
+                "success_contract": "complete-accepted-winner-v1"
+              },
+              "upper": "4"
+            },
+            "scale": 16
+          }
+        ],
+        "rho": "3/2",
+        "schema": "pon-credit-envelope-input-v1",
+        "scope": {
+          "competitive_scope": "finite-demo-all-scales-v1",
+          "resource_model": "declared-additive-resource-v1",
+          "success_contract": "complete-accepted-winner-v1"
+        }
+      },
+      "witness": {
+        "cycle": [
+          {
+            "bound": "3/32",
+            "miner_class": "classical",
+            "source_scale": 16,
+            "target_scale": 1
+          },
+          {
+            "bound": "6",
+            "miner_class": "quantum",
+            "source_scale": 1,
+            "target_scale": 16
+          }
+        ],
+        "cycle_product": "9/16",
+        "status": "INFEASIBLE_FOR_DECLARED_RECTANGULAR_ENVELOPES"
+      }
+    },
+    {
+      "case_id": "exponent-mismatch-rho-two",
+      "input": {
+        "points": [
+          {
+            "classical": {
+              "lower": "1",
+              "scope": {
+                "competitive_scope": "finite-demo-all-scales-v1",
+                "resource_model": "declared-additive-resource-v1",
+                "success_contract": "complete-accepted-winner-v1"
+              },
+              "upper": "1"
+            },
+            "quantum": {
+              "lower": "1",
+              "scope": {
+                "competitive_scope": "finite-demo-all-scales-v1",
+                "resource_model": "declared-additive-resource-v1",
+                "success_contract": "complete-accepted-winner-v1"
+              },
+              "upper": "1"
+            },
+            "scale": 1
+          },
+          {
+            "classical": {
+              "lower": "16",
+              "scope": {
+                "competitive_scope": "finite-demo-all-scales-v1",
+                "resource_model": "declared-additive-resource-v1",
+                "success_contract": "complete-accepted-winner-v1"
+              },
+              "upper": "16"
+            },
+            "quantum": {
+              "lower": "4",
+              "scope": {
+                "competitive_scope": "finite-demo-all-scales-v1",
+                "resource_model": "declared-additive-resource-v1",
+                "success_contract": "complete-accepted-winner-v1"
+              },
+              "upper": "4"
+            },
+            "scale": 16
+          }
+        ],
+        "rho": "2",
+        "schema": "pon-credit-envelope-input-v1",
+        "scope": {
+          "competitive_scope": "finite-demo-all-scales-v1",
+          "resource_model": "declared-additive-resource-v1",
+          "success_contract": "complete-accepted-winner-v1"
+        }
+      },
+      "witness": {
+        "credits": [
+          {
+            "credit": "1",
+            "scale": 1
+          },
+          {
+            "credit": "8",
+            "scale": 16
+          }
+        ],
+        "status": "FEASIBLE_FOR_DECLARED_RECTANGULAR_ENVELOPES",
+        "worst_case_efficiency_spread": {
+          "classical": "2",
+          "quantum": "2"
+        }
+      }
+    },
+    {
+      "case_id": "three-cycle-without-negative-two-cycle",
+      "input": {
+        "points": [
+          {
+            "classical": {
+              "lower": "1",
+              "scope": {
+                "competitive_scope": "finite-demo-all-scales-v1",
+                "resource_model": "declared-additive-resource-v1",
+                "success_contract": "complete-accepted-winner-v1"
+              },
+              "upper": "1"
+            },
+            "quantum": {
+              "lower": "3",
+              "scope": {
+                "competitive_scope": "finite-demo-all-scales-v1",
+                "resource_model": "declared-additive-resource-v1",
+                "success_contract": "complete-accepted-winner-v1"
+              },
+              "upper": "3"
+            },
+            "scale": 1
+          },
+          {
+            "classical": {
+              "lower": "1",
+              "scope": {
+                "competitive_scope": "finite-demo-all-scales-v1",
+                "resource_model": "declared-additive-resource-v1",
+                "success_contract": "complete-accepted-winner-v1"
+              },
+              "upper": "3"
+            },
+            "quantum": {
+              "lower": "4",
+              "scope": {
+                "competitive_scope": "finite-demo-all-scales-v1",
+                "resource_model": "declared-additive-resource-v1",
+                "success_contract": "complete-accepted-winner-v1"
+              },
+              "upper": "4"
+            },
+            "scale": 2
+          },
+          {
+            "classical": {
+              "lower": "4",
+              "scope": {
+                "competitive_scope": "finite-demo-all-scales-v1",
+                "resource_model": "declared-additive-resource-v1",
+                "success_contract": "complete-accepted-winner-v1"
+              },
+              "upper": "4"
+            },
+            "quantum": {
+              "lower": "4",
+              "scope": {
+                "competitive_scope": "finite-demo-all-scales-v1",
+                "resource_model": "declared-additive-resource-v1",
+                "success_contract": "complete-accepted-winner-v1"
+              },
+              "upper": "8"
+            },
+            "scale": 3
+          }
+        ],
+        "rho": "2",
+        "schema": "pon-credit-envelope-input-v1",
+        "scope": {
+          "competitive_scope": "finite-demo-all-scales-v1",
+          "resource_model": "declared-additive-resource-v1",
+          "success_contract": "complete-accepted-winner-v1"
+        }
+      },
+      "witness": {
+        "cycle": [
+          {
+            "bound": "1/2",
+            "miner_class": "classical",
+            "source_scale": 3,
+            "target_scale": 2
+          },
+          {
+            "bound": "2/3",
+            "miner_class": "classical",
+            "source_scale": 2,
+            "target_scale": 1
+          },
+          {
+            "bound": "8/3",
+            "miner_class": "quantum",
+            "source_scale": 1,
+            "target_scale": 3
+          }
+        ],
+        "cycle_product": "8/9",
+        "status": "INFEASIBLE_FOR_DECLARED_RECTANGULAR_ENVELOPES"
+      }
+    },
+    {
+      "case_id": "wide-single-scale",
+      "input": {
+        "points": [
+          {
+            "classical": {
+              "lower": "1",
+              "scope": {
+                "competitive_scope": "finite-demo-all-scales-v1",
+                "resource_model": "declared-additive-resource-v1",
+                "success_contract": "complete-accepted-winner-v1"
+              },
+              "upper": "1000000"
+            },
+            "quantum": {
+              "lower": "2",
+              "scope": {
+                "competitive_scope": "finite-demo-all-scales-v1",
+                "resource_model": "declared-additive-resource-v1",
+                "success_contract": "complete-accepted-winner-v1"
+              },
+              "upper": "3000000"
+            },
+            "scale": 1
+          }
+        ],
+        "rho": "1",
+        "schema": "pon-credit-envelope-input-v1",
+        "scope": {
+          "competitive_scope": "finite-demo-all-scales-v1",
+          "resource_model": "declared-additive-resource-v1",
+          "success_contract": "complete-accepted-winner-v1"
+        }
+      },
+      "witness": {
+        "credits": [
+          {
+            "credit": "1",
+            "scale": 1
+          }
+        ],
+        "status": "FEASIBLE_FOR_DECLARED_RECTANGULAR_ENVELOPES",
+        "worst_case_efficiency_spread": {
+          "classical": "1",
+          "quantum": "1"
+        }
+      }
+    },
+    {
+      "case_id": "robust-uncertainty-only-refusal",
+      "input": {
+        "points": [
+          {
+            "classical": {
+              "lower": "1",
+              "scope": {
+                "competitive_scope": "finite-demo-all-scales-v1",
+                "resource_model": "declared-additive-resource-v1",
+                "success_contract": "complete-accepted-winner-v1"
+              },
+              "upper": "2"
+            },
+            "quantum": {
+              "lower": "1",
+              "scope": {
+                "competitive_scope": "finite-demo-all-scales-v1",
+                "resource_model": "declared-additive-resource-v1",
+                "success_contract": "complete-accepted-winner-v1"
+              },
+              "upper": "2"
+            },
+            "scale": 1
+          },
+          {
+            "classical": {
+              "lower": "1",
+              "scope": {
+                "competitive_scope": "finite-demo-all-scales-v1",
+                "resource_model": "declared-additive-resource-v1",
+                "success_contract": "complete-accepted-winner-v1"
+              },
+              "upper": "2"
+            },
+            "quantum": {
+              "lower": "1",
+              "scope": {
+                "competitive_scope": "finite-demo-all-scales-v1",
+                "resource_model": "declared-additive-resource-v1",
+                "success_contract": "complete-accepted-winner-v1"
+              },
+              "upper": "2"
+            },
+            "scale": 2
+          }
+        ],
+        "rho": "1",
+        "schema": "pon-credit-envelope-input-v1",
+        "scope": {
+          "competitive_scope": "finite-demo-all-scales-v1",
+          "resource_model": "declared-additive-resource-v1",
+          "success_contract": "complete-accepted-winner-v1"
+        }
+      },
+      "witness": {
+        "cycle": [
+          {
+            "bound": "1/2",
+            "miner_class": "classical",
+            "source_scale": 1,
+            "target_scale": 2
+          },
+          {
+            "bound": "1/2",
+            "miner_class": "classical",
+            "source_scale": 2,
+            "target_scale": 1
+          }
+        ],
+        "cycle_product": "1/4",
+        "status": "INFEASIBLE_FOR_DECLARED_RECTANGULAR_ENVELOPES"
+      }
+    },
+    {
+      "case_id": "proportional-intervals",
+      "input": {
+        "points": [
+          {
+            "classical": {
+              "lower": "1",
+              "scope": {
+                "competitive_scope": "finite-demo-all-scales-v1",
+                "resource_model": "declared-additive-resource-v1",
+                "success_contract": "complete-accepted-winner-v1"
+              },
+              "upper": "2"
+            },
+            "quantum": {
+              "lower": "3",
+              "scope": {
+                "competitive_scope": "finite-demo-all-scales-v1",
+                "resource_model": "declared-additive-resource-v1",
+                "success_contract": "complete-accepted-winner-v1"
+              },
+              "upper": "6"
+            },
+            "scale": 1
+          },
+          {
+            "classical": {
+              "lower": "2",
+              "scope": {
+                "competitive_scope": "finite-demo-all-scales-v1",
+                "resource_model": "declared-additive-resource-v1",
+                "success_contract": "complete-accepted-winner-v1"
+              },
+              "upper": "4"
+            },
+            "quantum": {
+              "lower": "6",
+              "scope": {
+                "competitive_scope": "finite-demo-all-scales-v1",
+                "resource_model": "declared-additive-resource-v1",
+                "success_contract": "complete-accepted-winner-v1"
+              },
+              "upper": "12"
+            },
+            "scale": 2
+          },
+          {
+            "classical": {
+              "lower": "4",
+              "scope": {
+                "competitive_scope": "finite-demo-all-scales-v1",
+                "resource_model": "declared-additive-resource-v1",
+                "success_contract": "complete-accepted-winner-v1"
+              },
+              "upper": "8"
+            },
+            "quantum": {
+              "lower": "12",
+              "scope": {
+                "competitive_scope": "finite-demo-all-scales-v1",
+                "resource_model": "declared-additive-resource-v1",
+                "success_contract": "complete-accepted-winner-v1"
+              },
+              "upper": "24"
+            },
+            "scale": 4
+          }
+        ],
+        "rho": "2",
+        "schema": "pon-credit-envelope-input-v1",
+        "scope": {
+          "competitive_scope": "finite-demo-all-scales-v1",
+          "resource_model": "declared-additive-resource-v1",
+          "success_contract": "complete-accepted-winner-v1"
+        }
+      },
+      "witness": {
+        "credits": [
+          {
+            "credit": "1",
+            "scale": 1
+          },
+          {
+            "credit": "2",
+            "scale": 2
+          },
+          {
+            "credit": "4",
+            "scale": 4
+          }
+        ],
+        "status": "FEASIBLE_FOR_DECLARED_RECTANGULAR_ENVELOPES",
+        "worst_case_efficiency_spread": {
+          "classical": "2",
+          "quantum": "2"
+        }
+      }
+    }
+  ],
+  "limitations": [
+    "Cost intervals and their common success/resource/scope labels are declared inputs, not verified bounds.",
+    "Infeasible means no credit is robust for the entire declared rectangle; actual unknown costs may still allow a credit.",
+    "Pointwise feasibility does not cover preprocessing, shared work, adaptive task portfolios, hidden inventory or quantum residual state.",
+    "This component supplies no W1 all-algorithm lower bound and no common-prefix, chain-quality or chain-growth theorem."
+  ],
+  "qualification": {
+    "actual_w1_lower_bounds_proved": false,
+    "all_legal_classical_and_quantum_strategies_covered": false,
+    "mixed_mining_consensus_qualified": false,
+    "production_activation": false,
+    "stateful_composition_proved": false
+  },
+  "schema": "pon-credit-envelope-report-v1",
+  "source_binding": [
+    {
+      "path": "formal/pon-nakamoto-v1/credit_envelope_contract.py",
+      "sha256": "1a6277134855202f9c8144519e47eb01ab70485ce9db54b4b43932f418155fb9"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_credit_envelope_contract.py",
+      "sha256": "5560f9f04126685819e02149a312bfaa4091a2288e7526c2466c5e75da867eef"
+    }
+  ]
+}

@@ -1,0 +1,352 @@
+[
+  {
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh",
+      "--dev"
+    ],
+    "cwd": "/workspace/scratch/5faaca703596/chain-root",
+    "source_sha": "aa7ba29a5485a6b04ccb909e34bb3d8ae2528669",
+    "started_utc": "2026-11-08T17:28:31.178990+00:00",
+    "elapsed_seconds": 0.44193221599994104,
+    "exit_code": 0,
+    "log": "static-00.log",
+    "bytes": 181,
+    "sha256": "6cb741e14b61e7871ee62000ca541aae67aef655465c772af9256b1bbd2f46fd",
+    "python_test_counts": [],
+    "rust_test_results": []
+  },
+  {
+    "argv": [
+      "python3",
+      "scripts/ci/test_pq_lifetime_budget.py"
+    ],
+    "cwd": "/workspace/scratch/5faaca703596/chain-root",
+    "source_sha": "aa7ba29a5485a6b04ccb909e34bb3d8ae2528669",
+    "started_utc": "2026-11-08T17:28:31.626977+00:00",
+    "elapsed_seconds": 1.2540619060000608,
+    "exit_code": 0,
+    "log": "static-01.log",
+    "bytes": 157,
+    "sha256": "cb02799687093187e37e9e754ea193dd22907c381f6e0cefa0a40f009e5917c2",
+    "python_test_counts": [
+      "58"
+    ],
+    "rust_test_results": []
+  },
+  {
+    "argv": [
+      "python3",
+      "scripts/ci/pq_lifetime_budget.py"
+    ],
+    "cwd": "/workspace/scratch/5faaca703596/chain-root",
+    "source_sha": "aa7ba29a5485a6b04ccb909e34bb3d8ae2528669",
+    "started_utc": "2026-11-08T17:28:32.881628+00:00",
+    "elapsed_seconds": 0.42246888899990154,
+    "exit_code": 0,
+    "log": "static-02.log",
+    "bytes": 12824,
+    "sha256": "5ec6d9237665c7c7500b3f63b35a4380b397dada80668b3804913be008c09b90",
+    "python_test_counts": [],
+    "rust_test_results": []
+  },
+  {
+    "argv": [
+      "python3",
+      "scripts/ci/test_pq_chain_claim_guard.py"
+    ],
+    "cwd": "/workspace/scratch/5faaca703596/chain-root",
+    "source_sha": "aa7ba29a5485a6b04ccb909e34bb3d8ae2528669",
+    "started_utc": "2026-11-08T17:28:33.304971+00:00",
+    "elapsed_seconds": 0.89176928400002,
+    "exit_code": 0,
+    "log": "static-03.log",
+    "bytes": 148,
+    "sha256": "2428a6ccb37217f334b9fec9e110489b375d99ddde2096719151026bbb6704f1",
+    "python_test_counts": [
+      "49"
+    ],
+    "rust_test_results": []
+  },
+  {
+    "argv": [
+      "python3",
+      "formal/pon-nakamoto-v1/test_pq_root_recovery_policy_v1.py",
+      "-v"
+    ],
+    "cwd": "/workspace/scratch/5faaca703596/chain-root",
+    "source_sha": "aa7ba29a5485a6b04ccb909e34bb3d8ae2528669",
+    "started_utc": "2026-11-08T17:28:34.201815+00:00",
+    "elapsed_seconds": 0.27747526799998923,
+    "exit_code": 0,
+    "log": "static-04.log",
+    "bytes": 4683,
+    "sha256": "78f25fd969f6a8d85efa294c5449e9c5f3ba1771624333114b6f7e90f18246cf",
+    "python_test_counts": [
+      "26"
+    ],
+    "rust_test_results": []
+  },
+  {
+    "argv": [
+      "python3",
+      "formal/pon-nakamoto-v1/test_pq_root_recovery_signatures_v2.py",
+      "-v"
+    ],
+    "cwd": "/workspace/scratch/5faaca703596/chain-root",
+    "source_sha": "aa7ba29a5485a6b04ccb909e34bb3d8ae2528669",
+    "started_utc": "2026-11-08T17:28:34.487027+00:00",
+    "elapsed_seconds": 0.31791424800007917,
+    "exit_code": 0,
+    "log": "static-05.log",
+    "bytes": 2708,
+    "sha256": "345d8ccafa1895862bbfc22952622dc8af61a4c4179fcf5b1bc9037b7cd1555c",
+    "python_test_counts": [
+      "17"
+    ],
+    "rust_test_results": []
+  },
+  {
+    "argv": [
+      "python3",
+      "formal/pon-nakamoto-v1/test_pq_root_effect_readback_v2.py",
+      "-v"
+    ],
+    "cwd": "/workspace/scratch/5faaca703596/chain-root",
+    "source_sha": "aa7ba29a5485a6b04ccb909e34bb3d8ae2528669",
+    "started_utc": "2026-11-08T17:28:34.805255+00:00",
+    "elapsed_seconds": 0.21868659799997658,
+    "exit_code": 0,
+    "log": "static-06.log",
+    "bytes": 2728,
+    "sha256": "2e702303f9ba4c393824632cf09d265ac7bdd4f0fe88843b337f15dd7bbb6e0b",
+    "python_test_counts": [
+      "15"
+    ],
+    "rust_test_results": []
+  },
+  {
+    "argv": [
+      "python3",
+      "scripts/ci/test_pq_authority_effect_register.py"
+    ],
+    "cwd": "/workspace/scratch/5faaca703596/chain-root",
+    "source_sha": "aa7ba29a5485a6b04ccb909e34bb3d8ae2528669",
+    "started_utc": "2026-11-08T17:28:35.032618+00:00",
+    "elapsed_seconds": 2.642506850000018,
+    "exit_code": 0,
+    "log": "static-07.log",
+    "bytes": 117,
+    "sha256": "b2ea23d1e539f924757c8b75e4ce58a3064e65cb65fba1e22b4a15d170a6c0ec",
+    "python_test_counts": [
+      "18"
+    ],
+    "rust_test_results": []
+  },
+  {
+    "argv": [
+      "python3",
+      "scripts/ci/test_pq_authority_surface_scan.py"
+    ],
+    "cwd": "/workspace/scratch/5faaca703596/chain-root",
+    "source_sha": "aa7ba29a5485a6b04ccb909e34bb3d8ae2528669",
+    "started_utc": "2026-11-08T17:28:37.679516+00:00",
+    "elapsed_seconds": 0.44118839100019613,
+    "exit_code": 0,
+    "log": "static-08.log",
+    "bytes": 114,
+    "sha256": "7751c4f6dde25cf7538240d6b444585fcc54159071d2346f2431a10276d540dc",
+    "python_test_counts": [
+      "15"
+    ],
+    "rust_test_results": []
+  },
+  {
+    "argv": [
+      "python3",
+      "scripts/ci/test_pq_research_integration.py"
+    ],
+    "cwd": "/workspace/scratch/5faaca703596/chain-root",
+    "source_sha": "aa7ba29a5485a6b04ccb909e34bb3d8ae2528669",
+    "started_utc": "2026-11-08T17:28:38.125997+00:00",
+    "elapsed_seconds": 56.431825981999964,
+    "exit_code": 0,
+    "log": "static-09.log",
+    "bytes": 155,
+    "sha256": "55c9586aca3aa4d4eb82b1125a8d6c5c1aac5000b878f336cef495f89023cd62",
+    "python_test_counts": [
+      "55"
+    ],
+    "rust_test_results": []
+  },
+  {
+    "argv": [
+      "python3",
+      "scripts/ci/test_ci_contract.py"
+    ],
+    "cwd": "/workspace/scratch/5faaca703596/chain-root",
+    "source_sha": "aa7ba29a5485a6b04ccb909e34bb3d8ae2528669",
+    "started_utc": "2026-11-08T17:29:34.558258+00:00",
+    "elapsed_seconds": 7.562995863999959,
+    "exit_code": 0,
+    "log": "static-10.log",
+    "bytes": 17848,
+    "sha256": "25d51424e44c5de03683d80bc121b093b93f8fe852d03c511dfa7b313ffcf0b3",
+    "python_test_counts": [
+      "107"
+    ],
+    "rust_test_results": []
+  },
+  {
+    "argv": [
+      "python3",
+      "scripts/ci/test_pq_provider_ci.py"
+    ],
+    "cwd": "/workspace/scratch/5faaca703596/chain-root",
+    "source_sha": "aa7ba29a5485a6b04ccb909e34bb3d8ae2528669",
+    "started_utc": "2026-11-08T17:29:42.121838+00:00",
+    "elapsed_seconds": 0.26578768200010927,
+    "exit_code": 0,
+    "log": "static-11.log",
+    "bytes": 1512,
+    "sha256": "c839c6bd2c0a4005c4bdf55a1138af841829321335a1a973911dc30717dc5b67",
+    "python_test_counts": [
+      "9"
+    ],
+    "rust_test_results": []
+  },
+  {
+    "argv": [
+      "python3",
+      "scripts/ci/test_ci_source_integrity.py"
+    ],
+    "cwd": "/workspace/scratch/5faaca703596/chain-root",
+    "source_sha": "aa7ba29a5485a6b04ccb909e34bb3d8ae2528669",
+    "started_utc": "2026-11-08T17:29:42.388143+00:00",
+    "elapsed_seconds": 3.0797972440000194,
+    "exit_code": 0,
+    "log": "static-12.log",
+    "bytes": 6898,
+    "sha256": "757c729247d9e19cb31518c75b87438bca6b9b0604d71c45820e671ad3679f87",
+    "python_test_counts": [
+      "43"
+    ],
+    "rust_test_results": []
+  },
+  {
+    "argv": [
+      "python3",
+      "scripts/ci/test_repository.py"
+    ],
+    "cwd": "/workspace/scratch/5faaca703596/chain-root",
+    "source_sha": "aa7ba29a5485a6b04ccb909e34bb3d8ae2528669",
+    "started_utc": "2026-11-08T17:29:45.468398+00:00",
+    "elapsed_seconds": 149.8650346689999,
+    "exit_code": 0,
+    "log": "static-13.log",
+    "bytes": 5345,
+    "sha256": "cc49e47ff9341e3044c11e86fc9a09efc5ee639623deea002911b993795aa683",
+    "python_test_counts": [
+      "50"
+    ],
+    "rust_test_results": []
+  },
+  {
+    "argv": [
+      "python3",
+      "scripts/ci/check_ci_contract.py"
+    ],
+    "cwd": "/workspace/scratch/5faaca703596/chain-root",
+    "source_sha": "aa7ba29a5485a6b04ccb909e34bb3d8ae2528669",
+    "started_utc": "2026-11-08T17:32:15.334344+00:00",
+    "elapsed_seconds": 0.11680859100010821,
+    "exit_code": 0,
+    "log": "static-14.log",
+    "bytes": 180,
+    "sha256": "1811739ab56176be2d74cfd1b12a86ba05919a96769d5479faca6db12f37dd54",
+    "python_test_counts": [],
+    "rust_test_results": []
+  },
+  {
+    "argv": [
+      "python3",
+      "scripts/refresh_distributed_source_inventory.py",
+      "--check"
+    ],
+    "cwd": "/workspace/scratch/5faaca703596/chain-root",
+    "source_sha": "aa7ba29a5485a6b04ccb909e34bb3d8ae2528669",
+    "started_utc": "2026-11-08T17:32:15.451792+00:00",
+    "elapsed_seconds": 0.06686349899996458,
+    "exit_code": 0,
+    "log": "static-15.log",
+    "bytes": 35,
+    "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+    "python_test_counts": [],
+    "rust_test_results": []
+  },
+  {
+    "argv": [
+      "python3",
+      "scripts/ci/check_pq_research_integration.py"
+    ],
+    "cwd": "/workspace/scratch/5faaca703596/chain-root",
+    "source_sha": "aa7ba29a5485a6b04ccb909e34bb3d8ae2528669",
+    "started_utc": "2026-11-08T17:32:15.519120+00:00",
+    "elapsed_seconds": 0.31760811499998454,
+    "exit_code": 0,
+    "log": "static-16.log",
+    "bytes": 557,
+    "sha256": "80631ed6136e7675eeaaac82dbab4535f8c41bc1ea55b51d7379122e18cb1c45",
+    "python_test_counts": [],
+    "rust_test_results": []
+  },
+  {
+    "argv": [
+      "python3",
+      "scripts/ci/pq_chain_claim_guard.py"
+    ],
+    "cwd": "/workspace/scratch/5faaca703596/chain-root",
+    "source_sha": "aa7ba29a5485a6b04ccb909e34bb3d8ae2528669",
+    "started_utc": "2026-11-08T17:32:15.837231+00:00",
+    "elapsed_seconds": 0.06482046700011779,
+    "exit_code": 0,
+    "log": "static-17.log",
+    "bytes": 4835,
+    "sha256": "1071e58361cfdbc4b70e270822fc6984fe5f82331614be861ea41db0b9d6b7ec",
+    "python_test_counts": [],
+    "rust_test_results": []
+  },
+  {
+    "argv": [
+      "python3",
+      "scripts/ci/check_repository.py"
+    ],
+    "cwd": "/workspace/scratch/5faaca703596/chain-root",
+    "source_sha": "aa7ba29a5485a6b04ccb909e34bb3d8ae2528669",
+    "started_utc": "2026-11-08T17:32:15.902782+00:00",
+    "elapsed_seconds": 46.082015556000215,
+    "exit_code": 0,
+    "log": "static-18.log",
+    "bytes": 307,
+    "sha256": "85bfa370f3790c633eac181a48958c50533e61e594bb2deae1b1462091142957",
+    "python_test_counts": [],
+    "rust_test_results": []
+  },
+  {
+    "argv": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "cwd": "/workspace/scratch/5faaca703596/chain-root",
+    "source_sha": "aa7ba29a5485a6b04ccb909e34bb3d8ae2528669",
+    "started_utc": "2026-11-08T17:33:01.985446+00:00",
+    "elapsed_seconds": 0.018484899000213773,
+    "exit_code": 0,
+    "log": "static-19.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "python_test_counts": [],
+    "rust_test_results": []
+  }
+]

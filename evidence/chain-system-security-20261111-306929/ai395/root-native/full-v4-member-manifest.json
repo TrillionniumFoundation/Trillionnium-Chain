@@ -1,0 +1,152 @@
+{
+  "all_66_unique_methods_verified": true,
+  "all_native_29_passed": true,
+  "created_utc": "2026-11-12T02:47:07.609053+00:00",
+  "log_bindings": [
+    {
+      "bytes": 3714,
+      "log": "observations/records/root-continuation-v4-full.log",
+      "record": "observations/records/root-continuation-v4-full.json",
+      "sha256": "42325fb90a4472290f6644561c61f28ef1792d8c282556dd58af11b634e3cf65"
+    },
+    {
+      "bytes": 1135,
+      "log": "observations/v4-continuation/recovery-floor.log",
+      "record": "observations/v4-continuation/commands.json:recovery-floor",
+      "sha256": "69f38ce953873f9bf841e7040312770a41ae812cd7051f7f2e6d8e11bca9e81e"
+    },
+    {
+      "bytes": 1489,
+      "log": "observations/v4-continuation/provider-readback.log",
+      "record": "observations/v4-continuation/commands.json:provider-readback",
+      "sha256": "ee08a7c1c03a4a630cd398b432de6363f5ef964061b9e4431e72872697d2c7f2"
+    },
+    {
+      "bytes": 868,
+      "log": "observations/v4-continuation/callback-budget.log",
+      "record": "observations/v4-continuation/commands.json:callback-budget",
+      "sha256": "86a96a6b2e01ef13707c97c1bd6ac30a901d19520b519bb84758559b7d292b5c"
+    }
+  ],
+  "members": [
+    {
+      "bytes": 6640,
+      "path": "drivers/root-full-v4-driver.py",
+      "sha256": "77f3ba3d3595f49c28d29d86969dc15b355fa07697db35986b3548c0a972d21f"
+    },
+    {
+      "bytes": 6125,
+      "path": "observations/configuration.json",
+      "sha256": "9cdfc3580d45e9ddbfa060a08f5c44db7f7b4220bb78ac9a83f832896bc72b76"
+    },
+    {
+      "bytes": 900,
+      "path": "observations/native-binaries-after.json",
+      "sha256": "d7e804bf474c40f02ad66127bcdbb52b03ca852a30dcccce6c5f6e3d99c85389"
+    },
+    {
+      "bytes": 1238,
+      "path": "observations/provider-after.json",
+      "sha256": "8d45799b6b72a5831c45bf76b24c10deadb5b4f14355b5397a2ab9a9ee059341"
+    },
+    {
+      "bytes": 2502,
+      "path": "observations/records/root-continuation-v4-full.json",
+      "sha256": "b4da695bc86c9612b54caa9c7f3b331140127c86b39664f132df952e3fb66745"
+    },
+    {
+      "bytes": 3714,
+      "path": "observations/records/root-continuation-v4-full.log",
+      "sha256": "42325fb90a4472290f6644561c61f28ef1792d8c282556dd58af11b634e3cf65"
+    },
+    {
+      "bytes": 199,
+      "path": "observations/root-continuation-v4-full.driver.log",
+      "sha256": "47a6ae49789783aae8b32111f7f3ffa4945a22bf6ff6f4f884fc5472d928f0fa"
+    },
+    {
+      "bytes": 423,
+      "path": "observations/source-after.json",
+      "sha256": "6b95bd150b95dc340ed49e3ad677bba5eda5a2ac3b971467d2c79cf4802e18f7"
+    },
+    {
+      "bytes": 423,
+      "path": "observations/source-before.json",
+      "sha256": "6b95bd150b95dc340ed49e3ad677bba5eda5a2ac3b971467d2c79cf4802e18f7"
+    },
+    {
+      "bytes": 6903,
+      "path": "observations/summary.json",
+      "sha256": "ee0068c8fbf62036077dc08dc0ae34f337a8a5b1f65bdc2959055a9262564e22"
+    },
+    {
+      "bytes": 868,
+      "path": "observations/v4-continuation/callback-budget.log",
+      "sha256": "86a96a6b2e01ef13707c97c1bd6ac30a901d19520b519bb84758559b7d292b5c"
+    },
+    {
+      "bytes": 4456,
+      "path": "observations/v4-continuation/commands.json",
+      "sha256": "118084f448aff8ece357b8ba75f1864f2c8c22581a0675481814c97817a3be57"
+    },
+    {
+      "bytes": 1489,
+      "path": "observations/v4-continuation/provider-readback.log",
+      "sha256": "ee08a7c1c03a4a630cd398b432de6363f5ef964061b9e4431e72872697d2c7f2"
+    },
+    {
+      "bytes": 1135,
+      "path": "observations/v4-continuation/recovery-floor.log",
+      "sha256": "69f38ce953873f9bf841e7040312770a41ae812cd7051f7f2e6d8e11bca9e81e"
+    },
+    {
+      "bytes": 423,
+      "path": "observations/v4-continuation/source-after.json",
+      "sha256": "6b95bd150b95dc340ed49e3ad677bba5eda5a2ac3b971467d2c79cf4802e18f7"
+    },
+    {
+      "bytes": 423,
+      "path": "observations/v4-continuation/source-before.json",
+      "sha256": "6b95bd150b95dc340ed49e3ad677bba5eda5a2ac3b971467d2c79cf4802e18f7"
+    },
+    {
+      "bytes": 5258,
+      "path": "observations/v4-continuation/summary.json",
+      "sha256": "410e34a87a191667f8e564388d0929bc56580ab4322b5236f113a9ba1cf8dd5d"
+    }
+  ],
+  "native_results_are_observations_for_exact_source_only": true,
+  "original_directory": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-continuation-v4-full-bac6b765",
+  "preserved_native_binary_copies": [
+    {
+      "bytes": 257669568,
+      "post_execution_copy_not_live_inode_attestation": true,
+      "preserved_copy": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-full-v4-bac6b765-archive-20261112-306929/preserved-native-binaries/recovery_floor_v4_native-d92b8a2dd8958aba",
+      "reused_prior_preserved_copy": false,
+      "sha256": "b380fefea1f97caeb0906b2c3763dd8e91de1e8f0ddd9beeac2200287b6bd24f",
+      "source": "/home/qq/chain-system-security-20261112-306929/trillionnium/target/debug/deps/recovery_floor_v4_native-d92b8a2dd8958aba"
+    },
+    {
+      "bytes": 256754520,
+      "post_execution_copy_not_live_inode_attestation": true,
+      "preserved_copy": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-full-v4-bac6b765-archive-20261112-306929/preserved-native-binaries/root_budget_v4_native-3d3a8766ab85074c",
+      "reused_prior_preserved_copy": false,
+      "sha256": "cf7dc435fa25fe8d96e869f7b96793df5be2aa96c96cea22ea9d0fe38f598a1b",
+      "source": "/home/qq/chain-system-security-20261112-306929/trillionnium/target/debug/deps/root_budget_v4_native-3d3a8766ab85074c"
+    },
+    {
+      "bytes": 258139216,
+      "post_execution_copy_not_live_inode_attestation": true,
+      "preserved_copy": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-native-bac6b765-archive-20261112-306929/preserved-native-binaries/root_effect_readback_v4_native-2310b7cf782b61a7",
+      "reused_prior_preserved_copy": true,
+      "sha256": "03f30ef41f384bd72c92f468361c669b3e761556ace61524cdccd9f9be026b4e",
+      "source": "/home/qq/chain-system-security-20261112-306929/trillionnium/target/debug/deps/root_effect_readback_v4_native-2310b7cf782b61a7"
+    }
+  ],
+  "prior_scoped14_overlap_not_added": 14,
+  "prior_workspace_strict_clippy_passed": true,
+  "schema": "trnm-root-full-v4-original-observation-archive-v1",
+  "source": "bac6b7659bd7e2d633e25c2da0add60f6a10c7fb",
+  "source_and_provider_equal": true,
+  "status": "HOLD"
+}

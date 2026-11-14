@@ -1,0 +1,79 @@
+{
+  "schema": "trnm-native-node-history-supplement-plan-v1",
+  "declared_before_new_candidate_execution": true,
+  "future_source_required_explicit": [
+    "worktree",
+    "frozen_sha",
+    "tree"
+  ],
+  "source_scope": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-node-history-scope-v1/scope.json",
+    "bytes": 6409,
+    "sha256": "646ebbeb99b82a3dc0792162b16a1ef95cd68aff9a224e18ab2f506b0c5452c1"
+  },
+  "original_sixteen_library_selector_plan_unchanged": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/targeted-validation-plan-v1.json",
+    "bytes": 10750,
+    "sha256": "de2a9acb3cf711c53d0bad85c958b2a0e844aefa906aed1f0ec16827a3c93054"
+  },
+  "selector": "test_full_transaction_pages_use_byte_limits_and_recover_all_native_state",
+  "cargo_integration_target": "native_node",
+  "command": [
+    "/home/qian-qi/.cargo/bin/cargo",
+    "+1.95.0",
+    "test",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--all-features",
+    "--test",
+    "native_node",
+    "test_full_transaction_pages_use_byte_limits_and_recover_all_native_state",
+    "--",
+    "--exact",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "attempts": 1,
+  "required_selected_outer_tests": 1,
+  "required_ignored": 0,
+  "expected_target_inventory": {
+    "tests": 31,
+    "ignored": 1,
+    "exact_run_filtered_out": 30
+  },
+  "outer_timeout_seconds": 600,
+  "internal_budgets_deadlines_test_assertions_changed": false,
+  "required_reader": [
+    "python3",
+    "scripts/ci/check_required_native_test.py",
+    "<actual native log>",
+    "--test",
+    "test_full_transaction_pages_use_byte_limits_and_recover_all_native_state"
+  ],
+  "binding": [
+    "Original complete source verifier before and after actual command",
+    "Original record_pq_native_command.py retains exact command, source identity and raw result",
+    "Unique actual Cargo Running path equals native_node integration harness from fresh candidate inventory",
+    "Actual executable SHA before and after equals inventoried candidate binary",
+    "Same abnormal/child-summary guard as frozen v2; every failure retained"
+  ],
+  "execution_prerequisites": [
+    "Authoritative original819 full-package terminal and identical source-after receipt",
+    "Root committed isolated new H/tree and explicit start authorization",
+    "Candidate strict Clippy/no-run and exact inventory completed"
+  ],
+  "result_reporting": [
+    "One independent integration denominator, never added to or substituted for the original16 library exact denominator",
+    "Failure remains failed; no retries until favorable outcome",
+    "No implication that full package or original4105/4second gates pass"
+  ],
+  "qualification": {
+    "native_pass": false,
+    "business_pass": false,
+    "performance": false
+  }
+}

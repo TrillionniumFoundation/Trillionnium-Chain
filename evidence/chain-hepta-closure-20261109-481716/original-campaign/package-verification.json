@@ -1,0 +1,47 @@
+{
+  "deterministic_gzip_roundtrip_checks": [
+    {
+      "bytes": 67972,
+      "compression_level": 9,
+      "gzip_filename": "",
+      "gzip_mtime": 0,
+      "path": "campaign0746-outcomes-v2.json.gz",
+      "sha256": "b61a17fa5ba42866deef4c01ede7f758271a1d93abf03a953ae67333897e0563",
+      "uncompressed_bytes": 2033029,
+      "uncompressed_sha256": "1b95b9e8bee728922480a8e40eb9730e750fc64a4c50c0e5cefe2ced1b38585a"
+    },
+    {
+      "bytes": 4517,
+      "compression_level": 9,
+      "gzip_filename": "",
+      "gzip_mtime": 0,
+      "path": "history/campaign0746-outcomes-v1.json.gz",
+      "sha256": "f04a6056b65e09642d88071f3cbff446b97b2d45ff4efcc1c92a1639b27b0647",
+      "uncompressed_bytes": 42071,
+      "uncompressed_sha256": "0f88e649882f3c95f751b5e2ae5ab85cfe938c1d8fbd0c7534dcff47018f4cb7"
+    },
+    {
+      "bytes": 77115,
+      "compression_level": 9,
+      "gzip_filename": "",
+      "gzip_mtime": 0,
+      "path": "artifact-files.json.gz",
+      "sha256": "e60672ed9000139c0a8adba8da489f5577d57f3bd6c2d7bd13a1b1fd3e69f6f7",
+      "uncompressed_bytes": 319639,
+      "uncompressed_sha256": "9710a213553110e9347790a34775d92d9ba20d55a7f13a5e633e78ea0d63689b"
+    }
+  ],
+  "local_raw_zip_removed_for_disk_pressure": true,
+  "native_execution_performed": false,
+  "original_manifest_hash_verified": true,
+  "original_v2_audit_hash_verified": true,
+  "original_zip_copied": false,
+  "original_zip_hash_verified": true,
+  "prepared_at_utc": "2026-11-09T14:13:54.885173+00:00",
+  "reader_attempt_records_preserved": 9,
+  "repository_mutated_by_packager": false,
+  "schema": "compact-retained-evidence-package-verification-v1",
+  "small_original_members_rehashed": 24,
+  "workflow_scope_review_is_static": true,
+  "zip_hash_verification_basis": "Full local byte hash matched fresh GitHub artifact digest immediately before authorized cache removal; see local-raw-zip-removal.json."
+}

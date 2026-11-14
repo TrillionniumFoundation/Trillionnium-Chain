@@ -1,0 +1,8 @@
+{
+  "schema": "TRNM-W1-INDEPENDENT-VERIFIER-BUILD-IDENTITY1",
+  "exact_source_freeze": "w1-hardened-source-freeze-r2.json",
+  "all_source_bytes_match_frozen_version": true,
+  "binary_sha256": "0a96d752c4418c35b6ff3f6912d5c6b824490dff60f83e26a6101a99c96a3274",
+  "original_runner_sha256": "1640e4304ad09e6db494c94d0d5069b9e2c3f83e7adb401481a431d81e1f1c2c",
+  "original_verifier_sha256": "f87b03adcf1d268f724150b5f39fd81c09ca4afd585c7ea239d568ed117fe1b0"
+}

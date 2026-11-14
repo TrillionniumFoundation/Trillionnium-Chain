@@ -1,0 +1,52 @@
+{
+  "schema": "commit66-readonly-evidence-audit-v1",
+  "result": "PASS_FOR_RECORDED_COMMIT_66_ONLY",
+  "commit": "66b7064be597039ce871b5b12ad5568850a2dd46",
+  "tree": "75ac72605e3647de5a09557bfd7012dc99b0dec6",
+  "remote_referenced_files": 88,
+  "file_identity_mismatches": 0,
+  "command_stdout_stderr_identities_verified": 64,
+  "exact_gate_count": 25,
+  "all_exact_gate_exit_codes_zero": true,
+  "DA": {
+    "library": 714,
+    "integration": 34,
+    "doc": 16,
+    "result_harnesses": 13,
+    "failed": 0,
+    "ignored": 0,
+    "filtered": 0
+  },
+  "Node": {
+    "passed": 35,
+    "filtered": 1275,
+    "failed": 0
+  },
+  "worker": {
+    "passed": 24,
+    "failed": 0,
+    "skipped": 0,
+    "scope": "Actual SCM_RIGHTS/FD/bootstrap/source controls; no model execution"
+  },
+  "raw_red_assertions_verified": true,
+  "red_green_server_fixture_bytes_equal_after_documented_Read_import_normalization": true,
+  "saved_mutation_is_exactly_one_deadline_clamp_removal": true,
+  "phase_source_before_after_equal": true,
+  "candidate_source_restored_clean": true,
+  "source_receipt_sha256": "a3e1b14b47ab355a69c48ee4717f1154c367d8799b876009d250ae65b3427a14",
+  "source_receipts_equal_between_runs": true,
+  "runner_before_after_equal": true,
+  "provider_before_after_equal_between_runs": true,
+  "frozen_exact_configuration": {
+    "bytes": 91593,
+    "path": "/home/qq/work/chain-cell-storage-convergence-exact-final01/frozen-configuration.json",
+    "sha256": "8c556ac0acc58416196e6f7a5a3f30bc6067edbcb8c073e55a666cecea78c9ff"
+  },
+  "differential_stdin_readback": {
+    "path": "/home/qq/work/chain-cell-storage-convergence-differential-final01-stdin-readback.json",
+    "size": 924,
+    "sha256": "b4eb001a815ec417fa8f9a194fd0f0ce9d8cfb3426d1a892dbeb9c4a868d34ad"
+  },
+  "stdin_provenance": "Post-run byte-preserving copy of the original saved pre-launch stdin; not a file claimed present at launch.",
+  "scope": "Original historical commit66 evidence only. No Cargo/model/CI/repository code rerun; no checkout edited. No successor, production, ordinary Hepta FinalUse, or historical attempt01 qualification."
+}

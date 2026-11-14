@@ -1,0 +1,9 @@
+{
+  "executed_tests": 2,
+  "result": "PASS",
+  "scope": "native-libtest-transcript-and-process-exit-only",
+  "tests": [
+    "ingress::public_v3::output_reservation_tests::full_output_pool_closes_without_signed_response_and_recovers_after_release",
+    "ingress::public_v3::output_reservation_tests::refusal_borrows_only_bounded_original_headroom_and_preserves_control_service"
+  ]
+}

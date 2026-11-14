@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/home/qq/chain-incentive-evidence-recovery-driver-20261112-306929.py", line 57, in <module>
+    assert sha(previous.read_bytes())=='07c11a04880eab6303a66000d23082748a8f8568f8e1defe92d91c0a8b30db40'
+               ~~~~~~~~~~~~~~~~~~~^^
+  File "/usr/lib/python3.14/pathlib/__init__.py", line 778, in read_bytes
+    with self.open(mode='rb', buffering=0) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/pathlib/__init__.py", line 772, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/qq/chain-system-security-20261112-306929/evidence/chain-incentive-counterexamples-20261112/node-genesis-split/native.json'

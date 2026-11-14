@@ -1,0 +1,18 @@
+test_different_network_release_generation_requester_provider_and_nonce_reject (test_pq_cell_custody.PQCellCustodyTests.test_different_network_release_generation_requester_provider_and_nonce_reject) ... ok
+test_even_four_and_single_chunk_complete_paths (test_pq_cell_custody.PQCellCustodyTests.test_even_four_and_single_chunk_complete_paths) ... ok
+test_every_challenge_byte_change_is_refused (test_pq_cell_custody.PQCellCustodyTests.test_every_challenge_byte_change_is_refused) ... ok
+test_journal_concurrent_distinct_sqlite_connections_one_first_only (test_pq_cell_custody.PQCellCustodyTests.test_journal_concurrent_distinct_sqlite_connections_one_first_only) ... ok
+test_journal_first_exact_retry_and_cold_reopen (test_pq_cell_custody.PQCellCustodyTests.test_journal_first_exact_retry_and_cold_reopen) ... ok
+test_journal_foreign_schema_trigger_and_downgrade_reject (test_pq_cell_custody.PQCellCustodyTests.test_journal_foreign_schema_trigger_and_downgrade_reject) ... ok
+test_malformed_types_dimensions_and_oversized_chunk_reject (test_pq_cell_custody.PQCellCustodyTests.test_malformed_types_dimensions_and_oversized_chunk_reject) ... ok
+test_missing_trailing_and_framing_reject (test_pq_cell_custody.PQCellCustodyTests.test_missing_trailing_and_framing_reject) ... ok
+test_odd_merkle_duplicate_last_cannot_be_fake_sibling (test_pq_cell_custody.PQCellCustodyTests.test_odd_merkle_duplicate_last_cannot_be_fake_sibling) ... ok
+test_real_ml_dsa_signed_valid_response_and_exact_merkle_path (test_pq_cell_custody.PQCellCustodyTests.test_real_ml_dsa_signed_valid_response_and_exact_merkle_path) ... ok
+test_self_consistent_alternate_catalog_not_accepted_under_original_release (test_pq_cell_custody.PQCellCustodyTests.test_self_consistent_alternate_catalog_not_accepted_under_original_release) ... ok
+test_signed_response_changed_chunk_merkle_and_signature_reject (test_pq_cell_custody.PQCellCustodyTests.test_signed_response_changed_chunk_merkle_and_signature_reject) ... ok
+test_wrong_purpose_and_wrong_actual_signing_key_reject (test_pq_cell_custody.PQCellCustodyTests.test_wrong_purpose_and_wrong_actual_signing_key_reject) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 1.191s
+
+OK

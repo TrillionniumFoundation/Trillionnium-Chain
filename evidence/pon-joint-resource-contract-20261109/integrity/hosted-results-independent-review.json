@@ -1,0 +1,696 @@
+{
+  "actions": {
+    "archive_members_executed": false,
+    "campaign_rerun": false,
+    "ci_modified": false,
+    "native_tests_rerun": false,
+    "publication_performed": false,
+    "reviewed_markdown_modified": false,
+    "source_modified": false
+  },
+  "complete_zip_identities": [
+    {
+      "bytes": 76217297,
+      "path": "preparation/ci-readback-117/main-hosted-42553751914-42553751985/original-campaign-42553751914.zip",
+      "sha256": "4568b72cd9ab324e7d63eda766785efb61c754810267529ca3af82863064abed"
+    },
+    {
+      "bytes": 1812700,
+      "path": "preparation/ci-readback-117/main-hosted-42553751914-42553751985/worktime-head-42553751985.zip",
+      "sha256": "738c55807bd4e26b9b7f635d7fffbfbcb9240440856c992127c0e9ca2df51f81"
+    },
+    {
+      "bytes": 1812824,
+      "path": "preparation/ci-readback-117/main-hosted-42553751914-42553751985/worktime-merge-42553751985.zip",
+      "sha256": "5ac4c7720c6a2eb2786c8a2257d62cb19e5fc3131032bcf39d84d7c9567e1379"
+    }
+  ],
+  "document_identity_at_save": {
+    "bytes": 5684,
+    "path": "evidence-preparation/hosted-results.md",
+    "sha256": "72369b93a5d02b5de375a64276a314be0a2ee1b8900f8aa02e34cec6183b1bc4"
+  },
+  "external_evidence": {
+    "jobs": [
+      {
+        "errors_including_subtests": 22,
+        "failures_including_subtests": 84,
+        "job_id": 128954796911,
+        "named_tests": 71,
+        "old_fixture_needle_missing_blocks": 5,
+        "selected_modes_blocks": 101
+      },
+      {
+        "errors_including_subtests": 22,
+        "failures_including_subtests": 84,
+        "job_id": 128954797024,
+        "named_tests": 71,
+        "old_fixture_needle_missing_blocks": 5,
+        "selected_modes_blocks": 101
+      }
+    ],
+    "unchanged_inputs": [
+      {
+        "exact_identifier_occurrences_at_117": {
+          "growth_observation_only": 8,
+          "observation_only": 0
+        },
+        "path": "scripts/ci/check_public_readiness_evidence.py",
+        "same_bytes": true,
+        "versions": [
+          {
+            "blob": "18e8f5ce45370ba8abc8e36390fb923afe8fc982",
+            "bytes": 70294,
+            "commit": "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+            "sha256": "bff8d8d7aaae498c03bfeca86098c840f4be2291966b23aea83ee21498062224"
+          },
+          {
+            "blob": "18e8f5ce45370ba8abc8e36390fb923afe8fc982",
+            "bytes": 70294,
+            "commit": "11791e2da79b69322271be2cffe03725165151d1",
+            "sha256": "bff8d8d7aaae498c03bfeca86098c840f4be2291966b23aea83ee21498062224"
+          }
+        ]
+      },
+      {
+        "exact_identifier_occurrences_at_117": {
+          "growth_observation_only": 10,
+          "observation_only": 0
+        },
+        "path": "scripts/ci/test_public_readiness_evidence.py",
+        "same_bytes": true,
+        "versions": [
+          {
+            "blob": "c524695c9630ec49498dcd30619f548309ba1fa2",
+            "bytes": 119401,
+            "commit": "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+            "sha256": "863db081feb9c02a6b479ebb9f131d1518aa6c52068553bcebee435688253ac8"
+          },
+          {
+            "blob": "c524695c9630ec49498dcd30619f548309ba1fa2",
+            "bytes": 119401,
+            "commit": "11791e2da79b69322271be2cffe03725165151d1",
+            "sha256": "863db081feb9c02a6b479ebb9f131d1518aa6c52068553bcebee435688253ac8"
+          }
+        ]
+      },
+      {
+        "exact_identifier_occurrences_at_117": {
+          "growth_observation_only": 0,
+          "observation_only": 14
+        },
+        "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "same_bytes": true,
+        "versions": [
+          {
+            "blob": "a8bd7b9c8d9b02617060bea955b3bb21d905129f",
+            "bytes": 382866,
+            "commit": "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+            "sha256": "108621f304255841ea2e1a7353858c3f0f5d8cb70a235f6a4aef6d57ebe0c554"
+          },
+          {
+            "blob": "a8bd7b9c8d9b02617060bea955b3bb21d905129f",
+            "bytes": 382866,
+            "commit": "11791e2da79b69322271be2cffe03725165151d1",
+            "sha256": "108621f304255841ea2e1a7353858c3f0f5d8cb70a235f6a4aef6d57ebe0c554"
+          }
+        ]
+      }
+    ]
+  },
+  "four_second_cases": {
+    "cases": [
+      {
+        "acceptance_passed": false,
+        "all_child_exit_zero_no_timeout": true,
+        "baseline_confirmed": 1,
+        "failures": [
+          "CONFIRMATION_TARGET"
+        ],
+        "host_limits": {
+          "cpu.max": "25000 100000",
+          "cpu.max.burst": "0",
+          "memory.max": "2147483648",
+          "memory.swap.max": "0",
+          "pids.max": "256"
+        },
+        "job_id": 128954796906,
+        "native_execution_completed": true,
+        "native_invocations": 5,
+        "pressure_confirmed": 0,
+        "pressure_submit_acks": 7,
+        "pressure_verification_errors": [
+          "PUBLIC_REQUEST_DEADLINE"
+        ],
+        "required_business_per_phase": 1,
+        "tested_commit": "11791e2da79b69322271be2cffe03725165151d1",
+        "window_ns": 4000000000
+      },
+      {
+        "acceptance_passed": false,
+        "all_child_exit_zero_no_timeout": true,
+        "baseline_confirmed": 1,
+        "failures": [
+          "CONFIRMATION_TARGET"
+        ],
+        "host_limits": {
+          "cpu.max": "25000 100000",
+          "cpu.max.burst": "0",
+          "memory.max": "2147483648",
+          "memory.swap.max": "0",
+          "pids.max": "256"
+        },
+        "job_id": 128954797047,
+        "native_execution_completed": true,
+        "native_invocations": 5,
+        "pressure_confirmed": 0,
+        "pressure_submit_acks": 7,
+        "pressure_verification_errors": [
+          "PUBLIC_REQUEST_DEADLINE"
+        ],
+        "required_business_per_phase": 1,
+        "tested_commit": "b472c21f7b14ba27bb87d9d2f52d299365ed3145",
+        "window_ns": 4000000000
+      },
+      {
+        "acceptance_passed": false,
+        "all_child_exit_zero_no_timeout": true,
+        "baseline_confirmed": 1,
+        "failures": [
+          "CONFIRMATION_TARGET"
+        ],
+        "host_limits": {
+          "cpu.max": "25000 100000",
+          "cpu.max.burst": "0",
+          "memory.max": "2147483648",
+          "memory.swap.max": "0",
+          "pids.max": "256"
+        },
+        "job_id": 128954796813,
+        "native_execution_completed": true,
+        "native_invocations": 5,
+        "pressure_confirmed": 0,
+        "pressure_submit_acks": 7,
+        "pressure_verification_errors": [
+          "PUBLIC_REQUEST_DEADLINE"
+        ],
+        "required_business_per_phase": 1,
+        "tested_commit": "11791e2da79b69322271be2cffe03725165151d1",
+        "window_ns": 4000000000
+      },
+      {
+        "acceptance_passed": false,
+        "all_child_exit_zero_no_timeout": true,
+        "baseline_confirmed": 1,
+        "failures": [
+          "CONFIRMATION_TARGET"
+        ],
+        "host_limits": {
+          "cpu.max": "25000 100000",
+          "cpu.max.burst": "0",
+          "memory.max": "2147483648",
+          "memory.swap.max": "0",
+          "pids.max": "256"
+        },
+        "job_id": 128954796735,
+        "native_execution_completed": true,
+        "native_invocations": 5,
+        "pressure_confirmed": 0,
+        "pressure_submit_acks": 7,
+        "pressure_verification_errors": [],
+        "required_business_per_phase": 1,
+        "tested_commit": "11791e2da79b69322271be2cffe03725165151d1",
+        "window_ns": 4000000000
+      }
+    ],
+    "hostile_workers": 16,
+    "interpretation": "Separate 4-second/16-worker cases; not merged with the 30-second/24-process campaign denominator. ACKs are not confirmations; later confirmation predicates were not asserted after CONFIRMATION_TARGET. History is on the current path, and no paired causal experiment proves or excludes its involvement.",
+    "run_id": 42553751938
+  },
+  "implementation": "11791e2da79b69322271be2cffe03725165151d1",
+  "original_three_run_campaign": {
+    "all_nine_public_host_limits_independently_checked": true,
+    "build_exit": 0,
+    "checked_binary": {
+      "actual_compiler_artifact_profile": {
+        "debug_assertions": false,
+        "debuginfo": 0,
+        "opt_level": "3",
+        "overflow_checks": false,
+        "test": true
+      },
+      "build_artifact": "/home/runner/work/_temp/target-native-campaign/release/deps/public_v3_multiprocess-f2ec8cfbb025f448",
+      "build_separate_from_measured_campaign": true,
+      "bytes": 12601856,
+      "execution": "original cargo test command using the checked build artifact",
+      "retained": "public_v3_multiprocess.bin",
+      "sha256_after": "f9cd85c7b053746cea0610aa184bd4993def306bd6bb8aeb875583c803dfa619",
+      "sha256_before": "f9cd85c7b053746cea0610aa184bd4993def306bd6bb8aeb875583c803dfa619"
+    },
+    "complete_success": false,
+    "controller_build_resources": {
+      "cpu_max": "400000 100000",
+      "memory_max": "17179869184",
+      "nice": 10
+    },
+    "executed_runs": 3,
+    "failure": "ORIGINAL_THREE_RUN_CAMPAIGN_FAILED",
+    "finalization_failures": [],
+    "interpretation": "Observed round records are not all completed successful confirmations. Fifteen unobserved scheduled rounds are not completed failed executions and carry no zero-cost assumption. All nine finite phase criteria are false; attack-free partial success does not pass its original full target.",
+    "phases": [
+      {
+        "confirmed_rounds": 1,
+        "finite_phase_criteria_met": false,
+        "genuine_budget_depletion_observed": false,
+        "hostile_processes": 0,
+        "mode": "baseline",
+        "observed_round_records": 2,
+        "planned_rounds": 3,
+        "receiver_client_state_equal": false,
+        "run": 1,
+        "submit_acks_on_time": 14,
+        "submit_attempts": 14,
+        "unobserved_rounds": 1,
+        "verifier_errors": [
+          "PUBLIC_REQUEST_DEADLINE"
+        ],
+        "window_seconds": 30
+      },
+      {
+        "confirmed_rounds": 0,
+        "finite_phase_criteria_met": false,
+        "genuine_budget_depletion_observed": false,
+        "hostile_processes": 24,
+        "mode": "from-zero",
+        "observed_round_records": 1,
+        "planned_rounds": 3,
+        "receiver_client_state_equal": false,
+        "run": 1,
+        "submit_acks_on_time": 7,
+        "submit_attempts": 7,
+        "unobserved_rounds": 2,
+        "verifier_errors": [
+          "PUBLIC_REQUEST_DEADLINE"
+        ],
+        "window_seconds": 30
+      },
+      {
+        "confirmed_rounds": 0,
+        "finite_phase_criteria_met": false,
+        "genuine_budget_depletion_observed": false,
+        "hostile_processes": 24,
+        "mode": "late-product",
+        "observed_round_records": 1,
+        "planned_rounds": 3,
+        "receiver_client_state_equal": false,
+        "run": 1,
+        "submit_acks_on_time": 7,
+        "submit_attempts": 7,
+        "unobserved_rounds": 2,
+        "verifier_errors": [
+          "PUBLIC_REQUEST_DEADLINE"
+        ],
+        "window_seconds": 30
+      },
+      {
+        "confirmed_rounds": 1,
+        "finite_phase_criteria_met": false,
+        "genuine_budget_depletion_observed": false,
+        "hostile_processes": 0,
+        "mode": "baseline",
+        "observed_round_records": 2,
+        "planned_rounds": 3,
+        "receiver_client_state_equal": false,
+        "run": 2,
+        "submit_acks_on_time": 14,
+        "submit_attempts": 14,
+        "unobserved_rounds": 1,
+        "verifier_errors": [
+          "PUBLIC_REQUEST_DEADLINE"
+        ],
+        "window_seconds": 30
+      },
+      {
+        "confirmed_rounds": 0,
+        "finite_phase_criteria_met": false,
+        "genuine_budget_depletion_observed": false,
+        "hostile_processes": 24,
+        "mode": "from-zero",
+        "observed_round_records": 1,
+        "planned_rounds": 3,
+        "receiver_client_state_equal": false,
+        "run": 2,
+        "submit_acks_on_time": 7,
+        "submit_attempts": 7,
+        "unobserved_rounds": 2,
+        "verifier_errors": [
+          "PUBLIC_REQUEST_DEADLINE"
+        ],
+        "window_seconds": 30
+      },
+      {
+        "confirmed_rounds": 0,
+        "finite_phase_criteria_met": false,
+        "genuine_budget_depletion_observed": false,
+        "hostile_processes": 24,
+        "mode": "late-product",
+        "observed_round_records": 1,
+        "planned_rounds": 3,
+        "receiver_client_state_equal": false,
+        "run": 2,
+        "submit_acks_on_time": 7,
+        "submit_attempts": 7,
+        "unobserved_rounds": 2,
+        "verifier_errors": [
+          "PUBLIC_REQUEST_DEADLINE"
+        ],
+        "window_seconds": 30
+      },
+      {
+        "confirmed_rounds": 1,
+        "finite_phase_criteria_met": false,
+        "genuine_budget_depletion_observed": false,
+        "hostile_processes": 0,
+        "mode": "baseline",
+        "observed_round_records": 2,
+        "planned_rounds": 3,
+        "receiver_client_state_equal": false,
+        "run": 3,
+        "submit_acks_on_time": 14,
+        "submit_attempts": 14,
+        "unobserved_rounds": 1,
+        "verifier_errors": [
+          "PUBLIC_REQUEST_DEADLINE"
+        ],
+        "window_seconds": 30
+      },
+      {
+        "confirmed_rounds": 0,
+        "finite_phase_criteria_met": false,
+        "genuine_budget_depletion_observed": false,
+        "hostile_processes": 24,
+        "mode": "from-zero",
+        "observed_round_records": 1,
+        "planned_rounds": 3,
+        "receiver_client_state_equal": false,
+        "run": 3,
+        "submit_acks_on_time": 7,
+        "submit_attempts": 7,
+        "unobserved_rounds": 2,
+        "verifier_errors": [
+          "PUBLIC_REQUEST_DEADLINE"
+        ],
+        "window_seconds": 30
+      },
+      {
+        "confirmed_rounds": 0,
+        "finite_phase_criteria_met": false,
+        "genuine_budget_depletion_observed": false,
+        "hostile_processes": 24,
+        "mode": "late-product",
+        "observed_round_records": 1,
+        "planned_rounds": 3,
+        "receiver_client_state_equal": false,
+        "run": 3,
+        "submit_acks_on_time": 7,
+        "submit_attempts": 7,
+        "unobserved_rounds": 2,
+        "verifier_errors": [
+          "PUBLIC_REQUEST_DEADLINE"
+        ],
+        "window_seconds": 30
+      }
+    ],
+    "planned_runs": 3,
+    "profile": "release",
+    "public_phase_placement": {
+      "attacker_processes_remain_in_original_controller_domain": true,
+      "fixed_parent": "/sys/fs/cgroup/trnmponpublic.slice",
+      "original_3x3_workload_and_depletion_predicates_changed": false,
+      "profile": "fixed-public-phase-external-actors-v1",
+      "receiver_and_verifier_cpu_max": "25000 100000",
+      "receiver_and_verifier_memory_max": "2147483648"
+    },
+    "raw_primary_confirmation_counts_crosschecked": true,
+    "run_id": 42553751914,
+    "runs": [
+      {
+        "exit_code": 101,
+        "original_criteria_met": false,
+        "phase_startup_errors": [],
+        "raw_report_sha256": "42b9991771a1e86589667c68c93e43d1a77276a52cd5311ce1434c1034aa00e8",
+        "report_validation_failure": null,
+        "run": 1,
+        "step_error": null
+      },
+      {
+        "exit_code": 101,
+        "original_criteria_met": false,
+        "phase_startup_errors": [],
+        "raw_report_sha256": "63015262011215ca56f5ebf7416c7ba920e7d6709b4bb8bd37d7ed98aef9ba6a",
+        "report_validation_failure": null,
+        "run": 2,
+        "step_error": null
+      },
+      {
+        "exit_code": 101,
+        "original_criteria_met": false,
+        "phase_startup_errors": [],
+        "raw_report_sha256": "1958aa8ccf3caaf3d6f2fa4b64ea94b6a4f2c0e280aadecba20e82376555fd67",
+        "report_validation_failure": null,
+        "run": 3,
+        "step_error": null
+      }
+    ],
+    "runs_meeting_original_criteria": 0,
+    "source_before": {
+      "base": null,
+      "candidate": "11791e2da79b69322271be2cffe03725165151d1",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "11791e2da79b69322271be2cffe03725165151d1",
+      "tested_tree": "162552848110fda532504b78865a16930bc6d9bb",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 2485379627,
+      "tracked_entries": 26124,
+      "tracked_worktree_verified": true
+    },
+    "source_before_after_equal": true,
+    "totals": {
+      "confirmed_rounds": 3,
+      "observed_round_records": 12,
+      "planned_rounds": 27,
+      "unobserved_rounds": 15
+    }
+  },
+  "other_required_corrections_found": [],
+  "prospective_merge": "b472c21f7b14ba27bb87d9d2f52d299365ed3145",
+  "qrom": {
+    "actual_verifier_bytes": 11172,
+    "historical_verifier_bytes": 9233,
+    "implementation_refusal": "INPUT_REJECTED input exceeds bound: formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs",
+    "interpretation": "Two named test errors are separate from one setUpClass error. Fourteen never-started controls are not counted as passed or run. The historical source refusal remains a real CI failure.",
+    "lanes": [
+      {
+        "lane": "head-artifact",
+        "not_started": 14,
+        "required": 81,
+        "separate_setUpClass_errors": 1,
+        "started": 67,
+        "successful": 63,
+        "test_errors": 2,
+        "test_failures": 2
+      },
+      {
+        "lane": "merge-artifact",
+        "not_started": 14,
+        "required": 81,
+        "separate_setUpClass_errors": 1,
+        "started": 67,
+        "successful": 63,
+        "test_errors": 2,
+        "test_failures": 2
+      }
+    ],
+    "run_id": 42553751987,
+    "scope_report_skipped": true
+  },
+  "recorded_utc": "2026-11-09T03:58:53.145373+00:00",
+  "required_corrections": [
+    {
+      "locations_at_117": {
+        "actual_store": "trillionnium/crates/trnm-pon-node/src/store.rs:1375",
+        "checker": "scripts/ci/check_public_readiness_evidence.py:427",
+        "fixture": "scripts/ci/test_public_readiness_evidence.py:1261"
+      },
+      "original_text": "The checker expects growth_observation_only, while the store and fixture use observation_only.",
+      "problem": "The test source-replacement fixtures still expect growth_observation_only; only the actual store input uses observation_only. The current sentence incorrectly assigns the new field to the test fixture.",
+      "recommended_text": "The checker and source-replacement test fixtures still expect `growth_observation_only`; the actual `store.rs` uses `observation_only`. The complete checker, test-suite and store blobs are identical at e798 and 117. This inherited static mismatch remains FAIL; no guard or historical pin is rewritten.",
+      "section": "Other retained failed gates: external-evidence"
+    }
+  ],
+  "reviewed_document": {
+    "bytes": 5684,
+    "path": "evidence-preparation/hosted-results.md",
+    "sha256": "72369b93a5d02b5de375a64276a314be0a2ee1b8900f8aa02e34cec6183b1bc4"
+  },
+  "reviewed_document_unchanged_during_review": true,
+  "schema": "pon-joint-hosted-results-independent-review-v1",
+  "scope": "Read-only factual review of all existing hosted paragraphs against prior required-baseline/QROM raw-evidence reports and the three complete local provider ZIPs. No campaign or native test rerun.",
+  "source_documents": [
+    {
+      "bytes": 188549,
+      "path": "preparation/ci-readback-117/required-baseline-42553751938/failure-readback-summary.json",
+      "sha256": "48b1853f41dd16784303671cb76d8d873220136eec7f95ce9e482a4d32fe2a5a"
+    },
+    {
+      "bytes": 34151,
+      "path": "preparation/ci-readback-117/w1-qrom-run42553751987/failure-readback-summary.json",
+      "sha256": "fcddfd531f30380dd044ae01640694c2e9237be5ccefa7b15d4fba3d24381196"
+    },
+    {
+      "bytes": 5309,
+      "path": "main-zip-independent-review/main-zip-review.json",
+      "sha256": "2f527087adaa269e547520473ae598a9595ebb402bab325e2a20e1efdc6dbac0"
+    }
+  ],
+  "tree": "162552848110fda532504b78865a16930bc6d9bb",
+  "whole_workflow_snapshot_boundary": "The required-baseline six-job report is explicitly a retained nonterminal root snapshot and does not establish the later final status of every other job.",
+  "worktime_research": {
+    "interpretation": "These are Python finite-grid and historical-reference controls, not native cost executions or an all-legal/quantum/production qualification. Current source refusal remains explicit even though research controls pass.",
+    "lanes": [
+      {
+        "catalog_stage_results": [
+          {
+            "exit_code": 0,
+            "passed": true,
+            "stage": "catalog-generate"
+          },
+          {
+            "exit_code": 0,
+            "passed": true,
+            "stage": "catalog-replay"
+          }
+        ],
+        "current_native_cost_qualified": false,
+        "finite_declared_python_grid_only": true,
+        "finite_python_cohorts": 24,
+        "frozen_native_binary_executed": false,
+        "frozen_reference_source": "b16bae2824e6c8236ef2011fc93a74df3ac7f039",
+        "lane": "head",
+        "named_failures_errors_skips": [
+          0,
+          0,
+          0
+        ],
+        "named_native_execution": false,
+        "named_required_started_successful": [
+          104,
+          104,
+          104
+        ],
+        "native_node_admission_executed": false,
+        "original_current_contract": {
+          "error": {
+            "message": "SOURCE_BYTES:config/pon/pq-cross-branch-corpus-v1.json",
+            "type": "ValueError"
+          },
+          "matched": false
+        },
+        "passed_research_controls": true,
+        "qualification": {
+          "all_legal_algorithm_cost_lower_bound": false,
+          "joint_cp_cq_cg_proof": false,
+          "lifetime_security_bound": null,
+          "native_time_daa_upgrade": false,
+          "production_activation": false,
+          "real_hepta_product_loop": false,
+          "same_iteration_deployment": false,
+          "variable_u_native_relation": false
+        },
+        "reference_failures_errors_skips": [
+          0,
+          0,
+          0
+        ],
+        "reference_native_execution": false,
+        "reference_required_started_successful": [
+          13,
+          13,
+          13
+        ],
+        "source_before_after_equal": true,
+        "status": "HOLD_NO_GO",
+        "tested_commit": "11791e2da79b69322271be2cffe03725165151d1",
+        "tree": "162552848110fda532504b78865a16930bc6d9bb"
+      },
+      {
+        "catalog_stage_results": [
+          {
+            "exit_code": 0,
+            "passed": true,
+            "stage": "catalog-generate"
+          },
+          {
+            "exit_code": 0,
+            "passed": true,
+            "stage": "catalog-replay"
+          }
+        ],
+        "current_native_cost_qualified": false,
+        "finite_declared_python_grid_only": true,
+        "finite_python_cohorts": 24,
+        "frozen_native_binary_executed": false,
+        "frozen_reference_source": "b16bae2824e6c8236ef2011fc93a74df3ac7f039",
+        "lane": "merge",
+        "named_failures_errors_skips": [
+          0,
+          0,
+          0
+        ],
+        "named_native_execution": false,
+        "named_required_started_successful": [
+          104,
+          104,
+          104
+        ],
+        "native_node_admission_executed": false,
+        "original_current_contract": {
+          "error": {
+            "message": "SOURCE_BYTES:config/pon/pq-cross-branch-corpus-v1.json",
+            "type": "ValueError"
+          },
+          "matched": false
+        },
+        "passed_research_controls": true,
+        "qualification": {
+          "all_legal_algorithm_cost_lower_bound": false,
+          "joint_cp_cq_cg_proof": false,
+          "lifetime_security_bound": null,
+          "native_time_daa_upgrade": false,
+          "production_activation": false,
+          "real_hepta_product_loop": false,
+          "same_iteration_deployment": false,
+          "variable_u_native_relation": false
+        },
+        "reference_failures_errors_skips": [
+          0,
+          0,
+          0
+        ],
+        "reference_native_execution": false,
+        "reference_required_started_successful": [
+          13,
+          13,
+          13
+        ],
+        "source_before_after_equal": true,
+        "status": "HOLD_NO_GO",
+        "tested_commit": "b472c21f7b14ba27bb87d9d2f52d299365ed3145",
+        "tree": "162552848110fda532504b78865a16930bc6d9bb"
+      }
+    ],
+    "run_id": 42553751985
+  }
+}

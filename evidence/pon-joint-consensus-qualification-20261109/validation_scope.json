@@ -1,0 +1,44 @@
+{
+  "schema": "trnm-joint-consensus-validation-scope-v1",
+  "base_commit": "e2a02f9271b49f146e70806c8a66e161b5973971",
+  "local_tested_source_commit": "73b5a70fc3f4ffa5a1a99da366591c243d384786",
+  "published_source_commit": "ef5473ca77a43177adacf170451090a3a600cf81",
+  "tested_source_tree": "33734d72a3d893fb8dfb438b17a42fa3a20e2114",
+  "source_tree_equality_verified": true,
+  "delivery_scope": "Evidence-only child of the published source commit; evidence is not included in the tested source tree.",
+  "tests": {
+    "joint": 34,
+    "dynamic": 28,
+    "ci_contract": 167,
+    "source_integrity": 43,
+    "total": 272
+  },
+  "cargo": {
+    "locked_offline_graph": "PASS",
+    "workspace_members": 26,
+    "resolved_packages": 181,
+    "format": "PASS",
+    "strict_clippy": "UNKNOWN",
+    "sqlite_loader_private_abi": "UNQUALIFIED"
+  },
+  "qualification": "HOLD_NO_GO",
+  "source_pins": 23,
+  "unknown_environment_parameters": 18,
+  "open_obligations": 13,
+  "native_failure_probabilities": null,
+  "full_repository_check": "NOT_RUN",
+  "canonical_plan_wrapper": "NOT_RUN",
+  "full_native_test_suite": "NOT_RUN",
+  "hosted_delivery_checks": "NOT_OBSERVED_AT_EVIDENCE_CREATION",
+  "complete_link_audit_details_preserved": false,
+  "production_activation": false,
+  "execution_authority": false,
+  "finalized": false,
+  "preparation_observations": [
+    "The initial sparse checkout omitted tests/fuzz/Cargo.lock; the exact tracked tests path was materialized and the final CI contract check passed.",
+    "An earlier executor interruption recovered with source and worktree intact; completed validations were run afterward on the frozen commit.",
+    "HeptaRuntime host/process read operations returned Internal error; no successful receipt from the pending read-only source scan was substituted.",
+    "GitHub publication used the selected GitHub connection authenticated as ProfHepta, preserving the existing candidate lineage.",
+    "The executor disconnected during strict Clippy. The final exit code and complete Clippy log were not obtained. The last observed SQLite UNQUALIFIED warning and group-metric observation are retained."
+  ]
+}

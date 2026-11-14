@@ -1,0 +1,11 @@
+test_fallback_receipt_root_reaches_child_and_preserves_original_failure (__main__.RustBaselineReceiptRetentionTests.test_fallback_receipt_root_reaches_child_and_preserves_original_failure) ... ok
+test_native_domain_and_historical_oracles_both_execute (__main__.NativeConsensusOracleLaneTests.test_native_domain_and_historical_oracles_both_execute) ... ok
+test_native_domain_oracle_cannot_be_omitted_skipped_or_swallowed (__main__.NativeConsensusOracleLaneTests.test_native_domain_oracle_cannot_be_omitted_skipped_or_swallowed) ... ok
+test_actual_workflow_guards_bind_current_bytes (__main__.InlineSourcePinTests.test_actual_workflow_guards_bind_current_bytes) ... ok
+test_recent_log_inventory_retains_absence_and_source_failure (__main__.InlineSourcePinTests.test_recent_log_inventory_retains_absence_and_source_failure) ... ok
+test_stale_missing_and_bypassed_literal_guards_are_rejected (__main__.InlineSourcePinTests.test_stale_missing_and_bypassed_literal_guards_are_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.261s
+
+OK

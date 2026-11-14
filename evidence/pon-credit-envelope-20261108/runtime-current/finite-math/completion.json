@@ -1,0 +1,12 @@
+{
+  "actual_w1_minimum_cost": "UNPROVED",
+  "complete_worktree_verified_here": false,
+  "distinct_named_tests_passed": 77,
+  "finite_math_checks": "PASS",
+  "mixed_consensus_bound": "UNPROVED",
+  "overall": "HOLD",
+  "production_activation": false,
+  "schema": "pon-credit-envelope-completion-v1",
+  "source_bytes_unchanged": true,
+  "stateful_portfolio_bound": "UNPROVED"
+}

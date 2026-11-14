@@ -1,0 +1,82 @@
+{
+  "schema": "chain-hepta-candidate-source-lineage-v1",
+  "executed_candidate": "M6",
+  "native_result_records_are_source_specific": true,
+  "future_evidence_child_is_not_the_executed_source": true,
+  "records": [
+    {
+      "label": "M1",
+      "commit": "d728137d082bb6def7cdaa13d27a9ba57925824d",
+      "tree": "c0778de4538f6c6b3683d59410e6284b2de30491",
+      "parents": [
+        "e2a02f9271b49f146e70806c8a66e161b5973971",
+        "0746a462e80067b78317597f2fa4bacf5e3db958"
+      ],
+      "commit_object_bytes": 598,
+      "commit_object_sha256": "ba85ec8df1f80a787b93817e173f969f0f290332c2269c2daa31dff4a794b6b6",
+      "git_oid_recomputed": true,
+      "role": "merge original Chain 835 and 836 source histories"
+    },
+    {
+      "label": "M2",
+      "commit": "44e96b1a841a50613d0b93484c5e576caec9f81f",
+      "tree": "c297ebb14fcbeeb5f8acf13b3143a66b8b3b6db8",
+      "parents": [
+        "d728137d082bb6def7cdaa13d27a9ba57925824d",
+        "44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0"
+      ],
+      "commit_object_bytes": 669,
+      "commit_object_sha256": "7890ac0f41d1ce733fe24fbcc102c71ec7b145ef54efb0abafe43114baa9e544",
+      "git_oid_recomputed": true,
+      "role": "merge original Chain 837 with the composed source"
+    },
+    {
+      "label": "M3",
+      "commit": "f48840dead56de84fbae9d3b202b6c9ddd4a8291",
+      "tree": "21cf3932e715e1d9b9a1357b24022afa1257547a",
+      "parents": [
+        "44e96b1a841a50613d0b93484c5e576caec9f81f"
+      ],
+      "commit_object_bytes": 380,
+      "commit_object_sha256": "25994823c5ae075b48b8d35413cf7cff461f48ba82e392d7247fc4ececd6e02c",
+      "git_oid_recomputed": true,
+      "role": "bind selected source readers and manifests"
+    },
+    {
+      "label": "M4",
+      "commit": "e4e4a8e049915ba09d9e97444b4709ce8769ce81",
+      "tree": "c82829c3a5710960081d91930cf425f9a768e9e4",
+      "parents": [
+        "f48840dead56de84fbae9d3b202b6c9ddd4a8291"
+      ],
+      "commit_object_bytes": 423,
+      "commit_object_sha256": "1578619ae4b025d4a4ef6467a4cea34b41a40a6d959abeaeb95781c0185d77c3",
+      "git_oid_recomputed": true,
+      "role": "retain eleven Root CI commands in independent expected contract"
+    },
+    {
+      "label": "M5",
+      "commit": "3ad605ecdac4b3b123dff83c1cb7458430acd776",
+      "tree": "fbbb4dca143775bae75ea825ff502f368e122ebb",
+      "parents": [
+        "e4e4a8e049915ba09d9e97444b4709ce8769ce81"
+      ],
+      "commit_object_bytes": 265,
+      "commit_object_sha256": "6e321e9610def39daa10d46bf1dcc5c58b2515ea7d150d962bbcd191b060b2e7",
+      "git_oid_recomputed": true,
+      "role": "correct sealed-loader test descriptor identity oracle"
+    },
+    {
+      "label": "M6",
+      "commit": "4dbeae12fa756fd662cc074390fcb628abe970ad",
+      "tree": "1943c3e69e3a717ce99d91aabc00eba4d37516f1",
+      "parents": [
+        "3ad605ecdac4b3b123dff83c1cb7458430acd776"
+      ],
+      "commit_object_bytes": 559,
+      "commit_object_sha256": "75ef456f2a2e2ff1b2353eb3800fe312e7a6f021899e6652c3d3934a6146482e",
+      "git_oid_recomputed": true,
+      "role": "isolate complete journal test owner lifetime; preserve production lock behavior"
+    }
+  ]
+}

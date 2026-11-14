@@ -1,0 +1,43 @@
+{
+  "base": "5c04c60e463462d9df8884786e0d5bb32af08a64",
+  "head": "51c215b45c41180fc044ec806fde39c7ceffb75c",
+  "tree": "8f59f0f2895e7b9add7d727a84466eb7203c743a",
+  "original_test_methods": 225,
+  "unchanged_method_asts": 223,
+  "changed_fixture_methods": [
+    "CiContractTests.test_model_observation_block_cannot_move_to_another_lane",
+    "CiContractTests.test_model_oracles_must_precede_documentation_tests"
+  ],
+  "single_test_blob": "8683f6b319cb6104bf7dc201e3b363c648901468",
+  "production_changed": false,
+  "agent_complete_suite_passed": 225,
+  "agent_suite_skips": 0,
+  "native_repeated": false,
+  "steps": [
+    {
+      "label": "preflight",
+      "exit": 0,
+      "seconds": 0.05,
+      "sha256": "2e0930e3e5b93d19ab63db0fe013c910ee3255283942eeab771e4db4aec002ec"
+    },
+    {
+      "label": "fast-forward",
+      "exit": 0,
+      "seconds": 0.071,
+      "sha256": "b31edd0cc3a97f1b24173f002306e71331a2f9cebd9afaa2ed6eb1b2fcafb40e"
+    },
+    {
+      "label": "current-ci-contract",
+      "exit": 0,
+      "seconds": 0.087,
+      "sha256": "04a27d4ea2af1ccbbf7ed70f56bad64b02ba958a2645254d6d547d8a28102c55"
+    },
+    {
+      "label": "current-corpus",
+      "exit": 0,
+      "seconds": 0.691,
+      "sha256": "5f1fe207ff94b51831ba165f387faaaed9a527754a4bce334fb5c20cbb421546"
+    }
+  ],
+  "remote_writes": false
+}

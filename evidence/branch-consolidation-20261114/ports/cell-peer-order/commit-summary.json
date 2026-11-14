@@ -1,0 +1,70 @@
+{
+  "schema": "cell-peer-failure-order-selected-port-v1",
+  "commit": "283981a062158f3b41eea42d52f56eaee457ba97",
+  "tree": "6def71d45efdc36adbfcc9223136651988c991f8",
+  "parent": "3eb2cfdd9c123a2418c138e4c18940bcc584d878",
+  "original_tip": "6a5eb9de422cc3ae4392ee7ace8ef12f3a7395e6",
+  "paths": {
+    "trillionnium/crates/trnm-data-availability/src/cell/network.rs": {
+      "blob": "b9d1547e13c8c5ac0820c7d6eaa1a17a0940630d",
+      "sha256": "dd82a7a03e3b64ec74929734d0a9cdc99af61da5e2d4cf2614a578c7b2374924"
+    },
+    "trillionnium/crates/trnm-data-availability/src/cell/release_tests.rs": {
+      "blob": "edf9baf2d76c7cb519c1554c4d65f33231771169",
+      "sha256": "66655a9253e5f71f6f47710605b6161886a24ecf543c32128e655dbbdc02d073"
+    },
+    "trillionnium/crates/trnm-data-availability/src/cell/network/availability/tests.rs": {
+      "blob": "dcdd3d86271c074fb02b26e2502816f0a7fa4ff5",
+      "sha256": "8dbf4b425c74f43969f74a04be583e26f82c76c14453341eac303c927f093dd5"
+    },
+    "scripts/ci/check_pq_research_integration.py": {
+      "blob": "1a38aa58bd64722c7dc630f43db4186828e938e6",
+      "sha256": "2dc8efc24e52434a7bd244af45d03fd6f8084982e6792e788d60cb1684e67c1a"
+    },
+    "scripts/ci/test_pq_research_integration.py": {
+      "blob": "de4c17a63cb95f1fda3e229ccb253240290d7096",
+      "sha256": "bae424f7f61b490faf4fefa9df985be5d404c90ad0a59573ec54e747bdeae25b"
+    },
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": {
+      "blob": "e5985ea4008337f0753076cd682c7c92cc2170e0",
+      "sha256": "39d5691d42db93333adbb07aa4ac9bd0e204026ddf718be73a05dfb6abb52843"
+    },
+    "config/pon/pq-cross-branch-corpus-v1.json": {
+      "blob": "3c4b59aa753ff8b192909bb450eaed90c120daed",
+      "sha256": "1b6cea5a4cc3a1926d90d5a6b37433981a060d18cc37f041355ef50827ece057"
+    }
+  },
+  "source_patch_sha256": "0d2f73fd18989c1fb9c12b054c7f1636ecb602965717ce40670be08a4c5cf274",
+  "complete_patch_sha256": "7a63ab7881e4209391ef1c638f70b3aa4449b2d67ef9a01e9f58cc9f601c375d",
+  "linux_job": "1a1d83ef373-392-d0b",
+  "linux_summary_original_sha256": "6323e3df6bb52b77996ac9ef92beacc3c381adbf78158de3618fb5a19969f228",
+  "linux_result": {
+    "release": 19,
+    "availability": 13,
+    "network_budget": 8,
+    "cancellation": 4,
+    "failed": 0,
+    "ignored": 0,
+    "strict_all_target_clippy": true
+  },
+  "mac_first_observation": {
+    "release": 19,
+    "availability_passed": 12,
+    "availability_failed": 1,
+    "failure": "existing availability_probe_exhaustion_cannot_reset_connections_or_publish_partial_output observed server-call count 1 vs 2"
+  },
+  "mac_followup": {
+    "unchanged_baseline_control_passed": 1,
+    "patched_isolated_control_passed": 1,
+    "network_budget": 8,
+    "cancellation": 4,
+    "strict_all_target_clippy": true
+  },
+  "original_failure_retained": true,
+  "original_failure_cause_proven": false,
+  "ordinary_miss_is_behavior_policy": true,
+  "all_arrangements_accelerated": false,
+  "four_second_confirmation_qualified": false,
+  "activation": false,
+  "worktree_clean": true
+}

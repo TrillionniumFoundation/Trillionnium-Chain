@@ -225,7 +225,18 @@ impl TaskKernelStoreV1 {
     pub fn open(config: AgentMarketStoreConfigV1) -> AgentMarketResultV1<Self> {
         validate_trust_bundle(&config.trust_bundle)?;
         reject_sidecars(&config.path)?;
-        if config.path.exists() {
+        let store_exists = match fs::symlink_metadata(&config.path) {
+            Ok(_) => true,
+            Err(cause) if cause.kind() == std::io::ErrorKind::NotFound => false,
+            Err(cause) => {
+                return Err(error(
+                    AgentMarketErrorCodeV1::StoreFailure,
+                    cause.to_string(),
+                ))
+            }
+        };
+        if store_exists {
+            require_existing_regular_store(&config.path)?;
             let read_only = open_ro_raw(&config.path)?;
             verify_schema(&read_only)?;
             verify_metadata(&read_only, &config)?;
@@ -3867,14 +3878,26 @@ fn reject_sidecars(path: &Path) -> AgentMarketResultV1<()> {
         let mut sidecar_name = path.as_os_str().to_os_string();
         sidecar_name.push(suffix);
         let sidecar = PathBuf::from(sidecar_name);
-        if sidecar.exists() {
-            return Err(error(
-                AgentMarketErrorCodeV1::SidecarPresent,
-                format!(
-                    "unresolved SQLite sidecar is fail-closed: {}",
-                    sidecar.display()
-                ),
-            ));
+        match fs::symlink_metadata(&sidecar) {
+            Ok(_) => {
+                return Err(error(
+                    AgentMarketErrorCodeV1::SidecarPresent,
+                    format!(
+                        "unresolved SQLite sidecar is fail-closed: {}",
+                        sidecar.display()
+                    ),
+                ))
+            }
+            Err(cause) if cause.kind() == std::io::ErrorKind::NotFound => {}
+            Err(cause) => {
+                return Err(error(
+                    AgentMarketErrorCodeV1::StoreFailure,
+                    format!(
+                        "cannot inspect SQLite sidecar {}: {cause}",
+                        sidecar.display()
+                    ),
+                ))
+            }
         }
     }
     Ok(())

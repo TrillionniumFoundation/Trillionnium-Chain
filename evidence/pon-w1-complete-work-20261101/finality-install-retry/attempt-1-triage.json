@@ -1,0 +1,225 @@
+{
+  "schema": "pon-finality-ci-toolchain-failure-readback-v1",
+  "read_utc": "2026-11-01T11:20:48.250859+00:00",
+  "run_id": 41299973511,
+  "source_commit": "7c5caf5bce1396976808a0f504c4163fbc1aed44",
+  "attempt": 1,
+  "failed_job": {
+    "id": 124828701949,
+    "name": "reference (ubuntu-24.04-arm, head)",
+    "html_url": null,
+    "conclusion": "failure",
+    "steps": [
+      {
+        "name": "Set up job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 1
+      },
+      {
+        "name": "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 2
+      },
+      {
+        "name": "Verify actual immutable source and unchanged original preflight",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 3
+      },
+      {
+        "name": "Install existing frozen conformance environment",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 4
+      },
+      {
+        "name": "Execute all reference, recovery and separate-reader controls",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 5
+      },
+      {
+        "name": "Preserve original signed learning suites and execute actual V3 join",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 6
+      },
+      {
+        "name": "Build original native pipeline without changing runtime",
+        "status": "completed",
+        "conclusion": "failure",
+        "number": 7
+      },
+      {
+        "name": "Require each native certificate and separate-reference selector to execute",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 8
+      },
+      {
+        "name": "Observe every original hot disjoint and growth baseline; preserve failures",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 9
+      },
+      {
+        "name": "Recompute existing native counters without claiming saturation",
+        "status": "completed",
+        "conclusion": "failure",
+        "number": 10
+      },
+      {
+        "name": "Recheck source even after failures",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 11
+      },
+      {
+        "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 12
+      },
+      {
+        "name": "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 24
+      },
+      {
+        "name": "Complete job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 25
+      }
+    ]
+  },
+  "workflow_job_summary": [
+    {
+      "job_id": 124828701626,
+      "name": "reference (ubuntu-24.04, prospective-merge)",
+      "conclusion": "success"
+    },
+    {
+      "job_id": 124828701857,
+      "name": "reference (ubuntu-24.04-arm, prospective-merge)",
+      "conclusion": "success"
+    },
+    {
+      "job_id": 124828701949,
+      "name": "reference (ubuntu-24.04-arm, head)",
+      "conclusion": "failure"
+    },
+    {
+      "job_id": 124828702049,
+      "name": "reference (ubuntu-24.04, head)",
+      "conclusion": "success"
+    }
+  ],
+  "classification": "runner_toolchain_partial_installation_component_conflict",
+  "primary_failure": {
+    "step_number": 7,
+    "command": "rustup toolchain install 1.95.0 --profile minimal",
+    "source_file": ".github/workflows/release-finality-reference.yml",
+    "source_line": 76,
+    "error": "error: failed to install component: 'clippy-preview-aarch64-unknown-linux-gnu', detected conflict: 'bin/cargo-clippy'",
+    "preceding_state": "recovering from a partially installed toolchain",
+    "rollback_observed": true,
+    "exit_code": 1,
+    "cargo_build_reached": false,
+    "native_selectors_reached": false,
+    "native_pipeline_baselines_reached": false,
+    "specific_preexisting_runner_state_not_independently_inspected": true
+  },
+  "secondary_failure": {
+    "step_number": 10,
+    "condition": "always()",
+    "reason": "All three native summary files were never produced because prerequisite installation failed and native stages were skipped.",
+    "evidence": "Source marks missing hot/disjoint4/growth summaries as not_observed and exits nonzero; job metadata says the producing steps were skipped.",
+    "exact_artifact_file_read": false
+  },
+  "source_identity_before_and_after": [
+    {
+      "base": null,
+      "candidate": "7c5caf5bce1396976808a0f504c4163fbc1aed44",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "7c5caf5bce1396976808a0f504c4163fbc1aed44",
+      "tested_tree": "fef6125b338e5697896c0a32d0488458d8d93244",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 792454453,
+      "tracked_entries": 6852,
+      "tracked_worktree_verified": true
+    },
+    {
+      "base": null,
+      "candidate": "7c5caf5bce1396976808a0f504c4163fbc1aed44",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "7c5caf5bce1396976808a0f504c4163fbc1aed44",
+      "tested_tree": "fef6125b338e5697896c0a32d0488458d8d93244",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 792454453,
+      "tracked_entries": 6852,
+      "tracked_worktree_verified": true
+    }
+  ],
+  "source_binding_succeeded": true,
+  "reference_and_learning_controls_passed": true,
+  "workflow_source_unchanged_since_8327": true,
+  "workflow_git_blobs": {
+    "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47": "b8436de9ad3c58d545b0badfc99d0329adc2a819",
+    "7c5caf5bce1396976808a0f504c4163fbc1aed44": "b8436de9ad3c58d545b0badfc99d0329adc2a819"
+  },
+  "all_changed_files_since_8327": [
+    ".github/workflows/pon-recent-batch-acceptance.yml",
+    ".github/workflows/pon-w1-work-security.yml"
+  ],
+  "no_rust_source_change_since_8327": true,
+  "same_run_arm64_merge_comparison": {
+    "job_id": 124828701857,
+    "conclusion": "success",
+    "same_install_command": true,
+    "partial_install_recovery_also_logged": true,
+    "toolchain_installation_completed": true,
+    "native_release_build_completed": true,
+    "native_required_selector_pass_count": 4,
+    "not_a_controlled_same_host_experiment": true
+  },
+  "disposition": {
+    "authorized_action_by_parent": "One rerun of the failed job only at the same source and unchanged budget.",
+    "rerun_triggered_by_this_analysis": false,
+    "no_repeat_until_green": true,
+    "if_fault_recurs": "Consider a reviewed CI-only isolated task-specific RUSTUP_HOME or existing clean toolchain owner; retain pinned compiler and all native runtime limits.",
+    "unexecuted_native_stages_are_not_passes": true
+  },
+  "artifact_downloads": 0,
+  "scope": "Read-only complete failed log, complete same-run ARM merge success log, exact job steps and exact workflow bytes; no source/budget edits or native reexecution.",
+  "public_evidence_8327_modified": false,
+  "files": [
+    {
+      "path": "run-41299973511-jobs.json",
+      "bytes": 11429,
+      "sha256": "0cf9a326b54f4553a8222a8c8b4e4aeca9cf9542370921778d3dcba35be89179"
+    },
+    {
+      "path": "job-124828701949.log",
+      "bytes": 130406,
+      "sha256": "823df77f6f1998734d3e1bf51ab685f1abe21cc89aea822a7311292cd2c5ed78"
+    },
+    {
+      "path": "job-124828701857-arm-merge-success.log",
+      "bytes": 150088,
+      "sha256": "8f3948bc2aac47a253e923d9c3f464008ae174f0068cdbd55545cc49e5748709"
+    },
+    {
+      "path": "release-finality-reference.7c5.yml",
+      "bytes": 7450,
+      "sha256": "5b90700d4d0ac685ed2874540a394ede3afc8fc453a508718a7ac24df8b50f40"
+    }
+  ]
+}

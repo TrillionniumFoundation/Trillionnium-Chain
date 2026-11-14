@@ -1,0 +1,56 @@
+{
+  "scope": "one five-native-path patch relative to 69d2, reconstructed in disposable scratch trees; it also exactly reconstructs the separately recorded b811 input map on its own base",
+  "raw_patch_sha256": "dbf3236fd11b0d10614a8521c91c875470c8100621d833178478a2ab4d9bc003",
+  "compressed_patch_sha256": "989979e0256a35306b9ab43aa0aff0a00967a24b0daca43ef2045ebc483412b2",
+  "files": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "base_sha256": "0342acef32397f88d4020f1b3a5d8873f066490dcf68d9bd0792d183abdd1f17",
+      "target_sha256": "fa87ce978b7401b4fc8aae08895691092370697788b3567b000cbc34a56b053e",
+      "new_file": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/error.rs",
+      "base_sha256": "c645f245b52ad5008d047a1baf964364621c69048ac1a09af27cfb9d813c1904",
+      "target_sha256": "260ec57946cc5268bf916f95547ebdf70b2ed70cfd01696f2caf8d601736830e",
+      "new_file": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "base_sha256": "18128e759ed1eebe9158b6e73e57ced187b244ba0d7f906fb3917b6e28227271",
+      "target_sha256": "605435c5454913edc8faad4666252a5ab035bd0a87fe74dff93bee16db733bd3",
+      "new_file": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "base_sha256": "cd74756ebab44aee3479fcdeb8afa0816c467099e1db86b89e0ccadfb018dbf1",
+      "target_sha256": "e097b9e8cb972187333c56854f8cfc55c0e27bd608ea596e454ecb7eeb9f62b4",
+      "new_file": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/append_readback_tests.rs",
+      "base_sha256": null,
+      "target_sha256": "93054fdbb3f32e2df9ee76fb0f8adbfe5812383d9b99121739e99f1f651d9930",
+      "new_file": true
+    }
+  ],
+  "reconstructions": [
+    {
+      "version": "69d2",
+      "base_commit": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+      "native_manifest_sha256": "ccc0b180a702aa012bb24ca0541c9d91592239083c141e3a289f0345acf9df8c",
+      "all_1190_reconstructed_inputs_match": true,
+      "git_apply_check_exit": 0,
+      "git_apply_exit": 0
+    },
+    {
+      "version": "b811",
+      "base_commit": "b8116f65789a85148254f870c678a44f895316de",
+      "native_manifest_sha256": "27920633e57be739926218c370ecfbdfea624df71d84b89c2f9e3fc6f48605d2",
+      "all_1190_reconstructed_inputs_match": true,
+      "git_apply_check_exit": 0,
+      "git_apply_exit": 0
+    }
+  ],
+  "native_tests_executed_during_packaging": false
+}

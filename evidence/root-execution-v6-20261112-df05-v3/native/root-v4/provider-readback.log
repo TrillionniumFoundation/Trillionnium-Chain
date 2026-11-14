@@ -1,0 +1,13 @@
+warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: normal Cargo loader directory set incomplete: missing=["/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib"]; observed=["/data/chain-root-operation-v6-df05-target-v3/debug", "/data/chain-root-operation-v6-df05-target-v3/debug/deps", "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib"]; allowed=["/data/chain-root-operation-v6-df05-target-v3/debug", "/data/chain-root-operation-v6-df05-target-v3/debug/deps", "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib", "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib"]
+   Compiling trnm-pon-node v0.1.0 (/data/chain-root-operation-owned-20261112-df05-v4/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.10s
+     Running tests/root_effect_readback_v4_native.rs (/data/chain-root-operation-v6-df05-target-v3/debug/deps/root_effect_readback_v4_native-d03415315774194d)
+
+running 14 tests
+test native_provider_v4_callback_cannot_replace_cancel_or_replenish_budget ... ok
+test native_provider_v4_complete_request_and_both_signature_families_are_required ... ok
+test native_provider_v4_enrollment_requires_floor_complete_bytes_kind_and_attempt ... ok
+test native_provider_v4_foreign_replaced_linked_and_truncated_journals_refuse ... ok
+test native_provider_v4_later_root_provider_alias_refuses_before_transport ... ok
+test native_provider_v4_live_session_refuses_complete_record_rollback ... ok
+test native_provider_v4_live_session_refuses_same_length_history_substitution ... 

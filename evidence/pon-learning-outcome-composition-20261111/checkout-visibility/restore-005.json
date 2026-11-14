@@ -1,0 +1,24 @@
+{
+  "actual_oid": "1063992cff41d01b4b9a51fe0d40a2744dafe98d",
+  "bytes": 2303980,
+  "command": [
+    "/usr/bin/git",
+    "--no-replace-objects",
+    "cat-file",
+    "blob",
+    "1063992cff41d01b4b9a51fe0d40a2744dafe98d"
+  ],
+  "entry_created": true,
+  "existing_path_replaced": false,
+  "exit_code": 0,
+  "expected_bytes": 2303980,
+  "expected_oid": "1063992cff41d01b4b9a51fe0d40a2744dafe98d",
+  "finished_at": "2026-11-12T01:41:46.278729+00:00",
+  "path": "evidence/chain-six-full-20261108/archives/github-work-security-original-controls.tar.xz",
+  "path_base64": "ZXZpZGVuY2UvY2hhaW4tc2l4LWZ1bGwtMjAyNjExMDgvYXJjaGl2ZXMvZ2l0aHViLXdvcmstc2VjdXJpdHktb3JpZ2luYWwtY29udHJvbHMudGFyLnh6",
+  "result": "RESTORED_EXACT_HEAD_BLOB",
+  "sha256": "48086312817e44228c13cfa0913a937326fe6d01789b68f7e89c26211ecc7b1e",
+  "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81",
+  "started_at": "2026-11-12T01:41:46.243462+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

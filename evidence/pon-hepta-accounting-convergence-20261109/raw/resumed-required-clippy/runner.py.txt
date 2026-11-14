@@ -1,0 +1,106 @@
+import datetime, hashlib, json, os, pathlib, shutil, subprocess, sys, time, traceback
+ROOT = pathlib.Path('/home/qq/work/chain-hepta-accounting-d9bb-20261109')
+OUT = pathlib.Path('/home/qq/work/chain-c1-gates-resume-20261109-cadence-01')
+TARGET = pathlib.Path('/home/qq/work/chain-c1-clippy-target-20261109-cadence-01')
+SHA = 'e8f81ca15634d0393e7bc6257193b4dbe88d9b2e'
+TREE = '563992ef5bd3db98d95b7e249ea67cbbec2e2978'
+PROVIDER_BASE = pathlib.Path('/home/qq/work/chain-tls-m15-58cecf-20261106-evidence')
+OUT.mkdir(exist_ok=False)
+env = dict(os.environ)
+commands = []
+summary = {'schema':'chain-c1-resumed-strict-clippy-v1','source':SHA,'tree':TREE,'source_root':str(ROOT),'target':str(TARGET),'qualification':'HOLD_NO_GO','native_tests_executed':0,'model_runs':0,'status':'preparing','started_utc':datetime.datetime.now(datetime.timezone.utc).isoformat()}
+def digest(path):
+    with path.open('rb') as stream:
+        return hashlib.file_digest(stream,'sha256').hexdigest()
+def ref(path):
+    return {'path':str(path),'bytes':path.stat().st_size,'sha256':digest(path)}
+def save(name,value):
+    (OUT/name).write_text(json.dumps(value,sort_keys=True,indent=2)+'\n')
+def git(*args):
+    return subprocess.check_output(['git','--no-replace-objects',*args],cwd=ROOT,text=True).strip()
+def run(label,argv):
+    started=time.monotonic()
+    stdout,stderr=OUT/(label+'.stdout'),OUT/(label+'.stderr')
+    with stdout.open('xb') as out,stderr.open('xb') as err:
+        result=subprocess.run(argv,cwd=ROOT,env=env,stdout=out,stderr=err)
+    row={'label':label,'argv':argv,'cwd':str(ROOT),'exit_code':result.returncode,'wall_seconds':time.monotonic()-started,'stdout':ref(stdout),'stderr':ref(stderr)}
+    commands.append(row); save('preparation-commands.json',commands)
+    print(json.dumps({'label':label,'exit_code':result.returncode}),flush=True)
+    return result.returncode
+code=1
+try:
+    assert git('rev-parse','HEAD')==SHA
+    assert git('rev-parse','HEAD^{tree}')==TREE
+    assert git('status','--porcelain')==''
+    forbidden=[k for k,v in env.items() if v and (k in {'RUSTC','RUSTC_WRAPPER','RUSTC_WORKSPACE_WRAPPER','RUSTFLAGS','CARGO_ENCODED_RUSTFLAGS','RUSTDOCFLAGS','CARGO_ENCODED_RUSTDOCFLAGS'} or k.startswith('CARGO_PROFILE_') or (k.startswith('CARGO_TARGET_') and k.endswith('_RUSTFLAGS')))]
+    assert not forbidden, {'unexpected_build_overrides':forbidden}
+    env.update(PATH='/home/qq/.cargo/bin:'+env.get('PATH',''),CARGO_HOME='/home/qq/.cargo',RUSTUP_HOME='/home/qq/.rustup',CARGO_TARGET_DIR=str(TARGET),CARGO_BUILD_JOBS='1',CARGO_INCREMENTAL='0',RUST_TEST_THREADS='1',PYTHONDONTWRITEBYTECODE='1',GIT_TERMINAL_PROMPT='0')
+    summary['disk_before']=shutil.disk_usage(ROOT)._asdict()
+    summary['memory_available_bytes']=int(next(x for x in pathlib.Path('/proc/meminfo').read_text().splitlines() if x.startswith('MemAvailable:')).split()[1])*1024
+    assert summary['disk_before']['free']>=8*1024**3
+    assert summary['memory_available_bytes']>=4*1024**3
+    assert run('preflight',['bash','scripts/project-preflight.sh'])==0
+    provider_json=PROVIDER_BASE/'pq-provider/provider.json'
+    provider_env=PROVIDER_BASE/'provider.env'
+    provider=json.loads(provider_json.read_text())
+    assert provider['result']=='PREPARED_AND_SMOKE_VERIFIED'
+    assert provider['version']=='3.5.9' and provider['static_build'] is True
+    assert digest(ROOT/'scripts/ci/prepare_pq_provider.sh')==provider['preparation_script_sha256']
+    (OUT/'retained-provider-original.json').write_bytes(provider_json.read_bytes())
+    (OUT/'retained-provider-original.env').write_bytes(provider_env.read_bytes())
+    allowed={'OPENSSL_DIR','OPENSSL_STATIC','TRNM_PQ_OPENSSL','TRNM_PQ_OPENSSL_SHA256','TRNM_PQ_OPENSSL_VERSION','OPENSSL_CONF','OPENSSL_MODULES'}
+    values={}
+    for line in provider_env.read_text().splitlines():
+        key,value=line.split('=',1)
+        assert key in allowed and key not in values
+        values[key]=value
+    assert set(values)==allowed
+    assert values['OPENSSL_STATIC']=='1' and values['TRNM_PQ_OPENSSL_VERSION']=='3.5.9'
+    actual_inputs=[]
+    for item in provider['native_backend_inputs']:
+        path=pathlib.Path(item['path'])
+        assert path.is_file() and not path.is_symlink(),str(path)
+        observed=ref(path)
+        assert observed['bytes']==item['bytes'] and observed['sha256']==item['sha256'],str(path)
+        actual_inputs.append(observed)
+    assert digest(pathlib.Path(values['TRNM_PQ_OPENSSL']))==values['TRNM_PQ_OPENSSL_SHA256']
+    env.update(values)
+    summary['provider']={'original_receipt':ref(provider_json),'original_environment':ref(provider_env),'actual_inputs':actual_inputs,'smoke_tests_rerun':False}
+    summary['environment']={k:env[k] for k in sorted(allowed|{'PATH','CARGO_HOME','RUSTUP_HOME','CARGO_TARGET_DIR','CARGO_BUILD_JOBS','CARGO_INCREMENTAL','RUST_TEST_THREADS','PYTHONDONTWRITEBYTECODE','GIT_TERMINAL_PROMPT'})}
+    assert run('rustc-identity',['rustc','+1.95.0','-Vv'])==0
+    assert run('cargo-identity',['cargo','+1.95.0','-Vv'])==0
+    assert run('provider-version',[values['TRNM_PQ_OPENSSL'],'version'])==0
+    TARGET.mkdir(exist_ok=False)
+    summary['status']='strict_clippy_recording'
+    save('summary.json',summary)
+    strict=['cargo','+1.95.0','clippy','--manifest-path','trillionnium/Cargo.toml','--locked','--offline','--workspace','--all-targets','--all-features','--','-D','warnings']
+    recorder=['python3','-B','scripts/ci/record_pq_native_command.py','--kind','head','--candidate',SHA,'--tested',SHA,'--label','strict-clippy','--output',str(OUT),'--',*strict]
+    code=run('strict-clippy-recorder',recorder)
+    receipt=json.loads((OUT/'strict-clippy.json').read_text())
+    summary['receipt_status']=receipt['status']
+    summary['command_exit_code']=receipt['exit_code']
+    summary['recorder_exit_code']=code
+    summary['before']=receipt.get('before')
+    summary['after']=receipt.get('after')
+    summary['status']='strict_clippy_succeeded' if receipt['status']=='command_succeeded' and code==0 else 'strict_clippy_failed_or_unverified'
+    summary['receipt']=ref(OUT/'strict-clippy.json')
+    if (OUT/'strict-clippy.log').exists():
+        summary['log']=ref(OUT/'strict-clippy.log')
+except BaseException as error:
+    summary['status']='preparation_or_recording_failed'
+    summary['error']={'type':type(error).__name__,'message':str(error)}
+    (OUT/'failure.traceback').write_text(traceback.format_exc())
+    code=1
+finally:
+    summary['commands']=commands
+    summary['exit_code']=code
+    summary['ended_utc']=datetime.datetime.now(datetime.timezone.utc).isoformat()
+    summary['head_after']=git('rev-parse','HEAD')
+    summary['tree_after']=git('rev-parse','HEAD^{tree}')
+    summary['status_after']=git('status','--porcelain')
+    summary['disk_after']=shutil.disk_usage(ROOT)._asdict()
+    summary['runner']=ref(pathlib.Path(__file__))
+    save('summary.json',summary)
+    save('artifact-index.json',{'schema':'chain-c1-gate-resume-artifacts-v1','candidate':SHA,'tree':TREE,'qualification':'HOLD_NO_GO','files':[ref(p)|{'relative_path':str(p.relative_to(OUT))} for p in sorted(OUT.rglob('*')) if p.is_file() and p.name!='artifact-index.json']})
+    print(json.dumps({'status':summary['status'],'exit_code':code,'output':str(OUT)}),flush=True)
+sys.exit(code)

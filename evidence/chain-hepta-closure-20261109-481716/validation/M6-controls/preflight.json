@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "bash",
+    "scripts/project-preflight.sh"
+  ],
+  "completed_at_utc": "2026-11-09T17:17:56.763057+00:00",
+  "exit_code": 0,
+  "output": {
+    "bytes": 180,
+    "sha256": "9e9d4144463e544ae14797fbc46c29aec41551f7019ee04bfd56fd0a461ed3ce"
+  },
+  "started_at_utc": "2026-11-09T17:17:56.067609+00:00"
+}

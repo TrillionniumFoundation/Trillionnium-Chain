@@ -1,0 +1,16 @@
+
+running 11 tests
+test linux::bep52::tests::explicit_endpoint_allowances_fit_one_total ... ok
+test linux::bep52::tests::old_network_profile_unknown_fields_and_missing_grants_are_refused ... ok
+test linux::bep52::tests::same_operation_transfer_handles_cross_member_cache_dedup ... ok
+test linux::paged::tests::paged_research_expired_original_deadline_retains_failure_observation ... ok
+test linux::paged::tests::paged_research_original_cancellation_is_not_reset_for_cold_reconstruction ... ok
+test linux::paged::tests::paged_research_profile_binds_exact_canonical_available_slots ... ok
+test linux::paged::tests::paged_research_restores_two_pages_from_four_reopened_targets ... ok
+test linux::paged::tests::paged_research_wrapper_is_explicit_and_old_v2_wire_stays_closed ... ok
+test linux::paged::tests::paged_research_wrapper_requires_independent_previous_identity_and_canonical_pins ... ok
+test linux::snapshot::tests::actual_worker_and_closed_composition_profile_are_required ... ok
+test linux::snapshot::tests::dense_roster_rejects_unknown_dtype_duplicate_fields_and_layout_gaps ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.29s
+

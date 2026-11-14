@@ -66,7 +66,7 @@ def train(x,y,steps,initial=None,weight=None):
 def quantize(w):return np.clip(np.rint(w*SCALE),-32767,32767).astype(np.int64)
 def artifact(value,path):
     b=canonical(value);Path(path).write_bytes(b);return H('artifact',b)
-from model_contract import load_model
+from model_contract import load_model,load_model_bytes
 
 def predict(m,x,removed=None,mode='composed',expert=0):
     x=np.asarray(x,dtype=np.int64);base=np.asarray(m['base'],dtype=np.int64);deltas=np.asarray(m['deltas'],dtype=np.int64)
@@ -96,8 +96,9 @@ def worker(args):
         w=train(x[mask],y[mask],120,base);delta=(quantize(w)-quantize(base)).clip(-32767,32767)
         value={'node':i,'rows':int(mask.sum()),'file_count':len({r['file']for r,ok in zip(tasks,mask)if ok}),'delta':delta.tolist(),'duration_seconds':time.perf_counter()-start}
     elif args.mode=='infer':
-        m=load_model(args.model);pred=predict(m,x)
-        value={'schema':'controlled-source-inference-v2','task_commitment':H('tasks',canonical(tasks)).hex(),'model_artifact':H('artifact',Path(args.model).read_bytes()).hex(),'predictions':pred.tolist(),'duration_seconds':time.perf_counter()-start,'training_consent':False}
+        with open(args.model,'rb')as source:model_bytes=source.read(65537)
+        m=load_model_bytes(model_bytes);pred=predict(m,x)
+        value={'schema':'controlled-source-inference-v2','task_commitment':H('tasks',canonical(tasks)).hex(),'model_artifact':H('artifact',model_bytes).hex(),'predictions':pred.tolist(),'duration_seconds':time.perf_counter()-start,'training_consent':False}
     else:
         require(args.evaluation_bundle and args.bundle_hash and args.partition and args.calibration, 'FROZEN_BUNDLE_REQUIRED')
         bundle_raw=read_bounded(args.evaluation_bundle,MAX_BUNDLE_BYTES)
@@ -112,7 +113,7 @@ def worker(args):
         marginal=[dict(value,score=value['exploratory_score'])for value in result['marginal']]
         value={'schema':'controlled-source-evaluation-v3','task_commitment':H('tasks',canonical(tasks)).hex(),
           'model_artifact':bundle['candidate_artifact'],'evaluation_bundle':args.bundle_hash,
-          'evaluation_partition':args.partition,'samples':len(y),'composed_correct':int(correct.sum()),
+          'evaluation_partition':args.partition,'value_claim':result['value_claim'],'samples':len(y),'composed_correct':int(correct.sum()),
           'base_correct':int((base==y).sum()),'whole_gain':whole,
           'weak_base_gain_for_comparison_only':gain(correct,base==y),'strong_reference':bundle['selected'],
           'strong_reference_artifact':result['reference_artifact'],

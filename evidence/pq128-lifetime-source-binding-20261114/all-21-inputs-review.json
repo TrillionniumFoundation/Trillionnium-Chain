@@ -1,0 +1,509 @@
+{
+  "schema": "pq128-current-21-source-review-v1",
+  "baseline_head": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+  "baseline_tree": "9fda17fed2542b2baccaa34585bb00afd699e12b",
+  "historical_source_revision": "0f9b30549328e5be20f4d3e6e27bd132b42d90de",
+  "historical_source_tree": "9188a73c6933b3b5e19f3fb927c8eb5891f4f2e2",
+  "worktree": "/private/tmp/chain-pq-lifetime-source-binding-20261114",
+  "branch": "fix/chain-pq-lifetime-source-binding-20261114",
+  "source_lock_scope": "current declared-event-path mapping; no dependency or theorem coverage",
+  "path_count": 21,
+  "changed_count": 8,
+  "unchanged_count": 13,
+  "all_old_blobs_match_original_lock": true,
+  "all_current_regular_blobs_equal_worktree": true,
+  "rows": [
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "old_revision": "0f9b30549328e5be20f4d3e6e27bd132b42d90de",
+      "new_revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "old": {
+        "mode": "100644",
+        "oid": "ce1608248d2ee67ed8f5d82a2c5f15942689139b",
+        "bytes": 104121,
+        "sha256": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03"
+      },
+      "current": {
+        "mode": "100644",
+        "oid": "b89112abb32b692c83cf94a3e85fce58c5798628",
+        "bytes": 106066,
+        "sha256": "7af17da8488782bf403275b5fd401ad469dd460fd0ecda38a0edb4e714c5494e"
+      },
+      "worktree_bytes_equal_git": true,
+      "changed": true,
+      "patch": {
+        "path": "/private/tmp/chain-pq-lifetime-source-binding-evidence-20261114/old-to-current-source-diffs/01--trillionnium--crates--trnm-crypto-primitives--src--pon_work.rs.patch",
+        "bytes": 3663,
+        "sha256": "a9fc3195a51e2eb1e4859274f7ab1997f71ead9390492cc429c355969dbc5ca5"
+      },
+      "source_history_candidates": [
+        "51b95f5784deb22bcf2c7f60c127df16acf1f05e\tPreserve original statement-boundary controls in current source",
+        "b6e4eb38be4f2562505f65271cc20c086e4809d4\tMerge cheap native rejection checks and cold-reopen payment control",
+        "5e1d6cf650725a4fd5981360e8bea9e71a435b75\tMerge reviewed root key cache and exact legal producer components",
+        "19940a6653df0d88aba02f264f295a40ee047f96\tRetain immutable root key expansion and independent exact legal producers",
+        "e180c52b881955c3da054b59e6025d9292a4a4d3\tReject invalid W1 statements before optional cache work",
+        "c2cc34f4f637467b3c8fcaa246d8a5bff9192ed4\tRetain cooperative checkpoints for native checkpoint material",
+        "e1a996703a7a1ff9734c9cbeb562dee054c77a0d\tPreserve opt-in exact-input task product facts and original controls"
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs",
+      "old_revision": "0f9b30549328e5be20f4d3e6e27bd132b42d90de",
+      "new_revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "old": {
+        "mode": "100644",
+        "oid": "3a38da1061df615b98e46b0d2fd56133f493b4cd",
+        "bytes": 12902,
+        "sha256": "536270dab4fd54a243a10c90eff2a4269911ad1537196dc937b6e3a33082929b"
+      },
+      "current": {
+        "mode": "100644",
+        "oid": "3a38da1061df615b98e46b0d2fd56133f493b4cd",
+        "bytes": 12902,
+        "sha256": "536270dab4fd54a243a10c90eff2a4269911ad1537196dc937b6e3a33082929b"
+      },
+      "worktree_bytes_equal_git": true,
+      "changed": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_profile_auth.rs",
+      "old_revision": "0f9b30549328e5be20f4d3e6e27bd132b42d90de",
+      "new_revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "old": {
+        "mode": "100644",
+        "oid": "9ab0df1e3c69b38e290cc5f2113983f56ec23862",
+        "bytes": 11609,
+        "sha256": "e91a1c00a2b5e1cc598a8ca615a8f19adb51470f0575106140891e60b6d4ca37"
+      },
+      "current": {
+        "mode": "100644",
+        "oid": "9ab0df1e3c69b38e290cc5f2113983f56ec23862",
+        "bytes": 11609,
+        "sha256": "e91a1c00a2b5e1cc598a8ca615a8f19adb51470f0575106140891e60b6d4ca37"
+      },
+      "worktree_bytes_equal_git": true,
+      "changed": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell.rs",
+      "old_revision": "0f9b30549328e5be20f4d3e6e27bd132b42d90de",
+      "new_revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "old": {
+        "mode": "100644",
+        "oid": "55cd859ca445af11ed47ddd5dfeefe45f614f9b6",
+        "bytes": 14762,
+        "sha256": "af920ebe2fc0d998c5083418b6d2e312aa90e4109b84241e44ee585c656c2739"
+      },
+      "current": {
+        "mode": "100644",
+        "oid": "5dfe1c4fe26b53940cdfedea887bab08cc6bcd26",
+        "bytes": 15173,
+        "sha256": "e017968bf65b9f47605b9235a17f56b61c3c5c7a7e6a888528b1e9aa58b89d3c"
+      },
+      "worktree_bytes_equal_git": true,
+      "changed": true,
+      "patch": {
+        "path": "/private/tmp/chain-pq-lifetime-source-binding-evidence-20261114/old-to-current-source-diffs/04--trillionnium--crates--trnm-data-availability--src--cell.rs.patch",
+        "bytes": 3752,
+        "sha256": "51c3d7ecd50446886fffaf1c69b9e931b81d80e75a8d3c6dd361837d99acbd2b"
+      },
+      "source_history_candidates": [
+        "e57423e9542f944f17941cc5eb77061009325514\tMerge reviewed explicit fact cache, reservation, and runtime APIs",
+        "14c6021cb9186e69d8101837c4a4b228f104489d\tPreserve explicit runtime byte-root materialization under original deadlines",
+        "8c74c221902d4f0f191af7ccb12f556fe9329cd0\tMerge explicit bounded DHT lookup and preserved original controls",
+        "ea649f1802a2330fff2a4a618a88c1856b4d17bd\tPreserve bounded opt-in Cell DHT lookup and refusal controls",
+        "8fac1d44fb0280fc0cdceb8b1586b4f66f2ed474\tPreserve cooperative paged restore owner checkpoints"
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/manifest.rs",
+      "old_revision": "0f9b30549328e5be20f4d3e6e27bd132b42d90de",
+      "new_revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "old": {
+        "mode": "100644",
+        "oid": "ccbd170297584e9ee7e86edacb2ddd9547985088",
+        "bytes": 11176,
+        "sha256": "cf945af731b8172d6b093bded63d546ac3f3a15756524e739a50187dcdaebdc5"
+      },
+      "current": {
+        "mode": "100644",
+        "oid": "ccbd170297584e9ee7e86edacb2ddd9547985088",
+        "bytes": 11176,
+        "sha256": "cf945af731b8172d6b093bded63d546ac3f3a15756524e739a50187dcdaebdc5"
+      },
+      "worktree_bytes_equal_git": true,
+      "changed": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/model_root.rs",
+      "old_revision": "0f9b30549328e5be20f4d3e6e27bd132b42d90de",
+      "new_revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "old": {
+        "mode": "100644",
+        "oid": "e073b728532e695cc6d0a31d115cba15b0d8d7bd",
+        "bytes": 6915,
+        "sha256": "6311b100634a1358e2d1aad2d9b71300e75f599326f9f5c61d4eff8149ac3915"
+      },
+      "current": {
+        "mode": "100644",
+        "oid": "e073b728532e695cc6d0a31d115cba15b0d8d7bd",
+        "bytes": 6915,
+        "sha256": "6311b100634a1358e2d1aad2d9b71300e75f599326f9f5c61d4eff8149ac3915"
+      },
+      "worktree_bytes_equal_git": true,
+      "changed": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/pq.rs",
+      "old_revision": "0f9b30549328e5be20f4d3e6e27bd132b42d90de",
+      "new_revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "old": {
+        "mode": "100644",
+        "oid": "9739dbb7882da42af42bae5d103d73637feb3ad9",
+        "bytes": 17612,
+        "sha256": "906e3c38a8f038a346e589c514b69dcb585f4d930bd7167d83aa6c495dd2ed33"
+      },
+      "current": {
+        "mode": "100644",
+        "oid": "9739dbb7882da42af42bae5d103d73637feb3ad9",
+        "bytes": 17612,
+        "sha256": "906e3c38a8f038a346e589c514b69dcb585f4d930bd7167d83aa6c495dd2ed33"
+      },
+      "worktree_bytes_equal_git": true,
+      "changed": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/retained.rs",
+      "old_revision": "0f9b30549328e5be20f4d3e6e27bd132b42d90de",
+      "new_revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "old": {
+        "mode": "100644",
+        "oid": "8bb6dcc43adfcd06794cce01d80fb676268bd1f6",
+        "bytes": 18698,
+        "sha256": "e9b4e6e1dde309ec644e0a80ed702eb098c3a5cb788f9153ffa1de0c78354128"
+      },
+      "current": {
+        "mode": "100644",
+        "oid": "8bb6dcc43adfcd06794cce01d80fb676268bd1f6",
+        "bytes": 18698,
+        "sha256": "e9b4e6e1dde309ec644e0a80ed702eb098c3a5cb788f9153ffa1de0c78354128"
+      },
+      "worktree_bytes_equal_git": true,
+      "changed": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/version.rs",
+      "old_revision": "0f9b30549328e5be20f4d3e6e27bd132b42d90de",
+      "new_revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "old": {
+        "mode": "100644",
+        "oid": "8b94fc41f6e30f5afadb8ce7665dbd0f96f8b87a",
+        "bytes": 10863,
+        "sha256": "e0d11e7cddbb670af8411bed97612e738edf9a7c89b161e1ee4cdd9178cda832"
+      },
+      "current": {
+        "mode": "100644",
+        "oid": "8b94fc41f6e30f5afadb8ce7665dbd0f96f8b87a",
+        "bytes": 10863,
+        "sha256": "e0d11e7cddbb670af8411bed97612e738edf9a7c89b161e1ee4cdd9178cda832"
+      },
+      "worktree_bytes_equal_git": true,
+      "changed": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/version_content.rs",
+      "old_revision": "0f9b30549328e5be20f4d3e6e27bd132b42d90de",
+      "new_revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "old": {
+        "mode": "100644",
+        "oid": "75c92455df5e9b9fac6973aacef35662c6be8f0e",
+        "bytes": 20064,
+        "sha256": "ccdef45238de25e772114c457240fe152ac8cc32a1e32cac8d550c124b49958c"
+      },
+      "current": {
+        "mode": "100644",
+        "oid": "880cae5f3ee7c9bcc1e8444d4193cd884acddf93",
+        "bytes": 21641,
+        "sha256": "4b1df7fd0500303667873e560c66f90a86ed7cae0ae7784cc46bcc49e69ef57c"
+      },
+      "worktree_bytes_equal_git": true,
+      "changed": true,
+      "patch": {
+        "path": "/private/tmp/chain-pq-lifetime-source-binding-evidence-20261114/old-to-current-source-diffs/10--trillionnium--crates--trnm-data-availability--src--cell--version_content.rs.patch",
+        "bytes": 4848,
+        "sha256": "641f3bc71410cb19a31d7a067b88d8f542b4ba0b9c4d855af646a0697aea90ee"
+      },
+      "source_history_candidates": [
+        "8fac1d44fb0280fc0cdceb8b1586b4f66f2ed474\tPreserve cooperative paged restore owner checkpoints"
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/version_content_closure_v3.rs",
+      "old_revision": "0f9b30549328e5be20f4d3e6e27bd132b42d90de",
+      "new_revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "old": {
+        "mode": "100644",
+        "oid": "47f024a03405ae471b74522c98ee37488fb00e84",
+        "bytes": 13549,
+        "sha256": "65bd7171aa9f70d8c2c426f9e024d47e0c98728d804896f3bd41c807e254227a"
+      },
+      "current": {
+        "mode": "100644",
+        "oid": "47f024a03405ae471b74522c98ee37488fb00e84",
+        "bytes": 13549,
+        "sha256": "65bd7171aa9f70d8c2c426f9e024d47e0c98728d804896f3bd41c807e254227a"
+      },
+      "worktree_bytes_equal_git": true,
+      "changed": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration.rs",
+      "old_revision": "0f9b30549328e5be20f4d3e6e27bd132b42d90de",
+      "new_revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "old": {
+        "mode": "100644",
+        "oid": "f4af2dc570e705c80c11c1dca880f2e249fe7a12",
+        "bytes": 22190,
+        "sha256": "c26d0f9838628a0a254e803f231dee8781c31899b2d5de6f7e9f8b18af3aec3d"
+      },
+      "current": {
+        "mode": "100644",
+        "oid": "f4af2dc570e705c80c11c1dca880f2e249fe7a12",
+        "bytes": 22190,
+        "sha256": "c26d0f9838628a0a254e803f231dee8781c31899b2d5de6f7e9f8b18af3aec3d"
+      },
+      "worktree_bytes_equal_git": true,
+      "changed": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/consensus.rs",
+      "old_revision": "0f9b30549328e5be20f4d3e6e27bd132b42d90de",
+      "new_revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "old": {
+        "mode": "100644",
+        "oid": "2213a39b14c03d9476c35b80a30fcb8414d459f0",
+        "bytes": 20510,
+        "sha256": "dbbd44790428ae0aff32d7305e062a6fc09ca0add0e3c4c077deefd8bfec760d"
+      },
+      "current": {
+        "mode": "100644",
+        "oid": "2213a39b14c03d9476c35b80a30fcb8414d459f0",
+        "bytes": 20510,
+        "sha256": "dbbd44790428ae0aff32d7305e062a6fc09ca0add0e3c4c077deefd8bfec760d"
+      },
+      "worktree_bytes_equal_git": true,
+      "changed": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs",
+      "old_revision": "0f9b30549328e5be20f4d3e6e27bd132b42d90de",
+      "new_revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "old": {
+        "mode": "100644",
+        "oid": "e6f6e97d4d11cd548c6e6b5d2e5d6c20c52af460",
+        "bytes": 43098,
+        "sha256": "2a9811bf0ef41a64e31a5f3909a7b8777d3b8e2ebe68b9f34759c14c2c0991f5"
+      },
+      "current": {
+        "mode": "100644",
+        "oid": "dfad36b1032617e1ec9b95486bc8a0b0015639fc",
+        "bytes": 46767,
+        "sha256": "4feedfe11971aaccc40d1c2b094d543c61e8a7f12c885b7770aeaae2c637f60b"
+      },
+      "worktree_bytes_equal_git": true,
+      "changed": true,
+      "patch": {
+        "path": "/private/tmp/chain-pq-lifetime-source-binding-evidence-20261114/old-to-current-source-diffs/14--trillionnium--crates--trnm-pon-node--src--ingress--pq_network.rs.patch",
+        "bytes": 7252,
+        "sha256": "250c1ea7d310359d61564c6272d50b18434c779060a3a8e66728720d1b5af3f8"
+      },
+      "source_history_candidates": [
+        "5aa0189307adc0a85c95a0b0e7e6aab36fdd36dd\tfix: share TLS test fixtures and initialize metrics directly",
+        "4e0943b7168640f1ea7355eade92d172c29fa9c9\ttest: retain original NPQ6 parallel execution controls",
+        "f66df9b7324daaf7171d6e9f940f562c1a244633\tRetain durable exact-request PQ outbound owner and sealed replies",
+        "b89f78cdb702ede1f2a4a98502667929a5f77a2d\tPreserve pinned TLS endpoint boundaries across current client and shared owner APIs"
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "old_revision": "0f9b30549328e5be20f4d3e6e27bd132b42d90de",
+      "new_revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "old": {
+        "mode": "100644",
+        "oid": "464492851bf7098d3777ef69165263a9a3246754",
+        "bytes": 418686,
+        "sha256": "e99582448552da03300e7079e898d7adbbf252f63d86573c6f33c1081f7605f3"
+      },
+      "current": {
+        "mode": "100644",
+        "oid": "b9bbe75b8509eaf10a73b50aab7e7892f6796e64",
+        "bytes": 433736,
+        "sha256": "1a90c3eebf8a8642264f8a65ef906f5bdb9c1e656fab8650dc028328f104fb70"
+      },
+      "worktree_bytes_equal_git": true,
+      "changed": true,
+      "patch": {
+        "path": "/private/tmp/chain-pq-lifetime-source-binding-evidence-20261114/old-to-current-source-diffs/15--trillionnium--crates--trnm-pon-node--src--ingress--public_v3.rs.patch",
+        "bytes": 45316,
+        "sha256": "bb59919381aab0bc49c9a1b2267215c9414248544c5d6d1689c3723d9eb3dcc2"
+      },
+      "source_history_candidates": [
+        "eb3a02048eb219558697dffa710e41de8e471899\tRetain explicit authenticated caller V5 observation boundary",
+        "5aa0189307adc0a85c95a0b0e7e6aab36fdd36dd\tfix: share TLS test fixtures and initialize metrics directly",
+        "caeb2b0cb5542add3be9cedf74212dc594783c0d\tPreserve bounded PublicV3 worker wakeups and actual progress",
+        "bc5f9d4bf9ceebd2ba0e91b2e8c9d7358a964736\tRetain lazy history spool and original codec and client CPU controls",
+        "ef76e8bf849ed551a4b3154963a837d065d6d644\tAdd authenticated caller grant limits under resource revision 20"
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs",
+      "old_revision": "0f9b30549328e5be20f4d3e6e27bd132b42d90de",
+      "new_revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "old": {
+        "mode": "100644",
+        "oid": "89a0acf1f7851822fc3b54fdcf7a91596252ec98",
+        "bytes": 38829,
+        "sha256": "1e23d8da17c4e1c32627fb96af0088587296810a51e90588d3122a2249902b4f"
+      },
+      "current": {
+        "mode": "100644",
+        "oid": "89a0acf1f7851822fc3b54fdcf7a91596252ec98",
+        "bytes": 38829,
+        "sha256": "1e23d8da17c4e1c32627fb96af0088587296810a51e90588d3122a2249902b4f"
+      },
+      "worktree_bytes_equal_git": true,
+      "changed": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "old_revision": "0f9b30549328e5be20f4d3e6e27bd132b42d90de",
+      "new_revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "old": {
+        "mode": "100644",
+        "oid": "6ef5f01142a33eace66256dd6ecc81d34681d194",
+        "bytes": 387798,
+        "sha256": "df2e303798678fe0b7437cf707bdc1d9cd6559ece47fcf2dd8c7ba8de0b29a17"
+      },
+      "current": {
+        "mode": "100644",
+        "oid": "d596dc6bab16698cd18bcc15bcbbe1fafedf603e",
+        "bytes": 391470,
+        "sha256": "5918270368c61b420d26910dc5934714e1423f71c686b2d01f8d2e3ccceb990c"
+      },
+      "worktree_bytes_equal_git": true,
+      "changed": true,
+      "patch": {
+        "path": "/private/tmp/chain-pq-lifetime-source-binding-evidence-20261114/old-to-current-source-diffs/17--trillionnium--crates--trnm-pon-node--src--store.rs.patch",
+        "bytes": 10354,
+        "sha256": "2472b0457f11b4c6d246083032bf75cbaafeaef0368dabb1b3c90bccd4d2921d"
+      },
+      "source_history_candidates": [
+        "1897d0fb17f167c33f2e30c6e154ec43a1a5753c\tMerge reviewed native ownership and fresh-read boundary controls",
+        "687141e74aca9249ac8bec79d2b4116999683cae\tfix: retain account query transaction scope on every exit",
+        "0605428845ccbe856690fae3780c455efbdbc9f6\tMerge reviewed q4-advisory branch capabilities",
+        "83612992abd90de344be699e8cf1a90e609480f5\tfeat(node): retain Q4 renewal advice and native reentry control",
+        "9cb1b55a86004c4808d36aafff2bd98e39f52fa6\tMerge reviewed caller-and-native-controls branch capabilities",
+        "bc5f9d4bf9ceebd2ba0e91b2e8c9d7358a964736\tRetain lazy history spool and original codec and client CPU controls",
+        "b89f78cdb702ede1f2a4a98502667929a5f77a2d\tPreserve pinned TLS endpoint boundaries across current client and shared owner APIs",
+        "182c3925d0ac0a65512b8c7419b670f3c847a902\tfix: fence confirmation and native payment readbacks"
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/funding/payment.rs",
+      "old_revision": "0f9b30549328e5be20f4d3e6e27bd132b42d90de",
+      "new_revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "old": {
+        "mode": "100644",
+        "oid": "8ed6300d48b28ed19bc8df2b06ffb532d7acdb32",
+        "bytes": 24683,
+        "sha256": "14f10ec0fa8a4c6cd017b79f72f6fd2a2dafec6002ddfbffe34fd455bfdf3ab5"
+      },
+      "current": {
+        "mode": "100644",
+        "oid": "8ed6300d48b28ed19bc8df2b06ffb532d7acdb32",
+        "bytes": 24683,
+        "sha256": "14f10ec0fa8a4c6cd017b79f72f6fd2a2dafec6002ddfbffe34fd455bfdf3ab5"
+      },
+      "worktree_bytes_equal_git": true,
+      "changed": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-release-bundle/src/pq_release.rs",
+      "old_revision": "0f9b30549328e5be20f4d3e6e27bd132b42d90de",
+      "new_revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "old": {
+        "mode": "100644",
+        "oid": "04fc5e9a584a3052e2fbf0a8cd33fb528fe6e5ad",
+        "bytes": 32181,
+        "sha256": "eb17390e1d16fe7fa82c773c0ed81004374687469f6081a2ad5ce9bd7d87ac9b"
+      },
+      "current": {
+        "mode": "100644",
+        "oid": "04fc5e9a584a3052e2fbf0a8cd33fb528fe6e5ad",
+        "bytes": 32181,
+        "sha256": "eb17390e1d16fe7fa82c773c0ed81004374687469f6081a2ad5ce9bd7d87ac9b"
+      },
+      "worktree_bytes_equal_git": true,
+      "changed": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs",
+      "old_revision": "0f9b30549328e5be20f4d3e6e27bd132b42d90de",
+      "new_revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "old": {
+        "mode": "100644",
+        "oid": "9734363a3e8884189468b0ca706aa96094d826f7",
+        "bytes": 13778,
+        "sha256": "06b4c988f921b03c6f20134bdc5130fbd7db18bec6f291bfd289de52c81087e6"
+      },
+      "current": {
+        "mode": "100644",
+        "oid": "f6e24fba99f1b23008ba6a96f812964d53a2a1a0",
+        "bytes": 16053,
+        "sha256": "68381031cf7b4bd11605648ea787223c155df44431045fd84f822abd37285fd0"
+      },
+      "worktree_bytes_equal_git": true,
+      "changed": true,
+      "patch": {
+        "path": "/private/tmp/chain-pq-lifetime-source-binding-evidence-20261114/old-to-current-source-diffs/20--trillionnium--crates--trnm-research-protocol--src--hepta_handoff--pq.rs.patch",
+        "bytes": 3204,
+        "sha256": "2f1cc43260816b1512223c117c05eeef81ee4490c2a89e02a1fce6871db3d408"
+      },
+      "source_history_candidates": [
+        "6e06401819a40ffb8a6cb21f1a1bfd40d9018fcc\tfix(research): preserve THP2 post-verification time boundaries"
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-service-settlement/src/native_budget.rs",
+      "old_revision": "0f9b30549328e5be20f4d3e6e27bd132b42d90de",
+      "new_revision": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+      "old": {
+        "mode": "100644",
+        "oid": "15c3b284f74120bd818c382a96698a97e25cfec1",
+        "bytes": 70672,
+        "sha256": "04f10f76d9f3bcdbe2df1b0bf3182d3e5d66a8f3974982a3491f156e50ba7c68"
+      },
+      "current": {
+        "mode": "100644",
+        "oid": "7c2efcb189f7908b8923f95207a892ae36cfe423",
+        "bytes": 71463,
+        "sha256": "ca9cbdcf910d777d703793fcb0667426f3003c7c76b4c99feb750dc01815fe81"
+      },
+      "worktree_bytes_equal_git": true,
+      "changed": true,
+      "patch": {
+        "path": "/private/tmp/chain-pq-lifetime-source-binding-evidence-20261114/old-to-current-source-diffs/21--trillionnium--crates--trnm-service-settlement--src--native_budget.rs.patch",
+        "bytes": 2967,
+        "sha256": "29808b3b5faa689bf01a4769074d8781217a7f85182b0e3e28a7062bfdcc2cb7"
+      },
+      "source_history_candidates": [
+        "182c3925d0ac0a65512b8c7419b670f3c847a902\tfix: fence confirmation and native payment readbacks"
+      ]
+    }
+  ],
+  "old_register_sha256": "0315e07ca2988b3b209a6fd2980ca6d9aa22a5bb3aa98b5444a041852b2f0afd",
+  "old_lock_sha256": "094dcae805f3872ee621d6554ab26a7a3a34c498e21be669740949ada424ccb2",
+  "runtime_or_contract_edited": false,
+  "qualification_granted": false,
+  "completed_at": "2026-11-14T06:53:56.036103+00:00"
+}

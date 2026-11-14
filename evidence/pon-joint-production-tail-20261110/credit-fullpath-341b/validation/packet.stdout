@@ -1,0 +1,1 @@
+{"activation": false, "actual_joint_obligations_closed": 0, "finite_credit_controls_per_lane": 77, "lifetime_bound": null, "native_cp_cg_cq": null, "native_gate": "HOLD", "packet_consistency": "PASS", "qualification": "HOLD_NO_GO", "six_successor_bound": null}

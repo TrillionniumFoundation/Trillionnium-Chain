@@ -1,0 +1,10 @@
+{
+  "observed_failure": "rustc pre-lto bitcode write: ENOSPC, os error 28",
+  "observed_filesystem": "overlay63G used60G avail0 before cleanup",
+  "removed_only_rebuildable_task_caches": [
+    "/workspace/scratch/5faaca703596/target-crypto-root-v3",
+    "/workspace/scratch/5faaca703596/cargo-target/debug/incremental"
+  ],
+  "source_or_evidence_removed": false,
+  "at_utc": "2026-11-09T02:53:53.763791+00:00"
+}

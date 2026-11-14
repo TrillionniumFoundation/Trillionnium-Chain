@@ -1,0 +1,204 @@
+{
+  "actions": {
+    "git_writes": 0,
+    "github_comments": 0,
+    "github_read_only": true,
+    "hepta_remote_calls": 0,
+    "local_diagnostic_packaging_only": true,
+    "pin_or_gate_changes": 0,
+    "tests_executed": 0,
+    "tracked_source_edits": 0,
+    "workflow_reruns": 0
+  },
+  "archive_identity": {
+    "bytes": 1027003,
+    "files": 97,
+    "manifest_sha256": "9f3d26e1f3f7a93a276e865c859a758f92eaeead3a94995a2454a35cfe1d8271",
+    "path": "source-head-diagnosis.tar.gz",
+    "sha256": "32d47db9ae014badf460c086d993a678f3eb5492f276ac356ae14884095594e7"
+  },
+  "comparison_base_commit": "249f772cc2a2ace5e363fd5fbfec4241a26f4d4d",
+  "created_utc": "2026-11-12T01:15:25.688250+00:00",
+  "findings": [
+    {
+      "actual_sha256_at_base_and_head": "108621f304255841ea2e1a7353858c3f0f5d8cb70a235f6a4aef6d57ebe0c554",
+      "aggregate_error": "required named completion differs: started_ids",
+      "attribution": "The specific fixed-source identity refusal is inherited: same error in exact-base log, and byte-identical checker, input and workflow at base/head. This does not qualify the QROM model.",
+      "base_head_job_id": 130336378979,
+      "base_run_id": 42963844385,
+      "expected_sha256": "b712a86b9997a098df5e8257f309d22445b2c749c9aa474457e958a0f65f5153",
+      "failed_steps": [
+        6,
+        7,
+        9
+      ],
+      "original_error": "source identity mismatch: trillionnium/crates/trnm-pon-node/src/store.rs",
+      "run_id": 43126392924,
+      "source_jobs": [
+        130879440375,
+        130879440928
+      ],
+      "workflow": "PoN W1 QROM closure observations"
+    },
+    {
+      "actual_bytes_at_base_and_head": 11172,
+      "attribution": "The specific pinned-input bound refusal is inherited: same error in exact-base log, and byte-identical checker, contract, input and workflow. Two negative tests also fail because this earlier refusal differs from their expected pinned-input-drift message.",
+      "base_head_job_id": 130336379331,
+      "base_run_id": 42963844495,
+      "failed_steps": [
+        6,
+        7,
+        12
+      ],
+      "original_error": "input exceeds bound: formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs",
+      "pinned_bytes": 9233,
+      "run_id": 43126392928,
+      "source_jobs": [
+        130879439988,
+        130879439577
+      ],
+      "workflow": "PoN W1 QROM implementation observations"
+    },
+    {
+      "attempt_returncodes": [
+        101,
+        101,
+        101
+      ],
+      "attribution": "The previous base campaign also fails. Even with identical observed binary bytes, the exact dynamic failure cause and its causal relation to this patch are not established by this read-only comparison.",
+      "base_attempt_returncodes": [
+        101,
+        101,
+        101
+      ],
+      "base_head_job_id": 130336378537,
+      "base_run_id": 42963844218,
+      "build_returncode": 0,
+      "failed_step": 7,
+      "identical_observed_base_head_binary_sha256": "a1b0c4e61d46e5e59187b3fd2620cdc24f66fb8905d1c43ab81b619055601205",
+      "observed_report_pattern": "All three reports have economics_complete=true and finite_experiment_criteria_met=false. All nine phases have finite_phase_criteria_met=false and all_signed_rounds_confirmed_in_window=false. Each baseline confirms rounds 0 and 1 but not round 2 inside the window. All six attack phases record PUBLIC_REQUEST_DEADLINE and no observed genuine budget depletion.",
+      "original_criteria_met": [
+        false,
+        false,
+        false
+      ],
+      "original_panic": "finite experiment criteria failed",
+      "panic_source": "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs:1765",
+      "run_id": 43126393033,
+      "scope": "Same-host finite controlled loopback; no WAN, independent-operator, profitable quantum attack, cryptographic hardness or consensus qualification.",
+      "source_jobs": [
+        130879440817
+      ],
+      "workflow": "PoN original native campaign"
+    },
+    {
+      "count_gate_attribution": "The specific count-consistency refusals are inherited: exact-base head logs show the same actual counts and refusal text; workflow, example sources and shared producer source compared here are byte-identical. No gate was changed or bypassed.",
+      "factorial_v3": {
+        "actual_example_passed": 11,
+        "base_head_job_id": 130336377800,
+        "failed_jobs": 4,
+        "failed_step": 8,
+        "gate_expected_passed": 6,
+        "original_error": "factorial-example-tests: exact native controls did not execute"
+      },
+      "fresh_service": {
+        "controller_exit": 1,
+        "failed_jobs": 2,
+        "failed_step": 7,
+        "head_fresh_native_exit": 101,
+        "head_fresh_reader_failure": "FRESH_NATIVE_PROCESS_REQUIRED",
+        "head_last_history_errors": [
+          "PUBLIC_REQUEST_DEADLINE",
+          "PUBLIC_REQUEST_DEADLINE"
+        ],
+        "head_original_native_exit": 0,
+        "head_original_panic": "fresh challenges failed the original four-second/six-depth business target; retain report.json, no post-window success credit",
+        "head_original_reader_failure": "CONFIRMATION_TARGET",
+        "limit": "Detailed inner reports/logs extracted only for source head. Both head/merge controller jobs fail; no claim that merge inner observations were independently read. Exact-base head controller also fails, but detailed dynamic causal attribution remains undetermined.",
+        "source_head_artifact_id": 13902843454
+      },
+      "job_counts": {
+        "failure": 14,
+        "skipped": 1,
+        "success": 8
+      },
+      "legal_v1_v2": {
+        "actual_example_passed": 13,
+        "base_head_job_ids": [
+          130336378248,
+          130336378155
+        ],
+        "failed_jobs": 8,
+        "failed_step": 6,
+        "gate_expected_passed": 8,
+        "original_error": "four retained legal, two versioned legal and two shared material controls did not execute"
+      },
+      "run_id": 43126392872,
+      "workflow": "PoN W1 work security observations"
+    },
+    {
+      "attribution": "The same exporter wait-deadline error was observed on the exact base. This is an incomplete export observation, not evidence that a particular vulnerability was reported, and does not establish the cause of unavailable or unstable analyses.",
+      "base_head_job_id": 130336378384,
+      "base_run_id": 42963844246,
+      "failed_step": 5,
+      "original_error": "CodeQL analysis export failed: CodeQL analyses/checks did not complete and stabilize before the deadline",
+      "run_id": 43126392847,
+      "source_jobs": [
+        130879439040
+      ],
+      "workflow": "CodeQL exact-source analysis export"
+    }
+  ],
+  "pr": 920,
+  "qualification": {
+    "all_ci_green": false,
+    "note": "Observed failure attribution does not waive CI gates or create a security proof.",
+    "production_or_consensus_qualification": false
+  },
+  "raw_evidence": {
+    "archive": "source-head-diagnosis.tar.gz",
+    "base_comparators": "base-error-comparators-derived.json",
+    "complete_connector_decoded_job_logs": 28,
+    "details": "source-failed-jobs-derived.json",
+    "large_downloaded_archives_excluded_from_diagnosis_archive": [
+      {
+        "artifact_id": 13903871465,
+        "bytes": 79835140,
+        "local_file": "/workspace/scratch/7f73fe002713/daa-ci-failure-attribution-d23488c5-v1/native-campaign-d23488c5-43126393033.zip",
+        "sha256": "be2dbc572a76a36c48b7482adae264d50a6ddf1f7a31e776b8b303a80645b0e1"
+      },
+      {
+        "artifact_id": 13902843454,
+        "bytes": 5904062,
+        "local_file": "/workspace/scratch/7f73fe002713/daa-ci-failure-attribution-d23488c5-v1/w1-fresh-service-head-d23488c5-43126392872.zip",
+        "sha256": "967a26a5ffd98b5c176dcf62d3e98701b29bf323ac829782ff0c637c6498c582"
+      }
+    ],
+    "log_scope": "All retrieved decoded log contents are retained verbatim as UTF-8; not described as original HTTP/gzip response bytes. Archive MANIFEST.json binds each retained file.",
+    "native_reports": "native-source-criteria-summary.json",
+    "original_fresh_manifest": "source-fresh-selected/fresh-service/manifest.json",
+    "original_native_stderr": "source-native-selected/run-{1,2,3}.stderr.log",
+    "selected_base_head_job_logs": 8,
+    "source_comparisons": [
+      "source-identity-comparison.json",
+      "additional-source-identity-comparison.json"
+    ],
+    "source_failed_job_logs": 20
+  },
+  "repo": "TrillionniumFoundation/Trillionnium-Chain",
+  "schema": "pon-d23488-ci-readonly-diagnosis-v1",
+  "snapshot": {
+    "counts": {
+      "failure": 5,
+      "in_progress": 2,
+      "queued": 1,
+      "success": 13
+    },
+    "observed_utc": "2026-11-12T01:13:56.296Z",
+    "retrieval": "source-runs-followup.retrieval.json",
+    "returned_runs": 21,
+    "scope": "GitHub connector first page of PR-triggered workflows for this exact commit; observation at the recorded time, not an all-branch or permanent final result."
+  },
+  "source_commit": "d23488c5f9b4a6696c3799b12f14b8af0a1b81fc",
+  "source_tree": "72b106b4458299c37da146b0218b8f5276195b6d"
+}

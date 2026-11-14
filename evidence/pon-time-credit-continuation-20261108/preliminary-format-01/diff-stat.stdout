@@ -1,0 +1,13 @@
+ .../TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md  |  12 +
+ .../details/BRANCH_WORK_SCHEDULE_RESEARCH_V1.md    |  17 +
+ scripts/ci/ci_job.sh                               |   2 +
+ .../crates/trnm-pon-node/src/growth_cli.rs         | 204 +++++++++++-
+ .../trnm-pon-node/src/ingress/public_v3/growth.rs  |  30 +-
+ .../src/ingress/public_v3/growth/tests.rs          |  92 ++++++
+ .../trnm-pon-node/src/research_work_schedule.rs    | 317 ++++++++++++++++++-
+ trillionnium/crates/trnm-pon-node/src/store.rs     |   5 +-
+ .../trnm-pon-node/src/store/growth/recovery.rs     |  56 ++++
+ .../src/store/growth/tests/header_window.rs        | 225 +++++++++++++
+ .../trnm-pon-node/tests/native_growth_cli.rs       | 111 +++++++
+ .../trnm-pon-node/tests/research_work_schedule.rs  | 352 ++++++++++++++++++++-
+ 12 files changed, 1386 insertions(+), 37 deletions(-)

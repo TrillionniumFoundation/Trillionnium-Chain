@@ -1,0 +1,18 @@
+[
+  {
+    "command": [
+      "python3",
+      "scripts/ci/test_w1_staged_observer.py"
+    ],
+    "returncode": 0,
+    "wall_seconds": 3.9214429510000173
+  },
+  {
+    "command": [
+      "python3",
+      "scripts/ci/test_w1_security_budget.py"
+    ],
+    "returncode": 0,
+    "wall_seconds": 0.7411362640000334
+  }
+]

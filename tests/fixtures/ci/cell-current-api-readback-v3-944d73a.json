@@ -1,0 +1,20 @@
+{
+  "actual_case_line": 423,
+  "artifact_sha256": "7e41e7da4104ac169ded0ff0917e4c78fb59a38f60929c9566db56824f337843",
+  "artifact_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43470950805/artifacts/14061471886",
+  "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43470950805/job/132042382285",
+  "log_bytes": 1159,
+  "log_member": "cell-current-api.log",
+  "log_sha256": "f62af1580b9f3984527b687e0f75881335d72257c952c127aaad9098751ba994",
+  "original_doctest_exit_code": 0,
+  "original_fixed_case_line": 364,
+  "original_job_conclusion": "failure",
+  "original_readback_exit_code": 1,
+  "original_readback_log_sha256": "9b3335f681eaa44d0d2c33ae4c232074620d90837c93b1daf6aa35eb15676e56",
+  "schema": "cell-current-api-ci-observation-v1",
+  "scope": "Unchanged actual doctest output from failed DOC944 x64 head CI. The old line-364 reader refused this output. No rerun, later source qualification or independent C execution is claimed.",
+  "source_commit": "944d73aab375b062348b12b67b3159403c901ba1",
+  "source_file": "trillionnium/crates/trnm-data-availability/src/cell/pq.rs",
+  "source_file_sha256": "906e3c38a8f038a346e589c514b69dcb585f4d930bd7167d83aa6c495dd2ed33",
+  "source_tree": "b17cc006d3736a04f0539cfe292bb1c5d2dd7653"
+}

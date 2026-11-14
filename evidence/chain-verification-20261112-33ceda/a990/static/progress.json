@@ -1,0 +1,479 @@
+{
+  "schema": "chain-python-source-validation-v1",
+  "expected_source": "a9909fe579dd938005b9d17074f7937c8fa8eb98",
+  "source_root": "/home/qq/chain-verification-33ceda-20261112",
+  "output": "/home/qq/chain-verification-validation-33ceda-20261112/python-source-a9909fe579dd938005b9d17074f7937c8fa8eb98-attempt1",
+  "records": [
+    {
+      "label": "preflight",
+      "argv": [
+        "/bin/bash",
+        "scripts/project-preflight.sh"
+      ],
+      "log": "/home/qq/chain-verification-validation-33ceda-20261112/python-source-a9909fe579dd938005b9d17074f7937c8fa8eb98-attempt1/00-preflight.log",
+      "state": "completed",
+      "started_unix_ns": 1794471745228596621,
+      "exit_code": 0,
+      "elapsed_ns": 24477756,
+      "log_bytes": 179,
+      "log_sha256": "c32203b226220547f074c87c1e888e954c9e0f255d476247f1e8cc713924626d",
+      "unittest_counts": [],
+      "unittest_result_lines": []
+    },
+    {
+      "label": "source-before",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "a9909fe579dd938005b9d17074f7937c8fa8eb98",
+        "--output",
+        "/home/qq/chain-verification-validation-33ceda-20261112/python-source-a9909fe579dd938005b9d17074f7937c8fa8eb98-attempt1/source-before.json"
+      ],
+      "log": "/home/qq/chain-verification-validation-33ceda-20261112/python-source-a9909fe579dd938005b9d17074f7937c8fa8eb98-attempt1/01-source-before.log",
+      "state": "completed",
+      "started_unix_ns": 1794471745253587479,
+      "exit_code": 0,
+      "elapsed_ns": 1652459829,
+      "log_bytes": 423,
+      "log_sha256": "abe71e9adba2666c0640661123dbf5deb0b7ac3308e18a0847487d4e16cf7539",
+      "unittest_counts": [],
+      "unittest_result_lines": []
+    },
+    {
+      "label": "policy-reader",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/test_pon_public_v3_policy_read.py",
+        "-v"
+      ],
+      "log": "/home/qq/chain-verification-validation-33ceda-20261112/python-source-a9909fe579dd938005b9d17074f7937c8fa8eb98-attempt1/02-policy-reader.log",
+      "state": "completed",
+      "started_unix_ns": 1794471746907104420,
+      "exit_code": 0,
+      "elapsed_ns": 49628110,
+      "log_bytes": 1222,
+      "log_sha256": "5f456673f3f1a4f5a47f2726090b082ff0665e6f515cd283f7f1ad8e1677d47b",
+      "unittest_counts": [
+        7
+      ],
+      "unittest_result_lines": [
+        "OK"
+      ],
+      "expected_tests": 7,
+      "full_roster_observed": true
+    },
+    {
+      "label": "phase-reader",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/test_pon_public_v3_phase_read.py",
+        "-v"
+      ],
+      "log": "/home/qq/chain-verification-validation-33ceda-20261112/python-source-a9909fe579dd938005b9d17074f7937c8fa8eb98-attempt1/03-phase-reader.log",
+      "state": "completed",
+      "started_unix_ns": 1794471746958985509,
+      "exit_code": 0,
+      "elapsed_ns": 289116589,
+      "log_bytes": 10429,
+      "log_sha256": "038773c63161541577f1a50df17a431ab6cf2bc7910aff7dfa0b39e03639ad23",
+      "unittest_counts": [
+        63
+      ],
+      "unittest_result_lines": [
+        "OK"
+      ],
+      "expected_tests": 63,
+      "full_roster_observed": true
+    },
+    {
+      "label": "pq-research-source",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "log": "/home/qq/chain-verification-validation-33ceda-20261112/python-source-a9909fe579dd938005b9d17074f7937c8fa8eb98-attempt1/04-pq-research-source.log",
+      "state": "completed",
+      "started_unix_ns": 1794471747249332753,
+      "exit_code": 0,
+      "elapsed_ns": 178839097,
+      "log_bytes": 558,
+      "log_sha256": "c8fc6c69bfbb2e9de6350910dc950a2219f67eae05d5f5541039afd78a045d73",
+      "unittest_counts": [],
+      "unittest_result_lines": []
+    },
+    {
+      "label": "pq-research-controls",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/test_pq_research_integration.py",
+        "-v"
+      ],
+      "log": "/home/qq/chain-verification-validation-33ceda-20261112/python-source-a9909fe579dd938005b9d17074f7937c8fa8eb98-attempt1/05-pq-research-controls.log",
+      "state": "completed",
+      "started_unix_ns": 1794471747429423885,
+      "exit_code": 0,
+      "elapsed_ns": 70046944925,
+      "log_bytes": 8584,
+      "log_sha256": "86fae1b5500980088ab3022bba7523ff33b6cb0c712cc2f335048b8d10321f28",
+      "unittest_counts": [
+        60
+      ],
+      "unittest_result_lines": [
+        "OK"
+      ]
+    },
+    {
+      "label": "source-integrity-controls",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/test_ci_source_integrity.py",
+        "-v"
+      ],
+      "log": "/home/qq/chain-verification-validation-33ceda-20261112/python-source-a9909fe579dd938005b9d17074f7937c8fa8eb98-attempt1/06-source-integrity-controls.log",
+      "state": "completed",
+      "started_unix_ns": 1794471817479505306,
+      "exit_code": 0,
+      "elapsed_ns": 1879838133,
+      "log_bytes": 7606,
+      "log_sha256": "c95a33167f1e9b58d098c9de9355a78bd4215f4fef965b6d02761fc2b24db1e4",
+      "unittest_counts": [
+        43
+      ],
+      "unittest_result_lines": [
+        "OK"
+      ]
+    },
+    {
+      "label": "ci-contract-controls",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/test_ci_contract.py",
+        "-v"
+      ],
+      "log": "/home/qq/chain-verification-validation-33ceda-20261112/python-source-a9909fe579dd938005b9d17074f7937c8fa8eb98-attempt1/07-ci-contract-controls.log",
+      "state": "completed",
+      "started_unix_ns": 1794471819359897109,
+      "exit_code": 0,
+      "elapsed_ns": 28017458287,
+      "log_bytes": 32210,
+      "log_sha256": "e10683dc95ea7f3898b2c63392be1e3556f706f241db8ad2b7ded21053ce905e",
+      "unittest_counts": [
+        187
+      ],
+      "unittest_result_lines": [
+        "OK"
+      ]
+    },
+    {
+      "label": "evidence-source-controls",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/test_evidence_sources.py",
+        "-v"
+      ],
+      "log": "/home/qq/chain-verification-validation-33ceda-20261112/python-source-a9909fe579dd938005b9d17074f7937c8fa8eb98-attempt1/08-evidence-source-controls.log",
+      "state": "completed",
+      "started_unix_ns": 1794471847378175737,
+      "exit_code": 0,
+      "elapsed_ns": 293159500,
+      "log_bytes": 6158,
+      "log_sha256": "d1e7a9910269d78d73c392535d135a6e3a0c84d404afff52ef574a48fce1bcec",
+      "unittest_counts": [
+        38
+      ],
+      "unittest_result_lines": [
+        "OK"
+      ]
+    },
+    {
+      "label": "repository-controls",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/test_repository.py",
+        "-v"
+      ],
+      "log": "/home/qq/chain-verification-validation-33ceda-20261112/python-source-a9909fe579dd938005b9d17074f7937c8fa8eb98-attempt1/09-repository-controls.log",
+      "state": "completed",
+      "started_unix_ns": 1794471847671930636,
+      "exit_code": 0,
+      "elapsed_ns": 91584702835,
+      "log_bytes": 5344,
+      "log_sha256": "8243bece3ad23df972c671573c7c2b4899271d03afa704a5bec017a8be13ca7f",
+      "unittest_counts": [
+        50
+      ],
+      "unittest_result_lines": [
+        "OK"
+      ]
+    },
+    {
+      "label": "project-boundary-controls",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/test_project_boundary.py",
+        "-v"
+      ],
+      "log": "/home/qq/chain-verification-validation-33ceda-20261112/python-source-a9909fe579dd938005b9d17074f7937c8fa8eb98-attempt1/10-project-boundary-controls.log",
+      "state": "completed",
+      "started_unix_ns": 1794471939257198120,
+      "exit_code": 0,
+      "elapsed_ns": 1644047657,
+      "log_bytes": 2425,
+      "log_sha256": "1649ca873fbeb3964a38f1026dab032aaac6cf792eabdb4ed02ee79368755e62",
+      "unittest_counts": [
+        16
+      ],
+      "unittest_result_lines": [
+        "OK"
+      ]
+    },
+    {
+      "label": "invariants-registry-controls",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/test_invariants_registry.py",
+        "-v"
+      ],
+      "log": "/home/qq/chain-verification-validation-33ceda-20261112/python-source-a9909fe579dd938005b9d17074f7937c8fa8eb98-attempt1/11-invariants-registry-controls.log",
+      "state": "completed",
+      "started_unix_ns": 1794471940901728450,
+      "exit_code": 0,
+      "elapsed_ns": 4399316730,
+      "log_bytes": 2560,
+      "log_sha256": "25ab44de589468a8d61a96fc9b21cf240030a20c68b5ff8b157b0250ad720529",
+      "unittest_counts": [
+        19
+      ],
+      "unittest_result_lines": [
+        "OK"
+      ]
+    },
+    {
+      "label": "responsibility-evidence-controls",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/test_responsibility_evidence.py",
+        "-v"
+      ],
+      "log": "/home/qq/chain-verification-validation-33ceda-20261112/python-source-a9909fe579dd938005b9d17074f7937c8fa8eb98-attempt1/12-responsibility-evidence-controls.log",
+      "state": "completed",
+      "started_unix_ns": 1794471945301739925,
+      "exit_code": 0,
+      "elapsed_ns": 2922118629,
+      "log_bytes": 6368,
+      "log_sha256": "d0307c7641f1d2514ffbdc7602bf38a1933cd527aad20493915763d22a876d89",
+      "unittest_counts": [
+        46
+      ],
+      "unittest_result_lines": [
+        "OK"
+      ]
+    },
+    {
+      "label": "applicability-controls",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/test_applicability.py",
+        "-v"
+      ],
+      "log": "/home/qq/chain-verification-validation-33ceda-20261112/python-source-a9909fe579dd938005b9d17074f7937c8fa8eb98-attempt1/13-applicability-controls.log",
+      "state": "completed",
+      "started_unix_ns": 1794471948224496841,
+      "exit_code": 0,
+      "elapsed_ns": 19746409444,
+      "log_bytes": 6568,
+      "log_sha256": "f83086b139d56ac71223eb783b434a048a99b4601f035f2d6de59fd9d370251a",
+      "unittest_counts": [
+        42
+      ],
+      "unittest_result_lines": [
+        "OK"
+      ]
+    },
+    {
+      "label": "ci-execution-controls",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/test_ci_execution.py",
+        "-v"
+      ],
+      "log": "/home/qq/chain-verification-validation-33ceda-20261112/python-source-a9909fe579dd938005b9d17074f7937c8fa8eb98-attempt1/14-ci-execution-controls.log",
+      "state": "completed",
+      "started_unix_ns": 1794471967971609709,
+      "exit_code": 0,
+      "elapsed_ns": 22558922388,
+      "log_bytes": 13606,
+      "log_sha256": "0cda868eda3fbb07f16e02eb8ab31dc629dbe7589787c83250a749aa1271d9ff",
+      "unittest_counts": [
+        77
+      ],
+      "unittest_result_lines": [
+        "OK"
+      ]
+    },
+    {
+      "label": "authenticated-suite-count-controls",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/test_authenticated_suite_count.py",
+        "-v"
+      ],
+      "log": "/home/qq/chain-verification-validation-33ceda-20261112/python-source-a9909fe579dd938005b9d17074f7937c8fa8eb98-attempt1/15-authenticated-suite-count-controls.log",
+      "state": "completed",
+      "started_unix_ns": 1794471990531205082,
+      "exit_code": 0,
+      "elapsed_ns": 945622698,
+      "log_bytes": 2669,
+      "log_sha256": "5cec0995d48a1e70a4315a642e30031a8ced5e3a708f5a8d94f5afaa715896d0",
+      "unittest_counts": [
+        15
+      ],
+      "unittest_result_lines": [
+        "OK"
+      ]
+    },
+    {
+      "label": "pq-command-controls",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/test_record_pq_native_command.py",
+        "-v"
+      ],
+      "log": "/home/qq/chain-verification-validation-33ceda-20261112/python-source-a9909fe579dd938005b9d17074f7937c8fa8eb98-attempt1/16-pq-command-controls.log",
+      "state": "completed",
+      "started_unix_ns": 1794471991477337741,
+      "exit_code": 0,
+      "elapsed_ns": 557779291,
+      "log_bytes": 3551,
+      "log_sha256": "0b6f860ed38b07838e5a5f76829cacd69e535f4e36e3c692332295d20646c156",
+      "unittest_counts": [
+        9
+      ],
+      "unittest_result_lines": [
+        "OK"
+      ]
+    },
+    {
+      "label": "pq-chain-claim-controls",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/test_pq_chain_claim_guard.py",
+        "-v"
+      ],
+      "log": "/home/qq/chain-verification-validation-33ceda-20261112/python-source-a9909fe579dd938005b9d17074f7937c8fa8eb98-attempt1/17-pq-chain-claim-controls.log",
+      "state": "completed",
+      "started_unix_ns": 1794471992035973891,
+      "exit_code": 0,
+      "elapsed_ns": 330817123,
+      "log_bytes": 7054,
+      "log_sha256": "e1057fbefc45380da5ded588cc30d14acaf6bdc3170a579bc652b981d48ff380",
+      "unittest_counts": [
+        55
+      ],
+      "unittest_result_lines": [
+        "OK"
+      ]
+    },
+    {
+      "label": "pq-authority-surface-controls",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/test_pq_authority_surface_scan.py",
+        "-v"
+      ],
+      "log": "/home/qq/chain-verification-validation-33ceda-20261112/python-source-a9909fe579dd938005b9d17074f7937c8fa8eb98-attempt1/18-pq-authority-surface-controls.log",
+      "state": "completed",
+      "started_unix_ns": 1794471992367695491,
+      "exit_code": 0,
+      "elapsed_ns": 151302375,
+      "log_bytes": 2454,
+      "log_sha256": "fa58300d9cbc06c68f1ffca0080a4c3b9714ccd7a89869f336c9d8d3cc237c6f",
+      "unittest_counts": [
+        15
+      ],
+      "unittest_result_lines": [
+        "OK"
+      ]
+    },
+    {
+      "label": "distributed-inventory-check",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "log": "/home/qq/chain-verification-validation-33ceda-20261112/python-source-a9909fe579dd938005b9d17074f7937c8fa8eb98-attempt1/19-distributed-inventory-check.log",
+      "state": "completed",
+      "started_unix_ns": 1794471992519692131,
+      "exit_code": 0,
+      "elapsed_ns": 50462161,
+      "log_bytes": 35,
+      "log_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "unittest_counts": [],
+      "unittest_result_lines": []
+    },
+    {
+      "label": "current-implementation-check",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/report_current_implementation.py",
+        "--check"
+      ],
+      "log": "/home/qq/chain-verification-validation-33ceda-20261112/python-source-a9909fe579dd938005b9d17074f7937c8fa8eb98-attempt1/20-current-implementation-check.log",
+      "state": "completed",
+      "started_unix_ns": 1794471992571021701,
+      "exit_code": 0,
+      "elapsed_ns": 27820127,
+      "log_bytes": 71,
+      "log_sha256": "431e373353829a7aa76abab6c3a606519c90290e2dc0909202c9a9f4cab92be3",
+      "unittest_counts": [],
+      "unittest_result_lines": []
+    },
+    {
+      "label": "source-after",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "a9909fe579dd938005b9d17074f7937c8fa8eb98",
+        "--output",
+        "/home/qq/chain-verification-validation-33ceda-20261112/python-source-a9909fe579dd938005b9d17074f7937c8fa8eb98-attempt1/source-after.json"
+      ],
+      "log": "/home/qq/chain-verification-validation-33ceda-20261112/python-source-a9909fe579dd938005b9d17074f7937c8fa8eb98-attempt1/21-source-after.log",
+      "state": "completed",
+      "started_unix_ns": 1794471992599542513,
+      "exit_code": 0,
+      "elapsed_ns": 1713767974,
+      "log_bytes": 423,
+      "log_sha256": "abe71e9adba2666c0640661123dbf5deb0b7ac3308e18a0847487d4e16cf7539",
+      "unittest_counts": [],
+      "unittest_result_lines": []
+    }
+  ]
+}

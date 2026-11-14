@@ -1,0 +1,50 @@
+{
+  "schema": "trnm-pq-m04-local-qualification-v1",
+  "research_only": true,
+  "independent_operator_acceptance": false,
+  "native_chain_integrated": false,
+  "production_activation": false,
+  "full_chain_post_quantum": false,
+  "parent_branch": "research/pq-cell-provenance-verified-release-20261026",
+  "parent_sha": "fcd52964b3a2fadba0dec86702775cddf4cc0200",
+  "source_commit_at_test_blob_pinning": "4508ee62e5bffb0c89193649e329e619a3300041",
+  "git_blob_sha1": {
+    "pq_mtls_probe.c": "2c80e77764b1ef66d2e39ed6fc062f0c69e1412d",
+    "pq_peer_session.py": "0137fd0c9ba0bb4be961fda7400f1b2df681f85e",
+    "test_pq_mtls_probe.py": "f94257acc3f1335b658b56d4e2fadb4d5324b7bd",
+    "pq_envelope.py": "27e40b04ac8eaa381ad4dc017f23f226f99f3f41"
+  },
+  "test_command": "cd formal/pon-nakamoto-v1 && python3 -m unittest -v test_pq_mtls_probe.py",
+  "compiler_command": "cc -std=c11 -Wall -Wextra -Werror -O2 pq_mtls_probe.c -o pq_mtls_probe -lssl -lcrypto",
+  "python_version": "3.13.5",
+  "openssl_version": "OpenSSL 3.5.5 27 Jan 2026 (Library: OpenSSL 3.5.5 27 Jan 2026)",
+  "compiler": "cc (Debian 14.2.0-19) 14.2.0",
+  "host": {
+    "os": "Linux",
+    "arch": "x86_64",
+    "kernel": "6.18.55",
+    "filesystem": "unreported"
+  },
+  "local_execution_observed_utc": "2026-10-26T15:10:25.418605+00:00",
+  "tests_reported": 11,
+  "failures": 0,
+  "local_run_log_sha256": "0ef2bccabaf9aea7ff8103382ef44f73b77f84f4779a174d1237a497fb6dd8a4",
+  "validated_scope": [
+    "OpenSSL native C TLS 1.3 loopback ML-DSA-65 mutual authentication",
+    "X25519MLKEM768 required, classical-only group rejected",
+    "strict peer SPKI ID bound to original TPQ1 key-id algorithm",
+    "TLS exporter derived with chain network/genesis/profile context",
+    "PPH1 purpose 6 signed statement bound to verified channel tag",
+    "single other TLS session replay rejected; expired/wrong network or signer denied"
+  ],
+  "not_validated": [
+    "product Rust M04 or M15 integration",
+    "remote WAN, independent operators and peer discovery",
+    "durable multi-process replay and revocation owner",
+    "TLS exporter confidentiality or 0-RTT/resumption attacks in a deployed stack",
+    "production key provisioning / HSM",
+    "network-wide membership / Sybil defenses",
+    "POW quantum work hardness",
+    "whole-chain post-quantum acceptance"
+  ]
+}

@@ -1,0 +1,332 @@
+{
+  "schema": "pon-final-research-read-review-v1",
+  "recorded_at_utc": "2026-11-09T14:22:24.203204+00:00",
+  "source_commit": "f48840dead56de84fbae9d3b202b6c9ddd4a8291",
+  "source_tree": "21cf3932e715e1d9b9a1357b24022afa1257547a",
+  "current_head_at_check": "e4e4a8e049915ba09d9e97444b4709ce8769ce81",
+  "files": [
+    {
+      "id": "S1",
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "anchor": "L21 常量；L423 verify",
+      "bytes": 104121,
+      "sha256": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03",
+      "git_blob": "ce1608248d2ee67ed8f5d82a2c5f15942689139b",
+      "current_bytes_equal_frozen_source": true
+    },
+    {
+      "id": "S2",
+      "path": "trillionnium/crates/trnm-pon-node/src/consensus.rs",
+      "anchor": "L141 required_work；L171 parent window；L188 retarget；L216 check_time",
+      "bytes": 20098,
+      "sha256": "a5600aeb8287cce30ae3075b675082df4e6e5569a80f23e9a2e381f8202a8f62",
+      "git_blob": "989ac5f08b8e4f707cda613617fd5245eb6a6463",
+      "current_bytes_equal_frozen_source": true
+    },
+    {
+      "id": "S3",
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "anchor": "L4138 expected_target；L6110 activation_selection；L6652 activate_observed；L6763 confirmation limits",
+      "bytes": 382866,
+      "sha256": "108621f304255841ea2e1a7353858c3f0f5d8cb70a235f6a4aef6d57ebe0c554",
+      "git_blob": "a8bd7b9c8d9b02617060bea955b3bb21d905129f",
+      "current_bytes_equal_frozen_source": true
+    },
+    {
+      "id": "S4",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs",
+      "anchor": "L171 header 检查；L213 admit_growth；L402 growth activation",
+      "bytes": 33123,
+      "sha256": "8b5b506c354664d3c7f2d96f36884f706a2653763fea6a6346c1d01079935192",
+      "git_blob": "1dc918fa383246ccfb673818d627e918bf80f5bc",
+      "current_bytes_equal_frozen_source": true
+    },
+    {
+      "id": "S5",
+      "path": "docs/protocol/pon-nakamoto-v1/details/BRANCH_WORK_SCHEDULE_RESEARCH_V1.md",
+      "anchor": "L3 authority；L29 finite contract；L67 required target",
+      "bytes": 14324,
+      "sha256": "a8747f23145610da86503cd10e0b865eec6350b67be9b1cc4c01c1762b01c410",
+      "git_blob": "cf3d72668279bfbd51226f1517ff86e017894970",
+      "current_bytes_equal_frozen_source": true
+    },
+    {
+      "id": "S6",
+      "path": "docs/protocol/pon-nakamoto-v1/details/WORK_COST_CONTRACT_V1.md",
+      "anchor": "L3 历史 source；L53 lifecycle；L132 historical replay",
+      "bytes": 10347,
+      "sha256": "76ecc8077a992eb5a509fd94d4dfe5d5a67987bf2845094cb8706d9f25255511",
+      "git_blob": "6318eec3dda6cb06c036b50183663b55e307130b",
+      "current_bytes_equal_frozen_source": true
+    },
+    {
+      "id": "S7",
+      "path": "docs/protocol/pon-nakamoto-v1/details/PURE_PON_WORK_SECURITY_MODEL_V1.md",
+      "anchor": "L54 全部自由度；L77 cost assumptions",
+      "bytes": 11243,
+      "sha256": "03cf447cb6c032c4e454114e034d999c8dd7f2c61b88c5ec08ac63ba0a8b7185",
+      "git_blob": "6bd484d2089dbe93c82d36f3b66b6f0e02f124d2",
+      "current_bytes_equal_frozen_source": true
+    },
+    {
+      "id": "S8",
+      "path": "docs/protocol/pon-nakamoto-v1/details/JOINT_CONSENSUS_DAA_AUDIT_20261108.md",
+      "anchor": "L29 native contract；L225 acceptance obligations",
+      "bytes": 13666,
+      "sha256": "8ee536c3ab0af6347920e6c006ed6de941bc2c0fc95d2e75dafaaee1f3847676",
+      "git_blob": "73f7e3314a2a14b0938e1db7c69f311e0f5c49bf",
+      "current_bytes_equal_frozen_source": true
+    },
+    {
+      "id": "S9",
+      "path": "formal/pon-nakamoto-v1/fixed_probability_contract_v1.json",
+      "anchor": "L2 accounting；L14 cost envelopes；L116 relation；L150 strategy classes；L176 open obligations",
+      "bytes": 5102,
+      "sha256": "e249dfcda10720a1fc388cef9613302253a96b125c0ab1f0eda1b584b72cebef",
+      "git_blob": "c56f2ee0f6a47bc04c0abc0de6142959f855c8ef",
+      "current_bytes_equal_frozen_source": true
+    },
+    {
+      "id": "S10",
+      "path": "docs/protocol/pon-nakamoto-v1/details/COST_ENVELOPE_CONTRACT_V1.md",
+      "anchor": "L10 success/cost；L46 credit；L152 failure budget；L166 joint proof",
+      "bytes": 21326,
+      "sha256": "44a44feaad8fc6c757a84cc881a84d0b4c017b67cd022202ead0484e831963ab",
+      "git_blob": "ba536f328edb1e18bbfa078e5521fd856b685f9f",
+      "current_bytes_equal_frozen_source": true
+    },
+    {
+      "id": "S11",
+      "path": "formal/pon-nakamoto-v1/contracts/cost-envelope-current-hold-v1.json",
+      "anchor": "L17 window；L18 null envelopes；L80 null failure budget",
+      "bytes": 4275,
+      "sha256": "5baa95901b44e024cd239179642f5e1576b7d5ee24d4fe9adff89cf48f6fa223",
+      "git_blob": "c149b1d2adb84c14788d21104f9af29f888491cd",
+      "current_bytes_equal_frozen_source": true
+    },
+    {
+      "id": "S12",
+      "path": "formal/pon-nakamoto-v1/work_query_bound.py",
+      "anchor": "L1 conditional query accounting；L39 tail",
+      "bytes": 7165,
+      "sha256": "d6b5c3b25f6cd8287de5b927f271d0436ffe736470eb914d02a8a17497ea0909",
+      "git_blob": "e3ec8bf4bdd510f3fe718e63a4df595d342c61c6",
+      "current_bytes_equal_frozen_source": true
+    },
+    {
+      "id": "S13",
+      "path": "formal/pon-nakamoto-v1/STATEFUL_RESOURCE_TAIL_V1.md",
+      "anchor": "L5 operator theorem；L87 remaining actual-relation obligations",
+      "bytes": 11309,
+      "sha256": "b3457f80f58ac1651b028bc80213756ebf2ba68b1c504b30ced96f9c78098d6d",
+      "git_blob": "a8db0e1571bee5a77df9d4d7445a0e8ca26f3888",
+      "current_bytes_equal_frozen_source": true
+    },
+    {
+      "id": "S14",
+      "path": "formal/pon-nakamoto-v1/FINITE_JOINT_STATE_CERTIFICATE_V1.md",
+      "anchor": "L34 complete input；L105 transfer theorem",
+      "bytes": 21885,
+      "sha256": "d831f15db90e345f7e8ccd5b14c268d046b7bbf72d5588eb09e44a6a48412b0b",
+      "git_blob": "599655df643e88feb6317ad4955a0eafe108f81f",
+      "current_bytes_equal_frozen_source": true
+    },
+    {
+      "id": "S15",
+      "path": "formal/pon-nakamoto-v1/WORK_SCALE_SECURITY_CONTRACT_V1.md",
+      "anchor": "L243 crossing lemma；L365 CP/CG/CQ interfaces；L462 query bound",
+      "bytes": 27428,
+      "sha256": "29c128cf14ea9b85da419f3885f505f8c417a6a3ca34b058ee061fd620439201",
+      "git_blob": "39f7256e3b74e69cdf4fd2b8e032395df124b0ac",
+      "current_bytes_equal_frozen_source": true
+    },
+    {
+      "id": "S16",
+      "path": "formal/pon-nakamoto-v1/NATIVE_FORK_MAPPING_V1.md",
+      "anchor": "L42 首次本地移除；L71 诚实竞争支和库存",
+      "bytes": 32066,
+      "sha256": "aeaf1d009f123d5525d502cb079b4efd806569b3639501ab0da5f240b2d3e6f9",
+      "git_blob": "42ec28c4bf6fb6f3723d6844360e4a550848e495",
+      "current_bytes_equal_frozen_source": true
+    },
+    {
+      "id": "S17",
+      "path": "formal/pon-nakamoto-v1/NATIVE_EXECUTION_CERTIFICATE_V1.md",
+      "anchor": "L234 later-window premises；L353 probability composition",
+      "bytes": 29945,
+      "sha256": "511fd7050202f051f1285f574216860f28ed2d6f79b30a03db7976904187800d",
+      "git_blob": "989f1f2b48dec7772a586dd2ecf8307f65870bc8",
+      "current_bytes_equal_frozen_source": true
+    },
+    {
+      "id": "S18",
+      "path": "formal/pon-nakamoto-v1/CERTIFICATE_EVENT_COVERAGE_V1.md",
+      "anchor": "L101 complete target event；L136 composition theorem",
+      "bytes": 15444,
+      "sha256": "103392d0fe0f35534f3f1e99125729488b6fe883c9166662bf03c58d9276905c",
+      "git_blob": "c22bca5f456768237c3f4dd643e84af3c2091a88",
+      "current_bytes_equal_frozen_source": true
+    },
+    {
+      "id": "S19",
+      "path": "formal/pon-nakamoto-v1/NATIVE_RISK_LEDGER_V1.md",
+      "anchor": "L126 exhaustive local reconciliation；L206 conditional risk",
+      "bytes": 16582,
+      "sha256": "58a72603cbdfa134288bad49b16b4316d01818d30b0eae580b532f244fe79766",
+      "git_blob": "c07c4872b1ff2c3af251228697a20344c61826b6",
+      "current_bytes_equal_frozen_source": true
+    },
+    {
+      "id": "S20",
+      "path": "formal/pon-nakamoto-v1/quantum_network_sim.py",
+      "anchor": "L36 ASSUMPTIONS",
+      "bytes": 60687,
+      "sha256": "a9a0980f25dda02960d0b5dae0269e1de1190287df66144b32965ab80d46dad7",
+      "git_blob": "582dee64057b81edbacc477c2eb285ee162bc61a",
+      "current_bytes_equal_frozen_source": true
+    },
+    {
+      "id": "S21",
+      "path": "formal/pon-nakamoto-v1/quantum_resource_clock.py",
+      "anchor": "L195 certificate；L229 failure-budget scope",
+      "bytes": 15682,
+      "sha256": "8d7257c315da4590e463b6bdb49434d284c0239681d6d8e50759dafda42c456a",
+      "git_blob": "50cc314bd4e15232889d752fb70b59289f1418d2",
+      "current_bytes_equal_frozen_source": true
+    },
+    {
+      "id": "S22",
+      "path": "formal/pon-nakamoto-v1/honest_rate_model.py",
+      "anchor": "L252 ASSUMPTIONS",
+      "bytes": 12160,
+      "sha256": "0d2b8bb34b8a95798995f86f79f146587d0ef90abac72a606e4e07d5609441d1",
+      "git_blob": "10e2cb4b0893632dff732e94f6ad53fb02c4f652",
+      "current_bytes_equal_frozen_source": true
+    },
+    {
+      "id": "S23",
+      "path": "docs/security/PQ_PROOF_PROFILE_BINDING_V1.md",
+      "anchor": "Selected identity、remaining qualification；配套 binding manifest",
+      "bytes": 7528,
+      "sha256": "ac4ffc16669db3eec5111bd438ce5159ace481bfc5b53bd6f32699cbd954706b",
+      "git_blob": "6ce82b26c53826f275f4fcc6d03fee744c32c205",
+      "current_bytes_equal_frozen_source": true
+    },
+    {
+      "id": "S24",
+      "path": "docs/development/specs/pon/CELL_STORAGE_NETWORK_ACCEPTANCE_V1.md",
+      "anchor": "L148 operational gate",
+      "bytes": 9915,
+      "sha256": "9796d49c535de01ea79dd331e1d9c6768326770b6411b76caac0f33d53fdd5a9",
+      "git_blob": "edd0f3942e798f20fd78474f451b28147adce191",
+      "current_bytes_equal_frozen_source": true
+    },
+    {
+      "id": "S25",
+      "path": "docs/security/PON_ORIGINAL_FOUR_SECOND_REPLAY_STAGES_20261031.md",
+      "anchor": "L9 original baseline；L33 unchanged closure gate",
+      "bytes": 3507,
+      "sha256": "cf72992cf874ac6c81661815c43f4f950564f2f3429c4d00099a1fc86b8533cb",
+      "git_blob": "3578e57b5ff7d702f931d47c866f511d43a5a0cb",
+      "current_bytes_equal_frozen_source": true
+    },
+    {
+      "id": "S26",
+      "path": "docs/protocol/pon-nakamoto-v1/details/CLASSICAL_QUANTUM_COST_AUDIT_20261108.md",
+      "anchor": "L39 submission scope；L89 stationary renewal；L119 joint goal",
+      "bytes": 11759,
+      "sha256": "e6a444af45cc1b00ed7d52c9db7f0dc39382df1d33ac910468939e731475930b",
+      "git_blob": "5052340ca856093ba579f392bd3cb16c9a472cd8",
+      "current_bytes_equal_frozen_source": true
+    },
+    {
+      "id": "S27",
+      "path": "docs/protocol/pon-nakamoto-v1/details/FIXED_PROBABILITY_COST_CONTRACT_V1.md",
+      "anchor": "L74 credit feasibility；L112 additive potential；L217 next gate",
+      "bytes": 13000,
+      "sha256": "d04a72ca081eb3bf1bba52aa0ba3946155208a243ff09c02a4a490795e21b30e",
+      "git_blob": "47af53d47eee17ed709968470302ab8e15463a72",
+      "current_bytes_equal_frozen_source": true
+    },
+    {
+      "id": "S28",
+      "path": "config/pon/devnet-v1.json",
+      "anchor": "L8 timing；L14 confirmation settings",
+      "bytes": 1964,
+      "sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4",
+      "git_blob": "a60f403b2f0e7343aed61170ca2aef875a787790",
+      "current_bytes_equal_frozen_source": true
+    }
+  ],
+  "file_count": 28,
+  "source_bytes_total": 918517,
+  "report": {
+    "path": "/workspace/scratch/481716a90d06/overlay/final-pon-research.md",
+    "bytes": 41640,
+    "sha256": "87c9b0a51ef15060d32e3b9f3981c876b515fee9d515d62a3ed780790a62a743",
+    "line_count": 421
+  },
+  "checks": {
+    "source_bytes_equal_fixed_commit": true,
+    "local_links_exist": true,
+    "citation_ids_complete": true,
+    "declared_line_anchors_in_range": true,
+    "mu1_sixteen_all_null_cost_points_preserved": true,
+    "generic_six_all_null_cost_points_preserved": true,
+    "native_tests_executed": false,
+    "benchmarks_executed": false,
+    "security_theorem_proved_for_actual_w1": false,
+    "production_activation": false
+  },
+  "external_primary_review": [
+    {
+      "url": "https://drops.dagstuhl.de/entities/document/10.4230/LIPIcs.ESA.2026.2",
+      "scope": "publisher metadata and selected formal-PDF passages",
+      "publication_date": "2026-08-25",
+      "full_version_equivalence_to_arxiv_or_w1_verified": false
+    },
+    {
+      "url": "https://arxiv.org/abs/2504.09971",
+      "scope": "version metadata",
+      "latest_version_observed": "v4",
+      "revision_date": "2025-11-13"
+    },
+    {
+      "url": "https://arxiv.org/html/2012.15254v4",
+      "scope": "fixed-version model and theorem passages; sections 4.1, 4.3, 4.4",
+      "latest_metadata_checked_at": "https://arxiv.org/abs/2012.15254",
+      "revision_date": "2023-03-06",
+      "native_reduction_verified": false
+    },
+    {
+      "url": "https://www.iog.io/papers/fast-difficulty-adjustment-in-proof-of-work-consensus",
+      "scope": "official institutional abstract only",
+      "full_text_url": "https://eprint.iacr.org/2026/1116.pdf",
+      "full_text_result": "403 Forbidden",
+      "full_text_theorem_verified": false
+    }
+  ],
+  "previous_report_identity_before_final_clarity_edits": {
+    "path": "/workspace/scratch/481716a90d06/overlay/final-pon-research.md",
+    "bytes": 41126,
+    "sha256": "8e1dcd9ecd83f45d1494fe504bffb27353a5675be11f4df187f3cf6663ebfed3",
+    "line_count": 416
+  },
+  "final_clarity_edits": [
+    "Explicitly separate current advanced HEAD from the frozen reviewed-source identity.",
+    "State the lower-bound implication on a deterministic pathwise budget B; do not demand every abort/failure path consume L.",
+    "Render primary URLs as Markdown links."
+  ],
+  "final_review_at_utc": "2026-11-09T14:23:47.818174+00:00",
+  "user_referenced_storage_contract": {
+    "source_commit": "097f59f505f8ec42f72e3b8255e6cb7822a70646",
+    "path": "docs/development/specs/pon/CELL_STORAGE_NETWORK_ACCEPTANCE_V1.md",
+    "git_read_returncode": 0,
+    "read_succeeded": true,
+    "sha256": "9796d49c535de01ea79dd331e1d9c6768326770b6411b76caac0f33d53fdd5a9",
+    "bytes": 9915,
+    "equal_current_reviewed_bytes": true,
+    "independence_and_duration_clause_present": true,
+    "four_and_thirty_second_clause_present": true
+  }
+}

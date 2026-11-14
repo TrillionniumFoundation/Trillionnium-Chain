@@ -1,0 +1,1710 @@
+{
+  "ancestor_execution_transferred": false,
+  "archival_conversion": {
+    "change": "archive paths refer to checkpoint root; full job logs stored as reversible gzip with decoded-byte hashes; evidence values unchanged",
+    "original_readback_json_bytes": 85994,
+    "original_readback_json_sha256": "60e789e58deadf7750ac7713402b48a340122acccde637b7f7b5dade008fb8a0"
+  },
+  "checkpoint_path_base": "evidence/nextuse-final-9d4-20261111",
+  "head": "9d4a68191f4e30135b07d3f1e1bc9a1a2367773e",
+  "hepta_final_use_accepted": false,
+  "independent_consumer_accepted": false,
+  "jobs": [
+    {
+      "artifact": {
+        "all_entries_retained": 170,
+        "bytes": 197793,
+        "id": 13825646186,
+        "original_root_hashes_verified": 144,
+        "path": "artifacts/next-architecture-x64-head-9d4.zip",
+        "sha256": "c546f9571ea54328b29a3f9d87fc33bb088a3066463aa252083ca0ac70357bcb",
+        "uploader_digest_verified": true
+      },
+      "job_conclusion": "success",
+      "job_id": 130278194744,
+      "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42941133309/job/130278194744",
+      "kind": "head",
+      "mapping_roundtrip_and_unique_labels": true,
+      "original_named_reader_verdicts_verified": true,
+      "raw_log": {
+        "bytes": 73860,
+        "decoded_bytes": 401970,
+        "decoded_path": "job-130278194744.log",
+        "decoded_sha256": "e201cce981cfd65246ec27ba09bb86396285609037c61b50b39d70833a1dbe08",
+        "encoding": "gzip",
+        "path": "logs/job-130278194744.log.gz",
+        "sha256": "2df390e49dc748952e86a9591ff846a8d4a02a42ef060ed68472cd9a0bcd114a",
+        "source_id": "github-job-log-130278194744"
+      },
+      "selector_count": 18,
+      "selectors": [
+        {
+          "captured_log_bytes": 433,
+          "captured_log_sha256": "9bde400a3c48c007990c31eb381b4165c03dc6c72fe1431cfb442afa97ad91e0",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-shard-native_shard_pending_initial_effect_cannot_dispatch_even_with_source_present",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::shard::native_shard_pending_initial_effect_cannot_dispatch_even_with_source_present"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::shard::native_shard_pending_initial_effect_cannot_dispatch_even_with_source_present"
+        },
+        {
+          "captured_log_bytes": 430,
+          "captured_log_sha256": "beefe4f0c820a4df0fc67b77af9401a239fd4ce345513aab7d8fe3c7d132fe6a",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-shard-native_shard_real_funding_target_readback_and_repair_keep_original_debits",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::shard::native_shard_real_funding_target_readback_and_repair_keep_original_debits"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::shard::native_shard_real_funding_target_readback_and_repair_keep_original_debits"
+        },
+        {
+          "captured_log_bytes": 431,
+          "captured_log_sha256": "f54f8c7ccc5bbbef315a81bafca6aec7648be5ebe008278cc5a2f06009328c53",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-shard-native_shard_unknown_repair_never_reissues_and_foreign_owner_cannot_retire",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::shard::native_shard_unknown_repair_never_reissues_and_foreign_owner_cannot_retire"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::shard::native_shard_unknown_repair_never_reissues_and_foreign_owner_cannot_retire"
+        },
+        {
+          "captured_log_bytes": 424,
+          "captured_log_sha256": "38f0c35bc425c09e63a8d0d6a7a336ea61be0dc1994a2722d3cdee847c6aed69",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-version-native_version_outer_history_cannot_invent_missing_member_intents",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::version::native_version_outer_history_cannot_invent_missing_member_intents"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::version::native_version_outer_history_cannot_invent_missing_member_intents"
+        },
+        {
+          "captured_log_bytes": 433,
+          "captured_log_sha256": "ae19329f5beb84059845ee2af576631c87563f438efb4a9f76a5ce03007e581a",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-version-native_version_pending_monetary_effect_cannot_retry_copy_with_a_new_source",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::version::native_version_pending_monetary_effect_cannot_retry_copy_with_a_new_source"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::version::native_version_pending_monetary_effect_cannot_retry_copy_with_a_new_source"
+        },
+        {
+          "captured_log_bytes": 444,
+          "captured_log_sha256": "a409ad4721edbe6d39de052080a837f287a6f3dcf8869ac81e14c5dc39547102",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-version-native_version_reorg_keeps_custody_but_cannot_grant_new_funding_or_foreign_retirement",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::version::native_version_reorg_keeps_custody_but_cannot_grant_new_funding_or_foreign_retirement"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::version::native_version_reorg_keeps_custody_but_cannot_grant_new_funding_or_foreign_retirement"
+        },
+        {
+          "captured_log_bytes": 447,
+          "captured_log_sha256": "457bddde767c4c7ed3b1ec5dbaf596ecd999c92294f9aa373b3a569b29956f16",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-version-native_version_scheduler_pending_metadata_accepts_only_new_funded_copy_then_reopens_done",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::version::native_version_scheduler_pending_metadata_accepts_only_new_funded_copy_then_reopens_done"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::version::native_version_scheduler_pending_metadata_accepts_only_new_funded_copy_then_reopens_done"
+        },
+        {
+          "captured_log_bytes": 435,
+          "captured_log_sha256": "322fd5ff7a45dc5855ade353308a9e48248e479199e164513eb549121808982e",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-version-native_version_scope_alias_and_late_funding_errors_precede_every_reservation",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::version::native_version_scope_alias_and_late_funding_errors_precede_every_reservation"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::version::native_version_scope_alias_and_late_funding_errors_precede_every_reservation"
+        },
+        {
+          "captured_log_bytes": 461,
+          "captured_log_sha256": "aa32ee3c005cb2452b05e772b3bc75daff681b9a346ddbbf6232442262db7228",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-version-shard_plan-native_complete_version_to_complete_local_shard_plan_reopens_without_sources_or_new_debits",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::version::shard_plan::native_complete_version_to_complete_local_shard_plan_reopens_without_sources_or_new_debits"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::version::shard_plan::native_complete_version_to_complete_local_shard_plan_reopens_without_sources_or_new_debits"
+        },
+        {
+          "captured_log_bytes": 465,
+          "captured_log_sha256": "0b7b8a6c1bd4c3c7e20137b96a339fbc0e17ae2e9413cf1334fe0a2c71f0cbe2",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-version-shard_plan-recovery-native_shard_plan_automatic_recovery_uses_four_targets_after_all_sources_are_deleted",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_automatic_recovery_uses_four_targets_after_all_sources_are_deleted"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_automatic_recovery_uses_four_targets_after_all_sources_are_deleted"
+        },
+        {
+          "captured_log_bytes": 465,
+          "captured_log_sha256": "9c1d48203b7c672f8b3c1d18ed2d251b624587c18d7b633606a442e348cc2578",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-version-shard_plan-recovery-native_shard_plan_pending_repair_cannot_redispatch_and_needs_independent_new_funding",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_pending_repair_cannot_redispatch_and_needs_independent_new_funding"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_pending_repair_cannot_redispatch_and_needs_independent_new_funding"
+        },
+        {
+          "captured_log_bytes": 468,
+          "captured_log_sha256": "eb057b87f57c7e11927374ea549ab4ce03e1daf1b4098744868460d04a327ff3",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-version-shard_plan-recovery-native_shard_plan_recovery_preflight_cpu_and_metadata_fail_closed_without_hidden_copies",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_recovery_preflight_cpu_and_metadata_fail_closed_without_hidden_copies"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_recovery_preflight_cpu_and_metadata_fail_closed_without_hidden_copies"
+        },
+        {
+          "captured_log_bytes": 478,
+          "captured_log_sha256": "0f32ac7f9e9ffa82e05cf5fd2cb341a185fa545429e33b9eb947d96bbce8a0fb",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-version-shard_plan-recovery-native_shard_plan_recovery_refuses_missing_quorum_without_spending_new_repairs_or_refunding_reads",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_recovery_refuses_missing_quorum_without_spending_new_repairs_or_refunding_reads"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_recovery_refuses_missing_quorum_without_spending_new_repairs_or_refunding_reads"
+        },
+        {
+          "captured_log_bytes": 452,
+          "captured_log_sha256": "26d4d276362dc8d328870fdfbe77c42cab37261b381f5091d08bb4ae5ce76ad9",
+          "exit_bytes": "0\n",
+          "label": "native-storage-component--cell-host_handoff-tests-research_fds-research_fd_sender_refuses_changed_pins_budget_task_parent_or_expiry_before_any_byte",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "cell::host_handoff::tests::research_fds::research_fd_sender_refuses_changed_pins_budget_task_parent_or_expiry_before_any_byte"
+          },
+          "prefix": "native-storage-component",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "cell::host_handoff::tests::research_fds::research_fd_sender_refuses_changed_pins_budget_task_parent_or_expiry_before_any_byte"
+        },
+        {
+          "captured_log_bytes": 447,
+          "captured_log_sha256": "c2adea6f61e8821b262dc226fefe70d2f03f575c0b9a7b67355f7de62bcce5a5",
+          "exit_bytes": "0\n",
+          "label": "native-storage-component--cell-host_handoff-tests-research_fds-research_fd_sender_transfers_actual_complete_sealed_pair_with_original_deadline",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "cell::host_handoff::tests::research_fds::research_fd_sender_transfers_actual_complete_sealed_pair_with_original_deadline"
+          },
+          "prefix": "native-storage-component",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "cell::host_handoff::tests::research_fds::research_fd_sender_transfers_actual_complete_sealed_pair_with_original_deadline"
+        },
+        {
+          "captured_log_bytes": 463,
+          "captured_log_sha256": "da167af8d2d039338b5f07e188bfac5cb8526d977874ca14a92797f301619355",
+          "exit_bytes": "0\n",
+          "label": "native-storage-component--cell-version_retention-tests-shard_plan-capacity-retained_shard_plan_initial_128_profile_accepts_complete_65_and_128_chunk_catalogs",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_accepts_complete_65_and_128_chunk_catalogs"
+          },
+          "prefix": "native-storage-component",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_accepts_complete_65_and_128_chunk_catalogs"
+        },
+        {
+          "captured_log_bytes": 465,
+          "captured_log_sha256": "8712531ea40cee14c59a16ac8efb2bfb8fe672af0735d9a18b06feb2c2158c3b",
+          "exit_bytes": "0\n",
+          "label": "native-storage-component--cell-version_retention-tests-shard_plan-capacity-retained_shard_plan_initial_128_profile_keeps_original_two_mib_wire_and_file_ceiling",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_keeps_original_two_mib_wire_and_file_ceiling"
+          },
+          "prefix": "native-storage-component",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_keeps_original_two_mib_wire_and_file_ceiling"
+        },
+        {
+          "captured_log_bytes": 463,
+          "captured_log_sha256": "fa5d22dbaa6275c6edf5ff686c2585f6316d61a48dfc8232b66c5572c6c12bfe",
+          "exit_bytes": "0\n",
+          "label": "native-storage-component--cell-version_retention-tests-shard_plan-capacity-retained_shard_plan_initial_128_profile_refuses_129_complete_chunks_before_staging",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_refuses_129_complete_chunks_before_staging"
+          },
+          "prefix": "native-storage-component",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_refuses_129_complete_chunks_before_staging"
+        }
+      ],
+      "source_before_after_identical": {
+        "base": null,
+        "candidate": "9d4a68191f4e30135b07d3f1e1bc9a1a2367773e",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "9d4a68191f4e30135b07d3f1e1bc9a1a2367773e",
+        "tested_tree": "b5c5f5d35431c9408a77d4c30376be7427bcbdd0",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2552886421,
+        "tracked_entries": 27994,
+        "tracked_worktree_verified": true
+      },
+      "stage_outcomes": {
+        "expected_source": "9d4a68191f4e30135b07d3f1e1bc9a1a2367773e",
+        "optional_pq_features_tested": false,
+        "performance_or_economics_qualified": false,
+        "production_qualified": false,
+        "qualification": "HOLD_NO_GO",
+        "runner": "ubuntu-24.04",
+        "sealed_python_passed": true,
+        "sealed_python_required": true,
+        "source_kind": "head",
+        "steps": {
+          "clippy": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "examples": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "graph_format": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "growth_observers": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "hepta_receivers": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "native_execution": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "native_packet": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "p2p": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "preflight": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "python": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "repository": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "reserve": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "sealed_python": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "source": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "source_after": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "storage_components": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "storage_owner": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "toolchain": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          }
+        },
+        "storage_components_passed": true,
+        "storage_components_required": true,
+        "storage_owner_passed": true,
+        "storage_owner_required": true
+      },
+      "storage_convergence_controls": 25,
+      "upload_conclusion": "success"
+    },
+    {
+      "artifact": {
+        "all_entries_retained": 170,
+        "bytes": 196238,
+        "id": 13824734687,
+        "original_root_hashes_verified": 144,
+        "path": "artifacts/next-architecture-arm-head-9d4.zip",
+        "sha256": "f8ff02bff6dd3fb94744afdb5eb4bd8bb136d6a3957e7c318811f00e90641d15",
+        "uploader_digest_verified": true
+      },
+      "job_conclusion": "success",
+      "job_id": 130278196936,
+      "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42941133309/job/130278196936",
+      "kind": "head",
+      "mapping_roundtrip_and_unique_labels": true,
+      "original_named_reader_verdicts_verified": true,
+      "raw_log": {
+        "bytes": 73822,
+        "decoded_bytes": 403040,
+        "decoded_path": "job-130278196936.log",
+        "decoded_sha256": "b73a75a044c8b1112a0943f4820018286875d7bc52129fcfdf76a3b03a7c67e9",
+        "encoding": "gzip",
+        "path": "logs/job-130278196936.log.gz",
+        "sha256": "5ec145e80fef1d634af2b5fe8db0335a8a1b3c4c0105cb65a72e27694e133bda",
+        "source_id": "github-job-log-130278196936"
+      },
+      "selector_count": 18,
+      "selectors": [
+        {
+          "captured_log_bytes": 433,
+          "captured_log_sha256": "8ad56748e7afb23d4d0543e4cdd4b282464d991ad7d9f416991a1c41a1e248f3",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-shard-native_shard_pending_initial_effect_cannot_dispatch_even_with_source_present",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::shard::native_shard_pending_initial_effect_cannot_dispatch_even_with_source_present"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::shard::native_shard_pending_initial_effect_cannot_dispatch_even_with_source_present"
+        },
+        {
+          "captured_log_bytes": 430,
+          "captured_log_sha256": "bc128a94d85b3db61770ce5a5a2228a7cc7f28adece7a79d59a75c3164053a46",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-shard-native_shard_real_funding_target_readback_and_repair_keep_original_debits",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::shard::native_shard_real_funding_target_readback_and_repair_keep_original_debits"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::shard::native_shard_real_funding_target_readback_and_repair_keep_original_debits"
+        },
+        {
+          "captured_log_bytes": 431,
+          "captured_log_sha256": "15687d9f36f0592c17897e21c74d10ff5c996216411752774b607b20af1aa0c1",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-shard-native_shard_unknown_repair_never_reissues_and_foreign_owner_cannot_retire",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::shard::native_shard_unknown_repair_never_reissues_and_foreign_owner_cannot_retire"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::shard::native_shard_unknown_repair_never_reissues_and_foreign_owner_cannot_retire"
+        },
+        {
+          "captured_log_bytes": 424,
+          "captured_log_sha256": "757d2ebfbb9ca2b661cec7cd69c573e7392a787c091fad9aeead1490f4a2f649",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-version-native_version_outer_history_cannot_invent_missing_member_intents",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::version::native_version_outer_history_cannot_invent_missing_member_intents"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::version::native_version_outer_history_cannot_invent_missing_member_intents"
+        },
+        {
+          "captured_log_bytes": 433,
+          "captured_log_sha256": "64c23380d5e733a136dceaede9e66b61a9aa9f0ceb0a5501b1613440bb615cdb",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-version-native_version_pending_monetary_effect_cannot_retry_copy_with_a_new_source",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::version::native_version_pending_monetary_effect_cannot_retry_copy_with_a_new_source"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::version::native_version_pending_monetary_effect_cannot_retry_copy_with_a_new_source"
+        },
+        {
+          "captured_log_bytes": 444,
+          "captured_log_sha256": "55263880fd1eabeea92e8a59f9d5468546201e25aa229073ca135bfb728d8647",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-version-native_version_reorg_keeps_custody_but_cannot_grant_new_funding_or_foreign_retirement",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::version::native_version_reorg_keeps_custody_but_cannot_grant_new_funding_or_foreign_retirement"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::version::native_version_reorg_keeps_custody_but_cannot_grant_new_funding_or_foreign_retirement"
+        },
+        {
+          "captured_log_bytes": 447,
+          "captured_log_sha256": "7fbf775fca1861a63686f61a52ab7402454fb16016d1d2682f31173453095502",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-version-native_version_scheduler_pending_metadata_accepts_only_new_funded_copy_then_reopens_done",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::version::native_version_scheduler_pending_metadata_accepts_only_new_funded_copy_then_reopens_done"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::version::native_version_scheduler_pending_metadata_accepts_only_new_funded_copy_then_reopens_done"
+        },
+        {
+          "captured_log_bytes": 435,
+          "captured_log_sha256": "a2e4864079070771b0e7eab0790a2df71c90e011c634fab641ff22176a75d5b5",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-version-native_version_scope_alias_and_late_funding_errors_precede_every_reservation",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::version::native_version_scope_alias_and_late_funding_errors_precede_every_reservation"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::version::native_version_scope_alias_and_late_funding_errors_precede_every_reservation"
+        },
+        {
+          "captured_log_bytes": 461,
+          "captured_log_sha256": "750ba8139596ef053f16705d5a647e3f40ebd00a256ca9badb504678c59b776e",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-version-shard_plan-native_complete_version_to_complete_local_shard_plan_reopens_without_sources_or_new_debits",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::version::shard_plan::native_complete_version_to_complete_local_shard_plan_reopens_without_sources_or_new_debits"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::version::shard_plan::native_complete_version_to_complete_local_shard_plan_reopens_without_sources_or_new_debits"
+        },
+        {
+          "captured_log_bytes": 465,
+          "captured_log_sha256": "8c8b2006ffbcfa125f09caf2d19c03f485350e4b0b47e9cebd1e3c729d44f9c8",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-version-shard_plan-recovery-native_shard_plan_automatic_recovery_uses_four_targets_after_all_sources_are_deleted",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_automatic_recovery_uses_four_targets_after_all_sources_are_deleted"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_automatic_recovery_uses_four_targets_after_all_sources_are_deleted"
+        },
+        {
+          "captured_log_bytes": 465,
+          "captured_log_sha256": "c9aadbe074c608985773e25923f91fee10e408a193172e599f44b205c9cfbd5e",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-version-shard_plan-recovery-native_shard_plan_pending_repair_cannot_redispatch_and_needs_independent_new_funding",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_pending_repair_cannot_redispatch_and_needs_independent_new_funding"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_pending_repair_cannot_redispatch_and_needs_independent_new_funding"
+        },
+        {
+          "captured_log_bytes": 468,
+          "captured_log_sha256": "221becfb24ac245c30408f038edc762977749004f250a0077d005a49c4c08f40",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-version-shard_plan-recovery-native_shard_plan_recovery_preflight_cpu_and_metadata_fail_closed_without_hidden_copies",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_recovery_preflight_cpu_and_metadata_fail_closed_without_hidden_copies"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_recovery_preflight_cpu_and_metadata_fail_closed_without_hidden_copies"
+        },
+        {
+          "captured_log_bytes": 478,
+          "captured_log_sha256": "ab84a832edad313e883da97209f3d844c35606ccf98430fa740e2ec28ffa1929",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-version-shard_plan-recovery-native_shard_plan_recovery_refuses_missing_quorum_without_spending_new_repairs_or_refunding_reads",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_recovery_refuses_missing_quorum_without_spending_new_repairs_or_refunding_reads"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_recovery_refuses_missing_quorum_without_spending_new_repairs_or_refunding_reads"
+        },
+        {
+          "captured_log_bytes": 452,
+          "captured_log_sha256": "2097120ef5ffd78b5301fda698a148333e74dfe3ef3396e08abbcc7d9fc0ced2",
+          "exit_bytes": "0\n",
+          "label": "native-storage-component--cell-host_handoff-tests-research_fds-research_fd_sender_refuses_changed_pins_budget_task_parent_or_expiry_before_any_byte",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "cell::host_handoff::tests::research_fds::research_fd_sender_refuses_changed_pins_budget_task_parent_or_expiry_before_any_byte"
+          },
+          "prefix": "native-storage-component",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "cell::host_handoff::tests::research_fds::research_fd_sender_refuses_changed_pins_budget_task_parent_or_expiry_before_any_byte"
+        },
+        {
+          "captured_log_bytes": 447,
+          "captured_log_sha256": "9bc7cca4b8149c06103061f4db115851207974752c7a22280e154019a16d21d2",
+          "exit_bytes": "0\n",
+          "label": "native-storage-component--cell-host_handoff-tests-research_fds-research_fd_sender_transfers_actual_complete_sealed_pair_with_original_deadline",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "cell::host_handoff::tests::research_fds::research_fd_sender_transfers_actual_complete_sealed_pair_with_original_deadline"
+          },
+          "prefix": "native-storage-component",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "cell::host_handoff::tests::research_fds::research_fd_sender_transfers_actual_complete_sealed_pair_with_original_deadline"
+        },
+        {
+          "captured_log_bytes": 463,
+          "captured_log_sha256": "d7693fa9f03f0a713de101134b391b3683792b48c673fd4891455b437894ed11",
+          "exit_bytes": "0\n",
+          "label": "native-storage-component--cell-version_retention-tests-shard_plan-capacity-retained_shard_plan_initial_128_profile_accepts_complete_65_and_128_chunk_catalogs",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_accepts_complete_65_and_128_chunk_catalogs"
+          },
+          "prefix": "native-storage-component",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_accepts_complete_65_and_128_chunk_catalogs"
+        },
+        {
+          "captured_log_bytes": 465,
+          "captured_log_sha256": "5835e16e3ef00a1e7cc286e02bf513938ece8bb76b7e9d9aca2250ad83c595cc",
+          "exit_bytes": "0\n",
+          "label": "native-storage-component--cell-version_retention-tests-shard_plan-capacity-retained_shard_plan_initial_128_profile_keeps_original_two_mib_wire_and_file_ceiling",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_keeps_original_two_mib_wire_and_file_ceiling"
+          },
+          "prefix": "native-storage-component",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_keeps_original_two_mib_wire_and_file_ceiling"
+        },
+        {
+          "captured_log_bytes": 463,
+          "captured_log_sha256": "28ab4b584a4c1fd6b560106f01d3da1829e5757d76a5937b7a4e791dd7626d3f",
+          "exit_bytes": "0\n",
+          "label": "native-storage-component--cell-version_retention-tests-shard_plan-capacity-retained_shard_plan_initial_128_profile_refuses_129_complete_chunks_before_staging",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_refuses_129_complete_chunks_before_staging"
+          },
+          "prefix": "native-storage-component",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_refuses_129_complete_chunks_before_staging"
+        }
+      ],
+      "source_before_after_identical": {
+        "base": null,
+        "candidate": "9d4a68191f4e30135b07d3f1e1bc9a1a2367773e",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "9d4a68191f4e30135b07d3f1e1bc9a1a2367773e",
+        "tested_tree": "b5c5f5d35431c9408a77d4c30376be7427bcbdd0",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2552886421,
+        "tracked_entries": 27994,
+        "tracked_worktree_verified": true
+      },
+      "stage_outcomes": {
+        "expected_source": "9d4a68191f4e30135b07d3f1e1bc9a1a2367773e",
+        "optional_pq_features_tested": false,
+        "performance_or_economics_qualified": false,
+        "production_qualified": false,
+        "qualification": "HOLD_NO_GO",
+        "runner": "ubuntu-24.04-arm",
+        "sealed_python_passed": true,
+        "sealed_python_required": true,
+        "source_kind": "head",
+        "steps": {
+          "clippy": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "examples": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "graph_format": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "growth_observers": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "hepta_receivers": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "native_execution": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "native_packet": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "p2p": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "preflight": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "python": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "repository": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "reserve": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "sealed_python": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "source": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "source_after": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "storage_components": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "storage_owner": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "toolchain": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          }
+        },
+        "storage_components_passed": true,
+        "storage_components_required": true,
+        "storage_owner_passed": true,
+        "storage_owner_required": true
+      },
+      "storage_convergence_controls": 25,
+      "upload_conclusion": "success"
+    },
+    {
+      "artifact": {
+        "all_entries_retained": 170,
+        "bytes": 195652,
+        "id": 13825685288,
+        "original_root_hashes_verified": 144,
+        "path": "artifacts/next-architecture-x64-merge-9d4.zip",
+        "sha256": "8adfa7060dc7855bb78a8c9b16a9ac2976c637321c67b2b51fccf63f2aaac79c",
+        "uploader_digest_verified": true
+      },
+      "job_conclusion": "success",
+      "job_id": 130278194850,
+      "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42941133309/job/130278194850",
+      "kind": "prospective-merge",
+      "mapping_roundtrip_and_unique_labels": true,
+      "original_named_reader_verdicts_verified": true,
+      "raw_log": {
+        "bytes": 73579,
+        "decoded_bytes": 403151,
+        "decoded_path": "job-130278194850.log",
+        "decoded_sha256": "9247807111dc9fa3d88502db9bade01394881d37d74f4387fff3435e1ce4eadb",
+        "encoding": "gzip",
+        "path": "logs/job-130278194850.log.gz",
+        "sha256": "6049b30ae861cedef2f04201d6cbc4e583a4ba56d48b059070ef96aa4598b7e8",
+        "source_id": "github-job-log-130278194850"
+      },
+      "selector_count": 18,
+      "selectors": [
+        {
+          "captured_log_bytes": 433,
+          "captured_log_sha256": "0a6f47e3b2e36cae8ec681e4704a554b285d1a95427bc2d215b9eb2263f0b4d9",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-shard-native_shard_pending_initial_effect_cannot_dispatch_even_with_source_present",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::shard::native_shard_pending_initial_effect_cannot_dispatch_even_with_source_present"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::shard::native_shard_pending_initial_effect_cannot_dispatch_even_with_source_present"
+        },
+        {
+          "captured_log_bytes": 430,
+          "captured_log_sha256": "ece04752c16382739d1b6288756c4e95e129b7816a8e471cb5fea4400234da8a",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-shard-native_shard_real_funding_target_readback_and_repair_keep_original_debits",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::shard::native_shard_real_funding_target_readback_and_repair_keep_original_debits"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::shard::native_shard_real_funding_target_readback_and_repair_keep_original_debits"
+        },
+        {
+          "captured_log_bytes": 431,
+          "captured_log_sha256": "2380681812009a6c7d4bbd26ef9d8914df181a6c83335fe3dde374971e22823e",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-shard-native_shard_unknown_repair_never_reissues_and_foreign_owner_cannot_retire",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::shard::native_shard_unknown_repair_never_reissues_and_foreign_owner_cannot_retire"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::shard::native_shard_unknown_repair_never_reissues_and_foreign_owner_cannot_retire"
+        },
+        {
+          "captured_log_bytes": 424,
+          "captured_log_sha256": "adbe7b0303c7374ffe617eb55a25d925cf36c625728e1685fd24ad3bfbde7372",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-version-native_version_outer_history_cannot_invent_missing_member_intents",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::version::native_version_outer_history_cannot_invent_missing_member_intents"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::version::native_version_outer_history_cannot_invent_missing_member_intents"
+        },
+        {
+          "captured_log_bytes": 433,
+          "captured_log_sha256": "1297029ba3e2435a79561018ce739f3f094e58f7c5cf2c49e24330678b3e1467",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-version-native_version_pending_monetary_effect_cannot_retry_copy_with_a_new_source",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::version::native_version_pending_monetary_effect_cannot_retry_copy_with_a_new_source"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::version::native_version_pending_monetary_effect_cannot_retry_copy_with_a_new_source"
+        },
+        {
+          "captured_log_bytes": 444,
+          "captured_log_sha256": "20db5cc15d249817a71ef451c21f5c8be1506bb16229258f057747922ad74dd4",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-version-native_version_reorg_keeps_custody_but_cannot_grant_new_funding_or_foreign_retirement",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::version::native_version_reorg_keeps_custody_but_cannot_grant_new_funding_or_foreign_retirement"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::version::native_version_reorg_keeps_custody_but_cannot_grant_new_funding_or_foreign_retirement"
+        },
+        {
+          "captured_log_bytes": 447,
+          "captured_log_sha256": "633014345fe5a468c97fdca25fe5b670f0f0c22e6e1a8a69a660947a8fd6c3c8",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-version-native_version_scheduler_pending_metadata_accepts_only_new_funded_copy_then_reopens_done",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::version::native_version_scheduler_pending_metadata_accepts_only_new_funded_copy_then_reopens_done"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::version::native_version_scheduler_pending_metadata_accepts_only_new_funded_copy_then_reopens_done"
+        },
+        {
+          "captured_log_bytes": 435,
+          "captured_log_sha256": "56a230b58826b0779ee9f1494f95281cee38c6180849d0d316d6ba22703a69bf",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-version-native_version_scope_alias_and_late_funding_errors_precede_every_reservation",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::version::native_version_scope_alias_and_late_funding_errors_precede_every_reservation"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::version::native_version_scope_alias_and_late_funding_errors_precede_every_reservation"
+        },
+        {
+          "captured_log_bytes": 461,
+          "captured_log_sha256": "949ddd0ae3a76d2d99981d2a6aed8de6bd1b44ff055b8dfbed0163b670eb9e45",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-version-shard_plan-native_complete_version_to_complete_local_shard_plan_reopens_without_sources_or_new_debits",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::version::shard_plan::native_complete_version_to_complete_local_shard_plan_reopens_without_sources_or_new_debits"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::version::shard_plan::native_complete_version_to_complete_local_shard_plan_reopens_without_sources_or_new_debits"
+        },
+        {
+          "captured_log_bytes": 465,
+          "captured_log_sha256": "54f3e8efd5f95bc360dd6b55f17200dd48d5c53789fc416b1b5fba8296795efd",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-version-shard_plan-recovery-native_shard_plan_automatic_recovery_uses_four_targets_after_all_sources_are_deleted",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_automatic_recovery_uses_four_targets_after_all_sources_are_deleted"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_automatic_recovery_uses_four_targets_after_all_sources_are_deleted"
+        },
+        {
+          "captured_log_bytes": 465,
+          "captured_log_sha256": "8bf33dbfa596a96f1de45adda3e991b67d10f7689b164ee5686fd35e4bf04b3f",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-version-shard_plan-recovery-native_shard_plan_pending_repair_cannot_redispatch_and_needs_independent_new_funding",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_pending_repair_cannot_redispatch_and_needs_independent_new_funding"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_pending_repair_cannot_redispatch_and_needs_independent_new_funding"
+        },
+        {
+          "captured_log_bytes": 468,
+          "captured_log_sha256": "dbff1d48372ad85b78f70ce21af7ac540bed7e0439eea96a64e7c98da2d9fdf5",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-version-shard_plan-recovery-native_shard_plan_recovery_preflight_cpu_and_metadata_fail_closed_without_hidden_copies",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_recovery_preflight_cpu_and_metadata_fail_closed_without_hidden_copies"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_recovery_preflight_cpu_and_metadata_fail_closed_without_hidden_copies"
+        },
+        {
+          "captured_log_bytes": 478,
+          "captured_log_sha256": "025ce2fda14dea33f2a964d6ae1cd2448c49673d234da35335183e62c5ea4e1a",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-version-shard_plan-recovery-native_shard_plan_recovery_refuses_missing_quorum_without_spending_new_repairs_or_refunding_reads",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_recovery_refuses_missing_quorum_without_spending_new_repairs_or_refunding_reads"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_recovery_refuses_missing_quorum_without_spending_new_repairs_or_refunding_reads"
+        },
+        {
+          "captured_log_bytes": 452,
+          "captured_log_sha256": "948430d18bf57b3e8e97065fa804831a1af2d801da5100fe201176a0f0288ddb",
+          "exit_bytes": "0\n",
+          "label": "native-storage-component--cell-host_handoff-tests-research_fds-research_fd_sender_refuses_changed_pins_budget_task_parent_or_expiry_before_any_byte",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "cell::host_handoff::tests::research_fds::research_fd_sender_refuses_changed_pins_budget_task_parent_or_expiry_before_any_byte"
+          },
+          "prefix": "native-storage-component",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "cell::host_handoff::tests::research_fds::research_fd_sender_refuses_changed_pins_budget_task_parent_or_expiry_before_any_byte"
+        },
+        {
+          "captured_log_bytes": 447,
+          "captured_log_sha256": "2fa28171079ecd5b720063f05ca4fab5ec66da5823b3c63265dfddd65d6b38a1",
+          "exit_bytes": "0\n",
+          "label": "native-storage-component--cell-host_handoff-tests-research_fds-research_fd_sender_transfers_actual_complete_sealed_pair_with_original_deadline",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "cell::host_handoff::tests::research_fds::research_fd_sender_transfers_actual_complete_sealed_pair_with_original_deadline"
+          },
+          "prefix": "native-storage-component",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "cell::host_handoff::tests::research_fds::research_fd_sender_transfers_actual_complete_sealed_pair_with_original_deadline"
+        },
+        {
+          "captured_log_bytes": 463,
+          "captured_log_sha256": "8d9283cde9595ad0c977e92fab4599667a96a76adc7c95d025e73bc9018e9833",
+          "exit_bytes": "0\n",
+          "label": "native-storage-component--cell-version_retention-tests-shard_plan-capacity-retained_shard_plan_initial_128_profile_accepts_complete_65_and_128_chunk_catalogs",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_accepts_complete_65_and_128_chunk_catalogs"
+          },
+          "prefix": "native-storage-component",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_accepts_complete_65_and_128_chunk_catalogs"
+        },
+        {
+          "captured_log_bytes": 465,
+          "captured_log_sha256": "16f96c16e9eac17e744329513b2da86f5009b427b699c9353d43d6ffeff72d19",
+          "exit_bytes": "0\n",
+          "label": "native-storage-component--cell-version_retention-tests-shard_plan-capacity-retained_shard_plan_initial_128_profile_keeps_original_two_mib_wire_and_file_ceiling",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_keeps_original_two_mib_wire_and_file_ceiling"
+          },
+          "prefix": "native-storage-component",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_keeps_original_two_mib_wire_and_file_ceiling"
+        },
+        {
+          "captured_log_bytes": 463,
+          "captured_log_sha256": "95cadfe01194ab03576119aa0358dd23da4447695103bbfb440db01b3a556f1a",
+          "exit_bytes": "0\n",
+          "label": "native-storage-component--cell-version_retention-tests-shard_plan-capacity-retained_shard_plan_initial_128_profile_refuses_129_complete_chunks_before_staging",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_refuses_129_complete_chunks_before_staging"
+          },
+          "prefix": "native-storage-component",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_refuses_129_complete_chunks_before_staging"
+        }
+      ],
+      "source_before_after_identical": {
+        "base": "df927b6ffaecff293b9e9428e3ba516f47cd101a",
+        "candidate": "9d4a68191f4e30135b07d3f1e1bc9a1a2367773e",
+        "kind": "prospective-merge",
+        "prospective_merge": "a8a3bd2dd15d4ec06917ba3a0d1acd4681800cd6",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "a8a3bd2dd15d4ec06917ba3a0d1acd4681800cd6",
+        "tested_tree": "b5c5f5d35431c9408a77d4c30376be7427bcbdd0",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2552886421,
+        "tracked_entries": 27994,
+        "tracked_worktree_verified": true
+      },
+      "stage_outcomes": {
+        "expected_source": "a8a3bd2dd15d4ec06917ba3a0d1acd4681800cd6",
+        "optional_pq_features_tested": false,
+        "performance_or_economics_qualified": false,
+        "production_qualified": false,
+        "qualification": "HOLD_NO_GO",
+        "runner": "ubuntu-24.04",
+        "sealed_python_passed": true,
+        "sealed_python_required": true,
+        "source_kind": "prospective-merge",
+        "steps": {
+          "clippy": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "examples": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "graph_format": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "growth_observers": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "hepta_receivers": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "native_execution": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "native_packet": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "p2p": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "preflight": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "python": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "repository": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "reserve": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "sealed_python": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "source": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "source_after": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "storage_components": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "storage_owner": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "toolchain": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          }
+        },
+        "storage_components_passed": true,
+        "storage_components_required": true,
+        "storage_owner_passed": true,
+        "storage_owner_required": true
+      },
+      "storage_convergence_controls": 25,
+      "upload_conclusion": "success"
+    },
+    {
+      "artifact": {
+        "all_entries_retained": 170,
+        "bytes": 196750,
+        "id": 13824723591,
+        "original_root_hashes_verified": 144,
+        "path": "artifacts/next-architecture-arm-merge-9d4.zip",
+        "sha256": "af7f4a8aa19740a1b5b72cc18a4739294931e21d7184c468a11b72dd468dd792",
+        "uploader_digest_verified": true
+      },
+      "job_conclusion": "success",
+      "job_id": 130278194781,
+      "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42941133309/job/130278194781",
+      "kind": "prospective-merge",
+      "mapping_roundtrip_and_unique_labels": true,
+      "original_named_reader_verdicts_verified": true,
+      "raw_log": {
+        "bytes": 74072,
+        "decoded_bytes": 404408,
+        "decoded_path": "job-130278194781.log",
+        "decoded_sha256": "d6d7aafa96d425cd6d9755e8c3e276597788c44d0ffa4d08edef2460a13acce4",
+        "encoding": "gzip",
+        "path": "logs/job-130278194781.log.gz",
+        "sha256": "03537c551fe4710c06368cb49e7810719bcd581ff20e1a048c371048a3c4fa8e",
+        "source_id": "github-job-log-130278194781"
+      },
+      "selector_count": 18,
+      "selectors": [
+        {
+          "captured_log_bytes": 433,
+          "captured_log_sha256": "a58df994bf28203d2ffd48e25b330e8f2c64452c0699a8f818a23535a1cee35b",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-shard-native_shard_pending_initial_effect_cannot_dispatch_even_with_source_present",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::shard::native_shard_pending_initial_effect_cannot_dispatch_even_with_source_present"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::shard::native_shard_pending_initial_effect_cannot_dispatch_even_with_source_present"
+        },
+        {
+          "captured_log_bytes": 430,
+          "captured_log_sha256": "fcf8704b482ed032671d1f3293e9a67204478bd5830f61a491da849452c7d8b6",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-shard-native_shard_real_funding_target_readback_and_repair_keep_original_debits",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::shard::native_shard_real_funding_target_readback_and_repair_keep_original_debits"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::shard::native_shard_real_funding_target_readback_and_repair_keep_original_debits"
+        },
+        {
+          "captured_log_bytes": 431,
+          "captured_log_sha256": "e6712dc0a8413f699d7faa60973d8b477ea742f34ea15899e313cb3042499172",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-shard-native_shard_unknown_repair_never_reissues_and_foreign_owner_cannot_retire",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::shard::native_shard_unknown_repair_never_reissues_and_foreign_owner_cannot_retire"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::shard::native_shard_unknown_repair_never_reissues_and_foreign_owner_cannot_retire"
+        },
+        {
+          "captured_log_bytes": 424,
+          "captured_log_sha256": "89eef85d2f71aea5e84239ac56c87979645af7c37fa798a77d0f46eb315fd7c0",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-version-native_version_outer_history_cannot_invent_missing_member_intents",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::version::native_version_outer_history_cannot_invent_missing_member_intents"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::version::native_version_outer_history_cannot_invent_missing_member_intents"
+        },
+        {
+          "captured_log_bytes": 433,
+          "captured_log_sha256": "aa5d63fd721cdddb02df7c67b1ec12095bb19d558bda121f533fcc05fde7aeea",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-version-native_version_pending_monetary_effect_cannot_retry_copy_with_a_new_source",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::version::native_version_pending_monetary_effect_cannot_retry_copy_with_a_new_source"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::version::native_version_pending_monetary_effect_cannot_retry_copy_with_a_new_source"
+        },
+        {
+          "captured_log_bytes": 444,
+          "captured_log_sha256": "597c49951ef1a40946d2e298a4069c97f44af76eab956e661900d94a5060f565",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-version-native_version_reorg_keeps_custody_but_cannot_grant_new_funding_or_foreign_retirement",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::version::native_version_reorg_keeps_custody_but_cannot_grant_new_funding_or_foreign_retirement"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::version::native_version_reorg_keeps_custody_but_cannot_grant_new_funding_or_foreign_retirement"
+        },
+        {
+          "captured_log_bytes": 447,
+          "captured_log_sha256": "59cc7ed84953e14b430e0a23452f6d4b9f3346d258473b9aa82bea1a054e7843",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-version-native_version_scheduler_pending_metadata_accepts_only_new_funded_copy_then_reopens_done",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::version::native_version_scheduler_pending_metadata_accepts_only_new_funded_copy_then_reopens_done"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::version::native_version_scheduler_pending_metadata_accepts_only_new_funded_copy_then_reopens_done"
+        },
+        {
+          "captured_log_bytes": 435,
+          "captured_log_sha256": "9fc0b819a21aeb5d2f46f8b92b9dcb1c2cfcdfbc750b3b53b90e2d586277ae1c",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-version-native_version_scope_alias_and_late_funding_errors_precede_every_reservation",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::version::native_version_scope_alias_and_late_funding_errors_precede_every_reservation"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::version::native_version_scope_alias_and_late_funding_errors_precede_every_reservation"
+        },
+        {
+          "captured_log_bytes": 461,
+          "captured_log_sha256": "9b200e0c20863de441f7593821e867f038ab55ff0f8581152cad08368c6a2a80",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-version-shard_plan-native_complete_version_to_complete_local_shard_plan_reopens_without_sources_or_new_debits",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::version::shard_plan::native_complete_version_to_complete_local_shard_plan_reopens_without_sources_or_new_debits"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::version::shard_plan::native_complete_version_to_complete_local_shard_plan_reopens_without_sources_or_new_debits"
+        },
+        {
+          "captured_log_bytes": 465,
+          "captured_log_sha256": "57601492f69ef7d1b61cd4edcd9b7c8b5aac266c679f0f54b38772a7bb227121",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-version-shard_plan-recovery-native_shard_plan_automatic_recovery_uses_four_targets_after_all_sources_are_deleted",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_automatic_recovery_uses_four_targets_after_all_sources_are_deleted"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_automatic_recovery_uses_four_targets_after_all_sources_are_deleted"
+        },
+        {
+          "captured_log_bytes": 465,
+          "captured_log_sha256": "20bc2f7be02e48f83d887bfb2f0acadeff868552370c21101becdf13efd06981",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-version-shard_plan-recovery-native_shard_plan_pending_repair_cannot_redispatch_and_needs_independent_new_funding",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_pending_repair_cannot_redispatch_and_needs_independent_new_funding"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_pending_repair_cannot_redispatch_and_needs_independent_new_funding"
+        },
+        {
+          "captured_log_bytes": 468,
+          "captured_log_sha256": "e168ed19b561c0521935a33eed1baa97956d9df50fd9c646c13da72e0f1a78be",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-version-shard_plan-recovery-native_shard_plan_recovery_preflight_cpu_and_metadata_fail_closed_without_hidden_copies",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_recovery_preflight_cpu_and_metadata_fail_closed_without_hidden_copies"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_recovery_preflight_cpu_and_metadata_fail_closed_without_hidden_copies"
+        },
+        {
+          "captured_log_bytes": 478,
+          "captured_log_sha256": "c5be534417759cc5d35c2256780f1e2f5630f20c06a60db6f256fe32d9b47aa3",
+          "exit_bytes": "0\n",
+          "label": "native-storage--store-storage_service-tests-version-shard_plan-recovery-native_shard_plan_recovery_refuses_missing_quorum_without_spending_new_repairs_or_refunding_reads",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_recovery_refuses_missing_quorum_without_spending_new_repairs_or_refunding_reads"
+          },
+          "prefix": "native-storage",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_recovery_refuses_missing_quorum_without_spending_new_repairs_or_refunding_reads"
+        },
+        {
+          "captured_log_bytes": 452,
+          "captured_log_sha256": "01750dacfd227c900e67de315ed7df342e55d5971d9590a0f045af8fad3623e0",
+          "exit_bytes": "0\n",
+          "label": "native-storage-component--cell-host_handoff-tests-research_fds-research_fd_sender_refuses_changed_pins_budget_task_parent_or_expiry_before_any_byte",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "cell::host_handoff::tests::research_fds::research_fd_sender_refuses_changed_pins_budget_task_parent_or_expiry_before_any_byte"
+          },
+          "prefix": "native-storage-component",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "cell::host_handoff::tests::research_fds::research_fd_sender_refuses_changed_pins_budget_task_parent_or_expiry_before_any_byte"
+        },
+        {
+          "captured_log_bytes": 447,
+          "captured_log_sha256": "3ca82da884f4256c96d12935d6c23a6eb48bd40474e0cbf5698ba1366ff0a8be",
+          "exit_bytes": "0\n",
+          "label": "native-storage-component--cell-host_handoff-tests-research_fds-research_fd_sender_transfers_actual_complete_sealed_pair_with_original_deadline",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "cell::host_handoff::tests::research_fds::research_fd_sender_transfers_actual_complete_sealed_pair_with_original_deadline"
+          },
+          "prefix": "native-storage-component",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "cell::host_handoff::tests::research_fds::research_fd_sender_transfers_actual_complete_sealed_pair_with_original_deadline"
+        },
+        {
+          "captured_log_bytes": 463,
+          "captured_log_sha256": "96524e3384114a8f5cb4ec12bae9068ab0d2a67c1de6a4bf6c533bd284f9f713",
+          "exit_bytes": "0\n",
+          "label": "native-storage-component--cell-version_retention-tests-shard_plan-capacity-retained_shard_plan_initial_128_profile_accepts_complete_65_and_128_chunk_catalogs",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_accepts_complete_65_and_128_chunk_catalogs"
+          },
+          "prefix": "native-storage-component",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_accepts_complete_65_and_128_chunk_catalogs"
+        },
+        {
+          "captured_log_bytes": 465,
+          "captured_log_sha256": "3b65268b6db8cf9355fd7aa72f135becc1356662a13a20febf52d72f01b514b5",
+          "exit_bytes": "0\n",
+          "label": "native-storage-component--cell-version_retention-tests-shard_plan-capacity-retained_shard_plan_initial_128_profile_keeps_original_two_mib_wire_and_file_ceiling",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_keeps_original_two_mib_wire_and_file_ceiling"
+          },
+          "prefix": "native-storage-component",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_keeps_original_two_mib_wire_and_file_ceiling"
+        },
+        {
+          "captured_log_bytes": 463,
+          "captured_log_sha256": "a06861ccc822959b0b3df8ba22ed81ecfd0016164649d485f205609ebfdcc18d",
+          "exit_bytes": "0\n",
+          "label": "native-storage-component--cell-version_retention-tests-shard_plan-capacity-retained_shard_plan_initial_128_profile_refuses_129_complete_chunks_before_staging",
+          "original_reader_verdict": {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_refuses_129_complete_chunks_before_staging"
+          },
+          "prefix": "native-storage-component",
+          "schema": "trnm-native-selector-artifact-v1",
+          "selector": "cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_refuses_129_complete_chunks_before_staging"
+        }
+      ],
+      "source_before_after_identical": {
+        "base": "df927b6ffaecff293b9e9428e3ba516f47cd101a",
+        "candidate": "9d4a68191f4e30135b07d3f1e1bc9a1a2367773e",
+        "kind": "prospective-merge",
+        "prospective_merge": "a8a3bd2dd15d4ec06917ba3a0d1acd4681800cd6",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "a8a3bd2dd15d4ec06917ba3a0d1acd4681800cd6",
+        "tested_tree": "b5c5f5d35431c9408a77d4c30376be7427bcbdd0",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2552886421,
+        "tracked_entries": 27994,
+        "tracked_worktree_verified": true
+      },
+      "stage_outcomes": {
+        "expected_source": "a8a3bd2dd15d4ec06917ba3a0d1acd4681800cd6",
+        "optional_pq_features_tested": false,
+        "performance_or_economics_qualified": false,
+        "production_qualified": false,
+        "qualification": "HOLD_NO_GO",
+        "runner": "ubuntu-24.04-arm",
+        "sealed_python_passed": true,
+        "sealed_python_required": true,
+        "source_kind": "prospective-merge",
+        "steps": {
+          "clippy": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "examples": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "graph_format": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "growth_observers": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "hepta_receivers": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "native_execution": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "native_packet": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "p2p": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "preflight": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "python": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "repository": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "reserve": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "sealed_python": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "source": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "source_after": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "storage_components": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "storage_owner": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "toolchain": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          }
+        },
+        "storage_components_passed": true,
+        "storage_components_required": true,
+        "storage_owner_passed": true,
+        "storage_owner_required": true
+      },
+      "storage_convergence_controls": 25,
+      "upload_conclusion": "success"
+    }
+  ],
+  "observed_utc": "2026-11-11T03:22:53.759095+00:00",
+  "production_qualification": false,
+  "qualification": "HOLD_NO_GO",
+  "run_id": 42941133309,
+  "schema": "trnm-pr892-final-selector-artifact-observation-v1",
+  "scope": "All four actually completed hosted matrix jobs; no native command re-executed by this reader",
+  "tree": "b5c5f5d35431c9408a77d4c30376be7427bcbdd0",
+  "workflow_conclusion": "success"
+}

@@ -1,0 +1,129 @@
+{
+  "source_commit": "44e96b1a841a50613d0b93484c5e576caec9f81f",
+  "recorded_at_utc": "2026-11-09T14:01:53.353728+00:00",
+  "native_tests_executed": false,
+  "cases_if_all_pass": 100,
+  "all_suites_passed": true,
+  "suites": [
+    {
+      "name": "authority-controls",
+      "command": [
+        "python3",
+        "scripts/ci/test_pq_authority_effect_register.py",
+        "-v"
+      ],
+      "returncode": 0,
+      "observed_test_counts": [
+        "18"
+      ],
+      "expected_test_count": 18,
+      "tests_passed": true,
+      "elapsed_wall_seconds": 4.819607813999028,
+      "test_source_sha256_before": "82374857a97e491b275cc9bb9359be3fb2ae4e224dd7ab1bace098072f69309e",
+      "test_source_sha256_after": "82374857a97e491b275cc9bb9359be3fb2ae4e224dd7ab1bace098072f69309e",
+      "outputs": {
+        "stdout": {
+          "path": "/workspace/scratch/481716a90d06/pon_pq_patch/integration-review/authority-controls.stdout.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "path": "/workspace/scratch/481716a90d06/pon_pq_patch/integration-review/authority-controls.stderr.log",
+          "bytes": 3019,
+          "sha256": "375ace53225f8994cf9482d8c336fbe4f237939ba9a0ea1f6387b77895815fe9"
+        }
+      },
+      "tail": "sh_map_do_not_change_the_contract) ... ok\ntest_scope_promotion_of_validator_comparator_cache_or_finality_refuses (__main__.AuthorityEffectTests.test_scope_promotion_of_validator_comparator_cache_or_finality_refuses) ... ok\ntest_source_lock_missing_extra_invalid_and_changed_hashes_refuse (__main__.AuthorityEffectTests.test_source_lock_missing_extra_invalid_and_changed_hashes_refuse) ... ok\ntest_source_revision_schema_purpose_and_route_context_drift_refuse (__main__.AuthorityEffectTests.test_source_revision_schema_purpose_and_route_context_drift_refuse) ... ok\ntest_unknown_missing_duplicate_and_malformed_route_fields_refuse (__main__.AuthorityEffectTests.test_unknown_missing_duplicate_and_malformed_route_fields_refuse) ... ok\ntest_unreviewed_files_do_not_make_the_partial_register_complete (__main__.AuthorityEffectTests.test_unreviewed_files_do_not_make_the_partial_register_complete) ... ok\n\n----------------------------------------------------------------------\nRan 18 tests in 4.133s\n\nOK\n"
+    },
+    {
+      "name": "root-controls",
+      "command": [
+        "python3",
+        "scripts/ci/test_pq_root_dependency_register.py",
+        "-v"
+      ],
+      "returncode": 0,
+      "observed_test_counts": [
+        "42"
+      ],
+      "expected_test_count": 42,
+      "tests_passed": true,
+      "elapsed_wall_seconds": 15.274549039999329,
+      "test_source_sha256_before": "06ee6e75b759c931cc8234cd291b2a401e0804f0b23eac4303581e4da3b6a490",
+      "test_source_sha256_after": "06ee6e75b759c931cc8234cd291b2a401e0804f0b23eac4303581e4da3b6a490",
+      "outputs": {
+        "stdout": {
+          "path": "/workspace/scratch/481716a90d06/pon_pq_patch/integration-review/root-controls.stdout.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "path": "/workspace/scratch/481716a90d06/pon_pq_patch/integration-review/root-controls.stderr.log",
+          "bytes": 7056,
+          "sha256": "320ed358590559e0c145483575017f7ad4fccc1f3610a0a3397aba521da5d4d3"
+        }
+      },
+      "tail": "h_or_construction_alias) ... ok\ntest_retired_successor_and_recovered_keys_cannot_be_excluded (__main__.SharedHashAndEpochTests.test_retired_successor_and_recovered_keys_cannot_be_excluded) ... ok\ntest_role_keys_and_epochs_remain_unknown_not_single_roster_population (__main__.SharedHashAndEpochTests.test_role_keys_and_epochs_remain_unknown_not_single_roster_population) ... ok\ntest_rotation_recovery_restart_and_role_change_never_reset_a_lifetime (__main__.SharedHashAndEpochTests.test_rotation_recovery_restart_and_role_change_never_reset_a_lifetime) ... ok\ntest_sha512_scopes_include_native_python_and_slh_uses_together (__main__.SharedHashAndEpochTests.test_sha512_scopes_include_native_python_and_slh_uses_together) ... ok\ntest_slh_sha2_256s_requires_sha512_and_its_hmac_mgf_dependencies (__main__.SharedHashAndEpochTests.test_slh_sha2_256s_requires_sha512_and_its_hmac_mgf_dependencies) ... ok\n\n----------------------------------------------------------------------\nRan 42 tests in 14.577s\n\nOK\n"
+    },
+    {
+      "name": "w1-controls",
+      "command": [
+        "python3",
+        "scripts/ci/test_w1_qrom_current_implementation_audit.py",
+        "-v"
+      ],
+      "returncode": 0,
+      "observed_test_counts": [
+        "14"
+      ],
+      "expected_test_count": 14,
+      "tests_passed": true,
+      "elapsed_wall_seconds": 30.289190281999254,
+      "test_source_sha256_before": "9e87e202e839e498008f4b8178379de2553bfc7bb8da0ca91df853e6a8886909",
+      "test_source_sha256_after": "9e87e202e839e498008f4b8178379de2553bfc7bb8da0ca91df853e6a8886909",
+      "outputs": {
+        "stdout": {
+          "path": "/workspace/scratch/481716a90d06/pon_pq_patch/integration-review/w1-controls.stdout.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "path": "/workspace/scratch/481716a90d06/pon_pq_patch/integration-review/w1-controls.stderr.log",
+          "bytes": 2180,
+          "sha256": "11193bed8e8c8adb1fc7425f28c89a4df928754d53de52a5d3fbf9f58b844397"
+        }
+      },
+      "tail": "entationTests.test_included_work_profile_change_requires_review) ... ok\ntest_local_path_manifest_change_requires_review (__main__.CurrentImplementationTests.test_local_path_manifest_change_requires_review) ... ok\ntest_missing_funded_source_is_refused (__main__.CurrentImplementationTests.test_missing_funded_source_is_refused) ... ok\ntest_new_local_build_script_requires_review (__main__.CurrentImplementationTests.test_new_local_build_script_requires_review) ... ok\ntest_old_contract_and_its_failure_remain_visible (__main__.CurrentImplementationTests.test_old_contract_and_its_failure_remain_visible) ... ok\ntest_project_input_digests_are_the_reviewed_values (__main__.CurrentImplementationTests.test_project_input_digests_are_the_reviewed_values) ... ok\ntest_unlisted_rust_file_is_not_silently_accepted (__main__.CurrentImplementationTests.test_unlisted_rust_file_is_not_silently_accepted) ... ok\n\n----------------------------------------------------------------------\nRan 14 tests in 29.568s\n\nOK\n"
+    },
+    {
+      "name": "profile-controls",
+      "command": [
+        "python3",
+        "scripts/ci/test_pq_proof_profile_binding.py",
+        "-v"
+      ],
+      "returncode": 0,
+      "observed_test_counts": [
+        "26"
+      ],
+      "expected_test_count": 26,
+      "tests_passed": true,
+      "elapsed_wall_seconds": 16.539245263998964,
+      "test_source_sha256_before": "c9189a5c5e56f3b6a6684190554579e4dfa23256a64a371cb7ada9261557e867",
+      "test_source_sha256_after": "c9189a5c5e56f3b6a6684190554579e4dfa23256a64a371cb7ada9261557e867",
+      "outputs": {
+        "stdout": {
+          "path": "/workspace/scratch/481716a90d06/pon_pq_patch/integration-review/profile-controls.stdout.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "path": "/workspace/scratch/481716a90d06/pon_pq_patch/integration-review/profile-controls.stderr.log",
+          "bytes": 3994,
+          "sha256": "312aa5598d1d399d560ffa7a687e2a60a8d69d26f820b87e1272218c52462319"
+        }
+      },
+      "tail": "erify_revision_equivalence (__main__.ProofProfileBindingTests.test_paper_metadata_does_not_verify_revision_equivalence) ... ok\ntest_reused_v1_library_does_not_replace_the_v2_entry_image (__main__.ProofProfileBindingTests.test_reused_v1_library_does_not_replace_the_v2_entry_image) ... ok\ntest_selected_numeric_budget_requires_a_separate_reviewed_schema (__main__.ProofProfileBindingTests.test_selected_numeric_budget_requires_a_separate_reviewed_schema) ... ok\ntest_truncated_recorded_snapshot_has_a_structured_reader_error (__main__.ProofProfileBindingTests.test_truncated_recorded_snapshot_has_a_structured_reader_error) ... ok\ntest_unknown_activation_field_is_refused (__main__.ProofProfileBindingTests.test_unknown_activation_field_is_refused) ... ok\ntest_wrong_candidate_profile_descriptor_is_refused (__main__.ProofProfileBindingTests.test_wrong_candidate_profile_descriptor_is_refused) ... ok\n\n----------------------------------------------------------------------\nRan 26 tests in 15.847s\n\nOK\n"
+    }
+  ]
+}

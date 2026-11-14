@@ -1,0 +1,25 @@
+{
+  "name": "pq-claim-negative-controls",
+  "argv": [
+    "python3",
+    "-B",
+    "scripts/ci/test_pq_chain_claim_guard.py"
+  ],
+  "started_utc": "2026-11-11T04:12:15.081451+00:00",
+  "elapsed_seconds": 0.7024646970003232,
+  "exit_code": 0,
+  "source_before": {
+    "head": "eb32162449eab623f69bbd7016b694600cb382c5",
+    "tree": "c15f37e3f64456c9817019e8aec5d723a29549f0",
+    "status": ""
+  },
+  "source_after": {
+    "head": "eb32162449eab623f69bbd7016b694600cb382c5",
+    "tree": "c15f37e3f64456c9817019e8aec5d723a29549f0",
+    "status": ""
+  },
+  "stdout_bytes": 0,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_bytes": 154,
+  "stderr_sha256": "27c594d70e2a0e6e9c76927a60fdebafafc12086f545bf933198d5e9d93a770c"
+}

@@ -1,0 +1,7 @@
+
+running 2 tests
+test growth_admission_delta_readback_control_rolls_back_and_retries_after_cold_open ... ok
+test growth_admission_delta_write_control_rolls_back_and_retries_after_cold_open ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.76s
+

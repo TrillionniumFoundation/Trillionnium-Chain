@@ -1,0 +1,19 @@
+{
+  "source_commit": "06c3d24cc4fc05011e04951d30f066c057394836",
+  "pull_request": 857,
+  "jobs": [
+    {
+      "id": 129690267245,
+      "run_id": 42774670477,
+      "workflow": "QROM implementation",
+      "observed_refusal": "historical V1 verifier input bound"
+    },
+    {
+      "id": 129690267582,
+      "run_id": 42774670391,
+      "workflow": "QROM closure",
+      "observed_refusal": "historical V1 store.rs source identity mismatch; LifetimeLedger ran zero tests"
+    }
+  ],
+  "scope": "Parent hosted observations, not failures or passes of the integrated source."
+}

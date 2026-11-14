@@ -1,0 +1,34 @@
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/work/pon-upgrade-implementation-20261018/chain-performance/trillionnium/crates/trnm-pon-node)
+    Finished `release` profile [optimized] target(s) in 4.52s
+     Running tests/public_v3_multiprocess.rs (/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain-performance/release/deps/public_v3_multiprocess-ed1f83f1304f9903)
+
+running 1 test
+test separate_process_work_and_signed_confirmation_campaign ... P0 native campaign: honest 1024 signed transfers and 21 business blocks
+P0 native campaign: observed producer prepared-generic
+P0 native campaign: observed producer tiled-classical
+P0 native campaign: observed producer tiled-strassen-one-level
+P0 native campaign: observed producer paired-product
+P0 native campaign: observed producer maintenance-periodic
+P0 native campaign: observed producer maintenance-integer-paired
+P0 native campaign: observed producer maintenance-prefix
+P0 native campaign: observed producer maintenance-limb
+P0 native campaign: phase baseline 30s / 0 attacker processes
+P0 native campaign: phase from-zero 30s / 24 attacker processes
+P0 native campaign: phase late-product 30s / 24 attacker processes
+
+thread 'separate_process_work_and_signed_confirmation_campaign' (291454) panicked at crates/trnm-pon-node/tests/public_v3_multiprocess.rs:1096:5:
+finite experiment criteria failed; full counterexample retained at /home/qian-qi/work/pon-upgrade-implementation-20261018/chain-390-operational/public-v3-multiprocess
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'separate_process_work_and_signed_confirmation_campaign' (291454) panicked at crates/trnm-pon-node/tests/public_v3_multiprocess.rs:900:9:
+campaign failed; retained /home/qian-qi/work/pon-upgrade-implementation-20261018/chain-390-operational/public-v3-multiprocess
+FAILED
+
+failures:
+
+failures:
+    separate_process_work_and_signed_confirmation_campaign
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 3 filtered out; finished in 140.25s
+
+error: test failed, to rerun pass `-p trnm-pon-node --test public_v3_multiprocess`

@@ -1,0 +1,89 @@
+{
+  "files": [
+    {
+      "bytes": 23953,
+      "path": "driver.py",
+      "sha256": "07e8a8ecf0c3759608634ea62c85405b25b2019af705a9fb1f453ac89d673104"
+    },
+    {
+      "bytes": 1892,
+      "path": "FOUR_PATH_DELTA.json",
+      "sha256": "e166aeaa0cc8fbbf0ad2404c424114f2e8a055301c6123d7c1df914331b61c99"
+    },
+    {
+      "bytes": 118,
+      "path": "BASE_PHYSICAL.json",
+      "sha256": "961ce08cbc2ad09233aa71306ce22cee414a77f0fcbc11334f514a9afcbc8992"
+    },
+    {
+      "bytes": 118,
+      "path": "COMMITTED_PHYSICAL.json",
+      "sha256": "8acf22f7e00a3ac2cdb4f5e804fe98a8d32128dedfe3ec5d104d460f91ee7f8d"
+    },
+    {
+      "bytes": 423,
+      "path": "VERIFIED_PHYSICAL_SOURCE.json",
+      "sha256": "e3e777cde10aee772bedf53b94eeb450a0b2fd840c2c3df114933bc9ff3e3735"
+    },
+    {
+      "bytes": 232,
+      "path": "STORAGE_ADMISSION.json",
+      "sha256": "ae924174b94801a3df570139fc72044585c727fed5ee65fdf85702f69930ddc0"
+    },
+    {
+      "bytes": 99,
+      "path": "SHARED_CONFIG_IDENTITY.json",
+      "sha256": "91e12998e09241637a3e556c10890e269079ea03507ae0cc7dfd8833c3dd4a48"
+    },
+    {
+      "bytes": 433,
+      "path": "PREFLIGHT_BEFORE_EDIT.receipt.json",
+      "sha256": "8af5c88cdcadc7ad0476cc0347e4099bbb938ead3eeac6fcded386a01982ddb0"
+    },
+    {
+      "bytes": 171,
+      "path": "PREFLIGHT_BEFORE_EDIT.stdout",
+      "sha256": "fddacc8f229c38067116f1b9c30ef45dc2b348de2bbd7fa37490b97a2adfff5e"
+    },
+    {
+      "bytes": 0,
+      "path": "PREFLIGHT_BEFORE_EDIT.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 449,
+      "path": "PREFLIGHT_STAGED.receipt.json",
+      "sha256": "0f9a2a012de2996039422fcebe56d1dc0bf0fb933fdcdccb53cd874441086713"
+    },
+    {
+      "bytes": 174,
+      "path": "PREFLIGHT_STAGED.stdout",
+      "sha256": "8873a1ccea895e918fb87e4ee5e86a87936e5038eef112c1342f88aaa064f2cc"
+    },
+    {
+      "bytes": 0,
+      "path": "PREFLIGHT_STAGED.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 433,
+      "path": "PREFLIGHT_COMMITTED.receipt.json",
+      "sha256": "093ce3cce897091653d9d94109d27c732f90a9fdd55b5c9711f33a0a40b905e0"
+    },
+    {
+      "bytes": 171,
+      "path": "PREFLIGHT_COMMITTED.stdout",
+      "sha256": "fddacc8f229c38067116f1b9c30ef45dc2b348de2bbd7fa37490b97a2adfff5e"
+    },
+    {
+      "bytes": 0,
+      "path": "PREFLIGHT_COMMITTED.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "parent_evidence": "09e4801308366fac01e55bcbdcf8bdfd4e6d2810",
+  "schema": "checkpoint-probe-source-safe-manifest-v1",
+  "scope": "fixed sixteen safe source-preparation artifacts only; excludes INPUT and private command transcripts",
+  "source": "7d4303f1a9ba3c259b92e58b85126eef3c5378a1",
+  "tree": "2a580a0444f56c0e70e0d73a7fad1120367d1e9e"
+}

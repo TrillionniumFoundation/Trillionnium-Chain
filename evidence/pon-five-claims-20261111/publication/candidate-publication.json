@@ -1,0 +1,231 @@
+{
+  "started_utc": "2026-11-11T10:53:42.345853+00:00",
+  "candidate": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+  "branch": "fix/chain-pon-five-claims-20261111-d6cb",
+  "base": "fix/chain-hepta-closure-candidate-20261109-481716",
+  "base_sha": "2419777413e44314a4e9e693e81e03bb7590800f",
+  "steps": [
+    {
+      "name": "head",
+      "argv": [
+        "git",
+        "-C",
+        "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb",
+        "-c",
+        "credential.helper=",
+        "-c",
+        "credential.helper=!/usr/bin/gh auth git-credential",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "branch",
+      "argv": [
+        "git",
+        "-C",
+        "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb",
+        "-c",
+        "credential.helper=",
+        "-c",
+        "credential.helper=!/usr/bin/gh auth git-credential",
+        "branch",
+        "--show-current"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "clean",
+      "argv": [
+        "git",
+        "-C",
+        "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb",
+        "-c",
+        "credential.helper=",
+        "-c",
+        "credential.helper=!/usr/bin/gh auth git-credential",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "origin",
+      "argv": [
+        "git",
+        "-C",
+        "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb",
+        "-c",
+        "credential.helper=",
+        "-c",
+        "credential.helper=!/usr/bin/gh auth git-credential",
+        "remote",
+        "get-url",
+        "origin"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "hooks",
+      "argv": [
+        "git",
+        "-C",
+        "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb",
+        "-c",
+        "credential.helper=",
+        "-c",
+        "credential.helper=!/usr/bin/gh auth git-credential",
+        "config",
+        "core.hooksPath"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "principal",
+      "argv": [
+        "gh",
+        "api",
+        "user",
+        "--jq",
+        ".login"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--dev"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "remote-before",
+      "argv": [
+        "git",
+        "-C",
+        "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb",
+        "-c",
+        "credential.helper=",
+        "-c",
+        "credential.helper=!/usr/bin/gh auth git-credential",
+        "ls-remote",
+        "--heads",
+        "origin",
+        "refs/heads/fix/chain-hepta-closure-candidate-20261109-481716",
+        "refs/heads/fix/chain-pon-five-claims-20261111-d6cb"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "push-candidate",
+      "argv": [
+        "git",
+        "-C",
+        "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb",
+        "-c",
+        "credential.helper=",
+        "-c",
+        "credential.helper=!/usr/bin/gh auth git-credential",
+        "push",
+        "--porcelain",
+        "origin",
+        "refs/heads/fix/chain-pon-five-claims-20261111-d6cb:refs/heads/fix/chain-pon-five-claims-20261111-d6cb"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "remote-after",
+      "argv": [
+        "git",
+        "-C",
+        "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb",
+        "-c",
+        "credential.helper=",
+        "-c",
+        "credential.helper=!/usr/bin/gh auth git-credential",
+        "ls-remote",
+        "--heads",
+        "origin",
+        "refs/heads/fix/chain-pon-five-claims-20261111-d6cb"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "pr-list",
+      "argv": [
+        "gh",
+        "pr",
+        "list",
+        "--repo",
+        "TrillionniumFoundation/Trillionnium-Chain",
+        "--head",
+        "fix/chain-pon-five-claims-20261111-d6cb",
+        "--base",
+        "fix/chain-hepta-closure-candidate-20261109-481716",
+        "--state",
+        "all",
+        "--json",
+        "number,url,headRefOid,baseRefName,isDraft,state"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "create-pr",
+      "argv": [
+        "gh",
+        "pr",
+        "create",
+        "--repo",
+        "TrillionniumFoundation/Trillionnium-Chain",
+        "--draft",
+        "--base",
+        "fix/chain-hepta-closure-candidate-20261109-481716",
+        "--head",
+        "fix/chain-pon-five-claims-20261111-d6cb",
+        "--title",
+        "PoN: compose work accounting and local adoption; check Submit ancestry before execution",
+        "--body-file",
+        "/home/qian-qi/work/pon-five-claims-publish-d6cb/pr-initial.md"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "head-after",
+      "argv": [
+        "git",
+        "-C",
+        "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb",
+        "-c",
+        "credential.helper=",
+        "-c",
+        "credential.helper=!/usr/bin/gh auth git-credential",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "clean-after",
+      "argv": [
+        "git",
+        "-C",
+        "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb",
+        "-c",
+        "credential.helper=",
+        "-c",
+        "credential.helper=!/usr/bin/gh auth git-credential",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "exit_code": 0
+    }
+  ],
+  "pr_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/907",
+  "status": "draft_published",
+  "finished_utc": "2026-11-11T10:54:05.080951+00:00"
+}

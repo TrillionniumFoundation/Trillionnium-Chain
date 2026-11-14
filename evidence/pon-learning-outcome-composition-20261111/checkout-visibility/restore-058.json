@@ -1,0 +1,24 @@
+{
+  "actual_oid": "a5eee090ff57d41b40b82b1a5cd1a68af3a59974",
+  "bytes": 2236276,
+  "command": [
+    "/usr/bin/git",
+    "--no-replace-objects",
+    "cat-file",
+    "blob",
+    "a5eee090ff57d41b40b82b1a5cd1a68af3a59974"
+  ],
+  "entry_created": true,
+  "existing_path_replaced": false,
+  "exit_code": 0,
+  "expected_bytes": 2236276,
+  "expected_oid": "a5eee090ff57d41b40b82b1a5cd1a68af3a59974",
+  "finished_at": "2026-11-12T01:41:55.701845+00:00",
+  "path": "evidence/pon-proof-publication-latency-20261107/validation-raw.tar.gz",
+  "path_base64": "ZXZpZGVuY2UvcG9uLXByb29mLXB1YmxpY2F0aW9uLWxhdGVuY3ktMjAyNjExMDcvdmFsaWRhdGlvbi1yYXcudGFyLmd6",
+  "result": "RESTORED_EXACT_HEAD_BLOB",
+  "sha256": "113431ee37ca39bb2d21c16785cedc0e760c071c48e4205dfeb611aeebdeaf62",
+  "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81",
+  "started_at": "2026-11-12T01:41:55.660089+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

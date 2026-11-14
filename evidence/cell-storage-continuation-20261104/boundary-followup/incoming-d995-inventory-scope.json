@@ -1,0 +1,89 @@
+{
+  "schema": "trnm-incoming-inventory-successor-v1",
+  "base": "81da33e609cb64b319e8cfcca7059e5c30d39044",
+  "head": "d9954903ef9239f71aa575ec3e6f4fdaa88f2d35",
+  "ahead_by": 1,
+  "tree": "54442c70933c1ea37ebfe725628cbdd8685b746e",
+  "files": [
+    {
+      "sha": "f7949392d9819682764859e9a18e1707b7469689",
+      "bytes": 86614,
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "mode": "100644",
+      "status": "modified"
+    },
+    {
+      "sha": "79baba7f8351288c2bdddf906451b0a0a25dfbb7",
+      "bytes": 2127,
+      "path": "evidence/pq-workflow-continuation-20261104/PUBLICATION_SCOPE.md",
+      "mode": "100644",
+      "status": "modified"
+    },
+    {
+      "sha": "c6363538880f1937c92ad17896b667742517af31",
+      "bytes": 1447,
+      "path": "evidence/pq-workflow-continuation-20261104/inventory-correction/README.md",
+      "mode": "100644",
+      "status": "added"
+    },
+    {
+      "sha": "8436a426f9a1aedb768a7a0ac69387d4d41a8e95",
+      "bytes": 644,
+      "path": "evidence/pq-workflow-continuation-20261104/inventory-correction/initial-rust-format.log",
+      "mode": "100644",
+      "status": "added"
+    },
+    {
+      "sha": "4cb80d4c8a942017efe1650987387f3510932466",
+      "bytes": 76,
+      "path": "evidence/pq-workflow-continuation-20261104/inventory-correction/initial-source-inventory.log",
+      "mode": "100644",
+      "status": "added"
+    },
+    {
+      "sha": "45f01c34f69d1412bf608e7f5663c8ed71a330d2",
+      "bytes": 1322,
+      "path": "evidence/pq-workflow-continuation-20261104/inventory-correction/regenerated-checks.json",
+      "mode": "100644",
+      "status": "added"
+    },
+    {
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "bytes": 0,
+      "path": "evidence/pq-workflow-continuation-20261104/inventory-correction/regenerated-format.log",
+      "mode": "100644",
+      "status": "added"
+    },
+    {
+      "sha": "377f4ef57d19f3b41daa3be227d631fbbb09ce0f",
+      "bytes": 35,
+      "path": "evidence/pq-workflow-continuation-20261104/inventory-correction/regenerated-inventory.log",
+      "mode": "100644",
+      "status": "added"
+    },
+    {
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "bytes": 0,
+      "path": "evidence/pq-workflow-continuation-20261104/inventory-correction/regenerated-whitespace.log",
+      "mode": "100644",
+      "status": "added"
+    },
+    {
+      "sha": "82a6baebb10fea690675c552e641cecc9a4cb87e",
+      "bytes": 3859,
+      "path": "evidence/pq-workflow-continuation-20261104/publication-source-files.json",
+      "mode": "100644",
+      "status": "modified"
+    },
+    {
+      "sha": "b7eb36f77d93bf2c3ae272b34c5b8e66de7d8f5e",
+      "bytes": 337763,
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "mode": "100644",
+      "status": "modified"
+    }
+  ],
+  "analysis": "This successor restores the generator-produced public_cli inventory entry and its exact corpus pin, preserving both failed checks and corrected observations. The Rust inventory is a native-source input; no earlier runtime pass is relabelled to this successor.",
+  "native_tree": "a706490dda20cb6093cc27ab3c59b1486aafb5b4",
+  "new_native_tests_executed_by_this_task": 0
+}

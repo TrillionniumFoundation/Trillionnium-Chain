@@ -1,0 +1,14 @@
+{
+  "failed_commands": [],
+  "failure": null,
+  "missing_commands": [],
+  "model_efficacy_certified": false,
+  "native_test_total_required": 42,
+  "planned_commands": 26,
+  "production_activation": false,
+  "provider_prepared_and_unchanged": true,
+  "reader_suites_required": 6,
+  "recorded_commands": 26,
+  "result": "PASS",
+  "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81"
+}

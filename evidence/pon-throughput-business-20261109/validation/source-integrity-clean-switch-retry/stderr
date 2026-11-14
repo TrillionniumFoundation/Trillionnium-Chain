@@ -1,0 +1,6 @@
+test_source_fence_clean_commit_switch_during_command_is_rejected (__main__.TrackedSourceTests.test_source_fence_clean_commit_switch_during_command_is_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.635s
+
+OK

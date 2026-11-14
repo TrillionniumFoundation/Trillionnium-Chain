@@ -1,0 +1,1 @@
+{"executed_tests": 1, "result": "PASS", "scope": "named-libtest-execution-only", "test": "ingress::public_v3::work_arithmetic::tests::original_observer_json_has_no_arithmetic_claim_and_opt_in_unfinished_is_unknown"}

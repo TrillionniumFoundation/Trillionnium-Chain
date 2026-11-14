@@ -1,0 +1,32 @@
+{
+  "head": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+  "tree": "f15a7ee4a0f5455eaf965db01dcd49e02a5f22b6",
+  "git_replace_disabled": true,
+  "git_lazy_fetch_disabled": true,
+  "files": [
+    {
+      "path": ".github/workflows/pon-native-campaign-qualification.yml",
+      "git_blob": "6a89ba8237158615bfeb02afc23da0ac3a6a01f7",
+      "sha256": "1b1b2ab8331b8bb53874a6e9a4845facfa9d9717473a7c3732fb068a8d96b14a",
+      "bytes": 22343
+    },
+    {
+      "path": "scripts/ci/run_from_zero_native.py",
+      "git_blob": "9d97dfadd5bad55383475b7583f384ea572f180c",
+      "sha256": "baa7cba8096a3908c9b7ebe0705949b95061191ec78846006527fd80e6a5a0c8",
+      "bytes": 110854
+    },
+    {
+      "path": "scripts/ci/run_from_zero_host.py",
+      "git_blob": "7ec378d2eb26914441f1b15b1d4267c967986e76",
+      "sha256": "4b33ee64dfd418e1439a26ac5ec19d4b34b18c3b3c35b8a302c162d4bb91d63f",
+      "bytes": 25031
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs",
+      "git_blob": "ec6420becaba837f22d45c917d15554a8e653275",
+      "sha256": "83a6a768cd501d748e31f5fbc613cf75c23cec9e9f711915d3742c8715b9fcdf",
+      "bytes": 111313
+    }
+  ]
+}

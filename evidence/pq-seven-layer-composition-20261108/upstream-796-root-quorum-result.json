@@ -1,0 +1,361 @@
+{
+  "schema": "trnm.root-quorum-research-analysis.v1",
+  "sources_frozen": true,
+  "source_sha256": "929235622413fdef80833a9f1c99929a3c4ffdf327faaed4baf37bb2189d6741",
+  "source_files_sha256": {
+    "pq_root_quorum_research.py": "929235622413fdef80833a9f1c99929a3c4ffdf327faaed4baf37bb2189d6741",
+    "test_pq_root_quorum_research.py": "c1f72d844ff0600bdcd92f4507372eac45af3c81d78c258b3ea13c46a90396ee"
+  },
+  "native_job": {
+    "host": "desktop",
+    "job_id": "1a1b9c56452-12894-16ca",
+    "state": "succeeded",
+    "exit_code": 0,
+    "output_complete": true,
+    "output_durable": true
+  },
+  "analysis_job": {
+    "host": "desktop",
+    "job_id": "1a1b9cd4101-12894-16f7",
+    "state": "succeeded",
+    "exit_code": 0
+  },
+  "remote_source_directory": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/research-run-src",
+  "remote_evidence_directory": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/root-quorum-research-01",
+  "analysis_receipt": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/root-quorum-research-01/analysis-receipt.json",
+  "analysis_sha256": "03d5f9e48f4974ca7a59482a7db6ce4c0c596775bf98a320b7ac4ac639afe604",
+  "local_pure_tests_passed": 18,
+  "remote_pure_tests_passed": 18,
+  "resource_limits_execution_proven": false,
+  "post_terminal_resource_query_limitation": "The post-terminal unit was inactive/dead and returned default/unlimited properties. This cannot establish whether the requested limits were enforced while running.",
+  "job_id": "1a1b9c56452-12894-16ca",
+  "evidence": {
+    "observations.jsonl": {
+      "bytes": 17835591,
+      "sha256": "2868b1bdd190988ed13c5312bd9e68d5ab77e1c66aadc30e6653e88a71011dac"
+    },
+    "commands.jsonl": {
+      "bytes": 12205278,
+      "sha256": "b86e8409e6bea29d12a7f359c31eba7e42fe19ef985be6c2199fa5f1c853b878"
+    }
+  },
+  "sample_pairs": 64,
+  "sample_rows": 128,
+  "groups": {
+    "ML_COMPONENT": {
+      "sign_and_encode_ns": {
+        "samples": 64,
+        "median_ns": 20468252,
+        "p95_nearest_rank_ns": 25184317,
+        "maximum_ns": 400483535,
+        "minimum_ns": 15850676
+      },
+      "verify_frame_ns": {
+        "samples": 64,
+        "median_ns": 16539146.5,
+        "p95_nearest_rank_ns": 20397712,
+        "maximum_ns": 52993868,
+        "minimum_ns": 13283796
+      },
+      "elapsed_ns": {
+        "samples": 64,
+        "median_ns": 37428950.5,
+        "p95_nearest_rank_ns": 47127727,
+        "maximum_ns": 414863744,
+        "minimum_ns": 31125059
+      },
+      "frame_bytes": [
+        15484
+      ],
+      "proposal_bytes": [
+        846
+      ]
+    },
+    "AND_CANDIDATE": {
+      "sign_and_encode_ns": {
+        "samples": 64,
+        "median_ns": 4120411648.5,
+        "p95_nearest_rank_ns": 4643600678,
+        "maximum_ns": 5161909741,
+        "minimum_ns": 3866233654
+      },
+      "verify_frame_ns": {
+        "samples": 64,
+        "median_ns": 36786620.5,
+        "p95_nearest_rank_ns": 72509391,
+        "maximum_ns": 301864105,
+        "minimum_ns": 29971214
+      },
+      "elapsed_ns": {
+        "samples": 64,
+        "median_ns": 4160439066,
+        "p95_nearest_rank_ns": 4682189710,
+        "maximum_ns": 5204239172,
+        "minimum_ns": 3902124877
+      },
+      "frame_bytes": [
+        75378
+      ],
+      "proposal_bytes": [
+        846
+      ]
+    }
+  },
+  "configuration": {
+    "canonical_bytes": 8717,
+    "encode_and_hash_ns": 183922,
+    "distribution_cost_measured": false
+  },
+  "controls": [
+    {
+      "name": "legal-pair-0",
+      "expected": "accept",
+      "result": {
+        "activation_performed": false,
+        "component_only": false,
+        "host_attested": false,
+        "hybrid_policy_satisfied": true,
+        "production_qualified": false,
+        "root_effect_executed": false,
+        "verified_signatures": 4
+      },
+      "rejection": null,
+      "verification_api_calls": null
+    },
+    {
+      "name": "legal-pair-1",
+      "expected": "accept",
+      "result": {
+        "activation_performed": false,
+        "component_only": false,
+        "host_attested": false,
+        "hybrid_policy_satisfied": true,
+        "production_qualified": false,
+        "root_effect_executed": false,
+        "verified_signatures": 4
+      },
+      "rejection": null,
+      "verification_api_calls": null
+    },
+    {
+      "name": "legal-pair-2",
+      "expected": "accept",
+      "result": {
+        "activation_performed": false,
+        "component_only": false,
+        "host_attested": false,
+        "hybrid_policy_satisfied": true,
+        "production_qualified": false,
+        "root_effect_executed": false,
+        "verified_signatures": 4
+      },
+      "rejection": null,
+      "verification_api_calls": null
+    },
+    {
+      "name": "legal-pair-3",
+      "expected": "accept",
+      "result": {
+        "activation_performed": false,
+        "component_only": false,
+        "host_attested": false,
+        "hybrid_policy_satisfied": true,
+        "production_qualified": false,
+        "root_effect_executed": false,
+        "verified_signatures": 4
+      },
+      "rejection": null,
+      "verification_api_calls": null
+    },
+    {
+      "name": "legal-pair-4",
+      "expected": "accept",
+      "result": {
+        "activation_performed": false,
+        "component_only": false,
+        "host_attested": false,
+        "hybrid_policy_satisfied": true,
+        "production_qualified": false,
+        "root_effect_executed": false,
+        "verified_signatures": 4
+      },
+      "rejection": null,
+      "verification_api_calls": null
+    },
+    {
+      "name": "legal-pair-5",
+      "expected": "accept",
+      "result": {
+        "activation_performed": false,
+        "component_only": false,
+        "host_attested": false,
+        "hybrid_policy_satisfied": true,
+        "production_qualified": false,
+        "root_effect_executed": false,
+        "verified_signatures": 4
+      },
+      "rejection": null,
+      "verification_api_calls": null
+    },
+    {
+      "name": "legal-pair-6",
+      "expected": "accept",
+      "result": {
+        "activation_performed": false,
+        "component_only": false,
+        "host_attested": false,
+        "hybrid_policy_satisfied": true,
+        "production_qualified": false,
+        "root_effect_executed": false,
+        "verified_signatures": 4
+      },
+      "rejection": null,
+      "verification_api_calls": null
+    },
+    {
+      "name": "legal-pair-7",
+      "expected": "accept",
+      "result": {
+        "activation_performed": false,
+        "component_only": false,
+        "host_attested": false,
+        "hybrid_policy_satisfied": true,
+        "production_qualified": false,
+        "root_effect_executed": false,
+        "verified_signatures": 4
+      },
+      "rejection": null,
+      "verification_api_calls": null
+    },
+    {
+      "name": "legal-pair-8",
+      "expected": "accept",
+      "result": {
+        "activation_performed": false,
+        "component_only": false,
+        "host_attested": false,
+        "hybrid_policy_satisfied": true,
+        "production_qualified": false,
+        "root_effect_executed": false,
+        "verified_signatures": 4
+      },
+      "rejection": null,
+      "verification_api_calls": null
+    },
+    {
+      "name": "component-cannot-satisfy-AND",
+      "expected": "reject",
+      "result": null,
+      "rejection": "scope",
+      "verification_api_calls": 0
+    },
+    {
+      "name": "missing-SLH-family",
+      "expected": "reject",
+      "result": null,
+      "rejection": "quorum",
+      "verification_api_calls": 0
+    },
+    {
+      "name": "missing-ML-family",
+      "expected": "reject",
+      "result": null,
+      "rejection": "quorum",
+      "verification_api_calls": 0
+    },
+    {
+      "name": "duplicate-signer",
+      "expected": "reject",
+      "result": null,
+      "rejection": "signer",
+      "verification_api_calls": 0
+    },
+    {
+      "name": "unknown-signer",
+      "expected": "reject",
+      "result": null,
+      "rejection": "signer",
+      "verification_api_calls": 0
+    },
+    {
+      "name": "wrong-context",
+      "expected": "reject",
+      "result": null,
+      "rejection": "signature",
+      "verification_api_calls": 4
+    },
+    {
+      "name": "signed-wrong-state",
+      "expected": "reject",
+      "result": null,
+      "rejection": "proposal",
+      "verification_api_calls": 0
+    },
+    {
+      "name": "split-proposal",
+      "expected": "reject",
+      "result": null,
+      "rejection": "signature",
+      "verification_api_calls": 3
+    },
+    {
+      "name": "stale-owner-generation",
+      "expected": "reject",
+      "result": null,
+      "rejection": "proposal",
+      "verification_api_calls": 0
+    },
+    {
+      "name": "stale-key-epoch",
+      "expected": "reject",
+      "result": null,
+      "rejection": "proposal",
+      "verification_api_calls": 0
+    },
+    {
+      "name": "expired-current-view",
+      "expected": "reject",
+      "result": null,
+      "rejection": "expired",
+      "verification_api_calls": 0
+    },
+    {
+      "name": "last-SLH-signature-bitflip",
+      "expected": "reject",
+      "result": null,
+      "rejection": "signature",
+      "verification_api_calls": 4
+    }
+  ],
+  "command_count": 877,
+  "command_purpose_counts": {
+    "version": 1,
+    "fixture-keygen": 6,
+    "fixture-public": 6,
+    "sign:ML-DSA-87": 278,
+    "sign:SLH-DSA-SHA2-256s": 151,
+    "verify:ML-DSA-87": 282,
+    "verify:SLH-DSA-SHA2-256s": 153
+  },
+  "expected_negative_command_exits": 3,
+  "elapsed_ns": 324237033443,
+  "requested_runtime_limits": {
+    "cpu_quota_percent": 100,
+    "memory_max_bytes": 2147483648,
+    "nice": 5,
+    "timeout_seconds": 1800
+  },
+  "observed_systemd_properties": {
+    "exit_code": 0,
+    "stdout": "Result=success\nExecMainStatus=0\nMemoryPeak=[not set]\nCPUUsageNSec=[not set]\nCPUQuotaPerSecUSec=infinity\nCPUQuotaPeriodUSec=infinity\nMemoryMax=infinity\nNice=0\nActiveState=inactive\nSubState=dead\n",
+    "stderr": ""
+  },
+  "resource_context": "Host was not isolated; a concurrent release-bundle Cargo compilation/regression job may overlap. CPUQuota is a ceiling, not a reserved core.",
+  "latency_scope": "command-cold; includes processes, key import, temporary IO and command journal flushing; p95 is a 64-sample statistic, not a production tail",
+  "protocol_cost_scope": "frame excludes pre-distribution of full trusted 3+3 configuration; no full management-lifecycle or network cost claim",
+  "root_effect_executed": false,
+  "activation_performed": false,
+  "production_qualified": false,
+  "host_attested": false,
+  "analysis_scope": "bounded evidence consistency and recomputed statistics; no independent host attestation"
+}

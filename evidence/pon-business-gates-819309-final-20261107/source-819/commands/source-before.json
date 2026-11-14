@@ -1,0 +1,24 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "scripts/ci/verify_ci_source.py",
+    "--kind",
+    "head",
+    "--expected-head",
+    "819309fd312298e099642e1253b1d4ba07113e98",
+    "--output",
+    "/home/qian-qi/chain-throughput-local-admin-20261107/final-source-validation-20261107/819309fd312298e099642e1253b1d4ba07113e98/source-before.json"
+  ],
+  "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/work-final-business-20261107",
+  "end_utc": "2026-11-07T18:32:00.017121+00:00",
+  "exit_code": 0,
+  "log": "logs/source-before.log",
+  "log_bytes": 423,
+  "log_sha256": "5759d06c351357aa4d7b24e1b56c03607da60870788f30139a8e10460744c6b6",
+  "name": "source-before",
+  "pid": 1320031,
+  "start_utc": "2026-11-07T18:31:56.846873+00:00",
+  "supervisor_timeout_seconds": 600,
+  "timed_out": false,
+  "wall_ns": 3170269879
+}

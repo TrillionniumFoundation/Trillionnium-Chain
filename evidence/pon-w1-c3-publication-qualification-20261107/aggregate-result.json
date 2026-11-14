@@ -1,0 +1,207 @@
+{
+  "attempt_history": {
+    "bounded_diagnostics": [
+      {
+        "bytes": 3249,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/c3-aggregate-timeout-diagnosis-01/observation.json",
+        "sha256": "3b163c0be5a57fd0d52bbf8528c7248eb4ac987bbad4eb690f2cec95f5d08348"
+      },
+      {
+        "bytes": 10456,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/c3-aggregate-timeout-diagnosis-02/observation.json",
+        "sha256": "3574397b2ee2abf3551edca4d160a61a6d75f2f916362b153e538a9592e41590"
+      },
+      {
+        "bytes": 6824,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/c3-aggregate-timeout-diagnosis-03/observation.json",
+        "sha256": "0f87e2552bd5b43da9961bd8225da9f266960e8bfde4921fc5472cd9669c170f"
+      }
+    ],
+    "cause": "UNDETERMINED; environment and CPU causation were not established",
+    "earlier_source_guard_timeout_seconds": 180,
+    "historical_affinity_and_load_not_reconstructed": true,
+    "later_traced_status_elapsed_seconds": 0.213262,
+    "later_traced_status_exit": 0,
+    "metadata_status_timeouts_seconds": [
+      15,
+      15
+    ],
+    "prior_failed_result": {
+      "bytes": 1765,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-C3-build-qualification-01/aggregate-run-01/result.json",
+      "sha256": "60f33a3d22faeb4cd8d3be160638a2e0017c84f4b3cf56e58dbeaf6d75fd0578"
+    },
+    "prior_failed_terminal": {
+      "bytes": 726,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-C3-build-qualification-01/aggregate-run-02/terminal-prior-aggregate.json",
+      "sha256": "819ff100cafc3ab803b36916d2d82e4f140a6f8d3590aed23b5e8ac506c03d9a"
+    },
+    "same_original_qualification_logic_and_timeouts": true
+  },
+  "attempt_id": "02",
+  "commands": [
+    {
+      "all_descendants_reaped": null,
+      "argv": [
+        "/usr/bin/bash",
+        "scripts/project-preflight.sh",
+        "--dev"
+      ],
+      "complete_resource_accounting": false,
+      "cwd": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-repo",
+      "elapsed_ns": 125988795,
+      "error": null,
+      "exit": 0,
+      "git_trace2": {
+        "bytes": 4382,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-C3-build-qualification-01/aggregate-run-02/preflight.git-trace2.json",
+        "sha256": "1287f1743dc686dd113dc74904eff2f6763fd8afa39b95d90c5073a563969190"
+      },
+      "label": "aggregate/preflight",
+      "resource_after": {
+        "bytes": 1711,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-C3-build-qualification-01/aggregate-run-02/preflight-after.resource.json",
+        "sha256": "905fc74b8673dcfcc4b794bef2c2e1f2aeee7d20301d7f0fd62d3ff20e476bb9"
+      },
+      "resource_before": {
+        "bytes": 1679,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-C3-build-qualification-01/aggregate-run-02/preflight-before.resource.json",
+        "sha256": "0f751ef222fa0a592038e45ad0a28d2adf58f4c8be3c4d8779b59595df35aff6"
+      },
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-C3-build-qualification-01/aggregate-run-02/preflight.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-C3-build-qualification-01/aggregate-run-02/preflight.stdout",
+      "stdout_sha256": "22e2178221fa739d1cacc4bd4cfc5debe14a6dcccbe6f397a79e0b0c43b25b07",
+      "timed_out": false,
+      "timeout_seconds": 180
+    },
+    {
+      "all_descendants_reaped": null,
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "abab79dac0cb89eb2753d3f579119ac135650eb5",
+        "--output",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-C3-build-qualification-01/aggregate-run-02/source-before.json"
+      ],
+      "complete_resource_accounting": false,
+      "cwd": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-repo",
+      "elapsed_ns": 9100128478,
+      "error": null,
+      "exit": 0,
+      "git_trace2": {
+        "bytes": 41260,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-C3-build-qualification-01/aggregate-run-02/source-before.git-trace2.json",
+        "sha256": "3f29b382a20b92f0211cf209c31178fd9812b0531089f5dd91ab241bc11ec70d"
+      },
+      "label": "aggregate/source-before",
+      "resource_after": {
+        "bytes": 1706,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-C3-build-qualification-01/aggregate-run-02/source-before-after.resource.json",
+        "sha256": "950b7d9ce769a649e2cdbdff354f42f5789647cfd52b7e059b297adb39b773af"
+      },
+      "resource_before": {
+        "bytes": 1722,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-C3-build-qualification-01/aggregate-run-02/source-before-before.resource.json",
+        "sha256": "7c84516b4e7b95884f6f63479c990583ddb03229fcd9cb4131fb1f2b384261b0"
+      },
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-C3-build-qualification-01/aggregate-run-02/source-before.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-C3-build-qualification-01/aggregate-run-02/source-before.stdout",
+      "stdout_sha256": "f64801ce2a5fd2e3e0814c4b68e5f7fdd7b740dd72aa90984eff69dcb5a1ba5f",
+      "timed_out": false,
+      "timeout_seconds": 180
+    },
+    {
+      "all_descendants_reaped": null,
+      "argv": [
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/fixed-backend-01/r0vm",
+        "--version"
+      ],
+      "complete_resource_accounting": false,
+      "cwd": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-repo",
+      "elapsed_ns": 14979910,
+      "error": null,
+      "exit": 0,
+      "git_trace2": null,
+      "label": "aggregate/r0vm-version",
+      "resource_after": {
+        "bytes": 1713,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-C3-build-qualification-01/aggregate-run-02/r0vm-version-after.resource.json",
+        "sha256": "3c625f992a3ed8e6a57b8aa53f6da14760a43e19b71829be8afb5f81311ef193"
+      },
+      "resource_before": {
+        "bytes": 1712,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-C3-build-qualification-01/aggregate-run-02/r0vm-version-before.resource.json",
+        "sha256": "51618a09867fca9c348251298223cc83968d75bc09769a4e195c889f065b19af"
+      },
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-C3-build-qualification-01/aggregate-run-02/r0vm-version.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-C3-build-qualification-01/aggregate-run-02/r0vm-version.stdout",
+      "stdout_sha256": "23b765c616c3240aa069b42ddab21169793e1af4530c68ddc1da72b7456b3d30",
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "all_descendants_reaped": null,
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "abab79dac0cb89eb2753d3f579119ac135650eb5",
+        "--output",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-C3-build-qualification-01/aggregate-run-02/source-after.json"
+      ],
+      "complete_resource_accounting": false,
+      "cwd": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-repo",
+      "elapsed_ns": 3912160076,
+      "error": null,
+      "exit": 0,
+      "git_trace2": {
+        "bytes": 41260,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-C3-build-qualification-01/aggregate-run-02/source-after.git-trace2.json",
+        "sha256": "a7eb50f5c9dd0866ece56e203a9e6564a1584966c5037faf6e0a55ebcdcda438"
+      },
+      "label": "aggregate/source-after",
+      "resource_after": {
+        "bytes": 1728,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-C3-build-qualification-01/aggregate-run-02/source-after-after.resource.json",
+        "sha256": "4bd96062625126b203cea47bc01dd9e6c533c19f8106d487093dab55b91527c8"
+      },
+      "resource_before": {
+        "bytes": 1714,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-C3-build-qualification-01/aggregate-run-02/source-after-before.resource.json",
+        "sha256": "ce67ff2726b9d6f32c0678f7a2240570faf701ad256b8d2aa05359ccdb94a9ba"
+      },
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-C3-build-qualification-01/aggregate-run-02/source-after.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-C3-build-qualification-01/aggregate-run-02/source-after.stdout",
+      "stdout_sha256": "f64801ce2a5fd2e3e0814c4b68e5f7fdd7b740dd72aa90984eff69dcb5a1ba5f",
+      "timed_out": false,
+      "timeout_seconds": 180
+    }
+  ],
+  "completed": true,
+  "completed_monotonic_ns": 1176547227356846,
+  "errors": [],
+  "fresh_proof_generations": 0,
+  "qualification": {
+    "bytes": 241332,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-C3-build-qualification-01/qualification.json",
+    "sha256": "2fbd82253b5610cf08afeaa3dfb6e36cbb2d183f8b6c5b564baba655e365d99f"
+  },
+  "schema": "TRNM-W1-C3-AGGREGATE-ATTEMPT1",
+  "source_commit": "abab79dac0cb89eb2753d3f579119ac135650eb5",
+  "source_tree": "194808f4a0db5d642aa746beb251ca9e9532cebb",
+  "test_bodies_executed": false,
+  "wrapper": {
+    "bytes": 41618,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-C3-build-qualification-01/aggregate-run-02/build_qualification.py",
+    "sha256": "48bae79bbfabbd67e35444ce034aeb9ed15cf0e8a2890d2f7e3cc87b278cf13c"
+  }
+}

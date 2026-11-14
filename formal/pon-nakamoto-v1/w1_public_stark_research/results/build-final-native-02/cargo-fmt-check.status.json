@@ -1,0 +1,16 @@
+{
+  "label": "cargo-fmt-check",
+  "command": [
+    "/home/qian-qi/.cargo/bin/cargo",
+    "+1.95.0",
+    "fmt",
+    "--manifest-path",
+    "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml",
+    "--",
+    "--check"
+  ],
+  "exit_code": 0,
+  "outer_wall_seconds": 0.11063819518312812,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

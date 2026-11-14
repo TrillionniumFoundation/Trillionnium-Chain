@@ -1,0 +1,71 @@
+{
+  "base_head": "7e044b65454f4c9ea505591727332acffb33e7e5",
+  "base_pr": 812,
+  "cherry_picked_continuations": {
+    "ci_original_diagnostic_order": "70388cd53e8c8d7a397537db51ff1d076fb33625",
+    "ci_strict_literals": "16b3ef70bb22e438870ffca81f4fac2c7ac42670",
+    "ci_tests": "cc96e739386bbaa34b212d85815fb34877c66c46",
+    "explicit_frozen_contract_replay": "08c61d59b1b338ed5cba8a77aa2c0da07f175073",
+    "reviewed_pq_source_locks": "5c9c8b5dbcc9cf08b9942e5f6f6a3c1ebd5a3086"
+  },
+  "independent_operator_qualified": false,
+  "integrated_pq_lock_commit": "3eedbdb193312dae9483d2d27196bde3e4003b12",
+  "merged_continuations": {
+    "growth_confirmation": "0f9934f84cf22318f7bc564a0a4279c9cd0db6b8",
+    "learning_completion": "a172152d7ef789fec95b61fee1fc8a116b8d6185",
+    "mmcs_composition_observation": "6be0bc820cd0eea31299f5d3ada3875220d5ae25",
+    "money_observation_epoch": "f129f07555cafa3423000e7c49b37ddf678ad303",
+    "proof_start_owner": "216427acc159f743dc533ddf6cc8d9d2a7288d34"
+  },
+  "new_proof_generated": false,
+  "original_merged_heads": [
+    {
+      "head": "50a1fad7156dedd7db31f08a4bb1c94cc0c9d015",
+      "pr": 801
+    },
+    {
+      "head": "cc09d6dc311596a9d9a45c64e9392caff4a75c0b",
+      "pr": 802
+    },
+    {
+      "head": "ebc31f07f96060fe1e9fb165aae0123de0fcbc1a",
+      "pr": 803
+    },
+    {
+      "head": "dbc1ca09c3db57ae683671a0e7c37ca0aca01f71",
+      "pr": 804
+    },
+    {
+      "head": "4840f980ff1009fb2772bcba3aa9e71c6384810c",
+      "pr": 805
+    },
+    {
+      "head": "0788c44f4139c74772a8a9d7d475821f56e5b727",
+      "pr": 806
+    },
+    {
+      "head": "0dc13a92cc49e9a751a2b6cf7cc96524f1244a2a",
+      "pr": 807
+    },
+    {
+      "head": "3a16d5c56ccca52feb6363b299a3e80a18051b9b",
+      "pr": 808
+    },
+    {
+      "head": "5f7eccf86e252cce67bf5dd6f614c1c7a1824e53",
+      "pr": 809
+    },
+    {
+      "head": "137b0479458462ab679014e40290a39ee6388a5f",
+      "pr": 810
+    },
+    {
+      "head": "081da763ed8647fc3bf54f44a7b9706116390cda",
+      "pr": 811
+    }
+  ],
+  "production_activation": false,
+  "same_resource_net_gain_qualified": false,
+  "schema": "chain-six-composition-inputs-v1",
+  "whole_chain_pq_qualified": false
+}

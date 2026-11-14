@@ -1,0 +1,128 @@
+{
+  "all_commands_zero_exit": true,
+  "commands": [
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/workspace/scratch/8f0d1a7a75bb/chain_certificates",
+      "elapsed_seconds": 0.06171333599922946,
+      "exit_code": 0,
+      "name": "preflight",
+      "started_at_utc": "2026-11-07T23:42:16.926247+00:00",
+      "streams": {
+        "stderr": {
+          "bytes": 0,
+          "path": "preflight.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 177,
+          "path": "preflight.stdout.log",
+          "sha256": "390eaae41b4cea9817edf58dae3def992730ea1e0af10cf6403a7fd9e47bd304"
+        }
+      }
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "scripts/ci/test_ci_source_integrity.py",
+        "-v"
+      ],
+      "cwd": "/workspace/scratch/8f0d1a7a75bb/chain_certificates",
+      "elapsed_seconds": 3.0118090700016182,
+      "exit_code": 0,
+      "name": "source-integrity",
+      "started_at_utc": "2026-11-07T23:42:17.127438+00:00",
+      "streams": {
+        "stderr": {
+          "bytes": 6414,
+          "path": "source-integrity.stderr.log",
+          "sha256": "897d3854280fec2bf2f9d8a93c7cc5877e1a724f8a9006d1ba49b081f1f2f1c9"
+        },
+        "stdout": {
+          "bytes": 484,
+          "path": "source-integrity.stdout.log",
+          "sha256": "66beb30bb917460b1e8de29600d44ca8d20ef0f5a5907ce66b15c3f2bb559956"
+        }
+      }
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "scripts/ci/test_ci_execution.py",
+        "-v"
+      ],
+      "cwd": "/workspace/scratch/8f0d1a7a75bb/chain_certificates",
+      "elapsed_seconds": 23.817802499001118,
+      "exit_code": 0,
+      "name": "ci-execution",
+      "started_at_utc": "2026-11-07T23:42:17.127745+00:00",
+      "streams": {
+        "stderr": {
+          "bytes": 12414,
+          "path": "ci-execution.stderr.log",
+          "sha256": "148d1f23a51f68411710e0443f7ea5b4e98b34011bee9a833e0bf9625670df25"
+        },
+        "stdout": {
+          "bytes": 484,
+          "path": "ci-execution.stdout.log",
+          "sha256": "78ce8bafde7878ef4bfc56922d0d2893f4193880e0ebc3cdd112b8ae43cb7cc8"
+        }
+      }
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/transport/verify-transfer.py"
+      ],
+      "cwd": "/workspace/scratch/8f0d1a7a75bb/chain_certificates",
+      "elapsed_seconds": 0.11493818800227018,
+      "exit_code": 0,
+      "name": "transfer-verification",
+      "started_at_utc": "2026-11-07T23:42:40.946120+00:00",
+      "streams": {
+        "stderr": {
+          "bytes": 0,
+          "path": "transfer-verification.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 789,
+          "path": "transfer-verification.stdout.log",
+          "sha256": "cb4ed221b6459ab0489de068f33fbe8c231ccda637ec55dd5afd8813ba3563a5"
+        }
+      }
+    }
+  ],
+  "head_after": "6615ffa37a0d8f6451bf3e49c2500b4626ffae6c",
+  "head_before": "6615ffa37a0d8f6451bf3e49c2500b4626ffae6c",
+  "loaded_modules_execution_attested": false,
+  "production_qualified": false,
+  "same_non_evidence_source_at_endpoints": false,
+  "schema": "root-ci-source-execution-gates-v1",
+  "source_changes": [
+    {
+      "after": {
+        "bytes": 580758,
+        "kind": "regular",
+        "mode": 420,
+        "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+        "sha256": "36dd2dbeba12910a18505744608728b59384bd22bad47f19f20e425cd7a1db37"
+      },
+      "before": {
+        "bytes": 579300,
+        "kind": "regular",
+        "mode": 420,
+        "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+        "sha256": "22b8adf1193061f59af035f575802f2f68cec24682386ecfe3f5848b6e290aa2"
+      },
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+    }
+  ],
+  "source_entries_after": 2376,
+  "source_entries_before": 2376,
+  "source_entries_sha256_after": "137a13f6bea69e65548fd5f6fc495993df37b1ea41b8e720ad34813287d6bddc",
+  "source_entries_sha256_before": "464497d52441320ffa29b59a3e887b1f9fcbeee442f1d20828ef1b31d8daa4e3"
+}

@@ -1,0 +1,7 @@
+{
+  "commit": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+  "materialized_checked": 4890,
+  "unmaterialized_historical_evidence": 21242,
+  "materialized_manifest_sha256": "a821396cf6ea35c928e6bf598ae4d016ada773688b67134f1305d3b59eb04ba4",
+  "whole_materialized_repository_checked": false
+}

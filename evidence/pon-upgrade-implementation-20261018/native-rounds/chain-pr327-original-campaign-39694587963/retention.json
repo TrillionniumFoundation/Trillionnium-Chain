@@ -1,0 +1,487 @@
+{
+  "artifact": {
+    "artifact_id": 12391561439,
+    "repository": "TrillionniumFoundation/Trillionnium-Chain",
+    "workflow_run_id": 39694587963,
+    "zip_bytes": 67642508,
+    "zip_sha256": "e6aa9b46dc0eaf06ba13615f8973637474eddf445d141bb0d3460cc62a03b7f0"
+  },
+  "binary": {
+    "bytes": 8471112,
+    "sha256": "efaeadc30b476271923af6b51b6149e71f882b0088f6fbdb7bc2609235aa7f61"
+  },
+  "coverage": "retained-subset",
+  "files": [
+    {
+      "bytes": 303,
+      "encoding": "identity",
+      "original_path": "SCOPE.txt",
+      "retained_bytes": 303,
+      "retained_path": "SCOPE.txt",
+      "retained_sha256": "ce6e78baf98f002f35edf9e67a9c04614f5ba357365acff42313d8dc18542ab9",
+      "sha256": "ce6e78baf98f002f35edf9e67a9c04614f5ba357365acff42313d8dc18542ab9"
+    },
+    {
+      "bytes": 594,
+      "encoding": "identity",
+      "original_path": "binary-before.json",
+      "retained_bytes": 594,
+      "retained_path": "binary-before.json",
+      "retained_sha256": "704dca16f23c4e36e76bb6f25e07fcc7505096e983462f5adfd244349e895ca9",
+      "sha256": "704dca16f23c4e36e76bb6f25e07fcc7505096e983462f5adfd244349e895ca9"
+    },
+    {
+      "bytes": 3094,
+      "encoding": "identity",
+      "original_path": "build.stderr.log",
+      "retained_bytes": 3094,
+      "retained_path": "build.stderr.log",
+      "retained_sha256": "5b7b9aaa450497e83414d6d65d38e6688a1c8180cfbb729fd241f8bf5a8189ff",
+      "sha256": "5b7b9aaa450497e83414d6d65d38e6688a1c8180cfbb729fd241f8bf5a8189ff"
+    },
+    {
+      "bytes": 88210,
+      "encoding": "identity",
+      "original_path": "build.stdout.log",
+      "retained_bytes": 88210,
+      "retained_path": "build.stdout.log",
+      "retained_sha256": "9cdd43a341d45b1b1cc87bbb2ede8f4c3d8b092e666c26e919a088c77709b556",
+      "sha256": "9cdd43a341d45b1b1cc87bbb2ede8f4c3d8b092e666c26e919a088c77709b556"
+    },
+    {
+      "bytes": 911,
+      "encoding": "identity",
+      "original_path": "build.step.json",
+      "retained_bytes": 911,
+      "retained_path": "build.step.json",
+      "retained_sha256": "493849518547f98d2354b13c6b97640f30d53864f399636fa2c295f9dec08323",
+      "sha256": "493849518547f98d2354b13c6b97640f30d53864f399636fa2c295f9dec08323"
+    },
+    {
+      "bytes": 336,
+      "encoding": "identity",
+      "original_path": "cargo-version.txt",
+      "retained_bytes": 336,
+      "retained_path": "cargo-version.txt",
+      "retained_sha256": "bfd735e736b354adabe72cea24bc1b393488223889b6ab95e974fd8fb963552e",
+      "sha256": "bfd735e736b354adabe72cea24bc1b393488223889b6ab95e974fd8fb963552e"
+    },
+    {
+      "bytes": 2877,
+      "encoding": "identity",
+      "original_path": "dependency-fetch.log",
+      "retained_bytes": 2877,
+      "retained_path": "dependency-fetch.log",
+      "retained_sha256": "9e23dd311c73618d1bcabbb4c2fe5e4c2eb2891ffc2475b590f59eaa822f36b8",
+      "sha256": "9e23dd311c73618d1bcabbb4c2fe5e4c2eb2891ffc2475b590f59eaa822f36b8"
+    },
+    {
+      "bytes": 1900,
+      "encoding": "identity",
+      "original_path": "hardware.json",
+      "retained_bytes": 1900,
+      "retained_path": "hardware.json",
+      "retained_sha256": "918a67224f2a449a35c15795b4992f0aa831c4ecb5d2d0d00867109fbf2c9628",
+      "sha256": "918a67224f2a449a35c15795b4992f0aa831c4ecb5d2d0d00867109fbf2c9628"
+    },
+    {
+      "bytes": 133,
+      "encoding": "identity",
+      "original_path": "preflight.log",
+      "retained_bytes": 133,
+      "retained_path": "preflight.log",
+      "retained_sha256": "0b44c512357b1923d3676127e495b65140c8e6b6c037b9e15d099196803ebcf7",
+      "sha256": "0b44c512357b1923d3676127e495b65140c8e6b6c037b9e15d099196803ebcf7"
+    },
+    {
+      "bytes": 1527,
+      "encoding": "identity",
+      "original_path": "resource-after-native.json",
+      "retained_bytes": 1527,
+      "retained_path": "resource-after-native.json",
+      "retained_sha256": "da5cbd1f7bba8bb5a3f122dd41b059e595b838dbc50e52852bb8fa2c7d90f14d",
+      "sha256": "da5cbd1f7bba8bb5a3f122dd41b059e595b838dbc50e52852bb8fa2c7d90f14d"
+    },
+    {
+      "bytes": 1503,
+      "encoding": "identity",
+      "original_path": "resource-before-build.json",
+      "retained_bytes": 1503,
+      "retained_path": "resource-before-build.json",
+      "retained_sha256": "a5b6db2dfb1097dd2913d55fb01c1923bc96d39d52d5ec388347ae7f68e8da6d",
+      "sha256": "a5b6db2dfb1097dd2913d55fb01c1923bc96d39d52d5ec388347ae7f68e8da6d"
+    },
+    {
+      "bytes": 7906,
+      "encoding": "identity",
+      "original_path": "results.json",
+      "retained_bytes": 7906,
+      "retained_path": "results.json",
+      "retained_sha256": "889bab65c091e68824a3d97599d7fd571641a11a3e7d633fe899cc1f49f28010",
+      "sha256": "889bab65c091e68824a3d97599d7fd571641a11a3e7d633fe899cc1f49f28010"
+    },
+    {
+      "bytes": 144200,
+      "encoding": "identity",
+      "original_path": "run-1-phase-readback.json",
+      "retained_bytes": 144200,
+      "retained_path": "run-1-phase-readback.json",
+      "retained_sha256": "b98a145f2bf4b64b8b0f947a0959f07d4674de51c502659edbb30e556edb6ae5",
+      "sha256": "b98a145f2bf4b64b8b0f947a0959f07d4674de51c502659edbb30e556edb6ae5"
+    },
+    {
+      "bytes": 1527,
+      "encoding": "identity",
+      "original_path": "run-1-resource-after.json",
+      "retained_bytes": 1527,
+      "retained_path": "run-1-resource-after.json",
+      "retained_sha256": "06b396e5677078c7f52b2dac550555a7d5f491fcc273215ec497d3019cc3f9b4",
+      "sha256": "06b396e5677078c7f52b2dac550555a7d5f491fcc273215ec497d3019cc3f9b4"
+    },
+    {
+      "bytes": 1526,
+      "encoding": "identity",
+      "original_path": "run-1-resource-before.json",
+      "retained_bytes": 1526,
+      "retained_path": "run-1-resource-before.json",
+      "retained_sha256": "a4a1dd7709f883fb0aaa76ee93f40de9576712bf32c728552ac0aaabc7c6598e",
+      "sha256": "a4a1dd7709f883fb0aaa76ee93f40de9576712bf32c728552ac0aaabc7c6598e"
+    },
+    {
+      "bytes": 1330,
+      "encoding": "identity",
+      "original_path": "run-1-result.json",
+      "retained_bytes": 1330,
+      "retained_path": "run-1-result.json",
+      "retained_sha256": "cf9c72f9eee56382182eeba1e6fa19d36f13d52b94c6ec1218aea964cca0234d",
+      "sha256": "cf9c72f9eee56382182eeba1e6fa19d36f13d52b94c6ec1218aea964cca0234d"
+    },
+    {
+      "bytes": 421,
+      "encoding": "identity",
+      "original_path": "run-1-source-after.json",
+      "retained_bytes": 421,
+      "retained_path": "run-1-source-after.json",
+      "retained_sha256": "919a93685f4d8837ac4eb3009db5ba74fedc30456c0f8a6bb3660eee1c92c398",
+      "sha256": "919a93685f4d8837ac4eb3009db5ba74fedc30456c0f8a6bb3660eee1c92c398"
+    },
+    {
+      "bytes": 935,
+      "encoding": "identity",
+      "original_path": "run-1.stderr.log",
+      "retained_bytes": 935,
+      "retained_path": "run-1.stderr.log",
+      "retained_sha256": "f96ee05144b65b7af958430a7128f3588c61f463ae2196c59708f086a7e4db47",
+      "sha256": "f96ee05144b65b7af958430a7128f3588c61f463ae2196c59708f086a7e4db47"
+    },
+    {
+      "bytes": 180,
+      "encoding": "identity",
+      "original_path": "run-1.stdout.log",
+      "retained_bytes": 180,
+      "retained_path": "run-1.stdout.log",
+      "retained_sha256": "ac74d7cf5db742bf8adb62a896e476f1107d91729a5163a6142070b11cbc3c46",
+      "sha256": "ac74d7cf5db742bf8adb62a896e476f1107d91729a5163a6142070b11cbc3c46"
+    },
+    {
+      "bytes": 1007,
+      "encoding": "identity",
+      "original_path": "run-1.step.json",
+      "retained_bytes": 1007,
+      "retained_path": "run-1.step.json",
+      "retained_sha256": "36f0fb803ee4ab79091f7b3eea89a3a280f0151cc1acd19afa50986db7ba39b8",
+      "sha256": "36f0fb803ee4ab79091f7b3eea89a3a280f0151cc1acd19afa50986db7ba39b8"
+    },
+    {
+      "bytes": 144214,
+      "encoding": "identity",
+      "original_path": "run-2-phase-readback.json",
+      "retained_bytes": 144214,
+      "retained_path": "run-2-phase-readback.json",
+      "retained_sha256": "1c7ee1e8c5818850a1d622b470f3782bdd62ed84aef379b32d6e24d69089930a",
+      "sha256": "1c7ee1e8c5818850a1d622b470f3782bdd62ed84aef379b32d6e24d69089930a"
+    },
+    {
+      "bytes": 1527,
+      "encoding": "identity",
+      "original_path": "run-2-resource-after.json",
+      "retained_bytes": 1527,
+      "retained_path": "run-2-resource-after.json",
+      "retained_sha256": "2f4ac1564972e76247a55ea5f0bbcc5385758dc55175ecd6fba1621ef81c8508",
+      "sha256": "2f4ac1564972e76247a55ea5f0bbcc5385758dc55175ecd6fba1621ef81c8508"
+    },
+    {
+      "bytes": 1527,
+      "encoding": "identity",
+      "original_path": "run-2-resource-before.json",
+      "retained_bytes": 1527,
+      "retained_path": "run-2-resource-before.json",
+      "retained_sha256": "53a3d366d2281dd4997efc03a0a46934e1d11c079bfd223a9a2ae38741f7d1ea",
+      "sha256": "53a3d366d2281dd4997efc03a0a46934e1d11c079bfd223a9a2ae38741f7d1ea"
+    },
+    {
+      "bytes": 1330,
+      "encoding": "identity",
+      "original_path": "run-2-result.json",
+      "retained_bytes": 1330,
+      "retained_path": "run-2-result.json",
+      "retained_sha256": "a26796567b0319615ea75b7d36cbecce898bb484b0c7007b15e0410be0f0eb58",
+      "sha256": "a26796567b0319615ea75b7d36cbecce898bb484b0c7007b15e0410be0f0eb58"
+    },
+    {
+      "bytes": 421,
+      "encoding": "identity",
+      "original_path": "run-2-source-after.json",
+      "retained_bytes": 421,
+      "retained_path": "run-2-source-after.json",
+      "retained_sha256": "919a93685f4d8837ac4eb3009db5ba74fedc30456c0f8a6bb3660eee1c92c398",
+      "sha256": "919a93685f4d8837ac4eb3009db5ba74fedc30456c0f8a6bb3660eee1c92c398"
+    },
+    {
+      "bytes": 935,
+      "encoding": "identity",
+      "original_path": "run-2.stderr.log",
+      "retained_bytes": 935,
+      "retained_path": "run-2.stderr.log",
+      "retained_sha256": "f96ee05144b65b7af958430a7128f3588c61f463ae2196c59708f086a7e4db47",
+      "sha256": "f96ee05144b65b7af958430a7128f3588c61f463ae2196c59708f086a7e4db47"
+    },
+    {
+      "bytes": 180,
+      "encoding": "identity",
+      "original_path": "run-2.stdout.log",
+      "retained_bytes": 180,
+      "retained_path": "run-2.stdout.log",
+      "retained_sha256": "b0bdd98c64fa7ebf5b83c91cf9db46da6cef96db515561a6cc72e8b276abc1da",
+      "sha256": "b0bdd98c64fa7ebf5b83c91cf9db46da6cef96db515561a6cc72e8b276abc1da"
+    },
+    {
+      "bytes": 1007,
+      "encoding": "identity",
+      "original_path": "run-2.step.json",
+      "retained_bytes": 1007,
+      "retained_path": "run-2.step.json",
+      "retained_sha256": "a76226906597131539736c43feaf40f90a4365a38c8868564032cc0f5d845b2e",
+      "sha256": "a76226906597131539736c43feaf40f90a4365a38c8868564032cc0f5d845b2e"
+    },
+    {
+      "bytes": 144242,
+      "encoding": "identity",
+      "original_path": "run-3-phase-readback.json",
+      "retained_bytes": 144242,
+      "retained_path": "run-3-phase-readback.json",
+      "retained_sha256": "db1ea5b87b5978f827cd8ef350cb8d9a2c6c89291743dcc56e3701e46adbf5b9",
+      "sha256": "db1ea5b87b5978f827cd8ef350cb8d9a2c6c89291743dcc56e3701e46adbf5b9"
+    },
+    {
+      "bytes": 1527,
+      "encoding": "identity",
+      "original_path": "run-3-resource-after.json",
+      "retained_bytes": 1527,
+      "retained_path": "run-3-resource-after.json",
+      "retained_sha256": "13f6f7a68f5962be0100d3fdb36efeaf24df63d62ab10661d2a3f269d8be8914",
+      "sha256": "13f6f7a68f5962be0100d3fdb36efeaf24df63d62ab10661d2a3f269d8be8914"
+    },
+    {
+      "bytes": 1527,
+      "encoding": "identity",
+      "original_path": "run-3-resource-before.json",
+      "retained_bytes": 1527,
+      "retained_path": "run-3-resource-before.json",
+      "retained_sha256": "8c7879def66ed4cc227cb8aae2444cf54e5e23e51ee1b9c0c92385d558d14d13",
+      "sha256": "8c7879def66ed4cc227cb8aae2444cf54e5e23e51ee1b9c0c92385d558d14d13"
+    },
+    {
+      "bytes": 1330,
+      "encoding": "identity",
+      "original_path": "run-3-result.json",
+      "retained_bytes": 1330,
+      "retained_path": "run-3-result.json",
+      "retained_sha256": "3ae59cd6919514a3ab1cd5fd4762ad8a87d51196300f5dfb4e516708a053242e",
+      "sha256": "3ae59cd6919514a3ab1cd5fd4762ad8a87d51196300f5dfb4e516708a053242e"
+    },
+    {
+      "bytes": 421,
+      "encoding": "identity",
+      "original_path": "run-3-source-after.json",
+      "retained_bytes": 421,
+      "retained_path": "run-3-source-after.json",
+      "retained_sha256": "919a93685f4d8837ac4eb3009db5ba74fedc30456c0f8a6bb3660eee1c92c398",
+      "sha256": "919a93685f4d8837ac4eb3009db5ba74fedc30456c0f8a6bb3660eee1c92c398"
+    },
+    {
+      "bytes": 935,
+      "encoding": "identity",
+      "original_path": "run-3.stderr.log",
+      "retained_bytes": 935,
+      "retained_path": "run-3.stderr.log",
+      "retained_sha256": "e871fba30716bd3c2bd30576053962bfbf6126dfd7b7a4ac603e45179ad08984",
+      "sha256": "e871fba30716bd3c2bd30576053962bfbf6126dfd7b7a4ac603e45179ad08984"
+    },
+    {
+      "bytes": 180,
+      "encoding": "identity",
+      "original_path": "run-3.stdout.log",
+      "retained_bytes": 180,
+      "retained_path": "run-3.stdout.log",
+      "retained_sha256": "00e899d4157b4773f19fb3f78c6f041762ca8a655997b822273669f42acb5ac0",
+      "sha256": "00e899d4157b4773f19fb3f78c6f041762ca8a655997b822273669f42acb5ac0"
+    },
+    {
+      "bytes": 1007,
+      "encoding": "identity",
+      "original_path": "run-3.step.json",
+      "retained_bytes": 1007,
+      "retained_path": "run-3.step.json",
+      "retained_sha256": "dbe46eb6fe54a1e48ea76ba92ae854511ab28427c8c0724ac0b8375c7a418c4c",
+      "sha256": "dbe46eb6fe54a1e48ea76ba92ae854511ab28427c8c0724ac0b8375c7a418c4c"
+    },
+    {
+      "bytes": 10539,
+      "encoding": "identity",
+      "original_path": "run-native-campaign.py",
+      "retained_bytes": 10539,
+      "retained_path": "run-native-campaign.py",
+      "retained_sha256": "21d618485ba281076d754a70bf892d6d986fc46b4f70341f03c08347d17bced7",
+      "sha256": "21d618485ba281076d754a70bf892d6d986fc46b4f70341f03c08347d17bced7"
+    },
+    {
+      "bytes": 196,
+      "encoding": "identity",
+      "original_path": "rustc-version.txt",
+      "retained_bytes": 196,
+      "retained_path": "rustc-version.txt",
+      "retained_sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+    },
+    {
+      "bytes": 421,
+      "encoding": "identity",
+      "original_path": "source-after-native.json",
+      "retained_bytes": 421,
+      "retained_path": "source-after-native.json",
+      "retained_sha256": "919a93685f4d8837ac4eb3009db5ba74fedc30456c0f8a6bb3660eee1c92c398",
+      "sha256": "919a93685f4d8837ac4eb3009db5ba74fedc30456c0f8a6bb3660eee1c92c398"
+    },
+    {
+      "bytes": 421,
+      "encoding": "identity",
+      "original_path": "source-after.json",
+      "retained_bytes": 421,
+      "retained_path": "source-after.json",
+      "retained_sha256": "919a93685f4d8837ac4eb3009db5ba74fedc30456c0f8a6bb3660eee1c92c398",
+      "sha256": "919a93685f4d8837ac4eb3009db5ba74fedc30456c0f8a6bb3660eee1c92c398"
+    },
+    {
+      "bytes": 421,
+      "encoding": "identity",
+      "original_path": "source-after.log",
+      "retained_bytes": 421,
+      "retained_path": "source-after.log",
+      "retained_sha256": "919a93685f4d8837ac4eb3009db5ba74fedc30456c0f8a6bb3660eee1c92c398",
+      "sha256": "919a93685f4d8837ac4eb3009db5ba74fedc30456c0f8a6bb3660eee1c92c398"
+    },
+    {
+      "bytes": 421,
+      "encoding": "identity",
+      "original_path": "source-before-build.json",
+      "retained_bytes": 421,
+      "retained_path": "source-before-build.json",
+      "retained_sha256": "919a93685f4d8837ac4eb3009db5ba74fedc30456c0f8a6bb3660eee1c92c398",
+      "sha256": "919a93685f4d8837ac4eb3009db5ba74fedc30456c0f8a6bb3660eee1c92c398"
+    },
+    {
+      "bytes": 421,
+      "encoding": "identity",
+      "original_path": "source-before-campaigns.json",
+      "retained_bytes": 421,
+      "retained_path": "source-before-campaigns.json",
+      "retained_sha256": "919a93685f4d8837ac4eb3009db5ba74fedc30456c0f8a6bb3660eee1c92c398",
+      "sha256": "919a93685f4d8837ac4eb3009db5ba74fedc30456c0f8a6bb3660eee1c92c398"
+    },
+    {
+      "bytes": 421,
+      "encoding": "identity",
+      "original_path": "source-before.json",
+      "retained_bytes": 421,
+      "retained_path": "source-before.json",
+      "retained_sha256": "919a93685f4d8837ac4eb3009db5ba74fedc30456c0f8a6bb3660eee1c92c398",
+      "sha256": "919a93685f4d8837ac4eb3009db5ba74fedc30456c0f8a6bb3660eee1c92c398"
+    },
+    {
+      "bytes": 6565,
+      "encoding": "identity",
+      "original_path": "systemd-run.log",
+      "retained_bytes": 6565,
+      "retained_path": "systemd-run.log",
+      "retained_sha256": "ce2d7a1f67b6b3f3e841a60564359f10b236606acf29e40d8dd2edbd766bbe7c",
+      "sha256": "ce2d7a1f67b6b3f3e841a60564359f10b236606acf29e40d8dd2edbd766bbe7c"
+    },
+    {
+      "bytes": 330,
+      "encoding": "identity",
+      "original_path": "systemd-version.txt",
+      "retained_bytes": 330,
+      "retained_path": "systemd-version.txt",
+      "retained_sha256": "24e682030f54829600ce9c96ef9d8be4297eb4cd1b11eca8fa7f83c5c4595fc7",
+      "sha256": "24e682030f54829600ce9c96ef9d8be4297eb4cd1b11eca8fa7f83c5c4595fc7"
+    },
+    {
+      "bytes": 257,
+      "encoding": "identity",
+      "original_path": "toolchain-install.log",
+      "retained_bytes": 257,
+      "retained_path": "toolchain-install.log",
+      "retained_sha256": "5f75ffd1584354e30e6c4ead246d2a4807422b220697104064d8a7c296b79d22",
+      "sha256": "5f75ffd1584354e30e6c4ead246d2a4807422b220697104064d8a7c296b79d22"
+    },
+    {
+      "bytes": 150,
+      "encoding": "identity",
+      "original_path": "unit-cleanup.log",
+      "retained_bytes": 150,
+      "retained_path": "unit-cleanup.log",
+      "retained_sha256": "7785b72a851b763a60661072b0fe59787c438e7b60da3da5c85ae67e48f5def4",
+      "sha256": "7785b72a851b763a60661072b0fe59787c438e7b60da3da5c85ae67e48f5def4"
+    },
+    {
+      "bytes": 29137889,
+      "encoding": "gzip",
+      "original_path": "run-1-raw/report.json",
+      "retained_bytes": 2633344,
+      "retained_path": "run-1-report.json.gz",
+      "retained_sha256": "a5a7a39866ab2d9dd0deb40e9f29173af8cbeb70d9c3bcc4d78aaee17c5c43b4",
+      "sha256": "669a338e9f7e2c8d60e5c499cd12da2a695d348ca835cae771577d6a783067ac"
+    },
+    {
+      "bytes": 28381847,
+      "encoding": "gzip",
+      "original_path": "run-2-raw/report.json",
+      "retained_bytes": 2579570,
+      "retained_path": "run-2-report.json.gz",
+      "retained_sha256": "05cddb92e6f6645c325dc35c2ca97fb0778c4f9d09f45621fb0927677309bfe4",
+      "sha256": "44779fbb1087c7bcd19e311d71b0365c6771c6375c3f87934edef1086402a24f"
+    },
+    {
+      "bytes": 28566043,
+      "encoding": "gzip",
+      "original_path": "run-3-raw/report.json",
+      "retained_bytes": 2592028,
+      "retained_path": "run-3-report.json.gz",
+      "retained_sha256": "bee4ff00c33015e7c760716010667f2131dc1f3473489eea156abb47f59e3db1",
+      "sha256": "6b9b1fda9d08a6e6b530e2094541be7bc2f3c56770173084997948d80eab569e"
+    }
+  ],
+  "original_artifact_file_count": 910,
+  "original_manifest": {
+    "bytes": 160105,
+    "path": "artifact-files.json",
+    "sha256": "12406cc156e57c130fa14af2b50b386031ec3640ce7f0234ed5bc9f0a700aac3"
+  },
+  "schema": "pon-original-native-campaign-retained-subset-v1",
+  "scope": "Original raw reports and top-level metadata/logs retained without rewriting; report gzip is lossless. Binary and per-actor/SQLite files are omitted here, retained in the complete ZIP. Subset verification cannot attest omitted bytes, host enforcement, independent custody, WAN, work hardness, unique transaction throughput, model efficacy, deterministic finality or execution authority.",
+  "source": {
+    "head": "9e705ccf75b7318dcc4bda4815956f58beb10e72",
+    "tree": "521ae87a28060d545979069b189eebbc74a71fd8"
+  }
+}

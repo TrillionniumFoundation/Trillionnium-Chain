@@ -1,0 +1,159 @@
+{
+  "absent_paths": {
+    "original_outer_cgroup": true,
+    "proof": true,
+    "target_root": true
+  },
+  "all_descendants_wait_reaped": null,
+  "analysis_complete": true,
+  "begin_dispatch_cancel_admit_payment_calls": 0,
+  "bound_provider_job_present": false,
+  "cancel_event_present": false,
+  "cold_Rust_replay_executed": false,
+  "current_native_payment_authorized": false,
+  "decoder_sources": {
+    "trillionnium/crates/trnm-service-settlement/src/native_budget.rs": {
+      "argv": [
+        "/usr/bin/git",
+        "-C",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-repo",
+        "show",
+        "cb557c5e59b00ba7c6b1d40f78fbe51031a26f11:trillionnium/crates/trnm-service-settlement/src/native_budget.rs"
+      ],
+      "bytes": 68208,
+      "exit": 0,
+      "sha256": "dd200bb218967dc4456ad48cf81a4e648202f0ed6593972717d7ee4a5eafe4db"
+    },
+    "trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2.rs": {
+      "argv": [
+        "/usr/bin/git",
+        "-C",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-repo",
+        "show",
+        "cb557c5e59b00ba7c6b1d40f78fbe51031a26f11:trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2.rs"
+      ],
+      "bytes": 41413,
+      "exit": 0,
+      "sha256": "acf3c206be4d1ffad879dade186cd70fa0cdf5d8c0a8cf821b8bfce086eb6484"
+    }
+  },
+  "dispatch_intent_persisted": true,
+  "errors": [],
+  "event_counts": {
+    "Intent": 1,
+    "Prepare": 1
+  },
+  "event_tags": [
+    {
+      "kind": "Prepare",
+      "payload_bytes": 866,
+      "payload_sha256": "9b1a54f4bdff4973be633b8aaf6ae1a57fc5af77eb92a053a3182375908bc583",
+      "root": "edf01b9344fb8d603d622d4f325885122afd9a0339d9a900e8b7856d6369141c",
+      "sequence": 1
+    },
+    {
+      "kind": "Intent",
+      "payload_bytes": 249,
+      "payload_sha256": "be35bdc9a2cf35aa3c28e28e5c5b10a320b5f8085b9fa49158c63db2cfc29b49",
+      "root": "aa8c1c771494522042c7f2d42b0390caf4eef6a6fd28c06b1bbeac316312dc98",
+      "sequence": 2
+    }
+  ],
+  "exact_Prepare_and_Intent_Borsh_payloads_decoded": true,
+  "failure_event_present": false,
+  "finished_monotonic_ns": 1164660788375901,
+  "fresh_proof_generations": 0,
+  "gpu_usage_ns": null,
+  "journal_identity": "71c7642adb5d4531a7ee5d824e98d343d6f413086fe009c2922ea8fe5715eac9",
+  "journal_raw_hash_chain_verified": true,
+  "native_cancel_or_settlement_block_present": false,
+  "native_current_tip": "3f3e2bead3d12278ea3e27696e65373e92c46e227132f51117b0329fb0f8ccdf",
+  "native_post_genesis_blocks": 1,
+  "native_remaining_units": 1000,
+  "native_task_status": "reserved",
+  "original_database_connections_opened": 0,
+  "original_databases_written": false,
+  "original_deadline": {
+    "clock_domain": "30c42ca1232d091a08cdc59666f3135cdb197a577b4c2406537e9750a0dc8b34",
+    "deadline_ns": 1164217362239646,
+    "winner_ns": 1163625518296320
+  },
+  "original_files": [
+    {
+      "bytes": 732,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/failed-C1-owner-state-readback-01/original-terminal.json",
+      "sha256": "d149c98c23e08159c10235c4ea5bd3a7274fc69b5357c45b43fffdf595994aba"
+    },
+    {
+      "bytes": 42646,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-cancel-launch-plans-01/config.json",
+      "sha256": "45eccfbb1f63c23809eeb1cccf20b9793abe3f9ef37339afb0a3ff60a842823d"
+    },
+    {
+      "bytes": 221184,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-cancel-research-node-01/native.sqlite",
+      "sha256": "eb17db9a8270719277bfb4d982bfc156dab2dfdb662551f1685e7870ce1e4815"
+    },
+    {
+      "bytes": 20480,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-cancel-research-node-01/native.sqlite.w1-generation-owner-v2.sqlite",
+      "sha256": "372d15453f640b9f1989445d731b98bf95c3aeda455262fb6c2d3aeccdf8ea4c"
+    },
+    {
+      "bytes": 1241,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-cancel-run-01/native-funded-intent.json",
+      "sha256": "7ab6e2e76077d49f058165f566596a709b0007be02a9d579211eeaf2947a1fbf"
+    },
+    {
+      "bytes": 12288,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-cancel-run-01/native-generation-v2.sqlite",
+      "sha256": "7a7028b060713a79f281cf91f19a36db4b7feeed3ece025bbe9981acf13b736a"
+    },
+    {
+      "bytes": 68909,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-cancel-run-01/target-request.json",
+      "sha256": "eff76555c5166818cbf7b833e12c43d315f6fd6bb684d8031f09e70982910071"
+    }
+  ],
+  "original_operation": "285bbcda30e7b735bdb828c1d2d838ab3f01501b00166a8074e271d83d0dc654",
+  "original_request": {
+    "canonical_bytes": 66550,
+    "file_pins": 339,
+    "raw_bytes": 68909,
+    "raw_sha256": "eff76555c5166818cbf7b833e12c43d315f6fd6bb684d8031f09e70982910071"
+  },
+  "original_resource_cap": {
+    "cpu_ns": 4800000000000,
+    "gpu_ns": 1200000000000,
+    "memory_peak_upper_bound_bytes": 8589934592,
+    "receipt_bytes": 16777216
+  },
+  "original_statement": "2e7f2362cbef52373502f7e6ea147aded38e4a56a35fdb3e32728ea299e5335e",
+  "original_terminal": {
+    "bytes": 732,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/failed-C1-owner-state-readback-01/original-terminal.json",
+    "sha256": "d149c98c23e08159c10235c4ea5bd3a7274fc69b5357c45b43fffdf595994aba"
+  },
+  "owner_assignment_count": 1,
+  "payment_event_present": false,
+  "private_database_copies_and_dumps_excluded_from_publication": true,
+  "provider_account_delta_present": false,
+  "provider_current_balance_independently_decoded": false,
+  "publish_exclusion": [
+    "private-analysis-only/**"
+  ],
+  "resource_charge_derived_from_exact_source": {
+    "cpu_ns": 4800000000000,
+    "gpu_ns": 1200000000000,
+    "memory_peak_upper_bound_bytes": 8589934592,
+    "receipt_bytes": 16777216
+  },
+  "resource_charge_scope": "No Verified or Failure-with-consumption event exists; unchanged V2 Record::readback retains original full cap. This reader never invoked Rust readback/begin or granted credit.",
+  "schema": "TRNM-W1-FAILED-C1-OWNER-READONLY-STATE1",
+  "scope": "Closed failed C1 trial, no dispatch retry. Independent bounded byte/schema/hash-chain/canonical-row readback on private SQLite copies only. No successful cancellation, cold executable replay or payment qualification inferred.",
+  "settlement_event_present": false,
+  "source_commit": "cb557c5e59b00ba7c6b1d40f78fbe51031a26f11",
+  "source_tree": "7971aca2ff432ec8907bb69545a2c58d70b4a215",
+  "started_monotonic_ns": 1164660336277403,
+  "verified_event_present": false
+}

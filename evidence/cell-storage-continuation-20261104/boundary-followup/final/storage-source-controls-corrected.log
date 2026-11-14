@@ -1,0 +1,35 @@
+..................................
+----------------------------------------------------------------------
+Ran 34 tests in 10.805s
+
+OK
+{"receipt": "/tmp/trnm-ci-raw-source-08gvjrqr/.git/receipt", "result": "FAIL"}
+{"receipt": "/tmp/trnm-ci-raw-source-s_99i37v/.git/receipt", "result": "FAIL"}
+{"receipt": "/tmp/trnm-ci-raw-source-kj_ob7tg/.git/receipt", "result": "FAIL"}
+{"receipt": "/tmp/trnm-ci-raw-source-3dxug99p/.git/receipt", "result": "FAIL"}
+{"receipt": "/tmp/trnm-ci-raw-source-wvz1a56e/.git/receipt-PASS", "result": "PASS"}
+{"receipt": "/tmp/trnm-ci-raw-source-wvz1a56e/.git/receipt-FAIL", "result": "FAIL"}
+...................................
+----------------------------------------------------------------------
+Ran 35 tests in 117.560s
+
+OK
+......................
+----------------------------------------------------------------------
+Ran 22 tests in 0.936s
+
+OK
+...........
+----------------------------------------------------------------------
+Ran 11 tests in 0.381s
+
+OK
+....
+----------------------------------------------------------------------
+Ran 4 tests in 0.016s
+
+OK
+distributed source inventory: PASS
+{"canonical_default_provider_contract_checked": true, "canonical_pnq2_contract_checked": true, "continuous_npq6_combination_accepted": false, "cryptographic_acceptance": false, "exact_source_blobs": 452, "legacy_qtx1_optional_adapter_contract_checked": true, "native_transfer_account_contract_checked": true, "native_transport_contract_checked": true, "node_activated": false, "production_confidentiality_accepted": false, "schema": "trnm-pq-cross-branch-check-v1", "status": "HOLD_NO_GO", "upstream_heads": 6, "whole_native_authorization_migrated": false}
+{"artifact_comparison_jobs": 1, "head_jobs": 5, "inline_source_pins": 22, "merge_lanes": 5, "native_cost_architectures": 2, "tests_executed": false, "w1_actual_reuse_v3_cells": 4}
+{"activation": false, "head": "211e330fd1cfbdaf3e9ff552714df29c840ce675", "local_links": 2633, "normal_dependency_edges": 25, "result": "PASS", "runtime_implemented": false, "rust_files": 1125, "source_state": "committed-clean", "tree": "a18dc9ffc20efe435ae8ebceecdca537b7013261", "workspace_packages": 26}

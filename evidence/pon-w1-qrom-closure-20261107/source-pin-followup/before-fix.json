@@ -1,0 +1,15 @@
+{
+  "command": [
+    "python3",
+    "scripts/ci/check_pq_research_integration.py"
+  ],
+  "elapsed_seconds": 0.1190734510000766,
+  "exit_code": 1,
+  "head": "1a14f7d4826363daefac9ec10131c66d7e70ece7",
+  "scope": "Existing 1a14 generated inventory pin before new release-owner changes; raw source-pin error preserved.",
+  "started_utc": "2026-11-07T14:21:53.799723+00:00",
+  "stderr_bytes": 111,
+  "stderr_sha256": "7ff852b1e8329df2a0bb724640bee1eb74e2ed6208d66a958cbec2cbbcca84c3",
+  "stdout_bytes": 0,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

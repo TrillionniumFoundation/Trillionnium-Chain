@@ -1,0 +1,64 @@
+{
+  "acceptance_granted": false,
+  "diagnostic_job_id": "1a1c9049876-135c4-381",
+  "diagnostic_process_exit_code": 0,
+  "diagnostic_terminal_publication_confirmed": true,
+  "files": [
+    {
+      "bytes": 5113,
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/probe_data_node_quiet_activity.py",
+      "sha256": "79d77d08cbf269427788dcbb3d43a73b1c294bf2727abcd01055fcc93d110471"
+    },
+    {
+      "bytes": 971,
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/data-node-quiet-activity-readonly-launch.json",
+      "sha256": "aefea2527c4755bb6dbd96db5876f523970a6b45ff2bb7cf233ecff536c91ead"
+    },
+    {
+      "bytes": 732,
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/data-node-quiet-activity-status.json",
+      "sha256": "9b5300691e6f4d6aa3a6a840d0d3763e01e11b90461551d4b32e54d4ad50009a"
+    },
+    {
+      "bytes": 8584,
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/data-node-quiet-activity-observation-1.json",
+      "sha256": "8240af7ef8da59e7f9b3181c007000a46892923d8328b03723112e12f002bf37"
+    },
+    {
+      "bytes": 28485,
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/data-node-quiet-activity-native-read-payload.json",
+      "sha256": "f1ca05d161f600cdb60091fc83c81df82f2fb27438eeab579d495242c0bc5797"
+    }
+  ],
+  "host": "desktop",
+  "interpreted_as_hang_oom_or_storage_cause": false,
+  "observed_native_job_id": "1a1c8ba754b-135c4-1d3",
+  "original_native_job_not_modified": true,
+  "original_sdk_payload_bytes": 28485,
+  "original_sdk_payload_sha256": "f1ca05d161f600cdb60091fc83c81df82f2fb27438eeab579d495242c0bc5797",
+  "original_stdout_bytes": 8584,
+  "original_stdout_matches_saved_observation": true,
+  "original_stdout_sha256": "8240af7ef8da59e7f9b3181c007000a46892923d8328b03723112e12f002bf37",
+  "pages": [
+    {
+      "bytes": 22604,
+      "next_offset": 16384,
+      "offset": 0,
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/data-node-quiet-activity-readback-1-sdk-result-page-0.json",
+      "sha256": "78aa8714ca2a2789f22acf47ad6a2c746ff8fed3c8d367a9c64c7ed513f1ec0a"
+    },
+    {
+      "bytes": 16895,
+      "next_offset": 28485,
+      "offset": 16384,
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/data-node-quiet-activity-readback-1-sdk-result-page-16384.json",
+      "sha256": "c7ca2c99f6d4a67822febb3d4c6c8a096eb7adba1959af296f530147a32bbea2"
+    }
+  ],
+  "read_operation_id": "0d9b2d9d2ec3c77368f3b5e96836721dce04bcc3505902ade06c72d72489837a",
+  "role": "one read-only activity and filesystem-capacity observation; not a validation receipt or benchmark",
+  "schema": "read-only-native-activity-transfer-verification-v1",
+  "source_commit_context": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_identity_not_rechecked_by_probe": true,
+  "verified_utc": "2026-11-11T05:13:22.499257+00:00"
+}

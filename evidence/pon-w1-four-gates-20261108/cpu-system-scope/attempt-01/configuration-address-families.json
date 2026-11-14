@@ -1,0 +1,34 @@
+[
+  {
+    "properties": [
+      "RestrictAddressFamilies=none"
+    ],
+    "exit": 1,
+    "stdout": "",
+    "stderr": "Failed to start transient service unit: Failed to set unit properties: Invalid argument\n"
+  },
+  {
+    "properties": [
+      "PrivateNetwork=yes",
+      "PrivateIPC=yes",
+      "PrivateTmp=yes",
+      "ProtectProc=invisible",
+      "ProcSubset=pid",
+      "ProtectSystem=strict",
+      "ProtectHome=yes"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "properties": [
+      "RestrictAddressFamilies=AF_UNIX",
+      "SystemCallFilter=~@debug socket socketpair",
+      "SystemCallErrorNumber=EPERM"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+]

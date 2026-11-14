@@ -1,0 +1,622 @@
+{
+  "checked_source_files": 36,
+  "checks": [
+    "expected_source_commit",
+    "exact_source_success_flags",
+    "clean_unchanged_source_snapshots",
+    "all_reported_source_hashes_match_committed_git_blobs",
+    "runner_hash_fixed_before_and_after",
+    "preregistered_plan_digest",
+    "source_material_replay_required_and_recorded",
+    "retained_model_and_consumer_files_match_pins",
+    "native_request_transcripts_byte_equal",
+    "native_response_transcripts_byte_equal",
+    "native_exchange_count_368",
+    "all_native_exact_frame_hashes_lengths_ordinals_and_exchange_records",
+    "attempts_ndjson_matches_report",
+    "controls_ndjson_matches_report",
+    "native_exchanges_ndjson_matches_report",
+    "all_16_preregistered_primary_nonces_retained",
+    "all_251_preregistered_controls_have_disposition",
+    "unused_budget_control_denominator_is_preregistered",
+    "fixed_body_capsule_sizes_and_binding",
+    "all_candidate_challenges_and_work_ids_independently_recomputed",
+    "trace_owner_breakdown_1024_plus_64",
+    "1088_distinct_step_preimages",
+    "report_trace_owner_totals_match_raw_rows",
+    "all_87_receipts_and_exact_packet_files",
+    "post_exit_packet_and_receipt_readback_sha_and_exact_wire_bytes",
+    "packet_readback_audit_occurs_after_recorded_clean_child_exit",
+    "all_17_full_python_traces_match_wire_proof_seed_chain_and_endpoint",
+    "all_primary_native_proofs_targets_first_records_match_wire",
+    "64_distinct_raw_carriers",
+    "carriers_are_exact_expected_whitespace_variants_with_one_identity",
+    "all_negative_wire_packets_retrievable_and_match_intended_mutations",
+    "sqlite_budget_256_reserved_83_spent_256_max",
+    "sqlite_attempts_7_hit_9_miss_2_reserved",
+    "all_256_reservations_and_83_claims_match_ordered_fingerprints_and_sqlite",
+    "response_budget_matches_sqlite_after_reopen",
+    "all_7_hits_and_9_misses_retained",
+    "untrusted_valid_proof_has_no_native_producer_record",
+    "257th_rejected_before_cell",
+    "cancelled_17_prefix_not_proof",
+    "nonce_and_expiry_refusals_recorded",
+    "observer_main_thread_and_parent_process_cpu_are_distinct",
+    "native_command_cpu_is_nested_within_native_only_and_all_child_totals",
+    "cpu_and_wall_overlap_exclusions_explicit",
+    "all_nested_credit_and_production_claims_remain_zero_or_false",
+    "global_sidechannel_and_crash_limits_retained"
+  ],
+  "expected_source_sha": "1e0eba75f4f4a4e24e17cbd0f263f915c1493ac7",
+  "observations": {
+    "all_child_cpu_seconds": 1.2643809999999998,
+    "carriers": 64,
+    "charged_unused_or_pre_native_failure": 173,
+    "controls": 251,
+    "hits": 7,
+    "independent_python_steps_by_owner": {
+      "independent_python_crosscheck": 1024,
+      "independent_untrusted_producer": 64
+    },
+    "independent_python_steps_total": 1088,
+    "misses": 9,
+    "native_command_thread_cpu_ns_nested": 345090631,
+    "native_exchanges": 368,
+    "native_only_child_cpu_seconds": 0.375407,
+    "native_producer_cancelled_prefix_steps": 17,
+    "native_producer_complete_steps": 1024,
+    "native_valid_verified_seals": 81,
+    "observer_main_thread_cpu_ns_nested": 174681093,
+    "parent_process_cpu_ns": 1285820745,
+    "post_exit_exact_packets": 87,
+    "primary_verified": 16,
+    "raw_native_input_bytes": 272320,
+    "raw_native_output_bytes": 423645,
+    "raw_tcp_packet_bytes": 308445,
+    "tcp_application_received_bytes": 231293,
+    "tcp_application_sent_bytes": 308793,
+    "tcp_receipts": 87,
+    "verification_reserved": 256,
+    "verification_spent": 83,
+    "whole_wall_ns": 3202521043
+  },
+  "packet_manifest": [
+    {
+      "bytes": 3522,
+      "file": "packet-0000.bin",
+      "sha256": "d07951c2858a201bd939ea87a62551c9bcf50c3cc895a571e034f84de4bb2046",
+      "status": "verified"
+    },
+    {
+      "bytes": 3522,
+      "file": "packet-0001.bin",
+      "sha256": "3c26fb4117453ac8183b01959e37b826fddab062070d70bfb98572613e57282f",
+      "status": "verified"
+    },
+    {
+      "bytes": 3522,
+      "file": "packet-0002.bin",
+      "sha256": "dda96364e58c012be83cdc98f9c6e60e3cf56bd67092ace9c3e33364d21d0061",
+      "status": "verified"
+    },
+    {
+      "bytes": 3522,
+      "file": "packet-0003.bin",
+      "sha256": "d90e74a53c2c68dd7d0e352099d03b7e1d6c9c35458982f34744a1cc72f59088",
+      "status": "verified"
+    },
+    {
+      "bytes": 3522,
+      "file": "packet-0004.bin",
+      "sha256": "31988bfbc299fbb01b212cd9df27a0f616361c1a43f6d5b418e306c226dd537e",
+      "status": "verified"
+    },
+    {
+      "bytes": 3522,
+      "file": "packet-0005.bin",
+      "sha256": "4813cae113ec5d4e2d73fcae5749ac4f895127c92b6ab41736fceb2280aed7b8",
+      "status": "verified"
+    },
+    {
+      "bytes": 3522,
+      "file": "packet-0006.bin",
+      "sha256": "0e5b8fff75d085da2c956ae9013cd719e6ddb43431ee333abf20608e02513b07",
+      "status": "verified"
+    },
+    {
+      "bytes": 3522,
+      "file": "packet-0007.bin",
+      "sha256": "a82de8ba758b05d3adfa5d6a1200c32019c44ba2177ccd424b6e7be242ca8e4a",
+      "status": "verified"
+    },
+    {
+      "bytes": 3522,
+      "file": "packet-0008.bin",
+      "sha256": "f0a6d69c0ce6ec2925d8a60fa76103fe62a7f1691ba381174f344a1a017295b1",
+      "status": "verified"
+    },
+    {
+      "bytes": 3523,
+      "file": "packet-0009.bin",
+      "sha256": "c4a79a81eb7e5347a66404491c609eea84a6dabc80b99948260a44b9691c29bd",
+      "status": "verified"
+    },
+    {
+      "bytes": 3523,
+      "file": "packet-0010.bin",
+      "sha256": "610bcd82f1c2a3173f4a5e2c458a229b0617ad1a468f2fa4fbf6cd22f9efbf37",
+      "status": "verified"
+    },
+    {
+      "bytes": 3523,
+      "file": "packet-0011.bin",
+      "sha256": "ae3a115a9a7193a1f34afdcc102e78b8923c8106f6175c54c2cc25ae44d5113c",
+      "status": "verified"
+    },
+    {
+      "bytes": 3523,
+      "file": "packet-0012.bin",
+      "sha256": "af7537913cc3dd5fb005333097dd702ccd21ba76c21fb5a9ed085e63c2d3e527",
+      "status": "verified"
+    },
+    {
+      "bytes": 3523,
+      "file": "packet-0013.bin",
+      "sha256": "79bf788043b7463b4bece74968745171f61aa0cbc9d6a55db0350b3194109a96",
+      "status": "verified"
+    },
+    {
+      "bytes": 3523,
+      "file": "packet-0014.bin",
+      "sha256": "f5b4b863ac7f81cfdfe5db132c431920b9880cc4e6535fa99fe875cbed37343c",
+      "status": "verified"
+    },
+    {
+      "bytes": 3523,
+      "file": "packet-0015.bin",
+      "sha256": "fb28e1954b649eb838fd197d9d6d23838d33e4aca4842a1379c559a0701cc753",
+      "status": "verified"
+    },
+    {
+      "bytes": 3522,
+      "file": "packet-0016.bin",
+      "sha256": "d07951c2858a201bd939ea87a62551c9bcf50c3cc895a571e034f84de4bb2046",
+      "status": "verified"
+    },
+    {
+      "bytes": 3523,
+      "file": "packet-0017.bin",
+      "sha256": "3450ae5c7ab4ad29c28cf8bb24c5f0683d3eeafbe7365bda6a049896c2bb4884",
+      "status": "verified"
+    },
+    {
+      "bytes": 3524,
+      "file": "packet-0018.bin",
+      "sha256": "a605d0b291f89a27a246572705b84113893c89abfaf987328dc79ce64fed9911",
+      "status": "verified"
+    },
+    {
+      "bytes": 3525,
+      "file": "packet-0019.bin",
+      "sha256": "7fd75eec2cbad9106baa1adf677760b94811e28f7254bb5cf231c06e5e17562a",
+      "status": "verified"
+    },
+    {
+      "bytes": 3526,
+      "file": "packet-0020.bin",
+      "sha256": "e09b8a66e6f690740226ade91c067423dd1850b815a48c38fca2177f159940cb",
+      "status": "verified"
+    },
+    {
+      "bytes": 3527,
+      "file": "packet-0021.bin",
+      "sha256": "c8b1f9d81a7ad4a0940bcee78a7d3386a93ace05b86af09cda2c956010e7f7b8",
+      "status": "verified"
+    },
+    {
+      "bytes": 3528,
+      "file": "packet-0022.bin",
+      "sha256": "dc40af8275d2d92812f85cd774669ca76344290de232ddec3787eec042c001c0",
+      "status": "verified"
+    },
+    {
+      "bytes": 3529,
+      "file": "packet-0023.bin",
+      "sha256": "5f0be1a60ecb5697ef325efd80e0c6e36eb6894e11deab3d021a37de6be8cbf9",
+      "status": "verified"
+    },
+    {
+      "bytes": 3530,
+      "file": "packet-0024.bin",
+      "sha256": "9d81cf9602d421f523eaf48f665f962ca2d71588e0c20f4a9233e3c6ecea59ef",
+      "status": "verified"
+    },
+    {
+      "bytes": 3531,
+      "file": "packet-0025.bin",
+      "sha256": "2ae881d5133ec39ce8caea649d21f65759ce76048328ed2edfea27aeb86ba18c",
+      "status": "verified"
+    },
+    {
+      "bytes": 3532,
+      "file": "packet-0026.bin",
+      "sha256": "7e5af7b633256b213b29171843a3c9be15bdb2f55662fa51756d01a3a712f589",
+      "status": "verified"
+    },
+    {
+      "bytes": 3533,
+      "file": "packet-0027.bin",
+      "sha256": "d6deb8f5af402af93bf2d2a2698866dd937e8a15751277e66e17c25c2fc7dabb",
+      "status": "verified"
+    },
+    {
+      "bytes": 3534,
+      "file": "packet-0028.bin",
+      "sha256": "a90452683e89c3fbe4bdbe622d9e3e6123fbe7d81fbf688f4dc203420a19859b",
+      "status": "verified"
+    },
+    {
+      "bytes": 3535,
+      "file": "packet-0029.bin",
+      "sha256": "84fbee1b0a863e00eb599e44b05de112b4c31fc38c8cd7d47f21235667e626ed",
+      "status": "verified"
+    },
+    {
+      "bytes": 3536,
+      "file": "packet-0030.bin",
+      "sha256": "107125fe51054feb43c163fae60a35bc64d9427b89b2dff2fc9b8ca292079f91",
+      "status": "verified"
+    },
+    {
+      "bytes": 3537,
+      "file": "packet-0031.bin",
+      "sha256": "b16572eeb0bb671305a410213c754d7a352caf06cda69a7faf6bf3ef0c016b43",
+      "status": "verified"
+    },
+    {
+      "bytes": 3538,
+      "file": "packet-0032.bin",
+      "sha256": "d7f27e274b31c78edf7381cd9b14af5b449fd8482ad5e5c85c4b6409f99e0170",
+      "status": "verified"
+    },
+    {
+      "bytes": 3539,
+      "file": "packet-0033.bin",
+      "sha256": "40eace2a2a6c699c06eaea31f6ac25c98b697020b42aca20502590fe9921784e",
+      "status": "verified"
+    },
+    {
+      "bytes": 3540,
+      "file": "packet-0034.bin",
+      "sha256": "b6e492b1f1145f2953db24109321e94233f25137b62fa27565c0ba782644944a",
+      "status": "verified"
+    },
+    {
+      "bytes": 3541,
+      "file": "packet-0035.bin",
+      "sha256": "175adf204752becfbaca9229de952e213c47b907fad4618f86b528089ab3a747",
+      "status": "verified"
+    },
+    {
+      "bytes": 3542,
+      "file": "packet-0036.bin",
+      "sha256": "9b7eb51bb8ec7f9eccd099b92ebac5d10319730f0d1b0aa2ad05dfbcd38b4c0f",
+      "status": "verified"
+    },
+    {
+      "bytes": 3543,
+      "file": "packet-0037.bin",
+      "sha256": "dfeed40650c1182fc5b7bc93f882fd354baa4d6ae39aa05da8962abc262c4970",
+      "status": "verified"
+    },
+    {
+      "bytes": 3544,
+      "file": "packet-0038.bin",
+      "sha256": "efe6023e51d28b80a8e1c541165972a54fc5dd93c190e072c4a3ef59bf4b9e2a",
+      "status": "verified"
+    },
+    {
+      "bytes": 3545,
+      "file": "packet-0039.bin",
+      "sha256": "251c7b2edb1fe640f87ac7202d6b5bac785fc2524b1bfaf6f6828b93dbd4b4c2",
+      "status": "verified"
+    },
+    {
+      "bytes": 3546,
+      "file": "packet-0040.bin",
+      "sha256": "2c599d26714188445d0ada25bffdc0722b64a0ffbfc33d304a554f9214ee13e9",
+      "status": "verified"
+    },
+    {
+      "bytes": 3547,
+      "file": "packet-0041.bin",
+      "sha256": "df0ad570b2b84ab9ff5b0c3c504e847f2e92e304d16adf0c89bdf3804b36e3ae",
+      "status": "verified"
+    },
+    {
+      "bytes": 3548,
+      "file": "packet-0042.bin",
+      "sha256": "89d59b714d9f6b88b99e27b8d82190486889fe9374ed42fdc3300f9be82bc7f6",
+      "status": "verified"
+    },
+    {
+      "bytes": 3549,
+      "file": "packet-0043.bin",
+      "sha256": "df64a5fd68685e4882adfb27ac1092c16114765805de681a37de924916f897d6",
+      "status": "verified"
+    },
+    {
+      "bytes": 3550,
+      "file": "packet-0044.bin",
+      "sha256": "9560abc0f3d9f527941f7260e9f677cdf05d19d8c36628fa830428a988303bd4",
+      "status": "verified"
+    },
+    {
+      "bytes": 3551,
+      "file": "packet-0045.bin",
+      "sha256": "8f420fe1521b82ed02cf1775b840e17bc71c8ca0dcc35f7dc3cdf8b23e0dc73b",
+      "status": "verified"
+    },
+    {
+      "bytes": 3552,
+      "file": "packet-0046.bin",
+      "sha256": "002dd8450de199994d0d34dcea59791a83a586b1b07834064e45da424f76389d",
+      "status": "verified"
+    },
+    {
+      "bytes": 3553,
+      "file": "packet-0047.bin",
+      "sha256": "c6df2b86ca7b21af7c6f6d9517a137f1b8626c85b684f1e4681e605a31cc569c",
+      "status": "verified"
+    },
+    {
+      "bytes": 3554,
+      "file": "packet-0048.bin",
+      "sha256": "d3b818039276be359de148195dd389ff5b785551ad00b97895095d63504dc8b3",
+      "status": "verified"
+    },
+    {
+      "bytes": 3555,
+      "file": "packet-0049.bin",
+      "sha256": "470155bf01016b1ce60461a180ad9153dc696fdb105cd5fd7f01464c69070cb3",
+      "status": "verified"
+    },
+    {
+      "bytes": 3556,
+      "file": "packet-0050.bin",
+      "sha256": "cfbd20fe6c8a2c729d3fbb936a4ff1b730828ba1d6d6a0b5a8f3f5fec24aa57c",
+      "status": "verified"
+    },
+    {
+      "bytes": 3557,
+      "file": "packet-0051.bin",
+      "sha256": "e7bdfa05a56b368968890db25c32da006dab5819d7d0e078a24162d70dcc9973",
+      "status": "verified"
+    },
+    {
+      "bytes": 3558,
+      "file": "packet-0052.bin",
+      "sha256": "224ebd117dcb43f6b3407a3c33a2264d986226a1fb8392767b68b34f92f4686e",
+      "status": "verified"
+    },
+    {
+      "bytes": 3559,
+      "file": "packet-0053.bin",
+      "sha256": "cee86de97c9a34c3f9090bf60505bf4d44cda958468820d5e77dfbae572927ee",
+      "status": "verified"
+    },
+    {
+      "bytes": 3560,
+      "file": "packet-0054.bin",
+      "sha256": "bfb95d4560d5d24be770863d32f4f7ab631fba35b53a7d7bdf60f57bd29ab59a",
+      "status": "verified"
+    },
+    {
+      "bytes": 3561,
+      "file": "packet-0055.bin",
+      "sha256": "5b5e872e3803f63f85751a4c0b693c2d607337976bdffaf5c97c56c34b19bc20",
+      "status": "verified"
+    },
+    {
+      "bytes": 3562,
+      "file": "packet-0056.bin",
+      "sha256": "b8855da52952dd8e3ea534cbf62eb09133fd7ea52539b185353ccbb86cf1de41",
+      "status": "verified"
+    },
+    {
+      "bytes": 3563,
+      "file": "packet-0057.bin",
+      "sha256": "907b7466b64e4f9c30de4f333dff16f45fc8ab02c436e8775dd13f92d95894b3",
+      "status": "verified"
+    },
+    {
+      "bytes": 3564,
+      "file": "packet-0058.bin",
+      "sha256": "82952404f9f1806b173cfd216783f7677197ac8842607da062e9eb247f6403a5",
+      "status": "verified"
+    },
+    {
+      "bytes": 3565,
+      "file": "packet-0059.bin",
+      "sha256": "592da284f14d4a0f30b9c50ffbf47b479b99746ddb65f6e2b02a800b1bc37135",
+      "status": "verified"
+    },
+    {
+      "bytes": 3566,
+      "file": "packet-0060.bin",
+      "sha256": "88b8aa2402d0e763f70b222a34243bfc9cff36bae4463748e54fa91e653fc5fc",
+      "status": "verified"
+    },
+    {
+      "bytes": 3567,
+      "file": "packet-0061.bin",
+      "sha256": "0af68103e643770f288834672210e8cd40327e8b36dfecfe2d67d6d98f02cf7a",
+      "status": "verified"
+    },
+    {
+      "bytes": 3568,
+      "file": "packet-0062.bin",
+      "sha256": "6086735a3c07f8c97094a97cd1719f9a5f776e3a3e8459b56a2aceac4a6de1ca",
+      "status": "verified"
+    },
+    {
+      "bytes": 3569,
+      "file": "packet-0063.bin",
+      "sha256": "c73e50bf5324eba980e6ac0730b9273d7f0fd485f605c206bd5216d3def88bf2",
+      "status": "verified"
+    },
+    {
+      "bytes": 3570,
+      "file": "packet-0064.bin",
+      "sha256": "73f52c836ec9060261a5a4e2b0d58f9a9da16fcdf8b1a769b2d9a9158b99ff07",
+      "status": "verified"
+    },
+    {
+      "bytes": 3571,
+      "file": "packet-0065.bin",
+      "sha256": "aa3167a21dbe3e4fecd0af5eac1de21f804bf634b2fb84b941fa1419ac4a07a0",
+      "status": "verified"
+    },
+    {
+      "bytes": 3572,
+      "file": "packet-0066.bin",
+      "sha256": "c7c01a78e5f8e1cca9e222c3123c32044b19dc2c1217e3d4ea6f543c9f51f399",
+      "status": "verified"
+    },
+    {
+      "bytes": 3573,
+      "file": "packet-0067.bin",
+      "sha256": "0ac667c1d5f9759f071045fc6872c1bd11a4325867d12e38ee8f304a2d1f5e6e",
+      "status": "verified"
+    },
+    {
+      "bytes": 3574,
+      "file": "packet-0068.bin",
+      "sha256": "013f2cd982718a2d26d6d72f03471e8a27faae905b5b490b1d817289eb1c9ea0",
+      "status": "verified"
+    },
+    {
+      "bytes": 3575,
+      "file": "packet-0069.bin",
+      "sha256": "e55e61bdc6786290c23b95f6db0011e0079f229ea3265c1bef75336e4e631521",
+      "status": "verified"
+    },
+    {
+      "bytes": 3576,
+      "file": "packet-0070.bin",
+      "sha256": "c8ed9ba0660cc4257f67f80b0aa34adee48570a7b099e36f35eceb9348c72d42",
+      "status": "verified"
+    },
+    {
+      "bytes": 3577,
+      "file": "packet-0071.bin",
+      "sha256": "548631a21928c2b7841fbe2ab4488174ec4a5c0d7e419a5d5a6313691633845b",
+      "status": "verified"
+    },
+    {
+      "bytes": 3578,
+      "file": "packet-0072.bin",
+      "sha256": "010d61e56bb51c577e1dffd152699f1703e81f9e68b10922712c02aa91444728",
+      "status": "verified"
+    },
+    {
+      "bytes": 3579,
+      "file": "packet-0073.bin",
+      "sha256": "0ca74e8cdf77ec6aa9c413c23d849c1b94c00fa45de7848543c9f6a39b0c29bf",
+      "status": "verified"
+    },
+    {
+      "bytes": 3580,
+      "file": "packet-0074.bin",
+      "sha256": "72bb11b8f7dc0d8093f94feb4acaa2ef493572b706ad3ffe0797e0137d414013",
+      "status": "verified"
+    },
+    {
+      "bytes": 3581,
+      "file": "packet-0075.bin",
+      "sha256": "7f24195d5bde5e480efa3707f7afc3da6cf5e60d33433b4dc5be2b16d18e95e5",
+      "status": "verified"
+    },
+    {
+      "bytes": 3582,
+      "file": "packet-0076.bin",
+      "sha256": "f9abb48a88dbc40187c92b32df5f34742c2130c44a927ffd2114e1e85377d5b2",
+      "status": "verified"
+    },
+    {
+      "bytes": 3583,
+      "file": "packet-0077.bin",
+      "sha256": "996904ae693a9e1a1536434df1e8bf76187deb99ea89ec6a40075e42e4023a64",
+      "status": "verified"
+    },
+    {
+      "bytes": 3584,
+      "file": "packet-0078.bin",
+      "sha256": "aeaa9903b9bac0ea709df78bc0f74f44521bb203284d48db7ef14bc01e44ee16",
+      "status": "verified"
+    },
+    {
+      "bytes": 3585,
+      "file": "packet-0079.bin",
+      "sha256": "d45b0482d6e41db9a3e4b18bc9d22b1f9d97e12139d419accc2a1b8576dae5a0",
+      "status": "verified"
+    },
+    {
+      "bytes": 3522,
+      "file": "packet-0080.bin",
+      "sha256": "abf2036314f0de343ca3d3c0ba680558a6e5e46ebfd6b4a152dde500f6eb1538",
+      "status": "rejected"
+    },
+    {
+      "bytes": 3522,
+      "file": "packet-0081.bin",
+      "sha256": "574d3166ac32fed17103062bb1332312a7edf5c497cb9a7303d53506c6d73623",
+      "status": "rejected"
+    },
+    {
+      "bytes": 3522,
+      "file": "packet-0082.bin",
+      "sha256": "7776368e204c18ae571a800cd8362ab308ce106b51a2348b6c67652d0f1cf471",
+      "status": "rejected"
+    },
+    {
+      "bytes": 3522,
+      "file": "packet-0083.bin",
+      "sha256": "487a888d194a8f99fade122e814b0fb95e8dda84c34ba204b70f17ce1b5c4dad",
+      "status": "rejected"
+    },
+    {
+      "bytes": 3529,
+      "file": "packet-0084.bin",
+      "sha256": "4c5f0a9c7e813581616cb1fae4bef4cdc6f91b4b85057fa9ffda21b84a5b8c28",
+      "status": "rejected"
+    },
+    {
+      "bytes": 3523,
+      "file": "packet-0085.bin",
+      "sha256": "625023274744de14c0c8566e96730985899e2d8bd8a37fa6c0d62a9f7415cd38",
+      "status": "verified"
+    },
+    {
+      "bytes": 3522,
+      "file": "packet-0086.bin",
+      "sha256": "d07951c2858a201bd939ea87a62551c9bcf50c3cc895a571e034f84de4bb2046",
+      "status": "rejected"
+    }
+  ],
+  "report_sha256": "3e18ebd0437320941f452e66088f49dedd1f71e3c747fb4d1965d85945285ac3",
+  "reviewed_campaign": "/workspace/scratch/10a9f8f2cba0/evidence-staging/pon-fresh-work-floor-20261107/fresh-work/final-source-run",
+  "same_45_checks_as_source_run_01": true,
+  "schema": "pon-grouped-fresh-exact-source-independent-audit-v0",
+  "scope_notes": [
+    "This final cohort is pinned to 1e0eba75f4f4a4e24e17cbd0f263f915c1493ac7; the earlier b9ccd327 source cohort and development run remain separate observations.",
+    "Post-exit packet/receipt readback is observed locally; no WAN, independent durable storage, power-loss or public availability-service claim.",
+    "K is enforced on one pinned Session/journal; no global/cloned-node cap or verifier side-channel model is established.",
+    "Python parent process CPU includes receiver threads; all-child CPU includes native CPU; do not add nested phase/observer/native totals again.",
+    "Native-only CPU is a separate RUSAGE_CHILDREN interval containing the native child as sole subprocess; no source/git helper calls occur inside this interval in the frozen source.",
+    "The 1088 Python chain steps are separate actually executed work from native producer and verifier; they are not a complete global oracle attestation.",
+    "Native mathematical seal verification does not itself verify Cell arithmetic; separate full Python original-coefficient verification is retained.",
+    "Whole-Python-process kill may leave partial in-memory stages unknown; no crash-complete accounting claim."
+  ],
+  "status": "PASS"
+}

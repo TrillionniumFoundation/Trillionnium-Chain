@@ -1,0 +1,239 @@
+{
+  "artifacts": {
+    "README.md": {
+      "bytes": 16144,
+      "sha256": "bdff1813e84e1f82be40b105b8c7b764ae54f888a0d3e1faf1a7536ac6f26bff"
+    },
+    "comparison-declaration.json": {
+      "bytes": 2604,
+      "sha256": "834e92fe465fb0515c027d2221d22ce5272ae2e3b1825e4251357b11803a8dd9"
+    },
+    "comparison.json": {
+      "bytes": 5777,
+      "sha256": "3cadcecde085cf7f2a6d419b0eba1a0a8b6b9279f07ea0c97eb1b354f5800430"
+    },
+    "controls.json": {
+      "bytes": 18131,
+      "sha256": "3cd4a471b68358e5c8ed7c762342700389140f038eff99b917da4b32abd76f15"
+    },
+    "native.json": {
+      "bytes": 7759,
+      "sha256": "2c9ae09b28ade17978f4d193df1567296093d3fd746c463eda1a86faaa8493c1"
+    },
+    "profile.json": {
+      "bytes": 964,
+      "sha256": "5e666bb2215b6278b755ec15546fd81e58aa8a4237ee64e4477569e543ca3431"
+    },
+    "regressions.json": {
+      "bytes": 7330,
+      "sha256": "c977d452318c16c03800c1e73703ae6711a51f68fe289cc028bb0a7c2ca59703"
+    },
+    "security-map.json": {
+      "bytes": 30208,
+      "sha256": "fff5548201e366565b22e93b6dd9b4436691e4dcb3bf6744075a60d2d0de5cfe"
+    },
+    "transparent.json": {
+      "bytes": 2835,
+      "sha256": "1640366455fc3e1fcf14cf8176e07e47b11b9ae7adc3495deaa7cde6c8c1d741"
+    },
+    "validation.json": {
+      "bytes": 37823,
+      "sha256": "7d074e769b56be32d83e72e225100e46ea5a99d39827a026aaa4c878f7342a67"
+    }
+  },
+  "build": {
+    "binary_sha256": {
+      "native": "5db3fc47969324261c9acbf61546b78502b081cdbb0e6382ed815ed5163c4703",
+      "transparent": "c41d5d13e490e6d65b6f25501f6d536ae28704cb3ebe7562662bdbee8a1175db"
+    },
+    "build_jobs": 1,
+    "cargo_locks_sha256": {
+      "hardened": "3d6b7e7895169e638240a0ed835a5352d64a0ae44f4b56ba0a00acc2ec6b3865",
+      "native": "729bdcda4a9f49d5757c2726cd98582ed420d6dd858f46ac453ed0625c7a593b",
+      "workspace": "773cd1364a02cc70b017412350e2343172ae4f2a8770b044a5a307e33a638d0a"
+    },
+    "explicit_rustflags": null,
+    "host_target": "x86_64-unknown-linux-gnu",
+    "incremental_build_and_test_commands_on_frozen_source": "validation.json",
+    "profile": "release; debug=1; incremental=false",
+    "rustc_verbose": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+    "source_and_elf_mapping_scope": "Locally built and tested recorded source bytes, with explicit before/after executable hashes; not a reproducible compiler or supply-chain attestation."
+  },
+  "code_files_sha256": {
+    "evidence/pon-w1-transparent-profile-20261104/security-map.json": "fff5548201e366565b22e93b6dd9b4436691e4dcb3bf6744075a60d2d0de5cfe",
+    "formal/pon-nakamoto-v1/w1_hardened_verifier/README.md": "3847d020f801496213aae3eb87e91f7b5c6a2a1c5490cc742928e5a1c9ab313b",
+    "formal/pon-nakamoto-v1/w1_hardened_verifier/src/main.rs": "69de1aad14105be128a2b7d927e845b70e8c42ab87ba1b2a2efe95d5f7e2fe21",
+    "formal/pon-nakamoto-v1/w1_hardened_verifier/src/profile.rs": "2dcf608f5bc1cf4f7f06b8b096da4253c00b7504d898e587f2c0c82c47c0851c",
+    "formal/pon-nakamoto-v1/w1_native_cost/Cargo.lock": "729bdcda4a9f49d5757c2726cd98582ed420d6dd858f46ac453ed0625c7a593b",
+    "formal/pon-nakamoto-v1/w1_native_cost/Cargo.toml": "3bb0f3dbc88bcf0fe16fcc76f12044dc63e964697c15a49fa273fdd6ff738aff",
+    "formal/pon-nakamoto-v1/w1_zkvm/host/src/bin/w1-native-cost.rs": "dca14710abdfa7501b9dd0ffba0cb2b7192d3316c77945496dbda857da7794aa",
+    "formal/pon-nakamoto-v1/w1_zkvm/relation/src/lib.rs": "116aff0b93205156f19d540d2f2d91abe1bb5d72a11ec1351ab06a902a7c2962",
+    "scripts/ci/test_w1_profile_source_map.py": "4a80f4bf4554d3f4714de199c6d3133a946384aed54865869db6527c71d36d04",
+    "scripts/ci/test_w1_transparent_compare.py": "82bb6310bc6315da634d9c7a7d559036a7ed94884c121e72cdec17b00ba70c99",
+    "scripts/w1_profile_source_map.py": "d951744c30a9057f5e1807934fdf9b14b98ca861aaed9a76099217279f48650f",
+    "scripts/w1_transparent_compare.py": "3cc93cf139a285895035a34a3147c44975131cac297509865c5d9b8a55c393ec"
+  },
+  "decision": {
+    "consensus_admission": false,
+    "end_to_end_benefit_established": false,
+    "native_full_W1_remains_mainline": true,
+    "node_parent_eligibility_and_separate_A_B_artifact_commitments_in_proof": false,
+    "proof_randomness_tickets": 0,
+    "qualification": "HOLD",
+    "quantum_security_bits": null,
+    "quantum_soundness_qualified": false,
+    "selected_components_improve": false
+  },
+  "environment": {
+    "affinity_cpu_count": 9,
+    "cgroup": {
+      "cpu.max": "800000 100000",
+      "memory.current": "8589828096",
+      "memory.max": "8589934592"
+    },
+    "cpu_models": [
+      "AMD EPYC 9V74 80-Core Processor"
+    ],
+    "isolated_benchmark": false,
+    "kernel": "6.18.57",
+    "machine": "x86_64",
+    "relevant_env": {
+      "CARGO_ENCODED_RUSTFLAGS": null,
+      "RAYON_NUM_THREADS": null,
+      "RISC0_DEV_MODE": null,
+      "RISC0_PROVER": null,
+      "RUSTFLAGS": null
+    },
+    "shared_host": true
+  },
+  "frozen_guest": {
+    "image_id": [
+      4203990569,
+      1706128024,
+      889896351,
+      2751765305,
+      3434005897,
+      1411617246,
+      870515685,
+      3215144349
+    ],
+    "native_kernel_difference": "Frozen guest uses the historical Transposed implementation; current independent native control uses later FullLimb optimization. Identical non-test relation wrapper and finite scalar controls do not prove all-input equivalence.",
+    "sha256": "6b58409420f2bd3f7a733de531ce20144580b259fde8ca9362b43d9728a8772c",
+    "source_commit": "64be7c4ad51d432e7736ad135476262e23e968f5",
+    "source_equivalence_established": false
+  },
+  "integration": {
+    "composition_main_graph": {
+      "lock_sha256": "00f3573879f3da7d5a702a8bc13245196bbfd53b86b0b6eb19c51f14887cef61",
+      "members": 26,
+      "note": "Concurrent M15 dependency edges; the two independent W1 locks and 12 measured code files retain their recorded bytes.",
+      "resolved_packages": 180
+    },
+    "concurrent_parent_commit": "c156c2310346d1367b8f9b1111171f412b5ffce2",
+    "local_dependency_source_paths_verified_unchanged_since_measured_commit": [
+      "formal/pon-nakamoto-v1/w1_native_cost",
+      "formal/pon-nakamoto-v1/w1_zkvm/relation",
+      "trillionnium/crates/trnm-crypto-primitives",
+      "trillionnium/crates/trnm-protocol",
+      "formal/pon-nakamoto-v1/w1_hardened_verifier",
+      "trillionnium/Cargo.toml",
+      ".cargo",
+      "rust-toolchain.toml",
+      "scripts/w1_transparent_compare.py",
+      "scripts/w1_profile_source_map.py"
+    ],
+    "main_lock_note": "Concurrent M15 release-bundle dependency edges are preserved. The recorded old main-graph hash belongs to the measured b13211cc source, not a claim that the composed main lock is unchanged.",
+    "measurement_code_file_hashes_unchanged": true,
+    "preserved_concurrent_paths": 41,
+    "preserved_concurrent_topics": [
+      "245146c7 independently pinned recovery, release roles and TLS controls",
+      "8e3df70c merge of the quantum resource/event DAA research",
+      "c156c231 merge of bounded admission counting and reversible component validation"
+    ],
+    "workflow": {
+      "local_validation": "YAML duplicate-key parsing, 13 bash syntax checks and 8 embedded Python syntax checks; hosted execution unobserved.",
+      "path": ".github/workflows/pon-w1-transparent-profile.yml",
+      "sha256": "f8c204ebc79daf8db4a9b97cbba7d1c0c193a2f9ec6aeca9fa9bbb08faebfa80",
+      "validation_against_actual_local_records": {
+        "bash_syntax_blocks": 13,
+        "hosted_execution": false,
+        "validators_passed_on_actual_local_records": [
+          "observer_tests",
+          "mapper_tests",
+          "native",
+          "hardened",
+          "profile",
+          "receipt_controls",
+          "comparison"
+        ],
+        "workflow_sha256": "f8c204ebc79daf8db4a9b97cbba7d1c0c193a2f9ec6aeca9fa9bbb08faebfa80"
+      }
+    }
+  },
+  "known_scope_limits": [
+    "No fresh proof generation, propagation, post-find publication, independent confirmation or stale-block observation.",
+    "No all-input equivalence or newly rebuilt guest qualification.",
+    "No claim of a complete Node admission statement; current Node still needs parent-state and separate A/B artifact checks.",
+    "No full QROM theorem/constant mapping or concrete quantum acceptance bound.",
+    "Finite adversarial controls are not an exhaustive decoder/cryptographic audit.",
+    "A separate CI workflow is added in the evidence child commit; its hosted execution is not counted as a local pass."
+  ],
+  "measured_code_commit": "b13211ccf356fe16624da66d970ce71d77a5c51f",
+  "measured_code_tree": "e3b711355ae8a0fa62b9b52d63537c7b8a1433f8",
+  "measurement_process": {
+    "argv": [
+      "python3",
+      "scripts/w1_transparent_compare.py",
+      "--proof-dir",
+      "evidence/pon-w1-complete-succinct-20261028/full-proof",
+      "--native",
+      "/workspace/scratch/79360d3567d1/target-native/release/w1-native-cost",
+      "--verifier",
+      "/workspace/scratch/79360d3567d1/target-w1/release/trnm-w1-hardened-verifier",
+      "--native-sha256",
+      "5db3fc47969324261c9acbf61546b78502b081cdbb0e6382ed815ed5163c4703",
+      "--verifier-sha256",
+      "c41d5d13e490e6d65b6f25501f6d536ae28704cb3ebe7562662bdbee8a1175db",
+      "--native-source-commit",
+      "b13211ccf356fe16624da66d970ce71d77a5c51f",
+      "--verifier-source-commit",
+      "b13211ccf356fe16624da66d970ce71d77a5c51f",
+      "--out",
+      "/workspace/scratch/79360d3567d1/w1-profile-comparison-b13211cc",
+      "--total-wall-seconds",
+      "120"
+    ],
+    "returncode": 0,
+    "source_commit": "b13211ccf356fe16624da66d970ce71d77a5c51f",
+    "started_utc": "2026-11-04T12:59:15.357485+00:00",
+    "wall_seconds": 4.795351802997175
+  },
+  "preserved_parent_commit": "bd2777f9cc74df10ba07ae8202584ed0fb90a519",
+  "retained_historical_proving_observation": {
+    "failed_timeouts_and_interruption_retained": true,
+    "full_proving_cost_remeasured": false,
+    "independent_saved_proofs": 1,
+    "new_proofs_in_this_run": 0,
+    "reference": "evidence/pon-w1-complete-succinct-20261028/README.md",
+    "reference_receipt_sha256": "ca4d3c9f5159b7001abae7491604cadbbbfa97c0f93d90d5943e48936813ca2b"
+  },
+  "runtime_controls_report": "controls.json",
+  "schema": "TRNM-W1-TRANSPARENT-PROFILE-REPRODUCTION1",
+  "source_mapping_report": "security-map.json",
+  "timing_boundaries": {
+    "candidate_application_cost_includes": "Public journal/header/ticket/work binding, profile and canonicality checks, context reconstruction and full cryptographic receipt verification.",
+    "candidate_decode_verify_timed_calls": 100,
+    "candidate_initial_separately_timed_full_verifies": 1,
+    "candidate_verify_only_timed_calls": 100,
+    "lifetime_asymmetry": "Native temporary replay result is destroyed before sampling; candidate decoded receipt is destroyed after sampling. No estimated correction applied.",
+    "median_rule": "For these even-sized arrays, arithmetic mean of the middle two ordered samples.",
+    "native_timed_calls": 1000,
+    "native_untimed_complete_replays": 2,
+    "primary_ratio": "median(candidate decode + application full verification) / median(native decode + complete replay)",
+    "process_rusage_scope": "wait4 direct-child process totals; includes process startup/fork baseline and unequal whole-command call counts; not per-verification CPU ratio, aggregate prover memory or host isolation.",
+    "production_tail_established": false,
+    "sample_p95_p99_rule": "Nearest rank within this repeated fixed-input run.",
+    "shared_host_and_fixed_input": true
+  },
+  "validation_report": "validation.json"
+}

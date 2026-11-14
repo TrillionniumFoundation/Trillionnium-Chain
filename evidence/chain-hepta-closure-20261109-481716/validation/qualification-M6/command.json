@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "scripts/ci/chain_hepta_qualification.py",
+    "--plan",
+    "/workspace/scratch/481716a90d06/closure-evidence/qualification-plan.json",
+    "--plan-sha256",
+    "94d02a1f21b9e33b5fb22ea53fe0445433aaa8e03d5f0ca446ad3c33cd3b3df8",
+    "--packet",
+    "/workspace/scratch/481716a90d06/closure-evidence/qualification-packet.json",
+    "--evidence-root",
+    "/workspace/scratch/481716a90d06/closure-evidence"
+  ],
+  "returncode": 2,
+  "review_sha256": "d536c4d56b66d6ca622d7cc400205d91e6ea93a59d8012d45ba73f65fdaa0356",
+  "qualified": false,
+  "source_commit": "4dbeae12fa756fd662cc074390fcb628abe970ad"
+}

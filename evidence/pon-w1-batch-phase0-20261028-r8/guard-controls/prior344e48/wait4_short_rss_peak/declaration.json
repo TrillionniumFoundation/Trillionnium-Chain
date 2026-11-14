@@ -1,0 +1,47 @@
+{
+  "clock_ticks_per_second": 100,
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-c",
+    "x=bytearray(48*1024*1024)"
+  ],
+  "cpu_accounting": "wait4 reaped subtrees plus live inclusive /proc ticks; monotone max",
+  "cwd": "/workspace/scratch/56818e4fba76",
+  "disk_accounting": "allocated st_blocks, unique inodes, no intentional symlink following",
+  "disk_probe_path": "/tmp/w1-guard-final344e48-tiny-r8-rfrt9u3e",
+  "guarantee": "sampled detection and stop; not kernel CPU/RSS/disk hard limits",
+  "initial_free_bytes": 3145261056,
+  "interval_seconds": 0.5,
+  "kill_reap_grace_seconds": 3.0,
+  "limits": {
+    "cpu_seconds": 5.0,
+    "min_free_bytes": 1,
+    "rss_bytes": 33554432,
+    "target_growth_bytes": 8388608,
+    "wall_seconds": 3.0
+  },
+  "ownership": "one new session, tracked descendants, process-local subreaper, pidfds",
+  "page_bytes": 4096,
+  "pid_fields": "pid/ppid/pgid/sid are procfs-visible; local_pid is signal namespace PID",
+  "root_birth": 7303009,
+  "root_pgid": 955482,
+  "root_pid": 12,
+  "root_proc_pid": 955482,
+  "root_sid": 955482,
+  "rss_accounting": "sum of sampled process RSS; shared pages may be counted repeatedly",
+  "schema": 1,
+  "source_commit_freeze": "caller responsibility; this file records only source hash",
+  "source_path": "/tmp/w1-batch-phase0-guard-20261028-r8.py",
+  "source_sha256": "344e48fab07ceaa40abd7ce0e36f80aeb9397b8afad873c5be9fb2abda92500d",
+  "started_monotonic": 73030.091673525,
+  "supervisor_nspids": [
+    955481,
+    11
+  ],
+  "supervisor_pid": 11,
+  "supervisor_pid_namespace": "pid:[4026532347]",
+  "supervisor_proc_pid": 955481,
+  "target": "/tmp/w1-guard-final344e48-tiny-r8-rfrt9u3e/target",
+  "target_baseline_bytes": 0,
+  "term_grace_seconds": 3.0
+}

@@ -1,0 +1,149 @@
+{
+  "schema": "recovered-pinned-observations-v2",
+  "note": "Existing round1 fixtures and native observations recovered from saved bundle; no newly measured native results.",
+  "entries": [
+    {
+      "name": "real_lottery_hit_p_1_64",
+      "expected_file": "real_lottery_hit_p_1_64.expected.bin",
+      "witness_file": "real_lottery_hit_p_1_64.witness.bin",
+      "file_sha256": {
+        "real_lottery_hit_p_1_64.expected.bin": "16eea862f5955a0cb8b52a3eb1c8299d595446863c476571186b1837145bf474",
+        "real_lottery_hit_p_1_64.witness.bin": "59f4a1c43f11b3e7245c699b59f4031ef6d458e4cc416168ec96392eae1fe318",
+        "structured-a.bin": "f3694144d1f5c261fd1e7ac798d58983c5eb5a89b4e3554f41f46ec615bc7787",
+        "structured-b.bin": "ad53173acd55b78366ee0fd4de3c5c38fd95889ae8846efe8b9d394d197721b5"
+      },
+      "producer_check": {
+        "a_file": "structured-a.bin",
+        "b_file": "structured-b.bin",
+        "nonce": 24
+      },
+      "native_observed_counts": {
+        "scalar_additions": 1920,
+        "scalar_multiplications": 2048,
+        "sha256_calls": 56,
+        "sha256_compression_blocks": 152,
+        "sha256_input_bytes": 8128
+      },
+      "native_observed_result": {
+        "context": "eaac4b6b800bb20683ee7c964d5ea69f90d3d45f90ee76f9b1a955b92aa3a439",
+        "event_id": "924dc6430266b51e856366901229d37f2aedc5bb45d576b010da7c13695025e5",
+        "status": "ACCEPT_SELECTED_EVENT_ONLY",
+        "ticket": "021041180e552a9210ed732c5a31f628bcc316829140778adf9cec22c6e91053",
+        "useful_product": [
+          1231300,
+          1250984,
+          1270668,
+          1290352,
+          1310036,
+          1329720,
+          1349404,
+          1369088,
+          1586564,
+          1612072,
+          1637580,
+          1663088,
+          1688596,
+          1714104,
+          1739612,
+          1765120,
+          1941828,
+          1973160,
+          2004492,
+          2035824,
+          2067156,
+          2098488,
+          2129820,
+          2161152,
+          2297092,
+          2334248,
+          2371404,
+          2408560,
+          2445716,
+          2482872,
+          2520028,
+          2557184,
+          2652356,
+          2695336,
+          2738316,
+          2781296,
+          2824276,
+          2867256,
+          2910236,
+          2953216,
+          3007620,
+          3056424,
+          3105228,
+          3154032,
+          3202836,
+          3251640,
+          3300444,
+          3349248,
+          3362884,
+          3417512,
+          3472140,
+          3526768,
+          3581396,
+          3636024,
+          3690652,
+          3745280,
+          3718148,
+          3778600,
+          3839052,
+          3899504,
+          3959956,
+          4020408,
+          4080860,
+          4141312
+        ]
+      },
+      "observation_source": "/workspace/scratch/89f4ddbb3fd2/recovery/round1/PoN_W1_Continuation_2026-11-07/native_selected/results/conformance/real_lottery_hit_p_1_64.json",
+      "observation_source_sha256": "9a2a817be57a38745f660198fee490c06eb95efb8073084222ec1baa08d490de"
+    },
+    {
+      "name": "false_noisy_product_0",
+      "expected_file": "false_noisy_product_0.expected.bin",
+      "witness_file": "false_noisy_product_0.witness.bin",
+      "file_sha256": {
+        "false_noisy_product_0.expected.bin": "a1c73eaefdfdba467935c92a35bf38c71d9fd2d86ed354b68b5928ec28aadc78",
+        "false_noisy_product_0.witness.bin": "53f60b0be65e6f75788c07e585afad4c5811f19d7dd63e9f8f9ef5c966facf2f"
+      },
+      "producer_check": null,
+      "native_observed_counts": {
+        "scalar_additions": 1472,
+        "scalar_multiplications": 1536,
+        "sha256_calls": 54,
+        "sha256_compression_blocks": 144,
+        "sha256_input_bytes": 7691
+      },
+      "native_observed_result": {
+        "error": "NOISY_PRODUCT",
+        "status": "REJECT"
+      },
+      "observation_source": "/workspace/scratch/89f4ddbb3fd2/recovery/round1/PoN_W1_Continuation_2026-11-07/native_selected/results/conformance/false_noisy_product_0.json",
+      "observation_source_sha256": "f922d062069b2cecd1755c644723cf51c32f5877a6888b99a3d0306af7e9110c"
+    },
+    {
+      "name": "false_useful_product_0",
+      "expected_file": "false_useful_product_0.expected.bin",
+      "witness_file": "false_useful_product_0.witness.bin",
+      "file_sha256": {
+        "false_useful_product_0.expected.bin": "a1c73eaefdfdba467935c92a35bf38c71d9fd2d86ed354b68b5928ec28aadc78",
+        "false_useful_product_0.witness.bin": "1cad18ccbbc980670d412e2f4b074dd04e9c883507b94dcff6f066646640de3b"
+      },
+      "producer_check": null,
+      "native_observed_counts": {
+        "scalar_additions": 1920,
+        "scalar_multiplications": 2048,
+        "sha256_calls": 54,
+        "sha256_compression_blocks": 144,
+        "sha256_input_bytes": 7691
+      },
+      "native_observed_result": {
+        "error": "USEFUL_PRODUCT",
+        "status": "REJECT"
+      },
+      "observation_source": "/workspace/scratch/89f4ddbb3fd2/recovery/round1/PoN_W1_Continuation_2026-11-07/native_selected/results/conformance/false_useful_product_0.json",
+      "observation_source_sha256": "9eb2d57dcb32c10f13fa25539ba849566434783ae8844dd00b092e651e4e6a81"
+    }
+  ]
+}

@@ -1,0 +1,150 @@
+[
+  {
+    "argv": [
+      "/bin/bash",
+      "scripts/project-preflight.sh"
+    ],
+    "cwd": "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114",
+    "elapsed_seconds": 0.042412,
+    "exit": 0,
+    "label": "preflight",
+    "started_at": "2026-11-14T07:50:52.551884+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114/evidence/pon-fixed-joint-source-binding-20261114/f2/validation/preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 176,
+      "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114/evidence/pon-fixed-joint-source-binding-20261114/f2/validation/preflight.stdout",
+      "sha256": "9d6c19e895e5795b948d5f0f9a61fe95dd345bb61ecfa7af950c9f8ba1c37fb3"
+    },
+    "timeout_seconds": 120
+  },
+  {
+    "argv": [
+      "/opt/homebrew/bin/python3",
+      "-B",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "formal/pon-nakamoto-v1",
+      "-p",
+      "test_joint_consensus_qualification.py",
+      "-v"
+    ],
+    "cwd": "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114",
+    "elapsed_seconds": 0.426936,
+    "exit": 0,
+    "label": "original-joint-controls-35",
+    "started_at": "2026-11-14T07:50:52.594647+00:00",
+    "stderr": {
+      "bytes": 6033,
+      "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114/evidence/pon-fixed-joint-source-binding-20261114/f2/validation/original-joint-controls-35.stderr",
+      "sha256": "a48668b638d0f38bd12ea64d962e77cb8d222a17c983de588ac933c8698003f7"
+    },
+    "stdout": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114/evidence/pon-fixed-joint-source-binding-20261114/f2/validation/original-joint-controls-35.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "timeout_seconds": 120
+  },
+  {
+    "argv": [
+      "/opt/homebrew/bin/python3",
+      "-B",
+      "formal/pon-nakamoto-v1/joint_consensus_qualification.py",
+      "--check"
+    ],
+    "cwd": "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114",
+    "elapsed_seconds": 0.044539,
+    "exit": 0,
+    "label": "actual-joint-check",
+    "started_at": "2026-11-14T07:50:53.021944+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114/evidence/pon-fixed-joint-source-binding-20261114/f2/validation/actual-joint-check.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 9301,
+      "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114/evidence/pon-fixed-joint-source-binding-20261114/f2/validation/actual-joint-check.stdout",
+      "sha256": "28d869a91a6fcaadbd3f2608c024ae7d8377631bca35fe40bf0e414f7ebcd846"
+    },
+    "timeout_seconds": 120
+  },
+  {
+    "argv": [
+      "/opt/homebrew/bin/python3",
+      "-B",
+      "formal/pon-nakamoto-v1/joint_consensus_qualification.py",
+      "--require-qualified"
+    ],
+    "cwd": "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114",
+    "elapsed_seconds": 0.043171,
+    "exit": 3,
+    "label": "actual-require-qualified-refusal",
+    "started_at": "2026-11-14T07:50:53.066825+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114/evidence/pon-fixed-joint-source-binding-20261114/f2/validation/actual-require-qualified-refusal.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 9364,
+      "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114/evidence/pon-fixed-joint-source-binding-20261114/f2/validation/actual-require-qualified-refusal.stdout",
+      "sha256": "78d081ff07476e1f57d699b58754baf9e781e2fff989ccf30e85d2517ceac537"
+    },
+    "timeout_seconds": 120
+  },
+  {
+    "argv": [
+      "/opt/homebrew/bin/python3",
+      "-B",
+      "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114/evidence/pon-fixed-joint-source-binding-20261114/f2/validation/old-mapping-control.py",
+      "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114"
+    ],
+    "cwd": "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114",
+    "elapsed_seconds": 0.041919,
+    "exit": 0,
+    "label": "historical-revision-and-map-refusal",
+    "started_at": "2026-11-14T07:50:53.110434+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114/evidence/pon-fixed-joint-source-binding-20261114/f2/validation/historical-revision-and-map-refusal.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 307,
+      "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114/evidence/pon-fixed-joint-source-binding-20261114/f2/validation/historical-revision-and-map-refusal.stdout",
+      "sha256": "7fee4bd1adac737ca207da6f3e63e93f0652a92ba222da34a53336a92bbfde97"
+    },
+    "timeout_seconds": 120
+  },
+  {
+    "argv": [
+      "/usr/bin/git",
+      "--no-optional-locks",
+      "diff",
+      "--check"
+    ],
+    "cwd": "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114",
+    "elapsed_seconds": 0.04466,
+    "exit": 0,
+    "label": "diff-check",
+    "started_at": "2026-11-14T07:50:53.152654+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114/evidence/pon-fixed-joint-source-binding-20261114/f2/validation/diff-check.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114/evidence/pon-fixed-joint-source-binding-20261114/f2/validation/diff-check.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "timeout_seconds": 120
+  }
+]

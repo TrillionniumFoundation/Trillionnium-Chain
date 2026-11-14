@@ -1,0 +1,41 @@
+{
+  "schema": "m4-native-validation-small-delivery-v1",
+  "all_files": [
+    {
+      "path": "README.md",
+      "bytes": 8244,
+      "sha256": "37c8b70b72f7e547d8af0a9c78d801cfcf30538b90762a12688658bb41a50489"
+    },
+    {
+      "path": "archive-summary.json",
+      "bytes": 16717,
+      "sha256": "39ed67af93f756a5eed11d09219e33b249f2671c1639d179d376949126172506"
+    },
+    {
+      "path": "archive-transfer-receipt.json",
+      "bytes": 2246,
+      "sha256": "e9915d92965d285747b2df0a96cfac0e07622a26d1a95e753831a809ccc2098c"
+    },
+    {
+      "path": "controller-records-01.tar.gz",
+      "bytes": 58589,
+      "sha256": "d97be06e6de14ffe15c18692910f0137822bc68a620ceeb23164ea5b853623fb"
+    },
+    {
+      "path": "controller-terminal-receipts.json",
+      "bytes": 20526,
+      "sha256": "291e784436345ce2883ae352b4c282d51bf6df13df2f0974faf9b0333e4a613a"
+    },
+    {
+      "path": "local-validation.json",
+      "bytes": 2848,
+      "sha256": "23858efa6b18b2146215751362e84c11287c565cd0b342a71e5c8110b4c1724d"
+    },
+    {
+      "path": "validation-logs-01.tar.gz",
+      "bytes": 159519,
+      "sha256": "856524b9bb284a83fe12ed098da9858a687d08e25ddad0ed5c7121f1e38f15c6"
+    }
+  ],
+  "files_manifest_and_checksum_file_excluded_from_own_inventory": true
+}

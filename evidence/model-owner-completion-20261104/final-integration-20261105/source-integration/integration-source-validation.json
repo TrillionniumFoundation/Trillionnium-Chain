@@ -1,0 +1,44 @@
+{
+  "schema": "model-owner-integration-source-validation-v1",
+  "head": "7d347fa80e2cd3fd19d0010c3465581143b8d2e1",
+  "tree": "30309765887b6d2f54a5e37d58f8608dc60a2518",
+  "repository_check": {
+    "command": [
+      "python3",
+      "-B",
+      "scripts/ci/check_repository.py"
+    ],
+    "exit_code": 0,
+    "result": {
+      "activation": false,
+      "head": "7d347fa80e2cd3fd19d0010c3465581143b8d2e1",
+      "local_links": 2829,
+      "normal_dependency_edges": 25,
+      "result": "PASS",
+      "runtime_implemented": false,
+      "rust_files": 1135,
+      "source_state": "committed-clean",
+      "tree": "30309765887b6d2f54a5e37d58f8608dc60a2518",
+      "workspace_packages": 26
+    },
+    "log_sha256": "550f9acdaa0268b6bf85abc28427783d0a546b022fdf4c8dc304c9b1b9e634d9"
+  },
+  "source_integrity_tests": {
+    "command": [
+      "python3",
+      "-B",
+      "scripts/ci/test_ci_source_integrity.py"
+    ],
+    "exit_code": 0,
+    "tests": 43,
+    "failures": 0,
+    "errors": 0,
+    "seconds": 3.471,
+    "log_sha256": "609509dc1a3c3f63a24d1da1aefdf725128071324d73a6555d5c909656398c3c",
+    "negative_receipt_FAIL_outputs": "expected negative controls; the unittest suite returned zero"
+  },
+  "pq_exact_source_blobs": 468,
+  "pq_status": "HOLD_NO_GO",
+  "native_integrated_check": "pending; results will be a separate immutable record",
+  "qualification": false
+}

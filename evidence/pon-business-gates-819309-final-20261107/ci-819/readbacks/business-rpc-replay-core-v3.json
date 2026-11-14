@@ -1,0 +1,666 @@
+{
+  "schema": "trnm-final819-business-rpc-replay-timing-v3",
+  "candidate": "819309fd312298e099642e1253b1d4ba07113e98",
+  "scope": "Original retained report RPC and independent replay timing only; no phase CPU attribution",
+  "clock_rule": "Keep original raw phase-relative timestamps; do not subtract business_started_ns or treat wall intervals as CPU.",
+  "native_gate_validated": false,
+  "reports": [
+    {
+      "lane": "priority-ubuntu-24.04-prospective-merge-service-model-819309fd312298e099642e1253b1d4ba07113e98-1",
+      "artifact_id": 13586194181,
+      "path": "/home/qian-qi/throughput-final-ci-observation-20261107/20261107T185919Z-819309fd3122-f4da8b5c/service-artifact-read-v1/13586194181/from-zero-native/confirmation/report.json",
+      "expected_sha256": "44afacbb1d64f50053926a483feee888e49b322be8d9d8dd0dadc3f8c35a2379",
+      "phases": [
+        {
+          "mode": "attack-free-baseline",
+          "client_confirmed_transactions": 1,
+          "client_confirmation_latency_ns": 2379932989,
+          "submission_count": 7,
+          "submission_status_counts": {
+            "ok": 7
+          },
+          "last_submit_ended_ns": 191281398,
+          "history_rpc_count": 7,
+          "history_rpc_status_counts": {
+            "ok": 7
+          },
+          "last_history_rpc": {
+            "status": "ok",
+            "error": null,
+            "started_ns": 2070644606,
+            "ended_ns": 2084385439,
+            "elapsed_wall_ns": 13742025,
+            "returned_after_deadline": false,
+            "returned_after_window": false
+          },
+          "independent_replay_count": 7,
+          "independent_replay_accepted": 7,
+          "last_independent_replay": {
+            "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+            "history_call_index": 6,
+            "history_request_ended_ns": 2084385439,
+            "replay_started_ns": 2084411658,
+            "replay_ended_ns": 2379381176,
+            "replay_wall_ns": 294969518,
+            "replay_accepted": true,
+            "replay_error": null,
+            "prior_after": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d",
+            "next_after": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+          }
+        },
+        {
+          "mode": "from-zero-pressure",
+          "client_confirmed_transactions": 0,
+          "client_confirmation_latency_ns": null,
+          "submission_count": 7,
+          "submission_status_counts": {
+            "ok": 7
+          },
+          "last_submit_ended_ns": 889881079,
+          "history_rpc_count": 6,
+          "history_rpc_status_counts": {
+            "ok": 6
+          },
+          "last_history_rpc": {
+            "status": "ok",
+            "error": null,
+            "started_ns": 3638808943,
+            "ended_ns": 3733973520,
+            "elapsed_wall_ns": 95165509,
+            "returned_after_deadline": false,
+            "returned_after_window": false
+          },
+          "independent_replay_count": 6,
+          "independent_replay_accepted": 5,
+          "last_independent_replay": {
+            "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+            "history_call_index": 5,
+            "history_request_ended_ns": 3733973520,
+            "replay_started_ns": 3733988302,
+            "replay_ended_ns": 4031969218,
+            "replay_wall_ns": 297980916,
+            "replay_accepted": false,
+            "replay_error": "PUBLIC_REQUEST_DEADLINE",
+            "prior_after": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611",
+            "next_after": null
+          }
+        }
+      ]
+    },
+    {
+      "lane": "priority-ubuntu-24.04-arm-head-service-model-819309fd312298e099642e1253b1d4ba07113e98-1",
+      "artifact_id": 13586980357,
+      "path": "/home/qian-qi/throughput-final-ci-observation-20261107/20261107T190954Z-819309fd3122-2881e25e/service-artifact-read-remaining-v1/13586980357/from-zero-native/confirmation/report.json",
+      "expected_sha256": "68b31b4495ab7102a324f2e8d68b759b58418ae12964207b2fc0c4d1e5e52e7b",
+      "phases": [
+        {
+          "mode": "attack-free-baseline",
+          "client_confirmed_transactions": 1,
+          "client_confirmation_latency_ns": 1810381926,
+          "submission_count": 7,
+          "submission_status_counts": {
+            "ok": 7
+          },
+          "last_submit_ended_ns": 271710279,
+          "history_rpc_count": 7,
+          "history_rpc_status_counts": {
+            "ok": 7
+          },
+          "last_history_rpc": {
+            "status": "ok",
+            "error": null,
+            "started_ns": 1591878822,
+            "ended_ns": 1677435719,
+            "elapsed_wall_ns": 85558097,
+            "returned_after_deadline": false,
+            "returned_after_window": false
+          },
+          "independent_replay_count": 7,
+          "independent_replay_accepted": 7,
+          "last_independent_replay": {
+            "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+            "history_call_index": 6,
+            "history_request_ended_ns": 1677435719,
+            "replay_started_ns": 1677456389,
+            "replay_ended_ns": 1878081415,
+            "replay_wall_ns": 200625026,
+            "replay_accepted": true,
+            "replay_error": null,
+            "prior_after": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d",
+            "next_after": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+          }
+        },
+        {
+          "mode": "from-zero-pressure",
+          "client_confirmed_transactions": 0,
+          "client_confirmation_latency_ns": null,
+          "submission_count": 7,
+          "submission_status_counts": {
+            "ok": 7
+          },
+          "last_submit_ended_ns": 1143819349,
+          "history_rpc_count": 6,
+          "history_rpc_status_counts": {
+            "ok": 6
+          },
+          "last_history_rpc": {
+            "status": "ok",
+            "error": null,
+            "started_ns": 3551516992,
+            "ended_ns": 3655236221,
+            "elapsed_wall_ns": 103720581,
+            "returned_after_deadline": false,
+            "returned_after_window": false
+          },
+          "independent_replay_count": 6,
+          "independent_replay_accepted": 5,
+          "last_independent_replay": {
+            "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+            "history_call_index": 5,
+            "history_request_ended_ns": 3655236221,
+            "replay_started_ns": 3655254252,
+            "replay_ended_ns": 4041249072,
+            "replay_wall_ns": 385994820,
+            "replay_accepted": false,
+            "replay_error": "PUBLIC_REQUEST_DEADLINE",
+            "prior_after": "8841bbc6456f24800ce7eb317d4a1de16caf7e5fbc9edc77703050de3f791611",
+            "next_after": null
+          }
+        }
+      ]
+    },
+    {
+      "lane": "priority-ubuntu-24.04-arm-prospective-merge-service-model-819309fd312298e099642e1253b1d4ba07113e98-1",
+      "artifact_id": 13586309794,
+      "path": "/home/qian-qi/throughput-final-ci-observation-20261107/20261107T190954Z-819309fd3122-2881e25e/service-artifact-read-remaining-v1/13586309794/from-zero-native/confirmation/report.json",
+      "expected_sha256": "c6f6af775512a7af67f4c6c7f527f64e741da6f7210ca7744efbcfeeb7df8057",
+      "phases": [
+        {
+          "mode": "attack-free-baseline",
+          "client_confirmed_transactions": 1,
+          "client_confirmation_latency_ns": 1781689543,
+          "submission_count": 7,
+          "submission_status_counts": {
+            "ok": 7
+          },
+          "last_submit_ended_ns": 208592798,
+          "history_rpc_count": 7,
+          "history_rpc_status_counts": {
+            "ok": 7
+          },
+          "last_history_rpc": {
+            "status": "ok",
+            "error": null,
+            "started_ns": 1497431246,
+            "ended_ns": 1508375639,
+            "elapsed_wall_ns": 10945745,
+            "returned_after_deadline": false,
+            "returned_after_window": false
+          },
+          "independent_replay_count": 7,
+          "independent_replay_accepted": 7,
+          "last_independent_replay": {
+            "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+            "history_call_index": 6,
+            "history_request_ended_ns": 1508375639,
+            "replay_started_ns": 1508394248,
+            "replay_ended_ns": 1781027148,
+            "replay_wall_ns": 272632900,
+            "replay_accepted": true,
+            "replay_error": null,
+            "prior_after": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d",
+            "next_after": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+          }
+        },
+        {
+          "mode": "from-zero-pressure",
+          "client_confirmed_transactions": 0,
+          "client_confirmation_latency_ns": null,
+          "submission_count": 7,
+          "submission_status_counts": {
+            "ok": 7
+          },
+          "last_submit_ended_ns": 1058095707,
+          "history_rpc_count": 7,
+          "history_rpc_status_counts": {
+            "ok": 7
+          },
+          "last_history_rpc": {
+            "status": "ok",
+            "error": null,
+            "started_ns": 3752895228,
+            "ended_ns": 3855772891,
+            "elapsed_wall_ns": 102878679,
+            "returned_after_deadline": false,
+            "returned_after_window": false
+          },
+          "independent_replay_count": 7,
+          "independent_replay_accepted": 6,
+          "last_independent_replay": {
+            "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+            "history_call_index": 6,
+            "history_request_ended_ns": 3855772891,
+            "replay_started_ns": 3855790835,
+            "replay_ended_ns": 4050543893,
+            "replay_wall_ns": 194753058,
+            "replay_accepted": false,
+            "replay_error": "PUBLIC_REQUEST_DEADLINE",
+            "prior_after": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d",
+            "next_after": null
+          }
+        }
+      ]
+    },
+    {
+      "lane": "priority-ubuntu-24.04-head-service-model-819309fd312298e099642e1253b1d4ba07113e98-1",
+      "artifact_id": 13586249872,
+      "path": "/home/qian-qi/throughput-final-ci-observation-20261107/20261107T190954Z-819309fd3122-2881e25e/service-artifact-read-remaining-v1/13586249872/from-zero-native/confirmation/report.json",
+      "expected_sha256": "78e453f7a8f7bb28d0db3d80cd282d870cf9683416dd41536ee016d3c6ac5bae",
+      "phases": [
+        {
+          "mode": "attack-free-baseline",
+          "client_confirmed_transactions": 1,
+          "client_confirmation_latency_ns": 2998398221,
+          "submission_count": 7,
+          "submission_status_counts": {
+            "ok": 7
+          },
+          "last_submit_ended_ns": 221242970,
+          "history_rpc_count": 7,
+          "history_rpc_status_counts": {
+            "ok": 7
+          },
+          "last_history_rpc": {
+            "status": "ok",
+            "error": null,
+            "started_ns": 2513277704,
+            "ended_ns": 2525677351,
+            "elapsed_wall_ns": 12400709,
+            "returned_after_deadline": false,
+            "returned_after_window": false
+          },
+          "independent_replay_count": 7,
+          "independent_replay_accepted": 7,
+          "last_independent_replay": {
+            "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+            "history_call_index": 6,
+            "history_request_ended_ns": 2525677351,
+            "replay_started_ns": 2525695985,
+            "replay_ended_ns": 2997542169,
+            "replay_wall_ns": 471846184,
+            "replay_accepted": true,
+            "replay_error": null,
+            "prior_after": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d",
+            "next_after": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+          }
+        },
+        {
+          "mode": "from-zero-pressure",
+          "client_confirmed_transactions": 0,
+          "client_confirmation_latency_ns": null,
+          "submission_count": 7,
+          "submission_status_counts": {
+            "ok": 7
+          },
+          "last_submit_ended_ns": 1408262765,
+          "history_rpc_count": 3,
+          "history_rpc_status_counts": {
+            "ok": 3
+          },
+          "last_history_rpc": {
+            "status": "ok",
+            "error": null,
+            "started_ns": 3505051136,
+            "ended_ns": 3695813163,
+            "elapsed_wall_ns": 190763159,
+            "returned_after_deadline": false,
+            "returned_after_window": false
+          },
+          "independent_replay_count": 3,
+          "independent_replay_accepted": 2,
+          "last_independent_replay": {
+            "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+            "history_call_index": 2,
+            "history_request_ended_ns": 3695813163,
+            "replay_started_ns": 3695833361,
+            "replay_ended_ns": 4001553124,
+            "replay_wall_ns": 305719763,
+            "replay_accepted": false,
+            "replay_error": "PUBLIC_REQUEST_DEADLINE",
+            "prior_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+            "next_after": null
+          }
+        }
+      ]
+    },
+    {
+      "lane": "fresh-workflow-x64-head-original",
+      "artifact_id": 13586581750,
+      "path": "/home/qian-qi/throughput-final-ci-observation-20261107/20261107T185302Z-819309fd3122-28c8f400/fresh-artifact-read-v1/13586581750/fresh-service/original/report.json",
+      "expected_sha256": "df6a932c8ee2cd9ba6287918ae2861a62f2215f012bddbc57dbb849ae3226377",
+      "phases": [
+        {
+          "mode": "attack-free-baseline",
+          "client_confirmed_transactions": 1,
+          "client_confirmation_latency_ns": 3013527913,
+          "submission_count": 7,
+          "submission_status_counts": {
+            "ok": 7
+          },
+          "last_submit_ended_ns": 218964364,
+          "history_rpc_count": 7,
+          "history_rpc_status_counts": {
+            "ok": 7
+          },
+          "last_history_rpc": {
+            "status": "ok",
+            "error": null,
+            "started_ns": 2600655019,
+            "ended_ns": 2612865729,
+            "elapsed_wall_ns": 12211831,
+            "returned_after_deadline": false,
+            "returned_after_window": false
+          },
+          "independent_replay_count": 7,
+          "independent_replay_accepted": 7,
+          "last_independent_replay": {
+            "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+            "history_call_index": 6,
+            "history_request_ended_ns": 2612865729,
+            "replay_started_ns": 2612885576,
+            "replay_ended_ns": 3012741719,
+            "replay_wall_ns": 399856143,
+            "replay_accepted": true,
+            "replay_error": null,
+            "prior_after": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d",
+            "next_after": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+          }
+        },
+        {
+          "mode": "from-zero-pressure",
+          "client_confirmed_transactions": 0,
+          "client_confirmation_latency_ns": null,
+          "submission_count": 7,
+          "submission_status_counts": {
+            "ok": 7
+          },
+          "last_submit_ended_ns": 1401289679,
+          "history_rpc_count": 3,
+          "history_rpc_status_counts": {
+            "ok": 3
+          },
+          "last_history_rpc": {
+            "status": "ok",
+            "error": null,
+            "started_ns": 3503245491,
+            "ended_ns": 3604867487,
+            "elapsed_wall_ns": 101623549,
+            "returned_after_deadline": false,
+            "returned_after_window": false
+          },
+          "independent_replay_count": 3,
+          "independent_replay_accepted": 2,
+          "last_independent_replay": {
+            "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+            "history_call_index": 2,
+            "history_request_ended_ns": 3604867487,
+            "replay_started_ns": 3604893176,
+            "replay_ended_ns": 4001035757,
+            "replay_wall_ns": 396142581,
+            "replay_accepted": false,
+            "replay_error": "PUBLIC_REQUEST_DEADLINE",
+            "prior_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+            "next_after": null
+          }
+        }
+      ]
+    },
+    {
+      "lane": "fresh-workflow-x64-head-fresh",
+      "artifact_id": 13586581750,
+      "path": "/home/qian-qi/throughput-final-ci-observation-20261107/20261107T185302Z-819309fd3122-28c8f400/fresh-artifact-read-v1/13586581750/fresh-service/fresh/report.json",
+      "expected_sha256": "242c09c6196980e5e0552be822e93c00797486f17e18d70bedef1b060c7daa80",
+      "phases": [
+        {
+          "mode": "attack-free-baseline",
+          "client_confirmed_transactions": 1,
+          "client_confirmation_latency_ns": 3104824911,
+          "submission_count": 7,
+          "submission_status_counts": {
+            "ok": 7
+          },
+          "last_submit_ended_ns": 225366442,
+          "history_rpc_count": 7,
+          "history_rpc_status_counts": {
+            "ok": 7
+          },
+          "last_history_rpc": {
+            "status": "ok",
+            "error": null,
+            "started_ns": 2692914613,
+            "ended_ns": 2705074607,
+            "elapsed_wall_ns": 12161226,
+            "returned_after_deadline": false,
+            "returned_after_window": false
+          },
+          "independent_replay_count": 7,
+          "independent_replay_accepted": 7,
+          "last_independent_replay": {
+            "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+            "history_call_index": 6,
+            "history_request_ended_ns": 2705074607,
+            "replay_started_ns": 2705093783,
+            "replay_ended_ns": 3103989745,
+            "replay_wall_ns": 398895962,
+            "replay_accepted": true,
+            "replay_error": null,
+            "prior_after": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d",
+            "next_after": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+          }
+        },
+        {
+          "mode": "from-zero-pressure",
+          "client_confirmed_transactions": 0,
+          "client_confirmation_latency_ns": null,
+          "submission_count": 7,
+          "submission_status_counts": {
+            "ok": 7
+          },
+          "last_submit_ended_ns": 2259719095,
+          "history_rpc_count": 2,
+          "history_rpc_status_counts": {
+            "ok": 1,
+            "error": 1
+          },
+          "last_history_rpc": {
+            "status": "error",
+            "error": "IO: Resource temporarily unavailable (os error 11)",
+            "started_ns": 3858824199,
+            "ended_ns": 4052858242,
+            "elapsed_wall_ns": 194035727,
+            "returned_after_deadline": false,
+            "returned_after_window": true
+          },
+          "independent_replay_count": 1,
+          "independent_replay_accepted": 1,
+          "last_independent_replay": {
+            "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+            "history_call_index": 0,
+            "history_request_ended_ns": 2459007092,
+            "replay_started_ns": 2459026970,
+            "replay_ended_ns": 3858738888,
+            "replay_wall_ns": 1399711918,
+            "replay_accepted": true,
+            "replay_error": null,
+            "prior_after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+            "next_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754"
+          }
+        }
+      ]
+    },
+    {
+      "lane": "fresh-workflow-x64-prospective-merge-original",
+      "artifact_id": 13585963261,
+      "path": "/home/qian-qi/throughput-final-ci-observation-20261107/20261107T185302Z-819309fd3122-28c8f400/fresh-artifact-read-v1/13585963261/fresh-service/original/report.json",
+      "expected_sha256": "43018547e1dccf1017bc90f6f73f481fac6586ee834c761aa9a9ef72394b3bb0",
+      "phases": [
+        {
+          "mode": "attack-free-baseline",
+          "client_confirmed_transactions": 1,
+          "client_confirmation_latency_ns": 2682595039,
+          "submission_count": 7,
+          "submission_status_counts": {
+            "ok": 7
+          },
+          "last_submit_ended_ns": 216204595,
+          "history_rpc_count": 7,
+          "history_rpc_status_counts": {
+            "ok": 7
+          },
+          "last_history_rpc": {
+            "status": "ok",
+            "error": null,
+            "started_ns": 2290172977,
+            "ended_ns": 2302524714,
+            "elapsed_wall_ns": 12352878,
+            "returned_after_deadline": false,
+            "returned_after_window": false
+          },
+          "independent_replay_count": 7,
+          "independent_replay_accepted": 7,
+          "last_independent_replay": {
+            "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+            "history_call_index": 6,
+            "history_request_ended_ns": 2302524714,
+            "replay_started_ns": 2302540938,
+            "replay_ended_ns": 2681731369,
+            "replay_wall_ns": 379190431,
+            "replay_accepted": true,
+            "replay_error": null,
+            "prior_after": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d",
+            "next_after": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+          }
+        },
+        {
+          "mode": "from-zero-pressure",
+          "client_confirmed_transactions": 0,
+          "client_confirmation_latency_ns": null,
+          "submission_count": 7,
+          "submission_status_counts": {
+            "ok": 7
+          },
+          "last_submit_ended_ns": 1263221840,
+          "history_rpc_count": 4,
+          "history_rpc_status_counts": {
+            "ok": 4
+          },
+          "last_history_rpc": {
+            "status": "ok",
+            "error": null,
+            "started_ns": 3859064743,
+            "ended_ns": 3962640499,
+            "elapsed_wall_ns": 103576877,
+            "returned_after_deadline": false,
+            "returned_after_window": false
+          },
+          "independent_replay_count": 4,
+          "independent_replay_accepted": 3,
+          "last_independent_replay": {
+            "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+            "history_call_index": 3,
+            "history_request_ended_ns": 3962640499,
+            "replay_started_ns": 3962658416,
+            "replay_ended_ns": 4052593434,
+            "replay_wall_ns": 89935018,
+            "replay_accepted": false,
+            "replay_error": "PUBLIC_REQUEST_DEADLINE",
+            "prior_after": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70",
+            "next_after": null
+          }
+        }
+      ]
+    },
+    {
+      "lane": "fresh-workflow-x64-prospective-merge-fresh",
+      "artifact_id": 13585963261,
+      "path": "/home/qian-qi/throughput-final-ci-observation-20261107/20261107T185302Z-819309fd3122-28c8f400/fresh-artifact-read-v1/13585963261/fresh-service/fresh/report.json",
+      "expected_sha256": "92eb9b47359816171288cf4b61d362df75567feabb912a281d88a7124f7cd98a",
+      "phases": [
+        {
+          "mode": "attack-free-baseline",
+          "client_confirmed_transactions": 1,
+          "client_confirmation_latency_ns": 2680975825,
+          "submission_count": 7,
+          "submission_status_counts": {
+            "ok": 7
+          },
+          "last_submit_ended_ns": 220423541,
+          "history_rpc_count": 7,
+          "history_rpc_status_counts": {
+            "ok": 7
+          },
+          "last_history_rpc": {
+            "status": "ok",
+            "error": null,
+            "started_ns": 2284093323,
+            "ended_ns": 2295826990,
+            "elapsed_wall_ns": 11734979,
+            "returned_after_deadline": false,
+            "returned_after_window": false
+          },
+          "independent_replay_count": 7,
+          "independent_replay_accepted": 7,
+          "last_independent_replay": {
+            "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+            "history_call_index": 6,
+            "history_request_ended_ns": 2295826990,
+            "replay_started_ns": 2295842804,
+            "replay_ended_ns": 2680252285,
+            "replay_wall_ns": 384409481,
+            "replay_accepted": true,
+            "replay_error": null,
+            "prior_after": "80f909ce4f7008f8a357ce8bfa5c31baf6f173a60e00bed55bb497cb27505e6d",
+            "next_after": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+          }
+        },
+        {
+          "mode": "from-zero-pressure",
+          "client_confirmed_transactions": 0,
+          "client_confirmation_latency_ns": null,
+          "submission_count": 7,
+          "submission_status_counts": {
+            "ok": 7
+          },
+          "last_submit_ended_ns": 1943670706,
+          "history_rpc_count": 2,
+          "history_rpc_status_counts": {
+            "ok": 2
+          },
+          "last_history_rpc": {
+            "status": "ok",
+            "error": null,
+            "started_ns": 3339056309,
+            "ended_ns": 3539152189,
+            "elapsed_wall_ns": 200096892,
+            "returned_after_deadline": false,
+            "returned_after_window": false
+          },
+          "independent_replay_count": 2,
+          "independent_replay_accepted": 1,
+          "last_independent_replay": {
+            "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+            "history_call_index": 1,
+            "history_request_ended_ns": 3539152189,
+            "replay_started_ns": 3539167232,
+            "replay_ended_ns": 4037687725,
+            "replay_wall_ns": 498520493,
+            "replay_accepted": false,
+            "replay_error": "PUBLIC_REQUEST_DEADLINE",
+            "prior_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+            "next_after": null
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,141 @@
+[
+  {
+    "name": "preflight",
+    "command": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "base",
+    "command": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "changed",
+    "command": [
+      "git",
+      "diff",
+      "--name-only"
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "untracked",
+    "command": [
+      "git",
+      "ls-files",
+      "--others",
+      "--exclude-standard"
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "diff-check",
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "repository",
+    "command": [
+      "python3",
+      "scripts/ci/check_repository.py"
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "add",
+    "command": [
+      "git",
+      "add",
+      "--",
+      ".github/workflows/pon-recent-batch-acceptance.yml",
+      "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "docs/protocol/pon-nakamoto-v1/details/BRANCH_WORK_SCHEDULE_RESEARCH_V1.md",
+      "docs/protocol/pon-nakamoto-v1/details/INCREMENTAL_WORK_SCHEDULE_RESEARCH_V1.md",
+      "docs/protocol/pon-nakamoto-v1/details/TIME_CREDIT_CONTINUATION_V1.md",
+      "formal/pon-nakamoto-v1/QUANTUM_BERNOULLI_SOURCE_AUDIT_V1.md",
+      "formal/pon-nakamoto-v1/quantum_bernoulli_source_audit.py",
+      "formal/pon-nakamoto-v1/test_quantum_bernoulli_source_audit.py",
+      "scripts/ci/ci_job.sh",
+      "scripts/ci/check_ci_contract.py",
+      "scripts/ci/test_ci_contract.py",
+      "trillionnium/crates/trnm-pon-node/src/growth_cli.rs",
+      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/growth.rs",
+      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/growth/tests.rs",
+      "trillionnium/crates/trnm-pon-node/src/research_work_schedule.rs",
+      "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/growth/tests/header_window.rs",
+      "trillionnium/crates/trnm-pon-node/tests/native_growth_cli.rs",
+      "trillionnium/crates/trnm-pon-node/tests/research_work_schedule.rs"
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "staged-preflight",
+    "command": [
+      "bash",
+      "scripts/project-preflight.sh",
+      "--staged"
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "staged-diff",
+    "command": [
+      "git",
+      "diff",
+      "--cached",
+      "--check"
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "commit",
+    "command": [
+      "git",
+      "commit",
+      "--signoff",
+      "-m",
+      "Fix Growth clock eligibility and audit quantum credit bounds"
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "source-head",
+    "command": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "source-tree",
+    "command": [
+      "git",
+      "rev-parse",
+      "HEAD^{tree}"
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "status",
+    "command": [
+      "git",
+      "status",
+      "--porcelain=v1"
+    ],
+    "exit_code": 0
+  }
+]

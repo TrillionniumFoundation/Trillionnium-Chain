@@ -1,0 +1,45 @@
+{
+  "schema": "trnm.original-artifact-recovery-attempts.v1",
+  "artifact_id": 13662172930,
+  "run_id": 42591962205,
+  "expected_archive_bytes": 76441344,
+  "expected_archive_sha256": "4e8a243caf2aadf4a195b4cb96dbb0229a0e001a830f0e9de2c4f853ee7dff5c",
+  "download_attempt": {
+    "job_id": "1a1c11102f6-336d-58",
+    "state": "failed",
+    "exit_code": 1,
+    "child_timeout_seconds": 300,
+    "original_key_reconciliation_reused": true,
+    "complete_archive_obtained": false
+  },
+  "range_probe": {
+    "job_id": "1a1c1174650-336d-67",
+    "state": "failed",
+    "exit_code": 1,
+    "precondition": "progress partial size no longer matched after original process terminal",
+    "http_range_request_performed": false,
+    "partial_modified": false
+  },
+  "final_partial": {
+    "metadata": {
+      "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gid": 20,
+      "link_count": 1,
+      "metadata_platform": "darwin",
+      "mode": 384,
+      "uid": 501,
+      "xattr_names": [],
+      "xattr_sha256": {}
+    },
+    "mode": 384,
+    "path": "/Users/qianqi/chain-hepta-closure-481716/history-snapshot-recovery/artifact-13662172930-download-01.part",
+    "sha256": "e504ce83690af060d28952417aaebc338102ac2b0621232efbb453d87f20db8a",
+    "size": 11599872,
+    "version": "16777233:598263075:11599872:1794240786064785117:1794240786064785117"
+  },
+  "reports_extracted": false,
+  "snapshots_obtained": false,
+  "further_downloads_paused_for_root_connector_retrieval": true,
+  "campaign_executed": false,
+  "github_writes_performed": false
+}

@@ -1,0 +1,29 @@
+{"started": true, "commit": "2d46d8682201bc0619f5b156af50e77fb399322e", "output": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/merged-python-source-gates/attempt-01", "commands": 12, "workers": 3}
+{"name": "lifecycle-query", "exit_code": 0, "elapsed_seconds": 0.23134549800306559, "tests": ["Ran 26 tests in 0.047s", "OK"]}
+{"name": "event-coverage", "exit_code": 0, "elapsed_seconds": 1.1587239280343056, "tests": ["Ran 21 tests in 0.973s", "OK"]}
+{"name": "finite-joint-state", "exit_code": 0, "elapsed_seconds": 2.01159986294806, "tests": ["Ran 34 tests in 1.828s", "OK"]}
+{"name": "source-integrity", "exit_code": 0, "elapsed_seconds": 19.52374137402512, "tests": ["Ran 43 tests in 19.365s", "OK"]}
+{"name": "ci-contract-static", "exit_code": 0, "elapsed_seconds": 0.18387407786212862, "tests": []}
+{"name": "source-inventory", "exit_code": 0, "elapsed_seconds": 0.11640634620562196, "tests": []}
+{"name": "detailed-contracts", "exit_code": 1, "elapsed_seconds": 1.0977561420295388, "tests": []}
+{"name": "applicability", "exit_code": 1, "elapsed_seconds": 0.08845385489985347, "tests": []}
+{"name": "invariants", "exit_code": 0, "elapsed_seconds": 4.440342094982043, "tests": []}
+{"name": "current-implementation", "exit_code": 0, "elapsed_seconds": 0.06300788302905858, "tests": []}
+{"name": "ci-execution", "exit_code": 0, "elapsed_seconds": 28.884057803079486, "tests": ["Ran 77 tests in 28.691s", "OK"]}
+{"name": "ci-contract-negative", "exit_code": 0, "elapsed_seconds": 92.5011487591546, "tests": ["Ran 108 tests in 92.245s", "OK"]}
+{
+  "schema": "merged-python-source-gates-v1",
+  "commit": "2d46d8682201bc0619f5b156af50e77fb399322e",
+  "tree": "5ae5317304588cca8295a19dd512c8e853f1ef5b",
+  "all_commands_zero_exit": false,
+  "source_and_git_state_equal_at_endpoints": true,
+  "source_entries_materialized": 2415,
+  "source_entries_unmaterialized": 0,
+  "native_reviewed_blobs_checked": 13,
+  "full_repository_truth_lane_executed": false,
+  "check_repository_executed": false,
+  "full_repository_truth_lane_pass_claimed": false,
+  "physical_execution_attested": false,
+  "production_qualified": false,
+  "result": "FAIL"
+}

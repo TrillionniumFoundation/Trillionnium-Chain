@@ -556,6 +556,7 @@ fn open_existing_requires_precreated_regular_nonsymlink_store() {
 
     drop(MvccFeeStoreV1::open(&store_path, g.clone()).expect("create store"));
     drop(MvccFeeStoreV1::open_existing(&store_path, g.clone()).expect("strict reopen"));
+    drop(MvccFeeStoreV1::open(&store_path, g.clone()).expect("normal regular reopen"));
 
     let directory_path = temporary.path().join("not-a-store-file");
     fs::create_dir(&directory_path).expect("directory object");
@@ -571,11 +572,27 @@ fn open_existing_requires_precreated_regular_nonsymlink_store() {
         let symlink_path = temporary.path().join("store-link.sqlite");
         std::os::unix::fs::symlink(&store_path, &symlink_path).expect("store symlink");
         assert_eq!(
-            MvccFeeStoreV1::open_existing(symlink_path, g)
+            MvccFeeStoreV1::open_existing(&symlink_path, g.clone())
                 .expect_err("symlink store path")
                 .code(),
             MvccFeeErrorCodeV1::StoreFailure
         );
+        assert_eq!(
+            MvccFeeStoreV1::open(&symlink_path, g.clone())
+                .expect_err("normal open rejects symlink store path")
+                .code(),
+            MvccFeeErrorCodeV1::StoreFailure
+        );
+        let missing = temporary.path().join("missing-store.sqlite");
+        let dangling = temporary.path().join("dangling-store.sqlite");
+        std::os::unix::fs::symlink(&missing, &dangling).expect("dangling store symlink");
+        assert_eq!(
+            MvccFeeStoreV1::open(&dangling, g)
+                .expect_err("normal open rejects dangling store path")
+                .code(),
+            MvccFeeErrorCodeV1::StoreFailure
+        );
+        assert!(!missing.exists(), "refusal must not create the link target");
     }
 }
 
@@ -700,3 +717,75 @@ fn committed_sparse_block_writes_only_changed_objects_and_replays_exactly_v1() {
 
 #[path = "parallel_execution_tests.rs"]
 mod parallel_execution_tests;
+
+#[cfg(unix)]
+#[test]
+fn sqlite_sidecar_objects_refuse_creation_and_reopen_without_file_effects() {
+    use std::os::unix::fs::symlink;
+
+    for existing in [false, true] {
+        let temporary = TempDir::new().unwrap();
+        let database = path(&temporary);
+        let g = genesis(42);
+        if existing {
+            drop(MvccFeeStoreV1::open(&database, g.clone()).expect("initial store"));
+        }
+        let original = fs::read(&database).ok();
+        for suffix in ["-wal", "-shm", "-journal"] {
+            let mut name = database.as_os_str().to_os_string();
+            name.push(suffix);
+            let sidecar = std::path::PathBuf::from(name);
+            let target = database.parent().unwrap().join(format!("missing{suffix}"));
+            for dangling in [true, false] {
+                if dangling {
+                    symlink(&target, &sidecar).unwrap();
+                } else {
+                    fs::write(&sidecar, b"unresolved sidecar bytes").unwrap();
+                }
+                let error = MvccFeeStoreV1::open(&database, g.clone())
+                    .expect_err("sidecar object must refuse before SQLite is opened");
+                assert_eq!(error.code(), MvccFeeErrorCodeV1::SidecarPresent);
+                if existing {
+                    let error = MvccFeeStoreV1::open_existing(&database, g.clone())
+                        .expect_err("existing opener must enforce the same sidecar boundary");
+                    assert_eq!(error.code(), MvccFeeErrorCodeV1::SidecarPresent);
+                }
+                assert_eq!(
+                    fs::read(&database).ok(),
+                    original,
+                    "database must remain unchanged"
+                );
+                if dangling {
+                    assert_eq!(fs::read_link(&sidecar).unwrap(), target);
+                    assert!(
+                        !target.exists(),
+                        "refusal must not create the symlink target"
+                    );
+                } else {
+                    assert_eq!(fs::read(&sidecar).unwrap(), b"unresolved sidecar bytes");
+                }
+                fs::remove_file(&sidecar).unwrap();
+            }
+        }
+        drop(MvccFeeStoreV1::open(&database, g.clone()).expect("clean store remains available"));
+        MvccFeeStoreV1::open_existing(&database, g.clone())
+            .expect("clean reopen remains available");
+    }
+}
+
+#[cfg(unix)]
+#[test]
+fn sqlite_sidecar_inspection_error_refuses_before_database_creation() {
+    let directory = TempDir::new().unwrap();
+    let database = directory.path().join("a".repeat(255));
+    let mut probe = database.as_os_str().to_os_string();
+    probe.push("-journal");
+    let cause = fs::symlink_metadata(&probe).expect_err("overlong sidecar fixture");
+    assert_ne!(cause.kind(), std::io::ErrorKind::NotFound);
+    let error = MvccFeeStoreV1::open(&database, genesis(42))
+        .expect_err("inspection failure cannot be treated as sidecar absence");
+    assert_eq!(error.code(), MvccFeeErrorCodeV1::StoreFailure);
+    assert!(error.message().starts_with("cannot inspect SQLite sidecar"));
+    assert!(!database.exists(), "refusal must precede database creation");
+    assert_eq!(fs::read_dir(directory.path()).unwrap().count(), 0);
+}

@@ -1,0 +1,313 @@
+{
+  "actual_named_ok_including_partial_targets": 76,
+  "archive_sha256": "6d22e3ca7dcd98a75da46f6717f122f2293fa0d870a5aa2807e7f8252aee6acd",
+  "failed_commands": [
+    "root-effect-readback-v4-native",
+    "root-witness-v5-native"
+  ],
+  "git_blob_verification": {
+    "all_git_blobs_sha256_recomputed": true,
+    "bytes": 2554106689,
+    "files": 27912
+  },
+  "host_or_execution_attestation_claimed": false,
+  "independent_security_property_count": null,
+  "native_targets": [
+    {
+      "completed_ok_names": [
+        "absent_selector_retains_real_classical_transfer_and_signature_refusal",
+        "present_npq_selector_still_requires_the_independent_native_owner",
+        "present_qtx1_selector_cannot_install_a_classical_service_profile",
+        "present_qtx1_selector_cannot_reach_classical_transfer_or_empty_block_effects"
+      ],
+      "elapsed_seconds": 92.91358627309091,
+      "exit_code": 0,
+      "expected": 4,
+      "remaining_without_ok": [],
+      "target": "account-profile-boundary",
+      "target_passed": true,
+      "timed_out": false,
+      "timeout_seconds": 1200
+    },
+    {
+      "completed_ok_names": [
+        "altered_missing_null_or_mistyped_development_scope_refuses_real_and_empty_blocks",
+        "classical_development_empty_block_keeps_real_maturity_and_subsidy_effects",
+        "classical_development_keeps_signed_transfer_maturity_fee_subsidy_and_receipt_bytes",
+        "partial_null_and_unknown_pq_selections_never_authorize_classical_effects",
+        "real_native_pq_genesis_and_owner_checks_survive_the_development_scope_guard"
+      ],
+      "elapsed_seconds": 3.7520492661278695,
+      "exit_code": 0,
+      "expected": 5,
+      "remaining_without_ok": [],
+      "target": "account-development-scope",
+      "target_passed": true,
+      "timed_out": false,
+      "timeout_seconds": 1200
+    },
+    {
+      "completed_ok_names": [
+        "native_owner_v3_authenticated_response_still_must_bind_fresh_challenge",
+        "native_owner_v3_callback_cannot_replace_original_owner_budget",
+        "native_owner_v3_cancellation_after_external_commit_requires_reconciliation",
+        "native_owner_v3_changed_current_bytes_and_replaced_database_are_not_authority",
+        "native_owner_v3_co_restored_owner_and_anchor_counterexample_remains_accepted",
+        "native_owner_v3_corrupt_pending_state_cannot_promote_even_after_real_cas",
+        "native_owner_v3_domain_binds_each_independent_identity_without_zero_fallback",
+        "native_owner_v3_foreign_sqlite_namespace_is_refused_without_mutating_it",
+        "native_owner_v3_last_observation_rechecks_persisted_revocation_and_rotation",
+        "native_owner_v3_lost_successful_cas_reply_requires_explicit_exact_completion",
+        "native_owner_v3_real_signed_append_reopen_and_exact_intent_observation",
+        "native_owner_v3_reopen_reverifies_retained_signature_bytes",
+        "native_owner_v3_replay_preserves_nonce_and_refuses_second_exact_operation",
+        "native_owner_v3_retained_external_anchor_refuses_whole_local_rollback",
+        "native_owner_v3_same_budget_exhaustion_retains_pending_before_cas",
+        "native_owner_v3_storage_tamper_schema_alias_and_concurrent_open_fail_closed",
+        "native_owner_v3_successor_cannot_reuse_an_anchor_or_writer_key",
+        "native_owner_v3_unadvanced_anchor_cannot_clear_pending_or_retry",
+        "native_owner_v3_writer_signature_is_verified_before_transport",
+        "native_owner_v3_wrong_enrollment_scope_and_service_aliases_are_refused"
+      ],
+      "elapsed_seconds": 1122.6223723080475,
+      "exit_code": 0,
+      "expected": 20,
+      "remaining_without_ok": [],
+      "target": "root-recovery-v3-native",
+      "target_passed": true,
+      "timed_out": false,
+      "timeout_seconds": 1200
+    },
+    {
+      "completed_ok_names": [
+        "native_floor_v4_common_restore_contrast_stale_pin_accepts_surviving_pin_rejects",
+        "native_floor_v4_complete_enrollment_binding_precedes_storage_and_anchor",
+        "native_floor_v4_exact_signed_ancestor_survives_append_and_reopen",
+        "native_floor_v4_fresh_anchor_authentication_remains_required",
+        "native_floor_v4_higher_counter_cannot_replace_exact_signed_ancestry",
+        "native_floor_v4_history_below_external_lower_bound_is_refused",
+        "native_floor_v4_invalid_pin_shapes_are_refused",
+        "native_floor_v4_pending_bytes_do_not_become_authority_from_head_match",
+        "native_floor_v4_pending_target_needs_signed_replay_and_explicit_completion"
+      ],
+      "elapsed_seconds": 475.617006178014,
+      "exit_code": 0,
+      "expected": 9,
+      "remaining_without_ok": [],
+      "target": "recovery-floor-v4-native",
+      "target_passed": true,
+      "timed_out": false,
+      "timeout_seconds": 1200
+    },
+    {
+      "completed_ok_names": [
+        "native_provider_v4_callback_cannot_replace_cancel_or_replenish_budget",
+        "native_provider_v4_complete_request_and_both_signature_families_are_required",
+        "native_provider_v4_enrollment_requires_floor_complete_bytes_kind_and_attempt",
+        "native_provider_v4_foreign_replaced_linked_and_truncated_journals_refuse"
+      ],
+      "elapsed_seconds": 1200.1551726670004,
+      "exit_code": -15,
+      "expected": 14,
+      "remaining_without_ok": [
+        "native_provider_v4_later_root_provider_alias_refuses_before_transport",
+        "native_provider_v4_live_session_refuses_complete_record_rollback",
+        "native_provider_v4_live_session_refuses_same_length_history_substitution",
+        "native_provider_v4_lost_and_unknown_reads_keep_original_operation_pending",
+        "native_provider_v4_orphan_epochs_require_explicit_same_epoch_reconciliation",
+        "native_provider_v4_oversized_journal_refuses_before_lookup",
+        "native_provider_v4_real_declaration_reopens_without_effect_authority",
+        "native_provider_v4_replays_original_operation_after_authority_rotation",
+        "native_provider_v4_unknown_does_not_erase_known_outcome_and_conflicts_refuse",
+        "native_provider_v4_unresolved_orphan_is_not_replaced_by_new_epoch"
+      ],
+      "target": "root-effect-readback-v4-native",
+      "target_passed": false,
+      "timed_out": true,
+      "timeout_seconds": 1200
+    },
+    {
+      "completed_ok_names": [
+        "native_budget_v4_transport_error_cannot_hide_budget_replacement",
+        "native_budget_v4_transport_error_latches_observed_external_cancellation",
+        "native_budget_v4_unmodified_transport_error_is_preserved",
+        "native_budget_v4_unmodified_writer_error_is_preserved",
+        "native_budget_v4_writer_error_cannot_hide_budget_replacement",
+        "native_budget_v4_writer_error_latches_observed_external_cancellation"
+      ],
+      "elapsed_seconds": 27.857564196921885,
+      "exit_code": 0,
+      "expected": 6,
+      "remaining_without_ok": [],
+      "target": "root-budget-v4-native",
+      "target_passed": true,
+      "timed_out": false,
+      "timeout_seconds": 1200
+    },
+    {
+      "completed_ok_names": [
+        "native_witness_v5_another_recovery_epoch_cannot_use_the_same_service_pin",
+        "native_witness_v5_callback_budget_replacement_and_cancellation_remain_fenced",
+        "native_witness_v5_changed_signed_pending_and_anchor_cannot_bypass_role_snapshot",
+        "native_witness_v5_complete_binding_and_role_separation_are_required",
+        "native_witness_v5_context_and_intent_recheck_live_witness_and_latch_failure",
+        "native_witness_v5_corrupt_pending_never_advances_the_witness"
+      ],
+      "elapsed_seconds": 1200.0293497219682,
+      "exit_code": -15,
+      "expected": 17,
+      "remaining_without_ok": [
+        "native_witness_v5_lost_ack_retains_pending_and_resumes_without_another_cas",
+        "native_witness_v5_open_checks_retained_root_key_roles",
+        "native_witness_v5_pre_cas_disconnect_retries_only_the_verified_witness_transition",
+        "native_witness_v5_restoring_every_authority_remains_an_explicit_counterexample",
+        "native_witness_v5_rotation_cannot_reuse_witness_keys",
+        "native_witness_v5_signed_response_must_bind_the_complete_fresh_request",
+        "native_witness_v5_success_is_witnessed_before_pending_is_completed",
+        "native_witness_v5_surviving_witness_refuses_common_owner_anchor_restore",
+        "native_witness_v5_unavailable_witness_has_no_static_floor_fallback",
+        "native_witness_v5_unwitnessed_v3_commit_cannot_be_promoted_from_an_ancestor_floor",
+        "native_witness_v5_wrong_signature_and_outcome_are_refused"
+      ],
+      "target": "root-witness-v5-native",
+      "target_passed": false,
+      "timed_out": true,
+      "timeout_seconds": 1200
+    },
+    {
+      "completed_ok_names": [
+        "native_durable_witness_v5_budget_replacement_on_ok_or_err_and_cancellation_fence",
+        "native_durable_witness_v5_complete_policy_and_live_stored_binding_are_enforced",
+        "native_durable_witness_v5_exact_cas_retry_and_cold_reopen_have_dual_family_receipts",
+        "native_durable_witness_v5_exclusive_lock_and_named_inode_are_required",
+        "native_durable_witness_v5_foreign_namespace_and_extra_schema_are_refused",
+        "native_durable_witness_v5_real_sqlite_commit_busy_fences_until_explicit_reopen",
+        "native_durable_witness_v5_root_lost_ack_cold_recovery_does_not_repeat_cas",
+        "native_durable_witness_v5_signer_callback_cannot_replace_committed_row_before_ack",
+        "native_durable_witness_v5_signing_failure_and_wrong_quorum_preserve_committed_head",
+        "native_durable_witness_v5_stale_database_requires_surviving_independent_reopen_pin",
+        "native_durable_witness_v5_unauthenticated_requests_cannot_mutate_or_fence",
+        "native_durable_witness_v5_wrong_predecessor_and_competing_successor_are_mismatches"
+      ],
+      "elapsed_seconds": 492.1117378731724,
+      "exit_code": 0,
+      "expected": 12,
+      "remaining_without_ok": [],
+      "target": "root-witness-v5-durable-native",
+      "target_passed": true,
+      "timed_out": false,
+      "timeout_seconds": 1200
+    },
+    {
+      "completed_ok_names": [
+        "store::account_profile_scope_tests::cold_open_rechecks_account_scope_without_rewriting_existing_storage",
+        "store::account_profile_scope_tests::growth_owner_rechecks_scope_before_open_recovery_and_noop_activation",
+        "store::account_profile_scope_tests::invalid_account_scope_never_creates_legacy_or_authenticated_namespace",
+        "store::account_profile_scope_tests::warm_owner_rechecks_current_account_scope_before_reads_recovery_and_activation"
+      ],
+      "elapsed_seconds": 648.5225777411833,
+      "exit_code": 0,
+      "expected": 4,
+      "remaining_without_ok": [],
+      "target": "node-account-scope",
+      "target_passed": true,
+      "timed_out": false,
+      "timeout_seconds": 1800
+    },
+    {
+      "completed_ok_names": [
+        "store::task_observation::tests::every_native_profile_observes_real_settlement_with_its_exact_wire_id"
+      ],
+      "elapsed_seconds": 7.844516737153754,
+      "exit_code": 0,
+      "expected": 1,
+      "remaining_without_ok": [],
+      "target": "node-all-pq-profile-settlement",
+      "target_passed": true,
+      "timed_out": false,
+      "timeout_seconds": 1200
+    },
+    {
+      "completed_ok_names": [
+        "ingress::pq_network::canonical_tests::pq_client_requires_complete_key_pin_after_identity_lookup"
+      ],
+      "elapsed_seconds": 1.1457406538538635,
+      "exit_code": 0,
+      "expected": 1,
+      "remaining_without_ok": [],
+      "target": "tls-full-spki-1",
+      "target_passed": true,
+      "timed_out": false,
+      "timeout_seconds": 1200
+    },
+    {
+      "completed_ok_names": [
+        "ingress::pq_network::tls::tests::tls_local_identity_requires_complete_key_pin_for_both_roles"
+      ],
+      "elapsed_seconds": 0.47716441191732883,
+      "exit_code": 0,
+      "expected": 1,
+      "remaining_without_ok": [],
+      "target": "tls-full-spki-2",
+      "target_passed": true,
+      "timed_out": false,
+      "timeout_seconds": 1200
+    },
+    {
+      "completed_ok_names": [
+        "ingress::pq_network::tls::tests::actual_tls_peer_identity_alias_refuses_before_application_dispatch_in_both_directions"
+      ],
+      "elapsed_seconds": 0.9262539560440928,
+      "exit_code": 0,
+      "expected": 1,
+      "remaining_without_ok": [],
+      "target": "tls-full-spki-3",
+      "target_passed": true,
+      "timed_out": false,
+      "timeout_seconds": 1200
+    },
+    {
+      "completed_ok_names": [
+        "real_node_pq_account_packets_work_forks_reorg_and_cold_replay"
+      ],
+      "elapsed_seconds": 8.894560035085306,
+      "exit_code": 0,
+      "expected": 1,
+      "remaining_without_ok": [],
+      "target": "node-qtx1-recovery",
+      "target_passed": true,
+      "timed_out": false,
+      "timeout_seconds": 1200
+    },
+    {
+      "completed_ok_names": [
+        "distinct_false_traces_and_cross_listener_retry_pay_one_shared_domain_without_effects"
+      ],
+      "elapsed_seconds": 5.185261161997914,
+      "exit_code": 0,
+      "expected": 1,
+      "remaining_without_ok": [],
+      "target": "distinct-invalid-work",
+      "target_passed": true,
+      "timed_out": false,
+      "timeout_seconds": 1200
+    }
+  ],
+  "original_group_complete": true,
+  "original_group_passed": false,
+  "partial_ok_is_not_a_target_pass": true,
+  "passed_complete_target_executions": 66,
+  "planned_native_executions": 97,
+  "production_activation": false,
+  "raw_members": 90,
+  "schema": "TRNM-C1-DESKTOP-EVIDENCE-VERIFICATION1",
+  "source": {
+    "branch": "fix/chain-pq-closure-20261111-d4d2",
+    "commit": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+    "status": "",
+    "tree": "f15a7ee4a0f5455eaf965db01dcd49e02a5f22b6"
+  },
+  "strict_clippy_passed": true,
+  "verified": true,
+  "whole_chain_pq_qualified": false
+}

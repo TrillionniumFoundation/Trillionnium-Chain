@@ -1,0 +1,46 @@
+{
+  "ast_parse": "PASS",
+  "cargo_or_project_tests_executed": false,
+  "created_utc": "2026-11-11T02:58:22.078117+00:00",
+  "final_stage_executed": false,
+  "full_ci_acceptance_granted": false,
+  "limitations": [
+    "This is helper AST/static review and raw-evidence inspection, not a new native run.",
+    "The stage/copy branch has not been executed.",
+    "Future full Rust adapter paths and archive pins require review when that package arrives.",
+    "Historical inspection snapshots are not the final payload approval."
+  ],
+  "plan_sha256": "4967ed2e1e0fc41e0a9443b67927489a0e9f242a99aed14e183d2785a724989a",
+  "production_qualification_granted": false,
+  "readonly_inspection_snapshot": {
+    "all_observed_recorder_hashes_have_saved_script_bytes": true,
+    "archive_original_members_verified": {
+      "desktop-primary": 51,
+      "desktop-repository-truth": 37
+    },
+    "exit_code": 2,
+    "fail_records": 11,
+    "large_files_over_64_mib": 0,
+    "pass_records": 43,
+    "path": "/workspace/scratch/a4188f5c86b5/coordination/delivery-evidence-inspection-current.json",
+    "reason": "Full Rust export and four genuine terminal records are not yet available. No final README supplied.",
+    "terminal_records_observed": 54
+  },
+  "review_findings": [
+    {
+      "finding": "Archive and current extracted manifest needed a cryptographic binding.",
+      "resolution": "Fixed archive SHA plus read-only streaming verification of every archive member including the manifest; duplicate, unsafe, special and missing members refused."
+    },
+    {
+      "finding": "Inspection output could otherwise enter an original evidence input tree.",
+      "resolution": "Inspection and stage both reject output within existing or future input trees; stage also rejects overlaps and existing output."
+    },
+    {
+      "finding": "Initial output-location rule was broader than the actual protected source checkouts.",
+      "resolution": "Plan names protected source roots, collected context cwd roots are also protected, and all original input trees are protected independently."
+    }
+  ],
+  "schema": "trnm-delivery-helper-static-review-v1",
+  "script_sha256": "352da614ba1eaeb3bf3261f5e1bc1ee3758bd9bf81fe54323f56eef177be46d0",
+  "source_repository_modified": false
+}

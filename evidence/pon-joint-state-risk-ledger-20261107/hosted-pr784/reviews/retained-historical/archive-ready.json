@@ -1,0 +1,11 @@
+{
+  "bytes_covered": 127229,
+  "directory": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/hosted-pr784-retained-failure-review",
+  "exclusions": [],
+  "files_covered": 43,
+  "frozen": true,
+  "manifest_scope": "SHA256SUMS covers every file except SHA256SUMS and this archive-ready.json, whose digest is reported separately to the archive owner.",
+  "schema": "hosted-review-archive-ready-v1",
+  "sha256sums_sha256": "5925acf700fa82d83a49235e75aad9591634118c387f73474b395c1b02f5bc75",
+  "unverified_transport_fragments": []
+}

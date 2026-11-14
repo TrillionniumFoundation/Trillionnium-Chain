@@ -1,0 +1,148 @@
+{
+  "schema": "readonly-node-third-failure-pre-panic-addendum-v1",
+  "created_utc": "2026-11-11T06:01:05.058163+00:00",
+  "predecessor_snapshots": [
+    {
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/diagnostic_node_recovery_readonly.md",
+      "sha256": "fa813f91f3e27694258eddcf196a25dbff0df7a1b8f85dee677ee1e249e1d983"
+    },
+    {
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/diagnostic_node_recovery_readonly.json",
+      "sha256": "04e0ccb41f8e00f6921e52a2bf12b48b805b2a6024a01ab0fc8e45fcac621c64"
+    }
+  ],
+  "source": {
+    "head": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+    "base": "df927b6ffaecff293b9e9428e3ba516f47cd101a",
+    "tree": "1ed39b6ebe55cb00c238f26f6bfc9361ab93faec",
+    "clean_at_read": true
+  },
+  "original_job": "1a1c8ba754b-135c4-1d3",
+  "observation": {
+    "path": "/workspace/scratch/a4188f5c86b5/coordination/data-node-stdout-observed-prefix-0-111603.log",
+    "bytes": 111603,
+    "sha256": "1a9aa38f74c9055d08ed5ff7f0caa129e0479066fa13012e3f65b545c1978019",
+    "complete_log": false,
+    "parent_lib_expected_test_count": 1402,
+    "failure_markers": [
+      {
+        "line": 237,
+        "text": "test ingress::pq_network::tls::tests::shared_tests::recovery_cases::actual_npq6_lost_ack_and_cold_resume_reuse_exact_wire_without_history_consuming_sequence ... FAILED"
+      },
+      {
+        "line": 238,
+        "text": "test ingress::pq_network::tls::tests::shared_tests::recovery_cases::actual_npq6_plain_parent_recovery_and_cold_membership_keep_one_original_campaign ... FAILED"
+      },
+      {
+        "line": 931,
+        "text": "test store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner ... FAILED"
+      }
+    ],
+    "captured_panic_observed": false,
+    "parent_suite_terminal_summary_observed": false,
+    "nested_child_one_test_summaries_are_parent_totals": false,
+    "auth_only_same_helper_observed_pass": {
+      "line": 932,
+      "text": "test store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator ... ok"
+    }
+  },
+  "fixture": {
+    "test": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+    "backend_iteration_order": [
+      "legacy",
+      "authenticated"
+    ],
+    "actual_failing_backend": "unknown_until_captured_output",
+    "settings": "Settings::development(Some(1))",
+    "profile": "classical development",
+    "initial_cells_added": 2100,
+    "bytes_per_string_content": 4080,
+    "custom_genesis_recomputed": true,
+    "app_params_tampered": false,
+    "scope_valid_by_source": true,
+    "pq_integrity_digest_reachable_for_this_fixture": false,
+    "new_scope_selector_checks_reachable": true,
+    "parent_gt_8MiB_uses_original_held_execution": true,
+    "dispatch_wall_deadline_seconds": 10,
+    "cpu_burst_ns": 2000000000,
+    "cpu_refill_ns_per_wall_second": 250000000,
+    "cpu_start_reserve_ns": 100000000,
+    "cpu_workers_limit": 2,
+    "separate_admission_owner_wait_seconds": 2,
+    "strict_outer_dispatch_unwrap_line": 1049,
+    "strict_native_unwrap_line": 1058,
+    "captured_diagnostics_defined_before_outer_unwrap": true,
+    "native_refusal_does_not_mean_whole_state_unchanged_without_readback": true
+  },
+  "object_comparison": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/detached_admission.rs",
+      "base_object": "5a881abe6b660933f31f4c16b66e1f1f42daf5cd",
+      "z_object": "5a881abe6b660933f31f4c16b66e1f1f42daf5cd",
+      "equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/detached_admission",
+      "base_object": "2b077754e1414f2b51299895387cd2b5138baa01",
+      "z_object": "2b077754e1414f2b51299895387cd2b5138baa01",
+      "equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+      "base_object": "52b115797c30bdb4b89d2eb73fc56b9b8bc9d033",
+      "z_object": "52b115797c30bdb4b89d2eb73fc56b9b8bc9d033",
+      "equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/metered_work_facts.rs",
+      "base_object": "e50508731d30f2b2bb33f6dafac1a90d1176d5a3",
+      "z_object": "e50508731d30f2b2bb33f6dafac1a90d1176d5a3",
+      "equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs",
+      "base_object": "b727972bee2230fcf26c7dd8bb04a0e3d00b16c7",
+      "z_object": "b727972bee2230fcf26c7dd8bb04a0e3d00b16c7",
+      "equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/lib.rs",
+      "base_object": "0758122202468cdf7ad938c058442be15555c329",
+      "z_object": "0758122202468cdf7ad938c058442be15555c329",
+      "equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "base_object": "a8bd7b9c8d9b02617060bea955b3bb21d905129f",
+      "z_object": "a766d083bc1955041bf2fc537cb2731e2d4eb6c4",
+      "equal": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "base_object": "a52e20fe46fe409bf3aac5b63c4b9d01438bb705",
+      "z_object": "5d2ccbcac24abc55f3598fad0a22da4cd8c8d0d2",
+      "equal": false
+    },
+    {
+      "path": "config/pon/devnet-v1.json",
+      "base_object": "a60f403b2f0e7343aed61170ca2aef875a787790",
+      "z_object": "a60f403b2f0e7343aed61170ca2aef875a787790",
+      "equal": true
+    },
+    {
+      "path": "trillionnium/Cargo.lock",
+      "base_object": "def80fa394ebb1ae6ce7d1d62ed77524152a2d04",
+      "z_object": "def80fa394ebb1ae6ce7d1d62ed77524152a2d04",
+      "equal": true
+    }
+  ],
+  "cause_established": false,
+  "actual_base_execution_performed": false,
+  "actions": {
+    "source_modified": false,
+    "raw_modified": false,
+    "cargo_run": false,
+    "remote_job_changed": false,
+    "thresholds_or_flags_changed": false
+  }
+}

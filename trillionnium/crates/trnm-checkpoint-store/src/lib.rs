@@ -1,6 +1,8 @@
 //! Bounded Unix transport and append-only CAS store for owner checkpoints.
 //! No signer, host attestation, ledger runtime or activation is provided.
 //! Use a fresh private V2 namespace and independently reconcile local roots.
+//! Cold restart requires an independently retained full-journal checkpoint;
+//! the sibling crash-recovery head cannot supply its own freshness evidence.
 
 #![cfg(unix)]
 #![forbid(unsafe_code)]
@@ -25,6 +27,14 @@ use sha2::{Digest, Sha256};
 use trnm_checkpoint_types::{
     ExternalCheckpointStoreErrorV2, ExternalCheckpointStoreV2, ExternalCheckpointV2,
     EXTERNAL_CHECKPOINT_RECORD_BYTES_V2,
+};
+
+mod journal_checkpoint_v1;
+mod live_journal_v2;
+mod socket_owner_v1;
+pub use journal_checkpoint_v1::{
+    read_external_journal_checkpoint_v1, write_new_external_journal_checkpoint_v1,
+    ExternalJournalCheckpointV1, EXTERNAL_JOURNAL_CHECKPOINT_BYTES_V1,
 };
 
 /// This adapter is a cross-process CAS transport, not operational node
@@ -125,6 +135,25 @@ struct LogRecordV2 {
     record_hash: [u8; 32],
 }
 
+#[derive(Clone, Copy)]
+enum AuthorityOpenModeV2 {
+    StructuralOnly,
+    RegisterNew,
+    ExistingPinned(ExternalJournalCheckpointV1),
+}
+
+#[derive(Clone, Copy)]
+enum InitialHeadCreationV2 {
+    Allowed,
+    Forbidden,
+}
+
+#[derive(Clone, Copy, Eq, PartialEq)]
+enum AuthorityAdmissionV1 {
+    StructuralOnly,
+    RegisteredOrPinned,
+}
+
 /// Descriptor/path identity retained by the candidate checkpoint owner.
 ///
 /// A valid hash chain does not protect an already-open owner from a same-UID
@@ -192,14 +221,54 @@ pub struct ExternalCheckpointAuthorityV2 {
     head_hash: [u8; 32],
     record_count: u64,
     poisoned: bool,
+    admission: AuthorityAdmissionV1,
 }
 
 impl ExternalCheckpointAuthorityV2 {
-    /// Open and authenticate the entire append-only journal.  No repair or
-    /// truncation is attempted.  A partial tail, stale anchor, or hash-chain
-    /// mismatch is a hard startup failure.
+    /// Compatibility constructor for structural qualification only.
+    ///
+    /// This validates the local journal and reconciles its sibling crash head.
+    /// It CANNOT detect a self-consistent rollback of both files and must not
+    /// be used as a cold-recovery freshness claim. An owner opened this way
+    /// cannot read or advance runtime checkpoints, serve the daemon protocol,
+    /// or export a trusted recovery pin. It is only a structural inspector.
+    /// Use [`Self::register_new`] for explicit first provisioning and
+    /// [`Self::reopen_with_external_checkpoint`] for all daemon restarts.
     pub fn open(log_path: impl AsRef<Path>) -> Result<Self, ExternalCheckpointAuthorityErrorV2> {
-        let (directory, log_path) = private_path_v2(log_path.as_ref())?;
+        Self::open_selected_v2(log_path.as_ref(), AuthorityOpenModeV2::StructuralOnly)
+    }
+
+    /// Explicitly register a new namespace. Existing journal, lock or head
+    /// files, including an empty namespace left by a crash, are refused.
+    /// This is a provisioning decision, never recovery after missing storage.
+    pub fn register_new(
+        log_path: impl AsRef<Path>,
+    ) -> Result<Self, ExternalCheckpointAuthorityErrorV2> {
+        Self::open_selected_v2(log_path.as_ref(), AuthorityOpenModeV2::RegisterNew)
+    }
+
+    /// Reopen existing storage against a separately retained full-journal pin.
+    ///
+    /// Count AND root must match exactly across every scope before any local
+    /// head repair. Missing files are not reseeded. An unknown/newer local
+    /// tail also requires explicit external reconciliation; the sibling head
+    /// is never promoted to an expected checkpoint. The caller must obtain
+    /// `expected` from an authenticated state outside this rollback domain.
+    pub fn reopen_with_external_checkpoint(
+        log_path: impl AsRef<Path>,
+        expected: ExternalJournalCheckpointV1,
+    ) -> Result<Self, ExternalCheckpointAuthorityErrorV2> {
+        Self::open_selected_v2(
+            log_path.as_ref(),
+            AuthorityOpenModeV2::ExistingPinned(expected),
+        )
+    }
+
+    fn open_selected_v2(
+        log_path: &Path,
+        mode: AuthorityOpenModeV2,
+    ) -> Result<Self, ExternalCheckpointAuthorityErrorV2> {
+        let (directory, log_path) = private_path_v2(log_path)?;
         let directory_path = log_path
             .parent()
             .ok_or(ExternalCheckpointAuthorityErrorV2::InvalidConfig(
@@ -210,10 +279,29 @@ impl ExternalCheckpointAuthorityV2 {
         verify_checkpoint_path_identity_v2(&directory_path, directory_identity, true)?;
         let lock_path = sidecar_path_v2(&log_path, "lock-v2")?;
         let anchor_path = sidecar_path_v2(&log_path, "head-v2")?;
+        if matches!(mode, AuthorityOpenModeV2::RegisterNew) {
+            for path in [&log_path, &lock_path, &anchor_path] {
+                match fs::symlink_metadata(path) {
+                    Ok(_) => {
+                        return Err(ExternalCheckpointAuthorityErrorV2::InvalidConfig(
+                            "new checkpoint namespace already exists",
+                        ))
+                    }
+                    Err(error) if error.kind() == io::ErrorKind::NotFound => {}
+                    Err(source) => {
+                        return Err(ExternalCheckpointAuthorityErrorV2::Io {
+                            stage: "inspect new checkpoint namespace",
+                            source,
+                        })
+                    }
+                }
+            }
+        }
         let lock = OpenOptions::new()
             .read(true)
             .write(true)
-            .create(true)
+            .create(matches!(mode, AuthorityOpenModeV2::StructuralOnly))
+            .create_new(matches!(mode, AuthorityOpenModeV2::RegisterNew))
             .mode(0o600)
             .custom_flags(libc::O_CLOEXEC | libc::O_NOFOLLOW)
             .open(&lock_path)
@@ -232,7 +320,8 @@ impl ExternalCheckpointAuthorityV2 {
 
         let log = OpenOptions::new()
             .read(true)
-            .create(true)
+            .create(matches!(mode, AuthorityOpenModeV2::StructuralOnly))
+            .create_new(matches!(mode, AuthorityOpenModeV2::RegisterNew))
             .append(true)
             .mode(0o600)
             .custom_flags(libc::O_CLOEXEC | libc::O_NOFOLLOW)
@@ -260,15 +349,96 @@ impl ExternalCheckpointAuthorityV2 {
             head_hash: [0; 32],
             record_count: 0,
             poisoned: false,
+            admission: if matches!(mode, AuthorityOpenModeV2::StructuralOnly) {
+                AuthorityAdmissionV1::StructuralOnly
+            } else {
+                AuthorityAdmissionV1::RegisteredOrPinned
+            },
         };
-        authority.replay_log_v2()?;
-        authority.reconcile_anchor_v2()?;
+        let expected_length = if let AuthorityOpenModeV2::ExistingPinned(expected) = mode {
+            let length = expected
+                .record_count()
+                .checked_mul(LOG_RECORD_BYTES_V2 as u64)
+                .ok_or(ExternalCheckpointAuthorityErrorV2::InvalidConfig(
+                    "external journal checkpoint length overflow",
+                ))?;
+            let actual_length = authority
+                .log
+                .metadata()
+                .map_err(|source| ExternalCheckpointAuthorityErrorV2::Io {
+                    stage: "stat pinned checkpoint journal",
+                    source,
+                })?
+                .len();
+            if actual_length != length {
+                return Err(ExternalCheckpointAuthorityErrorV2::InvalidLog(
+                    "external journal checkpoint mismatch",
+                ));
+            }
+            Some(length)
+        } else {
+            None
+        };
+        authority.replay_log_v2(expected_length)?;
+        if let AuthorityOpenModeV2::ExistingPinned(expected) = mode {
+            let actual = ExternalJournalCheckpointV1::from_verified_journal(
+                authority.record_count,
+                authority.head_hash,
+            );
+            if actual != expected {
+                return Err(ExternalCheckpointAuthorityErrorV2::InvalidLog(
+                    "external journal checkpoint mismatch",
+                ));
+            }
+            // Even the empty existing namespace must already have its head.
+            // Never turn a missing file into a new enrollment during reopen.
+            fs::symlink_metadata(&authority.anchor_path).map_err(|source| {
+                ExternalCheckpointAuthorityErrorV2::Io {
+                    stage: "inspect existing checkpoint head",
+                    source,
+                }
+            })?;
+        }
+        let initial_head_creation = if matches!(mode, AuthorityOpenModeV2::ExistingPinned(_)) {
+            InitialHeadCreationV2::Forbidden
+        } else {
+            InitialHeadCreationV2::Allowed
+        };
+        authority.reconcile_anchor_v2(initial_head_creation)?;
         authority.revalidate_bound_endpoints_v2()?;
+        authority.validate_live_journal_v2()?;
         Ok(authority)
     }
 
     pub fn log_path(&self) -> &Path {
         &self.log_path
+    }
+
+    /// Read the complete durable journal head from an admitted live owner.
+    /// Exporting this value does not retain it independently. An unanchored
+    /// structural reopen cannot manufacture a fresh recovery expectation.
+    pub fn journal_checkpoint_v1(
+        &self,
+    ) -> Result<ExternalJournalCheckpointV1, ExternalCheckpointAuthorityErrorV2> {
+        self.require_recovery_admission_v1()?;
+        if self.poisoned {
+            return Err(ExternalCheckpointAuthorityErrorV2::Unavailable);
+        }
+        self.revalidate_bound_endpoints_v2()?;
+        self.validate_live_journal_v2()?;
+        Ok(ExternalJournalCheckpointV1::from_verified_journal(
+            self.record_count,
+            self.head_hash,
+        ))
+    }
+
+    fn require_recovery_admission_v1(&self) -> Result<(), ExternalCheckpointAuthorityErrorV2> {
+        if self.admission == AuthorityAdmissionV1::StructuralOnly {
+            return Err(ExternalCheckpointAuthorityErrorV2::InvalidConfig(
+                "independent journal checkpoint required before runtime access",
+            ));
+        }
+        Ok(())
     }
 
     /// Revalidate every descriptor and canonical pathname bound by this
@@ -309,10 +479,12 @@ impl ExternalCheckpointAuthorityV2 {
         &self,
         scope: [u8; 32],
     ) -> Result<Option<ExternalCheckpointV2>, ExternalCheckpointAuthorityErrorV2> {
+        self.require_recovery_admission_v1()?;
         if self.poisoned {
             return Err(ExternalCheckpointAuthorityErrorV2::Unavailable);
         }
         self.revalidate_bound_endpoints_v2()?;
+        self.validate_live_journal_v2()?;
         if scope == [0; 32] {
             return Err(ExternalCheckpointAuthorityErrorV2::InvalidConfig(
                 "zero scope",
@@ -328,10 +500,12 @@ impl ExternalCheckpointAuthorityV2 {
         expected: Option<ExternalCheckpointV2>,
         target: ExternalCheckpointV2,
     ) -> Result<(), ExternalCheckpointAuthorityErrorV2> {
+        self.require_recovery_admission_v1()?;
         if self.poisoned {
             return Err(ExternalCheckpointAuthorityErrorV2::Unavailable);
         }
         self.revalidate_bound_endpoints_v2()?;
+        self.validate_live_journal_v2()?;
         let scope = target.scope();
         if scope == [0; 32] || target.encode_canonical().iter().all(|byte| *byte == 0) {
             return Err(ExternalCheckpointAuthorityErrorV2::InvalidConfig(
@@ -393,6 +567,10 @@ impl ExternalCheckpointAuthorityV2 {
             return Err(error);
         }
         if let Err(error) = self.revalidate_bound_endpoints_v2() {
+            self.poisoned = true;
+            return Err(error);
+        }
+        if let Err(error) = self.validate_live_journal_v2() {
             self.poisoned = true;
             return Err(error);
         }
@@ -471,7 +649,10 @@ impl ExternalCheckpointAuthorityV2 {
         Ok(())
     }
 
-    fn replay_log_v2(&mut self) -> Result<(), ExternalCheckpointAuthorityErrorV2> {
+    fn replay_log_v2(
+        &mut self,
+        expected_length: Option<u64>,
+    ) -> Result<(), ExternalCheckpointAuthorityErrorV2> {
         let mut reader =
             self.log
                 .try_clone()
@@ -480,12 +661,25 @@ impl ExternalCheckpointAuthorityV2 {
                     source,
                 })?;
         let mut bytes = Vec::new();
-        reader.read_to_end(&mut bytes).map_err(|source| {
-            ExternalCheckpointAuthorityErrorV2::Io {
-                stage: "read checkpoint journal",
-                source,
-            }
+        let read_result = if let Some(expected_length) = expected_length {
+            let limit = expected_length.checked_add(1).ok_or(
+                ExternalCheckpointAuthorityErrorV2::InvalidConfig(
+                    "external journal checkpoint length overflow",
+                ),
+            )?;
+            reader.take(limit).read_to_end(&mut bytes)
+        } else {
+            reader.read_to_end(&mut bytes)
+        };
+        read_result.map_err(|source| ExternalCheckpointAuthorityErrorV2::Io {
+            stage: "read checkpoint journal",
+            source,
         })?;
+        if expected_length.is_some_and(|expected| bytes.len() as u64 != expected) {
+            return Err(ExternalCheckpointAuthorityErrorV2::InvalidLog(
+                "external journal checkpoint mismatch",
+            ));
+        }
         if bytes.len() % LOG_RECORD_BYTES_V2 != 0 {
             return Err(ExternalCheckpointAuthorityErrorV2::InvalidLog(
                 "trailing partial checkpoint record",
@@ -518,7 +712,10 @@ impl ExternalCheckpointAuthorityV2 {
         Ok(())
     }
 
-    fn reconcile_anchor_v2(&mut self) -> Result<(), ExternalCheckpointAuthorityErrorV2> {
+    fn reconcile_anchor_v2(
+        &mut self,
+        initial_head_creation: InitialHeadCreationV2,
+    ) -> Result<(), ExternalCheckpointAuthorityErrorV2> {
         validate_existing_sidecar_v2(&self.anchor_path, "checkpoint head")?;
         match fs::symlink_metadata(&self.anchor_path) {
             Ok(_) => {
@@ -544,6 +741,14 @@ impl ExternalCheckpointAuthorityV2 {
                 Ok(())
             }
             Err(error) if error.kind() == io::ErrorKind::NotFound => {
+                // The earlier presence check is not a lease: the head may be
+                // removed before this observation. Pinned recovery must reject
+                // here as well, including for an empty, otherwise matching log.
+                if matches!(initial_head_creation, InitialHeadCreationV2::Forbidden) {
+                    return Err(ExternalCheckpointAuthorityErrorV2::InvalidLog(
+                        "existing checkpoint head disappeared before reconciliation",
+                    ));
+                }
                 self.anchor_identity = None;
                 if self.record_count != 0 {
                     return Err(ExternalCheckpointAuthorityErrorV2::InvalidLog(
@@ -626,6 +831,7 @@ impl ExternalCheckpointAuthorityV2 {
     fn handle_connection_v2(
         &mut self,
         mut stream: UnixStream,
+        socket_owner: &socket_owner_v1::SocketOwnerV1,
     ) -> Result<(), ExternalCheckpointAuthorityErrorV2> {
         if self.poisoned {
             return Err(ExternalCheckpointAuthorityErrorV2::Unavailable);
@@ -643,7 +849,18 @@ impl ExternalCheckpointAuthorityV2 {
                 stage: "set response timeout",
                 source,
             })?;
-        let request = match decode_request_v2(&read_frame_v2(&mut stream)?) {
+        let frame = read_frame_v2(&mut stream)?;
+        // Reading an admitted peer may block; fence listener replacement again
+        // before a complete request can read or advance the journal.
+        socket_owner.revalidate()?;
+        if frame == journal_checkpoint_v1::REQUEST_V1 {
+            let checkpoint = self.journal_checkpoint_v1()?;
+            return write_frame_v2(
+                &mut stream,
+                &journal_checkpoint_v1::encode_response_v1(checkpoint),
+            );
+        }
+        let request = match decode_request_v2(&frame) {
             Ok(request) => request,
             Err(error) => {
                 write_frame_v2(&mut stream, &encode_status_response_v2(STATUS_PROTOCOL_V2))?;
@@ -706,25 +923,16 @@ impl ExternalCheckpointAuthorityV2 {
         mut self,
         socket_path: impl AsRef<Path>,
     ) -> Result<(), ExternalCheckpointAuthorityErrorV2> {
-        let socket_path = socket_path.as_ref();
-        remove_stale_socket_v2(socket_path)?;
-        let _parent = prepare_socket_parent_v2(socket_path)?;
-        let listener = UnixListener::bind(socket_path).map_err(|source| {
-            ExternalCheckpointAuthorityErrorV2::Io {
-                stage: "bind checkpoint socket",
-                source,
-            }
-        })?;
-        fs::set_permissions(socket_path, fs::Permissions::from_mode(0o600)).map_err(|source| {
-            ExternalCheckpointAuthorityErrorV2::Io {
-                stage: "protect checkpoint socket",
-                source,
-            }
-        })?;
-        for stream in listener.incoming() {
+        self.require_recovery_admission_v1()?;
+        let owner = socket_owner_v1::SocketOwnerV1::bind(socket_path.as_ref())?;
+        for stream in owner.listener().incoming() {
+            // A connect-only liveness probe carries no request. Revalidate the
+            // socket owner after a complete frame in handle_connection_v2,
+            // before any checkpoint read or advance, so the probe itself does
+            // not fence an idle owner whose lease pathname was displaced.
             match stream {
                 Ok(stream) => {
-                    if let Err(error) = self.handle_connection_v2(stream) {
+                    if let Err(error) = self.handle_connection_v2(stream, &owner) {
                         if matches!(error, ExternalCheckpointAuthorityErrorV2::InvalidLog(_)) {
                             return Err(error);
                         }
@@ -773,6 +981,16 @@ impl UnixExternalCheckpointStoreV2 {
         &self.socket_path
     }
 
+    /// Obtain a full-journal snapshot from the already running admitted owner.
+    /// A recovery custodian must retain it independently before relying on it.
+    /// This read neither advances the journal nor grants business authority.
+    pub fn journal_checkpoint_v1(
+        &self,
+    ) -> Result<ExternalJournalCheckpointV1, ExternalCheckpointAuthorityErrorV2> {
+        let response = self.exchange_frame_v2(journal_checkpoint_v1::REQUEST_V1)?;
+        journal_checkpoint_v1::decode_response_v1(&response)
+    }
+
     pub fn load_checked(
         &self,
         scope: [u8; 32],
@@ -818,6 +1036,13 @@ impl UnixExternalCheckpointStoreV2 {
         &self,
         request: RequestV2,
     ) -> Result<ResponseV2, ExternalCheckpointAuthorityErrorV2> {
+        decode_response_v2(&self.exchange_frame_v2(&encode_request_v2(request))?)
+    }
+
+    fn exchange_frame_v2(
+        &self,
+        request: &[u8],
+    ) -> Result<Vec<u8>, ExternalCheckpointAuthorityErrorV2> {
         let mut stream = UnixStream::connect(&self.socket_path).map_err(|source| {
             ExternalCheckpointAuthorityErrorV2::Io {
                 stage: "connect checkpoint socket",
@@ -836,8 +1061,8 @@ impl UnixExternalCheckpointStoreV2 {
                 stage: "set client write timeout",
                 source,
             })?;
-        write_frame_v2(&mut stream, &encode_request_v2(request))?;
-        decode_response_v2(&read_frame_v2(&mut stream)?)
+        write_frame_v2(&mut stream, request)?;
+        read_frame_v2(&mut stream)
     }
 }
 
@@ -859,12 +1084,24 @@ impl ExternalCheckpointStoreV2 for UnixExternalCheckpointStoreV2 {
     }
 }
 
-/// Start the standalone authority process loop.
+/// Register a NEW namespace and start its daemon. Existing storage is refused;
+/// use [`run_daemon_with_external_checkpoint`] for an explicit pinned restart.
 pub fn run_daemon(
     socket_path: impl AsRef<Path>,
     log_path: impl AsRef<Path>,
 ) -> Result<(), ExternalCheckpointAuthorityErrorV2> {
-    ExternalCheckpointAuthorityV2::open(log_path)?.serve_unix(socket_path)
+    ExternalCheckpointAuthorityV2::register_new(log_path)?.serve_unix(socket_path)
+}
+
+/// Restart an existing daemon only after matching the independently retained
+/// full-journal checkpoint. Never derives the pin from local recovery files.
+pub fn run_daemon_with_external_checkpoint(
+    socket_path: impl AsRef<Path>,
+    log_path: impl AsRef<Path>,
+    expected: ExternalJournalCheckpointV1,
+) -> Result<(), ExternalCheckpointAuthorityErrorV2> {
+    ExternalCheckpointAuthorityV2::reopen_with_external_checkpoint(log_path, expected)?
+        .serve_unix(socket_path)
 }
 
 fn map_store_error_v2(error: ExternalCheckpointAuthorityErrorV2) -> ExternalCheckpointStoreErrorV2 {
@@ -953,7 +1190,7 @@ fn decode_request_v2(body: &[u8]) -> Result<RequestV2, ExternalCheckpointAuthori
         OP_LOAD_V2 if body.len() == 41 && body[6..9] == [0, 0, 0] => Ok(RequestV2::Load {
             scope: body[9..41].try_into().expect("fixed load scope"),
         }),
-        OP_COMPARE_AND_ADVANCE_V2 if body[6] <= 1 && body[7..9] == [0, 0] => {
+        OP_COMPARE_AND_ADVANCE_V2 if body.len() >= 41 && body[6] <= 1 && body[7..9] == [0, 0] => {
             let scope: [u8; 32] = body[9..41].try_into().expect("fixed compare scope");
             let expected_start = 41;
             let target_start = expected_start + if body[6] == 1 { CHECKPOINT_BYTES_V2 } else { 0 };
@@ -1343,8 +1580,10 @@ fn read_anchor_v2(
     })?;
     let identity = checkpoint_path_identity_from_file_v2(&file)?;
     verify_checkpoint_path_identity_v2(path, identity, false)?;
-    let mut bytes = Vec::new();
-    let mut reader = file;
+    // The exact-size decoder must see a trailing byte, but an oversized or
+    // growing head must not cause unbounded allocation before that check.
+    let mut bytes = Vec::with_capacity(ANCHOR_BYTES_V2 + 1);
+    let mut reader = file.take(ANCHOR_BYTES_V2 as u64 + 1);
     reader
         .read_to_end(&mut bytes)
         .map_err(|source| ExternalCheckpointAuthorityErrorV2::Io {
@@ -1414,33 +1653,14 @@ fn validate_existing_sidecar_v2(
     }
 }
 
-fn remove_stale_socket_v2(path: &Path) -> Result<(), ExternalCheckpointAuthorityErrorV2> {
-    if !path.is_absolute() || path.file_name().is_none() {
+fn prepare_socket_parent_v2(
+    socket_path: &Path,
+) -> Result<PathBuf, ExternalCheckpointAuthorityErrorV2> {
+    if !socket_path.is_absolute() || socket_path.file_name().is_none() {
         return Err(ExternalCheckpointAuthorityErrorV2::InvalidConfig(
             "socket path must be absolute",
         ));
     }
-    match fs::symlink_metadata(path) {
-        Ok(metadata) if metadata.file_type().is_socket() => {
-            fs::remove_file(path).map_err(|source| ExternalCheckpointAuthorityErrorV2::Io {
-                stage: "remove stale checkpoint socket",
-                source,
-            })
-        }
-        Ok(_) => Err(ExternalCheckpointAuthorityErrorV2::InvalidConfig(
-            "socket path is not a Unix socket",
-        )),
-        Err(error) if error.kind() == io::ErrorKind::NotFound => Ok(()),
-        Err(source) => Err(ExternalCheckpointAuthorityErrorV2::Io {
-            stage: "inspect checkpoint socket",
-            source,
-        }),
-    }
-}
-
-fn prepare_socket_parent_v2(
-    socket_path: &Path,
-) -> Result<PathBuf, ExternalCheckpointAuthorityErrorV2> {
     let parent = socket_path
         .parent()
         .ok_or(ExternalCheckpointAuthorityErrorV2::InvalidConfig(
@@ -1550,12 +1770,66 @@ mod tests {
     }
 
     #[test]
+    fn oversized_checkpoint_head_read_is_bounded_and_refused() {
+        let directory = private_tempdir();
+        let log = directory.path().join("checkpoint.log");
+        let anchor = directory.path().join(".checkpoint.log.head-v2");
+        let authority = ExternalCheckpointAuthorityV2::register_new(&log).unwrap();
+        // Keep the valid header and inode, then append a large sparse suffix.
+        // Reading must retain a bounded invalid frame, never the whole suffix.
+        let file = OpenOptions::new().write(true).open(&anchor).unwrap();
+        file.set_len(1024 * 1024).unwrap();
+        let (bytes, _) = read_anchor_v2(&anchor).unwrap();
+        assert_eq!(bytes.len(), ANCHOR_BYTES_V2 + 1);
+        assert!(decode_anchor_v2(&bytes).is_err());
+        assert!(authority.journal_checkpoint_v1().is_err());
+        assert!(authority.load_checked([1; 32]).is_err());
+        assert_eq!(fs::metadata(&anchor).unwrap().len(), 1024 * 1024);
+        assert_eq!(fs::metadata(&log).unwrap().len(), 0);
+    }
+
+    #[test]
+    fn short_compare_requests_are_rejected_before_scope_decode() {
+        let first = checkpoint(0, [0; 32]);
+        for expected in [None, Some(first)] {
+            let target = match expected {
+                None => first,
+                Some(previous) => checkpoint(1, previous.checkpoint_checksum()),
+            };
+            let body =
+                encode_request_v2(RequestV2::CompareAndAdvance(Box::new(CompareRequestV2 {
+                    expected,
+                    target,
+                })));
+            // Every prefix shorter than the fixed scope is a protocol error.
+            // This exercises only the in-memory codec, without a socket or store.
+            for length in 0..41 {
+                assert!(
+                    matches!(
+                        decode_request_v2(&body[..length]),
+                        Err(ExternalCheckpointAuthorityErrorV2::Protocol(_))
+                    ),
+                    "short compare prefix length {length}"
+                );
+            }
+            let decoded = decode_request_v2(&body).expect("complete compare request");
+            match decoded {
+                RequestV2::CompareAndAdvance(decoded) => {
+                    assert_eq!(decoded.expected, expected);
+                    assert_eq!(decoded.target, target);
+                }
+                RequestV2::Load { .. } => panic!("compare decoded as load"),
+            }
+        }
+    }
+
+    #[test]
     fn authority_exact_cas_rejects_replay_and_reopens() {
         let directory = private_tempdir();
         let log = directory.path().join("checkpoint.log");
         let first = checkpoint(0, [0; 32]);
         let second = checkpoint(1, first.checkpoint_checksum());
-        let mut authority = ExternalCheckpointAuthorityV2::open(&log).unwrap();
+        let mut authority = ExternalCheckpointAuthorityV2::register_new(&log).unwrap();
         authority.compare_and_advance_checked(None, first).unwrap();
         assert_eq!(authority.load_checked([1; 32]).unwrap(), Some(first));
         assert!(matches!(
@@ -1565,8 +1839,13 @@ mod tests {
         authority
             .compare_and_advance_checked(Some(first), second)
             .unwrap();
+        let independently_retained = authority.journal_checkpoint_v1().unwrap();
         drop(authority);
-        let reopened = ExternalCheckpointAuthorityV2::open(&log).unwrap();
+        let reopened = ExternalCheckpointAuthorityV2::reopen_with_external_checkpoint(
+            &log,
+            independently_retained,
+        )
+        .unwrap();
         assert_eq!(reopened.load_checked([1; 32]).unwrap(), Some(second));
     }
 
@@ -1575,7 +1854,7 @@ mod tests {
         let directory = private_tempdir();
         let log = directory.path().join("checkpoint.log");
         let first = checkpoint(0, [0; 32]);
-        let mut authority = ExternalCheckpointAuthorityV2::open(&log).unwrap();
+        let mut authority = ExternalCheckpointAuthorityV2::register_new(&log).unwrap();
         authority.compare_and_advance_checked(None, first).unwrap();
         drop(authority);
         let original = fs::read(&log).unwrap();
@@ -1600,7 +1879,7 @@ mod tests {
         let log = directory.path().join("checkpoint.log");
         let first = checkpoint(0, [0; 32]);
         let second = checkpoint(1, first.checkpoint_checksum());
-        let mut authority = ExternalCheckpointAuthorityV2::open(&log).unwrap();
+        let mut authority = ExternalCheckpointAuthorityV2::register_new(&log).unwrap();
         authority.compare_and_advance_checked(None, first).unwrap();
         authority
             .compare_and_advance_checked(Some(first), second)
@@ -1622,7 +1901,7 @@ mod tests {
         let log = directory.path().join("checkpoint.log");
         let displaced = directory.path().join("checkpoint.log.displaced");
         let first = checkpoint(0, [0; 32]);
-        let mut authority = ExternalCheckpointAuthorityV2::open(&log).unwrap();
+        let mut authority = ExternalCheckpointAuthorityV2::register_new(&log).unwrap();
         authority.compare_and_advance_checked(None, first).unwrap();
         fs::rename(&log, &displaced).unwrap();
         fs::copy(&displaced, &log).unwrap();
@@ -1639,7 +1918,7 @@ mod tests {
         let log = directory.path().join("checkpoint.log");
         let lock = directory.path().join(".checkpoint.log.lock-v2");
         let displaced = directory.path().join(".checkpoint.log.lock-v2.displaced");
-        let authority = ExternalCheckpointAuthorityV2::open(&log).unwrap();
+        let authority = ExternalCheckpointAuthorityV2::register_new(&log).unwrap();
         fs::rename(&lock, &displaced).unwrap();
         OpenOptions::new()
             .write(true)
@@ -1660,7 +1939,7 @@ mod tests {
         let anchor = directory.path().join(".checkpoint.log.head-v2");
         let displaced = directory.path().join(".checkpoint.log.head-v2.displaced");
         let first = checkpoint(0, [0; 32]);
-        let mut authority = ExternalCheckpointAuthorityV2::open(&log).unwrap();
+        let mut authority = ExternalCheckpointAuthorityV2::register_new(&log).unwrap();
         authority.compare_and_advance_checked(None, first).unwrap();
         fs::rename(&anchor, &displaced).unwrap();
         fs::copy(&displaced, &anchor).unwrap();
@@ -1681,7 +1960,7 @@ mod tests {
             process::id()
         ));
         let log = root.join("checkpoint.log");
-        let authority = ExternalCheckpointAuthorityV2::open(&log).unwrap();
+        let authority = ExternalCheckpointAuthorityV2::register_new(&log).unwrap();
         fs::rename(&root, &displaced).unwrap();
         fs::create_dir(&root).unwrap();
         fs::set_permissions(&root, fs::Permissions::from_mode(0o700)).unwrap();
@@ -1694,6 +1973,42 @@ mod tests {
     }
 
     #[test]
+    fn pinned_recovery_rejects_head_deleted_after_precheck() {
+        let directory = private_tempdir();
+        let log = directory.path().join("checkpoint.log");
+        let mut authority = ExternalCheckpointAuthorityV2::register_new(&log).unwrap();
+        let expected = authority.journal_checkpoint_v1().unwrap();
+
+        // Deterministically enter the same stage as an ExistingPinned reopen:
+        // complete replay matches the external pin and the head precheck passed.
+        assert_eq!(
+            ExternalJournalCheckpointV1::from_verified_journal(
+                authority.record_count,
+                authority.head_hash,
+            ),
+            expected
+        );
+        assert_eq!(expected.record_count(), 0);
+        fs::symlink_metadata(&authority.anchor_path).expect("head precheck passed");
+        let before_log = fs::read(&log).unwrap();
+
+        // A same-UID removal now happens after the precheck and before the
+        // reconciliation helper observes NotFound. No production hook is used.
+        fs::remove_file(&authority.anchor_path).unwrap();
+        assert!(
+            matches!(
+                authority.reconcile_anchor_v2(InitialHeadCreationV2::Forbidden),
+                Err(ExternalCheckpointAuthorityErrorV2::InvalidLog(
+                    "existing checkpoint head disappeared before reconciliation"
+                ))
+            ),
+            "pinned recovery must not recreate a head deleted after precheck"
+        );
+        assert!(!authority.anchor_path.exists());
+        assert_eq!(fs::read(&log).unwrap(), before_log);
+    }
+
+    #[test]
     fn unix_client_round_trip_uses_separate_thread_authority() {
         let directory = private_tempdir();
         let log = directory.path().join("checkpoint.log");
@@ -1702,7 +2017,7 @@ mod tests {
         let log_for_thread = log.clone();
         let socket_for_thread = socket.clone();
         thread::spawn(move || {
-            let authority = ExternalCheckpointAuthorityV2::open(log_for_thread).unwrap();
+            let authority = ExternalCheckpointAuthorityV2::register_new(log_for_thread).unwrap();
             ready_tx.send(()).unwrap();
             authority.serve_unix(socket_for_thread).unwrap();
         });

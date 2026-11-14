@@ -1,0 +1,50 @@
+Root/recovery policy validation: independent review receipt
+UTC: 2026-11-08T11:23:12.769394+00:00
+cwd: /workspace/scratch/21690b881bed/chain-pq-composition
+SHA256 formal/pon-nakamoto-v1/pq_root_recovery_policy_v1.py 0060409241ef656831f64be61fbb965347ede7a7e67db465f18da031995bfce9
+SHA256 formal/pon-nakamoto-v1/test_pq_root_recovery_policy_v1.py 7b2f1e4fff4d607a57164fbc6ffd8e97c3d3d008b4296f0b3c8b7c76d34d87ce
+SHA256 docs/security/PQ_ROOT_RECOVERY_POLICY_V1.md 9826df5f009f9321553ea063bff69b78f81706ab870592bd1fd015b6cd294ac6
+
+COMMAND ["bash", "scripts/project-preflight.sh"]
+{"result": "PASS", "mode": "--dev", "project": "trillionnium-chain", "packages": 26, "branch": "fix/chain-pq-seven-layer-composition-20261108-21690", "remote_policy_mutated": false}
+RESULT {"command_index": 0, "completed": true, "return_code": 0}
+
+COMMAND ["/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python", "-B", "-m", "unittest", "discover", "-s", "formal/pon-nakamoto-v1", "-p", "test_pq_root_recovery_policy_v1.py", "-v"]
+test_a_recovery_or_path_poisoning_the_current_policy_is_refused_even_for_normal (test_pq_root_recovery_policy_v1.RootRecoveryPolicyTests.test_a_recovery_or_path_poisoning_the_current_policy_is_refused_even_for_normal) ... ok
+test_action_nonce_epoch_payload_and_successor_bytes_change_statement_and_operation (test_pq_root_recovery_policy_v1.RootRecoveryPolicyTests.test_action_nonce_epoch_payload_and_successor_bytes_change_statement_and_operation) ... ok
+test_all_claims_must_bind_the_same_complete_statement (test_pq_root_recovery_policy_v1.RootRecoveryPolicyTests.test_all_claims_must_bind_the_same_complete_statement) ... ok
+test_all_five_paths_and_nine_distinct_quorums_remain_hold (test_pq_root_recovery_policy_v1.RootRecoveryPolicyTests.test_all_five_paths_and_nine_distinct_quorums_remain_hold) ... ok
+test_all_scenario_assumptions_never_promote_any_real_evidence_or_effect (test_pq_root_recovery_policy_v1.RootRecoveryPolicyTests.test_all_scenario_assumptions_never_promote_any_real_evidence_or_effect) ... ok
+test_anchor_mismatch_in_each_authority_dimension_refuses (test_pq_root_recovery_policy_v1.RootRecoveryPolicyTests.test_anchor_mismatch_in_each_authority_dimension_refuses) ... ok
+test_cli_success_exit_is_only_a_hold_diagnostic_and_invalid_input_is_nonzero (test_pq_root_recovery_policy_v1.RootRecoveryPolicyTests.test_cli_success_exit_is_only_a_hold_diagnostic_and_invalid_input_is_nonzero) ... ok
+test_duplicate_unknown_cross_family_and_revoked_signers_refuse (test_pq_root_recovery_policy_v1.RootRecoveryPolicyTests.test_duplicate_unknown_cross_family_and_revoked_signers_refuse) ... ok
+test_each_unknown_evidence_dimension_holds_even_if_other_scenarios_are_assumed (test_pq_root_recovery_policy_v1.RootRecoveryPolicyTests.test_each_unknown_evidence_dimension_holds_even_if_other_scenarios_are_assumed) ... ok
+test_every_path_must_have_and_and_both_families (test_pq_root_recovery_policy_v1.RootRecoveryPolicyTests.test_every_path_must_have_and_and_both_families) ... ok
+test_freshly_redeclared_stale_state_cannot_change_the_expected_context (test_pq_root_recovery_policy_v1.RootRecoveryPolicyTests.test_freshly_redeclared_stale_state_cannot_change_the_expected_context) ... ok
+test_future_expired_inverted_and_noncanonical_windows_refuse (test_pq_root_recovery_policy_v1.RootRecoveryPolicyTests.test_future_expired_inverted_and_noncanonical_windows_refuse) ... ok
+test_input_history_and_payload_bounds_are_refusal_not_silent_truncation (test_pq_root_recovery_policy_v1.RootRecoveryPolicyTests.test_input_history_and_payload_bounds_are_refusal_not_silent_truncation) ... ok
+test_json_duplicate_keys_depth_nonfinite_and_utf8_refuse (test_pq_root_recovery_policy_v1.RootRecoveryPolicyTests.test_json_duplicate_keys_depth_nonfinite_and_utf8_refuse) ... ok
+test_missing_and_unknown_operation_routes_are_not_silently_ignored (test_pq_root_recovery_policy_v1.RootRecoveryPolicyTests.test_missing_and_unknown_operation_routes_are_not_silently_ignored) ... ok
+test_missing_family_cannot_be_replaced_by_extra_claims_from_the_other (test_pq_root_recovery_policy_v1.RootRecoveryPolicyTests.test_missing_family_cannot_be_replaced_by_extra_claims_from_the_other) ... ok
+test_new_roster_cannot_self_authorize_its_installation (test_pq_root_recovery_policy_v1.RootRecoveryPolicyTests.test_new_roster_cannot_self_authorize_its_installation) ... ok
+test_recovery_or_epoch_advancement_does_not_clear_supplied_local_history (test_pq_root_recovery_policy_v1.RootRecoveryPolicyTests.test_recovery_or_epoch_advancement_does_not_clear_supplied_local_history) ... ok
+test_replay_and_same_nonce_different_intent_are_both_refused (test_pq_root_recovery_policy_v1.RootRecoveryPolicyTests.test_replay_and_same_nonce_different_intent_are_both_refused) ... ok
+test_research_domains_and_canonical_json_do_not_depend_on_wire_object_order (test_pq_root_recovery_policy_v1.RootRecoveryPolicyTests.test_research_domains_and_canonical_json_do_not_depend_on_wire_object_order) ... ok
+test_rosters_require_exact_three_distinct_keys_and_no_cross_family_alias (test_pq_root_recovery_policy_v1.RootRecoveryPolicyTests.test_rosters_require_exact_three_distinct_keys_and_no_cross_family_alias) ... ok
+test_self_reported_verified_true_is_not_an_evidence_input (test_pq_root_recovery_policy_v1.RootRecoveryPolicyTests.test_self_reported_verified_true_is_not_an_evidence_input) ... ok
+test_signature_bytes_and_selected_witnesses_do_not_define_operation_identity (test_pq_root_recovery_policy_v1.RootRecoveryPolicyTests.test_signature_bytes_and_selected_witnesses_do_not_define_operation_identity) ... ok
+test_successor_policy_must_preserve_all_paths_even_when_authorized_by_current_policy (test_pq_root_recovery_policy_v1.RootRecoveryPolicyTests.test_successor_policy_must_preserve_all_paths_even_when_authorized_by_current_policy) ... ok
+test_unknown_family_is_not_mapped_to_a_default_family (test_pq_root_recovery_policy_v1.RootRecoveryPolicyTests.test_unknown_family_is_not_mapped_to_a_default_family) ... ok
+test_weaker_or_unknown_parameter_sets_and_boolean_quorums_refuse (test_pq_root_recovery_policy_v1.RootRecoveryPolicyTests.test_weaker_or_unknown_parameter_sets_and_boolean_quorums_refuse) ... ok
+
+----------------------------------------------------------------------
+Ran 26 tests in 0.045s
+
+OK
+RESULT {"command_index": 1, "completed": true, "return_code": 0}
+
+COMMAND ["/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python", "-B", "formal/pon-nakamoto-v1/pq_root_recovery_policy_v1.py", "--example"]
+{"action":"recover","activation_performed":false,"anchor_independence_verified":false,"approval_claims_checked":4,"authorization_granted":false,"currentness_verified":false,"custody_verified":false,"external_effects_reconciled":false,"history_persisted":false,"model_checks_satisfied":true,"model_decision":"HOLD_UNRESOLVED_SCENARIO","operation_id":"813e650d553b03aee95ceec0bf31f4940d810efc8e7cfc742d162675a0827159a9c9e4bca58091b2ed57529a164e0053e627562a59d16ccf88e4fe2911070727","policy_paths_checked":["normal","rotate","revoke","recover","policy-change"],"production_qualified":false,"research_only":true,"root_effect_executed":false,"schema":"trnm.pq-root-recovery-policy.v1","signatures_verified":false,"statement_sha512":"9c974056d3b0259aa17a22581d02872b48b1f8db52a008167e7f3fbb5ddf43500e06c8026a1dd221e28989465175a08226f9aa53cfc5200fcb414e62c5d44907","status":"HOLD","unknown_scenario_observations":["current-authority","external-effect-reconciliation","independent-anti-rollback-anchor","independent-custody"],"unresolved_real_obligations":["native-signature-verification","current-authority","independent-custody","independent-anti-rollback-anchor","external-effect-reconciliation","atomic-durable-operation-owner","complete-runtime-path-coverage","successor-key-possession-and-handoff"]}
+RESULT {"command_index": 2, "completed": true, "return_code": 0}
+
+SUMMARY {"all_commands_passed": true, "example_completed": true, "preflight_passed": true, "qualification": "HOLD; no signature or custody evidence", "tests_completed": true, "tests_failed": false}

@@ -1,0 +1,9 @@
+{
+  "argv": [
+    "python3",
+    "evidence/pon-joint-production-tail-20261110/runtime-shards-341b/verify.py"
+  ],
+  "exit_code": 0,
+  "base_head": "3176c871c037f63fc2f803fa3eb8cc408521fd13",
+  "scope": "evidence-only working tree validation"
+}

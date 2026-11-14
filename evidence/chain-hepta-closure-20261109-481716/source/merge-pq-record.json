@@ -1,0 +1,10 @@
+{
+  "commit": "44e96b1a841a50613d0b93484c5e576caec9f81f",
+  "tree": "c297ebb14fcbeeb5f8acf13b3143a66b8b3b6db8",
+  "parents": [
+    "d728137d082bb6def7cdaa13d27a9ba57925824d",
+    "44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0"
+  ],
+  "merge_base": "0788c44f4139c74772a8a9d7d475821f56e5b727",
+  "qualification": "SOURCE_COMPOSITION_PENDING_REBINDING_AND_VALIDATION"
+}

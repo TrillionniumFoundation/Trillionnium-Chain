@@ -1,0 +1,8 @@
+warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: RUSTC must be absolute
+    Finished `release` profile [optimized] target(s) in 0.14s
+     Running unittests src/lib.rs (/tmp/pon-next-target/release/deps/trnm_pon_node-80e3e393b159c9bd)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 839 filtered out; finished in 0.00s
+

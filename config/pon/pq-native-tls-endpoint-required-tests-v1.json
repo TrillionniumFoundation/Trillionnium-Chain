@@ -1,0 +1,29 @@
+{
+  "schema": "trnm-pq-native-tls-endpoint-required-tests-v1",
+  "expected_controls": {
+    "lib": 8,
+    "cli": 3
+  },
+  "production_activation": false,
+  "consensus_authority": false,
+  "public_wan_accepted": false,
+  "whole_chain_quantum_security_qualified": false,
+  "whole_node_rollback_protection": false,
+  "scopes": {
+    "lib": [
+      "ingress::pq_network::tls::endpoint_tests::endpoint_policy_keeps_legacy_bytes_and_separates_signed_domains",
+      "ingress::pq_network::tls::endpoint_tests::endpoint_policy_rejects_malformed_recovery_and_address_pins",
+      "ingress::pq_network::tls::endpoint_tests::endpoint_client_and_listener_refuse_mismatched_targets_before_io",
+      "ingress::pq_network::tls::endpoint_tests::endpoint_profile_requires_witness_at_constructor_and_live_owner",
+      "ingress::pq_network::tls::endpoint_tests::endpoint_disallowed_source_spends_no_owner_budget_and_stops_at_accept_cap",
+      "ingress::pq_network::tls::endpoint_tests::endpoint_tls_witness_dispatch_replay_reopen_and_legacy_alpn_refusal",
+      "ingress::pq_network::tls::endpoint_tests::endpoint_absolute_deadline_client_checks_exact_target_before_io",
+      "ingress::pq_network::tls::endpoint_tests::endpoint_shared_listener_keeps_exact_pin_source_refusal_and_accept_cap"
+    ],
+    "cli": [
+      "endpoint_schema_scope_and_witness_refusals_precede_all_owner_io",
+      "endpoint_binary_dispatches_replays_recovers_and_rejects_old_database",
+      "endpoint_binary_rejects_legacy_policy_and_changed_endpoint_on_reopen"
+    ]
+  }
+}

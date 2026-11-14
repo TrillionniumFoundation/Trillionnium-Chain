@@ -1,0 +1,19 @@
+{
+  "blocking_counterexample_found": false,
+  "comparison_cases": 256,
+  "finite_joint_law_cases": 16,
+  "known_incompatibility_refused": true,
+  "malformed_cli_cases": {
+    "w1_qrom_composition_budget.py": 16,
+    "w1_qrom_joint_oracle_diagnostic.py": 16
+  },
+  "primary_formula_reference": "January 1 2026 manuscript, Theorem 10.6 and Construction 10.5, CORE index lines 7281-7417 and 8290-8309; not March version",
+  "production_qualification": false,
+  "schema": "TRNM-NEW-QROM-INDEPENDENT-REVIEW1",
+  "source_sha256": {
+    "w1_qrom_composition_budget.py": "4d3d6a3b8efcac266cfaf7fb2204a4f3b0482ea0ead2481b72617556f0771427",
+    "w1_qrom_joint_oracle_diagnostic.py": "ce6dd894f949cced697ecdcb9f8960b3e4280eefa3815f02ad708e06842b4658"
+  },
+  "unknown_zero_cross_term_remains_unknown": true,
+  "whole_cryptographic_proof_audit": false
+}

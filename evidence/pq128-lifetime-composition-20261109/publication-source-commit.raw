@@ -1,0 +1,11 @@
+tree 25b45e6a3b6c58923e699b6e5dfaddb31b9d6aff
+parent 44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0
+author Qian QI <102159240+ProfHepta@users.noreply.github.com> 1794232441 +0800
+committer Qian QI <102159240+ProfHepta@users.noreply.github.com> 1794232441 +0800
+
+security: review joint lifetime scopes and AND composition
+
+Preserve unknown actual bounds while joining declared source and primitive scopes.
+Retain complete family losses before the AND minimum and require the bridge in CI.
+
+Signed-off-by: Codex <codex@openai.com>

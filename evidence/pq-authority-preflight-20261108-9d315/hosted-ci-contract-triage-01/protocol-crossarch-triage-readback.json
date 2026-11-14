@@ -1,0 +1,980 @@
+{
+  "base": "8d8f05566b2a1612a3bf4a6c6c71635df454d397",
+  "baseline_executed": false,
+  "ci_retries": false,
+  "held_scope": "local 31-gate pass does not establish hosted business target acceptance",
+  "jobs": [
+    {
+      "all_named_tests_passed": true,
+      "artifact": 13611037046,
+      "failures": [
+        "CONFIRMATION_TARGET"
+      ],
+      "format_passed": true,
+      "host": {
+        "command_argv": [
+          "python3",
+          "scripts/ci/run_from_zero_native.py",
+          "--out",
+          "/home/runner/work/_temp/ci-observations/from-zero-native"
+        ],
+        "consensus_or_model_authority": false,
+        "host_errors": [],
+        "host_readiness_only": true,
+        "native_child_exit": 1,
+        "schema": "trnm-ci-original-public-host-child-v1"
+      },
+      "job": 128678655202,
+      "lane": "protocol head",
+      "passed": false,
+      "phases": [
+        {
+          "business_observation": {
+            "business_start_delay_ns": 167716,
+            "business_started_before_original_window_end": true,
+            "independent_confirmed_transactions_per_window_second": 0.25,
+            "lower_bound_reaches_original_window_end": null,
+            "observed_success_latency_ns": 1873278563,
+            "original_window_remaining_at_business_start_ns": 3999832284,
+            "pre_business_window_overrun_ns": 0,
+            "reported_finite_business_target_met": true,
+            "reported_independently_confirmed_in_window": 1,
+            "required_signed_transactions": 1,
+            "successful_latency": {
+              "max_ns": 1873278563,
+              "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+              "min_ns": 1873278563,
+              "minimum_samples": {
+                "p50": 2,
+                "p95": 20,
+                "p99": 100
+              },
+              "missing_samples": 0,
+              "p50_ns": null,
+              "p95_ns": null,
+              "p99_ns": null,
+              "samples": 1
+            },
+            "unconfirmed": 0,
+            "unconfirmed_latency_lower_bound_ns": null,
+            "unknown": 0
+          },
+          "business_started_ns": 167716,
+          "client_confirmation_latency_ns": 1873278563,
+          "client_confirmed_before_original_window_end": true,
+          "client_confirmed_transactions": 1,
+          "completed_false_calls_at_confirmation": 0,
+          "confirmation_ended_ns": 1873446279,
+          "finite_business_target_met": true,
+          "honest_head_successes_in_window": 69,
+          "independent_replay_and_confirmation_cpu_ns": 269997479,
+          "independent_replay_and_confirmation_wall_ns": 1599228437,
+          "invariant_target_met": true,
+          "mode": "attack-free-baseline",
+          "requested_window_ns": 4000000000,
+          "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "verification_errors": [],
+          "workers": 0
+        },
+        {
+          "business_observation": {
+            "business_start_delay_ns": 47086702,
+            "business_started_before_original_window_end": true,
+            "independent_confirmed_transactions_per_window_second": 0.0,
+            "lower_bound_reaches_original_window_end": true,
+            "observed_success_latency_ns": null,
+            "original_window_remaining_at_business_start_ns": 3952913298,
+            "pre_business_window_overrun_ns": 0,
+            "reported_finite_business_target_met": false,
+            "reported_independently_confirmed_in_window": 0,
+            "required_signed_transactions": 1,
+            "successful_latency": {
+              "max_ns": null,
+              "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+              "min_ns": null,
+              "minimum_samples": {
+                "p50": 2,
+                "p95": 20,
+                "p99": 100
+              },
+              "missing_samples": 0,
+              "p50_ns": null,
+              "p95_ns": null,
+              "p99_ns": null,
+              "samples": 0
+            },
+            "unconfirmed": 1,
+            "unconfirmed_latency_lower_bound_ns": 3952913298,
+            "unknown": 0
+          },
+          "business_started_ns": 47086702,
+          "client_confirmation_latency_ns": null,
+          "client_confirmed_before_original_window_end": false,
+          "client_confirmed_transactions": 0,
+          "completed_false_calls_at_confirmation": 254,
+          "confirmation_ended_ns": null,
+          "finite_business_target_met": false,
+          "honest_head_successes_in_window": 20,
+          "independent_client_confirmation": null,
+          "independent_final_confirmation_stage": null,
+          "independent_replay_and_confirmation_cpu_ns": 115208968,
+          "independent_replay_and_confirmation_wall_ns": 2195415570,
+          "invariant_target_met": true,
+          "mode": "from-zero-pressure",
+          "requested_window_ns": 4000000000,
+          "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "workers": 16
+        }
+      ],
+      "report_bytes": 8769883,
+      "report_flags": {
+        "finite_target_met": false,
+        "invariant_target_met": true,
+        "same_packet_sequence_in_both_runs": true,
+        "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+      },
+      "report_sha256": "6657e6c64a438ab920be6b030ae60a00c44fdcaffca0781ca90b6659099d4402",
+      "runs": [
+        {
+          "exit_code": 0,
+          "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+          "passed": true,
+          "summaries": [
+            [
+              1,
+              0,
+              0,
+              0,
+              5
+            ]
+          ]
+        },
+        {
+          "exit_code": 0,
+          "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+          "passed": true,
+          "summaries": [
+            [
+              1,
+              0,
+              0,
+              0,
+              5
+            ]
+          ]
+        },
+        {
+          "exit_code": 0,
+          "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+          "passed": true,
+          "summaries": [
+            [
+              1,
+              0,
+              0,
+              0,
+              5
+            ]
+          ]
+        },
+        {
+          "exit_code": 0,
+          "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+          "passed": true,
+          "summaries": [
+            [
+              1,
+              0,
+              0,
+              0,
+              5
+            ]
+          ]
+        },
+        {
+          "exit_code": 0,
+          "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "passed": true,
+          "summaries": [
+            [
+              1,
+              0,
+              0,
+              0,
+              5
+            ]
+          ]
+        }
+      ],
+      "source_after": {
+        "commit": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+        "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+        "tracked_source_identity": {
+          "base": null,
+          "candidate": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+          "tested_tree": "21cf0f5bcccd9093397f14bbea44311b577554c0",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 1141476687,
+          "tracked_entries": 11587,
+          "tracked_worktree_verified": true
+        },
+        "tree": "21cf0f5bcccd9093397f14bbea44311b577554c0"
+      },
+      "source_before": {
+        "commit": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+        "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+        "tracked_source_identity": {
+          "base": null,
+          "candidate": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+          "tested_tree": "21cf0f5bcccd9093397f14bbea44311b577554c0",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 1141476687,
+          "tracked_entries": 11587,
+          "tracked_worktree_verified": true
+        },
+        "tree": "21cf0f5bcccd9093397f14bbea44311b577554c0"
+      }
+    },
+    {
+      "all_named_tests_passed": true,
+      "artifact": 13610703958,
+      "failures": [
+        "CONFIRMATION_TARGET"
+      ],
+      "format_passed": true,
+      "host": {
+        "command_argv": [
+          "python3",
+          "scripts/ci/run_from_zero_native.py",
+          "--out",
+          "/home/runner/work/_temp/ci-observations/from-zero-native"
+        ],
+        "consensus_or_model_authority": false,
+        "host_errors": [],
+        "host_readiness_only": true,
+        "native_child_exit": 1,
+        "schema": "trnm-ci-original-public-host-child-v1"
+      },
+      "job": 128678655233,
+      "lane": "protocol prospective",
+      "passed": false,
+      "phases": [
+        {
+          "business_observation": {
+            "business_start_delay_ns": 115605,
+            "business_started_before_original_window_end": true,
+            "independent_confirmed_transactions_per_window_second": 0.25,
+            "lower_bound_reaches_original_window_end": null,
+            "observed_success_latency_ns": 2995715020,
+            "original_window_remaining_at_business_start_ns": 3999884395,
+            "pre_business_window_overrun_ns": 0,
+            "reported_finite_business_target_met": true,
+            "reported_independently_confirmed_in_window": 1,
+            "required_signed_transactions": 1,
+            "successful_latency": {
+              "max_ns": 2995715020,
+              "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+              "min_ns": 2995715020,
+              "minimum_samples": {
+                "p50": 2,
+                "p95": 20,
+                "p99": 100
+              },
+              "missing_samples": 0,
+              "p50_ns": null,
+              "p95_ns": null,
+              "p99_ns": null,
+              "samples": 1
+            },
+            "unconfirmed": 0,
+            "unconfirmed_latency_lower_bound_ns": null,
+            "unknown": 0
+          },
+          "business_started_ns": 115605,
+          "client_confirmation_latency_ns": 2995715020,
+          "client_confirmed_before_original_window_end": true,
+          "client_confirmed_transactions": 1,
+          "completed_false_calls_at_confirmation": 0,
+          "confirmation_ended_ns": 2995830625,
+          "finite_business_target_met": true,
+          "honest_head_successes_in_window": 55,
+          "independent_replay_and_confirmation_cpu_ns": 536628794,
+          "independent_replay_and_confirmation_wall_ns": 2716811817,
+          "invariant_target_met": true,
+          "mode": "attack-free-baseline",
+          "requested_window_ns": 4000000000,
+          "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "verification_errors": [],
+          "workers": 0
+        },
+        {
+          "business_observation": {
+            "business_start_delay_ns": 140029363,
+            "business_started_before_original_window_end": true,
+            "independent_confirmed_transactions_per_window_second": 0.0,
+            "lower_bound_reaches_original_window_end": true,
+            "observed_success_latency_ns": null,
+            "original_window_remaining_at_business_start_ns": 3859970637,
+            "pre_business_window_overrun_ns": 0,
+            "reported_finite_business_target_met": false,
+            "reported_independently_confirmed_in_window": 0,
+            "required_signed_transactions": 1,
+            "successful_latency": {
+              "max_ns": null,
+              "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+              "min_ns": null,
+              "minimum_samples": {
+                "p50": 2,
+                "p95": 20,
+                "p99": 100
+              },
+              "missing_samples": 0,
+              "p50_ns": null,
+              "p95_ns": null,
+              "p99_ns": null,
+              "samples": 0
+            },
+            "unconfirmed": 1,
+            "unconfirmed_latency_lower_bound_ns": 3859970637,
+            "unknown": 0
+          },
+          "business_started_ns": 140029363,
+          "client_confirmation_latency_ns": null,
+          "client_confirmed_before_original_window_end": false,
+          "client_confirmed_transactions": 0,
+          "completed_false_calls_at_confirmation": 235,
+          "confirmation_ended_ns": null,
+          "finite_business_target_met": false,
+          "honest_head_successes_in_window": 19,
+          "independent_client_confirmation": null,
+          "independent_final_confirmation_stage": null,
+          "independent_replay_and_confirmation_cpu_ns": 95330759,
+          "independent_replay_and_confirmation_wall_ns": 1894460438,
+          "invariant_target_met": true,
+          "mode": "from-zero-pressure",
+          "requested_window_ns": 4000000000,
+          "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "workers": 16
+        }
+      ],
+      "report_bytes": 8141082,
+      "report_flags": {
+        "finite_target_met": false,
+        "invariant_target_met": true,
+        "same_packet_sequence_in_both_runs": true,
+        "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+      },
+      "report_sha256": "e5af4702a319eed7614be431c2326684596368824dfd6596ad949e79efe60688",
+      "runs": [
+        {
+          "exit_code": 0,
+          "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+          "passed": true,
+          "summaries": [
+            [
+              1,
+              0,
+              0,
+              0,
+              5
+            ]
+          ]
+        },
+        {
+          "exit_code": 0,
+          "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+          "passed": true,
+          "summaries": [
+            [
+              1,
+              0,
+              0,
+              0,
+              5
+            ]
+          ]
+        },
+        {
+          "exit_code": 0,
+          "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+          "passed": true,
+          "summaries": [
+            [
+              1,
+              0,
+              0,
+              0,
+              5
+            ]
+          ]
+        },
+        {
+          "exit_code": 0,
+          "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+          "passed": true,
+          "summaries": [
+            [
+              1,
+              0,
+              0,
+              0,
+              5
+            ]
+          ]
+        },
+        {
+          "exit_code": 0,
+          "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "passed": true,
+          "summaries": [
+            [
+              1,
+              0,
+              0,
+              0,
+              5
+            ]
+          ]
+        }
+      ],
+      "source_after": {
+        "commit": "eb2454eeb57cfe0ab23d5f12ce37ea22a98b6ed5",
+        "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+        "tracked_source_identity": {
+          "base": null,
+          "candidate": "eb2454eeb57cfe0ab23d5f12ce37ea22a98b6ed5",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "eb2454eeb57cfe0ab23d5f12ce37ea22a98b6ed5",
+          "tested_tree": "21cf0f5bcccd9093397f14bbea44311b577554c0",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 1141476687,
+          "tracked_entries": 11587,
+          "tracked_worktree_verified": true
+        },
+        "tree": "21cf0f5bcccd9093397f14bbea44311b577554c0"
+      },
+      "source_before": {
+        "commit": "eb2454eeb57cfe0ab23d5f12ce37ea22a98b6ed5",
+        "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+        "tracked_source_identity": {
+          "base": null,
+          "candidate": "eb2454eeb57cfe0ab23d5f12ce37ea22a98b6ed5",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "eb2454eeb57cfe0ab23d5f12ce37ea22a98b6ed5",
+          "tested_tree": "21cf0f5bcccd9093397f14bbea44311b577554c0",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 1141476687,
+          "tracked_entries": 11587,
+          "tracked_worktree_verified": true
+        },
+        "tree": "21cf0f5bcccd9093397f14bbea44311b577554c0"
+      }
+    },
+    {
+      "all_named_tests_passed": true,
+      "artifact": 13610627956,
+      "failures": [
+        "CONFIRMATION_TARGET"
+      ],
+      "format_passed": true,
+      "host": {
+        "command_argv": [
+          "python3",
+          "scripts/ci/run_from_zero_native.py",
+          "--out",
+          "/home/runner/work/_temp/ci-observations/from-zero-native"
+        ],
+        "consensus_or_model_authority": false,
+        "host_errors": [],
+        "host_readiness_only": true,
+        "native_child_exit": 1,
+        "schema": "trnm-ci-original-public-host-child-v1"
+      },
+      "job": 128678655520,
+      "lane": "cross-arch arm64",
+      "passed": false,
+      "phases": [
+        {
+          "business_observation": {
+            "business_start_delay_ns": 184557,
+            "business_started_before_original_window_end": true,
+            "independent_confirmed_transactions_per_window_second": 0.25,
+            "lower_bound_reaches_original_window_end": null,
+            "observed_success_latency_ns": 1788095985,
+            "original_window_remaining_at_business_start_ns": 3999815443,
+            "pre_business_window_overrun_ns": 0,
+            "reported_finite_business_target_met": true,
+            "reported_independently_confirmed_in_window": 1,
+            "required_signed_transactions": 1,
+            "successful_latency": {
+              "max_ns": 1788095985,
+              "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+              "min_ns": 1788095985,
+              "minimum_samples": {
+                "p50": 2,
+                "p95": 20,
+                "p99": 100
+              },
+              "missing_samples": 0,
+              "p50_ns": null,
+              "p95_ns": null,
+              "p99_ns": null,
+              "samples": 1
+            },
+            "unconfirmed": 0,
+            "unconfirmed_latency_lower_bound_ns": null,
+            "unknown": 0
+          },
+          "business_started_ns": 184557,
+          "client_confirmation_latency_ns": 1788095985,
+          "client_confirmed_before_original_window_end": true,
+          "client_confirmed_transactions": 1,
+          "completed_false_calls_at_confirmation": 0,
+          "confirmation_ended_ns": 1788280542,
+          "finite_business_target_met": true,
+          "honest_head_successes_in_window": 71,
+          "independent_replay_and_confirmation_cpu_ns": 275225104,
+          "independent_replay_and_confirmation_wall_ns": 1581244836,
+          "invariant_target_met": true,
+          "mode": "attack-free-baseline",
+          "requested_window_ns": 4000000000,
+          "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "verification_errors": [],
+          "workers": 0
+        },
+        {
+          "business_observation": {
+            "business_start_delay_ns": 68223105,
+            "business_started_before_original_window_end": true,
+            "independent_confirmed_transactions_per_window_second": 0.0,
+            "lower_bound_reaches_original_window_end": true,
+            "observed_success_latency_ns": null,
+            "original_window_remaining_at_business_start_ns": 3931776895,
+            "pre_business_window_overrun_ns": 0,
+            "reported_finite_business_target_met": false,
+            "reported_independently_confirmed_in_window": 0,
+            "required_signed_transactions": 1,
+            "successful_latency": {
+              "max_ns": null,
+              "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+              "min_ns": null,
+              "minimum_samples": {
+                "p50": 2,
+                "p95": 20,
+                "p99": 100
+              },
+              "missing_samples": 0,
+              "p50_ns": null,
+              "p95_ns": null,
+              "p99_ns": null,
+              "samples": 0
+            },
+            "unconfirmed": 1,
+            "unconfirmed_latency_lower_bound_ns": 3931776895,
+            "unknown": 0
+          },
+          "business_started_ns": 68223105,
+          "client_confirmation_latency_ns": null,
+          "client_confirmed_before_original_window_end": false,
+          "client_confirmed_transactions": 0,
+          "completed_false_calls_at_confirmation": 330,
+          "confirmation_ended_ns": null,
+          "finite_business_target_met": false,
+          "honest_head_successes_in_window": 23,
+          "independent_client_confirmation": null,
+          "independent_final_confirmation_stage": null,
+          "independent_replay_and_confirmation_cpu_ns": 156944216,
+          "independent_replay_and_confirmation_wall_ns": 2688328178,
+          "invariant_target_met": true,
+          "mode": "from-zero-pressure",
+          "requested_window_ns": 4000000000,
+          "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "workers": 16
+        }
+      ],
+      "report_bytes": 10180772,
+      "report_flags": {
+        "finite_target_met": false,
+        "invariant_target_met": true,
+        "same_packet_sequence_in_both_runs": true,
+        "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+      },
+      "report_sha256": "c2d174f21a873b211d3cf00fb007b1e3c4ee0bfb67a9c0e04563b3e32b9751c5",
+      "runs": [
+        {
+          "exit_code": 0,
+          "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+          "passed": true,
+          "summaries": [
+            [
+              1,
+              0,
+              0,
+              0,
+              5
+            ]
+          ]
+        },
+        {
+          "exit_code": 0,
+          "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+          "passed": true,
+          "summaries": [
+            [
+              1,
+              0,
+              0,
+              0,
+              5
+            ]
+          ]
+        },
+        {
+          "exit_code": 0,
+          "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+          "passed": true,
+          "summaries": [
+            [
+              1,
+              0,
+              0,
+              0,
+              5
+            ]
+          ]
+        },
+        {
+          "exit_code": 0,
+          "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+          "passed": true,
+          "summaries": [
+            [
+              1,
+              0,
+              0,
+              0,
+              5
+            ]
+          ]
+        },
+        {
+          "exit_code": 0,
+          "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "passed": true,
+          "summaries": [
+            [
+              1,
+              0,
+              0,
+              0,
+              5
+            ]
+          ]
+        }
+      ],
+      "source_after": {
+        "commit": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+        "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+        "tracked_source_identity": {
+          "base": null,
+          "candidate": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+          "tested_tree": "21cf0f5bcccd9093397f14bbea44311b577554c0",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 1141476687,
+          "tracked_entries": 11587,
+          "tracked_worktree_verified": true
+        },
+        "tree": "21cf0f5bcccd9093397f14bbea44311b577554c0"
+      },
+      "source_before": {
+        "commit": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+        "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+        "tracked_source_identity": {
+          "base": null,
+          "candidate": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+          "tested_tree": "21cf0f5bcccd9093397f14bbea44311b577554c0",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 1141476687,
+          "tracked_entries": 11587,
+          "tracked_worktree_verified": true
+        },
+        "tree": "21cf0f5bcccd9093397f14bbea44311b577554c0"
+      }
+    },
+    {
+      "all_named_tests_passed": true,
+      "artifact": 13611221530,
+      "failures": [
+        "CONFIRMATION_TARGET"
+      ],
+      "format_passed": true,
+      "host": {
+        "command_argv": [
+          "python3",
+          "scripts/ci/run_from_zero_native.py",
+          "--out",
+          "/home/runner/work/_temp/ci-observations/from-zero-native"
+        ],
+        "consensus_or_model_authority": false,
+        "host_errors": [],
+        "host_readiness_only": true,
+        "native_child_exit": 1,
+        "schema": "trnm-ci-original-public-host-child-v1"
+      },
+      "job": 128678655124,
+      "lane": "cross-arch x64",
+      "passed": false,
+      "phases": [
+        {
+          "business_observation": {
+            "business_start_delay_ns": 168286,
+            "business_started_before_original_window_end": true,
+            "independent_confirmed_transactions_per_window_second": 0.25,
+            "lower_bound_reaches_original_window_end": null,
+            "observed_success_latency_ns": 1882603213,
+            "original_window_remaining_at_business_start_ns": 3999831714,
+            "pre_business_window_overrun_ns": 0,
+            "reported_finite_business_target_met": true,
+            "reported_independently_confirmed_in_window": 1,
+            "required_signed_transactions": 1,
+            "successful_latency": {
+              "max_ns": 1882603213,
+              "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+              "min_ns": 1882603213,
+              "minimum_samples": {
+                "p50": 2,
+                "p95": 20,
+                "p99": 100
+              },
+              "missing_samples": 0,
+              "p50_ns": null,
+              "p95_ns": null,
+              "p99_ns": null,
+              "samples": 1
+            },
+            "unconfirmed": 0,
+            "unconfirmed_latency_lower_bound_ns": null,
+            "unknown": 0
+          },
+          "business_started_ns": 168286,
+          "client_confirmation_latency_ns": 1882603213,
+          "client_confirmed_before_original_window_end": true,
+          "client_confirmed_transactions": 1,
+          "completed_false_calls_at_confirmation": 0,
+          "confirmation_ended_ns": 1882771499,
+          "finite_business_target_met": true,
+          "honest_head_successes_in_window": 68,
+          "independent_replay_and_confirmation_cpu_ns": 271242453,
+          "independent_replay_and_confirmation_wall_ns": 1587385821,
+          "invariant_target_met": true,
+          "mode": "attack-free-baseline",
+          "requested_window_ns": 4000000000,
+          "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "verification_errors": [],
+          "workers": 0
+        },
+        {
+          "business_observation": {
+            "business_start_delay_ns": 142194245,
+            "business_started_before_original_window_end": true,
+            "independent_confirmed_transactions_per_window_second": 0.0,
+            "lower_bound_reaches_original_window_end": true,
+            "observed_success_latency_ns": null,
+            "original_window_remaining_at_business_start_ns": 3857805755,
+            "pre_business_window_overrun_ns": 0,
+            "reported_finite_business_target_met": false,
+            "reported_independently_confirmed_in_window": 0,
+            "required_signed_transactions": 1,
+            "successful_latency": {
+              "max_ns": null,
+              "method": "nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; independence and confidence are not established",
+              "min_ns": null,
+              "minimum_samples": {
+                "p50": 2,
+                "p95": 20,
+                "p99": 100
+              },
+              "missing_samples": 0,
+              "p50_ns": null,
+              "p95_ns": null,
+              "p99_ns": null,
+              "samples": 0
+            },
+            "unconfirmed": 1,
+            "unconfirmed_latency_lower_bound_ns": 3857805755,
+            "unknown": 0
+          },
+          "business_started_ns": 142194245,
+          "client_confirmation_latency_ns": null,
+          "client_confirmed_before_original_window_end": false,
+          "client_confirmed_transactions": 0,
+          "completed_false_calls_at_confirmation": 200,
+          "confirmation_ended_ns": null,
+          "finite_business_target_met": false,
+          "honest_head_successes_in_window": 17,
+          "independent_client_confirmation": null,
+          "independent_final_confirmation_stage": null,
+          "independent_replay_and_confirmation_cpu_ns": 67611283,
+          "independent_replay_and_confirmation_wall_ns": 1598016529,
+          "invariant_target_met": true,
+          "mode": "from-zero-pressure",
+          "requested_window_ns": 4000000000,
+          "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "workers": 16
+        }
+      ],
+      "report_bytes": 7836836,
+      "report_flags": {
+        "finite_target_met": false,
+        "invariant_target_met": true,
+        "same_packet_sequence_in_both_runs": true,
+        "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+      },
+      "report_sha256": "fe8b130a2590a08c867179d72e68a2d58ba19a0207931270d6d510092f1473db",
+      "runs": [
+        {
+          "exit_code": 0,
+          "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+          "passed": true,
+          "summaries": [
+            [
+              1,
+              0,
+              0,
+              0,
+              5
+            ]
+          ]
+        },
+        {
+          "exit_code": 0,
+          "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+          "passed": true,
+          "summaries": [
+            [
+              1,
+              0,
+              0,
+              0,
+              5
+            ]
+          ]
+        },
+        {
+          "exit_code": 0,
+          "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+          "passed": true,
+          "summaries": [
+            [
+              1,
+              0,
+              0,
+              0,
+              5
+            ]
+          ]
+        },
+        {
+          "exit_code": 0,
+          "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+          "passed": true,
+          "summaries": [
+            [
+              1,
+              0,
+              0,
+              0,
+              5
+            ]
+          ]
+        },
+        {
+          "exit_code": 0,
+          "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "passed": true,
+          "summaries": [
+            [
+              1,
+              0,
+              0,
+              0,
+              5
+            ]
+          ]
+        }
+      ],
+      "source_after": {
+        "commit": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+        "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+        "tracked_source_identity": {
+          "base": null,
+          "candidate": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+          "tested_tree": "21cf0f5bcccd9093397f14bbea44311b577554c0",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 1141476687,
+          "tracked_entries": 11587,
+          "tracked_worktree_verified": true
+        },
+        "tree": "21cf0f5bcccd9093397f14bbea44311b577554c0"
+      },
+      "source_before": {
+        "commit": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+        "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+        "tracked_source_identity": {
+          "base": null,
+          "candidate": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+          "tested_tree": "21cf0f5bcccd9093397f14bbea44311b577554c0",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 1141476687,
+          "tracked_entries": 11587,
+          "tracked_worktree_verified": true
+        },
+        "tree": "21cf0f5bcccd9093397f14bbea44311b577554c0"
+      }
+    }
+  ],
+  "observed_head": "527e2e58db6d7c1fd84ba88c3131289edea86b1d",
+  "schema": "trnm-pq-hosted-contract-triage-v1",
+  "source_comparison": "protocol-crossarch-source-comparison.json",
+  "source_edits": false
+}

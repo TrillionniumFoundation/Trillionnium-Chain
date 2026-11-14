@@ -1,0 +1,225 @@
+{
+  "head": "819309fd312298e099642e1253b1d4ba07113e98",
+  "results": [
+    {
+      "artifact": {
+        "id": 13584974949,
+        "name": "integration-push-source-42402618462-1",
+        "size_in_bytes": 1363,
+        "digest": "sha256:3e309a7049f917ec0aa9680066afab2e939bc597512bb44b1806a92970eceeca",
+        "expired": false,
+        "workflow_run": {
+          "id": 42402618462,
+          "repository_id": 1323087357,
+          "head_repository_id": 1323087357,
+          "head_branch": "fix/chain-six-axis-performance-20261103",
+          "head_sha": "819309fd312298e099642e1253b1d4ba07113e98"
+        }
+      },
+      "errors": [],
+      "files": [
+        {
+          "name": "context.json",
+          "bytes": 1452,
+          "sha256": "678a1768cc75832a716458b6c3ba08a635edf6730a8480da34ed0ae3e0b6aa3f",
+          "json": {
+            "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+            "base_ref": "refs/heads/main",
+            "event": {
+              "after": "819309fd312298e099642e1253b1d4ba07113e98",
+              "before": "04bbc81e4aad9b29fef29385d3262297e2cb17df",
+              "name": "push",
+              "payload_sha256": "a03c7ba501c2edf0831e1a0f75de1a14bf2b52436be567245573455aaa6c8cbc",
+              "ref": "refs/heads/fix/chain-six-axis-performance-20261103",
+              "repository": "TrillionniumFoundation/Trillionnium-Chain",
+              "repository_id": 1323087357,
+              "run_attempt": "1",
+              "run_id": "42402618462"
+            },
+            "git_version": "git version 2.56.0",
+            "head": "819309fd312298e099642e1253b1d4ba07113e98",
+            "is_github_pr_merge": false,
+            "merge": "28df21f965e0348690836c9c854dab645827a03d",
+            "merge_format": "canonical-git-merge-tree-ordered-base-head-v1",
+            "merge_tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267",
+            "production_activation": false,
+            "resolved_utc": "2026-11-07T18:43:21.858288+00:00",
+            "schema": "trnm-integration-push-source-v1",
+            "source_head": {
+              "base": null,
+              "candidate": "819309fd312298e099642e1253b1d4ba07113e98",
+              "kind": "head",
+              "prospective_merge": null,
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "819309fd312298e099642e1253b1d4ba07113e98",
+              "tested_tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 1277471450,
+              "tracked_entries": 12639,
+              "tracked_worktree_verified": true
+            }
+          }
+        },
+        {
+          "name": "controls.log",
+          "bytes": 112,
+          "sha256": "1d91c9e7c7e3e8065cb94b3e0d1ce7df6495c34258cad23d6fb5b3219fff19f9"
+        },
+        {
+          "name": "source-after-controls.json",
+          "bytes": 423,
+          "sha256": "5759d06c351357aa4d7b24e1b56c03607da60870788f30139a8e10460744c6b6",
+          "json": {
+            "base": null,
+            "candidate": "819309fd312298e099642e1253b1d4ba07113e98",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "819309fd312298e099642e1253b1d4ba07113e98",
+            "tested_tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 1277471450,
+            "tracked_entries": 12639,
+            "tracked_worktree_verified": true
+          }
+        }
+      ],
+      "native_gate_validated": false,
+      "download": {
+        "argv": [
+          "/usr/bin/gh",
+          "api",
+          "--hostname",
+          "github.com",
+          "--method",
+          "GET",
+          "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13584974949/zip"
+        ],
+        "started_utc": "2026-11-07T18:49:53.764525+00:00",
+        "exit_code": 0,
+        "bytes": 1363,
+        "sha256": "3e309a7049f917ec0aa9680066afab2e939bc597512bb44b1806a92970eceeca",
+        "finished_utc": "2026-11-07T18:49:57.239415+00:00"
+      }
+    },
+    {
+      "artifact": {
+        "id": 13585647797,
+        "name": "integration-push-source-42402618518-1",
+        "size_in_bytes": 1362,
+        "digest": "sha256:9c5ef9faf60ce9e36a817633fc10493b3f11d12248fb39c977d4bee1d2d96a1e",
+        "expired": false,
+        "workflow_run": {
+          "id": 42402618518,
+          "repository_id": 1323087357,
+          "head_repository_id": 1323087357,
+          "head_branch": "fix/chain-six-axis-performance-20261103",
+          "head_sha": "819309fd312298e099642e1253b1d4ba07113e98"
+        }
+      },
+      "errors": [],
+      "files": [
+        {
+          "name": "context.json",
+          "bytes": 1452,
+          "sha256": "0dac94a9be42d186f6f66b49d46818d3a478c5dec98f4679fe38fdf4d66dd441",
+          "json": {
+            "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+            "base_ref": "refs/heads/main",
+            "event": {
+              "after": "819309fd312298e099642e1253b1d4ba07113e98",
+              "before": "04bbc81e4aad9b29fef29385d3262297e2cb17df",
+              "name": "push",
+              "payload_sha256": "a03c7ba501c2edf0831e1a0f75de1a14bf2b52436be567245573455aaa6c8cbc",
+              "ref": "refs/heads/fix/chain-six-axis-performance-20261103",
+              "repository": "TrillionniumFoundation/Trillionnium-Chain",
+              "repository_id": 1323087357,
+              "run_attempt": "1",
+              "run_id": "42402618518"
+            },
+            "git_version": "git version 2.56.0",
+            "head": "819309fd312298e099642e1253b1d4ba07113e98",
+            "is_github_pr_merge": false,
+            "merge": "28df21f965e0348690836c9c854dab645827a03d",
+            "merge_format": "canonical-git-merge-tree-ordered-base-head-v1",
+            "merge_tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267",
+            "production_activation": false,
+            "resolved_utc": "2026-11-07T18:43:16.232281+00:00",
+            "schema": "trnm-integration-push-source-v1",
+            "source_head": {
+              "base": null,
+              "candidate": "819309fd312298e099642e1253b1d4ba07113e98",
+              "kind": "head",
+              "prospective_merge": null,
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "819309fd312298e099642e1253b1d4ba07113e98",
+              "tested_tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 1277471450,
+              "tracked_entries": 12639,
+              "tracked_worktree_verified": true
+            }
+          }
+        },
+        {
+          "name": "source-after-controls.json",
+          "bytes": 423,
+          "sha256": "5759d06c351357aa4d7b24e1b56c03607da60870788f30139a8e10460744c6b6",
+          "json": {
+            "base": null,
+            "candidate": "819309fd312298e099642e1253b1d4ba07113e98",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "819309fd312298e099642e1253b1d4ba07113e98",
+            "tested_tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 1277471450,
+            "tracked_entries": 12639,
+            "tracked_worktree_verified": true
+          }
+        },
+        {
+          "name": "controls.log",
+          "bytes": 112,
+          "sha256": "ed31ab17e73da6804dc18f8ef9507dee8a516f35d75a6aab8909b1b802d818f3"
+        }
+      ],
+      "native_gate_validated": false,
+      "download": {
+        "argv": [
+          "/usr/bin/gh",
+          "api",
+          "--hostname",
+          "github.com",
+          "--method",
+          "GET",
+          "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13585647797/zip"
+        ],
+        "started_utc": "2026-11-07T18:49:53.764967+00:00",
+        "exit_code": 0,
+        "bytes": 1362,
+        "sha256": "9c5ef9faf60ce9e36a817633fc10493b3f11d12248fb39c977d4bee1d2d96a1e",
+        "finished_utc": "2026-11-07T18:49:57.439550+00:00"
+      }
+    }
+  ],
+  "historical_retention_job": 128493479963,
+  "retention_log_fetch": {
+    "argv": [
+      "/usr/bin/gh",
+      "api",
+      "--hostname",
+      "github.com",
+      "--method",
+      "GET",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128493479963/logs"
+    ],
+    "started_utc": "2026-11-07T18:49:57.442564+00:00",
+    "exit_code": 0,
+    "bytes": 4112,
+    "sha256": "93b9d8a984b73fde1930d100b45f9edbd549fc7a99167f4de6b49aeed3f96337",
+    "finished_utc": "2026-11-07T18:50:05.179187+00:00"
+  },
+  "native_gate_validated": false
+}

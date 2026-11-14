@@ -1,0 +1,34 @@
+{
+  "schema": "model-owner-final-concurrent-materialization-v1",
+  "utc": "2026-11-05T03:02:01.232146+00:00",
+  "tested_source": "7d347fa80e2cd3fd19d0010c3465581143b8d2e1",
+  "upstream": "67097f5add069c49788fc5ba21c35d1db07167c4",
+  "merge_tree_before_new_evidence": "5f2661340ddbf74126d905067cc982458efa1239",
+  "preflight": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-model-owner-integration-20261105\", \"remote_policy_mutated\": false}",
+  "merge_stdout": "Auto-merging docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+  "newly_copied_objects": [
+    {
+      "path": "pack/pack-7889adb24e9131ce1a59df51076282b7df6b2782.idx",
+      "bytes": 4208,
+      "sha256": "c97afd787926715bdb4a8e1f052bde39698da62d9a64132c3434de4a710584d6"
+    },
+    {
+      "path": "pack/pack-7889adb24e9131ce1a59df51076282b7df6b2782.pack",
+      "bytes": 339835,
+      "sha256": "48b86ccb6c8061faa7893610aafb086b1ec7daccbb1b8419abd45118c752e8db"
+    },
+    {
+      "path": "pack/pack-7889adb24e9131ce1a59df51076282b7df6b2782.promisor",
+      "bytes": 9184,
+      "sha256": "77118944af688ad63bd8dbe0241caa788800165e4dc6fc490c9a6aaab21a65ed"
+    },
+    {
+      "path": "pack/pack-7889adb24e9131ce1a59df51076282b7df6b2782.rev",
+      "bytes": 500,
+      "sha256": "9bccaefc03df3cb6020f19c5418b93fe4a343ef2d682d49d05471f5d911ef54d"
+    }
+  ],
+  "persistent_alternates_changed": false,
+  "git_config_changed": false,
+  "source_or_test_execution": false
+}

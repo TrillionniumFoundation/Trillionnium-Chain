@@ -1,0 +1,118 @@
+{
+  "attempts": [
+    {
+      "attempt": 1,
+      "cause_established": false,
+      "observation": "Shell reported Killed; later code released the previous raw report before the next read.",
+      "receipt": "reader-attempt01.json",
+      "returncode": 137,
+      "stderr": "campaign0746-outcomes-reader.log",
+      "stdout": "campaign0746-outcomes-attempt01.stdout.log",
+      "version": "historical-v1",
+      "original_stdout_filename": "campaign0746-outcomes-attempt01.json"
+    },
+    {
+      "attempt": 2,
+      "observation": "The /usr/bin/time wrapper was absent; this was not another native campaign or completed reader run.",
+      "original_json_receipt": null,
+      "reader_started": false,
+      "recorded_shell_returncode": 127,
+      "returncode_source": "retained session command observation; no original JSON receipt exists",
+      "stderr": "campaign0746-outcomes-reader-attempt02.log",
+      "stdout": "campaign0746-outcomes-attempt02.stdout.log",
+      "version": "historical-v1",
+      "original_stdout_filename": "campaign0746-outcomes-attempt02.json"
+    },
+    {
+      "attempt": 3,
+      "output": "../history/campaign0746-outcomes-v1.json.gz",
+      "output_uncompressed_sha256": "0f88e649882f3c95f751b5e2ae5ab85cfe938c1d8fbd0c7534dcff47018f4cb7",
+      "receipt": "reader-attempt03.json",
+      "returncode": 0,
+      "stderr": "campaign0746-outcomes-final.log",
+      "version": "historical-v1"
+    },
+    {
+      "attempt": 1,
+      "output": "../campaign0746-outcomes-v2.json.gz",
+      "output_uncompressed_sha256": "1b95b9e8bee728922480a8e40eb9730e750fc64a4c50c0e5cefe2ced1b38585a",
+      "receipt": "reader-v2-attempt01.json",
+      "returncode": 0,
+      "stderr": "campaign0746-outcomes-v2.log",
+      "version": "v2"
+    }
+  ],
+  "historical_success_output_aliases": [
+    "/workspace/scratch/481716a90d06/chain_acceptance/campaign0746-outcomes-final.json",
+    "/workspace/scratch/481716a90d06/chain_acceptance/campaign0746-outcomes.json"
+  ],
+  "historical_success_source_sha256": "ed4aac34d182d76fa9a021c3260a58cdc84af09abb643cd65c8d6cb26e3c38b4",
+  "index_is_retrospective": true,
+  "latest_reader_source_sha256": "1fc55e57ed086d7179004d82bf64507f82fa33a7b3cc6e26c5fd7a6d2135c692",
+  "native_node_executed_by_these_reader_attempts": false,
+  "original_files_copied_byte_for_byte": [
+    {
+      "bytes": 313,
+      "path": "reader-attempt01.json",
+      "sha256": "06e8d8232ba03795b3c56ef0266a2acada1d9ec8b5bf09be11b2e419fe545af2",
+      "source_path": "/workspace/scratch/481716a90d06/chain_acceptance/reader-attempt01.json"
+    },
+    {
+      "bytes": 841,
+      "path": "reader-attempt03.json",
+      "sha256": "40a8c661f897d7a1d687fc9c6c7a248cc92f27a9f3d3fa326160d43e31a124f2",
+      "source_path": "/workspace/scratch/481716a90d06/chain_acceptance/reader-attempt03.json"
+    },
+    {
+      "bytes": 1113,
+      "path": "reader-v2-attempt01.json",
+      "sha256": "17f8354c74de41455c6eb2172af59e94a6589e27d87124492fb91d21a56fb5e2",
+      "source_path": "/workspace/scratch/481716a90d06/chain_acceptance/reader-v2-attempt01.json"
+    },
+    {
+      "bytes": 60,
+      "path": "campaign0746-outcomes-reader-attempt02.log",
+      "sha256": "3e737f6a9117cec194b02103b357f8668fae9adb86a8a8cd0bf25efab8948548",
+      "source_path": "/workspace/scratch/481716a90d06/chain_acceptance/campaign0746-outcomes-reader-attempt02.log"
+    },
+    {
+      "bytes": 0,
+      "path": "campaign0746-outcomes-attempt01.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/workspace/scratch/481716a90d06/chain_acceptance/campaign0746-outcomes-attempt01.json",
+      "original_filename": "campaign0746-outcomes-attempt01.json"
+    },
+    {
+      "bytes": 0,
+      "path": "campaign0746-outcomes-attempt02.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/workspace/scratch/481716a90d06/chain_acceptance/campaign0746-outcomes-attempt02.json",
+      "original_filename": "campaign0746-outcomes-attempt02.json"
+    },
+    {
+      "bytes": 0,
+      "path": "campaign0746-outcomes-reader.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/workspace/scratch/481716a90d06/chain_acceptance/campaign0746-outcomes-reader.log"
+    },
+    {
+      "bytes": 0,
+      "path": "campaign0746-outcomes-final.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/workspace/scratch/481716a90d06/chain_acceptance/campaign0746-outcomes-final.log"
+    },
+    {
+      "bytes": 0,
+      "path": "campaign0746-outcomes-v2.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/workspace/scratch/481716a90d06/chain_acceptance/campaign0746-outcomes-v2.log"
+    }
+  ],
+  "schema": "retained-campaign-reader-attempt-index-v1",
+  "stdout_filename_correction": {
+    "original_commit": "7ddfe2bfa480d1ebd91c07d03d56a963fff038c5",
+    "details": "stdout-filename-correction.json",
+    "original_index_sha256": "7bb4a46aa8c1cddac037bf2349f612e57df4a1fefcf8950e3ced08c1a197bf1d",
+    "bytes_of_original_outputs_changed": false
+  }
+}

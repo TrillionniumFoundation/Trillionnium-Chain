@@ -1,0 +1,9 @@
+{
+  "error": "IO: Connection refused (os error 111)",
+  "hardness_accepted": false,
+  "independent_accepted": false,
+  "passed": false,
+  "production_activation": false,
+  "public_network_ready": false,
+  "schema": "native-ancestry-long-sync-observation-v1"
+}

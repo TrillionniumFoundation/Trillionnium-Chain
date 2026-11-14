@@ -1,0 +1,21 @@
+{
+  "artifact_index_files": 158,
+  "branch": "fix/chain-pq-authority-preflight-20261108-9d315",
+  "first_validation_commit": "62ed4e4facae4e0eb9f3fdeb82001acb3b21be47",
+  "first_validation_gates": 28,
+  "integrated_validation_executed": false,
+  "lossless_archived_captures": 7,
+  "native_source_unchanged_from_first_validation": true,
+  "original_failed_attempt_preserved": true,
+  "parents": [
+    "62ed4e4facae4e0eb9f3fdeb82001acb3b21be47",
+    "8d8f05566b2a1612a3bf4a6c6c71635df454d397"
+  ],
+  "pinned_blobs": 722,
+  "production_activation": false,
+  "required_paths": 641,
+  "result": "PASS",
+  "source_commit": "af6b06fa1cb944e639148b58e9765fe2bb0065ab",
+  "source_tree": "5c624c637c9db17e0a7410d112369ad7b3bb2d73",
+  "whole_chain_pq_qualified": false
+}

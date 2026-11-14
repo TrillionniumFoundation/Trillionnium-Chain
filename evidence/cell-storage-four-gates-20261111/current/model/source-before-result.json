@@ -1,0 +1,21 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "scripts/ci/verify_ci_source.py",
+    "--kind",
+    "head",
+    "--expected-head",
+    "030de92be05bfd4f73e199098c12dfeaedf29b17"
+  ],
+  "cwd": "/home/qq/work/chain-cell-four-gates-20261111-2bfb",
+  "elapsed_ns": 10588116354,
+  "exit_code": 0,
+  "scope": "outside native operation",
+  "started_unix_ns": 1794445178366348696,
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_bytes": 423,
+  "stdout_sha256": "48d910b14e2897b8e9720280bdff823544d2ccbc0c80698dff1a6d06b9a562f7",
+  "timeout_seconds": 300
+}

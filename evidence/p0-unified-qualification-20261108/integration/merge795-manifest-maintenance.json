@@ -1,0 +1,17 @@
+{
+  "schema": "trnm-merge-source-manifest-maintenance-v1",
+  "raw_merge_equality_receipt": "merge795-runtime-equality.json",
+  "final_scope_tree_equal": false,
+  "changed_scope_paths": [
+    "config/pon/pq-cross-branch-corpus-v1.json"
+  ],
+  "only_json_change": {
+    "pinned_blobs.docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": {
+      "before": "1cc51710312f080a4b507695e2b8f8b676a8d95a",
+      "after": "c7db147493ab5f23ff161dcaec5c039dbac1176b"
+    }
+  },
+  "index_tree": "d48ce296e2777fc5320f30bb4dbec04075db19df",
+  "runtime_source_and_locks_changed": false,
+  "qualification": "HOLD_NO_GO"
+}

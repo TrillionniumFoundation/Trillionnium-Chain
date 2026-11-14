@@ -1,0 +1,13 @@
+   Compiling trnm-pon-node v0.1.0 (/workspace/scratch/736a3d6dec1b/chain-architecture/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized] target(s) in 38.05s
+     Running tests/pq_application_local_cli.rs (/workspace/scratch/736a3d6dec1b/target/debug/deps/pq_application_local_cli-c997779fb8a4d639)
+
+running 5 tests
+test export::export_ordinary_npq6_task_and_evaluator_control_material ... ignored, prepares exact public NPQ6 material for the separately selected paired native tests
+test ordinary_npq6_configuration_rejects_missing_null_extra_and_mixed_bindings ... ok
+test ordinary_npq6_invalid_packet_encoding_cannot_fall_back_to_classical_settings ... ok
+test ordinary_npq6_refuses_existing_owner_context_and_never_creates_a_missing_owner ... ok
+test ordinary_npq6_submit_and_cold_status_execute_current_task_and_evaluator_roles ... ok
+
+test result: ok. 4 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 6.14s
+

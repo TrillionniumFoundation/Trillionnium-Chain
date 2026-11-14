@@ -1,0 +1,29 @@
+{
+  "args": [
+    "/home/qian-qi/work/chain-next-architecture-security-20261108-8720-target/release/deps/trnm_data_availability-b3ca9e50346ca035",
+    "cell::discovery::equivocation_history_tests::tcp_higher_sequence_cannot_hide_observed_earlier_sequence_equivocation",
+    "--exact",
+    "--test-threads=1",
+    "--nocapture"
+  ],
+  "binary_sha256_after": "7aaa479b081854ab8ea172e9553fe03896d3859fc61f66a9de70d179a4f23c08",
+  "binary_sha256_before": "7aaa479b081854ab8ea172e9553fe03896d3859fc61f66a9de70d179a4f23c08",
+  "cause_established": false,
+  "client_deadline_ms": 200,
+  "cwd": "/home/qian-qi/work/chain-next-architecture-security-20261108-8720/trillionnium/crates/trnm-data-availability",
+  "diagnostic_repetition_count": 1,
+  "elapsed_wall_ns": 13204113583,
+  "exit_code": 101,
+  "internal_deadline_changed": false,
+  "server_deadline_ms": 250,
+  "source_commit": "bced22f712552302848e3e04f7acf24068af2048",
+  "stderr": {
+    "bytes": 759,
+    "sha256": "870c2e746b02af4493e3c96e08eefb37218903336a2343af34322862e0d3cb7c"
+  },
+  "stdout": {
+    "bytes": 393,
+    "sha256": "8fdbb4a97c05278e434de772ac742cc6f755bd67a22e3765d85ff9bd8d0504e6"
+  },
+  "timeout": false
+}

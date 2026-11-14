@@ -1,0 +1,10 @@
+{
+  "command": [
+    "/usr/bin/python3",
+    "scripts/ci/test_ci_source_integrity.py"
+  ],
+  "commit": "804b4290856629c27b215750254616b3e0da4b4c",
+  "cwd": "/home/qq/work/chain-cell-paged-consumer-34e09-20261109",
+  "started_at_utc": "2026-11-10T07:03:39.898499+00:00",
+  "tree": "f5a19e6ece2910d6b990c6e964c802e28760e7f6"
+}

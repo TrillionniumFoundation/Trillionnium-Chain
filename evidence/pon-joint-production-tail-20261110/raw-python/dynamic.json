@@ -1,0 +1,23 @@
+{
+  "argv": [
+    "python3",
+    "formal/pon-nakamoto-v1/test_dynamic_participation_v1.py",
+    "-v"
+  ],
+  "cwd": "/workspace/scratch/8e76272d9258/chain-joint-tail",
+  "elapsed_seconds": 0.16443800600063696,
+  "error": null,
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "label": "dynamic",
+  "native_probability_qualified": false,
+  "passed": true,
+  "production_activation": false,
+  "source_commit": "4716bade250f327b012a098418f4eece6b73fcaa",
+  "source_tree": "bbc0278f87282d9bcf4e22b167040233516da310",
+  "started_at_utc": "2026-11-10T07:31:06.068933+00:00",
+  "stderr": "dynamic.stderr.log",
+  "stderr_sha256": "46c6f073b535e9e152d2335e7ce7db353f022d07a95212f594910f79d4dcf2bf",
+  "stdout": "dynamic.stdout.log",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

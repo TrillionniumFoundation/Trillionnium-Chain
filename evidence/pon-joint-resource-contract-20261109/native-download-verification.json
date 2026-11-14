@@ -1,0 +1,20 @@
+{
+  "all_manifest_entries_verified": true,
+  "all_requested_native_components_pass": true,
+  "archive": "/workspace/scratch/pon-joint-58fd59-build/remote-native-117/chain-pon-joint-58fd59-native-evidence-11791e2d-01.tar.gz",
+  "archive_sha256": "178eae32c13c8fc4cd4cd14eadc45498094a2d07eb2ae206de2299eebe172293",
+  "archive_size": 2787512,
+  "chunk_count": 43,
+  "extracted": "/workspace/scratch/pon-joint-58fd59-build/remote-native-117/extracted",
+  "extracted_files": 478,
+  "finished_unix_ns": 1794194355109755290,
+  "manifest_excludes_itself": true,
+  "manifest_files": 477,
+  "manifest_sha256": "3586aec5ad2a76ee8b40ea5a4b77ca9b735e873a25658d21cd4f7faf9831c357",
+  "no_unlisted_files": true,
+  "passed": true,
+  "public_resource_contract_executed": false,
+  "regular_files_only": true,
+  "version": "66306:46172025:2787512:1794193898409093745:1794193898409093745",
+  "whole_system_qualified": false
+}

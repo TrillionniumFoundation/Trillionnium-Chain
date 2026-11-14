@@ -1,0 +1,71 @@
+{
+  "head": "cfef87ff6e09f998cb8fc5d3165fce8ac9eb2da1",
+  "merge_head": "09fbc0f45151a68a1bf205641171840fbf309882",
+  "index_tree": "26785a22b3118c718f71c1774dc1c1961db410e9",
+  "tracked_diff_sha256": "3827dc486eaac5afed7fdf55264eed2b523c95620e66268b62a92fea8256926d",
+  "source_files": {
+    "examples/carry_backend.rs": "7540a86eff7d2496fd1a2c4f9d2aebecd782c6b1c1ad79c8dc7facb523a04f99",
+    "examples/hash_role_probe.rs": "93072125eca6661bd2b2f8ee44d3209d1ac8b13f17f7e69569dccca90aea8144",
+    "examples/mutate_last_query.rs": "3695900e5341c2a7790b37657a35398b9044d5ed9bc057e1b2bf0b7275b6546f",
+    "examples/mutate_structure.rs": "bccf2cca0381cb49d04e5733259c45ea8a7a797ee2cbd0814ed6a3751a6fcdb8",
+    "examples/packed_carry_backend.rs": "43049ce43de27d02335a14ccc39fe5c51ba32d66651ae39235d7526224be65ea",
+    "examples/r4_lifecycle_probe.rs": "1d2deb4e6e79877de6a21ab2fcc2d0dedb7fcf86fa92c0f808a48ebc980c096e",
+    "examples/scheduled_sha_backend.rs": "2782d4004889ea40be680cc752844ca1d48bb537e54d8ef5fe1d77f6888702ad",
+    "examples/tagged_sha3_backend.rs": "9a278d5b98631a847b0a8a60ae97f20fb9f140985ee92ba7a561f35160a76a78",
+    "examples/tagged_sha3_wire_controls.rs": "7fbeda6fa6e39d4cb44d5dc88709be50a20e562ff1eb19bea969cc3547f3c9a9",
+    "src/arith_air.rs": "c320c54560b8e7cf645b37721f23622b69685d83c4ed965afece009cb71cb363",
+    "src/arith_carry_air.rs": "6524719eaa69e1c24e67ff4e82f26676612dcfc9b45da8d4a8ce08885dc56ec1",
+    "src/lib.rs": "f5b78f17de48d51276cc1fcaf62cd10e51f3c41d88d1c97b150f747c0448f1a4",
+    "src/main.rs": "5b7e6c2124f3a00e1a0eeafa586ab40e42d80b67dda4075cd5b48cedcbee7f76",
+    "src/proof_config.rs": "98876ea9e223f90079f69bd6f1f75f6a17b9988ed9412fdda8a16bc40367aebf",
+    "src/proof_wire.rs": "e8660e3b91849f538713b32835035f0eb39425326268dd9302b3c7b01b090921",
+    "src/public.rs": "593d1f25a53959dd2b7155f0bd6b7199c3e77bb1796ff291badc4996444f4a29",
+    "src/sha_air.rs": "a5e4d045eede07e01474225d5568326f2d6abdf0aae8246311bd9084a9b137fa",
+    "src/sha_plan.rs": "d1db8a58108702548ce801d6c8b558d49f975f72b6461d2d59be7d92c6b3c0d3",
+    "src/sha_schedule_air.rs": "88557607225e402b6f16ec7edffb7c8b90ddfe14cc7e87a2640042a205011a64",
+    "src/tagged_sha3.rs": "b6bf9e1d77e0e1711f3a8c667223afc5a7262b7658011d3fbbf6006ccd5b0847",
+    "src/tagged_sha3_wire.rs": "96f59192dc280908c3f4ac8268f798026259c1fad7d5d8d10891232b6855d6b1",
+    "tests/carry_proof.rs": "96659e082dd50dacdc08856576e4cbb47ebabf32786bb3c44a2f24620f1b3639",
+    "tests/proof_smoke.rs": "3f114828a246a9cf4d97a1c983fdd6675e6eea20aafc68bf0091b32669d8b51b",
+    "tests/schedule_proof.rs": "a4174b6bc56bf3845abe4b60e0ecee4a81d4410e86ca84d8c426e795bfd42813",
+    "tests/tagged_sha3_profile.rs": "e957b535ccc3f90972b4b8f2857459e6e92166cdd8a85837440db78d47d2053e",
+    "tests/tagged_sha3_reference_vectors.json": "c891c42cbd7751c920073c7701494d710016cbf56e933408893b0536996cc0a5",
+    "tests/wire_admission.rs": "5b6c870bee358f122fdc79a81cf7ad2e4bd5f01178184c20bc8f07dbd57a8d63",
+    "Cargo.toml": "f4b3ac509ba9ff16fef73f16f096e89436ebd7d6b11eb0158113dc6a2d5c39f5",
+    "Cargo.lock": "24f146fc5d5ba89f6070725a4453fbfe160fae0a81fb2449932f420fd2b7f281"
+  },
+  "binaries": {
+    "A": {
+      "path": "/home/qian-qi/work/p3-shared-profile-target-3acf89/release/examples/packed_carry_backend",
+      "sha256": "e6528d4a10e7f6585f23994c0d4d4bb17653c893114bfd57bfea9afb5147904f"
+    },
+    "B": {
+      "path": "/home/qian-qi/work/p3-shared-profile-target-3acf89/release/examples/tagged_sha3_backend",
+      "sha256": "ddc5b9d20e9c2463690e0b3a1aff2ed781b685efa687501096340b85ded58fe5"
+    },
+    "wire": {
+      "path": "/home/qian-qi/work/p3-shared-profile-target-3acf89/release/examples/tagged_sha3_wire_controls",
+      "sha256": "5d90b3108e00ca47a6c3c28534b6b358b94610e65ae228a984ad29b5f218157b"
+    }
+  },
+  "fixtures": {
+    "retained": {
+      "statement": {
+        "path": "/home/qian-qi/work/p3-shared-profile-observations-3acf89-base-sync/abba-v2/01-retained-B/prepared/statement.bin",
+        "sha256": "d8b06f64c5e3ff0242e1fe30110280be56fe9eca9cfb55086f7ed7ab5bdb3b6c",
+        "bytes": 377290
+      },
+      "header": {
+        "path": "/home/qian-qi/work/p3-shared-profile-observations-3acf89-base-sync/input-fixtures/retained.expected-header.bin",
+        "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+        "bytes": 318
+      },
+      "artifacts": {
+        "path": "/home/qian-qi/work/p3-shared-profile-observations-3acf89-base-sync/input-fixtures/retained.artifacts.bin",
+        "sha256": "802adcdd951cfb4cd7271df22c3bca6af66fee9f40454c74f8b5ff2c98a1b683",
+        "bytes": 64
+      }
+    }
+  },
+  "driver_sha256": "e5d7639ecc91cceaecefb62c39549dcab6baec6a4c11e3b709519d5cd479f8e3"
+}

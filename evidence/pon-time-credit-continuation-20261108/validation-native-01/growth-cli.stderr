@@ -1,0 +1,3 @@
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/work/chain-time-credit-20261108-qf01/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.76s
+     Running tests/native_growth_cli.rs (/home/qian-qi/work/chain-time-credit-20261108-qf01-target/debug/deps/native_growth_cli-dca017408c32ddac)

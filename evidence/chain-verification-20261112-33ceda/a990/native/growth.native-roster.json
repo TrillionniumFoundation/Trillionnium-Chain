@@ -1,0 +1,14 @@
+{
+  "executed_tests": 7,
+  "result": "PASS",
+  "scope": "native-libtest-transcript-and-process-exit-only",
+  "tests": [
+    "ingress::public_v3::growth::tests::growth_paid_dispatch_charges_joined_preparation_workers_and_fences_unknown_cpu",
+    "ingress::public_v3::growth::tests::growth_signed_tcp_uses_paid_parallel_preparation_and_rejects_unknown_child_cpu",
+    "ingress::public_v3::growth::tests::public_growth_v1_control_output_reserve_serves_head_but_not_paid_operations",
+    "ingress::public_v3::growth::tests::public_growth_v1_raw_new_ops_are_refused_by_legacy_and_arithmetic_listeners",
+    "ingress::public_v3::growth::tests::public_growth_v1_real_listener_lost_ack_exact_query_reorg_and_cold_reopen",
+    "ingress::public_v3::growth::tests::public_growth_v1_rechecks_future_ancestry_before_new_and_duplicate_activation",
+    "ingress::public_v3::growth::tests::public_growth_v1_wire_profile_namespace_and_free_lane_cannot_be_confused"
+  ]
+}

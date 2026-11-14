@@ -1,0 +1,13 @@
+{
+  "command": [
+    "/usr/bin/python3",
+    "scripts/ci/test_ci_source_integrity.py"
+  ],
+  "completed_at_utc": "2026-11-10T11:57:04.313655+00:00",
+  "elapsed_seconds": 1.9727122010663152,
+  "exit_code": 0,
+  "failure": null,
+  "log_sha256": "7bbbfd016db282ce69072157c956bf49d25637395dd73c1ad43225508f3bec0e",
+  "name": "source-integrity-negatives",
+  "started_at_utc": "2026-11-10T11:57:02.340944+00:00"
+}

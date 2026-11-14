@@ -1,0 +1,54 @@
+{
+  "all_sarif_findings_triaged": false,
+  "comparison_base": "31543fb6dde565b62b47436e0b1d399b6d0bd772",
+  "current_local_head": "0e554f36ffdde3053a5eb1756eb5e526b1935032",
+  "current_scripts_workflows_reference_search": {
+    "argv": [
+      "git",
+      "-C",
+      "/workspace/scratch/d4d2da8133e2/chain-pq-closure",
+      "grep",
+      "-n",
+      "-F",
+      "workflow_wiring_static",
+      "HEAD",
+      "--",
+      "scripts",
+      ".github"
+    ],
+    "exit_code": 1,
+    "stderr": "",
+    "stdout": ""
+  },
+  "false_positive_resolution_claimed": false,
+  "findings": [
+    {
+      "base_blob": "f421f1465b707cbcf345239003860e5e7e5e0373",
+      "c1_blob": "f421f1465b707cbcf345239003860e5e7e5e0373",
+      "c2_blob": "f421f1465b707cbcf345239003860e5e7e5e0373",
+      "line": 60,
+      "matched_source_line": "    names = re.findall(r'#\\[test\\]\\s*(?:#\\[[^\\n]*\\]\\s*)*fn ([A-Za-z0-9_]+)\\(', text)",
+      "path": "evidence/pon-throughput-continuation-20261104/parent-and-tail/ci/workflow_wiring_static.original.py",
+      "rule": "py/redos",
+      "same_blob_at_base_c1_c2": true,
+      "source_sha256": "2f296d5e1518c5245039784189068f29e32f778d718ca9a3bf002e017c0ad32f"
+    },
+    {
+      "base_blob": "ada7b1c09461edda6b6a945c71b6dbad0d5f01c6",
+      "c1_blob": "ada7b1c09461edda6b6a945c71b6dbad0d5f01c6",
+      "c2_blob": "ada7b1c09461edda6b6a945c71b6dbad0d5f01c6",
+      "line": 79,
+      "matched_source_line": "    names = re.findall(r'#\\[test\\]\\s*(?:#\\[[^\\n]*\\]\\s*)*fn ([A-Za-z0-9_]+)\\(', text)",
+      "path": "evidence/pon-throughput-continuation-20261104/parent-and-tail/ci/workflow_wiring_static.py",
+      "rule": "py/redos",
+      "same_blob_at_base_c1_c2": true,
+      "source_sha256": "1e01c6e6f8ea44dc8305a1d44e209e2fdf83c354ec121efdba308e8585e9352d"
+    }
+  ],
+  "historical_files_modified": false,
+  "observed_source": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+  "observed_utc": "2026-11-11T05:14:07.932049+00:00",
+  "schema": "TRNM-C1-PY-REDOS-BOUNDED-REVIEW1",
+  "scope": "Both reported locations are unchanged historical evidence scripts; the literal filename-reference search in current scripts and workflows found no matches. This does not prove all reachability, exclude dynamic execution, resolve the rule, or certify zero vulnerabilities. Historical evidence is not rewritten.",
+  "whole_chain_pq_qualified": false
+}

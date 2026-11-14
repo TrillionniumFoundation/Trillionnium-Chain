@@ -1,0 +1,20 @@
+{
+  "base": "df2a4f59edf1a181c2968eda131a2ddb0e5f33a1",
+  "branch": "fix/chain-daa-resource-competition-20261112-600e",
+  "commit": "43e5c9d6b668276d03e1c7a76f467ec211e1d7dc",
+  "common_config_unchanged": true,
+  "evidence_directory": "/home/qian-qi/work/chain-daa-freeze-600e",
+  "postcommit_all_index_H": true,
+  "postcommit_status": "",
+  "precommit_manifest_bytes": 7167130,
+  "precommit_manifest_sha256": "10e15e75d753a2871319e84a7d4ea1e20038260d829db142f5e68dd60cdaef05",
+  "precommit_patch_sha256": "5fd55d3b4a98fc4c61f77358923aaba10309670637cfd0ce3868043d6b42474d",
+  "pushed": false,
+  "schema": "trnm-daa-source-freeze-v1",
+  "scope_count": 17,
+  "source_bytes": 2542453893,
+  "source_entries": 26711,
+  "tests_executed_by_freeze": false,
+  "tree": "beac87c2431d149dbd6d2de4a2e1eaf0617520cc",
+  "worktree_sparse_checkout": false
+}

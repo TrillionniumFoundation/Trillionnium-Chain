@@ -1,0 +1,24 @@
+{
+  "actual_oid": "07289d1c0906f82e0831ac1abf9525ff9f6dd7cc",
+  "bytes": 11496239,
+  "command": [
+    "/usr/bin/git",
+    "--no-replace-objects",
+    "cat-file",
+    "blob",
+    "07289d1c0906f82e0831ac1abf9525ff9f6dd7cc"
+  ],
+  "entry_created": true,
+  "existing_path_replaced": false,
+  "exit_code": 0,
+  "expected_bytes": 11496239,
+  "expected_oid": "07289d1c0906f82e0831ac1abf9525ff9f6dd7cc",
+  "finished_at": "2026-11-12T01:55:19.544742+00:00",
+  "path": "evidence/pon-w1-batch-build-20261028-r8/attempt5/compiled-host.gz",
+  "path_base64": "ZXZpZGVuY2UvcG9uLXcxLWJhdGNoLWJ1aWxkLTIwMjYxMDI4LXI4L2F0dGVtcHQ1L2NvbXBpbGVkLWhvc3QuZ3o=",
+  "result": "RESTORED_EXACT_HEAD_BLOB",
+  "sha256": "fcdb5ccfbeea25b55bb1ba2a4dbb72f55872385d03c34706cabeaa417971da38",
+  "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81",
+  "started_at": "2026-11-12T01:55:19.380268+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

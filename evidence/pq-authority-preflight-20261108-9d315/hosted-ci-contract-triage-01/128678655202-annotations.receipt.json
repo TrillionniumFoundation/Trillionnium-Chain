@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "/usr/bin/gh",
+    "api",
+    "--method",
+    "GET",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128678655202/annotations?per_page=100"
+  ],
+  "exit_code": 0,
+  "label": "128678655202-annotations",
+  "observed_utc": "2026-11-08T08:53:03.669290+00:00",
+  "stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 956,
+    "sha256": "4c632eb8774090bbf4ec5ced671b42ac1c0472d4f1e26298f3d6b05f94ad4d35"
+  }
+}

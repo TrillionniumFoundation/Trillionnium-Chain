@@ -1,0 +1,5 @@
+$ cargo clippy --locked --release --manifest-path formal/pon-nakamoto-v1/w1_zkvm/Cargo.toml -p trnm-w1-zk-relation --all-targets -- -D warnings
+    Checking trnm-w1-zk-relation v0.1.0 (/workspace/scratch/79360d3567d1/chain/formal/pon-nakamoto-v1/w1_zkvm/relation)
+    Finished `release` profile [optimized + debuginfo] target(s) in 1.70s
+
+exit_code=0

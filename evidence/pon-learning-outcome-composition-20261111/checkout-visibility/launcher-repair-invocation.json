@@ -1,0 +1,11 @@
+{
+  "final_index_tag_counts_observed": {
+    "H": 28932,
+    "S": 109
+  },
+  "repair_exit_code": 0,
+  "repair_script_sha256": "6c8ae308445f6b42078be33fd3fc133db4984fa024e4012ec785f60677911fec",
+  "repair_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "repair_stdout_sha256": "70a640bb8803637e6c6dee8ad60f6664e83cf0e53754915ff4da2ea66cf6b312",
+  "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81"
+}

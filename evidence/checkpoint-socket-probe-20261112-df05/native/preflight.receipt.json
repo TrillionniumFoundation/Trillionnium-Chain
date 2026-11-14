@@ -1,0 +1,36 @@
+{
+  "bytes": 171,
+  "command": [
+    "bash",
+    "scripts/project-preflight.sh"
+  ],
+  "cwd": "/data/chain-checkpoint-probe-20261112-df05",
+  "elapsed_ns": 12981594937,
+  "executed": true,
+  "exit_code": 0,
+  "expected_source": "7d4303f1a9ba3c259b92e58b85126eef3c5378a1",
+  "log": "preflight.log",
+  "name": "preflight",
+  "process_exit_code": 0,
+  "sha256": "fddacc8f229c38067116f1b9c30ef45dc2b348de2bbd7fa37490b97a2adfff5e",
+  "source": "7d4303f1a9ba3c259b92e58b85126eef3c5378a1",
+  "source_after_verified": true,
+  "source_before_verified": true,
+  "source_verified": true,
+  "target_after_identity": {
+    "device": 2067,
+    "gid": 1000,
+    "inode": 26345745,
+    "mode": 448,
+    "uid": 1000
+  },
+  "target_before_identity": {
+    "device": 2067,
+    "gid": 1000,
+    "inode": 26345745,
+    "mode": 448,
+    "uid": 1000
+  },
+  "target_identity_error": null,
+  "timed_out": false
+}

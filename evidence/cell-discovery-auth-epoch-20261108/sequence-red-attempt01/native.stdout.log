@@ -1,0 +1,34 @@
+
+running 3 tests
+test cell::discovery::pq::auth::tests::authenticated_v3_newest_verified_expired_high_first_vetoes_later_low_sequence ... FAILED
+test cell::discovery::pq::auth::tests::authenticated_v3_newest_verified_expired_high_later_removes_observed_low_sequence ... FAILED
+test cell::discovery::pq::auth::tests::authenticated_v3_newest_verified_quota_rejected_withdrawal_vetoes_older_source ... FAILED
+
+failures:
+
+---- cell::discovery::pq::auth::tests::authenticated_v3_newest_verified_expired_high_first_vetoes_later_low_sequence stdout ----
+
+thread 'cell::discovery::pq::auth::tests::authenticated_v3_newest_verified_expired_high_first_vetoes_later_low_sequence' (1208040) panicked at crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs:1422:5:
+expired newer signed sequence resurrected an older provider: Ok([127.0.0.2:19001])
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- cell::discovery::pq::auth::tests::authenticated_v3_newest_verified_expired_high_later_removes_observed_low_sequence stdout ----
+
+thread 'cell::discovery::pq::auth::tests::authenticated_v3_newest_verified_expired_high_later_removes_observed_low_sequence' (1208276) panicked at crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs:1422:5:
+expired newer signed sequence resurrected an older provider: Ok([127.0.0.2:19001])
+
+---- cell::discovery::pq::auth::tests::authenticated_v3_newest_verified_quota_rejected_withdrawal_vetoes_older_source stdout ----
+
+thread 'cell::discovery::pq::auth::tests::authenticated_v3_newest_verified_quota_rejected_withdrawal_vetoes_older_source' (1208683) panicked at crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs:1507:5:
+assertion failed: matches!(discover(&directory, &options, &preparation_transport, &mut
+    preparation),
+    Err(CellErrorV1::Invalid("authenticated discovery has no admissible provider")))
+
+
+failures:
+    cell::discovery::pq::auth::tests::authenticated_v3_newest_verified_expired_high_first_vetoes_later_low_sequence
+    cell::discovery::pq::auth::tests::authenticated_v3_newest_verified_expired_high_later_removes_observed_low_sequence
+    cell::discovery::pq::auth::tests::authenticated_v3_newest_verified_quota_rejected_withdrawal_vetoes_older_source
+
+test result: FAILED. 0 passed; 3 failed; 0 ignored; 0 measured; 465 filtered out; finished in 24.60s
+

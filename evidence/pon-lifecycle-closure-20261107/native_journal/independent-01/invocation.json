@@ -1,0 +1,33 @@
+{
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "/workspace/scratch/b9454e263603/chain_obligations/formal/pon-nakamoto-v1",
+    "-p",
+    "test_native_owner_journal.py",
+    "-v"
+  ],
+  "cwd": "/workspace/scratch/b9454e263603/chain_obligations",
+  "elapsed_seconds": 0.6290966819997266,
+  "ended_at_utc": "2026-11-07T16:33:38.135093+00:00",
+  "environment_overrides": {
+    "NATIVE_OWNER_JOURNAL_RUN": "/workspace/scratch/b9454e263603/chain_obligations/evidence/pon-lifecycle-closure-20261107/desktop-components/attempt-02/native-owner-journal/run.json",
+    "PYTHONPATH": "/workspace/scratch/b9454e263603/chain_obligations/formal/pon-nakamoto-v1"
+  },
+  "exit_code": 0,
+  "inputs": {
+    "evidence/pon-lifecycle-closure-20261107/desktop-components/attempt-02/native-owner-journal/run.json": "ba7ee8b1356655a250c10b412952c8572b31898ec026f7fced46281ffade0fed",
+    "formal/pon-nakamoto-v1/native_owner_journal.py": "9a8a3eae2615d4c84194d58578897849ac3f0714408a98184a18365dabe34338",
+    "formal/pon-nakamoto-v1/test_native_owner_journal.py": "49b20fab69033eae05b99493c08e1bbd7cc685995cef365c7a7264a0d4bed5cc"
+  },
+  "native_runtime_attested": false,
+  "physical_clock_authenticated": false,
+  "probability_bound": null,
+  "schema": "native-owner-journal-independent-test-invocation-v1",
+  "six_successor_risk_qualified": false,
+  "started_at_utc": "2026-11-07T16:33:37.505751+00:00",
+  "world_coverage_attested": false
+}

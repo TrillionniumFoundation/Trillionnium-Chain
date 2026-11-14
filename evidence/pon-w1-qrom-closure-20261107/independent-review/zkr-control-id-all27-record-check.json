@@ -1,0 +1,9 @@
+{
+  "all_27_recomputed_independently_here": false,
+  "all_native_results_and_shape_byte_identities_checked": 27,
+  "post_quantum_soundness_qualified": false,
+  "report_sha256": "48be4b4f4016e90adab07505e27f511232ec4164049c333073ded39a2f462aad",
+  "root_from_computed_native_results": "a54dc85ac99f851c92d7c96d7318af41dbe7c0194edfcc37eb4d422a998c1f56",
+  "scope": "independent source/record/encoding/root consistency review; no second 27-program native run",
+  "unresolved_qualification_flags_preserved": true
+}

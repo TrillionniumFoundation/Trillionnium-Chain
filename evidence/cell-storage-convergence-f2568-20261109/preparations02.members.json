@@ -1,0 +1,494 @@
+{
+  "archive": {
+    "bytes": 156092,
+    "format": "USTAR in XZ; deterministic zero timestamps and ownership; original regular-file modes",
+    "path": "/home/qq/work/chain-cell-storage-convergence-preparations02-package-f2568-20261109/preparations02.tar.xz",
+    "sha256": "350a1f7dc6abd844e10257582d011027fe57a364ad9e4a1d1c8b24e00983ea2a"
+  },
+  "archive_reopened_and_all_members_verified": true,
+  "created_unix": 1794201043.4113612,
+  "excluded_pycache_or_nonregular_members": 0,
+  "member_count": 60,
+  "members": [
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-extension07-preflight/preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-extension07-preflight/preflight.stderr"
+    },
+    {
+      "bytes": 180,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-extension07-preflight/preflight.stdout",
+      "sha256": "579c1abf6dbb49074700e3f1d25d6c75bda18b52cf89e838dcabb885b04e0394",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-extension07-preflight/preflight.stdout"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-extension07-import/head.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-extension07-import/head.stderr"
+    },
+    {
+      "bytes": 41,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-extension07-import/head.stdout",
+      "sha256": "4e88179f158fd20dc399d485d23eaae2094107fe05aa926ba352617615c3e80d",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-extension07-import/head.stdout"
+    },
+    {
+      "bytes": 6566,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-extension07-import/import-manifest.json",
+      "sha256": "9c22e15141e04749864ff27bfe283ebe29d8cff2ba3889ad1ee6af4a4505545a",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-extension07-import/import-manifest.json"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-extension07-import/index-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-extension07-import/index-before.stderr"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-extension07-import/index-before.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-extension07-import/index-before.stdout"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-extension07-import/preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-extension07-import/preflight.stderr"
+    },
+    {
+      "bytes": 180,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-extension07-import/preflight.stdout",
+      "sha256": "579c1abf6dbb49074700e3f1d25d6c75bda18b52cf89e838dcabb885b04e0394",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-extension07-import/preflight.stdout"
+    },
+    {
+      "bytes": 8330,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-extension07-import/result.json",
+      "sha256": "2b28a7c024efdcf2f6a94ce8bc4ec4f4c7acd66cc37afd4f5e9ea9c8cbb1a3f3",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-extension07-import/result.json"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-extension07-import/status-after.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-extension07-import/status-after.stderr"
+    },
+    {
+      "bytes": 2932,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-extension07-import/status-after.stdout",
+      "sha256": "62a1eacd5155a141d237edc29e594362352b309eb99fb31d91951d1f8f13b648",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-extension07-import/status-after.stdout"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-extension07-import/tracked-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-extension07-import/tracked-before.stderr"
+    },
+    {
+      "bytes": 645,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-extension07-import/tracked-before.stdout",
+      "sha256": "42ca4b2b8ab6a7568be9076f09eaa1bea127c4b303ad23f0f5b8aa69e6d4caea",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-extension07-import/tracked-before.stdout"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-extension07-import/untracked-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-extension07-import/untracked-before.stderr"
+    },
+    {
+      "bytes": 2570,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-extension07-import/untracked-before.stdout",
+      "sha256": "1c2484368cf3750d8df9c305e3eea1ae5fe3f3796cf5c0d93e155af603947932",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-extension07-import/untracked-before.stdout"
+    },
+    {
+      "bytes": 1444,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-prep07-compile/compile-da-node.stderr",
+      "sha256": "ee21e97cda7c167641bbddd965c5459cf13d8350d5fe10ac2a075c2be6713027",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-prep07-compile/compile-da-node.stderr"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-prep07-compile/compile-da-node.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-prep07-compile/compile-da-node.stdout"
+    },
+    {
+      "bytes": 387758,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-prep07-compile/source-after.json",
+      "sha256": "b72af559fc2978a43e50f9a6a3b34ac4815167b92289615fd6861a93bcadd13f",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-prep07-compile/source-after.json"
+    },
+    {
+      "bytes": 387758,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-prep07-compile/source-before.json",
+      "sha256": "b72af559fc2978a43e50f9a6a3b34ac4815167b92289615fd6861a93bcadd13f",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-prep07-compile/source-before.json"
+    },
+    {
+      "bytes": 32608,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-prep07-compile/summary.json",
+      "sha256": "a9beda007dcf8f3c9c39c83b4aa437c90092bd1e9c83a5bd4076fc98f76c5ff2",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-prep07-compile/summary.json"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-patch08-import/preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-patch08-import/preflight.stderr"
+    },
+    {
+      "bytes": 180,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-patch08-import/preflight.stdout",
+      "sha256": "579c1abf6dbb49074700e3f1d25d6c75bda18b52cf89e838dcabb885b04e0394",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-patch08-import/preflight.stdout"
+    },
+    {
+      "bytes": 16755,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-patch08-import/recovery.before.rs",
+      "sha256": "59eeb3298b344d29343941511498942379eee3582f083bf40c2a82884bd7e454",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-patch08-import/recovery.before.rs"
+    },
+    {
+      "bytes": 486,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-patch08-import/result.json",
+      "sha256": "20bbe5818775c40177c0d17a057cc59aa680425ed62aa5f1e27d378e3fba6573",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-patch08-import/result.json"
+    },
+    {
+      "bytes": 1220,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-prep08-compile/compile-da-node.stderr",
+      "sha256": "6a91d3cc69fb92234c0b4e380a72a8700e174c0709d1105f59d19ff17d39752e",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-prep08-compile/compile-da-node.stderr"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-prep08-compile/compile-da-node.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-prep08-compile/compile-da-node.stdout"
+    },
+    {
+      "bytes": 387758,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-prep08-compile/source-after.json",
+      "sha256": "4843e89631a9c645d2f6f2abb4bd41d3dd3658828b5fd0515871ec8a26d0d8fd",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-prep08-compile/source-after.json"
+    },
+    {
+      "bytes": 387758,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-prep08-compile/source-before.json",
+      "sha256": "4843e89631a9c645d2f6f2abb4bd41d3dd3658828b5fd0515871ec8a26d0d8fd",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-prep08-compile/source-before.json"
+    },
+    {
+      "bytes": 32607,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-prep08-compile/summary.json",
+      "sha256": "3925c8bff8a67688b939d31e6317a6685aaacff5943683dff5b37fccb3f68811",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-prep08-compile/summary.json"
+    },
+    {
+      "bytes": 31888,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-patch10-import/example.before.rs",
+      "sha256": "acf773349249a12beea0a3e7370155e126e10cc8d7ee9697743b46d3a5ee2b32",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-patch10-import/example.before.rs"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-patch10-import/format.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-patch10-import/format.stderr"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-patch10-import/format.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-patch10-import/format.stdout"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-patch10-import/preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-patch10-import/preflight.stderr"
+    },
+    {
+      "bytes": 180,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-patch10-import/preflight.stdout",
+      "sha256": "579c1abf6dbb49074700e3f1d25d6c75bda18b52cf89e838dcabb885b04e0394",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-patch10-import/preflight.stdout"
+    },
+    {
+      "bytes": 495,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-patch10-import/result.json",
+      "sha256": "214469e587d53149ef47a935b1a8142b8c277209fd25b13d827386a4fd3090e7",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-patch10-import/result.json"
+    },
+    {
+      "bytes": 2090,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-prep10-native/complete-da-native.stderr",
+      "sha256": "3f9d784e112553fabc4d6ca31d25b1fc8a0e83d8e4bb9c7a91da099c3477872b",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-prep10-native/complete-da-native.stderr"
+    },
+    {
+      "bytes": 85101,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-prep10-native/complete-da-native.stdout",
+      "sha256": "2751a4eed1d492706b0523efc3a0e1ad55e52ecadb0c15cc63e6d9cc33d75f34",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-prep10-native/complete-da-native.stdout"
+    },
+    {
+      "bytes": 547,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-prep10-native/node-storage-owner-native.stderr",
+      "sha256": "4b5f1200aea4155ba212fe22984265ada117825c3b265dd1b4671d5d2f667376",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-prep10-native/node-storage-owner-native.stderr"
+    },
+    {
+      "bytes": 5610,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-prep10-native/node-storage-owner-native.stdout",
+      "sha256": "ca8c4efbede1c06c78c8f95ff92d13417f44ee8073c9386082a6bfcc77b9f5bd",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-prep10-native/node-storage-owner-native.stdout"
+    },
+    {
+      "bytes": 387758,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-prep10-native/source-after.json",
+      "sha256": "15a1975573c05b0594ec4ff8342c47d16c5747d254b78ae13a742c26b3f430dd",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-prep10-native/source-after.json"
+    },
+    {
+      "bytes": 387758,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-prep10-native/source-before.json",
+      "sha256": "15a1975573c05b0594ec4ff8342c47d16c5747d254b78ae13a742c26b3f430dd",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-prep10-native/source-before.json"
+    },
+    {
+      "bytes": 33712,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-prep10-native/summary.json",
+      "sha256": "62b6dcd49c96f82396501504da1caf7e1bbff6fb65925a19bdcb86ee812ec1fd",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-prep10-native/summary.json"
+    },
+    {
+      "bytes": 27231,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-patch12-import/before.rs",
+      "sha256": "8f240ec9f6d65a6df8f0e897b9d9d3c3fdb4491287ab2ca59c08cba9dd00110d",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-patch12-import/before.rs"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-patch12-import/format.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-patch12-import/format.stderr"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-patch12-import/format.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-patch12-import/format.stdout"
+    },
+    {
+      "bytes": 31,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-patch12-import/native-status.json",
+      "sha256": "740b3eed2bf9b5fdf1fb96ea972bbf447222a207f0a4b3e485d19d1b7148d580",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-patch12-import/native-status.json"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-patch12-import/preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-patch12-import/preflight.stderr"
+    },
+    {
+      "bytes": 180,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-patch12-import/preflight.stdout",
+      "sha256": "579c1abf6dbb49074700e3f1d25d6c75bda18b52cf89e838dcabb885b04e0394",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-patch12-import/preflight.stdout"
+    },
+    {
+      "bytes": 392,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-patch12-import/result.json",
+      "sha256": "4b9de3704b71606a78136c20484b78be6cbe650f2aeac7997878d0f5b14a8a19",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-patch12-import/result.json"
+    },
+    {
+      "bytes": 340,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-prep12-node/node-storage-owner-native.stderr",
+      "sha256": "139d9d4195735057d13dc14c5d73d15b97cd346e2fa9bd22500cc5ee83ccb9a6",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-prep12-node/node-storage-owner-native.stderr"
+    },
+    {
+      "bytes": 4791,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-prep12-node/node-storage-owner-native.stdout",
+      "sha256": "98420af8831da896548021739f6f235e945ba79b729ccd9c7f153e6d68e75458",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-prep12-node/node-storage-owner-native.stdout"
+    },
+    {
+      "bytes": 387758,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-prep12-node/source-after.json",
+      "sha256": "c34c7aba7dd0463212e506fc3d80e4d3506998ab0a061ae72bbd0760607cd980",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-prep12-node/source-after.json"
+    },
+    {
+      "bytes": 387758,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-prep12-node/source-before.json",
+      "sha256": "c34c7aba7dd0463212e506fc3d80e4d3506998ab0a061ae72bbd0760607cd980",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-prep12-node/source-before.json"
+    },
+    {
+      "bytes": 32744,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-prep12-node/summary.json",
+      "sha256": "b1341cbe943af3f17d4201f4b80f3eac0dbbb8f61c95bf63d07126ed353692c3",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-prep12-node/summary.json"
+    },
+    {
+      "bytes": 387758,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-prep12-clippy/source-after.json",
+      "sha256": "c34c7aba7dd0463212e506fc3d80e4d3506998ab0a061ae72bbd0760607cd980",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-prep12-clippy/source-after.json"
+    },
+    {
+      "bytes": 387758,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-prep12-clippy/source-before.json",
+      "sha256": "c34c7aba7dd0463212e506fc3d80e4d3506998ab0a061ae72bbd0760607cd980",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-prep12-clippy/source-before.json"
+    },
+    {
+      "bytes": 994,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-prep12-clippy/strict-workspace-clippy.stderr",
+      "sha256": "5bc0466bc32739e638c64f00e650264c6d7e5294433c9f195e7c72bbaf94545f",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-prep12-clippy/strict-workspace-clippy.stderr"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-prep12-clippy/strict-workspace-clippy.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-prep12-clippy/strict-workspace-clippy.stdout"
+    },
+    {
+      "bytes": 32658,
+      "mode": 384,
+      "path": "chain-cell-storage-convergence-prep12-clippy/summary.json",
+      "sha256": "253b12c7fa45823bb523e716a5b48c4d36f8143da72bd59ee4a11545d6633233",
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-prep12-clippy/summary.json"
+    }
+  ],
+  "native_or_model_commands_executed": 0,
+  "only_explicit_new_task_directory_union": true,
+  "payload_bytes": 4243308,
+  "preparations01_not_read_or_repacked": true,
+  "private_hepta_producer_runtime_snapshot_weights_databases_or_keys_included": false,
+  "schema": "cell-storage-preparations02-member-manifest-v1",
+  "source_directories": [
+    {
+      "bytes": 180,
+      "members": 2,
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-extension07-preflight"
+    },
+    {
+      "bytes": 21264,
+      "members": 14,
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-extension07-import"
+    },
+    {
+      "bytes": 809568,
+      "members": 5,
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-prep07-compile"
+    },
+    {
+      "bytes": 17421,
+      "members": 4,
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-patch08-import"
+    },
+    {
+      "bytes": 809343,
+      "members": 5,
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-prep08-compile"
+    },
+    {
+      "bytes": 32563,
+      "members": 6,
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-patch10-import"
+    },
+    {
+      "bytes": 902576,
+      "members": 7,
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-prep10-native"
+    },
+    {
+      "bytes": 27834,
+      "members": 7,
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-patch12-import"
+    },
+    {
+      "bytes": 813391,
+      "members": 5,
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-prep12-node"
+    },
+    {
+      "bytes": 809168,
+      "members": 5,
+      "source_path": "/home/qq/work/chain-cell-storage-convergence-prep12-clippy"
+    }
+  ],
+  "source_files_deleted": false,
+  "source_set_and_bytes_unchanged_after_archive": true
+}

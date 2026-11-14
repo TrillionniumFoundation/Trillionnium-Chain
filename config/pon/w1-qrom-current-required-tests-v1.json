@@ -1,0 +1,122 @@
+{
+  "expected_tests": 77,
+  "qualification": {
+    "complete_w1_soundness_qualified": false,
+    "consensus_admission": false,
+    "post_quantum_soundness_qualified": false,
+    "pq_signature_qualification_inferred": false,
+    "production_qualified": false,
+    "quantum_work_qualified": false,
+    "security_bits_quantum": null
+  },
+  "schema": "TRNM-W1-QROM-CURRENT-REQUIRED-TESTS1",
+  "suites": [
+    {
+      "expected_tests": 28,
+      "module": "test_w1_control_tree_audit",
+      "tests": [
+        "test_w1_control_tree_audit.ControlTreeAuditTests.test_aligned_sponge_matches_upstream_interpreter_golden",
+        "test_w1_control_tree_audit.ControlTreeAuditTests.test_altered_final_join_is_refused_even_in_matching_catalogs",
+        "test_w1_control_tree_audit.ControlTreeAuditTests.test_bundle_duplicate_source_record_is_refused",
+        "test_w1_control_tree_audit.ControlTreeAuditTests.test_bundle_relabelled_mutation_cannot_repin_source",
+        "test_w1_control_tree_audit.ControlTreeAuditTests.test_canonical_field_boundary_is_preserved",
+        "test_w1_control_tree_audit.ControlTreeAuditTests.test_catalog_recomputation_does_not_certify_semantics_or_qrom",
+        "test_w1_control_tree_audit.ControlTreeAuditTests.test_catalog_tree_matches_fixed_sdk_root",
+        "test_w1_control_tree_audit.ControlTreeAuditTests.test_cli_never_overwrites_existing_evidence",
+        "test_w1_control_tree_audit.ControlTreeAuditTests.test_constants_parser_rejects_expressions_and_noncanonical_values",
+        "test_w1_control_tree_audit.ControlTreeAuditTests.test_duplicate_control_id_is_refused",
+        "test_w1_control_tree_audit.ControlTreeAuditTests.test_inclusion_path_reproduces_tree_root",
+        "test_w1_control_tree_audit.ControlTreeAuditTests.test_length_extension_caveat_is_visible_in_unpadded_hash",
+        "test_w1_control_tree_audit.ControlTreeAuditTests.test_missing_and_added_program_are_refused",
+        "test_w1_control_tree_audit.ControlTreeAuditTests.test_montgomery_decoding_is_not_ordinary_integer_encoding",
+        "test_w1_control_tree_audit.ControlTreeAuditTests.test_named_catalog_disagreement_is_refused",
+        "test_w1_control_tree_audit.ControlTreeAuditTests.test_noncanonical_leaf_and_sibling_are_refused_before_hashing",
+        "test_w1_control_tree_audit.ControlTreeAuditTests.test_only_join_is_a_different_control_root",
+        "test_w1_control_tree_audit.ControlTreeAuditTests.test_out_of_range_and_boolean_path_indices_are_refused",
+        "test_w1_control_tree_audit.ControlTreeAuditTests.test_partial_control_parser_does_not_ignore_malformed_entry",
+        "test_w1_control_tree_audit.ControlTreeAuditTests.test_permutation_matches_upstream_known_answer",
+        "test_w1_control_tree_audit.ControlTreeAuditTests.test_program_reordering_is_refused_and_changes_root",
+        "test_w1_control_tree_audit.ControlTreeAuditTests.test_sdk_catalog_is_not_the_default_allowlist",
+        "test_w1_control_tree_audit.ControlTreeAuditTests.test_short_and_long_paths_are_refused",
+        "test_w1_control_tree_audit.ControlTreeAuditTests.test_source_mutation_and_missing_source_fail_closed",
+        "test_w1_control_tree_audit.ControlTreeAuditTests.test_tree_rejects_256_leaves_like_sdk_constructor",
+        "test_w1_control_tree_audit.ControlTreeAuditTests.test_unaligned_sponge_matches_upstream_interpreter_golden",
+        "test_w1_control_tree_audit.ControlTreeAuditTests.test_unknown_same_size_program_roster_is_refused",
+        "test_w1_control_tree_audit.ControlTreeAuditTests.test_wrong_index_or_path_reproduces_a_different_root"
+      ]
+    },
+    {
+      "expected_tests": 13,
+      "module": "test_w1_qrom_conditional_budget",
+      "tests": [
+        "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_256_is_only_an_explicit_hypothetical_width_and_can_fail_budget",
+        "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_bool_float_and_malformed_fractions_are_rejected",
+        "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_cli_deep_json_below_byte_limit_returns_structured_rejection",
+        "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_cli_exact_input_round_trip_and_duplicate_or_nonfinite_rejection",
+        "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_domain_and_query_mass_inconsistencies_are_rejected",
+        "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_exact_threshold_and_one_rational_step_above_it",
+        "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_expression_floor_distinguishes_impossible_and_zero_allowance",
+        "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_fractional_mass_and_expression_above_one_are_not_rounded_or_clamped",
+        "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_input_cannot_override_qualification_or_request_project_certification",
+        "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_merkle_components_are_distinct_and_exact",
+        "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_no_inputs_remain_unknown_without_classical_or_width_defaults",
+        "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_passing_every_component_never_qualifies_a_project",
+        "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_unknown_factor_is_not_zero_or_silently_replaced_by_t"
+      ]
+    },
+    {
+      "expected_tests": 16,
+      "module": "test_w1_qrom_current_implementation_audit",
+      "tests": [
+        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_all_lifetime_and_cryptographic_obligations_remain_unknown",
+        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_all_six_local_crates_and_literal_inputs_are_bound",
+        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_cli_report_is_created_once_and_never_replaces_prior_evidence",
+        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_consolidated_local_sources_have_independent_reviewed_pins",
+        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_contract_edit_cannot_relabel_unreviewed_source",
+        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_current_mapping_reaches_the_original_complete_saved_fixture",
+        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_each_consolidated_source_refuses_omission_and_mutation",
+        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_fixed_parameters_and_fri_mapping_are_preserved",
+        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_historical_reader_bytes_are_preserved",
+        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_included_work_profile_change_requires_review",
+        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_local_path_manifest_change_requires_review",
+        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_missing_funded_source_is_refused",
+        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_new_local_build_script_requires_review",
+        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_old_contract_and_its_failure_remain_visible",
+        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_project_input_digests_are_the_reviewed_values",
+        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_unlisted_rust_file_is_not_silently_accepted"
+      ]
+    },
+    {
+      "expected_tests": 7,
+      "module": "test_w1_fri_transcript_audit",
+      "tests": [
+        "test_w1_fri_transcript_audit.FriTranscriptAuditTests.test_actual_saved_seal_geometry_and_security_boundary",
+        "test_w1_fri_transcript_audit.FriTranscriptAuditTests.test_canonical_value_change_does_not_become_a_proof_verification",
+        "test_w1_fri_transcript_audit.FriTranscriptAuditTests.test_changed_declared_seal_length_cannot_hide_in_outer_suffix",
+        "test_w1_fri_transcript_audit.FriTranscriptAuditTests.test_missing_or_changed_upstream_source_is_refused",
+        "test_w1_fri_transcript_audit.FriTranscriptAuditTests.test_noncanonical_words_in_cap_coefficients_and_last_opening_are_refused",
+        "test_w1_fri_transcript_audit.FriTranscriptAuditTests.test_raw_po2_scope_does_not_confuse_lift_limit_with_seal_acceptance",
+        "test_w1_fri_transcript_audit.FriTranscriptAuditTests.test_truncated_u_coefficient_section_and_trailing_word_are_refused"
+      ]
+    },
+    {
+      "expected_tests": 13,
+      "module": "test_w1_qrom_current_ci",
+      "tests": [
+        "test_w1_qrom_current_ci.CurrentCiTests.test_actual_current_mapping_and_original_refusal_are_separate",
+        "test_w1_qrom_current_ci.CurrentCiTests.test_drift_rejects_missing_changes_and_unrelated_process_failures",
+        "test_w1_qrom_current_ci.CurrentCiTests.test_duplicate_and_nonfinite_json_are_refused",
+        "test_w1_qrom_current_ci.CurrentCiTests.test_existing_observation_is_never_replaced",
+        "test_w1_qrom_current_ci.CurrentCiTests.test_final_gate_accepts_complete_current_scope_without_qualifying_security",
+        "test_w1_qrom_current_ci.CurrentCiTests.test_final_gate_refuses_missing_completion_and_changed_original_output",
+        "test_w1_qrom_current_ci.CurrentCiTests.test_final_gate_retains_every_failed_or_skipped_stage",
+        "test_w1_qrom_current_ci.CurrentCiTests.test_mapping_rejects_scope_escalation_and_unknown_budget_changes",
+        "test_w1_qrom_current_ci.CurrentCiTests.test_named_completion_rechecks_ids_counts_and_boolean_types",
+        "test_w1_qrom_current_ci.CurrentCiTests.test_named_import_exit_zero_is_not_completion",
+        "test_w1_qrom_current_ci.CurrentCiTests.test_named_runner_records_every_real_start_and_success",
+        "test_w1_qrom_current_ci.CurrentCiTests.test_named_runner_refuses_missing_duplicate_and_skipped_cases",
+        "test_w1_qrom_current_ci.CurrentCiTests.test_source_checks_keep_candidate_and_historical_identities_separate"
+      ]
+    }
+  ]
+}

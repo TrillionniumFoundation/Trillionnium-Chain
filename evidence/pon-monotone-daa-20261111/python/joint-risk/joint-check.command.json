@@ -1,0 +1,49 @@
+{
+  "actual_relevant_env": {
+    "LANG": "C.UTF-8",
+    "LC_ALL": "C.UTF-8",
+    "NATIVE_RISK_LEDGER_RUN": null,
+    "PYTHONDONTWRITEBYTECODE": null,
+    "PYTHONHASHSEED": null,
+    "PYTHONHOME": null,
+    "PYTHONNOUSERSITE": null,
+    "PYTHONPATH": null,
+    "TZ": null,
+    "VIRTUAL_ENV": null
+  },
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "formal/pon-nakamoto-v1/joint_consensus_qualification.py",
+    "--check"
+  ],
+  "completed_at_utc": "2026-11-11T23:59:18.839499+00:00",
+  "cwd": "/workspace/scratch/7f73fe002713/chain-daa",
+  "elapsed_wall_ns": 4756665523,
+  "env_overrides": {},
+  "environment_capture_scope": "execution-relevant-nonsensitive-variables; inherited environment otherwise retained",
+  "exit_code": 0,
+  "exit_matches_expectation": true,
+  "expected_exit": 0,
+  "name": "joint-check",
+  "open_obligations_count": 13,
+  "qualification_observation": {
+    "actual_lifetime_failure_bound": null,
+    "contract_validation": "PASS",
+    "production_activation": false,
+    "qualification": "HOLD_NO_GO",
+    "qualification_request": null,
+    "security_probability_calibrated": false
+  },
+  "started_at_utc": "2026-11-11T23:59:14.082209+00:00",
+  "stderr": {
+    "bytes": 0,
+    "path": "joint-check.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 9301,
+    "path": "joint-check.stdout.log",
+    "sha256": "d37d5e0121421363d399164ace713cbc899a3159ea1f32f6e5085ed9846f957e"
+  },
+  "unknown_parameter_count": 18
+}

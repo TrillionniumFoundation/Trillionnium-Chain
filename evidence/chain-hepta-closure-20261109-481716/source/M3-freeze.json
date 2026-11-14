@@ -1,0 +1,25 @@
+{
+  "source_commit": "f48840dead56de84fbae9d3b202b6c9ddd4a8291",
+  "tree": "21cf3932e715e1d9b9a1357b24022afa1257547a",
+  "parent": "44e96b1a841a50613d0b93484c5e576caec9f81f",
+  "branch": "refs/heads/fix/chain-hepta-closure-candidate-20261109-481716",
+  "created_at": "2026-11-09T14:05:52.989819+00:00",
+  "paths": [
+    ".github/workflows/chain-hepta-closure-candidate.yml",
+    "config/pon/pq-authority-effects-v1.json",
+    "config/pon/pq-proof-profile-binding-v1.json",
+    "config/pon/pq-root-dependency-register-v3.json",
+    "config/pon/w1-qrom-implementation-current-v2.json",
+    "docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md",
+    "docs/security/PQ_PROOF_PROFILE_BINDING_V1.md",
+    "docs/security/PQ_ROOT_DEPENDENCY_REGISTER_V3.md",
+    "docs/security/W1_QROM_CURRENT_SOURCE_MAPPING_V2.md",
+    "scripts/ci/pq_authority_effect_register.py",
+    "scripts/ci/pq_root_dependency_register.py",
+    "scripts/ci/test_pq_authority_effect_register.py",
+    "scripts/ci/test_w1_qrom_current_implementation_audit.py",
+    "scripts/w1_qrom_current_implementation_audit.py",
+    "config/pon/pq-cross-branch-corpus-v1.json"
+  ],
+  "candidate_qualified": false
+}

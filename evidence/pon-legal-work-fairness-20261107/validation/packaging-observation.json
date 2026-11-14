@@ -1,0 +1,20 @@
+{
+  "initial_diagnostics": [
+    {
+      "diagnostic": "new blank line at EOF",
+      "line": 389,
+      "path": "validation/final-source/native-crypto-all-targets.log"
+    },
+    {
+      "diagnostic": "new blank line at EOF",
+      "line": 60,
+      "path": "validation/final-source/native-header-binding.log"
+    }
+  ],
+  "initial_git_diff_cached_check_exit_code": 2,
+  "measured_source_code_changed": false,
+  "raw_logs_rewritten": false,
+  "resolution": "Store the two raw native stdout logs byte-for-byte in the supporting observations archive, with original paths, lengths and SHA256. Preserve other validation logs directly.",
+  "schema": "pon-evidence-packaging-observation-v0",
+  "scope": "evidence packaging only; original source validation suite remains immutable"
+}

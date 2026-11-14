@@ -1,0 +1,142 @@
+{
+  "head": "205ae38ff01bbf968f3fc2ef0297bee986224684",
+  "tests": [
+    {
+      "target": [
+        "--lib"
+      ],
+      "name": "ingress::public_v3::canonical_packet::tests::borrowed_complete_packet_codec_matches_owned_for_valid_and_malformed_boundaries"
+    },
+    {
+      "target": [
+        "--lib"
+      ],
+      "name": "ingress::public_v3::canonical_packet::tests::borrowed_body_keeps_original_error_order_and_same_task_permit_lifetime"
+    },
+    {
+      "target": [
+        "--lib"
+      ],
+      "name": "ingress::public_v3::canonical_packet::tests::borrowed_submit_matches_owned_native_work_context_cancellation_and_phase_outcomes"
+    },
+    {
+      "target": [
+        "--lib"
+      ],
+      "name": "ingress::public_v3::input_decode_tests::packet_envelopes_match_serde_for_every_single_byte_mutation_and_truncation"
+    },
+    {
+      "target": [
+        "--lib"
+      ],
+      "name": "ingress::public_v3::input_decode_tests::packet_envelopes_keep_empty_exact_maximum_and_over_limit_behavior"
+    },
+    {
+      "target": [
+        "--lib"
+      ],
+      "name": "ingress::public_v3::input_decode_tests::initialized_socket_reads_preserve_partial_bytes_and_ignore_unreceived_padding"
+    },
+    {
+      "target": [
+        "--lib"
+      ],
+      "name": "ingress::public_v3::input_decode_tests::initialized_socket_reads_retain_original_quantum_and_do_not_swallow_trailing_bytes"
+    },
+    {
+      "target": [
+        "--lib"
+      ],
+      "name": "ingress::public_v3::work_rejection::tests::ordinary_default_preserves_cpu_owner_explicit_settings_and_other_profiles"
+    },
+    {
+      "target": [
+        "--lib"
+      ],
+      "name": "ingress::public_v3::work_rejection::tests::default_paid_tcp_repeated_refusal_is_charged_and_valid_packet_still_replays"
+    },
+    {
+      "target": [
+        "--lib"
+      ],
+      "name": "ingress::public_v3::work_rejection::tests::warmed_refusal_keeps_original_cancellation_context_and_cpu_reservation"
+    },
+    {
+      "target": [
+        "--lib"
+      ],
+      "name": "ingress::public_v3::work_rejection::tests::absent_or_unfinished_rejection_observation_never_claims_a_cache_hit"
+    },
+    {
+      "target": [
+        "--lib"
+      ],
+      "name": "ingress::public_v3::work_arithmetic::tests::arithmetic_profile_has_exact_separate_bytes_and_rejects_cross_profile_challenges"
+    },
+    {
+      "target": [
+        "--lib"
+      ],
+      "name": "ingress::public_v3::work_arithmetic::tests::explicit_arithmetic_setup_preserves_the_exact_cpu_owner_and_cold_start_credit"
+    },
+    {
+      "target": [
+        "--lib"
+      ],
+      "name": "ingress::public_v3::work_arithmetic::tests::actual_paid_arithmetic_tcp_rejects_current_bad_products_then_activates_exact_valid_packet"
+    },
+    {
+      "target": [
+        "--lib"
+      ],
+      "name": "ingress::public_v3::work_arithmetic::tests::warm_arithmetic_dispatch_cannot_bypass_original_abandonment_or_current_context"
+    },
+    {
+      "target": [
+        "--lib"
+      ],
+      "name": "ingress::public_v3::work_arithmetic::tests::original_observer_json_has_no_arithmetic_claim_and_opt_in_unfinished_is_unknown"
+    },
+    {
+      "target": [
+        "--lib"
+      ],
+      "name": "ingress::public_v3::tests::paid_wrong_product_is_fully_rejected_and_the_preserved_valid_packet_is_activated"
+    },
+    {
+      "target": [
+        "--lib"
+      ],
+      "name": "ingress::public_v3::tests::paid_envelope_malformed_body_is_accounted_before_signed_refusal"
+    },
+    {
+      "target": [
+        "--test",
+        "public_cache_modes"
+      ],
+      "name": "rejection_cache_then_arithmetic_profile_is_refused"
+    },
+    {
+      "target": [
+        "--test",
+        "public_cache_modes"
+      ],
+      "name": "arithmetic_profile_then_rejection_cache_is_refused"
+    },
+    {
+      "target": [
+        "--test",
+        "public_cache_modes"
+      ],
+      "name": "rejection_cache_owner_cannot_be_replaced_by_repeated_setup"
+    },
+    {
+      "target": [
+        "--test",
+        "public_cache_modes"
+      ],
+      "name": "either_cache_alone_preserves_original_cold_cpu_budget_and_profile"
+    }
+  ],
+  "ignored_component_benchmark_executed": false
+}

@@ -1,0 +1,351 @@
+{
+  "schema": "trnm-admission-fence-isolated-worktree-v1",
+  "state": "ISOLATED_WORKTREE_CREATED",
+  "authority_status": {
+    "at_unix_ms": 1794083905609,
+    "audit_recorded": true,
+    "automatic_retry": false,
+    "cancelled": false,
+    "exit_code": 1,
+    "job_id": "1a1b755c976-12894-a3a",
+    "launch_nonce": "c7b3f72d09672fc737341155176abe0d",
+    "log_bytes": {
+      "stderr": {
+        "seen": 0,
+        "stored": 0
+      },
+      "stdout": {
+        "seen": 4990,
+        "stored": 4990
+      }
+    },
+    "log_errors": {
+      "stderr": null,
+      "stdout": null
+    },
+    "log_synced": {
+      "stderr": true,
+      "stdout": true
+    },
+    "log_truncated": {
+      "stderr": false,
+      "stdout": false
+    },
+    "output_complete": true,
+    "output_durable": true,
+    "state": "failed",
+    "terminal_publication_confirmed": true,
+    "terminal_publication_protocol": 1,
+    "timed_out": false
+  },
+  "commands": [
+    {
+      "label": "old-head",
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/work-final-business-20261107",
+      "state": "completed",
+      "exit": 0,
+      "stdout": {
+        "bytes": 41,
+        "sha256": "db126331f08a713105fc1ebf9e8019875606f49c45784b719efa2020d9668ab3"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "old-tree",
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD^{tree}"
+      ],
+      "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/work-final-business-20261107",
+      "state": "completed",
+      "exit": 0,
+      "stdout": {
+        "bytes": 41,
+        "sha256": "2b72118ee6172f696f8335c1d3949bf3ab420ca0e6025422dafc316bebf810a8"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "old-status",
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1"
+      ],
+      "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/work-final-business-20261107",
+      "state": "completed",
+      "exit": 0,
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "github-identity",
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "user",
+        "--jq",
+        "{login:.login,id:.id}"
+      ],
+      "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/work-final-business-20261107",
+      "state": "completed",
+      "exit": 0,
+      "stdout": {
+        "bytes": 37,
+        "sha256": "7c6b9fd1c2f7309eb6bceb64a63c52c1bbfd7fdf0925f4bfc6e15c106f58b2f7"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "github-repository",
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain",
+        "--jq",
+        "{id:.id,full_name:.full_name,permissions:.permissions}"
+      ],
+      "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/work-final-business-20261107",
+      "state": "completed",
+      "exit": 0,
+      "stdout": {
+        "bytes": 157,
+        "sha256": "792a436c7182fc6216d10c7dee5ef5728b2223676b19134ca9d1a58e0f98551e"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "github-branch",
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/branches/fix/chain-six-axis-performance-20261103",
+        "--jq",
+        "{name:.name,sha:.commit.sha}"
+      ],
+      "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/work-final-business-20261107",
+      "state": "completed",
+      "exit": 0,
+      "stdout": {
+        "bytes": 100,
+        "sha256": "dc21ad7b403f8b95452fc2926ca431d2160451259d34a56e4aa57c74c233c3f3"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "github-main",
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/branches/main",
+        "--jq",
+        "{name:.name,sha:.commit.sha}"
+      ],
+      "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/work-final-business-20261107",
+      "state": "completed",
+      "exit": 0,
+      "stdout": {
+        "bytes": 65,
+        "sha256": "9d9bbfdffa4e0c7d668b110f4a7a9f87406449fc93751fa39ac6b28e395f2059"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "preflight-existing",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/work-final-business-20261107",
+      "state": "completed",
+      "exit": 0,
+      "stdout": {
+        "bytes": 170,
+        "sha256": "f877f84b261303fe763f6713410fa0220116d57de1d311e83f1e6ce4e5f8a59b"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "create-worktree",
+      "argv": [
+        "git",
+        "--git-dir=/home/qian-qi/chain-throughput-local-admin-20261107/repo.git",
+        "worktree",
+        "add",
+        "-b",
+        "fix/chain-admission-fence-final-20261107",
+        "/home/qian-qi/chain-throughput-local-admin-20261107/work-admission-fence-819309-20261107",
+        "819309fd312298e099642e1253b1d4ba07113e98"
+      ],
+      "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107",
+      "state": "completed",
+      "exit": 0,
+      "stdout": {
+        "bytes": 98,
+        "sha256": "9bff6cbe39fc0694878c6fe25e5a1b4b28a1bb992edb8a222f3cdf0778561de1"
+      },
+      "stderr": {
+        "bytes": 3868,
+        "sha256": "813cfeeaa6539fa00defaa97f9b2b8e070e687d93b5fd0bcbabc0e6cfaae7b1c"
+      }
+    },
+    {
+      "label": "new-head",
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/work-admission-fence-819309-20261107",
+      "state": "completed",
+      "exit": 0,
+      "stdout": {
+        "bytes": 41,
+        "sha256": "db126331f08a713105fc1ebf9e8019875606f49c45784b719efa2020d9668ab3"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "new-tree",
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD^{tree}"
+      ],
+      "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/work-admission-fence-819309-20261107",
+      "state": "completed",
+      "exit": 0,
+      "stdout": {
+        "bytes": 41,
+        "sha256": "2b72118ee6172f696f8335c1d3949bf3ab420ca0e6025422dafc316bebf810a8"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "new-status",
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1"
+      ],
+      "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/work-admission-fence-819309-20261107",
+      "state": "completed",
+      "exit": 0,
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "new-user",
+      "argv": [
+        "git",
+        "config",
+        "--local",
+        "--get",
+        "user.name"
+      ],
+      "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/work-admission-fence-819309-20261107",
+      "state": "completed",
+      "exit": 0,
+      "stdout": {
+        "bytes": 10,
+        "sha256": "fb88b106e2b46b960c918f6e5607cb876d7978fb7bfe11eb0f401e44e8971981"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "new-email",
+      "argv": [
+        "git",
+        "config",
+        "--local",
+        "--get",
+        "user.email"
+      ],
+      "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/work-admission-fence-819309-20261107",
+      "state": "completed",
+      "exit": 0,
+      "stdout": {
+        "bytes": 45,
+        "sha256": "387dc856abb6d1865a0367575d7923b5cdf795e94bf2a603c36dbced6bf47210"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "identity": {
+    "id": 102159240,
+    "login": "ProfHepta"
+  },
+  "repository": {
+    "full_name": "TrillionniumFoundation/Trillionnium-Chain",
+    "id": 1323087357,
+    "permissions": {
+      "admin": true,
+      "maintain": true,
+      "pull": true,
+      "push": true,
+      "triage": true
+    }
+  },
+  "remote_branch": {
+    "name": "fix/chain-six-axis-performance-20261103",
+    "sha": "819309fd312298e099642e1253b1d4ba07113e98"
+  },
+  "remote_main": {
+    "name": "main",
+    "sha": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0"
+  },
+  "worktree": "/home/qian-qi/chain-throughput-local-admin-20261107/work-admission-fence-819309-20261107",
+  "source_changes": false,
+  "native_commands": false
+}

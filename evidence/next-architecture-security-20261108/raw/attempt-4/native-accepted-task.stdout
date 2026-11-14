@@ -1,0 +1,8 @@
+
+running 3 tests
+test store::task_observation::tests::configured_profiles_decode_transfers_acceptances_and_reject_foreign_or_malformed_bytes ... ok
+test store::task_observation::tests::every_native_profile_observes_real_settlement_with_its_exact_wire_id ... ok
+test store::task_observation::tests::legacy_selection_and_ambiguity_keep_the_original_codec_order ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 1184 filtered out; finished in 1.53s
+

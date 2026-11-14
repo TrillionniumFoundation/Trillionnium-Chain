@@ -1,0 +1,284 @@
+{
+  "schema": "w1-fact-cache-collision-local-review-v1",
+  "recorded_at_utc": "2026-11-04T06:46:51.564903+00:00",
+  "scope": "explicit WorkFactCache distinct-key collision; unretained complete native replay",
+  "repository": "https://github.com/TrillionniumFoundation/Trillionnium-Chain.git",
+  "integration_pr": 688,
+  "base_commit": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+  "fix_commit": "cb0d95a924ab2adbd5f521831823c269fa99ba7a",
+  "fix_tree": "650900569663d6109ad37bec6be75bd24a507a49",
+  "sparse_checkout": true,
+  "patch": {
+    "path": "w1-collision-fix.patch",
+    "sha256": "75881ade6fbc75cc4071db6d294beaf09fd180ed4ad420ddc1532955eae5c371"
+  },
+  "source_bindings": [
+    {
+      "path": "docs/protocol/pon-nakamoto-v1/details/W1_FACT_REUSE_V1.md",
+      "sha256": "5a247950386f5a90655e2ec4328e4659b0b38d5acda4daf5f8bddf603f05b1e1",
+      "bytes": 17369,
+      "committed_bytes_match": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/facts.rs",
+      "sha256": "d3e10fd0b3f2ab50fbf95778bd38353a1c9da38f44cf6f558d309661f47606a2",
+      "bytes": 8795,
+      "committed_bytes_match": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/facts/tests.rs",
+      "sha256": "010410761dc0a71e03f32f43e82b09f808ee69cab860f5a708081ae661f6396e",
+      "bytes": 21981,
+      "committed_bytes_match": true
+    },
+    {
+      "path": "trillionnium/Cargo.toml",
+      "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+      "bytes": 2204,
+      "committed_bytes_match": true
+    },
+    {
+      "path": "trillionnium/Cargo.lock",
+      "sha256": "773cd1364a02cc70b017412350e2343172ae4f2a8770b044a5a307e33a638d0a",
+      "bytes": 39976,
+      "committed_bytes_match": true
+    }
+  ],
+  "native_binary_bindings": [
+    {
+      "path": "trnm_crypto_primitives-208017daf511ef6b",
+      "sha256": "a91c03a09b4c629cc81b54cb25199ba10691ac05c406aa61d6043da972ec1975",
+      "bytes": 44589480
+    },
+    {
+      "path": "pq_openssl_native-daf14b6819dd0f12",
+      "sha256": "925200c47d3b220baefba970a42cac8d0f375a8344a4b7d3e701b29e0de7b0c0",
+      "bytes": 6881320
+    },
+    {
+      "path": "qualified_task_lifecycle_v2-c36d26a2e0f88c0e",
+      "sha256": "12316a906e5864ec9d68d61c499cc12a3027a92e21c7d2c8751e3175b3d7d656",
+      "bytes": 17568632
+    },
+    {
+      "path": "qualified_work_task-5520e90c3963fdb3",
+      "sha256": "4477512e34f91619d09691e7fcd1e5e51b1b73f1f238d1698eb124d83a92de87",
+      "bytes": 17509576
+    }
+  ],
+  "logs": [
+    {
+      "path": "w1-collision-red-exact.log",
+      "sha256": "bb91e4bfdd48dde5a949c425ef0de384f2ab46e0eaccf41ad88ad0c047994f82",
+      "bytes": 957
+    },
+    {
+      "path": "w1-collision-red-pinned.log",
+      "sha256": "315a2d9f98fbc0fd0ff0aecc24211e83ac6117bdbf6ac4908784797021aa4bfa",
+      "bytes": 1092
+    },
+    {
+      "path": "w1-collision-red-source.json",
+      "sha256": "6877be72070ac41a1e9ee33cebcf6a964e4e2442b9d525175256588274ae7851",
+      "bytes": 760
+    },
+    {
+      "path": "w1-collision-green.log",
+      "sha256": "562d9e19f7f3939d653cc21fe38a482c35ce0fa9ff9f00db785fa28f2a769b31",
+      "bytes": 3166
+    },
+    {
+      "path": "w1-all-crypto.log",
+      "sha256": "6031d63748e514a19287d4b492e9186d68e67b14b186763ce1c8420314b13cf1",
+      "bytes": 16461
+    },
+    {
+      "path": "w1-clippy.log",
+      "sha256": "e1643f20d2eb973937604a88bc3088024c1d8000290d632ff18f555a5ab73bfd",
+      "bytes": 1394
+    },
+    {
+      "path": "w1-committed-crypto.log",
+      "sha256": "295161becd7618af2bdedd9d9ee050d3b67e741b644f4f56ac45222efdfdd2d3",
+      "bytes": 16462
+    },
+    {
+      "path": "w1-committed-clippy.log",
+      "sha256": "488e43d9ddb94ff3dc4a0e3c78fc82d9bd3a89b4856ebfef9924978ea9ac6e0c",
+      "bytes": 204
+    },
+    {
+      "path": "w1-source-integrity-negatives.log",
+      "sha256": "bf37ac3cfaca88a57d8d672b59838cd5c0607f839546a1590c82fa4363e22fdd",
+      "bytes": 5509
+    },
+    {
+      "path": "w1-repository-contract.log",
+      "sha256": "e9d6779920685ac8631f9cfe3fc344fa5a64886cd36ed304305284c108a90361",
+      "bytes": 84
+    },
+    {
+      "path": "w1-cargo-metadata.json",
+      "sha256": "f1872d2c47d5cf85f04d32d00a5228356c1373876e7503f1474a27ae9213aaa6",
+      "bytes": 161132
+    }
+  ],
+  "toolchain": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+  "checks": [
+    {
+      "name": "preflight",
+      "result": "PASS",
+      "packages": 26
+    },
+    {
+      "name": "exact red control with fixed test bytes and base runtime",
+      "result": "EXPECTED_FAIL",
+      "exit_code": 101,
+      "tests_failed": 1,
+      "source_binding": "w1-collision-red-source.json",
+      "note": "Three-second bounded channel rendezvous is not a service deadline."
+    },
+    {
+      "name": "facts regression suite",
+      "result": "PASS",
+      "tests_passed": 16,
+      "ignored": 0
+    },
+    {
+      "name": "committed native crypto unit suite",
+      "result": "PASS",
+      "tests_passed": 133,
+      "ignored": 0
+    },
+    {
+      "name": "committed qualified task lifecycle integration",
+      "result": "PASS",
+      "tests_passed": 4,
+      "ignored": 0
+    },
+    {
+      "name": "committed qualified work task integration",
+      "result": "PASS",
+      "tests_passed": 5,
+      "ignored": 0
+    },
+    {
+      "name": "committed compile-fail doctests",
+      "result": "PASS",
+      "tests_passed": 2,
+      "ignored": 0
+    },
+    {
+      "name": "native OpenSSL differential",
+      "result": "NOT_RUN",
+      "tests_passed": 0,
+      "reason": "feature not enabled in this default-feature package run"
+    },
+    {
+      "name": "strict all-target package Clippy",
+      "result": "PASS",
+      "command": "cargo clippy --manifest-path trillionnium/Cargo.toml --locked --offline -p trnm-crypto-primitives --all-targets -- -D warnings"
+    },
+    {
+      "name": "package rustfmt check",
+      "result": "PASS"
+    },
+    {
+      "name": "source-integrity negative controls",
+      "result": "PASS",
+      "tests_passed": 34
+    },
+    {
+      "name": "repository contract and Markdown links",
+      "result": "FAIL",
+      "exit_code": 2,
+      "reason": "sparse checkout omits evidence/pon-v1/README.md linked from docs/README.md; full checkout rerun required"
+    },
+    {
+      "name": "Cargo metadata graph and lock",
+      "result": "PASS",
+      "command": "cargo metadata --manifest-path trillionnium/Cargo.toml --locked --offline --format-version 1 --no-deps"
+    },
+    {
+      "name": "committed changed-source bytes and Cargo identities",
+      "result": "PASS"
+    },
+    {
+      "name": "diff whitespace",
+      "result": "PASS"
+    }
+  ],
+  "limits": [
+    "Optional local WorkFactCache fix; public V3 uses a separate ArithmeticFactCache implementation.",
+    "No profile, original attacker budget, service deadline, fork rule, proof relation, qualification flag or activation change.",
+    "Distinct-key full replay can increase concurrent arithmetic relative to waiting; existing external worker/CPU/deadline bounds remain required. Slot count bounds retained storage only.",
+    "No performance throughput or original four-second business-confirmation success claimed.",
+    "Full process and physical lowest legal work-cost bounds, complete structured/accelerated implementations and independent hardware reproductions remain open.",
+    "No remote push, merge or production activation performed."
+  ],
+  "public_arithmetic_review": {
+    "tested_commit": "cb0d95a924ab2adbd5f521831823c269fa99ba7a",
+    "source_bindings": [
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts.rs",
+        "sha256": "b6f453410f588391b8a05427299f7e7c3b10d1972d2057620146cde5ca28fbb9",
+        "matches_integrated_checkout": true
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/controls.rs",
+        "sha256": "1e53a6aa598d0fcb23866253f5c89add025cdd0654d6e82570a761a2d253f7a5",
+        "matches_integrated_checkout": true
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/churn_controls.rs",
+        "sha256": "d8e2d55c858925a749c97ea39d1c8935ef7767ae01436189d0e2fb587076e8c5",
+        "matches_integrated_checkout": true
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+        "sha256": "18128e759ed1eebe9158b6e73e57ced187b244ba0d7f906fb3917b6e28227271",
+        "matches_integrated_checkout": true
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_arithmetic.rs",
+        "sha256": "77897cfbb758edfa1063dbc8c8d6df5be04457bb2a6f72b27ba91e475e9c9fef",
+        "matches_integrated_checkout": true
+      }
+    ],
+    "runtime_changes": false,
+    "conclusion": "No unrelated-key waiting defect: completed-only cache, try_lock on lookup/publication, complete arithmetic on contention, no held lock across arithmetic or callbacks.",
+    "command": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-crypto-primitives",
+      "pon_work::arithmetic_facts",
+      "--",
+      "--nocapture"
+    ],
+    "result": {
+      "passed": 21,
+      "failed": 0,
+      "ignored": 0,
+      "filtered_out": 112
+    },
+    "observed_churn": {
+      "capacity": 64,
+      "distinct_challenges": 65,
+      "calls": 130,
+      "complete_transcripts": 130,
+      "complete_tiles": 66560,
+      "hits": 0,
+      "retained_software_bytes": 3152184
+    },
+    "log": {
+      "path": "w1-public-arithmetic-review.log",
+      "sha256": "70e8b6157b8d0de46ee49a107cc2d8b65388cad73eb9ea013c4c08c3d0cd0a90"
+    },
+    "scope": "same optional arithmetic profile and current worker/CPU/deadline ownership; not full public service acceptance"
+  }
+}

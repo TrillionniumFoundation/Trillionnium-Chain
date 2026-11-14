@@ -1,0 +1,75 @@
+{
+  "files": [
+    {
+      "bytes": 810,
+      "path": "postpublication/committed-artifacts-local-verification.json",
+      "sha256": "8441eeae75b7ff56fb66d638fe597cbbaaf221782b8ab970d2f0f0878080ad48"
+    },
+    {
+      "bytes": 9350,
+      "path": "postpublication/hosted-ci-observation-rest.log",
+      "sha256": "60c12cc5bea6bb39e60ec4c74dda6d561fa8dffa77dfa8f1eb914142de8194b0"
+    },
+    {
+      "bytes": 940,
+      "path": "postpublication/hosted-ci-observation-terminal.json",
+      "sha256": "a860197f0a29c1baee00856899adc29c5f5e7175cc244688a788f31bb466bb8e"
+    },
+    {
+      "bytes": 11159,
+      "path": "postpublication/hosted-ci-observation.json",
+      "sha256": "598f50939d271240bbad601cab033784b77640854dd8c9df97e55270f89cc9aa"
+    },
+    {
+      "bytes": 3050,
+      "path": "postpublication/postpublication-readback.json",
+      "sha256": "7eadd299e922aaba1446f22d334698747ba3155a0967bb6307f432f924c614f2"
+    },
+    {
+      "bytes": 2054,
+      "path": "postpublication/postpublication-verification-record.json",
+      "sha256": "1e0a1fda1125e17695300624cc703954708133b031b58a91b84d499df37ac42d"
+    },
+    {
+      "bytes": 940,
+      "path": "postpublication/publication-v1-terminal.json",
+      "sha256": "8813a2c6ccde8337d1d7d5969f538666b7adc0fc1e5e02cd17c9f901f852db8e"
+    },
+    {
+      "bytes": 2341,
+      "path": "postpublication/publication-v1-terminal.log",
+      "sha256": "9f60f20655447ff52525d94bc94cf19b509565cfadedb38b5f390699a66bc385"
+    },
+    {
+      "bytes": 940,
+      "path": "postpublication/readonly-verifier-attempt1.json",
+      "sha256": "1a159a5c958caffed8a83a3b2895bed720ec3a599f03290360b0f8e218d07f31"
+    },
+    {
+      "bytes": 1113,
+      "path": "postpublication/readonly-verifier-attempt1.log",
+      "sha256": "69a736ca0918b50d08c538a09abd76ed19d9baa20b556219ffa0b36052ad9e85"
+    },
+    {
+      "bytes": 940,
+      "path": "postpublication/readonly-verifier-attempt2.json",
+      "sha256": "ddc3b36d53516c4eb79e06f592912d5ccccebf9ba63accb7aded7a42005cd3c2"
+    },
+    {
+      "bytes": 2788,
+      "path": "postpublication/readonly-verifier-attempt2.log",
+      "sha256": "295ca002805b0fa9bef87b5a4b1a9a526f3695634f22dfd989e18f776b96813a"
+    },
+    {
+      "bytes": 581,
+      "path": "postpublication/root-pr-readback.json",
+      "sha256": "03a7a8dc0478baeb8e40de97cf262345256f6df45029e9debc491eddc27a094d"
+    },
+    {
+      "bytes": 17215,
+      "path": "verify_published_hepta_readbacks.py",
+      "sha256": "a5f149be49778a5a9f8c9136311b21f768b00423f87ee0ed9eab1cf7c87d0324"
+    }
+  ],
+  "schema": "hepta-postpublication-transfer-v1"
+}

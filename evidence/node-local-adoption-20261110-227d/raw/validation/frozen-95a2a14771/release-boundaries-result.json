@@ -1,0 +1,24 @@
+{
+  "name": "release-boundaries",
+  "command": [
+    "cargo",
+    "test",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "--offline",
+    "-p",
+    "trnm-release-bundle",
+    "--all-targets",
+    "-j1",
+    "--",
+    "--test-threads=1"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 103.473,
+  "source_commit": "95a2a14771a655e8e59a0cb5fb7f37bf8f62cd13",
+  "source_unchanged": true,
+  "log_sha256": "8fd92dbf701a579d25bf1221e605dada159aa1c4f44ec362d04c89f6af0bedb1",
+  "profile_overrides": {},
+  "scope": "targeted original-profile validation"
+}

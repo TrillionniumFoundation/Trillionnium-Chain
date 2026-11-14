@@ -1,0 +1,33 @@
+{
+  "started_utc": "2026-11-12T00:11:31.743957+00:00",
+  "source": "b7ed54cdb7793ca0a22f85350fecc0162d089fba",
+  "environment": {
+    "RUSTC": "/workspace/scratch/747d27b1ca86/build-setup/rust195/bin/rustc",
+    "LD_LIBRARY_PATH": "/workspace/scratch/747d27b1ca86/build-setup/rust195/lib",
+    "CARGO_HOME": "/workspace/scratch/3069292387f3/root-cargo-home",
+    "CARGO_TARGET_DIR": "/workspace/scratch/3069292387f3/root-target",
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_NET_OFFLINE": "true",
+    "RUST_TEST_THREADS": "1",
+    "RUSTFLAGS": null,
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CARGO_INCREMENTAL": null,
+    "RUSTC_WRAPPER": null,
+    "RUSTC_WORKSPACE_WRAPPER": null,
+    "OPENSSL_DIR": "/workspace/scratch/3069292387f3/root-build-setup/trnm-pq-provider-3.5.9.XUcDSuPf/install",
+    "OPENSSL_STATIC": "1",
+    "TRNM_PQ_OPENSSL": "/workspace/scratch/3069292387f3/root-build-setup/trnm-pq-provider-3.5.9.XUcDSuPf/install/bin/openssl",
+    "TRNM_PQ_OPENSSL_SHA256": "0de47e592b2163e2bbbb078301192d91a6ae933ba32dca1f4e1e23a593ef97a1",
+    "TRNM_PQ_OPENSSL_VERSION": "3.5.9",
+    "OPENSSL_CONF": "/dev/null",
+    "OPENSSL_MODULES": "/workspace/scratch/3069292387f3/root-build-setup/trnm-pq-provider-3.5.9.XUcDSuPf/install/lib/ossl-modules"
+  },
+  "rustc": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+  "cargo": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)\nrelease: 1.95.0\ncommit-hash: f2d3ce0bd7f24a49f8f72d9000448f8838c4e850\ncommit-date: 2026-03-21\nhost: x86_64-unknown-linux-gnu\nlibgit2: 1.9.2 (sys:0.20.4 vendored)\nlibcurl: 8.15.0-DEV (sys:0.4.83+curl-8.15.0 vendored ssl:OpenSSL/3.5.4)\nssl: OpenSSL 3.5.4 30 Sep 2025\nos: Debian 13.0.0 [64-bit]\n",
+  "rustc_binary_sha256": "bff349e72704ff70bc08a234a3847338e797065bbedde5e556808bc87b7bf7c6",
+  "prior_interrupted_attempt": "native-v5-b7ed/interrupted-attempt.json",
+  "environment_correction": "supply the derived canonical compiler lib directory; Cargo supplies its original target/deps and rustlib dirs",
+  "production_activation": false,
+  "profiles_changed": false,
+  "source_or_gate_modified": false
+}

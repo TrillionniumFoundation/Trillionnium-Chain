@@ -1,0 +1,24 @@
+{
+  "atomic_snapshot": false,
+  "encoding": "utf-8",
+  "files": [
+    {
+      "eof": true,
+      "path": "/home/qian-qi/.local/state/hepta-colab/jobs/artifacts/433199d9-4ee8-43c2-8140-ff440735cfbb/4a1c75ee91cc13c4fec8e8874cc91d55f41c384e8dd3e867cee1161a5fbd9ca4",
+      "sha256": "4a1c75ee91cc13c4fec8e8874cc91d55f41c384e8dd3e867cee1161a5fbd9ca4",
+      "size": 533,
+      "text": "{\"cases\": [\"retained_consumer16\", \"controlled_rank1_same_shape\"], \"errors\": [], \"gpu\": {\"compute_capability\": [7, 5], \"multiprocessor_count\": 40, \"name\": \"Tesla T4\", \"total_memory_bytes\": 15637086208}, \"payload_sha256\": \"475c1583a1059ddd1acc5d58c81390f4fb3ebfe7045f5cf73f5ea0692c334142\", \"result_bytes\": 256484, \"result_sha256\": \"b037da2e62f9d758beaeb977a710fcc01bdb93e761ac693658b45b993f4d8b37\", \"source_sha256\": \"c00765a255c021cb2e59b9670736acbcbcfcd36aa4773ef5befc60921de6fdc4\", \"status\": \"gpu_comparison_complete_research_hold\"}\n",
+      "version": "66306:37534883:533:1794050967910669106:1794050967913368323"
+    },
+    {
+      "eof": true,
+      "path": "/home/qian-qi/.local/state/hepta-colab/jobs/artifacts/433199d9-4ee8-43c2-8140-ff440735cfbb/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "text": "",
+      "version": "66306:37534882:0:1794050948939515759:1794050948942507886"
+    }
+  ],
+  "snapshot_scope": "independent_file",
+  "truncated": false
+}

@@ -1,0 +1,100 @@
+{
+  "actual_node_tests_run": false,
+  "actual_union_auditor_entry_executed": false,
+  "checks": [
+    {
+      "case": "complete_failure_with_exact_byte_span",
+      "details": {
+        "counted_failure": 1,
+        "summary_span_exact": true
+      },
+      "passed": true
+    },
+    {
+      "case": "nested_different_size_and_filtered_are_excluded",
+      "details": {
+        "child_filtered_not_counted": 700,
+        "outer_ignored": 1,
+        "outer_passed": 2
+      },
+      "passed": true
+    },
+    {
+      "case": "same_size_late_child_is_refused_after_greedy_pairing",
+      "details": {
+        "counted_summary": null
+      },
+      "passed": true
+    },
+    {
+      "case": "duplicate_cargo_header_refuses_target_count",
+      "details": {
+        "counted_summary": null
+      },
+      "passed": true
+    },
+    {
+      "case": "incomplete_parent_does_not_inherit_child_summary",
+      "details": {
+        "counted_summary": null,
+        "status": "incomplete_at_termination"
+      },
+      "passed": true
+    },
+    {
+      "case": "running_and_boolean_exit_statuses_are_refused",
+      "details": {
+        "actual_test_logs_read": false,
+        "synthetic_input_files": [
+          {
+            "bytes": 209,
+            "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/union-attribution-check-v1/synthetic-terminal-running.json",
+            "sha256": "b3c77cdf53a5201d8f437683f83fff08fa3b3cc9d9ca6e0ea55f1b146b7484b6"
+          },
+          {
+            "bytes": 212,
+            "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/union-attribution-check-v1/synthetic-terminal-boolean-exit.json",
+            "sha256": "49e54c5df2fdf4cdd18b1dbd2c441a2795080a4f5bb090a3c3b38d5ec6715c16"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "case": "kind_name_source_key_is_not_binary_basename",
+      "details": {
+        "same_basename_distinct_inventory_identity": true
+      },
+      "passed": true
+    },
+    {
+      "case": "strict_integer_count_validation",
+      "details": {
+        "bool_float_negative_string_null_rejected": true
+      },
+      "passed": true
+    }
+  ],
+  "failed": 0,
+  "helper": {
+    "bytes": 29432,
+    "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/audit_failed_node_observation_recovery_v1.py",
+    "sha256": "3add13fa42e47103c90d6e35c98c7be0accccc739963bad26aabcb8c930900cf"
+  },
+  "node_live_log_read": false,
+  "observed_unix_seconds": 1794067301.8719509,
+  "passed": 8,
+  "qualification": false,
+  "schema": "pon-node-union-attribution-synthetic-check-v1",
+  "scope": "Synthetic parser and readiness boundary checks only; no claim about actual remainder results.",
+  "script": {
+    "bytes": 7949,
+    "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/check_union_attribution_recovery_v1.py",
+    "sha256": "4181e1b0a81ffbae92a21a102497e102840193823f4f560759caa797391b9f10"
+  },
+  "union_auditor": {
+    "bytes": 33408,
+    "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/audit_node_union_coverage_recovery_v1.py",
+    "sha256": "5ada449347923c1b51bd85d179e931f73a8af7cae6cfb65765d28f1fbaac4650"
+  }
+}

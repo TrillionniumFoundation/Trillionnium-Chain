@@ -1,0 +1,10 @@
+
+thread 'cell::discovery::equivocation_history_tests::tcp_higher_sequence_cannot_hide_observed_earlier_sequence_equivocation' (3477432) panicked at crates/trnm-data-availability/src/cell/discovery/equivocation_history_tests.rs:263:89:
+called `Result::unwrap()` on an `Err` value: Io(Os { code: 11, kind: WouldBlock, message: "Resource temporarily unavailable" })
+stack backtrace:
+   0: __rustc::rust_begin_unwind
+   1: core::panicking::panic_fmt
+   2: core::result::unwrap_failed
+   3: trnm_data_availability::cell::discovery::equivocation_history_tests::tcp_higher_sequence_cannot_hide_observed_earlier_sequence_equivocation
+   4: core::ops::function::FnOnce::call_once
+note: Some details are omitted, run with `RUST_BACKTRACE=full` for a verbose backtrace.

@@ -1,0 +1,569 @@
+{
+  "archival_conversion": {
+    "change": "archive paths refer to checkpoint root; full job logs stored as reversible gzip with decoded-byte hashes; evidence values unchanged",
+    "original_readback_json_bytes": 18348,
+    "original_readback_json_sha256": "b4bc5831ad16884080562593c192567e5ab41464c734ee22d1fec203a88db37c"
+  },
+  "artifact_id": 13823694514,
+  "artifact_sha256": "191db73c44e8b28102a62734921f45d29d04c93836693522920193faa9b43697",
+  "blocking_failure_remains": true,
+  "checkpoint_path_base": "evidence/nextuse-final-9d4-20261111",
+  "code_modified": false,
+  "direct_observations": [
+    "first valid Submit unwrap fails at combined_tests.rs:586 before replay and independent restart",
+    "client CAS transport reports PQ_WITNESS_DEADLINE at 250071801 ns; original remaining request interval 9790208316 ns, capped to 249999768 ns",
+    "witness service CAS commit records 410656107 ns wall and 508040 ns calling-thread CPU; CAS committed; signed reply later has broken_pipe at witness_write",
+    "next TCP read-request rejects with PQ_WITNESS_UNAVAILABLE in 230665 ns",
+    "cleanup records primary error preserved, worker joined, child exit success and cleanup complete"
+  ],
+  "fixed_sources_read": [
+    {
+      "blob": "13c61b99303639372f058de580f2da6de0f53f16",
+      "identical_to_pr_base": true,
+      "path": "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs"
+    },
+    {
+      "blob": "56359fb2b597fcf7cfbb39d6288e9b0d0c030389",
+      "identical_to_pr_base": true,
+      "path": "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs"
+    },
+    {
+      "blob": "97f614be188d2acecef88e81da690c8121c7a595",
+      "identical_to_pr_base": true,
+      "path": "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness.rs"
+    },
+    {
+      "blob": "68d5724a307fc16f43f0525b7ff76a0e6dbf4f48",
+      "identical_to_pr_base": true,
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs"
+    },
+    {
+      "blob": "53de49ec72ce2bd891b1342659949c31cba8b47e",
+      "identical_to_pr_base": true,
+      "path": "trillionnium/crates/trnm-pon-node/src/store/pq_network.rs"
+    }
+  ],
+  "head": "9d4a68191f4e30135b07d3f1e1bc9a1a2367773e",
+  "independent_readonly_review": {
+    "cleanup_causal_order": "sender.send returned Err before preserve_send_error began cleanup; later child broken_pipe can be a consequence",
+    "code_or_threshold_modified": false,
+    "confidence": "high for fixed witness deadline -> unavailable -> subsequent valid Submit reset; underlying COMMIT delay unproven",
+    "minimal_lifecycle_fix_established": false,
+    "native_run_started": false,
+    "negative_frame_limit": "EOF/reset in the preconstructed bad-frame helper does not establish completed cryptographic signature rejection; the durable signature-attempt charge precedes verifier entry",
+    "proximate_path_supported": true
+  },
+  "inference": {
+    "cross_process_pairing_limit": "operation IDs are process-local; the single-client/single-service fixture and phase order support the relationship, but this diagnostic does not export an authenticated shared request identifier",
+    "lifecycle_defect": "not established: exact child/worker ownership and completed cleanup observed; no evidence of premature directory deletion or PID ownership race",
+    "proximate_failure_path": "high confidence: a witness CAS outlasts fixed 250 ms client cap, fail_closed marks the same owner unavailable, next TCP connection is refused before body read, client sees reset",
+    "underlying_commit_wall_delay": "not established: no fsync syscall trace, host I/O statistics, scheduler trace or independent resource comparison in this artifact"
+  },
+  "job_id": 130262955743,
+  "minimal_safe_source_fix_established": false,
+  "native_rerun": false,
+  "original_cleanup": {
+    "child_cleanup_error": null,
+    "child_exit_observed": true,
+    "child_exit_success": true,
+    "cleanup_complete": true,
+    "primary_error_preserved": true,
+    "worker_cleanup_error": null,
+    "worker_join_observed": true
+  },
+  "original_selected_phase_records": [
+    {
+      "operation_ids_are_process_local": true,
+      "process_id": 23045,
+      "record_capacity": 8,
+      "records": [
+        {
+          "accepted": false,
+          "cas_commit_attempted": false,
+          "cas_committed": false,
+          "closed": true,
+          "effective_remaining_ns": 9999997520,
+          "error": {
+            "code": null,
+            "io_kind": "broken_pipe",
+            "origin": "io",
+            "raw_os_error": 32,
+            "sqlite_extended_code": null
+          },
+          "fixture_delay_entered": false,
+          "id": 13,
+          "kind": "witness_connection",
+          "last_phase": "witness_write",
+          "local_commit_attempted": false,
+          "local_committed": false,
+          "matching_cas_receipt": false,
+          "original_remaining_ns": 9999997520,
+          "phases": [
+            {
+              "phase": "witness_read",
+              "samples": {
+                "completed": 1,
+                "cpu_unknown": 0,
+                "failed": 0,
+                "last_error": null,
+                "started": 1,
+                "thread_cpu_ns": 84688,
+                "unfinished": 0,
+                "wall_ns": 21148672,
+                "wall_unknown": 0
+              }
+            },
+            {
+              "phase": "witness_handle",
+              "samples": {
+                "completed": 1,
+                "cpu_unknown": 0,
+                "failed": 0,
+                "last_error": null,
+                "started": 1,
+                "thread_cpu_ns": 26865848,
+                "unfinished": 0,
+                "wall_ns": 437181281,
+                "wall_unknown": 0
+              }
+            },
+            {
+              "phase": "witness_write",
+              "samples": {
+                "completed": 1,
+                "cpu_unknown": 0,
+                "failed": 1,
+                "last_error": {
+                  "code": null,
+                  "io_kind": "broken_pipe",
+                  "origin": "io",
+                  "raw_os_error": 32,
+                  "sqlite_extended_code": null
+                },
+                "started": 1,
+                "thread_cpu_ns": 42648,
+                "unfinished": 0,
+                "wall_ns": 42550,
+                "wall_unknown": 0
+              }
+            }
+          ],
+          "thread_cpu_ns": 26998848,
+          "transport_entered": false,
+          "wall_ns": 458379070
+        },
+        {
+          "accepted": true,
+          "cas_commit_attempted": true,
+          "cas_committed": true,
+          "closed": true,
+          "effective_remaining_ns": 9978843408,
+          "error": null,
+          "fixture_delay_entered": false,
+          "id": 14,
+          "kind": "service_cas",
+          "last_phase": "service_final",
+          "local_commit_attempted": false,
+          "local_committed": false,
+          "matching_cas_receipt": false,
+          "original_remaining_ns": 9978843408,
+          "phases": [
+            {
+              "phase": "service_entry_and_storage",
+              "samples": {
+                "completed": 1,
+                "cpu_unknown": 0,
+                "failed": 0,
+                "last_error": null,
+                "started": 1,
+                "thread_cpu_ns": 235368,
+                "unfinished": 0,
+                "wall_ns": 234808,
+                "wall_unknown": 0
+              }
+            },
+            {
+              "phase": "service_request_context",
+              "samples": {
+                "completed": 2,
+                "cpu_unknown": 0,
+                "failed": 0,
+                "last_error": null,
+                "started": 2,
+                "thread_cpu_ns": 1832,
+                "unfinished": 0,
+                "wall_ns": 1872,
+                "wall_unknown": 0
+              }
+            },
+            {
+              "phase": "service_request_verify",
+              "samples": {
+                "completed": 1,
+                "cpu_unknown": 0,
+                "failed": 0,
+                "last_error": null,
+                "started": 1,
+                "thread_cpu_ns": 1811440,
+                "unfinished": 0,
+                "wall_ns": 1810641,
+                "wall_unknown": 0
+              }
+            },
+            {
+              "phase": "service_cas",
+              "samples": {
+                "completed": 1,
+                "cpu_unknown": 0,
+                "failed": 0,
+                "last_error": null,
+                "started": 1,
+                "thread_cpu_ns": 792480,
+                "unfinished": 0,
+                "wall_ns": 410942584,
+                "wall_unknown": 0
+              }
+            },
+            {
+              "phase": "service_commit",
+              "samples": {
+                "completed": 1,
+                "cpu_unknown": 0,
+                "failed": 0,
+                "last_error": null,
+                "started": 1,
+                "thread_cpu_ns": 508040,
+                "unfinished": 0,
+                "wall_ns": 410656107,
+                "wall_unknown": 0
+              }
+            },
+            {
+              "phase": "service_final_storage",
+              "samples": {
+                "completed": 1,
+                "cpu_unknown": 0,
+                "failed": 0,
+                "last_error": null,
+                "started": 1,
+                "thread_cpu_ns": 279184,
+                "unfinished": 0,
+                "wall_ns": 445098,
+                "wall_unknown": 0
+              }
+            },
+            {
+              "phase": "reply_sign_including_self_verify",
+              "samples": {
+                "completed": 1,
+                "cpu_unknown": 0,
+                "failed": 0,
+                "last_error": null,
+                "started": 1,
+                "thread_cpu_ns": 23727344,
+                "unfinished": 0,
+                "wall_ns": 23722479,
+                "wall_unknown": 0
+              }
+            },
+            {
+              "phase": "service_final",
+              "samples": {
+                "completed": 1,
+                "cpu_unknown": 0,
+                "failed": 0,
+                "last_error": null,
+                "started": 1,
+                "thread_cpu_ns": 848,
+                "unfinished": 0,
+                "wall_ns": 1040,
+                "wall_unknown": 0
+              }
+            }
+          ],
+          "thread_cpu_ns": 26863648,
+          "transport_entered": false,
+          "wall_ns": 437179073
+        }
+      ],
+      "records_overwritten": 6
+    },
+    {
+      "operation_ids_are_process_local": true,
+      "process_id": 23042,
+      "record_capacity": 8,
+      "records": [
+        {
+          "accepted": false,
+          "cas_commit_attempted": false,
+          "cas_committed": false,
+          "closed": true,
+          "effective_remaining_ns": 9790447261,
+          "error": {
+            "code": "PQ_WITNESS_DEADLINE",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "fixture_delay_entered": false,
+          "id": 16,
+          "kind": "mutation_commit",
+          "last_phase": "advance_cas",
+          "local_commit_attempted": false,
+          "local_committed": false,
+          "matching_cas_receipt": false,
+          "original_remaining_ns": 9790447261,
+          "phases": [
+            {
+              "phase": "protected_root",
+              "samples": {
+                "completed": 1,
+                "cpu_unknown": 0,
+                "failed": 0,
+                "last_error": null,
+                "started": 1,
+                "thread_cpu_ns": 209952,
+                "unfinished": 0,
+                "wall_ns": 209186,
+                "wall_unknown": 0
+              }
+            },
+            {
+              "phase": "advance_cas",
+              "samples": {
+                "completed": 1,
+                "cpu_unknown": 0,
+                "failed": 1,
+                "last_error": {
+                  "code": "PQ_WITNESS_DEADLINE",
+                  "io_kind": null,
+                  "origin": "exact_diagnostic_string_or_unknown",
+                  "raw_os_error": null,
+                  "sqlite_extended_code": null
+                },
+                "started": 1,
+                "thread_cpu_ns": 18408808,
+                "unfinished": 0,
+                "wall_ns": 250078361,
+                "wall_unknown": 0
+              }
+            },
+            {
+              "phase": "final_live_check",
+              "samples": {
+                "completed": 2,
+                "cpu_unknown": 0,
+                "failed": 0,
+                "last_error": null,
+                "started": 2,
+                "thread_cpu_ns": 2048,
+                "unfinished": 0,
+                "wall_ns": 2280,
+                "wall_unknown": 0
+              }
+            }
+          ],
+          "thread_cpu_ns": 18643784,
+          "transport_entered": false,
+          "wall_ns": 250313602
+        },
+        {
+          "accepted": false,
+          "cas_commit_attempted": false,
+          "cas_committed": false,
+          "closed": true,
+          "effective_remaining_ns": 249999768,
+          "error": {
+            "code": "PQ_WITNESS_DEADLINE",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "fixture_delay_entered": false,
+          "id": 18,
+          "kind": "client_cas",
+          "last_phase": "transport",
+          "local_commit_attempted": false,
+          "local_committed": false,
+          "matching_cas_receipt": false,
+          "original_remaining_ns": 9790208316,
+          "phases": [
+            {
+              "phase": "client_entry",
+              "samples": {
+                "completed": 1,
+                "cpu_unknown": 0,
+                "failed": 0,
+                "last_error": null,
+                "started": 1,
+                "thread_cpu_ns": 1144,
+                "unfinished": 0,
+                "wall_ns": 1048,
+                "wall_unknown": 0
+              }
+            },
+            {
+              "phase": "challenge_and_body",
+              "samples": {
+                "completed": 1,
+                "cpu_unknown": 0,
+                "failed": 0,
+                "last_error": null,
+                "started": 1,
+                "thread_cpu_ns": 32976,
+                "unfinished": 0,
+                "wall_ns": 32837,
+                "wall_unknown": 0
+              }
+            },
+            {
+              "phase": "request_sign_including_self_verify",
+              "samples": {
+                "completed": 1,
+                "cpu_unknown": 0,
+                "failed": 0,
+                "last_error": null,
+                "started": 1,
+                "thread_cpu_ns": 17563048,
+                "unfinished": 0,
+                "wall_ns": 17560221,
+                "wall_unknown": 0
+              }
+            },
+            {
+              "phase": "before_transport",
+              "samples": {
+                "completed": 1,
+                "cpu_unknown": 0,
+                "failed": 0,
+                "last_error": null,
+                "started": 1,
+                "thread_cpu_ns": 1008,
+                "unfinished": 0,
+                "wall_ns": 1071,
+                "wall_unknown": 0
+              }
+            },
+            {
+              "phase": "transport",
+              "samples": {
+                "completed": 1,
+                "cpu_unknown": 0,
+                "failed": 1,
+                "last_error": {
+                  "code": "PQ_WITNESS_DEADLINE",
+                  "io_kind": null,
+                  "origin": "exact_diagnostic_string_or_unknown",
+                  "raw_os_error": null,
+                  "sqlite_extended_code": null
+                },
+                "started": 1,
+                "thread_cpu_ns": 794360,
+                "unfinished": 0,
+                "wall_ns": 232462656,
+                "wall_unknown": 0
+              }
+            }
+          ],
+          "thread_cpu_ns": 18402272,
+          "transport_entered": true,
+          "wall_ns": 250071801
+        },
+        {
+          "accepted": false,
+          "cas_commit_attempted": false,
+          "cas_committed": false,
+          "closed": true,
+          "effective_remaining_ns": 9999996208,
+          "error": {
+            "code": "PQ_WITNESS_UNAVAILABLE",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "fixture_delay_entered": false,
+          "id": 19,
+          "kind": "tcp_request",
+          "last_phase": "tcp_read_request",
+          "local_commit_attempted": false,
+          "local_committed": false,
+          "matching_cas_receipt": false,
+          "original_remaining_ns": 9999996208,
+          "phases": [
+            {
+              "phase": "tcp_read_request",
+              "samples": {
+                "completed": 1,
+                "cpu_unknown": 0,
+                "failed": 1,
+                "last_error": {
+                  "code": "PQ_WITNESS_UNAVAILABLE",
+                  "io_kind": null,
+                  "origin": "exact_diagnostic_string_or_unknown",
+                  "raw_os_error": null,
+                  "sqlite_extended_code": null
+                },
+                "started": 1,
+                "thread_cpu_ns": 226664,
+                "unfinished": 0,
+                "wall_ns": 226697,
+                "wall_unknown": 0
+              }
+            }
+          ],
+          "thread_cpu_ns": 229664,
+          "transport_entered": false,
+          "wall_ns": 230665
+        },
+        {
+          "accepted": false,
+          "cas_commit_attempted": false,
+          "cas_committed": false,
+          "closed": true,
+          "effective_remaining_ns": null,
+          "error": {
+            "code": "PQ_WITNESS_UNAVAILABLE",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "fixture_delay_entered": false,
+          "id": 20,
+          "kind": "mutation_begin",
+          "last_phase": "mutation_begin",
+          "local_commit_attempted": false,
+          "local_committed": false,
+          "matching_cas_receipt": false,
+          "original_remaining_ns": null,
+          "phases": [
+            {
+              "phase": "mutation_begin",
+              "samples": {
+                "completed": 1,
+                "cpu_unknown": 0,
+                "failed": 0,
+                "last_error": null,
+                "started": 1,
+                "thread_cpu_ns": 752,
+                "unfinished": 0,
+                "wall_ns": 744,
+                "wall_unknown": 0
+              }
+            }
+          ],
+          "thread_cpu_ns": 7200,
+          "transport_entered": false,
+          "wall_ns": 7727
+        }
+      ],
+      "records_overwritten": 12
+    }
+  ],
+  "schema": "trnm-pr892-pq-arm-readonly-cause-review-v1",
+  "threshold_modified": false,
+  "tree": "b5c5f5d35431c9408a77d4c30376be7427bcbdd0"
+}

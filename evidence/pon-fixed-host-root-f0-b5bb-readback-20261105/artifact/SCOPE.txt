@@ -1,0 +1,1 @@
+One finite x64 head baseline/ROOT pair: 6 confirmations and 42 business exposures. All unobserved, failed and late outcomes remain. No independent operators, multi-day WAN, quantum hardness, production or F1 qualification. Controller 4-core/16GiB limits are ceilings; actual RAM and affinity are recorded.

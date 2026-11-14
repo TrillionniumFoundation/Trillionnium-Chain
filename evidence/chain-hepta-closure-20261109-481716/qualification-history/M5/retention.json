@@ -1,0 +1,36 @@
+{
+  "scope": "M5 qualification and pre-final execution snapshot as previously recorded",
+  "files": [
+    {
+      "path": "candidate-profile.json",
+      "bytes": 4052,
+      "sha256": "5e046ca20f6faece5c7bc0a189ecf5e5d82462a30fe60e5a69ff1b5371751f88"
+    },
+    {
+      "path": "qualification-plan.json",
+      "bytes": 4018,
+      "sha256": "9cd7c3cbd2c785458a3764f3d6dba6bca148b5f88a140f322a00510236e7ea92"
+    },
+    {
+      "path": "qualification-packet.json",
+      "bytes": 230,
+      "sha256": "cd0c52abc544bee2794cba92d0010294d0170830a2179734add1a5bbe8f92ce8"
+    },
+    {
+      "path": "qualification-review.json",
+      "bytes": 14086,
+      "sha256": "9bba26b27c26973e6a4521727d8b4d726a385dbefdda112cd002f8e94fc10844"
+    },
+    {
+      "path": "qualification-identities.json",
+      "bytes": 593,
+      "sha256": "73b3c3500905b598b917d7c0190d97207a6ff68d1ca78c568b62e4c36fef6214"
+    },
+    {
+      "path": "execution-status.json",
+      "bytes": 4347,
+      "sha256": "dfc4d356af8d99836dd72da108e46fa3b7a570f17d8dc2d7ee51f2142024ebcf"
+    }
+  ],
+  "execution_status_is_historical_not_current_native_result": true
+}

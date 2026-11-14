@@ -1,0 +1,5 @@
+On candidate c69cf2be and W1 merge 64b7373c, before correction:
+HOLD_NO_GO: changed source: trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs
+Declared: 98f27b597f5438ea70bf4de42365b8afc4c97e62
+Actual unchanged source: 8210411b21e805de81c73c12a66a493ad4bcfd69
+Generated distributed inventory check passed; this was the only stale pin.

@@ -1,0 +1,8 @@
+{
+  "bytes": 6282,
+  "classification": "observed metadata only; original bytes not copied or reconstructed",
+  "collected": false,
+  "name": "sparse-cloud-phase-reader",
+  "path": "/workspace/scratch/33ceda412cc1/validation-collected/preparation/phase-reader-r15-validation.log",
+  "previously_observed_sha256": "47cb9a18fce9fdacf763fbfaa39f8dc6e0ac038e87513ff62958f242612f6ea4"
+}

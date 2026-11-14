@@ -1,0 +1,37 @@
+{
+  "schema": "trnm-fixture-prepublish-artifact-index-v1",
+  "snapshot_utc": "2026-11-03T22:00:12.505361+00:00",
+  "scope": "This index covers every other file in this immutable seven-file prepublish snapshot. The index SHA256 is returned separately as the external anchor.",
+  "artifacts": [
+    {
+      "path": "README.addendum.md",
+      "bytes": 3799,
+      "sha256": "7c07e964e53a6f813fa8966ce8eb07f470d9111b11712b34e8c3880f5d3d1398"
+    },
+    {
+      "path": "completed-records.json.gz",
+      "bytes": 370621,
+      "sha256": "aedb1c73e01055217564330be03510ca3f72be91298cbcd8ff92df81efd4f946"
+    },
+    {
+      "path": "native-source-manifest.json",
+      "bytes": 173233,
+      "sha256": "545222b5d1baa03ca3403375170c30416b8351fdc570e5d994603c3fb2fcaa82"
+    },
+    {
+      "path": "source-bound-summary.json",
+      "bytes": 10511,
+      "sha256": "a3f0afdf1d4e9219590f10ca875063b33fd44f023d84f72ad8eb948dfa9346ee"
+    },
+    {
+      "path": "verification.json",
+      "bytes": 18323,
+      "sha256": "d7b15958318dc8777fa9fbeea89972de0a9bcf300029b46f207100aff0a9270a"
+    },
+    {
+      "path": "verify_bundle.py",
+      "bytes": 2223,
+      "sha256": "00477ae9382cb6c53f2ede66f05993b6ae105e7f81574e9bffdbfa10ebe60230"
+    }
+  ]
+}

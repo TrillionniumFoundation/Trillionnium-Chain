@@ -1,0 +1,6 @@
+{
+  "path": "docs/security/PQ_APPLICATION_AUTHORIZATION_V6.md",
+  "previous_blob": "710b4692991a1ef5ec4264e985552590be4b86bd",
+  "reviewed_blob": "f6ad9247f3cd1da82e759afe95326954a30e1dc3",
+  "reason": "Document verified round-local conflict semantics and specifically enumerate remaining unimplemented live authority paths; no protocol code or activation promotion."
+}

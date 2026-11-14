@@ -1,0 +1,70 @@
+[
+  {
+    "name": "actor",
+    "argv": [
+      "gh",
+      "api",
+      "user",
+      "--jq",
+      ".login"
+    ],
+    "returncode": 0,
+    "stdout_bytes": 10
+  },
+  {
+    "name": "job",
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128580281431"
+    ],
+    "returncode": 0,
+    "stdout_bytes": 3911
+  },
+  {
+    "name": "job-log",
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128580281431/logs"
+    ],
+    "returncode": 0,
+    "stdout_bytes": 158907
+  },
+  {
+    "name": "check-run",
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128580281431"
+    ],
+    "returncode": 0,
+    "stdout_bytes": 3759
+  },
+  {
+    "name": "annotations",
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128580281431/annotations?per_page=100"
+    ],
+    "returncode": 0,
+    "stdout_bytes": 956
+  },
+  {
+    "name": "base-diff",
+    "argv": [
+      "git",
+      "diff",
+      "--stat",
+      "cb314bb4656e5da4844325cd83994ab4764fe8e9",
+      "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+      "--",
+      "scripts/ci/run_cross_arch_cost.py",
+      ".github/workflows/trnm-required-baseline.yml",
+      "trillionnium/crates/trnm-pon-node/src/native_risk_ledger.rs"
+    ],
+    "returncode": 0,
+    "stdout_bytes": 116
+  }
+]

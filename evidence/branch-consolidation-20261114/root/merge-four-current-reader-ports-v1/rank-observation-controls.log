@@ -1,0 +1,19 @@
+test_compiler_multicall_symlink_keeps_its_invocation_name (__main__.CaptureTests.test_compiler_multicall_symlink_keeps_its_invocation_name) ... skipped 'Linux wait4 owner'
+test_launch_failure_and_existing_logs_are_not_success_or_overwritten (__main__.CaptureTests.test_launch_failure_and_existing_logs_are_not_success_or_overwritten) ... skipped 'Linux wait4 owner'
+test_nonzero_preserves_partial_rows_costs_and_actual_exit (__main__.CaptureTests.test_nonzero_preserves_partial_rows_costs_and_actual_exit) ... skipped 'Linux wait4 owner'
+test_success_retains_both_streams_and_whole_process_cpu (__main__.CaptureTests.test_success_retains_both_streams_and_whole_process_cpu) ... skipped 'Linux wait4 owner'
+test_successful_leader_does_not_leave_a_background_log_writer (__main__.CaptureTests.test_successful_leader_does_not_leave_a_background_log_writer) ... skipped 'Linux wait4 owner'
+test_timeout_keeps_all_prior_work_and_signal_status (__main__.CaptureTests.test_timeout_keeps_all_prior_work_and_signal_status) ... skipped 'Linux wait4 owner'
+test_escaped_mount_and_trailing_space_membership_preserve_exact_path (__main__.CurrentCgroupObservationTests.test_escaped_mount_and_trailing_space_membership_preserve_exact_path) ... skipped 'Linux cgroup observation controls'
+test_failed_limit_read_and_membership_drift_cannot_become_complete (__main__.CurrentCgroupObservationTests.test_failed_limit_read_and_membership_drift_cannot_become_complete) ... skipped 'Linux cgroup observation controls'
+test_fifo_read_refuses_with_a_bounded_real_child (__main__.CurrentCgroupObservationTests.test_fifo_read_refuses_with_a_bounded_real_child) ... skipped 'Linux cgroup observation controls'
+test_noncanonical_overdepth_and_oversized_paths_stay_unresolved (__main__.CurrentCgroupObservationTests.test_noncanonical_overdepth_and_oversized_paths_stay_unresolved) ... skipped 'Linux cgroup observation controls'
+test_nonroot_membership_observes_actual_leaf_and_each_visible_ancestor (__main__.CurrentCgroupObservationTests.test_nonroot_membership_observes_actual_leaf_and_each_visible_ancestor) ... skipped 'Linux cgroup observation controls'
+test_root_view_cannot_substitute_for_missing_actual_nonroot_group (__main__.CurrentCgroupObservationTests.test_root_view_cannot_substitute_for_missing_actual_nonroot_group) ... skipped 'Linux cgroup observation controls'
+test_subtree_mount_does_not_claim_namespace_external_ancestors (__main__.CurrentCgroupObservationTests.test_subtree_mount_does_not_claim_namespace_external_ancestors) ... skipped 'Linux cgroup observation controls'
+test_wrong_unrelated_ambiguous_or_shadowed_mount_cannot_resolve_membership (__main__.CurrentCgroupObservationTests.test_wrong_unrelated_ambiguous_or_shadowed_mount_cannot_resolve_membership) ... skipped 'Linux cgroup observation controls'
+
+----------------------------------------------------------------------
+Ran 14 tests in 0.000s
+
+OK (skipped=14)

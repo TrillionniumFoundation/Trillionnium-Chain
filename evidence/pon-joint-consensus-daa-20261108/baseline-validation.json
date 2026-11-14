@@ -1,0 +1,37 @@
+[
+  {
+    "name": "metadata",
+    "command": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "metadata",
+      "--offline",
+      "--locked",
+      "--format-version",
+      "1",
+      "--manifest-path",
+      "trillionnium/Cargo.toml"
+    ],
+    "exit_code": 0,
+    "wall_seconds": 2.110452890396118
+  },
+  {
+    "name": "baseline-build",
+    "command": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "test",
+      "--offline",
+      "--locked",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--test",
+      "daa_adversarial_schedule",
+      "--no-run"
+    ],
+    "exit_code": 0,
+    "wall_seconds": 357.1939706802368
+  }
+]

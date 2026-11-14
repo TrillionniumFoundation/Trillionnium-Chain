@@ -1,0 +1,16 @@
+[
+  {
+    "label": "march-official-archive",
+    "url": "https://eprint.iacr.org/archive/2025/2166/1772467621.pdf",
+    "method": "normal urllib GET, no credential or header modification",
+    "status": 403,
+    "error": "HTTP Error 403: Forbidden"
+  },
+  {
+    "label": "january-official-archive",
+    "url": "https://eprint.iacr.org/archive/2025/2166/1767247987.pdf",
+    "method": "normal urllib GET, no credential or header modification",
+    "status": 403,
+    "error": "HTTP Error 403: Forbidden"
+  }
+]

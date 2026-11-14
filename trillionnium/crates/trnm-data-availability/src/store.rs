@@ -419,6 +419,9 @@ impl DataAvailabilityStoreV1 {
         reject_sidecars(&config.path)?;
         let existed = config.path.exists();
         if existed {
+            // Existing stores use the same direct regular-file boundary as
+            // open_existing, before SQLite opens the path.
+            require_existing_regular_store(&config.path)?;
             let read_only = Connection::open_with_flags(
                 &config.path,
                 OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NO_MUTEX,
@@ -2968,15 +2971,29 @@ fn decode_u64(bytes: &[u8]) -> DaResultV1<u64> {
 
 fn reject_sidecars(path: &Path) -> DaResultV1<()> {
     for suffix in ["-wal", "-shm", "-journal"] {
-        let sidecar = PathBuf::from(format!("{}{suffix}", path.display()));
-        if sidecar.exists() {
-            return Err(error(
-                DaErrorCodeV1::StoreFailure,
-                format!(
-                    "unresolved SQLite sidecar is fail-closed: {}",
-                    sidecar.display()
-                ),
-            ));
+        let mut name = path.as_os_str().to_os_string();
+        name.push(suffix);
+        let sidecar = PathBuf::from(name);
+        match fs::symlink_metadata(&sidecar) {
+            Ok(_) => {
+                return Err(error(
+                    DaErrorCodeV1::StoreFailure,
+                    format!(
+                        "unresolved SQLite sidecar is fail-closed: {}",
+                        sidecar.display()
+                    ),
+                ))
+            }
+            Err(cause) if cause.kind() == std::io::ErrorKind::NotFound => {}
+            Err(cause) => {
+                return Err(error(
+                    DaErrorCodeV1::StoreFailure,
+                    format!(
+                        "cannot inspect SQLite sidecar {}: {cause}",
+                        sidecar.display()
+                    ),
+                ))
+            }
         }
     }
     Ok(())

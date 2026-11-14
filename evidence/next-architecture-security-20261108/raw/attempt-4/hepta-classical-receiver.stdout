@@ -1,0 +1,9 @@
+
+running 4 tests
+test hepta_admission_rejects_missing_parent_and_unbounded_payload ... ok
+test hepta_admission_requires_owner_facts_and_authority ... ok
+test hepta_handoff_limits_wire_before_decode_and_requires_its_signature_domain ... ok
+test hepta_handoff_rechecks_the_destination_and_fresh_owner_snapshot ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 22 filtered out; finished in 0.00s
+

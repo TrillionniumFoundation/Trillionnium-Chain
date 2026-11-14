@@ -1,0 +1,576 @@
+{
+  "13611186306": [
+    {
+      "name": "fresh-service/fresh/baseline/independent-client/native.sqlite",
+      "bytes": 499712,
+      "compressed": 33622
+    },
+    {
+      "name": "fresh-service/build.log",
+      "bytes": 111155,
+      "compressed": 8025
+    },
+    {
+      "name": "fresh-service/fresh/baseline/independent-client/owner.lock",
+      "bytes": 0,
+      "compressed": 2
+    },
+    {
+      "name": "fresh-service/fresh/baseline/receiver/native.sqlite",
+      "bytes": 499712,
+      "compressed": 33772
+    },
+    {
+      "name": "fresh-service/fresh/baseline/receiver/owner.lock",
+      "bytes": 0,
+      "compressed": 2
+    },
+    {
+      "name": "fresh-service/fresh/pressure/independent-client/native.sqlite",
+      "bytes": 147456,
+      "compressed": 4689
+    },
+    {
+      "name": "fresh-service/fresh/pressure/independent-client/owner.lock",
+      "bytes": 0,
+      "compressed": 2
+    },
+    {
+      "name": "fresh-service/fresh/pressure/receiver/native.sqlite",
+      "bytes": 499712,
+      "compressed": 33772
+    },
+    {
+      "name": "fresh-service/fresh/pressure/receiver/owner.lock",
+      "bytes": 0,
+      "compressed": 2
+    },
+    {
+      "name": "fresh-service/fresh/producer/native.sqlite",
+      "bytes": 499712,
+      "compressed": 33470
+    },
+    {
+      "name": "fresh-service/fresh/producer/owner.lock",
+      "bytes": 0,
+      "compressed": 2
+    },
+    {
+      "name": "fresh-service/fresh/report.json",
+      "bytes": 6201889,
+      "compressed": 336727
+    },
+    {
+      "name": "fresh-service/fresh.log",
+      "bytes": 927,
+      "compressed": 486
+    },
+    {
+      "name": "fresh-service/manifest.json",
+      "bytes": 8919,
+      "compressed": 1948
+    },
+    {
+      "name": "fresh-service/original/baseline/independent-client/native.sqlite",
+      "bytes": 499712,
+      "compressed": 33622
+    },
+    {
+      "name": "fresh-service/original/baseline/independent-client/owner.lock",
+      "bytes": 0,
+      "compressed": 2
+    },
+    {
+      "name": "fresh-service/original/baseline/receiver/native.sqlite",
+      "bytes": 499712,
+      "compressed": 33772
+    },
+    {
+      "name": "fresh-service/original/baseline/receiver/owner.lock",
+      "bytes": 0,
+      "compressed": 2
+    },
+    {
+      "name": "fresh-service/original/pressure/independent-client/native.sqlite",
+      "bytes": 147456,
+      "compressed": 4689
+    },
+    {
+      "name": "fresh-service/original/pressure/independent-client/owner.lock",
+      "bytes": 0,
+      "compressed": 2
+    },
+    {
+      "name": "fresh-service/original/pressure/receiver/native.sqlite",
+      "bytes": 499712,
+      "compressed": 33772
+    },
+    {
+      "name": "fresh-service/original/pressure/receiver/owner.lock",
+      "bytes": 0,
+      "compressed": 2
+    },
+    {
+      "name": "fresh-service/original/producer/native.sqlite",
+      "bytes": 499712,
+      "compressed": 33470
+    },
+    {
+      "name": "fresh-service/original/producer/owner.lock",
+      "bytes": 0,
+      "compressed": 2
+    },
+    {
+      "name": "fresh-service/original/report.json",
+      "bytes": 7887635,
+      "compressed": 322309
+    },
+    {
+      "name": "fresh-service/original.log",
+      "bytes": 433,
+      "compressed": 285
+    },
+    {
+      "name": "fresh-service/public_v3_from_zero",
+      "bytes": 10969904,
+      "compressed": 4427361
+    },
+    {
+      "name": "fresh-service-controls.log",
+      "bytes": 119,
+      "compressed": 37
+    },
+    {
+      "name": "fresh-service-host/actual-systemd-parent-after.log",
+      "bytes": 200,
+      "compressed": 145
+    },
+    {
+      "name": "fresh-service-host/actual-systemd-parent.log",
+      "bytes": 200,
+      "compressed": 145
+    },
+    {
+      "name": "fresh-service-host/after-provision.json",
+      "bytes": 1634,
+      "compressed": 789
+    },
+    {
+      "name": "fresh-service-host/before-provision.json",
+      "bytes": 2801,
+      "compressed": 710
+    },
+    {
+      "name": "fresh-service-host/child-final-load-state.log",
+      "bytes": 10,
+      "compressed": 12
+    },
+    {
+      "name": "fresh-service-host/child-load-state.log",
+      "bytes": 10,
+      "compressed": 12
+    },
+    {
+      "name": "fresh-service-host/child-result.json",
+      "bytes": 366,
+      "compressed": 240
+    },
+    {
+      "name": "fresh-service-host/controller-result.json",
+      "bytes": 7714,
+      "compressed": 1994
+    },
+    {
+      "name": "fresh-service-host/inside-after.json",
+      "bytes": 1712,
+      "compressed": 818
+    },
+    {
+      "name": "fresh-service-host/inside-before.json",
+      "bytes": 1700,
+      "compressed": 809
+    },
+    {
+      "name": "fresh-service-host/install-reviewed-unit.log",
+      "bytes": 0,
+      "compressed": 2
+    },
+    {
+      "name": "fresh-service-host/outside-after.json",
+      "bytes": 1668,
+      "compressed": 834
+    },
+    {
+      "name": "fresh-service-host/parent-properties.log",
+      "bytes": 146,
+      "compressed": 111
+    },
+    {
+      "name": "fresh-service-host/prepare-build/process.json",
+      "bytes": 921,
+      "compressed": 519
+    },
+    {
+      "name": "fresh-service-host/prepare-build/stderr",
+      "bytes": 7257,
+      "compressed": 1639
+    },
+    {
+      "name": "fresh-service-host/prepare-build/stdout",
+      "bytes": 111216,
+      "compressed": 7974
+    },
+    {
+      "name": "fresh-service-host/prepare-build.json",
+      "bytes": 3406,
+      "compressed": 1227
+    },
+    {
+      "name": "fresh-service-host/seal-parent-directory.log",
+      "bytes": 0,
+      "compressed": 2
+    },
+    {
+      "name": "fresh-service-host/seal-parent-receipt.log",
+      "bytes": 0,
+      "compressed": 2
+    },
+    {
+      "name": "fresh-service-host/systemd-reload.log",
+      "bytes": 0,
+      "compressed": 2
+    },
+    {
+      "name": "fresh-service-host/systemd-run.log",
+      "bytes": 541,
+      "compressed": 371
+    },
+    {
+      "name": "fresh-service-host/start-fixed-parent.log",
+      "bytes": 0,
+      "compressed": 2
+    },
+    {
+      "name": "fresh-service-host/unprovisioned-parent.json",
+      "bytes": 229,
+      "compressed": 139
+    },
+    {
+      "name": "original-host-controls.log",
+      "bytes": 177,
+      "compressed": 38
+    },
+    {
+      "name": "original-native-controls.log",
+      "bytes": 22947,
+      "compressed": 3772
+    },
+    {
+      "name": "preflight.log",
+      "bytes": 133,
+      "compressed": 114
+    },
+    {
+      "name": "public-fixture-parent.json",
+      "bytes": 3458,
+      "compressed": 1276
+    },
+    {
+      "name": "source-after.json",
+      "bytes": 512,
+      "compressed": 287
+    },
+    {
+      "name": "source.json",
+      "bytes": 512,
+      "compressed": 287
+    }
+  ],
+  "13611420775": [
+    {
+      "name": "fresh-service/build.log",
+      "bytes": 111155,
+      "compressed": 8030
+    },
+    {
+      "name": "fresh-service/fresh/baseline/independent-client/owner.lock",
+      "bytes": 0,
+      "compressed": 2
+    },
+    {
+      "name": "fresh-service/fresh/baseline/independent-client/native.sqlite",
+      "bytes": 499712,
+      "compressed": 33622
+    },
+    {
+      "name": "fresh-service/fresh/baseline/receiver/native.sqlite",
+      "bytes": 499712,
+      "compressed": 33772
+    },
+    {
+      "name": "fresh-service/fresh/baseline/receiver/owner.lock",
+      "bytes": 0,
+      "compressed": 2
+    },
+    {
+      "name": "fresh-service/fresh/pressure/independent-client/native.sqlite",
+      "bytes": 147456,
+      "compressed": 4689
+    },
+    {
+      "name": "fresh-service/fresh/pressure/independent-client/owner.lock",
+      "bytes": 0,
+      "compressed": 2
+    },
+    {
+      "name": "fresh-service/fresh/pressure/receiver/native.sqlite",
+      "bytes": 499712,
+      "compressed": 33772
+    },
+    {
+      "name": "fresh-service/fresh/pressure/receiver/owner.lock",
+      "bytes": 0,
+      "compressed": 2
+    },
+    {
+      "name": "fresh-service/fresh/producer/native.sqlite",
+      "bytes": 499712,
+      "compressed": 33470
+    },
+    {
+      "name": "fresh-service/fresh/producer/owner.lock",
+      "bytes": 0,
+      "compressed": 2
+    },
+    {
+      "name": "fresh-service/fresh/report.json",
+      "bytes": 6189620,
+      "compressed": 330944
+    },
+    {
+      "name": "fresh-service/fresh.log",
+      "bytes": 914,
+      "compressed": 477
+    },
+    {
+      "name": "fresh-service/manifest.json",
+      "bytes": 8919,
+      "compressed": 1990
+    },
+    {
+      "name": "fresh-service/original/baseline/independent-client/native.sqlite",
+      "bytes": 499712,
+      "compressed": 33622
+    },
+    {
+      "name": "fresh-service/original/baseline/independent-client/owner.lock",
+      "bytes": 0,
+      "compressed": 2
+    },
+    {
+      "name": "fresh-service/original/baseline/receiver/native.sqlite",
+      "bytes": 499712,
+      "compressed": 33772
+    },
+    {
+      "name": "fresh-service/original/baseline/receiver/owner.lock",
+      "bytes": 0,
+      "compressed": 2
+    },
+    {
+      "name": "fresh-service/original/pressure/independent-client/native.sqlite",
+      "bytes": 196608,
+      "compressed": 9361
+    },
+    {
+      "name": "fresh-service/original/pressure/independent-client/owner.lock",
+      "bytes": 0,
+      "compressed": 2
+    },
+    {
+      "name": "fresh-service/original/pressure/receiver/native.sqlite",
+      "bytes": 499712,
+      "compressed": 33772
+    },
+    {
+      "name": "fresh-service/original/pressure/receiver/owner.lock",
+      "bytes": 0,
+      "compressed": 2
+    },
+    {
+      "name": "fresh-service/original/producer/native.sqlite",
+      "bytes": 499712,
+      "compressed": 33470
+    },
+    {
+      "name": "fresh-service/original/producer/owner.lock",
+      "bytes": 0,
+      "compressed": 2
+    },
+    {
+      "name": "fresh-service/original/report.json",
+      "bytes": 7950516,
+      "compressed": 325421
+    },
+    {
+      "name": "fresh-service/public_v3_from_zero",
+      "bytes": 10969904,
+      "compressed": 4427361
+    },
+    {
+      "name": "fresh-service-controls.log",
+      "bytes": 119,
+      "compressed": 37
+    },
+    {
+      "name": "fresh-service/original.log",
+      "bytes": 420,
+      "compressed": 277
+    },
+    {
+      "name": "fresh-service-host/actual-systemd-parent-after.log",
+      "bytes": 200,
+      "compressed": 145
+    },
+    {
+      "name": "fresh-service-host/actual-systemd-parent.log",
+      "bytes": 200,
+      "compressed": 145
+    },
+    {
+      "name": "fresh-service-host/after-provision.json",
+      "bytes": 1634,
+      "compressed": 792
+    },
+    {
+      "name": "fresh-service-host/before-provision.json",
+      "bytes": 2801,
+      "compressed": 710
+    },
+    {
+      "name": "fresh-service-host/child-final-load-state.log",
+      "bytes": 10,
+      "compressed": 12
+    },
+    {
+      "name": "fresh-service-host/child-load-state.log",
+      "bytes": 10,
+      "compressed": 12
+    },
+    {
+      "name": "fresh-service-host/child-result.json",
+      "bytes": 353,
+      "compressed": 233
+    },
+    {
+      "name": "fresh-service-host/controller-result.json",
+      "bytes": 7701,
+      "compressed": 1989
+    },
+    {
+      "name": "fresh-service-host/inside-after.json",
+      "bytes": 1712,
+      "compressed": 820
+    },
+    {
+      "name": "fresh-service-host/inside-before.json",
+      "bytes": 1701,
+      "compressed": 809
+    },
+    {
+      "name": "fresh-service-host/install-reviewed-unit.log",
+      "bytes": 0,
+      "compressed": 2
+    },
+    {
+      "name": "fresh-service-host/outside-after.json",
+      "bytes": 1668,
+      "compressed": 832
+    },
+    {
+      "name": "fresh-service-host/parent-properties.log",
+      "bytes": 146,
+      "compressed": 111
+    },
+    {
+      "name": "fresh-service-host/prepare-build/stderr",
+      "bytes": 7257,
+      "compressed": 1644
+    },
+    {
+      "name": "fresh-service-host/prepare-build/process.json",
+      "bytes": 921,
+      "compressed": 518
+    },
+    {
+      "name": "fresh-service-host/prepare-build/stdout",
+      "bytes": 111216,
+      "compressed": 7983
+    },
+    {
+      "name": "fresh-service-host/prepare-build.json",
+      "bytes": 3406,
+      "compressed": 1222
+    },
+    {
+      "name": "fresh-service-host/seal-parent-directory.log",
+      "bytes": 0,
+      "compressed": 2
+    },
+    {
+      "name": "fresh-service-host/seal-parent-receipt.log",
+      "bytes": 0,
+      "compressed": 2
+    },
+    {
+      "name": "fresh-service-host/start-fixed-parent.log",
+      "bytes": 0,
+      "compressed": 2
+    },
+    {
+      "name": "fresh-service-host/systemd-reload.log",
+      "bytes": 0,
+      "compressed": 2
+    },
+    {
+      "name": "fresh-service-host/systemd-run.log",
+      "bytes": 540,
+      "compressed": 369
+    },
+    {
+      "name": "fresh-service-host/unprovisioned-parent.json",
+      "bytes": 229,
+      "compressed": 139
+    },
+    {
+      "name": "original-host-controls.log",
+      "bytes": 177,
+      "compressed": 38
+    },
+    {
+      "name": "original-native-controls.log",
+      "bytes": 22947,
+      "compressed": 3772
+    },
+    {
+      "name": "preflight.log",
+      "bytes": 133,
+      "compressed": 114
+    },
+    {
+      "name": "public-fixture-parent.json",
+      "bytes": 3304,
+      "compressed": 1222
+    },
+    {
+      "name": "source-after.json",
+      "bytes": 423,
+      "compressed": 238
+    },
+    {
+      "name": "source.json",
+      "bytes": 423,
+      "compressed": 238
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "environment": {
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_HOME": "/home/qq/.cargo",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_TARGET_DIR": "/home/qq/work/chain-cell-paged-model-34e09-20261110-target",
+    "LD_LIBRARY_PATH": "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib",
+    "OPENSSL_CONF": "/dev/null",
+    "OPENSSL_DIR": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install",
+    "OPENSSL_MODULES": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/lib/ossl-modules",
+    "OPENSSL_STATIC": "1",
+    "RUSTC": "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+    "RUSTDOC": "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustdoc",
+    "RUST_TEST_THREADS": "1",
+    "TMPDIR": "/home/qq/work/chain-cell-paged-model-34e09-20261110-validation/tmp",
+    "TRNM_PQ_OPENSSL": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/bin/openssl",
+    "TRNM_PQ_OPENSSL_SHA256": "ed29dfe14c0686c876833e39fbeedb277846987f3728acc279c256b32259cf62",
+    "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+  },
+  "identity": {
+    "commit": "34f16887fe9a9df8416c9f97ef5f3b765b105bbb",
+    "status": "",
+    "tree": "9ec1f69f463688521c867f857bfba1853380be5a"
+  },
+  "phase": "cargo",
+  "provider_cli_sha256": "ed29dfe14c0686c876833e39fbeedb277846987f3728acc279c256b32259cf62",
+  "script_sha256": "5e7b8a9d4daecf4ca782125c586b8e1908a921f7cebe95a4bbc61ca08ab130e2",
+  "source_files": 3115,
+  "source_manifest_sha256": "aedec2e45804eb0a4893d7edaf61c43e680998c6628181b164f1ccaee143470f",
+  "started_at_utc": "2026-11-10T09:54:32.293757+00:00"
+}

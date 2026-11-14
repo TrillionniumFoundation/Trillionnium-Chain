@@ -1,0 +1,9 @@
+{
+  "adapter": "3b3128293a86570a47a72c7bf081f898de1682ed1118c5a440ad7478c0f22e42",
+  "contract": "c9b06f9a029a3257801844f89acb59b5f59f6a39087335af323f274e9152992f",
+  "directory": "/home/qq/hepta-smollm2-weight-research-20261103/inputs/parent",
+  "file_sha256": "1c5af7b5a7144a619dfac83b14bd83ae77f1e2227b18a6a9c5dcb214889a0cba",
+  "generation": 1,
+  "operation_id": "public-v2-material-derivation-no-execution",
+  "schema": "hepta-smollm-parent-material-v1"
+}

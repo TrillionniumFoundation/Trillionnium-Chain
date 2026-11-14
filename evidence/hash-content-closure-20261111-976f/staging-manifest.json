@@ -1,0 +1,103 @@
+{
+  "cprime_or_lost_c_native_execution_claimed_by_this_archive": false,
+  "files": [
+    {
+      "bytes": 7257,
+      "path": "README.md",
+      "sha256": "dd0fb4a2ee64dbd4717c5d148453bc2f9421fc0049cc1c5d661e7faba0297638"
+    },
+    {
+      "bytes": 2209,
+      "path": "ai395-b-all-features-metadata-compact.json",
+      "sha256": "233e88eab04a9ebfdd5ad3b74f84fb5cd763a69721f2516a168025c93bf59f92"
+    },
+    {
+      "bytes": 1017,
+      "path": "ai395-b-all-features-metadata-members.json",
+      "sha256": "49f51a7f2cf64395200f698db9ce13b6a94b76054df44f963c0f57b73d35e83f"
+    },
+    {
+      "bytes": 72694,
+      "path": "ai395-b-all-features-metadata.tar.gz",
+      "sha256": "b26180b41b76c4dd5dec150bb1a95a77f1ce520a7bf48cd93a5df16b8c42f7a6"
+    },
+    {
+      "bytes": 16994,
+      "path": "ai395-b-native-members.json",
+      "sha256": "e181730b39665c2ad3268319aa842c4c895c213e68be745a85adcdbe3b1e444f"
+    },
+    {
+      "bytes": 69876,
+      "path": "ai395-b-native-observations.tar.xz",
+      "sha256": "6e22bc3eb6899fa894a1db2f9003729fb51ca2b12d3dfa46fd737d68a2215847"
+    },
+    {
+      "bytes": 59535,
+      "path": "ai395-b-native-summary.json",
+      "sha256": "a85be90b03be51a54a00aad731825602f714e38b9392dcc0246c5ccc03d9c8d3"
+    },
+    {
+      "bytes": 4234,
+      "path": "ai395-b-python16-controls-compact.json",
+      "sha256": "7c5b5f3bbcd0ee43a7784dbbafa695183f950ba1c165dc805d881c5e76a5b308"
+    },
+    {
+      "bytes": 9722,
+      "path": "ai395-b-python16-controls-members.json",
+      "sha256": "149929d0d3289cd45823d2b54abaeaa0a85546e15d24cc21d1ed36f9ee96b8ae"
+    },
+    {
+      "bytes": 61196,
+      "path": "ai395-b-python16-controls.tar.gz",
+      "sha256": "9fa251e50a74791cce71b5dfaf8e712ad0a14dd7cb947723d4894e1162d3dd41"
+    },
+    {
+      "bytes": 1017,
+      "path": "cloud-b-observations-976f.archive.json",
+      "sha256": "f02bc8f8bcf0f24f0522424446d49324ec8c7039754576e61c65bac6aa647636"
+    },
+    {
+      "bytes": 378819,
+      "path": "cloud-b-observations-976f.tar.gz",
+      "sha256": "bbc1785b2325a4bc6de2f92a6b84ed9a981b9cde61c1f08dc6d51ecd67e5e07d"
+    },
+    {
+      "bytes": 9029,
+      "path": "final-b-hash-purpose-preservation-review.json",
+      "sha256": "b02c0b7e247c7bcc2f1f3cabe8002a30854702e478e56d1ddf4bbbcde1a972bf"
+    },
+    {
+      "bytes": 1692,
+      "path": "mac-pr927-body-update-public-summary.json",
+      "sha256": "887ae7e6f11784ec7e133b2e7daeaafb7bd7bde70b731667f7fe43871ecf1c89"
+    },
+    {
+      "bytes": 3666,
+      "path": "mac-publication-public-summary-976f.json",
+      "sha256": "1cc930c8c9873d01f698822c81dac10ccb70c3de50cec2a87b2262358606a811"
+    },
+    {
+      "bytes": 3356996,
+      "path": "recovery-observations.tar.xz",
+      "sha256": "14694afebf60bd140a207dc68c8abd7017ef3b14ac2ebf124e7e9cfebe85db1b"
+    },
+    {
+      "bytes": 3156,
+      "path": "unpublished-cloud-c-observation.json",
+      "sha256": "161067fa9e4be77df7ec4a314104b5bbbf128713092c84cb9577943bd93c81e0"
+    }
+  ],
+  "manifest_excludes_itself": true,
+  "original_B_execution_hosts_and_failures_preserved": true,
+  "preservation_scope": "documentation/evidence/corpus retention only; no Rust/Cargo/CI workflow changes",
+  "production_activation_authorized": false,
+  "runtime_a": "55c0d0ea1330d80120754718f2f47f6a4a709aa3",
+  "schema": "trnm-hash-content-closure-preservation-manifest-v1",
+  "source_base": "6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d",
+  "status": "B_OBSERVATIONS_PRESERVED_CPRIME_EXECUTION_EXTERNAL",
+  "tested_b": "9fd6ee29a7a663cef547040d9d42cc36a371a17e",
+  "tested_b_tree": "7351f83fa9ac5c0e7540fa64bce06ea6f328602f",
+  "unpublished_cloud_c": "d3d8089eefb8425f1ee1c7f3d1feb7d1e5c10843",
+  "whole_chain_quantum_security_qualified": false,
+  "whole_chain_status": "HOLD_NO_GO"
+}

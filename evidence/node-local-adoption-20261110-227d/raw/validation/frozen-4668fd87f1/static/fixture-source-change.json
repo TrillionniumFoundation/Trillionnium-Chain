@@ -1,0 +1,19 @@
+{
+  "cargo_build_test_clippy_executed_by_this_task": false,
+  "changes": [
+    "Canonicalize only the temporary parent owned by adoption test setup.",
+    "Provision that test-owned parent with Unix mode 0700 before creating its adoption owner.",
+    "Derive every adoption owner path and sibling path from that canonical private parent."
+  ],
+  "corrected_sha256": "70c10966d4e07b9fe9489e2b0dc5288af2a8aca60be6e76d12ffc1e911de8f48",
+  "diff_command_exit_code": 0,
+  "diff_sha256": "4e67e24ef380a0ab5c66aa20bc45598a9ac3f50356823e8bcc268e6bf98fe16a",
+  "file": "trillionnium/crates/trnm-data-availability/src/cell/adoption/tests.rs",
+  "full_guard_rerun_for_correction": false,
+  "original_commit": "4668fd87f1c4c7f6f4e206572e817a0c22201582",
+  "original_sha256": "ab49bcd10b5194e8b146d78cecac9dfe486c97d208157d4ee1f9d5f1b94c28ef",
+  "production_permissions_changed": false,
+  "scope": "authorized-test-fixture-correction-not-production-permission-change",
+  "shared_version_fixture_changed": false,
+  "source_before_commit_still_claimed_after_correction": false
+}

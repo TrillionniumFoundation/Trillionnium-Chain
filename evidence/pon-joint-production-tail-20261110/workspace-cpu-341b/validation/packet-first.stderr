@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/workspace/scratch/8e76272d9258/chain-joint-tail/evidence/pon-joint-production-tail-20261110/workspace-cpu-341b/verify.py", line 69, in <module>
+    print(json.dumps(verify(), sort_keys=True))
+                     ^^^^^^^^
+  File "/workspace/scratch/8e76272d9258/chain-joint-tail/evidence/pon-joint-production-tail-20261110/workspace-cpu-341b/verify.py", line 48, in verify
+    assert z.read(prefix + 'binary-before.sha256').decode().split()[0] == sha
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/zipfile/__init__.py", line 1585, in read
+    with self.open(name, "r", pwd) as fp:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/zipfile/__init__.py", line 1622, in open
+    zinfo = self.getinfo(name)
+            ^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/zipfile/__init__.py", line 1550, in getinfo
+    raise KeyError(
+KeyError: "There is no item named 'm06-binary-before.sha256' in the archive"

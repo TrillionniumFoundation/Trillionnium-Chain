@@ -1,0 +1,39 @@
+scripts/ci/check_ci_contract.py:2378:def check_typed_pending_worker_controls(root: Path) -> dict:
+scripts/ci/check_ci_contract.py:2419:def validate(root: Path = ROOT) -> dict:
+scripts/ci/check_ci_contract.py:2434:    typed_pending_worker_controls = check_typed_pending_worker_controls(root)
+scripts/ci/check_ci_contract.py:2724:    print(json.dumps(validate(), sort_keys=True))
+scripts/ci/test_ci_contract.py:42:from check_ci_contract import check_typed_pending_worker_controls
+scripts/ci/test_ci_contract.py:88:class TypedPendingWorkerWiringTests(unittest.TestCase):
+scripts/ci/test_ci_contract.py:106:        result = check_typed_pending_worker_controls(self.root)
+scripts/ci/test_ci_contract.py:113:        check_typed_pending_worker_controls(self.root)
+scripts/ci/test_ci_contract.py:126:                        check_typed_pending_worker_controls(self.root)
+scripts/ci/test_ci_contract.py:131:        check_typed_pending_worker_controls(self.root)
+scripts/ci/test_ci_contract.py:152:                        check_typed_pending_worker_controls(self.root)
+scripts/ci/test_ci_contract.py:174:class ManualResearchWorkflowTests(unittest.TestCase):
+scripts/ci/test_ci_contract.py:283:class RustBaselineReceiptRetentionTests(unittest.TestCase):
+scripts/ci/test_ci_contract.py:328:class InlineSourcePinTests(unittest.TestCase):
+scripts/ci/test_ci_contract.py:392:class NativeConsensusOracleLaneTests(unittest.TestCase):
+scripts/ci/test_ci_contract.py:412:class EvaluationQuorumLaneTests(unittest.TestCase):
+scripts/ci/test_ci_contract.py:1317:class W1ReuseV3LaneTests(unittest.TestCase):
+scripts/ci/test_ci_contract.py:1321:        report = validate(ROOT)
+scripts/ci/test_ci_contract.py:1373:            shutil.copyfile(ROOT / 'scripts/ci/verify_ci_source.py', checkout / 'scripts/ci/verify_ci_source.py')
+scripts/ci/test_ci_contract.py:1420:class PqReleaseAuthorityCiTests(unittest.TestCase):
+scripts/ci/test_ci_contract.py:1435:            shutil.copyfile(ROOT / relative, target)
+scripts/ci/test_ci_contract.py:1641:        self.rejected_source(PQ_ROOT_HARNESS_FILES[1], 'class RootQuorumResearchTests(', 'class UnreviewedTests(')
+scripts/ci/test_ci_contract.py:1776:class CiContractTests(unittest.TestCase):
+scripts/ci/test_ci_contract.py:1792:        shutil.copytree(ROOT, cls.root, ignore=ignore)
+scripts/ci/test_ci_contract.py:1805:                validate(self.root)
+scripts/ci/test_ci_contract.py:1810:        self.assertEqual(validate(self.root)['merge_lanes'], 5)
+scripts/ci/test_ci_contract.py:1811:        current_validate(self.root)
+scripts/ci/test_ci_contract.py:1831:                    validate(self.root)
+scripts/ci/test_ci_contract.py:2045:                    validate(self.root)
+scripts/ci/test_ci_contract.py:2049:                    validate(self.root)
+scripts/ci/test_ci_contract.py:2063:                validate(self.root)
+scripts/ci/test_ci_contract.py:2067:                validate(self.root)
+scripts/ci/test_ci_contract.py:2767:                current_validate(self.root)
+scripts/ci/test_ci_contract.py:2769:            current_validate(self.root)
+scripts/ci/test_ci_contract.py:2774:class W1PostwinLaneTests(unittest.TestCase):
+scripts/ci/test_ci_contract.py:3116:class MergedQualificationLaneTests(unittest.TestCase):
+scripts/ci/test_ci_contract.py:3360:class CellCurrentApiReadbackTests(unittest.TestCase):
+scripts/ci/test_ci_contract.py:3633:class PqSystemSupplementalControlTests(unittest.TestCase):
+scripts/ci/test_ci_contract.py:3645:            shutil.copyfile(ROOT / relative, target)

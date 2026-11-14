@@ -1,0 +1,89 @@
+[
+  {
+    "bytes": 267348,
+    "kind": "publication",
+    "path": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/w1-qrom-1a14-publication-v1.tar.gz",
+    "sha256": "b49fb95c8e885fe227dd3b174d90dcab85f10e0aba4f983c414593de7f592227",
+    "stage": "archive-created",
+    "transfer": {
+      "chunks": [
+        {
+          "next_offset": 65536,
+          "offset": 0,
+          "sha256": "1b3bcbaea430048a26486b8545c084bef7176a5e34419bf418eb047ca9cdc3ca"
+        },
+        {
+          "next_offset": 131072,
+          "offset": 65536,
+          "sha256": "efd8ae6667c0060279354d2e9707f074008755d03514c1ed6f0eb4ba2f3eebb9"
+        },
+        {
+          "next_offset": 196608,
+          "offset": 131072,
+          "sha256": "66377adf1df894b9a3f6464c7e6a9b8d96a55cb04cdbfe2e5024789678d6e018"
+        },
+        {
+          "next_offset": 262144,
+          "offset": 196608,
+          "sha256": "e1cce89c6c3f1e4bd843c39e1a6a2495c45aff40fd7cd56c47fb1ae0f190155f"
+        },
+        {
+          "next_offset": 267348,
+          "offset": 262144,
+          "sha256": "ca324fab2bf47ecd480614e6c05a9e25380faa96780a2ef88dbd312c1cccc478"
+        }
+      ],
+      "eof": true,
+      "next_offset": 267348,
+      "path": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/w1-qrom-1a14-publication-v1.tar.gz",
+      "size": 267348,
+      "version": "2050:51045292:267348:1794060780794538023:1794060780794538023"
+    }
+  },
+  {
+    "bytes": 343807,
+    "kind": "hosted-collection",
+    "path": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/w1-qrom-1a14-hosted-collection-v1.tar.gz",
+    "sha256": "e83d73685949243d61318848cd22d5c88f5018e476df75e9917823e6d1d18ed6",
+    "stage": "archive-created",
+    "transfer": {
+      "chunks": [
+        {
+          "next_offset": 65536,
+          "offset": 0,
+          "sha256": "4c5a4e2bf770f98b3fd3f874844f0b200c0c4a6e4af8c93e9060ee8363b893e2"
+        },
+        {
+          "next_offset": 131072,
+          "offset": 65536,
+          "sha256": "c75eaf2e59e482bee666a42af18c14de5b83fc772382ada0007413542e0d6fd7"
+        },
+        {
+          "next_offset": 196608,
+          "offset": 131072,
+          "sha256": "9685d45018cb37b146c7289d39f92ca1142a211bdfd475620203b736c937a9b8"
+        },
+        {
+          "next_offset": 262144,
+          "offset": 196608,
+          "sha256": "70388ba7d3735e10f3eeb85901a517afb00138b8c304136e21aeeb84454912de"
+        },
+        {
+          "next_offset": 327680,
+          "offset": 262144,
+          "sha256": "b69573a2ecfdbd8285f3ba202a86d28699bef196540546fd51ee49090a4005ac"
+        },
+        {
+          "next_offset": 343807,
+          "offset": 327680,
+          "sha256": "4468de015d4915ecff433e1df005d3fd35cda3bade9399abbfb66674a14261fe"
+        }
+      ],
+      "eof": true,
+      "next_offset": 343807,
+      "path": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/w1-qrom-1a14-hosted-collection-v1.tar.gz",
+      "size": 343807,
+      "version": "2050:51045293:343807:1794060780829536884:1794060780829536884"
+    }
+  }
+]

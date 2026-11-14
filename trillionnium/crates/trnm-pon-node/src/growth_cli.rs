@@ -1,0 +1,515 @@
+//! Explicit local entrypoints for the PGH2/PNP2 development namespace. They use
+//! the real native owner and do not pass PNP2 through historical peer handlers.
+use super::{need, number, packet_input, read};
+use serde_json::{json, Value};
+use std::{
+    collections::{BTreeMap, BTreeSet},
+    fs,
+    io::Write,
+    path::Path,
+    time::{SystemTime, UNIX_EPOCH},
+};
+use trnm_mvcc_fee::{continuity_v1, pon_executor::growth as limits};
+use trnm_pon_node::{digest, Error, GrowthPacket, GrowthWorkingSnapshot, Node, Result, Settings};
+use trnm_protocol::pon_wire::{Envelope, Hash};
+
+fn parse_number(args: &BTreeMap<String, String>, name: &str) -> Result<u64> {
+    need(args, name)?
+        .parse()
+        .map_err(|_| format!("invalid {name}").into())
+}
+fn output_available(path: &Path) -> Result<()> {
+    match fs::symlink_metadata(path) {
+        Ok(_) => Err("GROWTH_OUTPUT_EXISTS".into()),
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(()),
+        Err(error) => Err(error.into()),
+    }
+}
+fn write_packet(path: &Path, bytes: &[u8]) -> Result<()> {
+    let directory = path
+        .parent()
+        .filter(|p| !p.as_os_str().is_empty())
+        .unwrap_or(Path::new("."));
+    let mut file = tempfile::NamedTempFile::new_in(directory)?;
+    file.write_all(bytes)?;
+    file.as_file().sync_all()?;
+    file.persist_noclobber(path)
+        .map_err(|error| Error::from(error.error))?;
+    fs::File::open(directory)?.sync_all()?;
+    Ok(())
+}
+fn selected(args: &BTreeMap<String, String>, node: &Node) -> Result<Hash> {
+    args.get("--block")
+        .map(|s| digest(s))
+        .unwrap_or_else(|| Ok(node.active()?.0))
+}
+fn mandatory_capacity(snapshot: &GrowthWorkingSnapshot) -> Result<Value> {
+    let owners = limits::mandatory_owners(&snapshot.working)?;
+    let unused_owner_slots = limits::MAX_MANDATORY_OWNERS
+        .checked_sub(owners.len())
+        .ok_or("GROWTH_CAPACITY_OBSERVATION")?;
+    let next_height = snapshot.height.checked_add(1).ok_or("HEIGHT")?;
+    let mut escrow_owners = BTreeSet::new();
+    let mut reward_owners = BTreeSet::new();
+    let mut escrow_records = 0u64;
+    let mut reward_records = 0u64;
+    let mut escrow_due = 0u64;
+    let mut reward_due = 0u64;
+    for (key, value) in &snapshot.working {
+        let reward = key.starts_with("reward:");
+        let escrow =
+            (key.starts_with("task:") || key.starts_with("quota:") || key.starts_with("release:"))
+                && value["remaining"]
+                    .as_u64()
+                    .ok_or("GROWTH_CAPACITY_OBSERVATION")?
+                    > 0;
+        if !reward && !escrow {
+            continue;
+        }
+        let owner = value["owner"]
+            .as_str()
+            .ok_or("GROWTH_CAPACITY_OBSERVATION")?;
+        if reward {
+            reward_owners.insert(owner);
+            reward_records += 1;
+            reward_due += u64::from(
+                value["maturity"]
+                    .as_u64()
+                    .ok_or("GROWTH_CAPACITY_OBSERVATION")?
+                    <= next_height,
+            );
+        } else {
+            escrow_owners.insert(owner);
+            escrow_records += 1;
+            escrow_due += u64::from(
+                value["deadline"]
+                    .as_u64()
+                    .ok_or("GROWTH_CAPACITY_OBSERVATION")?
+                    <= next_height,
+            );
+        }
+    }
+    // This is classification of the already authenticated snapshot. It is not
+    // a new admission predicate: the original M06 prologue and caller's actual
+    // transactions can release owners before the next reward is appended.
+    Ok(json!({
+        "schema":"native-growth-mandatory-owner-capacity-observation-v1",
+        "scope":"all-future-monetary-owners",
+        "owner_limit":limits::MAX_MANDATORY_OWNERS,
+        "owners":owners.len(),
+        "escrow_owners":escrow_owners.len(),
+        "reward_owners":reward_owners.len(),
+        "shared_owners":escrow_owners.intersection(&reward_owners).count(),
+        "unused_owner_slots_in_snapshot":unused_owner_slots,
+        "escrow_records":escrow_records,
+        "reward_records":reward_records,
+        "next_height":next_height,
+        "escrow_records_due_by_next_height":escrow_due,
+        "reward_records_maturing_by_next_height":reward_due,
+        "due_record_counts_are_not_execution_counts":true,
+        "counts_zero_amount_reward_rows":true,
+        "same_block_execution_may_release_owners":true,
+        "snapshot_only":true,
+        "admission_authority":false
+    }))
+}
+fn status(node: &Node) -> Result<Value> {
+    let snapshot = node.growth_current_working()?;
+    let capacity = mandatory_capacity(&snapshot)?;
+    Ok(
+        json!({"schema":"native-growth-current-observation-v2","block":hex::encode(snapshot.block),
+        "height":snapshot.height,"generation":snapshot.generation,"state_root":hex::encode(snapshot.commitment.id),
+        "network":hex::encode(snapshot.commitment.network),"parameters":hex::encode(snapshot.commitment.parameters),
+        "genesis":hex::encode(snapshot.commitment.genesis),"working_root":hex::encode(snapshot.commitment.working_root),
+        "permanent_account_root":hex::encode(snapshot.commitment.permanent_account_root),
+        "permanent_accounts":snapshot.commitment.permanent_account_count,"working_keys":snapshot.working.len(),
+        "commitment":snapshot.commitment,"mandatory_owner_capacity":capacity}),
+    )
+}
+
+pub(super) fn run(command: &str, args: &BTreeMap<String, String>) -> Result<Value> {
+    run_with_clock(command, args, &mut || {
+        Ok(SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .map_err(|_| Error::from("CLOCK"))?
+            .as_secs())
+    })
+}
+
+fn run_with_clock(
+    command: &str,
+    args: &BTreeMap<String, String>,
+    wall_now: &mut dyn FnMut() -> Result<u64>,
+) -> Result<Value> {
+    let extra = match command {
+        "growth-status" | "growth-recover" => "",
+        "growth-working" => "--key",
+        "growth-account" => "--owner --block",
+        "growth-witness" => "--owners --block",
+        "growth-make" | "growth-mine" => {
+            "--transactions --timestamp --output --parent --miner --search-attempts --logical-now"
+        }
+        "growth-submit" => "--packet --packet-stdin --logical-now",
+        "growth-packet-status" => "--packet --packet-stdin",
+        "growth-evaluation-observe" => "--candidate --ancestry-blocks --logical-now",
+        "growth-evaluation-round-observe" => "--candidate --round-blocks --logical-now",
+        "growth-export" => "--block --output",
+        "growth-activate" => "--block --logical-now",
+        _ => return Err("GROWTH_COMMAND".into()),
+    };
+    let allowed = format!("--development --store --growth-namespace --genesis-time {extra}");
+    if args
+        .keys()
+        .any(|key| !allowed.split_whitespace().any(|choice| key == choice))
+    {
+        return Err("GROWTH_OPTION".into());
+    }
+    // Reject all malformed inputs and output collisions before Node::open may
+    // initialize or recover the explicitly selected native namespace.
+    let settings = Settings::development_with_profiles(
+        Some(parse_number(args, "--genesis-time")?),
+        "native-public-evaluation-dev-v1",
+        continuity_v1::PROFILE,
+    )?
+    .with_permanent_account_growth_v2(need(args, "--growth-namespace")?)?;
+    let path = Path::new(need(args, "--store")?);
+    let owner = args.get("--owner").map(|s| digest(s)).transpose()?;
+    let parent = args.get("--parent").map(|s| digest(s)).transpose()?;
+    let block = args.get("--block").map(|s| digest(s)).transpose()?;
+    let evaluation_query = if matches!(
+        command,
+        "growth-evaluation-observe" | "growth-evaluation-round-observe"
+    ) {
+        let candidate = digest(need(args, "--candidate")?)?;
+        let option = if command == "growth-evaluation-observe" {
+            "--ancestry-blocks"
+        } else {
+            "--round-blocks"
+        };
+        let bound = number(args, option, 4096)?;
+        if !(1..=4096).contains(&bound) {
+            return Err("EVALUATION_OBSERVATION_LIMIT".into());
+        }
+        Some((candidate, bound))
+    } else {
+        None
+    };
+    if command == "growth-account" && owner.is_none() {
+        return Err("GROWTH_OWNER_REQUIRED".into());
+    }
+    if matches!(command, "growth-export" | "growth-activate") && block.is_none() {
+        return Err("GROWTH_BLOCK_REQUIRED".into());
+    }
+    let output = if matches!(command, "growth-make" | "growth-mine" | "growth-export") {
+        let value = Path::new(need(args, "--output")?);
+        output_available(value)?;
+        Some(value)
+    } else {
+        None
+    };
+    let supplied = if matches!(command, "growth-submit" | "growth-packet-status") {
+        Some(GrowthPacket::decode(&packet_input(args)?)?)
+    } else {
+        None
+    };
+    let owners = if command == "growth-witness" {
+        let raw: Vec<String> = serde_json::from_slice(&read(need(args, "--owners")?, 80_000)?)?;
+        if raw.is_empty() || raw.len() > limits::MAX_WITNESS_ACCOUNTS {
+            return Err("GROWTH_WITNESS_LIMIT".into());
+        }
+        Some(raw.iter().map(|s| digest(s)).collect::<Result<Vec<_>>>()?)
+    } else {
+        None
+    };
+    let mining = if matches!(command, "growth-make" | "growth-mine") {
+        let transactions = if let Some(file) = args.get("--transactions") {
+            let encoded: Vec<String> =
+                serde_json::from_slice(&read(file, 2 * limits::MAX_PACKET_BYTES as u64)?)?;
+            if encoded.len() > 256 {
+                return Err("TRANSACTION_LIMIT".into());
+            }
+            encoded
+                .iter()
+                .map(|raw| {
+                    if !(318..=4096).contains(&raw.len()) {
+                        return Err("TRANSACTION_LIMIT".into());
+                    }
+                    let bytes = hex::decode(raw).map_err(|_| Error::from("TRANSACTION_CODEC"))?;
+                    Envelope::decode(&bytes).map_err(|_| Error::from("TRANSACTION_CODEC"))?;
+                    Ok(bytes)
+                })
+                .collect::<Result<Vec<_>>>()?
+        } else {
+            Vec::new()
+        };
+        let miner = digest(need(args, "--miner")?)?;
+        let timestamp = parse_number(args, "--timestamp")?;
+        let attempts = number(args, "--search-attempts", 4096)?;
+        if attempts == 0 || attempts > 1_000_000 {
+            return Err("GROWTH_SEARCH_LIMIT".into());
+        }
+        Some((transactions, miner, timestamp, attempts))
+    } else {
+        None
+    };
+    let logical_now = args
+        .get("--logical-now")
+        .map(|_| parse_number(args, "--logical-now"))
+        .transpose()?;
+    let mut current_clock = || match logical_now {
+        Some(value) => Ok(value),
+        None => wall_now(),
+    };
+    current_clock()?;
+    // Query inputs, including the logical clock, are validated before even the
+    // source-store probe. Observation opens only the existing private snapshot
+    // path; it must not initialize or recover the source namespace.
+    let observation_only = command == "growth-packet-status" || evaluation_query.is_some();
+    if observation_only && !path.join("native.sqlite").is_file() {
+        return Err(if command == "growth-packet-status" {
+            "GROWTH_PACKET_STATUS_EXISTING_STORE_REQUIRED"
+        } else {
+            "GROWTH_EVALUATION_EXISTING_STORE_REQUIRED"
+        }
+        .into());
+    }
+    let mut node = if observation_only {
+        Node::open_growth_packet_observer(path, settings)?
+    } else {
+        Node::open_with_permanent_account_growth_v2(path, settings)?
+    };
+    let result = match command {
+        "growth-status" => status(&node)?,
+        "growth-recover" => {
+            node.recover()?;
+            status(&node)?
+        }
+        "growth-working" => {
+            let snapshot = node.growth_current_working()?;
+            let rows = if let Some(key) = args.get("--key") {
+                json!({"key":key,"row":snapshot.working.get(key)})
+            } else {
+                json!(snapshot.working)
+            };
+            json!({"block":hex::encode(snapshot.block),"height":snapshot.height,"generation":snapshot.generation,
+                "state_root":hex::encode(snapshot.commitment.id),"working_root":hex::encode(snapshot.commitment.working_root),"rows":rows})
+        }
+        "growth-account" => {
+            let block = selected(args, &node)?;
+            let owner = owner.ok_or("GROWTH_OWNER_REQUIRED")?;
+            let account = node.growth_account(block, owner)?;
+            json!({"block":hex::encode(block),"owner":hex::encode(owner),"account":account,"authenticated_absence":account.is_none()})
+        }
+        "growth-witness" => {
+            let (checkpoint, proof, observation) = node.growth_account_multiproof(
+                selected(args, &node)?,
+                &owners.ok_or("GROWTH_WITNESS_LIMIT")?,
+            )?;
+            json!({"checkpoint":checkpoint,"proof_hex":hex::encode(proof.encode().map_err(|e|Error::from(format!("GROWTH_PROOF:{e:?}")))?),"observation":observation})
+        }
+        "growth-make" | "growth-mine" => {
+            let (transactions, miner, timestamp, attempts) = mining.ok_or("GROWTH_MINING_INPUT")?;
+            let parent = parent.unwrap_or(node.active()?.0);
+            if command == "growth-mine" {
+                node.check_observed_history(parent, current_clock()?)?;
+            }
+            let packet = node.make_growth_consensus_maintenance(
+                parent,
+                transactions,
+                miner,
+                timestamp,
+                attempts,
+            )?;
+            let bytes = packet.encode()?;
+            write_packet(output.ok_or("GROWTH_OUTPUT_REQUIRED")?, &bytes)?;
+            let id = packet.id()?;
+            if command == "growth-mine" {
+                // Proof generation and output may take time. A wall-clock
+                // rollback can defer this branch without discarding its work.
+                let clock = current_clock()?;
+                node.check_observed_history(parent, clock)?;
+                node.admit_growth(&packet, clock)?;
+                node.activate_observed(id, current_clock()?)?;
+            }
+            json!({"block":hex::encode(id),"packet_bytes":bytes.len(),"account_witness_bytes":packet.accounts.encoded_len().map_err(|e|Error::from(format!("GROWTH_PROOF:{e:?}")))?,
+                "admitted":command=="growth-mine","state":status(&node)?})
+        }
+        "growth-submit" => {
+            let packet = supplied.ok_or("GROWTH_PACKET_REQUIRED")?;
+            let clock = current_clock()?;
+            node.check_observed_history(packet.header.ledger.parent, clock)?;
+            let id = node.admit_growth(&packet, clock)?;
+            // Admission verifies W1. Reobserve time before current activation;
+            // a deferred result leaves any already admitted packet intact.
+            let active = node.activate_observed(id, current_clock()?)?;
+            json!({"block":hex::encode(id),"admitted":true,"active":hex::encode(active),"state":status(&node)?})
+        }
+        "growth-packet-status" => {
+            node.growth_exact_packet_observation(&supplied.ok_or("GROWTH_PACKET_REQUIRED")?)?
+        }
+        "growth-evaluation-observe" => {
+            let (candidate, bound) = evaluation_query.ok_or("EVALUATION_OBSERVATION_LIMIT")?;
+            serde_json::to_value(node.evaluation_observation(
+                candidate,
+                current_clock()?,
+                bound,
+            )?)?
+        }
+        "growth-evaluation-round-observe" => {
+            let (candidate, bound) = evaluation_query.ok_or("EVALUATION_OBSERVATION_LIMIT")?;
+            serde_json::to_value(node.evaluation_round_observation(
+                candidate,
+                current_clock()?,
+                bound,
+            )?)?
+        }
+        "growth-export" => {
+            let packet = node.growth_packet(block.ok_or("GROWTH_BLOCK_REQUIRED")?)?;
+            let bytes = packet.encode()?;
+            write_packet(output.ok_or("GROWTH_OUTPUT_REQUIRED")?, &bytes)?;
+            json!({"block":hex::encode(packet.id()?),"packet_bytes":bytes.len()})
+        }
+        "growth-activate" => {
+            node.activate_observed(block.ok_or("GROWTH_BLOCK_REQUIRED")?, current_clock()?)?;
+            status(&node)?
+        }
+        _ => return Err("GROWTH_COMMAND".into()),
+    };
+    Ok(json!({"profile":limits::PROFILE,"result":result}))
+}
+
+#[cfg(test)]
+mod clock_tests {
+    use super::*;
+
+    fn at_clocks(command: &str, args: &BTreeMap<String, String>, clocks: &[u64]) -> Result<Value> {
+        let mut clocks = clocks.iter().copied();
+        let result = run_with_clock(command, args, &mut || {
+            Ok(clocks.next().expect("unexpected wall-clock observation"))
+        });
+        assert!(clocks.next().is_none(), "current boundary missed its clock");
+        result
+    }
+
+    #[test]
+    fn native_growth_v2_cli_resamples_wall_clock_after_work_and_keeps_explicit_time_fixed() {
+        let directory = tempfile::tempdir().unwrap();
+        let store = directory.path().join("growth");
+        let namespace = "native-growth-clock-resampling-v2";
+        let settings = Settings::development_with_profiles(
+            Some(1),
+            "native-public-evaluation-dev-v1",
+            continuity_v1::PROFILE,
+        )
+        .unwrap()
+        .with_permanent_account_growth_v2(namespace)
+        .unwrap();
+        let mut node =
+            Node::open_with_permanent_account_growth_v2(&store, settings.clone()).unwrap();
+        let miner = trnm_pon_node::development_public(3).unwrap();
+        let mut parent = settings.genesis();
+        for timestamp in [11, 21, 301, 22, 23] {
+            let packet = node
+                .make_growth_consensus_maintenance(parent, vec![], miner, timestamp, 4096)
+                .unwrap();
+            parent = node.admit_growth(&packet, 100_000).unwrap();
+        }
+        node.activate(parent).unwrap();
+        let active = node.active().unwrap();
+        let candidate = node
+            .make_growth_consensus_maintenance(parent, vec![], miner, 24, 4096)
+            .unwrap();
+        let candidate_id = candidate.id().unwrap();
+        let candidate_raw = candidate.encode().unwrap();
+        let candidate_file = directory.path().join("candidate.pnp2");
+        fs::write(&candidate_file, &candidate_raw).unwrap();
+        drop(node);
+
+        let common = BTreeMap::from([
+            ("--development".into(), "true".into()),
+            ("--genesis-time".into(), "1".into()),
+            ("--growth-namespace".into(), namespace.into()),
+            ("--store".into(), store.to_str().unwrap().into()),
+        ]);
+        let mined_file = directory.path().join("mined.pnp2");
+        let mut mine = common.clone();
+        mine.extend([
+            ("--parent".into(), hex::encode(parent)),
+            ("--timestamp".into(), "24".into()),
+            ("--miner".into(), hex::encode(miner)),
+            ("--output".into(), mined_file.to_str().unwrap().into()),
+        ]);
+        assert_eq!(
+            at_clocks("growth-mine", &mine, &[100_000, 100_000, 24])
+                .unwrap_err()
+                .to_string(),
+            "TIME_DEFERRED"
+        );
+        // Original CLI output precedes admission. Completed proof bytes remain,
+        // but a rollback after that real W1 must not admit the new descendant.
+        let mined = GrowthPacket::decode(&fs::read(&mined_file).unwrap()).unwrap();
+        {
+            let observed = Node::open_growth_packet_observer(&store, settings.clone()).unwrap();
+            assert_eq!(observed.active().unwrap(), active);
+            assert!(observed.parent_height(mined.id().unwrap()).is_err());
+        }
+
+        let mut submit = common.clone();
+        submit.insert("--packet".into(), candidate_file.to_str().unwrap().into());
+        assert_eq!(
+            at_clocks("growth-submit", &submit, &[100_000, 100_000, 24])
+                .unwrap_err()
+                .to_string(),
+            "TIME_DEFERRED"
+        );
+        {
+            let observed = Node::open_growth_packet_observer(&store, settings.clone()).unwrap();
+            assert_eq!(observed.active().unwrap(), active);
+            assert_eq!(
+                observed
+                    .growth_packet(candidate_id)
+                    .unwrap()
+                    .encode()
+                    .unwrap(),
+                candidate_raw
+            );
+        }
+
+        let mut activate = common.clone();
+        activate.insert("--block".into(), hex::encode(candidate_id));
+        assert_eq!(
+            at_clocks("growth-activate", &activate, &[100_000, 24])
+                .unwrap_err()
+                .to_string(),
+            "TIME_DEFERRED"
+        );
+        // Ordinary open performs historical recovery before the command gate.
+        // Refusing current eligibility must not erase that retained history.
+        {
+            let observed = Node::open_growth_packet_observer(&store, settings).unwrap();
+            assert_eq!(observed.active().unwrap().0, candidate_id);
+            assert_eq!(
+                observed
+                    .growth_packet(candidate_id)
+                    .unwrap()
+                    .encode()
+                    .unwrap(),
+                candidate_raw
+            );
+        }
+        activate.insert("--logical-now".into(), "100000".into());
+        run_with_clock("growth-activate", &activate, &mut || {
+            panic!("explicit logical time must not read the wall clock")
+        })
+        .unwrap();
+        activate.insert("--logical-now".into(), "24".into());
+        assert_eq!(
+            run_with_clock("growth-activate", &activate, &mut || {
+                panic!("explicit logical time must not read the wall clock")
+            })
+            .unwrap_err()
+            .to_string(),
+            "TIME_DEFERRED"
+        );
+    }
+}

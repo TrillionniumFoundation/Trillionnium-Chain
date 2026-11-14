@@ -1,0 +1,20 @@
+[
+  {
+    "ancestor": "b66e66d2465258d808c0f56ff851123306d4bdb4",
+    "descendant": "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+    "exit_code": 0,
+    "is_ancestor": true
+  },
+  {
+    "ancestor": "cb314bb4656e5da4844325cd83994ab4764fe8e9",
+    "descendant": "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+    "exit_code": 0,
+    "is_ancestor": true
+  },
+  {
+    "ancestor": "2d46d8682201bc0619f5b156af50e77fb399322e",
+    "descendant": "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+    "exit_code": 0,
+    "is_ancestor": true
+  }
+]

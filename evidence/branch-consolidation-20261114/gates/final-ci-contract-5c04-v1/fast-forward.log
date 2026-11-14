@@ -1,0 +1,23 @@
+Updating c34a729ac..5c04c60e4
+Fast-forward
+ config/pon/pq-cross-branch-corpus-v1.json          |  82 +--
+ .../TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md  | 101 +++
+ scripts/ci/check_ci_contract.py                    | 101 +++
+ scripts/ci/check_pq_research_integration.py        |  29 +
+ scripts/ci/test_ci_contract.py                     |  88 +++
+ scripts/ci/test_pq_research_integration.py         | 117 ++++
+ scripts/llm_runtime_exit_worker_observation.py     | 400 +++++++++++-
+ scripts/test_llm_runtime_exit_binding_pending.py   | 476 +++++++++++++++
+ scripts/test_llm_runtime_exit_initial_pending.py   | 679 +++++++++++++++++++++
+ ...est_llm_runtime_exit_post_binding_retirement.py | 466 ++++++++++++++
+ .../test_llm_runtime_exit_worker_observation.py    |  24 +-
+ scripts/test_llm_runtime_pilot.py                  |   3 +
+ .../trnm-data-availability/src/cell/network.rs     |  58 +-
+ .../src/cell/network/availability/tests.rs         | 108 ++++
+ .../src/cell/release_tests.rs                      |  47 ++
+ .../tests/mining_timestamp_liveness.rs             | 208 +++++++
+ 16 files changed, 2928 insertions(+), 59 deletions(-)
+ create mode 100644 scripts/test_llm_runtime_exit_binding_pending.py
+ create mode 100644 scripts/test_llm_runtime_exit_initial_pending.py
+ create mode 100644 scripts/test_llm_runtime_exit_post_binding_retirement.py
+ create mode 100644 trillionnium/crates/trnm-pon-node/tests/mining_timestamp_liveness.rs

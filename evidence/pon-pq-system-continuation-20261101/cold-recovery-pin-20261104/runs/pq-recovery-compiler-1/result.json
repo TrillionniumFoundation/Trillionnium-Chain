@@ -1,0 +1,24 @@
+{
+  "command": [
+    "rustc",
+    "+1.95.0",
+    "-Vv"
+  ],
+  "cwd": "/workspace/scratch/8a53368149fe/pq-recovery",
+  "returncode": 0,
+  "failure": null,
+  "elapsed_ns": 16027142,
+  "timeout_seconds": 60,
+  "files": {
+    "stdout.log": {
+      "bytes": 196,
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+    },
+    "stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "profile_overrides": false,
+  "acceptance_granted": false
+}

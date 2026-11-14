@@ -1,0 +1,240 @@
+{
+  "mode": "pool-scan-before",
+  "source": "ae657e262278ae4a058220f66a6a0495721eb9ad",
+  "tree": "def5ae894d06b787222b6b2b2b2d97bf8be59366",
+  "driver": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+  "subject_path": "/tmp/chain-throughput-before-ae-0b5320",
+  "official_out": "/dev/shm/chain-throughput-0b5320/official-pool-scan-before-v1",
+  "steps": [
+    {
+      "name": "preflight-driver",
+      "command": [
+        "/usr/bin/bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/tmp/chain-throughput-m-driver-0b5320",
+      "started": true,
+      "pid": 3398624,
+      "exit_code": 0,
+      "failure": null,
+      "cleanup_errors": [],
+      "elapsed_wall_seconds": 0.09138397802598774,
+      "stdout_sha256": "d8740b717f513c3ea0c079d6526576a7092177443a2e03604789d1b40d68e048",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "subject-head",
+      "command": [
+        "/usr/bin/git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/tmp/chain-throughput-before-ae-0b5320",
+      "started": true,
+      "pid": 3398641,
+      "exit_code": 0,
+      "failure": null,
+      "cleanup_errors": [],
+      "elapsed_wall_seconds": 0.009403277887031436,
+      "stdout_sha256": "de90085e1acd9a784529c1833ef5c94d518a501660247c58a3747a222c8cb86e",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "subject-tree",
+      "command": [
+        "/usr/bin/git",
+        "rev-parse",
+        "HEAD^{tree}"
+      ],
+      "cwd": "/tmp/chain-throughput-before-ae-0b5320",
+      "started": true,
+      "pid": 3398642,
+      "exit_code": 0,
+      "failure": null,
+      "cleanup_errors": [],
+      "elapsed_wall_seconds": 0.004737811861559749,
+      "stdout_sha256": "af5f6586aded4693cf5505d01dadd4c1261152924bb873b2c219a89b4cc39c98",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "subject-clean",
+      "command": [
+        "/usr/bin/git",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "cwd": "/tmp/chain-throughput-before-ae-0b5320",
+      "started": true,
+      "pid": 3398645,
+      "exit_code": 0,
+      "failure": null,
+      "cleanup_errors": [],
+      "elapsed_wall_seconds": 0.5514828038867563,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "preflight-subject",
+      "command": [
+        "/usr/bin/bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/tmp/chain-throughput-before-ae-0b5320",
+      "started": true,
+      "pid": 3398777,
+      "exit_code": 0,
+      "failure": null,
+      "cleanup_errors": [],
+      "elapsed_wall_seconds": 0.1081287448760122,
+      "stdout_sha256": "c986c8241f172be4e5665b6bf697138cb56d6dcfca842124728ef137dadf7e6e",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "success": false,
+  "finished": true,
+  "reuse_existing_source_only": true,
+  "scope": "unchanged frozen exact-source official component negative lane; original ad hoc run preserved separately; no campaign/TPS qualification",
+  "capacity_before": {
+    "root_free": 104738877440,
+    "tmpfs_free": 37143744512,
+    "memory_available": 75794935808
+  },
+  "compile_slot_check": {
+    "completed_builds": {
+      "M": {
+        "cleanup_errors": [],
+        "command": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--release",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--lib",
+          "--test",
+          "pool_mining",
+          "--no-run",
+          "--message-format=json"
+        ],
+        "cwd": "/tmp/chain-throughput-m-subject-0b5320",
+        "elapsed_wall_ns": 1526602208624,
+        "exit_code": 0,
+        "failure": null,
+        "pid": 3252772,
+        "started": true,
+        "stderr": {
+          "bytes": 4043,
+          "path": "/dev/shm/chain-throughput-0b5320/m-fixed-v1/build.stderr",
+          "sha256": "f3a92e3f7bdd380fe4155bad04a8eca5ec6960d66c3a0411aaa02d15311623f3"
+        },
+        "stdout": {
+          "bytes": 109411,
+          "path": "/dev/shm/chain-throughput-0b5320/m-fixed-v1/build.stdout",
+          "sha256": "3aecc15639d45b7b3b723e7d3a67f98b1c8de61efffd615c62b2ad3575960787"
+        }
+      },
+      "budget": {
+        "cleanup_errors": [],
+        "command": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--release",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--lib",
+          "--no-run",
+          "--message-format=json"
+        ],
+        "cwd": "/dev/shm/chain-throughput-0b5320/budget-before-v2-subject-v1",
+        "elapsed_wall_ns": 1131965904653,
+        "exit_code": 0,
+        "failure": null,
+        "pid": 3300182,
+        "started": true,
+        "stderr": {
+          "bytes": 4307,
+          "path": "/dev/shm/chain-throughput-0b5320/official-budget-before-v2-v1/build.stderr",
+          "sha256": "19e0aa996e1a363bb432d966b3d0d7c3503e9154401206dc35dc3b8b8d0085aa"
+        },
+        "stdout": {
+          "bytes": 111544,
+          "path": "/dev/shm/chain-throughput-0b5320/official-budget-before-v2-v1/build.stdout",
+          "sha256": "74020459d3508d52429bf17d56f350c1d54e92a1de92dfb4216d8aa1d2084fb3"
+        }
+      }
+    },
+    "M_whole_library_process": {
+      "cleanup_errors": [],
+      "command": [
+        "/dev/shm/chain-throughput-0b5320/m-fixed-v1/trnm-pon-node-libtest",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "cwd": "/tmp/chain-throughput-m-subject-0b5320",
+      "exit_code": null,
+      "failure": null,
+      "pid": 3346706,
+      "started": true
+    },
+    "max_simultaneous_expected_compiles": 2
+  },
+  "process": {
+    "command": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/chain-throughput-m-driver-0b5320/scripts/ci/run_pon_budget_controls.py",
+      "--source",
+      "/tmp/chain-throughput-before-ae-0b5320",
+      "--source-sha",
+      "ae657e262278ae4a058220f66a6a0495721eb9ad",
+      "--driver-sha",
+      "11e242dbaaae14a9d16282fe8deaf36827e98395",
+      "--mode",
+      "pool-scan-before",
+      "--out",
+      "/dev/shm/chain-throughput-0b5320/official-pool-scan-before-v1"
+    ],
+    "cwd": "/tmp/chain-throughput-m-driver-0b5320",
+    "started": true,
+    "exit_code": 1,
+    "failure": null,
+    "cleanup_errors": [],
+    "pid": 3398822,
+    "elapsed_wall_ns": 27918213920,
+    "stdout": {
+      "path": "/dev/shm/chain-throughput-0b5320/setup-pool-scan-before-v1/official-native-runner.stdout",
+      "bytes": 330,
+      "sha256": "767d34094085ecfb93ffdd37120feefbd5b09c548b281c94023952170a5b57cc"
+    },
+    "stderr": {
+      "path": "/dev/shm/chain-throughput-0b5320/setup-pool-scan-before-v1/official-native-runner.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "report_result": "FAIL",
+  "matched_pass_controls": 0,
+  "matched_failure_controls": 0,
+  "errors": [
+    "ValueError: index hides tracked worktree entries",
+    "subject-source-after: ValueError: index hides tracked worktree entries"
+  ],
+  "archive": {
+    "path": "/dev/shm/chain-throughput-0b5320/official-pool-scan-before-v1-text.tar.gz",
+    "bytes": 1974,
+    "sha256": "a1f75dd2b3510b826260abee9c1770e9d52b2f96d23ac008fdd3aca5c0945564",
+    "files": 8
+  },
+  "capacity_after": {
+    "root_free": 104735367168,
+    "tmpfs_free": 37143670784
+  }
+}

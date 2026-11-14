@@ -1,0 +1,139 @@
+{
+  "scope": "eight alternating process-level invocations of the unchanged full admission/graph/reopen control; shared cloud host, not pinned hardware or a service benchmark",
+  "selector": "store::native_authenticated::post_write_readback::tests::actual_admission_reuses_graphs_and_keeps_original_state_packet_and_reopen",
+  "binary_sha256": {
+    "False": "28368f3a4faa7d3bb5e708cd4224e0d8c48c291761a43d2a4d208edbf3727e5a",
+    "True": "345e9bf30dd2bb14f1f64d41fac4b40157b112ef3b8fcc5314e5a4cb537310cd"
+  },
+  "samples": [
+    {
+      "round": 0,
+      "cached": false,
+      "whole_process_wall_ns": 1360232602,
+      "exit_code": 0,
+      "stdout": "\nrunning 1 test\ntest store::native_authenticated::post_write_readback::tests::actual_admission_reuses_graphs_and_keeps_original_state_packet_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1077 filtered out; finished in 1.02s\n\n",
+      "stderr": ""
+    },
+    {
+      "round": 0,
+      "cached": true,
+      "whole_process_wall_ns": 686266541,
+      "exit_code": 0,
+      "stdout": "\nrunning 1 test\ntest store::native_authenticated::post_write_readback::tests::actual_admission_reuses_graphs_and_keeps_original_state_packet_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1079 filtered out; finished in 0.67s\n\n",
+      "stderr": ""
+    },
+    {
+      "round": 1,
+      "cached": true,
+      "whole_process_wall_ns": 452846378,
+      "exit_code": 0,
+      "stdout": "\nrunning 1 test\ntest store::native_authenticated::post_write_readback::tests::actual_admission_reuses_graphs_and_keeps_original_state_packet_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1079 filtered out; finished in 0.45s\n\n",
+      "stderr": ""
+    },
+    {
+      "round": 1,
+      "cached": false,
+      "whole_process_wall_ns": 424172557,
+      "exit_code": 0,
+      "stdout": "\nrunning 1 test\ntest store::native_authenticated::post_write_readback::tests::actual_admission_reuses_graphs_and_keeps_original_state_packet_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1077 filtered out; finished in 0.42s\n\n",
+      "stderr": ""
+    },
+    {
+      "round": 2,
+      "cached": false,
+      "whole_process_wall_ns": 447792306,
+      "exit_code": 0,
+      "stdout": "\nrunning 1 test\ntest store::native_authenticated::post_write_readback::tests::actual_admission_reuses_graphs_and_keeps_original_state_packet_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1077 filtered out; finished in 0.44s\n\n",
+      "stderr": ""
+    },
+    {
+      "round": 2,
+      "cached": true,
+      "whole_process_wall_ns": 419239035,
+      "exit_code": 0,
+      "stdout": "\nrunning 1 test\ntest store::native_authenticated::post_write_readback::tests::actual_admission_reuses_graphs_and_keeps_original_state_packet_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1079 filtered out; finished in 0.41s\n\n",
+      "stderr": ""
+    },
+    {
+      "round": 3,
+      "cached": true,
+      "whole_process_wall_ns": 372714944,
+      "exit_code": 0,
+      "stdout": "\nrunning 1 test\ntest store::native_authenticated::post_write_readback::tests::actual_admission_reuses_graphs_and_keeps_original_state_packet_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1079 filtered out; finished in 0.36s\n\n",
+      "stderr": ""
+    },
+    {
+      "round": 3,
+      "cached": false,
+      "whole_process_wall_ns": 276047799,
+      "exit_code": 0,
+      "stdout": "\nrunning 1 test\ntest store::native_authenticated::post_write_readback::tests::actual_admission_reuses_graphs_and_keeps_original_state_packet_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1077 filtered out; finished in 0.27s\n\n",
+      "stderr": ""
+    },
+    {
+      "round": 4,
+      "cached": false,
+      "whole_process_wall_ns": 229642954,
+      "exit_code": 0,
+      "stdout": "\nrunning 1 test\ntest store::native_authenticated::post_write_readback::tests::actual_admission_reuses_graphs_and_keeps_original_state_packet_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1077 filtered out; finished in 0.22s\n\n",
+      "stderr": ""
+    },
+    {
+      "round": 4,
+      "cached": true,
+      "whole_process_wall_ns": 1072243345,
+      "exit_code": 0,
+      "stdout": "\nrunning 1 test\ntest store::native_authenticated::post_write_readback::tests::actual_admission_reuses_graphs_and_keeps_original_state_packet_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1079 filtered out; finished in 1.07s\n\n",
+      "stderr": ""
+    },
+    {
+      "round": 5,
+      "cached": true,
+      "whole_process_wall_ns": 1060307575,
+      "exit_code": 0,
+      "stdout": "\nrunning 1 test\ntest store::native_authenticated::post_write_readback::tests::actual_admission_reuses_graphs_and_keeps_original_state_packet_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1079 filtered out; finished in 1.05s\n\n",
+      "stderr": ""
+    },
+    {
+      "round": 5,
+      "cached": false,
+      "whole_process_wall_ns": 375819232,
+      "exit_code": 0,
+      "stdout": "\nrunning 1 test\ntest store::native_authenticated::post_write_readback::tests::actual_admission_reuses_graphs_and_keeps_original_state_packet_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1077 filtered out; finished in 0.37s\n\n",
+      "stderr": ""
+    },
+    {
+      "round": 6,
+      "cached": false,
+      "whole_process_wall_ns": 734638533,
+      "exit_code": 0,
+      "stdout": "\nrunning 1 test\ntest store::native_authenticated::post_write_readback::tests::actual_admission_reuses_graphs_and_keeps_original_state_packet_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1077 filtered out; finished in 0.72s\n\n",
+      "stderr": ""
+    },
+    {
+      "round": 6,
+      "cached": true,
+      "whole_process_wall_ns": 571089576,
+      "exit_code": 0,
+      "stdout": "\nrunning 1 test\ntest store::native_authenticated::post_write_readback::tests::actual_admission_reuses_graphs_and_keeps_original_state_packet_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1079 filtered out; finished in 0.56s\n\n",
+      "stderr": ""
+    },
+    {
+      "round": 7,
+      "cached": true,
+      "whole_process_wall_ns": 379275958,
+      "exit_code": 0,
+      "stdout": "\nrunning 1 test\ntest store::native_authenticated::post_write_readback::tests::actual_admission_reuses_graphs_and_keeps_original_state_packet_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1079 filtered out; finished in 0.37s\n\n",
+      "stderr": ""
+    },
+    {
+      "round": 7,
+      "cached": false,
+      "whole_process_wall_ns": 345978388,
+      "exit_code": 0,
+      "stdout": "\nrunning 1 test\ntest store::native_authenticated::post_write_readback::tests::actual_admission_reuses_graphs_and_keeps_original_state_packet_and_reopen ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1077 filtered out; finished in 0.34s\n\n",
+      "stderr": ""
+    }
+  ],
+  "qualification": false
+}

@@ -1,0 +1,144 @@
+[
+  {
+    "name": "observer",
+    "command": [
+      "/workspace/scratch/b5a148b09b11/target/debug/deps/trnm_pon_node-8c0c5fa3641fab81",
+      "pq_rollback_witness::test_observation::tests",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "exit_code": 0,
+    "elapsed_s": 0.007795393999913358,
+    "binary_sha256": "68d9d1ba7ad5b3eb657a020a46ebd2aee576468934bdc77a011ac94faacef098",
+    "expected_passed": 4,
+    "expected_ignored": 0,
+    "observed": [
+      4,
+      0,
+      0
+    ],
+    "accepted": true
+  },
+  {
+    "name": "authenticated",
+    "command": [
+      "/workspace/scratch/b5a148b09b11/target/debug/deps/trnm_pon_node-8c0c5fa3641fab81",
+      "store::native_authenticated::",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "exit_code": 0,
+    "elapsed_s": 34.45529467000006,
+    "binary_sha256": "68d9d1ba7ad5b3eb657a020a46ebd2aee576468934bdc77a011ac94faacef098",
+    "expected_passed": 85,
+    "expected_ignored": 1,
+    "observed": [
+      85,
+      0,
+      1
+    ],
+    "accepted": true
+  },
+  {
+    "name": "state",
+    "command": [
+      "/workspace/scratch/b5a148b09b11/target/debug/deps/trnm_pon_node-8c0c5fa3641fab81",
+      "store::native_authenticated_tests::",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "exit_code": 0,
+    "elapsed_s": 31.45842319400026,
+    "binary_sha256": "68d9d1ba7ad5b3eb657a020a46ebd2aee576468934bdc77a011ac94faacef098",
+    "expected_passed": 21,
+    "expected_ignored": 0,
+    "observed": [
+      21,
+      0,
+      0
+    ],
+    "accepted": true
+  },
+  {
+    "name": "reorg",
+    "command": [
+      "/workspace/scratch/b5a148b09b11/target/debug/deps/trnm_pon_node-8c0c5fa3641fab81",
+      "store::reorg_readback_tests::",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "exit_code": 0,
+    "elapsed_s": 6.291093621000073,
+    "binary_sha256": "68d9d1ba7ad5b3eb657a020a46ebd2aee576468934bdc77a011ac94faacef098",
+    "expected_passed": 6,
+    "expected_ignored": 0,
+    "observed": [
+      6,
+      0,
+      0
+    ],
+    "accepted": true
+  },
+  {
+    "name": "ancestry",
+    "command": [
+      "/workspace/scratch/b5a148b09b11/target/debug/deps/trnm_pon_node-8c0c5fa3641fab81",
+      "store::native_ancestry_commit_tests::",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "exit_code": 0,
+    "elapsed_s": 3.50808046200018,
+    "binary_sha256": "68d9d1ba7ad5b3eb657a020a46ebd2aee576468934bdc77a011ac94faacef098",
+    "expected_passed": 3,
+    "expected_ignored": 0,
+    "observed": [
+      3,
+      0,
+      0
+    ],
+    "accepted": true
+  },
+  {
+    "name": "large-parent",
+    "command": [
+      "/workspace/scratch/b5a148b09b11/target/debug/deps/trnm_pon_node-8c0c5fa3641fab81",
+      "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+      "--nocapture",
+      "--test-threads=1",
+      "--exact"
+    ],
+    "exit_code": 101,
+    "elapsed_s": 36.409778795999955,
+    "binary_sha256": "68d9d1ba7ad5b3eb657a020a46ebd2aee576468934bdc77a011ac94faacef098",
+    "expected_passed": 1,
+    "expected_ignored": 0,
+    "observed": [
+      0,
+      1,
+      0
+    ],
+    "accepted": false
+  },
+  {
+    "name": "large-parent-auth",
+    "command": [
+      "/workspace/scratch/b5a148b09b11/target/debug/deps/trnm_pon_node-8c0c5fa3641fab81",
+      "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+      "--nocapture",
+      "--test-threads=1",
+      "--exact"
+    ],
+    "exit_code": 101,
+    "elapsed_s": 19.56439262599997,
+    "binary_sha256": "68d9d1ba7ad5b3eb657a020a46ebd2aee576468934bdc77a011ac94faacef098",
+    "expected_passed": 1,
+    "expected_ignored": 0,
+    "observed": [
+      0,
+      1,
+      0
+    ],
+    "accepted": false
+  }
+]

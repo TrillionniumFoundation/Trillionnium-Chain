@@ -1,0 +1,36 @@
+{
+  "schema": "pq-native-exact-source-run-v1",
+  "argv": [
+    "cargo",
+    "test",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "--offline",
+    "-p",
+    "trnm-mvcc-fee",
+    "--features",
+    "pq-native-openssl",
+    "--test",
+    "pq_account_owner",
+    "--",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "parent_commit": "48aaeddb1ab5115169cb1bc8d80647888bba3d2d",
+  "working_tree_candidate": true,
+  "started_utc": "2026-10-28T00:26:28.503541+00:00",
+  "source_manifest_sha256": "4c7ad29006c63e74c8a95e213056f2feb0bdfd0817e432993bdb942dff05dc06",
+  "exit_code": 0,
+  "elapsed_seconds": 25.75726130900148,
+  "completed_utc": "2026-10-28T00:26:54.257157+00:00",
+  "stdout": {
+    "bytes": 577,
+    "sha256": "46744385287e4afaf2ff8eedba2079a0c354e4f07e838e7644682e695a6f883f"
+  },
+  "stderr": {
+    "bytes": 1078,
+    "sha256": "1952aee5c8b3d3f826da130992995c45f2108b443fc49b8c78b5d748fac863f1"
+  },
+  "source_unchanged": true
+}

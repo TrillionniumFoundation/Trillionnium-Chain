@@ -1,0 +1,33 @@
+test_cancel_request_does_not_erase_late_output_or_resource (__main__.DynamicCohortTests.test_cancel_request_does_not_erase_late_output_or_resource) ... ok
+test_cancellation_without_completion_stays_unresolved (__main__.DynamicCohortTests.test_cancellation_without_completion_stays_unresolved) ... ok
+test_carry_in_remains_charged_and_never_becomes_fresh (__main__.DynamicCohortTests.test_carry_in_remains_charged_and_never_becomes_fresh) ... ok
+test_censored_deadline_is_not_a_pass (__main__.DynamicCohortTests.test_censored_deadline_is_not_a_pass) ... ok
+test_failed_task_costs_remain_without_inventing_success_credit (__main__.DynamicCohortTests.test_failed_task_costs_remain_without_inventing_success_credit) ... ok
+test_joined_members_inherit_progress_and_original_deadline (__main__.DynamicCohortTests.test_joined_members_inherit_progress_and_original_deadline) ... ok
+test_known_better_parent_must_be_selected_to_count_progress (__main__.DynamicCohortTests.test_known_better_parent_must_be_selected_to_count_progress) ... ok
+test_later_qualification_does_not_relabel_earlier_parent_binding (__main__.DynamicCohortTests.test_later_qualification_does_not_relabel_earlier_parent_binding) ... ok
+test_leaving_and_rejoining_preserves_task_generation_and_cost (__main__.DynamicCohortTests.test_leaving_and_rejoining_preserves_task_generation_and_cost) ... ok
+test_new_member_must_meet_already_pending_delivery_deadline (__main__.DynamicCohortTests.test_new_member_must_meet_already_pending_delivery_deadline) ... ok
+test_original_reference_does_not_meet_later_entry_floor (__main__.DynamicCohortTests.test_original_reference_does_not_meet_later_entry_floor) ... ok
+test_ready_credit_partition_is_exact_for_overlap_and_startup (__main__.DynamicCohortTests.test_ready_credit_partition_is_exact_for_overlap_and_startup) ... ok
+test_timely_delivery_cannot_be_inferred_from_a_later_view (__main__.DynamicCohortTests.test_timely_delivery_cannot_be_inferred_from_a_later_view) ... ok
+test_view_retention_loss_is_not_hidden_by_reclassification (__main__.DynamicCohortTests.test_view_retention_loss_is_not_hidden_by_reclassification) ... ok
+test_zero_participation_produces_no_growth_bound (__main__.DynamicCohortTests.test_zero_participation_produces_no_growth_bound) ... ok
+test_cli_native_qualification_request_fails_even_after_finite_pass (__main__.RefusalAndUnknownTests.test_cli_native_qualification_request_fails_even_after_finite_pass) ... ok
+test_every_numeric_native_claim_stays_unknown_on_good_trace (__main__.RefusalAndUnknownTests.test_every_numeric_native_claim_stays_unknown_on_good_trace) ... ok
+test_exceeded_weight_is_not_counted_as_paced_progress (__main__.RefusalAndUnknownTests.test_exceeded_weight_is_not_counted_as_paced_progress) ... ok
+test_generations_and_task_identity_never_rewind (__main__.RefusalAndUnknownTests.test_generations_and_task_identity_never_rewind) ... ok
+test_json_duplicates_and_nonfinite_values_refused (__main__.RefusalAndUnknownTests.test_json_duplicates_and_nonfinite_values_refused) ... ok
+test_numbers_cannot_be_booleans_or_floats (__main__.RefusalAndUnknownTests.test_numbers_cannot_be_booleans_or_floats) ... ok
+test_oversized_json_integer_is_a_structured_refusal (__main__.RefusalAndUnknownTests.test_oversized_json_integer_is_a_structured_refusal) ... ok
+test_unknown_bounds_are_not_zero_or_defaulted (__main__.RefusalAndUnknownTests.test_unknown_bounds_are_not_zero_or_defaulted) ... ok
+test_unknown_clock_completeness_or_provider_never_qualifies (__main__.RefusalAndUnknownTests.test_unknown_clock_completeness_or_provider_never_qualifies) ... ok
+test_unknown_cost_does_not_get_replaced_by_zero (__main__.RefusalAndUnknownTests.test_unknown_cost_does_not_get_replaced_by_zero) ... ok
+test_unknown_full_view_cannot_enter (__main__.RefusalAndUnknownTests.test_unknown_full_view_cannot_enter) ... ok
+test_unknown_unqualified_view_and_unfinished_parent_are_retained (__main__.RefusalAndUnknownTests.test_unknown_unqualified_view_and_unfinished_parent_are_retained) ... ok
+test_unsigned_extra_qualification_field_is_not_accepted (__main__.RefusalAndUnknownTests.test_unsigned_extra_qualification_field_is_not_accepted) ... ok
+
+----------------------------------------------------------------------
+Ran 28 tests in 0.064s
+
+OK

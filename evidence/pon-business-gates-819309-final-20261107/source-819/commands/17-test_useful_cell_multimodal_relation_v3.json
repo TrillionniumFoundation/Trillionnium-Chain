@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "formal/pon-nakamoto-v1/test_useful_cell_multimodal_relation_v3.py",
+    "-v"
+  ],
+  "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/work-final-business-20261107",
+  "end_utc": "2026-11-07T18:39:14.675558+00:00",
+  "exit_code": 0,
+  "log": "logs/17-test_useful_cell_multimodal_relation_v3.log",
+  "log_bytes": 4576,
+  "log_sha256": "8a9240146f201ff3115d58118fc9aa2d3bf72b3ca68d3e6390fff6b3159b99ae",
+  "name": "17-test_useful_cell_multimodal_relation_v3",
+  "pid": 1342555,
+  "start_utc": "2026-11-07T18:38:23.008093+00:00",
+  "supervisor_timeout_seconds": 1800,
+  "timed_out": false,
+  "wall_ns": 51667479752
+}

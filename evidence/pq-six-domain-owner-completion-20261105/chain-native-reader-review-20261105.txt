@@ -1,0 +1,74 @@
+Chain final-native reader: read-only review conclusion
+
+Reviewed reader:
+  /workspace/scratch/768fd621f7e2/evidence-prep/chain-observation-final-native.py
+  SHA256 bf2595501c478d6d6b2dd7afda5801868aef76efa04002b6b9070742f0577574
+Reviewed frozen roster:
+  /workspace/scratch/768fd621f7e2/evidence-prep/chain-observation-roster.json
+  SHA256 59e338f744de93a61b50b3bb59e0c58c8bb81bd0f9f978b6d1af1d1dd2732b1b
+Source covered by that roster:
+  commit 1d6a9f9b5e8abd9e86457f45199a4922f9376360
+  tree   4a0314e72ebc45659986d03e7ca2f96cab9399ea
+
+Conclusion: the reported projection/identity and roster-duplication gaps have
+been addressed. No remaining blocker was found within this field-binding and
+summary-counting review. This is code inspection, not execution of the reader,
+native tests, Cargo, or any observed ELF.
+
+1. Original material and receipt identity
+   The reader checks the retained receipt and log bytes against their recorded
+   SHA256 values and checks log length. It additionally binds the derived log
+   path, basename, digest and length to log_file/log_sha256/log_bytes in the
+   original receipt. Substitution of a separate log cannot preserve that link.
+   The raw receipt must be a completed known-schema command with status/exit-code
+   consistency. Derived status, exit code, argv, cwd and environment must equal
+   the original values. The source must equal original before and after and
+   carry tracked_worktree_verified=true.
+
+2. Fixed-source identity across pre/post/roster
+   Top-level commit/tree values must agree across all three inputs. The newly
+   added check also binds the pre observation's actual raw build receipt source
+   to its top-level commit/tree. Every post receipt is checked against that same
+   fixed source. This closes the pre-only identity-relabeling seam.
+
+3. Cargo target, line and execution-region binding
+   The reader replays the ANSI-stripped original log and rebuilds the complete
+   Cargo Running/test/summary projection with original line numbers and order.
+   The supplied post projection must be exactly equal. Consequently editing,
+   omitting, inserting, reordering or moving a projected test/summary across a
+   Running target boundary is rejected. The resolved logged path is also
+   compared with the post ELF path. The earlier forged-name/outcome counterexample
+   is rejected by this equality, without a native rerun.
+
+4. Fixed 37-entry roster
+   The actual roster digest equals the reader's hardcoded audited digest. The
+   reader requires 37 entries, 37 unique (target,test) identities, and exact target
+   counts of 24 lib, 2 pool_mining and 11 architecture_delivery_compare. Earlier
+   read-only Git inspection verified all 13 recorded source blobs against 1d and
+   found every named terminal function in its corresponding source blob.
+   A required name is recorded as observed_pass only for exactly one matching
+   outcome line whose text is exactly 'ok'; duplicate observations remain
+   ambiguous, and absent/ignored/failed outcomes remain distinct.
+
+5. Main harness versus nested child summaries
+   All raw summary observations are retained. For each Cargo target, the first
+   'running N tests' declaration in that target's region is kept separately.
+   The final observed summary gets a count-consistency flag comparing only
+   passed+failed+ignored+measured with N. Filtered-out counts are not added.
+   Child '1 passed; ... 1120 filtered out' summaries are not summed into the
+   primary 1121 result. Before a matching terminal main summary exists, the
+   child summary cannot satisfy that primary-declaration count flag. Status and
+   command exit code remain visible independently of count consistency.
+
+6. Artifact and qualification scope
+   Build-only executed/pass counts remain zero. Pre/post path, SHA256 and byte
+   length equality is separate from device/inode/mode/mtime/ctime equality.
+   The reader does not turn either into execution-time attestation, independent
+   deployment qualification or whole-chain quantum-security qualification;
+   all three remain explicitly false. Native outcomes must still come from
+   the final completed original commands, not from this review conclusion.
+
+Work performed: read-only source inspection, small metadata/digest reads and
+offline Git object reads. Only this scratch review note was written. No source
+repository, index, original receipt/log, executable or published private package
+was changed, and no tests/builds were run.

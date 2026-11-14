@@ -1,0 +1,104 @@
+{
+  "prior": "c5f8ac825f6706a4b432331633e10ed9d839a8d4",
+  "selected": "bc24ed14f01167233f9a53306a4d82ba77049c42",
+  "base": "eb3a02048eb219558697dffa710e41de8e471899",
+  "commit": "30ac5301e916572faa5632de8a2e280dd200b37a",
+  "tree": "8cad92a41129b576e780cd42b3582717414f12df",
+  "selected_blobs": {
+    ".github/workflows/pon-native-campaign-qualification.yml": "a11dbcd8476d149fa89aeac7979c5ddefad9108c",
+    "scripts/ci/check_collected_unit_empty_v1.py": "e21e8b05889d9264d022656e13097d512841c79c",
+    "scripts/ci/test_collected_unit_empty_v1.py": "8ed2a26a759a65625c25054286b4cc9ec0d505c2",
+    "scripts/ci/fixtures/collected-unit-empty-v1/original-b23c0ef8/.github/workflows/pon-history-epoch-v1-native.yml": "4407770349745a3e1d3cc0ad0a1fd0e63fc12ca4",
+    "scripts/ci/fixtures/collected-unit-empty-v1/original-b23c0ef8/.github/workflows/pon-native-campaign-qualification.yml": "48da7db69981dc732f13b78e3358c79d94ef12c0",
+    "scripts/ci/fixtures/collected-unit-empty-v1/original-b23c0ef8/.github/workflows/pon-pure-admission-daa-v2.yml": "02220e4c42f7752329c9c334c6276cecd604c417",
+    "scripts/ci/fixtures/collected-unit-empty-v1/original-b23c0ef8/.github/workflows/pon-pure-history-raw-joint.yml": "a08b60199f5e39312db34151c6dfad4add551248",
+    "scripts/ci/fixtures/collected-unit-empty-v1/original-b23c0ef8/manifest.json": "5ad0ef5e93b270720badc4a17bf87b485fd304d3"
+  },
+  "conflicts": [
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+  ],
+  "steps": [
+    {
+      "label": "preflight",
+      "exit": 0,
+      "seconds": 0.075,
+      "sha256": "2e0930e3e5b93d19ab63db0fe013c910ee3255283942eeab771e4db4aec002ec"
+    },
+    {
+      "label": "merge",
+      "exit": 1,
+      "seconds": 0.181,
+      "sha256": "09b397241ff8c12520ba1eb3ccef1de78db0034cc97985400118eff464da9ca7"
+    },
+    {
+      "label": "stage-resolved",
+      "exit": 0,
+      "seconds": 0.043,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "collected-original-and-current-controls",
+      "exit": 0,
+      "seconds": 2.269,
+      "sha256": "9f010bbf61bf6e933dbc9b80f5e34a3abc45e0e99f6c75e9fccdfade02012e9f"
+    },
+    {
+      "label": "source-negative",
+      "exit": 0,
+      "seconds": 2.834,
+      "sha256": "7caf4ef38422fdc6d672d509f5bb617b720767b282d509962cee1c4aef5dbf77"
+    },
+    {
+      "label": "independent-ci-command-negative",
+      "exit": 0,
+      "seconds": 0.303,
+      "sha256": "13ae8b0ab36b7875b0e73eed238b4abf96b352a870ded9bc034427f455927d64"
+    },
+    {
+      "label": "current-corpus",
+      "exit": 0,
+      "seconds": 0.707,
+      "sha256": "71aed34d9edb446af3d80e4c11b307559118597ddc10f4b6e0d8ae8f14b0096e"
+    },
+    {
+      "label": "current-ci-contract",
+      "exit": 0,
+      "seconds": 0.068,
+      "sha256": "d1490790908dab724ab473f615ff7440375869323608112fd5364b2c9d58cd4d"
+    },
+    {
+      "label": "shell",
+      "exit": 0,
+      "seconds": 0.008,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "fmt",
+      "exit": 0,
+      "seconds": 5.426,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "diff-check",
+      "exit": 0,
+      "seconds": 0.022,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "precommit-preflight",
+      "exit": 0,
+      "seconds": 0.052,
+      "sha256": "2e0930e3e5b93d19ab63db0fe013c910ee3255283942eeab771e4db4aec002ec"
+    },
+    {
+      "label": "commit",
+      "exit": 0,
+      "seconds": 0.069,
+      "sha256": "a29386604bc9dcd1528fb1815bfd1c752b06ceeb0a1fc1544f20caa4f51bdbd0"
+    }
+  ],
+  "host_provisioned": false,
+  "hosted_four_second_gate_qualified": false,
+  "remote_writes": false
+}

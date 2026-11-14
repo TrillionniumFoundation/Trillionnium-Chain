@@ -1,0 +1,48 @@
+{
+  "schema": "TRNM-W1-STAGE-MEASUREMENT1",
+  "command": [
+    "/usr/bin/env",
+    "PATH=/tmp/pure-pon-toolchain-20261027/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+    "CARGO_HOME=/tmp/pure-pon-cargo-20261027",
+    "CARGO_TARGET_DIR=/tmp/trnm-w1-r2-target",
+    "CARGO_BUILD_JOBS=1",
+    "CARGO_INCREMENTAL=0",
+    "cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "--release",
+    "--manifest-path",
+    "/tmp/w1-hardened-verifier-20261028/Cargo.toml"
+  ],
+  "cwd": "/workspace/scratch/56818e4fba76/chain-w1-next",
+  "wall_limit_seconds": 600.0,
+  "termination_grace_seconds": 5,
+  "started_unix_ns": 1793149272458729991,
+  "environment": {
+    "RAYON_NUM_THREADS": null,
+    "RUST_LOG": null,
+    "RISC0_HOME": null
+  },
+  "resource_scope": "wait4 direct child including descendants it has reaped; killed-stage CPU can be a lower bound; maxrss is largest single process, not summed peak",
+  "shared_cgroup": {
+    "cpu.max": "800000 100000",
+    "memory.max": "8589934592"
+  },
+  "finished_unix_ns": 1793149275776006871,
+  "wall_seconds": 3.3170204749985714,
+  "returncode": 0,
+  "timed_out": false,
+  "process_group_remaining_after_child_exit": false,
+  "rusage": {
+    "user_seconds": 2.039871,
+    "system_seconds": 0.271144,
+    "max_single_process_rss_bytes": 216055808,
+    "minor_faults": 62596,
+    "major_faults": 68,
+    "voluntary_context_switches": 2277,
+    "involuntary_context_switches": 450
+  },
+  "complete_proof_claim": false,
+  "note": "Stage exit 0 alone is not full proof success. Only a saved Succinct receipt checked in a fresh process against the fixed full image and journal can establish that gate."
+}

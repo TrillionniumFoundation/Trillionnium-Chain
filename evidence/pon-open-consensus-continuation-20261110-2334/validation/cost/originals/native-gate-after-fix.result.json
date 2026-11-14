@@ -1,0 +1,11 @@
+{
+  "command": [
+    "python3",
+    "scripts/ci/test_w1_factorial_native_gate.py",
+    "-v"
+  ],
+  "exit_code": 0,
+  "source_head": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+  "test_sha256": "0bd5c2e38518f2f6b0100d31a3cd22d1931d23f96bdefc2c7ddee9666dd7a0dc",
+  "workflow_sha256": "d6bfeef7f57e311fa904d6fd55fb77474e887c443d52a1ef858bd611111c49b7"
+}

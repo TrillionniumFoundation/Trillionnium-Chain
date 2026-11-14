@@ -1,0 +1,9 @@
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/chain-throughput-local-admin-20261107/work-ingress-canonical-d26/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized] target(s) in 1m 11s
+     Running tests/public_cache_modes.rs (/home/qian-qi/chain-throughput-local-admin-20261107/local-build/target/debug/deps/public_cache_modes-c6f143d911d5113a)
+
+running 1 test
+test rejection_cache_then_arithmetic_profile_is_refused ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+

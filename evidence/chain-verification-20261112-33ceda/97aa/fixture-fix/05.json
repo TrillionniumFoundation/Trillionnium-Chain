@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "git",
+    "diff",
+    "--name-only"
+  ],
+  "exit_code": 0,
+  "stdout": "config/pon/pq-cross-branch-corpus-v1.json\ntrillionnium/crates/trnm-pon-node/src/ingress/public_v3/output_reservation_tests.rs\n",
+  "stderr": ""
+}

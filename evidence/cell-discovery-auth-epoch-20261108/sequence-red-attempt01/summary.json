@@ -1,0 +1,25 @@
+{
+  "source": "phase1 exact V3 implementation plus three new sequence regression tests only",
+  "auth_sha256": "7214ea4e588a95cb0043d750123d7ad657ed7cba275ba54f1d4e62535ce7a30b",
+  "test_sha256": "d7a811f4a7d05ff8952ad5b896eecad54d9e4245893adc4499525f85fc3b3500",
+  "command": [
+    "cargo",
+    "test",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "--offline",
+    "-p",
+    "trnm-data-availability",
+    "--lib",
+    "authenticated_v3_newest_verified_",
+    "--",
+    "--test-threads=1"
+  ],
+  "exit_code": 101,
+  "elapsed_seconds": 45.73357288003899,
+  "auth_unchanged": true,
+  "tests_unchanged": true,
+  "stdout_sha256": "19f7baa735c1011bb4b9fbd463ae0ef06b0e33e030a7a8284e022455b14c5efe",
+  "stderr_sha256": "3ffa69d8dbf7cd4a419325432265ac97681b033edea7dfeeaff75e4af1a84a02"
+}

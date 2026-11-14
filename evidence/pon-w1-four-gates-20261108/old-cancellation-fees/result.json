@@ -1,0 +1,181 @@
+{
+  "cancel_fee_units": 291,
+  "cryptography_version": "41.0.7",
+  "gross_principal_refund_units": 1000,
+  "net_cancel_balance_change": 709,
+  "net_reserve_and_cancel_balance_change": -710,
+  "old_funding_readback_sha256": "fdf24c78021513e1ba544c5838009351afe2c61fdf50d02ce2a83e7ffa690d93",
+  "private_copy_sha256_before_and_after": "95b879a5fd90bff92adf59910c4b57349fbcb826260684daadef8ff7e5e00bd5",
+  "public_files": {
+    "cancel-packet.bin": {
+      "bytes": 49953,
+      "sha256": "6a6125eceb7916ccf4afb673e9abeaa54d4c66ea6a21de5b0a45956dc4805295"
+    },
+    "cancel-wire.bin": {
+      "bytes": 191,
+      "sha256": "f73e5433dc740e181426a3e50fc5f4e54d19cd9a84a1c96043257f0bfcfeb17d"
+    },
+    "devnet-v1.json": {
+      "bytes": 1964,
+      "sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4"
+    },
+    "ledger-v1.json": {
+      "bytes": 7793,
+      "sha256": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a"
+    },
+    "reserve-packet.bin": {
+      "bytes": 50001,
+      "sha256": "1307e3306eb84a1f5f90d5fb35216473c4f869d6296d749905d215f012da0b40"
+    },
+    "reserve-wire.bin": {
+      "bytes": 239,
+      "sha256": "c06aab3b33e783a75ba3a683faaa14c960d33085be8be6d50b017e7f341b8335"
+    }
+  },
+  "readback_complete": true,
+  "reserve_fee_units": 419,
+  "rows": [
+    {
+      "account_after": {
+        "balance": 9998581,
+        "nonce": 1
+      },
+      "account_before": {
+        "balance": 10000000,
+        "nonce": 0
+      },
+      "actual_net_balance_change": -1419,
+      "block": "3f3e2bead3d12278ea3e27696e65373e92c46e227132f51117b0329fb0f8ccdf",
+      "header": {
+        "account_multiproof_reverified": false,
+        "full_W1_reverified": false,
+        "height": 1,
+        "network": "df112ec87745f0dab60317b37a610793147bf1c13fae8db6bd5436c2b698dfa9",
+        "parameters": "ed04e871b388b32c155c3f8000f543e208da79d37248e56e97ff88ad515b2bd4",
+        "parent": "88e947fbcd0f40304edaf0325a57b41cb959c02c4473119b350032c91fe7b312",
+        "transaction_count": 1,
+        "witness_bytes": 208
+      },
+      "height": 1,
+      "packet_bytes": 50001,
+      "packet_sha256": "1307e3306eb84a1f5f90d5fb35216473c4f869d6296d749905d215f012da0b40",
+      "parent": "88e947fbcd0f40304edaf0325a57b41cb959c02c4473119b350032c91fe7b312",
+      "wire": {
+        "base_fee_units": 180,
+        "byte_fee_units": 1,
+        "computed_fee_units": 419,
+        "ed25519_signature_verified": true,
+        "expiry_height": 2000,
+        "fee_limit": 1000000,
+        "modified_payload_rejected": true,
+        "modified_signature_rejected": true,
+        "network": "df112ec87745f0dab60317b37a610793147bf1c13fae8db6bd5436c2b698dfa9",
+        "nonce": 1,
+        "payload_bytes": 80,
+        "principal_units": 1000,
+        "provider": "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+        "sender": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+        "signing_digest": "312a081e53c2336828fd40ba7dafbd186f5df52baa5b1d4f0837befd187ea68b",
+        "tag": 2,
+        "task": "93fdb42f44108cd1125e755dbbb1818a23c404ec85f198ddac7bdd89b43beb1e",
+        "task_deadline_height": 20,
+        "transaction_id": "f411ee7a976edb96c03ad367cb7bbd5e3ce508d2d62eb3f2798fd59a45cd2d50",
+        "wire_bytes": 239,
+        "wire_sha256": "c06aab3b33e783a75ba3a683faaa14c960d33085be8be6d50b017e7f341b8335"
+      }
+    },
+    {
+      "account_after": {
+        "balance": 9999290,
+        "nonce": 2
+      },
+      "account_before": {
+        "balance": 9998581,
+        "nonce": 1
+      },
+      "actual_net_balance_change": 709,
+      "block": "9106aa00fd98086ceba112c228c487398311b407bf81dd886378c2b0587f06fd",
+      "header": {
+        "account_multiproof_reverified": false,
+        "full_W1_reverified": false,
+        "height": 2,
+        "network": "df112ec87745f0dab60317b37a610793147bf1c13fae8db6bd5436c2b698dfa9",
+        "parameters": "ed04e871b388b32c155c3f8000f543e208da79d37248e56e97ff88ad515b2bd4",
+        "parent": "3f3e2bead3d12278ea3e27696e65373e92c46e227132f51117b0329fb0f8ccdf",
+        "transaction_count": 1,
+        "witness_bytes": 208
+      },
+      "height": 2,
+      "packet_bytes": 49953,
+      "packet_sha256": "6a6125eceb7916ccf4afb673e9abeaa54d4c66ea6a21de5b0a45956dc4805295",
+      "parent": "3f3e2bead3d12278ea3e27696e65373e92c46e227132f51117b0329fb0f8ccdf",
+      "wire": {
+        "base_fee_units": 100,
+        "byte_fee_units": 1,
+        "computed_fee_units": 291,
+        "ed25519_signature_verified": true,
+        "expiry_height": 2000,
+        "fee_limit": 1000000,
+        "modified_payload_rejected": true,
+        "modified_signature_rejected": true,
+        "network": "df112ec87745f0dab60317b37a610793147bf1c13fae8db6bd5436c2b698dfa9",
+        "nonce": 2,
+        "payload_bytes": 32,
+        "sender": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+        "signing_digest": "ac0ad09da07b0979da8208e52d200cadeeb2fd50a349dcc0b5db9a4d4e058dcc",
+        "tag": 3,
+        "task": "93fdb42f44108cd1125e755dbbb1818a23c404ec85f198ddac7bdd89b43beb1e",
+        "transaction_id": "dba9793565d7ae83790eaba3abb255fad2643d9b2d5696196a426ae289c7d83f",
+        "wire_bytes": 191,
+        "wire_sha256": "f73e5433dc740e181426a3e50fc5f4e54d19cd9a84a1c96043257f0bfcfeb17d"
+      }
+    }
+  ],
+  "schema": "TRNM-W1-OWNER-CANCEL-C1B-INDEPENDENT-FEE-READBACK1",
+  "scope": {
+    "M12_resource_release_authorized": false,
+    "fee_fields_decoded_independently_of_balance_residuals": true,
+    "fee_policy_from_exact_C1b_source_configuration": true,
+    "full_W1_or_account_multiproof_reverified": false,
+    "native_executor_reexecuted": false,
+    "new_node_calls": 0,
+    "new_proof_generations": 0,
+    "new_transactions": 0,
+    "original_database_connections_opened": 0,
+    "private_copy_read_only": true,
+    "production_qualified": false,
+    "provider_payment_observed": false
+  },
+  "source_commit": "0f18f93f2d35b62c6ca6d63faf4f336d55cbf4bf",
+  "source_tree": "94334bb6b52cfd13040059a5e71f47d8cc9603f2",
+  "sources": {
+    "config/pon/devnet-v1.json": {
+      "bytes": 1964,
+      "sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4"
+    },
+    "config/pon/ledger-v1.json": {
+      "bytes": 7793,
+      "sha256": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a"
+    },
+    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs": {
+      "bytes": 149789,
+      "sha256": "87d101a83be745f851c38fedf4e6f4366ec2b7c6d037403a9641eb35c343dd3c"
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests.rs": {
+      "bytes": 21080,
+      "sha256": "3c4e3788fab151c15ecf9179c40289a7cb1c2e561b08ae57ee41d2a3a2bb3c37"
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/growth/packet.rs": {
+      "bytes": 5348,
+      "sha256": "7883d1b6d2e5399b1f307f4e20bf524766e655970c94445e6d990ad5578d421d"
+    },
+    "trillionnium/crates/trnm-protocol/src/pon_growth.rs": {
+      "bytes": 3760,
+      "sha256": "37b8c818e6dd7341b25cd3c1e66a8b5fe0aecca2c60201272a9a2551db147d5f"
+    },
+    "trillionnium/crates/trnm-protocol/src/pon_wire.rs": {
+      "bytes": 32354,
+      "sha256": "be816ee5b209098fa790d6e190d1d9c659634ac22d58b95c83dc8b49899c70cd"
+    }
+  }
+}

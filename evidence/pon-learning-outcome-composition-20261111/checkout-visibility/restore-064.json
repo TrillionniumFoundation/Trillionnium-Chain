@@ -1,0 +1,24 @@
+{
+  "actual_oid": "1ebb25f2f4ce7bef053e50e2b3d8d731b8df3a08",
+  "bytes": 1835912,
+  "command": [
+    "/usr/bin/git",
+    "--no-replace-objects",
+    "cat-file",
+    "blob",
+    "1ebb25f2f4ce7bef053e50e2b3d8d731b8df3a08"
+  ],
+  "entry_created": true,
+  "existing_path_replaced": false,
+  "exit_code": 0,
+  "expected_bytes": 1835912,
+  "expected_oid": "1ebb25f2f4ce7bef053e50e2b3d8d731b8df3a08",
+  "finished_at": "2026-11-12T01:41:56.054752+00:00",
+  "path": "evidence/pon-runtime-fixture-closure-20261103/hosted-current/c5dd/f0-selected-original-records.json.gz",
+  "path_base64": "ZXZpZGVuY2UvcG9uLXJ1bnRpbWUtZml4dHVyZS1jbG9zdXJlLTIwMjYxMTAzL2hvc3RlZC1jdXJyZW50L2M1ZGQvZjAtc2VsZWN0ZWQtb3JpZ2luYWwtcmVjb3Jkcy5qc29uLmd6",
+  "result": "RESTORED_EXACT_HEAD_BLOB",
+  "sha256": "9d8f0cb98c8b66fee9f60277c011bd69f4ce06af9754035b43d46ef22adcefd9",
+  "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81",
+  "started_at": "2026-11-12T01:41:55.999207+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

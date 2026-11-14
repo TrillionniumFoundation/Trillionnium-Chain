@@ -1,0 +1,66 @@
+{
+  "archive_bytes": 4993378,
+  "archive_name": "work-time-recovery.tar.gz",
+  "archive_sha256": "6ca719903024582514448e447b84a676919d475eb21c8cd9030aed0eb09108ea",
+  "maximum_part_bytes": 921600,
+  "parts": [
+    {
+      "bytes": 921600,
+      "index": 0,
+      "local_path": "/workspace/scratch/7f73fe002713/daa-work-time-recovery-transfer-v1/work-time-recovery-transfer-v1.part00",
+      "name": "work-time-recovery-transfer-v1.part00",
+      "offset": 0,
+      "remote_path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery-transfer-v1.part00",
+      "sha256": "b982fd3781ed6d938da80bc8abb72c1850c7e838a55605719762f03fea903b57"
+    },
+    {
+      "bytes": 921600,
+      "index": 1,
+      "local_path": "/workspace/scratch/7f73fe002713/daa-work-time-recovery-transfer-v1/work-time-recovery-transfer-v1.part01",
+      "name": "work-time-recovery-transfer-v1.part01",
+      "offset": 921600,
+      "remote_path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery-transfer-v1.part01",
+      "sha256": "356c1e79108e125f80eecb144ab486a80159348a6921eb3c67dc2c3f4956f2f1"
+    },
+    {
+      "bytes": 921600,
+      "index": 2,
+      "local_path": "/workspace/scratch/7f73fe002713/daa-work-time-recovery-transfer-v1/work-time-recovery-transfer-v1.part02",
+      "name": "work-time-recovery-transfer-v1.part02",
+      "offset": 1843200,
+      "remote_path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery-transfer-v1.part02",
+      "sha256": "70b2428c12362a99751ad1ae80253444eef3fa49c74cc7b9a973bc73fa4525b5"
+    },
+    {
+      "bytes": 921600,
+      "index": 3,
+      "local_path": "/workspace/scratch/7f73fe002713/daa-work-time-recovery-transfer-v1/work-time-recovery-transfer-v1.part03",
+      "name": "work-time-recovery-transfer-v1.part03",
+      "offset": 2764800,
+      "remote_path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery-transfer-v1.part03",
+      "sha256": "f7911da5ae6d8e82a797034f3ea4e52022dfd69db881d03cc64624b966c19555"
+    },
+    {
+      "bytes": 921600,
+      "index": 4,
+      "local_path": "/workspace/scratch/7f73fe002713/daa-work-time-recovery-transfer-v1/work-time-recovery-transfer-v1.part04",
+      "name": "work-time-recovery-transfer-v1.part04",
+      "offset": 3686400,
+      "remote_path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery-transfer-v1.part04",
+      "sha256": "4a841131a8d13c3c7553116db1f98014612f326845e22daf57deb416c773ea99"
+    },
+    {
+      "bytes": 385378,
+      "index": 5,
+      "local_path": "/workspace/scratch/7f73fe002713/daa-work-time-recovery-transfer-v1/work-time-recovery-transfer-v1.part05",
+      "name": "work-time-recovery-transfer-v1.part05",
+      "offset": 4608000,
+      "remote_path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery-transfer-v1.part05",
+      "sha256": "63671f8ebb7b8eb5776a97e43bbb7cf7e9ab3ba826325885a3291dcaf2b58b40"
+    }
+  ],
+  "publication_policy": "create-only; on uncertain acknowledgement inspect the same path size and SHA256 before any retry",
+  "remote_archive_path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery.tar.gz",
+  "schema": "pon-work-time-recovery-transfer-v1",
+  "source_path": "/workspace/scratch/7f73fe002713/daa-evidence-stage/python/work-time-recovery.tar.gz"
+}

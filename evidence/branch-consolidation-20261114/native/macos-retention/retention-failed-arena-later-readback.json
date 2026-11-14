@@ -1,0 +1,82 @@
+[
+  {
+    "receipt": "retention-public-api-probe-receipt.json",
+    "path": "/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/chain-retention-public-api-probe-20261114-a1/retention-v1-0/payload.arena",
+    "original_allocated": 7700480,
+    "current_allocated": 7700480,
+    "current_length": 8388608,
+    "mode": "0o100600",
+    "flags": 0,
+    "inode": 604597224
+  },
+  {
+    "receipt": "retention-public-api-probe-receipt.json",
+    "path": "/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/chain-retention-public-api-probe-20261114-a1/retention-v1-7/payload.arena",
+    "original_allocated": 7684096,
+    "current_allocated": 7684096,
+    "current_length": 8388608,
+    "mode": "0o100600",
+    "flags": 0,
+    "inode": 604597238
+  },
+  {
+    "receipt": "retention-public-api-probe-receipt.json",
+    "path": "/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/chain-retention-public-api-probe-20261114-a1/retention-v1-8/payload.arena",
+    "original_allocated": 7684096,
+    "current_allocated": 7684096,
+    "current_length": 8388608,
+    "mode": "0o100600",
+    "flags": 0,
+    "inode": 604597240
+  },
+  {
+    "receipt": "retention-public-api-probe-receipt.json",
+    "path": "/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/chain-retention-public-api-probe-20261114-a1/retention-v1-11/payload.arena",
+    "original_allocated": 7651328,
+    "current_allocated": 7651328,
+    "current_length": 8388608,
+    "mode": "0o100600",
+    "flags": 0,
+    "inode": 604597246
+  },
+  {
+    "receipt": "retention-public-api-probe-receipt.json",
+    "path": "/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/chain-retention-public-api-probe-20261114-a1/version-retention-v3-3/objects/payload.arena",
+    "original_allocated": 7634944,
+    "current_allocated": 7634944,
+    "current_length": 8388608,
+    "mode": "0o100600",
+    "flags": 0,
+    "inode": 604597258
+  },
+  {
+    "receipt": "retention-public-api-probe-receipt.json",
+    "path": "/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/chain-retention-public-api-probe-20261114-a1/version-retention-v3-8/objects/payload.arena",
+    "original_allocated": 7618560,
+    "current_allocated": 7618560,
+    "current_length": 8388608,
+    "mode": "0o100600",
+    "flags": 0,
+    "inode": 604597273
+  },
+  {
+    "receipt": "retention-public-api-probe-receipt.json",
+    "path": "/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/chain-retention-public-api-probe-20261114-a1/version-retention-v3-9/objects/payload.arena",
+    "original_allocated": 7618560,
+    "current_allocated": 7618560,
+    "current_length": 8388608,
+    "mode": "0o100600",
+    "flags": 0,
+    "inode": 604597276
+  },
+  {
+    "receipt": "retention-public-api-canonical-probe.json",
+    "path": "/private/var/folders/4b/3k3pz4g52rqf29hjr083nzd00000gn/T/chain-retention-public-api-canonical-probe-20261114-a1/retention-v1-2/payload.arena",
+    "original_allocated": 7602176,
+    "current_allocated": 7602176,
+    "current_length": 8388608,
+    "mode": "0o100600",
+    "flags": 0,
+    "inode": 604697093
+  }
+]

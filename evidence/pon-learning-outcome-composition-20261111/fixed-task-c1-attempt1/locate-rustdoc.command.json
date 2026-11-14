@@ -1,0 +1,28 @@
+{
+  "command": [
+    "rustup",
+    "which",
+    "--toolchain",
+    "1.95.0",
+    "rustdoc"
+  ],
+  "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-publish",
+  "elapsed_seconds": 0.016661,
+  "exact_test_required": false,
+  "exactly_one_test_passed": null,
+  "execution_error": null,
+  "exit_code": 0,
+  "finished_utc": "2026-11-12T00:22:06.674440+00:00",
+  "interrupted": false,
+  "label": "locate-rustdoc",
+  "observation_accepted": true,
+  "source_report_sha256": null,
+  "sqlite_unqualified_diagnostic": false,
+  "started_utc": "2026-11-12T00:22:06.657782+00:00",
+  "stderr": "locate-rustdoc.stderr",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout": "locate-rustdoc.stdout",
+  "stdout_sha256": "357583c3bca396e13148de1905305ed9bf5365aed4e489f05b49781884fb2d21",
+  "test_harness_counts": [],
+  "timed_out": false
+}

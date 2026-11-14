@@ -1,0 +1,5 @@
+{
+  "job_id": "1a1b8860321-12894-fea",
+  "result": "FAIL",
+  "reason": "Static dependency analyzer treated the config historical source_archive commit/tree dictionary as a path; repository code and validators unchanged."
+}

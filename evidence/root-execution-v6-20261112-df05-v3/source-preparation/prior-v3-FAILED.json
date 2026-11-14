@@ -1,0 +1,8 @@
+{
+  "error": "insufficient retained space for full source materialization",
+  "error_type": "RuntimeError",
+  "no_success_inferred": true,
+  "operation_key": "chain-root-owned-runner-source-prep-df05-v3",
+  "stage": "create-isolated-worktree",
+  "traceback": "Traceback (most recent call last):\n  File \"<string>\", line 364, in <module>\n  File \"<string>\", line 259, in main\n  File \"<string>\", line 59, in need\nRuntimeError: insufficient retained space for full source materialization\n"
+}

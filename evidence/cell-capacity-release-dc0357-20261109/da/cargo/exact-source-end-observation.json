@@ -1,0 +1,17 @@
+{
+  "command": [
+    "/usr/bin/python3",
+    "scripts/ci/verify_ci_source.py",
+    "--kind",
+    "head",
+    "--expected-head",
+    "6ea3bf3fe13d66333bba3a8c7b97e14b4319b39f"
+  ],
+  "completed_at_utc": "2026-11-09T15:06:21.065001+00:00",
+  "elapsed_seconds": 4.448825191007927,
+  "exit_code": 0,
+  "failure": null,
+  "log_sha256": "823721f3c5ace4b57d6dd33d20f50ba1a7c88070db157e1d820e488578bb3166",
+  "name": "exact-source-end",
+  "started_at_utc": "2026-11-09T15:06:16.616176+00:00"
+}

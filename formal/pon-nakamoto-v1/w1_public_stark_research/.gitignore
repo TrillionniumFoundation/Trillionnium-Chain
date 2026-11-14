@@ -1,0 +1,7 @@
+/target/
+__pycache__/
+*.pyc
+# Mutation inputs are deterministic copies of the retained positive artifacts.
+# Keep their SHA/size manifest, commands, logs and observed outcomes in Git.
+/results/*/verification-campaign/*/
+/results/*/late-query-campaign*/*/

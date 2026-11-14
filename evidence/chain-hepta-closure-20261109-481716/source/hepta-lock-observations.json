@@ -1,0 +1,16 @@
+[
+  {
+    "path": "codex-rs/Cargo.lock",
+    "bytes": 421418,
+    "blob": "46b1be5a5534631bf3151fbf1b3b1884451a8df9",
+    "sha256": "48b55c7ff5c23516fd0aeedca7c10a6e7902aeb5dc49fa4cef80971e1ae57d3f",
+    "source_commit": "71738345326b98d88b738250d2b84ecbcb466eb8"
+  },
+  {
+    "path": "MODULE.bazel.lock",
+    "bytes": 1786971,
+    "blob": "34a567e6140eadd1a422b6b3dca536965069bd47",
+    "sha256": "2be801e80e41fc993798e133a168c8202c73ed8c8e4e06f419779e317f7c0679",
+    "source_commit": "71738345326b98d88b738250d2b84ecbcb466eb8"
+  }
+]

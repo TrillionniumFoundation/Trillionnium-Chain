@@ -1,0 +1,359 @@
+{
+  "checks": {
+    "affine_scenarios": 32,
+    "cli_rejections": 10,
+    "fractional_mass_evaluations": 1152,
+    "large_exact_boundary_cases": 1,
+    "missing_domain_cases": 3,
+    "numeric_or_schema_rejections": 65,
+    "query_domain_boundary_checks": 6,
+    "single_unknown_parameter_cases": 13,
+    "vertex_evaluations": 128,
+    "zero_times_unknown_cases": 7
+  },
+  "files_unchanged": true,
+  "findings": [],
+  "largest_exact_result_bits": {
+    "denominator_bits": 4095,
+    "numerator_bits": 5128
+  },
+  "mathematical_argument": "For a_fs,a_vc>=0 and w>=0 with sum(w)<=t, a_fs*w_fs+a_vc*w_vc <= max(a_fs,a_vc)*t. Allocating all t to an attaining coefficient reaches equality; the zero coefficient of w_m and ties introduce no missing vertex.",
+  "not_reviewed": [
+    "paper theorem/formula derivation",
+    "March positional interface erratum",
+    "actual P3 or RISC Zero QROM instantiation",
+    "lifetime/implementation hypotheses"
+  ],
+  "observations": [
+    "Every single missing numeric parameter kept the aggregate unknown.",
+    "A missing query domain kept conditional/target conclusions unknown even when arithmetic was known.",
+    "Integer strings and JSON integers normalized to identical exact values; floats and booleans were refused.",
+    "The reported mass assignment was feasible and attained the independent component-expression maximum.",
+    "This is a bounded implementation review, not a security certificate or independent theorem proof."
+  ],
+  "prior_harness_observation": {
+    "classification": "invalid_review_fixture_not_a_BCS_defect",
+    "log": "/workspace/scratch/edf7e3a8d961/risc0_audit/bcs-independent-review-run-01.log",
+    "reason": "The first review harness used q_v=0,k=1 after the concurrent q_v>=k guard was added. The adapter correctly rejected it; supported-domain fixtures were then used."
+  },
+  "reproducer": {
+    "command": "python -B /workspace/scratch/edf7e3a8d961/risc0_audit/bcs_review_reproducer.py",
+    "path": "/workspace/scratch/edf7e3a8d961/risc0_audit/bcs_review_reproducer.py",
+    "sha256": "25cd9847eee29e44aa7a177b6908397df3b948f5e03ef9bd860823d0c98d0d39"
+  },
+  "result": "NO_SUBSTANTIVE_IMPLEMENTATION_DEFECT_FOUND_IN_REVIEWED_SCOPE",
+  "reviewed_files": [
+    {
+      "bytes": 11977,
+      "path": "scripts/w1_qrom_bcs_budget.py",
+      "sha256": "391d8e0eaf9c5417bd79bf2c222bdd2d2bb3ca2df1da8bad8e623a524b63600a"
+    },
+    {
+      "bytes": 21292,
+      "path": "scripts/w1_qrom_composition_budget.py",
+      "sha256": "4d3d6a3b8efcac266cfaf7fb2204a4f3b0482ea0ead2481b72617556f0771427"
+    },
+    {
+      "bytes": 7343,
+      "path": "scripts/ci/test_w1_qrom_bcs_budget.py",
+      "sha256": "577108e3d064b6a6fdca47e8cf4771da23d1b6dcb3514a39659f8b9ac050bbd0"
+    }
+  ],
+  "scenarios": [
+    {
+      "maximum_matches": true,
+      "name": "example",
+      "optimizer": {
+        "w_fs": "5",
+        "w_m": "0",
+        "w_vc": "0"
+      }
+    },
+    {
+      "maximum_matches": true,
+      "name": "vc_dominant",
+      "optimizer": {
+        "w_fs": "0",
+        "w_m": "0",
+        "w_vc": "5"
+      }
+    },
+    {
+      "maximum_matches": true,
+      "name": "zero_t",
+      "optimizer": {
+        "w_fs": "0",
+        "w_m": "0",
+        "w_vc": "0"
+      }
+    },
+    {
+      "maximum_matches": true,
+      "name": "unit_vector_log_zero",
+      "optimizer": {
+        "w_fs": "5",
+        "w_m": "0",
+        "w_vc": "0"
+      }
+    },
+    {
+      "maximum_matches": true,
+      "name": "unhelpful_large_error",
+      "optimizer": {
+        "w_fs": "0",
+        "w_m": "0",
+        "w_vc": "5"
+      }
+    },
+    {
+      "maximum_matches": true,
+      "name": "large_exp",
+      "optimizer": {
+        "w_fs": "5",
+        "w_m": "0",
+        "w_vc": "0"
+      }
+    },
+    {
+      "maximum_matches": true,
+      "name": "u_drives_vc_domain",
+      "optimizer": {
+        "w_fs": "50",
+        "w_m": "0",
+        "w_vc": "0"
+      }
+    },
+    {
+      "maximum_matches": true,
+      "name": "exact_coefficient_tie",
+      "optimizer": {
+        "w_fs": "5",
+        "w_m": "0",
+        "w_vc": "0"
+      }
+    },
+    {
+      "maximum_matches": true,
+      "name": "deterministic_0",
+      "optimizer": {
+        "w_fs": "4",
+        "w_m": "0",
+        "w_vc": "0"
+      }
+    },
+    {
+      "maximum_matches": true,
+      "name": "deterministic_1",
+      "optimizer": {
+        "w_fs": "0",
+        "w_m": "0",
+        "w_vc": "12"
+      }
+    },
+    {
+      "maximum_matches": true,
+      "name": "deterministic_2",
+      "optimizer": {
+        "w_fs": "0",
+        "w_m": "0",
+        "w_vc": "0"
+      }
+    },
+    {
+      "maximum_matches": true,
+      "name": "deterministic_3",
+      "optimizer": {
+        "w_fs": "0",
+        "w_m": "0",
+        "w_vc": "3"
+      }
+    },
+    {
+      "maximum_matches": true,
+      "name": "deterministic_4",
+      "optimizer": {
+        "w_fs": "12",
+        "w_m": "0",
+        "w_vc": "0"
+      }
+    },
+    {
+      "maximum_matches": true,
+      "name": "deterministic_5",
+      "optimizer": {
+        "w_fs": "0",
+        "w_m": "0",
+        "w_vc": "0"
+      }
+    },
+    {
+      "maximum_matches": true,
+      "name": "deterministic_6",
+      "optimizer": {
+        "w_fs": "9",
+        "w_m": "0",
+        "w_vc": "0"
+      }
+    },
+    {
+      "maximum_matches": true,
+      "name": "deterministic_7",
+      "optimizer": {
+        "w_fs": "0",
+        "w_m": "0",
+        "w_vc": "6"
+      }
+    },
+    {
+      "maximum_matches": true,
+      "name": "deterministic_8",
+      "optimizer": {
+        "w_fs": "0",
+        "w_m": "0",
+        "w_vc": "11"
+      }
+    },
+    {
+      "maximum_matches": true,
+      "name": "deterministic_9",
+      "optimizer": {
+        "w_fs": "13",
+        "w_m": "0",
+        "w_vc": "0"
+      }
+    },
+    {
+      "maximum_matches": true,
+      "name": "deterministic_10",
+      "optimizer": {
+        "w_fs": "0",
+        "w_m": "0",
+        "w_vc": "0"
+      }
+    },
+    {
+      "maximum_matches": true,
+      "name": "deterministic_11",
+      "optimizer": {
+        "w_fs": "3",
+        "w_m": "0",
+        "w_vc": "0"
+      }
+    },
+    {
+      "maximum_matches": true,
+      "name": "deterministic_12",
+      "optimizer": {
+        "w_fs": "0",
+        "w_m": "0",
+        "w_vc": "5"
+      }
+    },
+    {
+      "maximum_matches": true,
+      "name": "deterministic_13",
+      "optimizer": {
+        "w_fs": "0",
+        "w_m": "0",
+        "w_vc": "16"
+      }
+    },
+    {
+      "maximum_matches": true,
+      "name": "deterministic_14",
+      "optimizer": {
+        "w_fs": "0",
+        "w_m": "0",
+        "w_vc": "14"
+      }
+    },
+    {
+      "maximum_matches": true,
+      "name": "deterministic_15",
+      "optimizer": {
+        "w_fs": "3",
+        "w_m": "0",
+        "w_vc": "0"
+      }
+    },
+    {
+      "maximum_matches": true,
+      "name": "deterministic_16",
+      "optimizer": {
+        "w_fs": "0",
+        "w_m": "0",
+        "w_vc": "4"
+      }
+    },
+    {
+      "maximum_matches": true,
+      "name": "deterministic_17",
+      "optimizer": {
+        "w_fs": "18",
+        "w_m": "0",
+        "w_vc": "0"
+      }
+    },
+    {
+      "maximum_matches": true,
+      "name": "deterministic_18",
+      "optimizer": {
+        "w_fs": "5",
+        "w_m": "0",
+        "w_vc": "0"
+      }
+    },
+    {
+      "maximum_matches": true,
+      "name": "deterministic_19",
+      "optimizer": {
+        "w_fs": "6",
+        "w_m": "0",
+        "w_vc": "0"
+      }
+    },
+    {
+      "maximum_matches": true,
+      "name": "deterministic_20",
+      "optimizer": {
+        "w_fs": "13",
+        "w_m": "0",
+        "w_vc": "0"
+      }
+    },
+    {
+      "maximum_matches": true,
+      "name": "deterministic_21",
+      "optimizer": {
+        "w_fs": "8",
+        "w_m": "0",
+        "w_vc": "0"
+      }
+    },
+    {
+      "maximum_matches": true,
+      "name": "deterministic_22",
+      "optimizer": {
+        "w_fs": "10",
+        "w_m": "0",
+        "w_vc": "0"
+      }
+    },
+    {
+      "maximum_matches": true,
+      "name": "deterministic_23",
+      "optimizer": {
+        "w_fs": "17",
+        "w_m": "0",
+        "w_vc": "0"
+      }
+    }
+  ],
+  "schema": "TRNM-W1-BCS-INDEPENDENT-IMPLEMENTATION-REVIEW1",
+  "scope": [
+    "exact numeric parsing",
+    "unknown propagation including zero factors",
+    "declared enlarged-query domain boundaries",
+    "affine maximization over the real simplex"
+  ]
+}

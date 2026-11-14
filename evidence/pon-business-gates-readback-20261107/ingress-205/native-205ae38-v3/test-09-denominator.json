@@ -1,0 +1,16 @@
+{
+  "name": "test-09-denominator",
+  "argv": [
+    "python3",
+    "scripts/ci/check_required_native_test.py",
+    "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-09.log",
+    "--test",
+    "ingress::public_v3::work_rejection::tests::default_paid_tcp_repeated_refusal_is_charged_and_valid_packet_still_replays"
+  ],
+  "started_unix_ns": 1794068930630004844,
+  "ended_unix_ns": 1794068930683854155,
+  "exit_code": 0,
+  "log": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-09-denominator.log",
+  "log_bytes": 211,
+  "log_sha256": "a10baeb009f711187f3caf2b5c45731a81c6dd6aac8e337a602cd545d34208b6"
+}

@@ -1,0 +1,9 @@
+{
+  "schema": "native-liveness-final-cargo-closure-v1",
+  "comparison_base": "0647ba9e0a928e772946a2f055a2edfbe3fd2870",
+  "candidate": "0ba09db0cf1c684013a896dd83f29c327f58521e",
+  "manifest_and_lock_paths": 62,
+  "changed": [],
+  "same_locked_graph_inputs": true,
+  "runtime_execution": false
+}

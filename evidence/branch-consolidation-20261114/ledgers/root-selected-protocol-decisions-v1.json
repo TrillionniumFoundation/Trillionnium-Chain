@@ -1,0 +1,431 @@
+{
+  "schema": "chain-consolidation-explicit-protocol-selections-v1",
+  "created_utc": "2026-11-14T01:43:26.664375+00:00",
+  "selected_source": "11bdc4cce16fc7d550d361f5cc863b061204f61b",
+  "production_activation": false,
+  "native_tests_executed_by_this_static_review": false,
+  "archival_ancestry_is_semantic_equivalence": false,
+  "scope_note": "These are conflict and ownership selections for consolidation, not a claim that every alternative source line was formally verified or that archived capabilities are present in the active tree.",
+  "protocol_families": [
+    {
+      "family": "PurePoN V2 and transparent certificate research",
+      "tips": [
+        "d08ff108d90324f103a0eff39b213a156d4d0cfc"
+      ],
+      "selected_contract": "Protected public V3 r19 accounting, with separately reviewed r20 caller-cap domain revision; native complete PNW1 replay remains the work acceptance relation.",
+      "not_selected": [
+        "PurePoN zero-search resource profile and its cross-listener admission FIFO",
+        "PWAI0001 general transparent certificate verifier and RISC0 backend dependency graph"
+      ],
+      "reason": "PureV2 requires zero-search policy, a new signed resource profile, CPU-domain admission state and new client selection. These differ from the retained protected paid-offer contract and cannot be spliced into its identifiers. PWAI0001 authenticates a different SDK-dependent research computation and returns a certificate observation, not VerifiedWork; its fixed image/control roots and backend assumptions are not native PNW1 acceptance or current security qualification. Retain each exact experimental namespace in archived Git history without describing it as absorbed or current-tested.",
+      "independent_component_port": {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/low_rank_prefix.rs",
+        "source_blob": "c359642f95dc5f2fa6981fd52c775785d223effa",
+        "status": "reviewed_for_exact_port",
+        "scope": "Rank-at-most-eight recognition/reconstruction, scalar and paired exact reduction, full challenge-specific cumulative transcript; unsupported inputs return None; original four controls retained."
+      },
+      "evidence": [
+        {
+          "path": "/private/tmp/chain-consolidation-20261114-root/protocol-selection-review-v1/pure/manifest.json",
+          "sha256": "02418aafca59c11a7d02a3b79de69afa761e958d6645f0af1ef8c3e5e82fecf8"
+        }
+      ],
+      "current_sources": [
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+          "git_blob": "464492851bf7098d3777ef69165263a9a3246754",
+          "bytes": 418686,
+          "sha256": "e99582448552da03300e7079e898d7adbbf252f63d86573c6f33c1081f7605f3"
+        },
+        {
+          "path": "trillionnium/crates/trnm-crypto-primitives/Cargo.toml",
+          "git_blob": "6e4cb1a2b5acf68497ce58b97e23619a279b333c",
+          "bytes": 924,
+          "sha256": "ab2554b1c8ec1010735fa55ed1b16d45376f4936885dc3cc6f0121917250256d"
+        }
+      ]
+    },
+    {
+      "family": "HistoryEffectV6 startup and irreversible journal alternative",
+      "tips": [
+        "a1edc667930da4011032021a4011b5b4f6b9acf0"
+      ],
+      "selected_contract": "Original Node M06/M12 owner, explicit existing recovery/startup owners, current journal and revocation fences.",
+      "not_selected": [
+        "HistoryEffectV6 predebit/effect-marker journal namespace",
+        "StartupScope/StartupMaterialSeal tied to that new owner",
+        "pure_history_raw alternate service path"
+      ],
+      "reason": "This alternative introduces its own persisted lifecycle, trusted external-anchor assumptions and startup capability. Importing its tree would add a parallel source of startup/effect authority instead of resolving the selected original-owner contract. Keep its exact sources, tests and prior observations in history; no byte equivalence, complete feature coverage, current execution or physical-rollback qualification is asserted. Shared material parsing cancellation is independent of that authority choice and is retained through its original canonical codec.",
+      "independent_component_port": {
+        "commits": [
+          "c2cc34f4f637467b3c8fcaa246d8a5bff9192ed4"
+        ],
+        "status": "reviewed_for_integration",
+        "scope": "MaterialProgress phases, first-error preservation, bounded cooperative read/hash/quantization and original callback compatibility; nine original/current material controls observed by port owner."
+      },
+      "evidence": [
+        {
+          "path": "/private/tmp/chain-consolidation-20261114-root/protocol-selection-review-v1/history/manifest.json",
+          "sha256": "9aed86434b46ce8dd7f0d51c0cbdd4d3bb3033ead457ddd28dcf53c2121801a5"
+        }
+      ],
+      "current_sources": [
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+          "git_blob": "730576ae533440ae89f4ce4a84ba6d8a2e0d9534",
+          "bytes": 390289,
+          "sha256": "c47bbdfc6f2430f84e7138fd4b07a3bcd53f50b5daadce8692f4772be71b2f12"
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/operator_checkpoint_tile.rs",
+          "git_blob": "79ccf278155261b3bdd7043e2f98be94e324d2d0",
+          "bytes": 12723,
+          "sha256": "6642c695cfc8b0e570586b26997aafc71725725f7b586f5aa7cfaa2417afd339"
+        }
+      ]
+    },
+    {
+      "family": "Earlier native transfer and standalone PQP3 Node wrappers",
+      "tips": [
+        "9a96067817d20b69d19e4e222bc207242a9c89d4"
+      ],
+      "selected_contract": "Settings-selected PQ codec over original Node; account-profile validation and explicit PQNetwork/PqWitness ownership are required before native namespaces open. Public ApplicationV6 settings entry remains selected.",
+      "retained_capabilities": [
+        "Protocol and executor account/QuotaV3 relation, genesis and migration checks",
+        "Shared packet framing for AccountsV2, QuotaV3, TasksV4, TasksV5 and ApplicationV6",
+        "All-five-profile exact framing/error and fixed-blob storage controls"
+      ],
+      "not_selected": [
+        "PqQuotaSettingsV3/PqPacketV3/PqNodeV3 wrapper entry points",
+        "Independent Profile::Pq3 store naming and DDL migration path",
+        "Earlier native-transfer owner and transaction namespace"
+      ],
+      "reason": "The current protocol and executor already retain and extend QuotaV3 arithmetic and wire behavior. The Node-specific old wrappers are absent; their absence is an explicit namespace/owner selection, not evidence of an equivalent public constructor. Current open_selected_mode validates account profiles and refuses a PQ account with a non-PQ-network owner before creating/recovering storage. Old standalone wrappers cannot replace those ownership checks or erase the later Tasks/Application state and migration constraints. Preserve their exact history, without claiming their old independent owner tests have run against the current design.",
+      "evidence": [
+        {
+          "path": "/private/tmp/chain-consolidation-20261114-root/protocol-selection-review-v1/pqp3/manifest.json",
+          "sha256": "5c2132d127943fd498380de0d4d0e22f17fca1a5dd94e37f2a0b7f3346fabef0"
+        }
+      ],
+      "current_sources": [
+        {
+          "path": "trillionnium/crates/trnm-protocol/src/pq_native_accounts_v2.rs",
+          "git_blob": "0b9109e5b1028dbcba96b44bd61b4f711a940542",
+          "bytes": 26325,
+          "sha256": "025f9a45830d97583a454241b61a73ca6fee41fdadeafc771ca60a0169a0530f"
+        },
+        {
+          "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs",
+          "git_blob": "61e8ff02976ebc79e2dc9f5a71ae531884cba5dc",
+          "bytes": 41699,
+          "sha256": "7c404502cbcc358b95cbf4f5ae88a1582e144562790913266eba599e5da8341d"
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs",
+          "git_blob": "6e221408298bb0bae0b615af5969fca3686f70ab",
+          "bytes": 11701,
+          "sha256": "d782595915da93128ecf71cfd8f5a8a3a906f7f4e108d72d34b5299490b30499"
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+          "git_blob": "730576ae533440ae89f4ce4a84ba6d8a2e0d9534",
+          "bytes": 390289,
+          "sha256": "c47bbdfc6f2430f84e7138fd4b07a3bcd53f50b5daadce8692f4772be71b2f12"
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/store/native_fixed_blob_tests.rs",
+          "git_blob": "5e3769d3186026a7bac012be534f0d6cad5e362a",
+          "bytes": 26606,
+          "sha256": "052a55f00b7978e26b4aa461dfdf1b29bc78fe077bfa105a0dd845ad4f67b4ad"
+        }
+      ]
+    }
+  ],
+  "ci_control_selection_source": {
+    "path": "/private/tmp/chain-ci-branch-dispositions-20261114/ci-controls-81-dispositions-v1.json",
+    "sha256": "62c66704647a929b422bf0e34f497e0d5eb4a598c6f629483b0ef614fd3767ef"
+  },
+  "ci_control_selections": [
+    {
+      "index": 18,
+      "sha": "57ba2868544528e4f845482fe6aaa9d0f74987b2",
+      "name": "audit/p0-w1-frozen-evidence-runtime-isolation-20261031",
+      "overall_disposition": "mixed_selected_successor",
+      "reason": "The frozen mainline/no-runtime claim and controls remain in current repository checks. The origin-normalizing writer helper is intentionally superseded by current read-only preflight and its 16 real-Git controls; current supports all three exact authorized spellings without mutating origin. Old optional W1 study placement is retained as historical experiment scope rather than replacing the current mandatory exact-source and resource-owner lanes.",
+      "root_selection_approved": true,
+      "equivalence_claimed": false
+    },
+    {
+      "index": 19,
+      "sha": "c1ad6e0033ebe8441ee7ecf783954f87f3f72e6c",
+      "name": "research/pon-w1-numpy-exact-valid-cost-20261030",
+      "overall_disposition": "historical_experiment_retained",
+      "reason": "The optional NumPy solver computes full legal PNW1 products and all 512 cumulative transcript tiles, reducing each uint64 product before addition; it is not equivalent to a hardness proof. The incoming bounded three-trial/512-guess timing experiment and its source-audit tests are not present in the current selected cost pipeline. Select the current full staged/native and fresh-rejection observation contracts for active qualification, and retain this exact alternative legal solver and cost experiment as reproducible historical research. Its existence remains a reason not to claim scalar prover cost is a cheapest-strategy bound; no equivalence or native coverage is claimed.",
+      "root_selection_approved": true,
+      "equivalence_claimed": false
+    },
+    {
+      "index": 20,
+      "sha": "729fa0d5c78d07d2ed71c1f68243f62a22afa7b7",
+      "name": "audit/pon-w1-legal-source-bound-reconcile-20261030",
+      "overall_disposition": "historical_experiment_retained",
+      "reason": "This iteration strengthens the old W1 cost experiment's direct/configuration source-byte reconciliation and rejects a clean-looking but substituted source. Current generic exact-source verification checks all committed tracked files, but it does not reproduce the missing experiment or its results. Preserve this experimental iteration and its negative controls in their exact source history; select current whole-source/native observation gates without relabeling the old scalar valid-solver measurements as current or minimum-cost evidence.",
+      "root_selection_approved": true,
+      "equivalence_claimed": false
+    },
+    {
+      "index": 21,
+      "sha": "61a39cde4a9604f68140388caa8a92fd3d8e4585",
+      "name": "research/pon-w1-algebraic-valid-cost-20261030",
+      "overall_disposition": "historical_experiment_retained",
+      "reason": "This is the algebraic legal-valid-prover versus invalid-verification study for structured zero/diagonal/rank-one/dense input families. Its timing observations do not establish a cheapest adversarial strategy, GPU/ASIC/quantum cost, or production work hardness. The selected current W1 profile remains explicitly experimental and unqualified. Preserve the original algorithm/tests/results as a separate research alternative; do not silently substitute it for the current full staged/fresh campaign contract or treat its absent default invocation as an accepted hardness result.",
+      "root_selection_approved": true,
+      "equivalence_claimed": false
+    },
+    {
+      "index": 24,
+      "sha": "fa704e45c1fea9e99dd35a77142d9b27a09fe7e0",
+      "name": "dot/w2c-durable-negative-tests-repair-20261027-0758",
+      "overall_disposition": "historical_experiment_retained",
+      "reason": "The repaired negative tests target the older w2c_durable_spent API and its own persisted envelope. Current selects DurableSpentOwner with explicit create/open, receiver/epoch/boot/lifetime/capacity binding, atomic paid spend and monotonic time. Its 12 controls include restart replay, independent-process contention, abrupt exit, context mismatch and explicit cloned-database double-spend counterexample. Preserve the older API-specific failures as research history; do not claim the new owner covers every removed epoch/lease policy.",
+      "root_selection_approved": true,
+      "equivalence_claimed": false
+    },
+    {
+      "index": 25,
+      "sha": "e67d26f5ab91f526206fe11ae56a46e210ed6c34",
+      "name": "research/pq-pql9-native-tpq1-crypto-20261027",
+      "overall_disposition": "explicit_selected_successor",
+      "reason": "The missing C buffer/header API verifies pure ML-DSA-65 TPQ1 under caller pins. Current selects pq_tpq1_native_verify.c as a standalone no-authority file oracle, with strict canonical PEM/DER, six-purpose frame checks, payload streaming, exact signature, caller context/key/generation/sequence/expiry and bounded regular-file inputs. Current native Rust pq_auth independently uses typed in-process verification. Old buffer-only memory ceiling and exhaustive signature-byte mutation tests remain historical coverage of that API; they are not claimed as freshly executed or byte-for-byte present in the current five-control CLI suite.",
+      "root_selection_approved": true,
+      "equivalence_claimed": false
+    },
+    {
+      "index": 26,
+      "sha": "9934e70dba5aabf5f02b85bc92ec87544fdf51e8",
+      "name": "dot/w2c-durable-paid-claims-20261027",
+      "overall_disposition": "historical_experiment_retained",
+      "reason": "The paid-claims variant adds a separate durable claim state/cost model. Current selected owner settles the paid ticket in one SQLite transaction and makes no W1/CPU-credit/identity grant. No current claim promises the old claim-owner lifecycle or its timing sample. Keep that model, its cost script and tests in the original experimental namespace; choose the narrower current spent-owner contract and keep its cloning/rollback limitations explicit.",
+      "root_selection_approved": true,
+      "equivalence_claimed": false
+    },
+    {
+      "index": 27,
+      "sha": "ca2e9d14d58e0882c3be58a3711428e055ff2eb6",
+      "name": "dot/w2c-durable-epoch-fence-20261026",
+      "overall_disposition": "historical_experiment_retained",
+      "reason": "The old durable-epoch variant includes epoch fencing and crash/rotation policy. Current binds one externally selected receiver/epoch/boot to an existing private SQLite owner and does not claim automatic epoch rotation or independent survival under database cloning. These are different selected ownership models, not a missing equivalent function. Retain the epoch/crash prototype and tests for historical reproduction without splicing its state machine into the current owner.",
+      "root_selection_approved": true,
+      "equivalence_claimed": false
+    },
+    {
+      "index": 28,
+      "sha": "e5e92ff2b055b198c087631eb48b4b9ad28e0ad0",
+      "name": "research/pq-preserved-liability-native-import-20261026",
+      "overall_disposition": "explicit_selected_successor",
+      "reason": "The old PQS1-to-PQI1 projection and native importer are not the selected current namespace. Current PQN5 verifies a complete pinned PQG1 source to PQS1 target under a separate PQA3 anchor: exact raw liabilities, all four kinds, owners, nonce/generation, quarantine, duplicates/order, bounded counts and u64 supply conservation are checked. Its 21 native structural tests retain reanchoring counterexamples and full capacity bounds. Select this whole-roster relation; retain old PQI1 source/tests without granting signer, historical trust, ledger import or migration authority.",
+      "root_selection_approved": true,
+      "equivalence_claimed": false
+    },
+    {
+      "index": 29,
+      "sha": "db379fe21097ac4501f17f0362fec421d687d412",
+      "name": "dot/p3-w2c-durable-epoch-owner-20261026",
+      "overall_disposition": "historical_experiment_retained",
+      "reason": "The old durable-epoch-owner API combines receiver lifetime with automatic epoch ownership and its own cost driver. Current explicitly selects a fixed externally supplied epoch/boot and same-file paid-spend owner. Current multi-process atomicity is retained, but it is not an implementation of the old automatic epoch state machine. Preserve that incompatible experimental lifecycle and controls in history, without expanding current guarantees.",
+      "root_selection_approved": true,
+      "equivalence_claimed": false
+    },
+    {
+      "index": 30,
+      "sha": "428d084bceee9699504cfef19617a62fed1c2af8",
+      "name": "dot/pon-p0-p6-evidence-failclosed-20261026",
+      "overall_disposition": "explicit_selected_successor",
+      "reason": "The old P0-P6 report gate validates a particular evidence-envelope schema and rejects unsupported acceptance. Current selects exact-key frozen repository truth, mandatory applicability/invariant/current-implementation checks, current source locks and separate native/resource report validators. Do not resurrect a second aggregate promotion policy or relabel old P0-P6 booleans as acceptance of M00-M17/current code. Preserve the old evidence schema/tests as historical input semantics, with all current qualification false.",
+      "root_selection_approved": true,
+      "equivalence_claimed": false
+    },
+    {
+      "index": 31,
+      "sha": "c953a86c9338bc46509ed527e53bd836d66ffce2",
+      "name": "dot/p5-single-host-epoch-exclusivity-20261026",
+      "overall_disposition": "historical_experiment_retained",
+      "reason": "The old single-host epoch lease uses its own PID/fork/exclusivity assumptions. Current same-file SQLite owner has independent-process atomic spent insertion and explicit filesystem-clone limitations, but does not advertise this lease protocol or fork inheritance protection. Keep the lease experiment and its tests under their original assumptions; do not transplant a separate epoch authority into the selected current owner.",
+      "root_selection_approved": true,
+      "equivalence_claimed": false
+    },
+    {
+      "index": 32,
+      "sha": "cab37b3f9ea4cc2565e2902c38c5a36f095ab171",
+      "name": "dot/w2c-durable-paid-spend-20261026",
+      "overall_disposition": "mixed_selected_successor",
+      "reason": "Paid-spend-before-expensive-work, bounded unpaid issuance and one-use serialization remain in the selected current stateless receiver plus durable spent owner. The old w2c_durable_spent integration API, its tests and ci_job entry are not an exact current caller. Keep current components and their source/CI contract; preserve the old combined API experiment without claiming equivalent epoch or clone guarantees.",
+      "root_selection_approved": true,
+      "equivalence_claimed": false
+    },
+    {
+      "index": 33,
+      "sha": "093ec49ae58da21d79c1fc1df0e3569f4d9e357b",
+      "name": "dot/w2c-durable-spend-20261026",
+      "overall_disposition": "mixed_selected_successor",
+      "reason": "The incoming durable-spend adapter and stateless receiver changes implement one of several alternative persistence interfaces. Current retains stateless unpaid issuance and atomic bounded paid one-use settlement through the separately named DurableSpentOwner. Its explicit clock/context/file checks and cloned-state counterexample define the selected scope. Preserve the old adapter-specific tests in history instead of replacing current interfaces or presenting the two schemas as interchangeable.",
+      "root_selection_approved": true,
+      "equivalence_claimed": false
+    },
+    {
+      "index": 34,
+      "sha": "83ecbbd361c15fb11df26d2abbc544bbf530bef7",
+      "name": "dot/p2-v3-economic-feasibility-20261026",
+      "overall_disposition": "historical_experiment_retained",
+      "reason": "The admission-price model is an assumption-driven economic feasibility calculator, not an actual native owner or measured adversarial lower bound. Current leaves independent economics/work hardness false and uses actual staged/fresh observations with complete failed-attempt costs. Retain this calculator and its parameter/negative controls as historical research; do not make its assumed price or amortization a required production acceptance policy.",
+      "root_selection_approved": true,
+      "equivalence_claimed": false
+    },
+    {
+      "index": 35,
+      "sha": "e19245dd880a989b5310cda126ff2f27a6da67d4",
+      "name": "dot/w2c-durable-consume-20261026",
+      "overall_disposition": "historical_experiment_retained",
+      "reason": "The old durable-consume receiver and cost script use a distinct state/epoch API. Current selects the fixed-context durable paid-spend owner with atomic insertion and explicit restart/clone assumptions. Retain all old consume/cost tests and observations in their original research namespace, not as evidence that current W2-C or public V3 has independent cost, fairness, lease or deployment qualification.",
+      "root_selection_approved": true,
+      "equivalence_claimed": false
+    },
+    {
+      "index": 36,
+      "sha": "7573e3ae83fd6090a1005a29fe716b0402b090ff",
+      "name": "dot/p2-admission-cost-verdict-20261026",
+      "overall_disposition": "historical_experiment_retained",
+      "reason": "The cost-verdict reader applies a specific bounded Python W2-C versus false-W1 experiment's assumptions. Current receiver cost script labels synthetic identifiers, caller-process CPU, no real V3/GPU/independent host and no pricing qualification; newer fresh rejection reporting preserves all attempts and costs. Keep the old verdict schema and tests as historical analysis, without converting their threshold/model into an active current security gate.",
+      "root_selection_approved": true,
+      "equivalence_claimed": false
+    },
+    {
+      "index": 37,
+      "sha": "4bf21e2a1e92e07955129c98d2c4f9102d3a1742",
+      "name": "dot/w2c-durable-spend-owner-20261026",
+      "overall_disposition": "historical_experiment_retained",
+      "reason": "This durable-spend-owner prototype predates the selected current explicitly opened same-file owner. Current research source separately enforces private regular file identity, full fixed context, monotonic clock and one committed spent slot. Preserve the earlier receiver API and its tests as an alternative design; its omitted automatic lifecycle assumptions are not silently claimed by the current narrow owner.",
+      "root_selection_approved": true,
+      "equivalence_claimed": false
+    },
+    {
+      "index": 38,
+      "sha": "4f367f106f97c92e95cca6a85c59fbc9d01d4a92",
+      "name": "dot/w2e-global-polynomial-research-20261026",
+      "overall_disposition": "historical_experiment_retained",
+      "reason": "W2-D full-tile Freivalds, late-tile attacks and W2-E global/batched polynomial experiments use different verifier relations and sampling assumptions. The selected PNW1 profile verifies the complete cumulative transcript and remains unqualified; these randomized/projection experiments are not wire-compatible substitutes. Preserve all eight algorithm/test files as research alternatives and counterexamples, without enabling them as current work verification or transferring their claimed cost/soundness to PNW1.",
+      "root_selection_approved": true,
+      "equivalence_claimed": false
+    },
+    {
+      "index": 39,
+      "sha": "34a0f509145607746a1e6b156709bd5680213227",
+      "name": "dot/p2-false-work-cost-envelope-20261026",
+      "overall_disposition": "historical_experiment_retained",
+      "reason": "The old false-work flood envelope is a parametric cost calculation, not a measured cheap-invalid-proof safety theorem. Current fresh rejection reporting charges failed attempts, exhaustion and complete construction/verification observations while all security and deployment qualifications remain false. Preserve the original envelope assumptions and tests in history; no equivalence to accelerator costs or current native denial-of-service bounds is asserted.",
+      "root_selection_approved": true,
+      "equivalence_claimed": false
+    },
+    {
+      "index": 40,
+      "sha": "b517d6f9e1e763742853c0d65f512d53203ec768",
+      "name": "dot/w2c-durable-paid-replay-20261026",
+      "overall_disposition": "historical_experiment_retained",
+      "reason": "This paid-replay receiver is an earlier alternative durable state machine. The selected current owner covers same-database atomic paid reuse refusal across reopen/processes and explicitly records the full-clone counterexample. Preserve this earlier API and tests without importing another epoch/boot convention or overstating current cross-clone/independent-survival guarantees.",
+      "root_selection_approved": true,
+      "equivalence_claimed": false
+    },
+    {
+      "index": 41,
+      "sha": "51423e17989d837405c9455a012bc654a21a5e0c",
+      "name": "dot/w2d-freivalds-cost-research-20261026",
+      "overall_disposition": "historical_experiment_retained",
+      "reason": "The product-projection Freivalds verifier and cost comparison use a different algebraic acceptance relation from full PNW1 transcript replay. Keep the original projection experiment and tests for reproduction; do not substitute randomized acceptance for the current full verifier or treat its speed/soundness assumptions as current work qualification.",
+      "root_selection_approved": true,
+      "equivalence_claimed": false
+    },
+    {
+      "index": 42,
+      "sha": "a0d2b172bbdd9e57f6c72fd02df1764aeaf54a66",
+      "name": "dot/w2c-stateless-issuance-20261026",
+      "overall_disposition": "mixed_selected_successor",
+      "reason": "Current receiver/stateless/cost modules retain receiver/proposal/MAC/time/capacity/one-use separation and unpaid stateless issuance. They are not a strict superset of the old fixed-minimum-ticket policy: current research offer selects bits in its bounded range and makes no deployment-pricing promise. Select the current explicitly narrow experiment, retain the old server-minimum/issuance tests as alternative policy evidence, and do not claim that absent minimum-price controls were absorbed.",
+      "root_selection_approved": true,
+      "equivalence_claimed": false
+    },
+    {
+      "index": 43,
+      "sha": "14c8ac9192748584d668e197e083d1c30ac28611",
+      "name": "dot/p2-w1-v3-go-cost-20261025",
+      "overall_disposition": "historical_experiment_retained",
+      "reason": "The missing Go pon_w1_cost command is a finite CPU timing harness, not the current pon_w1_io command or an independent cost-hardness proof. Current retains the Go W1 oracle/codec and separates timed native/staged observations from accepted security. Preserve the exact old timing command/tests in history; do not re-enable its one-shot measurements as a required current cost gate or claim it was renamed to the unrelated I/O tool.",
+      "root_selection_approved": true,
+      "equivalence_claimed": false
+    },
+    {
+      "index": 44,
+      "sha": "e489fa33fe80cae84dcc9bb0de2dad8b50efc69a",
+      "name": "dot/w2c-stateless-paid-offers-20261025",
+      "overall_disposition": "historical_experiment_retained",
+      "reason": "The old stateless-paid-offer API and paired-cost script are an alternative to current StatelessReceiverAdmission. Current preserves no unpaid stored entries, MACed receiver/proposal/epoch binding, bounded paid-spend memory and explicit no-W1 authority. Retain the old namespace's tests/cost observations without treating policy parameters or measured ratios as current public V3 acceptance.",
+      "root_selection_approved": true,
+      "equivalence_claimed": false
+    },
+    {
+      "index": 45,
+      "sha": "fffc600e20386d797039763f5b1b081449342d1a",
+      "name": "dot/w2c-stateless-receiver-20261025",
+      "overall_disposition": "historical_experiment_retained",
+      "reason": "The separate stateless_receiver_admission and paired-cost API is not current wire-compatible code. Current selected stateless receiver and bounded synthetic cost observer preserve the research-only separation from W1/Chainwork. Keep the old paid-offer algorithm, tests and paired observations in history, with no cross-model performance or authority promotion.",
+      "root_selection_approved": true,
+      "equivalence_claimed": false
+    },
+    {
+      "index": 46,
+      "sha": "17ff05b5a2dc93c901dcd76906e9831341d02781",
+      "name": "maintenance/actions-storage-reclaim-20261022",
+      "overall_disposition": "retired_operational_workflow",
+      "reason": "This one-time maintenance workflow has actions:write and deletes stale Actions artifacts/caches by age/name. It is operational storage mutation, not a Chain algorithm/control missing from current source. Do not reactivate it during branch consolidation; preserve exact workflow/history and require a separately scoped future retention decision for any deletion. No deletion was performed by this review.",
+      "root_selection_approved": true,
+      "equivalence_claimed": false
+    },
+    {
+      "index": 47,
+      "sha": "64771d99de08d917631a8c3e1bc8c8a62e4db9da",
+      "name": "ops/github-storage-audit-20261022",
+      "overall_disposition": "retired_operational_workflow",
+      "reason": "This one-time dated workflow only inventories remote artifact/cache sizes and age buckets under actions:read. It contributes no runtime or validation algorithm, and its branch-scoped push trigger is tied to the old operational task. Retain its exact history/report semantics, not an always-present active workflow; current branch audit uses separately recorded read-only inventory.",
+      "root_selection_approved": true,
+      "equivalence_claimed": false
+    },
+    {
+      "index": 48,
+      "sha": "a598d586239b9c019d4a1cd4df01d70c1d39f387",
+      "name": "fix/chain-finality-profile-20261014",
+      "overall_disposition": "explicit_selected_successor",
+      "reason": "The old activation-policy/checker schema froze an earlier experimental target. Current check_repository enforces an exact typed mainline key set, all current implementation axes false, no consensus/fallback authority and exact experimental work identity; current source pins bind selected work-profile bytes. Finality V1 remains disabled and now fixes quorum/membership consistency, with explicit release-finality-v2 successor that is not V1 activation. Preserve the newer targeted contracts and tests; do not restore the older aggregate promotion schema or merge deterministic-release finality into probabilistic chain confirmation.",
+      "root_selection_approved": true,
+      "equivalence_claimed": false
+    },
+    {
+      "index": 49,
+      "sha": "eb94f835ade72eaa7b0eaf82d6989b783186a913",
+      "name": "codex/freeze-pon-experimental-20261014",
+      "overall_disposition": "explicit_selected_successor",
+      "reason": "The old activation-policy/checker schema froze an earlier experimental target. Current check_repository enforces an exact typed mainline key set, all current implementation axes false, no consensus/fallback authority and exact experimental work identity; current source pins bind selected work-profile bytes. Finality V1 remains disabled and now fixes quorum/membership consistency, with explicit release-finality-v2 successor that is not V1 activation. Preserve the newer targeted contracts and tests; do not restore the older aggregate promotion schema or merge deterministic-release finality into probabilistic chain confirmation.",
+      "root_selection_approved": true,
+      "equivalence_claimed": false
+    },
+    {
+      "index": 59,
+      "sha": "9e471e2369d99623e0320412a237454ed90ecd1b",
+      "name": "tooling/pon-cpu-conservation-publication-20261011",
+      "overall_disposition": "selected_r19_cpu_conservation_alternative",
+      "reason": "The incoming C+S start-reserve algorithm is not byte-equivalent to selected r19, and its spent_start_reserves_ns state is intentionally absent. The separate supersession review derives old A=C+nR and U=nR-S versus current A=C+nR+T, start C>=R with n<2 and verified-completion exclusion, short continuation C+nR>=0, long continuation C+R>=0, and refill C<=B-nR-T. Each of the eight original controls is mapped to owned-quantum/other-reservation, refill, duplicate/unowned settlement, partial-owner, panic and final-sample invariants. No missing safety invariant was identified in that comparison. Preserve the competing old algorithm/8 controls as historical research; select r19 without importing mutually conflicting accounting state. The old 200,000-case model is not claimed as current execution coverage.",
+      "root_selection_approved": true,
+      "equivalence_claimed": false
+    }
+  ],
+  "r20_note": "Only caller pending-grant limits and the associated signed resource revision may change. The r19 CPU conservation algorithm stays selected; old C+S accounting remains a competing historical algorithm."
+}

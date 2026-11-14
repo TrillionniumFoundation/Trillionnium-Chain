@@ -1,0 +1,28 @@
+{
+  "argv": [
+    "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/venv/bin/python",
+    "formal/pon-nakamoto-v1/finite_joint_state_tests.py",
+    "-v"
+  ],
+  "cwd": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo",
+  "elapsed_seconds": 2.01159986294806,
+  "exit_code": 0,
+  "name": "finite-joint-state",
+  "started_at_utc": "2026-11-08T00:11:18.921030+00:00",
+  "streams": {
+    "stderr": {
+      "bytes": 5536,
+      "file": "finite-joint-state.stderr.log",
+      "sha256": "dfe3ae0c4e5ff5f8efae399d9bc88fc300e6f573856cfd8025261d14f9c7bbfa"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "finite-joint-state.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "test_summary_lines": [
+    "Ran 34 tests in 1.828s",
+    "OK"
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "store_blob": "db3346d91c20e0af0731d5d422086425e528954f",
+  "pins": 870,
+  "required": 778,
+  "pin_changes": [
+    {
+      "path": ".github/workflows/pon-pq-system-continuation.yml",
+      "previous": "0026cebc61487c1069c4aefd2187d73031bc9371",
+      "current": "5001da4c1bc3f2eef6c8de94965329f0a94a423b"
+    },
+    {
+      "path": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "previous": "237a04ee727193fb992abdb7ea85e1dd705f0aa4",
+      "current": "a259a093a20def123a2499908efaf5cb06f8d1c7"
+    },
+    {
+      "path": "scripts/ci/check_ci_contract.py",
+      "previous": "6d24139752e377ab829345b02b890e69ecd31dc1",
+      "current": "91c786a54bedb8794d4b4aeda6195ceb972f528d"
+    },
+    {
+      "path": "scripts/ci/test_ci_contract.py",
+      "previous": "880d9d885e3c81c24a07300727e2948039f25fa9",
+      "current": "1b678839f5825088570e778a83db0b0e847df62c"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "previous": "9341c03b3c81bd58cc5861626b651ed13a1bb0ba",
+      "current": "d1098c009d4316f14cc04dbb133a87ab93ad5235"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "previous": "00b4af0e427c8e0b09705bb3bf92f9662ccc97d8",
+      "current": "db3346d91c20e0af0731d5d422086425e528954f"
+    },
+    {
+      "path": "config/pon/pq-release-authority-required-tests-v2.json",
+      "previous": "",
+      "current": "a00e4e04d42f80b206b714c88d5969e0078d3cb9"
+    }
+  ],
+  "qualifications_changed": false
+}

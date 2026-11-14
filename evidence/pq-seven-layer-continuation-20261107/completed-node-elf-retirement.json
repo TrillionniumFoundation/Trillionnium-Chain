@@ -1,0 +1,15 @@
+{
+  "command_exit": 101,
+  "command_status": "command_failed",
+  "observed_utc": "2026-11-07T11:15:56Z",
+  "raw_elf_body_retained": false,
+  "raw_logs_and_receipts_retained": true,
+  "reason": "Filesystem exhausted after the complete library run; retire only its completed reproducible ELF after verifying both recorded digests.",
+  "retired": {
+    "bytes": 456005312,
+    "path": "/workspace/scratch/a6448796d7e7/target/debug/deps/trnm_pon_node-92e007dbc5af8b03",
+    "sha256": "c95475ef0d50d2edd7c8fb3f89da5cc90743f673bec81671c366d373bb5ba266"
+  },
+  "schema": "trnm-owned-build-cache-retirement-v1",
+  "source_edited": false
+}

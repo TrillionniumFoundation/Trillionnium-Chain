@@ -1,0 +1,34 @@
+{
+  "schema": "trnm-failed-output-filename-correction-v1",
+  "observed_utc": "2026-11-09T18:28:46.648790+00:00",
+  "original_evidence_commit": "7ddfe2bfa480d1ebd91c07d03d56a963fff038c5",
+  "original_evidence_tree": "d0fd1180a193e2caafd9ef6818f28bf571a9240b",
+  "outputs": [
+    {
+      "original_path": "reader-attempts/campaign0746-outcomes-attempt01.json",
+      "current_path": "reader-attempts/campaign0746-outcomes-attempt01.stdout.log",
+      "original_git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "bytes_before": 0,
+      "bytes_after": 0,
+      "sha256_before": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha256_after": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "reason": "Failed reader stdout contains zero bytes and is not a JSON document. Preserve exact bytes as a stdout log."
+    },
+    {
+      "original_path": "reader-attempts/campaign0746-outcomes-attempt02.json",
+      "current_path": "reader-attempts/campaign0746-outcomes-attempt02.stdout.log",
+      "original_git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "bytes_before": 0,
+      "bytes_after": 0,
+      "sha256_before": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha256_after": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "reason": "Failed reader stdout contains zero bytes and is not a JSON document. Preserve exact bytes as a stdout log."
+    }
+  ],
+  "native_campaign_rerun": false,
+  "failed_reader_rerun": false,
+  "reader_failures_changed": false,
+  "repository_checker_changed": false,
+  "original_index_sha256": "7bb4a46aa8c1cddac037bf2349f612e57df4a1fefcf8950e3ced08c1a197bf1d",
+  "historical_observations": "Attempt 1 remains exit 137 with cause unestablished; attempt 2 remains an absent time wrapper/reader not started with recorded shell exit 127. Both original stdout objects remain zero bytes. M7 Git objects retain the original names and metadata."
+}

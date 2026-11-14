@@ -1,0 +1,17 @@
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/work/pon-upgrade-implementation-20261018/chain-performance/trillionnium/crates/trnm-pon-node)
+    Finished `release` profile [optimized] target(s) in 2.06s
+     Running tests/evaluation_observation.rs (/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain-performance/release/deps/evaluation_observation-b2a1a73419f23759)
+
+running 1 test
+test actual_native_round_confirmation_restart_claim_late_conflict_and_heavier_fork ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 38.13s
+
+     Running tests/evaluation_round_observation.rs (/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain-performance/release/deps/evaluation_round_observation-d5c7119adf8f89b8)
+
+running 2 tests
+test actual_long_chain_round_close_archive_restart_fork_and_cli ... ignored, actual 4097+ native blocks; bounded evidence campaign
+test first_round_matches_v1_and_local_window_never_constructs_a_global_prefix ... ok
+
+test result: ok. 1 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 4.76s
+

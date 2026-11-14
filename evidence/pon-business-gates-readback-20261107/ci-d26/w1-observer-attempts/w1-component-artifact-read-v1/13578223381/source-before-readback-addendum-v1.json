@@ -1,0 +1,34 @@
+{
+  "artifact_id": 13578223381,
+  "preserved_observer_errors": [
+    "FileNotFoundError: [Errno 2] No such file or directory: '/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-read-v1/13578223381/source.json'"
+  ],
+  "download_exit": 0,
+  "expected_zip_bytes": 140612389,
+  "recorded_zip_bytes": 140612389,
+  "actual_zip_bytes": 140612389,
+  "zip_sha256": "7f993726d5845d1136af559666cb85b761244ad04e7c157bceee7e1b69793d8f",
+  "expected_digest": "sha256:7f993726d5845d1136af559666cb85b761244ad04e7c157bceee7e1b69793d8f",
+  "download_stderr": "",
+  "errors": [],
+  "source_binding": {
+    "kind": "prospective-merge",
+    "tested_commit": "7805f1445aec6a31152b50c3d28f5eb6db63305c",
+    "tree": "cef3563653b982a8043326ad4b53a4b93ab63906",
+    "before_after_equal": true,
+    "resolver_context_equal": true,
+    "source_before_path": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-read-v1/13578223381/source-before.json",
+    "source_before_sha256": "c8e153632d905fd608093cc8b787ccd0d8dcd0a2026601288d585cbf5e9de18c"
+  },
+  "manifests": [
+    {
+      "path": "w1-legal-strategy-v2/manifest.json",
+      "schema": "trnm-w1-legal-strategy-execution-v2",
+      "result": "PASS",
+      "error": null,
+      "observation_denominator": 34,
+      "artifact_file_hashes_verified": 70,
+      "nonzero_or_timedout_observations": []
+    }
+  ]
+}

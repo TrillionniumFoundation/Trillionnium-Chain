@@ -1,0 +1,30 @@
+{
+  "schema": "pon-pq-genesis-native-local-qualification-v1",
+  "source_parent": "c62339bc255b8ba59f1081552c1351109cded287",
+  "result": "research-only-no-activation",
+  "test_command": [
+    "PYTHONWARNINGS=error::ResourceWarning python3 -m unittest -v test_pqg_native_verify.py",
+    "PQN2_SANITIZE=1 ASAN_OPTIONS=detect_leaks=1:abort_on_error=1 PYTHONWARNINGS=error::ResourceWarning python3 -m unittest -v test_pqg_native_verify.py"
+  ],
+  "tests_normal_passed": 17,
+  "tests_sanitized_passed": 17,
+  "test_failures": 0,
+  "source_file_git_blobs": {
+    "pqg_native_verify.c": "d052f0cb49b413105cb60d9f752e21c01f3bb2be",
+    "test_pqg_native_verify.py": "2dc4ec67d4e95d7c00bceb764cb6bbe2b277aeaf"
+  },
+  "log_sha256": {
+    "normal.log": "ec03eaf31193d7cdc272444dbf959d200992b8dc1f521a5127a1dcd71bd2bad6",
+    "sanitize.log": "d7ca2c25064e6ae0d8f8ea5009288d957cc12a81b2da2a309bbe4f99d973a8e5"
+  },
+  "environment": {
+    "python": "3.13.5",
+    "openssl": "OpenSSL 3.5.5 27 Jan 2026 (Library: OpenSSL 3.5.5 27 Jan 2026)",
+    "compiler": "cc (Debian 14.2.0-19) 14.2.0",
+    "platform": "Linux-6.18.55-x86_64-with-glibc2.41",
+    "filesystem": "local overlayfs"
+  },
+  "independently_accepted": false,
+  "production_activation": false,
+  "rust_full_node_tested": false
+}

@@ -1,0 +1,225 @@
+{
+  "schema": "trnm.M4-readers-review.v1",
+  "started_at_utc": "2026-11-09T14:21:34.133385+00:00",
+  "completed_at_utc": "2026-11-09T14:25:14.550331+00:00",
+  "head": "e4e4a8e049915ba09d9e97444b4709ce8769ce81",
+  "tree": "c82829c3a5710960081d91930cf425f9a768e9e4",
+  "head_after": "e4e4a8e049915ba09d9e97444b4709ce8769ce81",
+  "tree_after": "c82829c3a5710960081d91930cf425f9a768e9e4",
+  "inventoried_paths": 1380,
+  "inventoried_source_unchanged": true,
+  "changed_source_paths": [],
+  "identity_unchanged": true,
+  "results": [
+    {
+      "label": "corpus-controls-full-900s",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/ci/test_pq_research_integration.py",
+        "-v"
+      ],
+      "started_at_utc": "2026-11-09T14:21:34.172318+00:00",
+      "completed_at_utc": "2026-11-09T14:25:13.090870+00:00",
+      "elapsed_seconds": 218.91855670400037,
+      "engineering_timeout_seconds": 900,
+      "timed_out": false,
+      "exit_code": 0,
+      "process_exit_after_timeout": null,
+      "status": "PASS",
+      "expected_test_count": null,
+      "observed_test_counts": [
+        59
+      ],
+      "expected_count_matched": true,
+      "raw_unittest_summary": [
+        "Ran 59 tests in 218.423s",
+        "OK"
+      ],
+      "stdout": {
+        "path": "corpus-controls-full-900s.stdout.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "corpus-controls-full-900s.stderr.log",
+        "bytes": 8425,
+        "sha256": "52f6c45ca7ffd2ec7f5601f40e8f7c60851395ec1f616398324f2e6a55bc4a09"
+      }
+    },
+    {
+      "label": "scope-controls",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/test_cell_learning_scope_join.py",
+        "-v"
+      ],
+      "started_at_utc": "2026-11-09T14:21:34.173348+00:00",
+      "completed_at_utc": "2026-11-09T14:21:35.823613+00:00",
+      "elapsed_seconds": 1.6502783779997117,
+      "engineering_timeout_seconds": 240,
+      "timed_out": false,
+      "exit_code": 0,
+      "process_exit_after_timeout": null,
+      "status": "PASS",
+      "expected_test_count": 11,
+      "observed_test_counts": [
+        11
+      ],
+      "expected_count_matched": true,
+      "raw_unittest_summary": [
+        "Ran 11 tests in 1.382s",
+        "OK"
+      ],
+      "stdout": {
+        "path": "scope-controls.stdout.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "scope-controls.stderr.log",
+        "bytes": 1944,
+        "sha256": "412497f0f2f01d90c33623496ba7f7338270f122d9bbf9972e3a9e9bd4f98975"
+      }
+    },
+    {
+      "label": "campaign-reader-controls",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/ci/test_audit_native_campaign_outcomes.py",
+        "-v"
+      ],
+      "started_at_utc": "2026-11-09T14:21:34.173829+00:00",
+      "completed_at_utc": "2026-11-09T14:21:34.604993+00:00",
+      "elapsed_seconds": 0.43141389900119975,
+      "engineering_timeout_seconds": 240,
+      "timed_out": false,
+      "exit_code": 0,
+      "process_exit_after_timeout": null,
+      "status": "PASS",
+      "expected_test_count": 23,
+      "observed_test_counts": [
+        23
+      ],
+      "expected_count_matched": true,
+      "raw_unittest_summary": [
+        "Ran 23 tests in 0.028s",
+        "OK"
+      ],
+      "stdout": {
+        "path": "campaign-reader-controls.stdout.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "campaign-reader-controls.stderr.log",
+        "bytes": 3529,
+        "sha256": "326eb1e7df73faf0f07c0d956fefd8e0f08d53b5eb8ba5a55b506b42e89de1f4"
+      }
+    },
+    {
+      "label": "proof-profile-controls",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/ci/test_pq_proof_profile_binding.py",
+        "-v"
+      ],
+      "started_at_utc": "2026-11-09T14:21:34.174660+00:00",
+      "completed_at_utc": "2026-11-09T14:21:35.063235+00:00",
+      "elapsed_seconds": 0.8885867890003283,
+      "engineering_timeout_seconds": 240,
+      "timed_out": false,
+      "exit_code": 0,
+      "process_exit_after_timeout": null,
+      "status": "PASS",
+      "expected_test_count": 26,
+      "observed_test_counts": [
+        26
+      ],
+      "expected_count_matched": true,
+      "raw_unittest_summary": [
+        "Ran 26 tests in 0.522s",
+        "OK"
+      ],
+      "stdout": {
+        "path": "proof-profile-controls.stdout.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "proof-profile-controls.stderr.log",
+        "bytes": 3993,
+        "sha256": "ce864e722c2bf8afd6f360b736381849e141ca638c86a7e40497b7d643705f30"
+      }
+    },
+    {
+      "label": "proof-profile-inspect",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/ci/pq_proof_profile_binding.py",
+        "--expected-profile-descriptor-sha256",
+        "da0c97f1c549e10ecfc066f6b0a9721147dc3d430eab6f53d502cbc7b91dd48c"
+      ],
+      "started_at_utc": "2026-11-09T14:21:34.175332+00:00",
+      "completed_at_utc": "2026-11-09T14:21:34.455687+00:00",
+      "elapsed_seconds": 0.2803637980014173,
+      "engineering_timeout_seconds": 240,
+      "timed_out": false,
+      "exit_code": 0,
+      "process_exit_after_timeout": null,
+      "status": "PASS",
+      "expected_test_count": null,
+      "observed_test_counts": [],
+      "expected_count_matched": true,
+      "raw_unittest_summary": [],
+      "stdout": {
+        "path": "proof-profile-inspect.stdout.log",
+        "bytes": 8272,
+        "sha256": "e19e35919217ebe95829cb61092ac2b79526e62dd7fdac1d58c030593dedd998"
+      },
+      "stderr": {
+        "path": "proof-profile-inspect.stderr.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "corpus-inspect",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "started_at_utc": "2026-11-09T14:21:34.176478+00:00",
+      "completed_at_utc": "2026-11-09T14:21:36.229484+00:00",
+      "elapsed_seconds": 2.0530147570007102,
+      "engineering_timeout_seconds": 240,
+      "timed_out": false,
+      "exit_code": 0,
+      "process_exit_after_timeout": null,
+      "status": "PASS",
+      "expected_test_count": null,
+      "observed_test_counts": [],
+      "expected_count_matched": true,
+      "raw_unittest_summary": [],
+      "stdout": {
+        "path": "corpus-inspect.stdout.log",
+        "bytes": 558,
+        "sha256": "ba07a28550940968e20206931d3cc2f07d7f3927c2da6299187426d45b4bc50d"
+      },
+      "stderr": {
+        "path": "corpus-inspect.stderr.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "all_commands_passed": true,
+  "repository_edited_by_runner": false,
+  "native_or_production_qualification": false,
+  "prior_f488_failure_and_240s_timeout_retained": true
+}

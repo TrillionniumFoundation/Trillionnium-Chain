@@ -1,0 +1,324 @@
+[
+  {
+    "family": "service",
+    "artifact_id": 13586194181,
+    "github_metadata": {
+      "id": 13586194181,
+      "name": "priority-ubuntu-24.04-prospective-merge-service-model-819309fd312298e099642e1253b1d4ba07113e98-1",
+      "size_in_bytes": 8011502,
+      "digest": "sha256:0248ce80439b577575da4c151d60e8988ca803e5174927041271823453b68009",
+      "expired": false,
+      "created_at": "2026-11-07T18:59:23Z",
+      "updated_at": "2026-11-07T18:59:23Z",
+      "workflow_run": {
+        "id": 42402618518,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "819309fd312298e099642e1253b1d4ba07113e98"
+      }
+    },
+    "archive": "archives/13586194181.zip",
+    "readback": "artifacts/13586194181/readback.json",
+    "sqlite_complete_bytes_in_original_archive": false
+  },
+  {
+    "family": "service",
+    "artifact_id": 13586980357,
+    "github_metadata": {
+      "id": 13586980357,
+      "name": "priority-ubuntu-24.04-arm-head-service-model-819309fd312298e099642e1253b1d4ba07113e98-1",
+      "size_in_bytes": 7765942,
+      "digest": "sha256:972ddc499d326a0474393fd8b71394b9d3806d2b8fa25cc8c38e5f8b9342b0af",
+      "expired": false,
+      "created_at": "2026-11-07T19:04:58Z",
+      "updated_at": "2026-11-07T19:04:58Z",
+      "workflow_run": {
+        "id": 42402618518,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "819309fd312298e099642e1253b1d4ba07113e98"
+      }
+    },
+    "archive": "archives/13586980357.zip",
+    "readback": "artifacts/13586980357/readback.json",
+    "sqlite_complete_bytes_in_original_archive": false
+  },
+  {
+    "family": "service",
+    "artifact_id": 13586309794,
+    "github_metadata": {
+      "id": 13586309794,
+      "name": "priority-ubuntu-24.04-arm-prospective-merge-service-model-819309fd312298e099642e1253b1d4ba07113e98-1",
+      "size_in_bytes": 7772335,
+      "digest": "sha256:4948b0757fa2ebb9aea2f5f4df4923c4bbcd8b5a0c7c4a296e09f6fcff1c1902",
+      "expired": false,
+      "created_at": "2026-11-07T19:04:47Z",
+      "updated_at": "2026-11-07T19:04:47Z",
+      "workflow_run": {
+        "id": 42402618518,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "819309fd312298e099642e1253b1d4ba07113e98"
+      }
+    },
+    "archive": "archives/13586309794.zip",
+    "readback": "artifacts/13586309794/readback.json",
+    "sqlite_complete_bytes_in_original_archive": false
+  },
+  {
+    "family": "service",
+    "artifact_id": 13586249872,
+    "github_metadata": {
+      "id": 13586249872,
+      "name": "priority-ubuntu-24.04-head-service-model-819309fd312298e099642e1253b1d4ba07113e98-1",
+      "size_in_bytes": 7857673,
+      "digest": "sha256:fa0e21f60a649513b9a7d6fb8fcd86c7a27f9ac93b726104f96fc71fa2cf5933",
+      "expired": false,
+      "created_at": "2026-11-07T19:04:05Z",
+      "updated_at": "2026-11-07T19:04:05Z",
+      "workflow_run": {
+        "id": 42402618518,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "819309fd312298e099642e1253b1d4ba07113e98"
+      }
+    },
+    "archive": "archives/13586249872.zip",
+    "readback": "artifacts/13586249872/readback.json",
+    "sqlite_complete_bytes_in_original_archive": false
+  },
+  {
+    "family": "fresh",
+    "artifact_id": 13586581750,
+    "github_metadata": {
+      "id": 13586581750,
+      "name": "w1-fresh-service-head-819309fd312298e099642e1253b1d4ba07113e98-1",
+      "size_in_bytes": 5525534,
+      "digest": "sha256:5bcae89f4f14aa35bd7cf6ca84fd329bb4e648ac45cc49d91c74f77cb5b27451",
+      "expired": false,
+      "created_at": "2026-11-07T18:49:01Z",
+      "updated_at": "2026-11-07T18:49:01Z",
+      "workflow_run": {
+        "id": 42402618462,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "819309fd312298e099642e1253b1d4ba07113e98"
+      }
+    },
+    "archive": "archives/13586581750.zip",
+    "readback": "artifacts/13586581750/readback.json",
+    "sqlite_complete_bytes_in_original_archive": false
+  },
+  {
+    "family": "fresh",
+    "artifact_id": 13585963261,
+    "github_metadata": {
+      "id": 13585963261,
+      "name": "w1-fresh-service-prospective-merge-28df21f965e0348690836c9c854dab645827a03d-1",
+      "size_in_bytes": 5622867,
+      "digest": "sha256:5bbd11368d4c893b3c80ed488bb519b7aff365e0cb46f61b48abf24dbff89591",
+      "expired": false,
+      "created_at": "2026-11-07T18:48:23Z",
+      "updated_at": "2026-11-07T18:48:23Z",
+      "workflow_run": {
+        "id": 42402618462,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "819309fd312298e099642e1253b1d4ba07113e98"
+      }
+    },
+    "archive": "archives/13585963261.zip",
+    "readback": "artifacts/13585963261/readback.json",
+    "sqlite_complete_bytes_in_original_archive": false
+  },
+  {
+    "family": "state",
+    "artifact_id": 13587018438,
+    "github_metadata": {
+      "id": 13587018438,
+      "name": "priority-ubuntu-24.04-head-state-819309fd312298e099642e1253b1d4ba07113e98-1",
+      "size_in_bytes": 20125,
+      "digest": "sha256:8a537719854c40d82b777adf4a9bf5c9b6077d94474cad922201ff0e7f134719",
+      "expired": false,
+      "created_at": "2026-11-07T19:22:37Z",
+      "updated_at": "2026-11-07T19:22:37Z",
+      "workflow_run": {
+        "id": 42402618518,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "819309fd312298e099642e1253b1d4ba07113e98"
+      }
+    },
+    "archive": "archives/13587018438.zip",
+    "readback": "artifacts/13587018438/readback.json",
+    "sqlite_complete_bytes_in_original_archive": false
+  },
+  {
+    "family": "state",
+    "artifact_id": 13586987572,
+    "github_metadata": {
+      "id": 13586987572,
+      "name": "priority-ubuntu-24.04-arm-prospective-merge-state-819309fd312298e099642e1253b1d4ba07113e98-1",
+      "size_in_bytes": 20136,
+      "digest": "sha256:668f57bceb67f565331dcf75132fea8fb38c57787ca63948427242345096f49b",
+      "expired": false,
+      "created_at": "2026-11-07T19:25:26Z",
+      "updated_at": "2026-11-07T19:25:26Z",
+      "workflow_run": {
+        "id": 42402618518,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "819309fd312298e099642e1253b1d4ba07113e98"
+      }
+    },
+    "archive": "archives/13586987572.zip",
+    "readback": "artifacts/13586987572/readback.json",
+    "sqlite_complete_bytes_in_original_archive": false
+  },
+  {
+    "family": "state",
+    "artifact_id": 13586734512,
+    "github_metadata": {
+      "id": 13586734512,
+      "name": "priority-ubuntu-24.04-arm-head-state-819309fd312298e099642e1253b1d4ba07113e98-1",
+      "size_in_bytes": 20099,
+      "digest": "sha256:6089e5d8bf0e70429345ea3dd8c04726f6e1932d54ed9bb45c9989e630afb79c",
+      "expired": false,
+      "created_at": "2026-11-07T19:26:04Z",
+      "updated_at": "2026-11-07T19:26:04Z",
+      "workflow_run": {
+        "id": 42402618518,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "819309fd312298e099642e1253b1d4ba07113e98"
+      }
+    },
+    "archive": "archives/13586734512.zip",
+    "readback": "artifacts/13586734512/readback.json",
+    "sqlite_complete_bytes_in_original_archive": false
+  },
+  {
+    "family": "state",
+    "artifact_id": 13588035599,
+    "github_metadata": {
+      "id": 13588035599,
+      "name": "priority-ubuntu-24.04-prospective-merge-state-819309fd312298e099642e1253b1d4ba07113e98-1",
+      "size_in_bytes": 20183,
+      "digest": "sha256:d62ca3e0c760da45c004223fbd448f5a08175c6604ce3a18f829dae11478af42",
+      "expired": false,
+      "created_at": "2026-11-07T19:34:16Z",
+      "updated_at": "2026-11-07T19:34:16Z",
+      "workflow_run": {
+        "id": 42402618518,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "819309fd312298e099642e1253b1d4ba07113e98"
+      }
+    },
+    "archive": "archives/13588035599.zip",
+    "readback": "artifacts/13588035599/readback.json",
+    "sqlite_complete_bytes_in_original_archive": false
+  },
+  {
+    "family": "history",
+    "artifact_id": 13587313298,
+    "github_metadata": {
+      "id": 13587313298,
+      "name": "priority-ubuntu-24.04-arm-head-history-819309fd312298e099642e1253b1d4ba07113e98-1",
+      "size_in_bytes": 61183946,
+      "digest": "sha256:02d417cf40d07903f635918a6061bdd7279e08c811aad581c89901d1427d4bf6",
+      "expired": false,
+      "created_at": "2026-11-07T19:35:43Z",
+      "updated_at": "2026-11-07T19:35:43Z",
+      "workflow_run": {
+        "id": 42402618518,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "819309fd312298e099642e1253b1d4ba07113e98"
+      }
+    },
+    "archive": "archives/13587313298.zip",
+    "readback": "artifacts/13587313298/readback.json",
+    "sqlite_complete_bytes_in_original_archive": true
+  },
+  {
+    "family": "history",
+    "artifact_id": 13588091577,
+    "github_metadata": {
+      "id": 13588091577,
+      "name": "priority-ubuntu-24.04-head-history-819309fd312298e099642e1253b1d4ba07113e98-1",
+      "size_in_bytes": 53531740,
+      "digest": "sha256:98b522a872f7577266b6ddb912d5be97acf1cb116d72fbe03c61a17365b632d2",
+      "expired": false,
+      "created_at": "2026-11-07T19:42:00Z",
+      "updated_at": "2026-11-07T19:42:00Z",
+      "workflow_run": {
+        "id": 42402618518,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "819309fd312298e099642e1253b1d4ba07113e98"
+      }
+    },
+    "archive": "archives/13588091577.zip",
+    "readback": "artifacts/13588091577/readback.json",
+    "sqlite_complete_bytes_in_original_archive": true
+  },
+  {
+    "family": "history",
+    "artifact_id": 13587604654,
+    "github_metadata": {
+      "id": 13587604654,
+      "name": "priority-ubuntu-24.04-prospective-merge-history-819309fd312298e099642e1253b1d4ba07113e98-1",
+      "size_in_bytes": 56937244,
+      "digest": "sha256:1367e8489575a9f3ec89ed488afb5d901392a9f363cbc79c817b780da5fa2fb4",
+      "expired": false,
+      "created_at": "2026-11-07T19:39:47Z",
+      "updated_at": "2026-11-07T19:39:47Z",
+      "workflow_run": {
+        "id": 42402618518,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "819309fd312298e099642e1253b1d4ba07113e98"
+      }
+    },
+    "archive": "archives/13587604654.zip",
+    "readback": "artifacts/13587604654/readback.json",
+    "sqlite_complete_bytes_in_original_archive": true
+  },
+  {
+    "family": "history",
+    "artifact_id": 13587353281,
+    "github_metadata": {
+      "id": 13587353281,
+      "name": "priority-ubuntu-24.04-arm-prospective-merge-history-819309fd312298e099642e1253b1d4ba07113e98-1",
+      "size_in_bytes": 61216668,
+      "digest": "sha256:8c45617945f1d60786dc250e65652bcc3748e5dd51dadb9092444131c4890327",
+      "expired": false,
+      "created_at": "2026-11-07T19:36:54Z",
+      "updated_at": "2026-11-07T19:36:54Z",
+      "workflow_run": {
+        "id": 42402618518,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "819309fd312298e099642e1253b1d4ba07113e98"
+      }
+    },
+    "archive": "archives/13587353281.zip",
+    "readback": "artifacts/13587353281/readback.json",
+    "sqlite_complete_bytes_in_original_archive": true
+  }
+]

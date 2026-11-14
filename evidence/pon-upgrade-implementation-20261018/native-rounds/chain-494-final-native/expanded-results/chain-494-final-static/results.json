@@ -1,0 +1,97 @@
+{
+  "head": "4940b7a8072761807c5da75b322eecb05a5f193f",
+  "tree": "e336a673fa763ad117b4b4dc40677fb85ba0c00e",
+  "steps": [
+    {
+      "name": "preflight",
+      "command": [
+        "/usr/bin/bash",
+        "scripts/project-preflight.sh"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.08842479001032189,
+      "child_user_seconds": 0.06252000000000002,
+      "child_system_seconds": 0.025488000000000004
+    },
+    {
+      "name": "format",
+      "command": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 15.191278040001635,
+      "child_user_seconds": 15.070778,
+      "child_system_seconds": 0.11939799999999999
+    },
+    {
+      "name": "applicability-fixed",
+      "command": [
+        "/usr/bin/python3",
+        "-m",
+        "unittest",
+        "-v",
+        "test_applicability.ApplicabilityTests.test_native_authenticated_profile_is_explicit_local_source_navigation"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 41.341595065023284,
+      "child_user_seconds": 40.40983,
+      "child_system_seconds": 0.917837
+    },
+    {
+      "name": "w1-reader-negative-controls",
+      "command": [
+        "/usr/bin/python3",
+        "-m",
+        "unittest",
+        "-v",
+        "test_pon_w1_budget_readers"
+      ],
+      "returncode": 5,
+      "elapsed_seconds": 0.11091412598034367,
+      "child_user_seconds": 0.08809200000000317,
+      "child_system_seconds": 0.022023000000000126
+    },
+    {
+      "name": "complete-source-check",
+      "command": [
+        "/usr/bin/python3",
+        "scripts/check_repository.py"
+      ],
+      "returncode": 2,
+      "elapsed_seconds": 0.021324084023945034,
+      "child_user_seconds": 0.01426600000000633,
+      "child_system_seconds": 0.006113999999999953
+    },
+    {
+      "name": "strict-clippy",
+      "command": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "clippy",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-mvcc-fee",
+        "-p",
+        "trnm-pon-node",
+        "-p",
+        "trnm-worker-agent",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 48.529355651000515,
+      "child_user_seconds": 129.073734,
+      "child_system_seconds": 16.453889999999998
+    }
+  ]
+}

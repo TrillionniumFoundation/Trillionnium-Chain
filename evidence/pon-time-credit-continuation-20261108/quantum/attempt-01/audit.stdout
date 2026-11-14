@@ -1,0 +1,57 @@
+{
+  "actual_w1_cost_lower_bound": false,
+  "counterexample": {
+    "actual_w1_attack_demonstrated": false,
+    "comparison_delta_positive": true,
+    "comparison_squared_gap": "3636360139341798489242762333020607217664",
+    "density": {
+      "denominator": "16",
+      "numerator": "1"
+    },
+    "disjoint_partitions": 3,
+    "distinct_outputs_required": 3,
+    "domain_size": 64,
+    "full_value_chain_attack_demonstrated": false,
+    "one_partition_success": {
+      "denominator": "32768",
+      "numerator": "13073"
+    },
+    "oracle": "Boolean Bernoulli phase oracle",
+    "partition_size": 16,
+    "phase_queries": 3,
+    "printed_bernoulli_expression": {
+      "a": "1786065",
+      "b": "461160",
+      "d": "67108864",
+      "decimal_display_only": "0.05322888493444043950392708229666428870755",
+      "radicand": 15,
+      "strictly_below_one_exact": true
+    },
+    "success_strictly_exceeds_printed_expression_exact": true,
+    "three_partition_success": {
+      "denominator": "35184372088832",
+      "numerator": "2234219220017"
+    }
+  },
+  "existing_conservative_proof": "MANDATORY_UNITS_RELATION_V1.md sections 6-7; mandatory_units_query.py",
+  "independent_joint_initial_state_established": false,
+  "native_consensus_security_certified": false,
+  "no_uncharged_advice_established": false,
+  "printed_chain_expression_only": {
+    "a": "4186872003647155767952236412308027489450965822685",
+    "b": "1059899708463004325738919687546519968069781532260",
+    "d": "23384026197294446691258957323460528314494920687616",
+    "decimal_display_only": "0.3545944506397209760219285406813991720218",
+    "radicand": 15,
+    "strictly_below_one_exact": true
+  },
+  "printed_chain_outputs_k": 21,
+  "printed_chain_queries_N": 21,
+  "printed_expression_is_probability_certificate": false,
+  "printed_reduction_argument_N_plus_k": 42,
+  "production_qualified": false,
+  "schema": "quantum-bernoulli-source-audit-v1",
+  "source": "https://arxiv.org/html/2012.15254v4",
+  "source_bound_usable": false,
+  "status": "REJECT_PRINTED_SOURCE_BOUND"
+}

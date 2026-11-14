@@ -1,0 +1,645 @@
+{
+  "schema": "pon-loader-hosted-original-campaign-read-only-diagnosis-v1",
+  "scope": {
+    "repository_source_modified": false,
+    "build_or_tests_run": false,
+    "ci_triggered": false,
+    "original_hosted_artifacts_modified": false,
+    "original_pressure_qualification_pass": false,
+    "independent_operator_qualification": false,
+    "indirect_performance_regression_excluded": false,
+    "inherited_failure_demonstrated": false,
+    "relationship_to_separate_from_zero_native_gate": "not established; no equivalence inferred from shared wording"
+  },
+  "lanes": {
+    "loader": {
+      "artifact_id": 13616134240,
+      "run_id": 42477996505,
+      "job_id": 128723533540,
+      "expected_head": "059e149ccf683a69e6dad4e7f5a21fdd76b671fc",
+      "expected_tree": "c9ea28106d0dfc33f9edb04d396e6e3c6f8783ba",
+      "expected_public_policy_id": "6d04725d8e7a84560baf69440b1becd79f47c9f1fb5e63b85f1447400c85d43f",
+      "github_reported_zip_sha256": "d32ef827168de88973dd6a75709bcba4fb6fd5ac6812ef955e884596fd005d60",
+      "attempts": [
+        {
+          "number": 1,
+          "report_sha256": "674d230d5ad33b5d55df9ac4a483c77e7cd725cfdba08db70aabe91dc5bb68e7",
+          "stderr_sha256": "6c6dc50d77e96b2dfd80e9b561046129e6e4e6801b70f59db23f115d77b70b89",
+          "returncode": 101,
+          "original_criteria_met": false,
+          "phase_startup_errors": []
+        },
+        {
+          "number": 2,
+          "report_sha256": "ab3e0fb31475f172e4b8c85ddc5bfb081a2ffae98fdf21f33127220a1c3d18b9",
+          "stderr_sha256": "ca38ae689eccec1f6340a1a57b97380cc9b4ca6a2988ae7a1ee358366903ed07",
+          "returncode": 101,
+          "original_criteria_met": false,
+          "phase_startup_errors": []
+        },
+        {
+          "number": 3,
+          "report_sha256": "5e6d4218cf2e6f3056670c8d36ff91364083278d089365b1d4be7cdb15eb051b",
+          "stderr_sha256": "92456dd2f962bd0f2011d88774fde6907ca16eea765d747b40af30f6d3e47e51",
+          "returncode": 101,
+          "original_criteria_met": false,
+          "phase_startup_errors": []
+        }
+      ],
+      "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42477996505/job/128723533540",
+      "artifact_manifest_path": "/workspace/scratch/10366560c781/hosted-campaign-readback/loader/artifact-files.json",
+      "artifact_manifest_sha256": "d214e10aea76214f7cff3fd96bc0227c07e79a8d5fdca32ca1ef1ee160f0cb1b",
+      "manifest_scope": "retained files including failed or partial runs; not a PASS verdict",
+      "acquired_members": [
+        {
+          "artifact_member": "run-1.stderr.log",
+          "local_path": "/workspace/scratch/10366560c781/hosted-campaign-readback/loader/run-1.stderr.log",
+          "bytes": 1615,
+          "sha256": "6c6dc50d77e96b2dfd80e9b561046129e6e4e6801b70f59db23f115d77b70b89",
+          "matches_artifact_file_manifest": true
+        },
+        {
+          "artifact_member": "run-2.stderr.log",
+          "local_path": "/workspace/scratch/10366560c781/hosted-campaign-readback/loader/run-2.stderr.log",
+          "bytes": 1615,
+          "sha256": "ca38ae689eccec1f6340a1a57b97380cc9b4ca6a2988ae7a1ee358366903ed07",
+          "matches_artifact_file_manifest": true
+        },
+        {
+          "artifact_member": "run-3.stderr.log",
+          "local_path": "/workspace/scratch/10366560c781/hosted-campaign-readback/loader/run-3.stderr.log",
+          "bytes": 1615,
+          "sha256": "92456dd2f962bd0f2011d88774fde6907ca16eea765d747b40af30f6d3e47e51",
+          "matches_artifact_file_manifest": true
+        },
+        {
+          "artifact_member": "run-1-phase-readback.json",
+          "local_path": "/workspace/scratch/10366560c781/hosted-campaign-readback/loader/run-1-phase-readback.json",
+          "bytes": 1634241,
+          "sha256": "1b842f755a6d84e1a86ce1fa67e142657d42101a9198bf9a756c6b6394326c95",
+          "matches_artifact_file_manifest": true
+        },
+        {
+          "artifact_member": "run-2-phase-readback.json",
+          "local_path": "/workspace/scratch/10366560c781/hosted-campaign-readback/loader/run-2-phase-readback.json",
+          "bytes": 1632278,
+          "sha256": "03238308e49a1221975afb916a5aeb785915d26df6f1b7424d00af689b28f7df",
+          "matches_artifact_file_manifest": true
+        },
+        {
+          "artifact_member": "run-3-phase-readback.json",
+          "local_path": "/workspace/scratch/10366560c781/hosted-campaign-readback/loader/run-3-phase-readback.json",
+          "bytes": 1654999,
+          "sha256": "227ce9309991e0fc96c8047596cbbd3f759f53cde8d2d29e67fb4f59371271c1",
+          "matches_artifact_file_manifest": true
+        },
+        {
+          "artifact_member": "run-1-raw/report.json",
+          "local_path": "/workspace/scratch/10366560c781/hosted-campaign-readback/loader/run-1-raw-report.json",
+          "bytes": 26388453,
+          "sha256": "674d230d5ad33b5d55df9ac4a483c77e7cd725cfdba08db70aabe91dc5bb68e7",
+          "matches_artifact_file_manifest": true
+        },
+        {
+          "artifact_member": "results.json",
+          "local_path": "/workspace/scratch/10366560c781/hosted-campaign-readback/loader/results.json",
+          "bytes": 8560,
+          "sha256": "39c77193c04f7d694aa98b252e2264fde580d472f4f076241f65a603e428f381",
+          "matches_artifact_file_manifest": true
+        },
+        {
+          "artifact_member": "run-native-campaign.py",
+          "local_path": "/workspace/scratch/10366560c781/hosted-campaign-readback/loader/run-native-campaign.py",
+          "bytes": 11686,
+          "sha256": "c1dfb715aaf8c0c86d66c9ebee6cf64c4a829b89fdf93767e2ce9f847b8534c0",
+          "matches_artifact_file_manifest": true
+        },
+        {
+          "artifact_member": "hardware.json",
+          "local_path": "/workspace/scratch/10366560c781/hosted-campaign-readback/loader/hardware.json",
+          "bytes": 1957,
+          "sha256": "c02866ef855b92c487d5de4a73205412ada148e7aaf6da024cd47c5fd0a82a30",
+          "matches_artifact_file_manifest": true
+        }
+      ],
+      "run_1_exact_phase_derivation_reproduced": true,
+      "run_1_exact_native_predicates": [
+        {
+          "mode": "baseline",
+          "common": {
+            "all_signed_rounds_confirmed_in_window": false,
+            "receiver_client_state_equal": false,
+            "observer_complete": true,
+            "service_ok": true,
+            "no_cpu_clock_failures": true,
+            "no_final_inflight": true,
+            "accounting_available": true,
+            "no_verifier_errors": true
+          },
+          "hostile": null,
+          "retained_phase_criteria_met": false,
+          "derived_phase_criteria_met": false,
+          "full_work_accepted": 14,
+          "full_work_failed": 0,
+          "overlaps": [
+            0,
+            0
+          ],
+          "errors": [],
+          "host_before_keys": [
+            "cpu_nr_periods",
+            "cpu_nr_throttled",
+            "cpu_throttled_usec",
+            "cpu_usage_usec",
+            "memory_current_bytes",
+            "pids_current"
+          ],
+          "host_after_keys": [
+            "cpu_nr_periods",
+            "cpu_nr_throttled",
+            "cpu_throttled_usec",
+            "cpu_usage_usec",
+            "memory_current_bytes",
+            "pids_current"
+          ]
+        },
+        {
+          "mode": "from-zero",
+          "common": {
+            "all_signed_rounds_confirmed_in_window": false,
+            "receiver_client_state_equal": false,
+            "observer_complete": true,
+            "service_ok": true,
+            "no_cpu_clock_failures": true,
+            "no_final_inflight": true,
+            "accounting_available": true,
+            "no_verifier_errors": false
+          },
+          "hostile": {
+            "observed_depletion": false,
+            "all_24_ready": true,
+            "actors_successful": true,
+            "three_round_overlaps": false,
+            "each_retained_overlap_positive": true,
+            "rejected_work_positive": true,
+            "accepted_work_at_least_21": false,
+            "round_depletion_positive": false,
+            "each_retained_round_hostile_rejection": true,
+            "no_attack_status_ok": true
+          },
+          "retained_phase_criteria_met": false,
+          "derived_phase_criteria_met": false,
+          "full_work_accepted": 7,
+          "full_work_failed": 1375,
+          "overlaps": [
+            1311
+          ],
+          "errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "host_before_keys": [
+            "cpu_nr_periods",
+            "cpu_nr_throttled",
+            "cpu_throttled_usec",
+            "cpu_usage_usec",
+            "memory_current_bytes",
+            "pids_current"
+          ],
+          "host_after_keys": [
+            "cpu_nr_periods",
+            "cpu_nr_throttled",
+            "cpu_throttled_usec",
+            "cpu_usage_usec",
+            "memory_current_bytes",
+            "pids_current"
+          ]
+        },
+        {
+          "mode": "late-product",
+          "common": {
+            "all_signed_rounds_confirmed_in_window": false,
+            "receiver_client_state_equal": false,
+            "observer_complete": true,
+            "service_ok": true,
+            "no_cpu_clock_failures": true,
+            "no_final_inflight": true,
+            "accounting_available": true,
+            "no_verifier_errors": false
+          },
+          "hostile": {
+            "observed_depletion": false,
+            "all_24_ready": true,
+            "actors_successful": true,
+            "three_round_overlaps": false,
+            "each_retained_overlap_positive": true,
+            "rejected_work_positive": true,
+            "accepted_work_at_least_21": false,
+            "round_depletion_positive": false,
+            "each_retained_round_hostile_rejection": true,
+            "no_attack_status_ok": true
+          },
+          "retained_phase_criteria_met": false,
+          "derived_phase_criteria_met": false,
+          "full_work_accepted": 7,
+          "full_work_failed": 1300,
+          "overlaps": [
+            1247
+          ],
+          "errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "host_before_keys": [
+            "cpu_nr_periods",
+            "cpu_nr_throttled",
+            "cpu_throttled_usec",
+            "cpu_usage_usec",
+            "memory_current_bytes",
+            "pids_current"
+          ],
+          "host_after_keys": [
+            "cpu_nr_periods",
+            "cpu_nr_throttled",
+            "cpu_throttled_usec",
+            "cpu_usage_usec",
+            "memory_current_bytes",
+            "pids_current"
+          ]
+        }
+      ],
+      "run_1_timeout_readback_path": "/workspace/scratch/10366560c781/hosted-campaign-readback/loader/run-1-timeout-readback.json"
+    },
+    "effects": {
+      "artifact_id": 13616159095,
+      "run_id": 42477998311,
+      "job_id": 128723539762,
+      "expected_head": "1910baa6c3421cc17ea5578b5eae431038212e88",
+      "expected_tree": "7887047307ca2fd0debcae00d6fa93b4cc17c9ce",
+      "expected_public_policy_id": "6d04725d8e7a84560baf69440b1becd79f47c9f1fb5e63b85f1447400c85d43f",
+      "github_reported_zip_sha256": "ecd6f08fcac0a93d66003ed8875ba67234dc4684b2b61ccb64a0af4cbdd2664d",
+      "attempts": [
+        {
+          "number": 1,
+          "report_sha256": "c634909a593ca8e513b492df6fe640e15d40af31c9ec9d13e1fc4e7391a486fb",
+          "stderr_sha256": "cf6e3e6dc3b09cae47d31afbf00d0babfd77f45f1df080bb6163a865ad073f6c",
+          "returncode": 101,
+          "original_criteria_met": false,
+          "phase_startup_errors": []
+        },
+        {
+          "number": 2,
+          "report_sha256": "645a404474b3db1b111905888b1e8d81ca209eee18fc7aa6f7a19d7fe37ce15d",
+          "stderr_sha256": "dd0c8d1e4634e33c7981336eb4e77bb6c1507e62733fb0f7bc68f9fc18a127a8",
+          "returncode": 101,
+          "original_criteria_met": false,
+          "phase_startup_errors": []
+        },
+        {
+          "number": 3,
+          "report_sha256": "e2851a1f779e31da6101495ffda87578b29f38f3c20ded2615eb05a3083d0a17",
+          "stderr_sha256": "a2f57941dfdbb7d47793ce23b3893d0ce4b130a71322cc76a4654e10085942ce",
+          "returncode": 101,
+          "original_criteria_met": false,
+          "phase_startup_errors": []
+        }
+      ],
+      "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42477998311/job/128723539762",
+      "artifact_manifest_path": "/workspace/scratch/10366560c781/hosted-campaign-readback/effects/artifact-files.json",
+      "artifact_manifest_sha256": "5095314cc9b24aac86fe9a70666f7b91e7baee75f79f3ed27d51d0511f7a2e2e",
+      "manifest_scope": "retained files including failed or partial runs; not a PASS verdict",
+      "acquired_members": [
+        {
+          "artifact_member": "run-1.stderr.log",
+          "local_path": "/workspace/scratch/10366560c781/hosted-campaign-readback/effects/run-1.stderr.log",
+          "bytes": 1615,
+          "sha256": "cf6e3e6dc3b09cae47d31afbf00d0babfd77f45f1df080bb6163a865ad073f6c",
+          "matches_artifact_file_manifest": true
+        },
+        {
+          "artifact_member": "run-2.stderr.log",
+          "local_path": "/workspace/scratch/10366560c781/hosted-campaign-readback/effects/run-2.stderr.log",
+          "bytes": 1615,
+          "sha256": "dd0c8d1e4634e33c7981336eb4e77bb6c1507e62733fb0f7bc68f9fc18a127a8",
+          "matches_artifact_file_manifest": true
+        },
+        {
+          "artifact_member": "run-3.stderr.log",
+          "local_path": "/workspace/scratch/10366560c781/hosted-campaign-readback/effects/run-3.stderr.log",
+          "bytes": 1615,
+          "sha256": "a2f57941dfdbb7d47793ce23b3893d0ce4b130a71322cc76a4654e10085942ce",
+          "matches_artifact_file_manifest": true
+        },
+        {
+          "artifact_member": "run-1-phase-readback.json",
+          "local_path": "/workspace/scratch/10366560c781/hosted-campaign-readback/effects/run-1-phase-readback.json",
+          "bytes": 1803760,
+          "sha256": "5b7c62ae270487f12a0d6df2dd9fa42c369c099a0081a9758ce2bae95148a5ff",
+          "matches_artifact_file_manifest": true
+        },
+        {
+          "artifact_member": "run-2-phase-readback.json",
+          "local_path": "/workspace/scratch/10366560c781/hosted-campaign-readback/effects/run-2-phase-readback.json",
+          "bytes": 1778752,
+          "sha256": "366a13bf6bebeca219c2ad8d3e6a59f601a9ca324150af3cb7cd7665001a0964",
+          "matches_artifact_file_manifest": true
+        },
+        {
+          "artifact_member": "run-3-phase-readback.json",
+          "local_path": "/workspace/scratch/10366560c781/hosted-campaign-readback/effects/run-3-phase-readback.json",
+          "bytes": 1803497,
+          "sha256": "e0a6a3345d5891e44a98d14972b40b507928cf0c4354fd819e153db30dd0f7d1",
+          "matches_artifact_file_manifest": true
+        },
+        {
+          "artifact_member": "run-1-raw/report.json",
+          "local_path": "/workspace/scratch/10366560c781/hosted-campaign-readback/effects/run-1-raw-report.json",
+          "bytes": 48646566,
+          "sha256": "c634909a593ca8e513b492df6fe640e15d40af31c9ec9d13e1fc4e7391a486fb",
+          "matches_artifact_file_manifest": true
+        },
+        {
+          "artifact_member": "results.json",
+          "local_path": "/workspace/scratch/10366560c781/hosted-campaign-readback/effects/results.json",
+          "bytes": 8561,
+          "sha256": "9c35ad90d4e6c8c53a72b27b2f6c087a454ef128fa9e1607f7b24784ee65f887",
+          "matches_artifact_file_manifest": true
+        },
+        {
+          "artifact_member": "run-native-campaign.py",
+          "local_path": "/workspace/scratch/10366560c781/hosted-campaign-readback/effects/run-native-campaign.py",
+          "bytes": 11686,
+          "sha256": "c1dfb715aaf8c0c86d66c9ebee6cf64c4a829b89fdf93767e2ce9f847b8534c0",
+          "matches_artifact_file_manifest": true
+        },
+        {
+          "artifact_member": "hardware.json",
+          "local_path": "/workspace/scratch/10366560c781/hosted-campaign-readback/effects/hardware.json",
+          "bytes": 1957,
+          "sha256": "774f682afca32f5152eef0477335ebcb5ed7848e2485fb860ca3b7c82b5a97c1",
+          "matches_artifact_file_manifest": true
+        }
+      ],
+      "run_1_exact_phase_derivation_reproduced": true,
+      "run_1_exact_native_predicates": [
+        {
+          "mode": "baseline",
+          "common": {
+            "all_signed_rounds_confirmed_in_window": false,
+            "receiver_client_state_equal": false,
+            "observer_complete": true,
+            "service_ok": true,
+            "no_cpu_clock_failures": true,
+            "no_final_inflight": true,
+            "accounting_available": true,
+            "no_verifier_errors": false
+          },
+          "hostile": null,
+          "retained_phase_criteria_met": false,
+          "derived_phase_criteria_met": false,
+          "full_work_accepted": 14,
+          "full_work_failed": 0,
+          "overlaps": [
+            0,
+            0
+          ],
+          "errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "host_before_keys": [
+            "cpu_nr_periods",
+            "cpu_nr_throttled",
+            "cpu_throttled_usec",
+            "cpu_usage_usec",
+            "memory_current_bytes",
+            "pids_current"
+          ],
+          "host_after_keys": [
+            "cpu_nr_periods",
+            "cpu_nr_throttled",
+            "cpu_throttled_usec",
+            "cpu_usage_usec",
+            "memory_current_bytes",
+            "pids_current"
+          ]
+        },
+        {
+          "mode": "from-zero",
+          "common": {
+            "all_signed_rounds_confirmed_in_window": false,
+            "receiver_client_state_equal": false,
+            "observer_complete": true,
+            "service_ok": true,
+            "no_cpu_clock_failures": true,
+            "no_final_inflight": true,
+            "accounting_available": true,
+            "no_verifier_errors": false
+          },
+          "hostile": {
+            "observed_depletion": false,
+            "all_24_ready": true,
+            "actors_successful": true,
+            "three_round_overlaps": false,
+            "each_retained_overlap_positive": true,
+            "rejected_work_positive": true,
+            "accepted_work_at_least_21": false,
+            "round_depletion_positive": false,
+            "each_retained_round_hostile_rejection": true,
+            "no_attack_status_ok": true
+          },
+          "retained_phase_criteria_met": false,
+          "derived_phase_criteria_met": false,
+          "full_work_accepted": 7,
+          "full_work_failed": 2694,
+          "overlaps": [
+            2568
+          ],
+          "errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "host_before_keys": [
+            "cpu_nr_periods",
+            "cpu_nr_throttled",
+            "cpu_throttled_usec",
+            "cpu_usage_usec",
+            "memory_current_bytes",
+            "pids_current"
+          ],
+          "host_after_keys": [
+            "cpu_nr_periods",
+            "cpu_nr_throttled",
+            "cpu_throttled_usec",
+            "cpu_usage_usec",
+            "memory_current_bytes",
+            "pids_current"
+          ]
+        },
+        {
+          "mode": "late-product",
+          "common": {
+            "all_signed_rounds_confirmed_in_window": false,
+            "receiver_client_state_equal": false,
+            "observer_complete": true,
+            "service_ok": true,
+            "no_cpu_clock_failures": true,
+            "no_final_inflight": true,
+            "accounting_available": true,
+            "no_verifier_errors": false
+          },
+          "hostile": {
+            "observed_depletion": false,
+            "all_24_ready": true,
+            "actors_successful": true,
+            "three_round_overlaps": false,
+            "each_retained_overlap_positive": true,
+            "rejected_work_positive": true,
+            "accepted_work_at_least_21": false,
+            "round_depletion_positive": false,
+            "each_retained_round_hostile_rejection": true,
+            "no_attack_status_ok": true
+          },
+          "retained_phase_criteria_met": false,
+          "derived_phase_criteria_met": false,
+          "full_work_accepted": 7,
+          "full_work_failed": 2648,
+          "overlaps": [
+            2521
+          ],
+          "errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "host_before_keys": [
+            "cpu_nr_periods",
+            "cpu_nr_throttled",
+            "cpu_throttled_usec",
+            "cpu_usage_usec",
+            "memory_current_bytes",
+            "pids_current"
+          ],
+          "host_after_keys": [
+            "cpu_nr_periods",
+            "cpu_nr_throttled",
+            "cpu_throttled_usec",
+            "cpu_usage_usec",
+            "memory_current_bytes",
+            "pids_current"
+          ]
+        }
+      ],
+      "run_1_timeout_readback_path": "/workspace/scratch/10366560c781/hosted-campaign-readback/effects/run-1-timeout-readback.json"
+    }
+  },
+  "verification": [
+    {
+      "lane": "loader",
+      "acquired_manifest_members_verified": 10,
+      "stderr_sha_matched_campaign_attempts": 3,
+      "phase_readback_input_sha_matched_campaign_attempts": 3,
+      "full_raw_report_sha_matched_campaign_attempts": 1,
+      "exact_existing_phase_reader_derivations_reproduced": 1
+    },
+    {
+      "lane": "effects",
+      "acquired_manifest_members_verified": 10,
+      "stderr_sha_matched_campaign_attempts": 3,
+      "phase_readback_input_sha_matched_campaign_attempts": 3,
+      "full_raw_report_sha_matched_campaign_attempts": 1,
+      "exact_existing_phase_reader_derivations_reproduced": 1
+    }
+  ],
+  "phase_summary_path": "/workspace/scratch/10366560c781/hosted-campaign-readback/phase-summary.json",
+  "phase_counts": {
+    "total": 18,
+    "failed_phase_criteria": 18,
+    "observer_complete": 18,
+    "actor_reports_successful": 18,
+    "baseline_confirmed_rounds": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "hostile_confirmed_rounds": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "hostile_depletion_observed": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "failure_location": {
+    "aggregate_assert": "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs:1765",
+    "retained_failure_rethrow": "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs:1541",
+    "phase_predicates": "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs:1235",
+    "actual_import_call": "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs:1052",
+    "ordinary_authenticated_opener": "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs:162",
+    "owners_all_none": "trillionnium/crates/trnm-pon-node/src/store.rs:1586",
+    "phase_common_predicates": "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs:1226"
+  },
+  "source_binding": {
+    "comparison_path": "/workspace/scratch/10366560c781/hosted-campaign-readback/source-common-paths.json",
+    "base": "8d8f05566b2a1612a3bf4a6c6c71635df454d397",
+    "compared_paths": 10,
+    "all_compared_paths_equal": false,
+    "direct_route": "ordinary Node::open_with_authenticated_state, all policy/mining/continuous/pq_network/pq_witness owners None; public TCP receiver plus ordinary verifier history import",
+    "new_loader_entrypoints_exercised_by_this_route": false,
+    "qualification_limit": "Static call-path evidence is not a matched-environment performance comparison and cannot prove inherited failure or exclude indirect binary/performance effects.",
+    "loader_equal_to_base_for_all_compared_paths": true,
+    "three_source_equal_path_count": 8,
+    "effects_vs_loader_differing_paths": [
+      "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "trillionnium/crates/trnm-pon-node/src/ingress.rs"
+    ]
+  },
+  "original_resource_profile": {
+    "phase_cpu_max": "25000 100000",
+    "phase_memory_max": 2147483648,
+    "controller_cpu_max": "400000 100000",
+    "controller_memory_max": 17179869184,
+    "window_seconds": 30,
+    "signed_rounds_required": 3,
+    "business_blocks_required": 21,
+    "hostile_actors": 24,
+    "stored_cpu_burst_ns": 2000000000,
+    "stored_cpu_refill_ns_per_second": 250000000,
+    "limits_or_criteria_changed": false
+  },
+  "interpretation": "Actual fixed-resource in-window signed-confirmation and depletion failures. Host actors ran, complete receiver records were retained, and exact phase-reader derivation reproduced the two run-1 reports. PUBLIC_REQUEST_DEADLINE is retained on client history import. Neither local AF_UNIX EPERM nor phase startup accounts for these hosted outcomes. Full-pressure qualification remains HOLD.",
+  "acquisition_limits": {
+    "method": "HTTP Range reads of ZIP central directory and selected members; zipfile CRC validation and per-member SHA verification against retained artifact-files manifest; run-1 report SHA checked against campaign attempt record",
+    "whole_zip_downloaded": false,
+    "whole_zip_sha_locally_recomputed": false,
+    "raw_reports_acquired_per_lane": [
+      1
+    ],
+    "phase_readbacks_acquired_per_lane": [
+      1,
+      2,
+      3
+    ],
+    "run_2_and_3_raw_reports_independently_rederived": false,
+    "new_execution_or_rerun": false,
+    "full_causal_attribution": false
+  }
+}

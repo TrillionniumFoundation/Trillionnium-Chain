@@ -1,0 +1,94 @@
+use super::*;
+
+#[test]
+fn canonical_comparison_matches_independent_serde_bytes_and_every_json_kind() {
+    let mut values = vec![
+        Value::Null,
+        json!(false),
+        json!(true),
+        json!(0),
+        json!(u64::MAX),
+        json!(i64::MIN),
+        json!((0_u8..=127).map(char::from).collect::<String>()),
+        json!([null, true, -7, {"b":[0,1],"a":"quote\" slash\\ newline\n"}]),
+        json!({"z":[],"a":{"back\\slash":"\\n","line":"\n"}}),
+    ];
+    values.extend(
+        [0, 1, 126, 127, 128, 129, 4094, 4095, 8192]
+            .into_iter()
+            .map(|width| json!("x".repeat(width))),
+    );
+    for value in values {
+        let expected = serde_json::to_vec(&value).unwrap();
+        assert_eq!(canonical(&value).unwrap(), expected);
+        assert!(canonical_matches(&value, &expected).unwrap());
+        assert!(!canonical_matches(&value, &[]).unwrap());
+        for position in [0, expected.len() / 2, expected.len() - 1] {
+            let mut changed = expected.clone();
+            changed[position] ^= 1;
+            assert!(!canonical_matches(&value, &changed).unwrap());
+        }
+        let mut appended = expected.clone();
+        appended.push(b' ');
+        assert!(!canonical_matches(&value, &appended).unwrap());
+        assert!(!canonical_matches(&value, &expected[..expected.len() - 1]).unwrap());
+    }
+    // Literal backslash-n and an actual newline must never share an encoding.
+    let escaped = json!("\\n");
+    let newline = json!("\n");
+    assert!(!canonical_matches(&escaped, &serde_json::to_vec(&newline).unwrap()).unwrap());
+    assert!(!canonical_matches(&newline, &serde_json::to_vec(&escaped).unwrap()).unwrap());
+    assert!(!canonical_matches(&json!(""), b"\"").unwrap());
+}
+
+#[test]
+fn canonical_comparison_keeps_complete_value_error_order_before_byte_mismatch() {
+    for value in [
+        json!(1.5),
+        json!("非ASCII"),
+        json!(["first", {"late":1.5}]),
+        json!({"a":"changed","z":"非ASCII"}),
+        json!({"非ASCII":0}),
+        json!(["非ASCII", 1.5]),
+        json!([1.5, "非ASCII"]),
+    ] {
+        let expected = canonical(&value).unwrap_err();
+        for bytes in [
+            b"".as_slice(),
+            b"null".as_slice(),
+            b"totally-different".as_slice(),
+        ] {
+            assert_eq!(canonical_matches(&value, bytes).unwrap_err(), expected);
+        }
+    }
+}
+
+#[test]
+fn canonical_comparison_distinguishes_number_spellings_under_the_actual_serde_features() {
+    let values: Vec<Value> = [
+        "0",
+        "-0",
+        "1",
+        "1.0",
+        "1.00",
+        "1e0",
+        "-1",
+        "18446744073709551615",
+        "-9223372036854775808",
+    ]
+    .into_iter()
+    .map(|text| serde_json::from_str(text).unwrap())
+    .collect();
+    for actual in &values {
+        for expected in &values {
+            let bytes = serde_json::to_vec(expected).unwrap();
+            match canonical(actual) {
+                Ok(actual_bytes) => assert_eq!(
+                    canonical_matches(actual, &bytes).unwrap(),
+                    actual_bytes == bytes
+                ),
+                Err(error) => assert_eq!(canonical_matches(actual, &bytes).unwrap_err(), error),
+            }
+        }
+    }
+}

@@ -1,0 +1,18 @@
+test_N_plus_k_substitution_is_algebra_only (__main__.QuantumBernoulliSourceAuditTests.test_N_plus_k_substitution_is_algebra_only) ... ok
+test_conservative_full_query_diagonal_remains_trivial (__main__.QuantumBernoulliSourceAuditTests.test_conservative_full_query_diagonal_remains_trivial) ... ok
+test_exact_quadratic_comparison (__main__.QuantumBernoulliSourceAuditTests.test_exact_quadratic_comparison) ... ok
+test_exhaustive_truth_table_control (__main__.QuantumBernoulliSourceAuditTests.test_exhaustive_truth_table_control) ... ok
+test_existing_bit_query_tail_can_be_nontrivial (__main__.QuantumBernoulliSourceAuditTests.test_existing_bit_query_tail_can_be_nontrivial) ... ok
+test_existing_conservative_proof_covers_counterexample (__main__.QuantumBernoulliSourceAuditTests.test_existing_conservative_proof_covers_counterexample) ... ok
+test_geometric_expression_crossing_does_not_certify_source (__main__.QuantumBernoulliSourceAuditTests.test_geometric_expression_crossing_does_not_certify_source) ... ok
+test_independent_statevector_calculation (__main__.QuantumBernoulliSourceAuditTests.test_independent_statevector_calculation) ... ok
+test_numeric_input_validation (__main__.QuantumBernoulliSourceAuditTests.test_numeric_input_validation) ... ok
+test_one_query_strategy_exact (__main__.QuantumBernoulliSourceAuditTests.test_one_query_strategy_exact) ... ok
+test_printed_progress_lemma_fails_exactly (__main__.QuantumBernoulliSourceAuditTests.test_printed_progress_lemma_fails_exactly) ... ok
+test_rejected_source_cannot_issue_certificate (__main__.QuantumBernoulliSourceAuditTests.test_rejected_source_cannot_issue_certificate) ... ok
+test_three_partition_source_counterexample (__main__.QuantumBernoulliSourceAuditTests.test_three_partition_source_counterexample) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.157s
+
+OK

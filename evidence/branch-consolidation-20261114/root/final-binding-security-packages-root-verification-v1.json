@@ -1,0 +1,8 @@
+{
+  "binding_members_verified": 254,
+  "security_members_verified": 38,
+  "env_members_verified": 34,
+  "binding_archive_sha256": "d4b565332b1d8ef6c4cb5783edcc24ddca7ea163181a1e1b5c2c672a20ff4c9c",
+  "security_archive_sha256": "925d4a2e0d70d8d9a916a7c5719a1163c0544f34964085626843dc0ecc2c5fe2",
+  "tests_repeated": false
+}

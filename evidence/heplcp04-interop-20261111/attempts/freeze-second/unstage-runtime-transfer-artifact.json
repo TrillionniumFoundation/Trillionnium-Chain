@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "git",
+    "restore",
+    "--staged",
+    "--",
+    "evidence/heplcp04-interop-20261111/.hepta-lock-c33cb9ca6a86e14c7bcbbc9a"
+  ],
+  "cwd": "/home/qq/af52-chain-20261111/source-sparse",
+  "elapsed_seconds": 0.015672168927267194,
+  "explicit_environment": {
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "returncode": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

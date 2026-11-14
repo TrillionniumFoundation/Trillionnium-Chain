@@ -1,0 +1,397 @@
+{
+  "schema": "trnm-original-budget-diagnostic-readback-v1",
+  "commit": "ffcb687b43843ec92b3170f8841f92a3dd0a4d3d",
+  "tree": "73dcb40e7021bb7f18d1ddb75fd26a53d0e1201a",
+  "raw_files": [
+    {
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/runs/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/targeted/records/exact-14.log",
+      "bytes": 70665,
+      "sha256": "277bc24b2b2222ee32c75243d05d4ce8d85b074bfd76a8406a8a13a03d515084"
+    },
+    {
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/runs/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/targeted/records/exact-15.log",
+      "bytes": 36691,
+      "sha256": "5585c5cb1629b4459ac5f22b84274992397186d8529d2ff1a26359875a28d30d"
+    }
+  ],
+  "original_records": [
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/runs/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/targeted/records/exact-14.log",
+      "line": 5,
+      "byte_offset": 242,
+      "raw_line_bytes": 17512,
+      "raw_line_sha256": "be0a33440862df30e4be89a036704c2c6bbda7a355a93c826d4a1f62f0f076fe",
+      "selected_original_fields": {
+        "schema": "native-large-parent-original-dispatch-diagnostic-v1",
+        "authenticated_backend": false,
+        "complete_key_utf8_and_canonical_value_bytes": 8625548,
+        "observed_held_capacity_lower_bound_bytes": 8391103,
+        "original_native_result": {
+          "Ok": "ok"
+        },
+        "original_dispatch_result": {
+          "Ok": "ok"
+        },
+        "actual_cpu_flow_before": {
+          "balance_identity_verified": true,
+          "booked_reservation_ns": 0,
+          "credited_refill_ns": 0,
+          "discarded_refill_ns": 0,
+          "initial_credit_ns": 2000000000,
+          "live_debited_cpu_ns": 0,
+          "live_owners": 0,
+          "paid_cpu_debit_ns": 0,
+          "remaining_paid_credit_ns": 2000000000,
+          "schema": "public-v3-local-actual-cpu-flow-v1",
+          "settled_full_cpu_ns": 0,
+          "settlement_discard_ns": 0,
+          "settlement_residual_cpu_ns": 0,
+          "stored_credit_ns": 2000000000,
+          "unsettled_known_live_cpu_ns": 0
+        },
+        "actual_cpu_flow_after": {
+          "balance_identity_verified": true,
+          "booked_reservation_ns": 0,
+          "credited_refill_ns": 571719321,
+          "discarded_refill_ns": 15179659,
+          "initial_credit_ns": 2000000000,
+          "live_debited_cpu_ns": 2343462337,
+          "live_owners": 0,
+          "paid_cpu_debit_ns": 2343488995,
+          "remaining_paid_credit_ns": 228230326,
+          "schema": "public-v3-local-actual-cpu-flow-v1",
+          "settled_full_cpu_ns": 2343488995,
+          "settlement_discard_ns": 0,
+          "settlement_residual_cpu_ns": 26658,
+          "stored_credit_ns": 228230326,
+          "unsettled_known_live_cpu_ns": 0
+        },
+        "cpu_budget_before": {
+          "accounting_unavailable": false,
+          "burst_ns": 2000000000,
+          "in_flight": 0,
+          "refill_ns_per_second": 250000000,
+          "schema": "public-v3-local-stored-cpu-budget-v1",
+          "start_reserve_ns": 100000000,
+          "stored_credit_ns": 2000000000,
+          "worker_limit": 2
+        },
+        "cpu_budget_after": {
+          "accounting_unavailable": false,
+          "burst_ns": 2000000000,
+          "in_flight": 0,
+          "refill_ns_per_second": 250000000,
+          "schema": "public-v3-local-stored-cpu-budget-v1",
+          "start_reserve_ns": 100000000,
+          "stored_credit_ns": 228230326,
+          "worker_limit": 2
+        },
+        "dispatch_elapsed_ns": "2347289617",
+        "active_state_unchanged_on_refusal": null,
+        "refusal_readback_error": null,
+        "measurement_scope": "actual original metered dispatch; observation after outcome, no alternative execution, refill or altered acceptance"
+      }
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/runs/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/targeted/records/exact-14.log",
+      "line": 6,
+      "byte_offset": 17754,
+      "raw_line_bytes": 15490,
+      "raw_line_sha256": "acecc693767be781dd9487b8f42f98295816f3eaf528969fbc6c94228340fbb1",
+      "selected_original_fields": {
+        "schema": "native-large-parent-arithmetic-stages-v1",
+        "authenticated_backend": false,
+        "measurement_scope": "existing stage counters sampled outside the original paid CPU operation; no budget or schedule changes"
+      }
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/runs/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/targeted/records/exact-14.log",
+      "line": 7,
+      "byte_offset": 33244,
+      "raw_line_bytes": 1080,
+      "raw_line_sha256": "9e4f3bf2de45c71545eb9475014631eaf2702abdfdd154450007ed267ade7c43",
+      "selected_original_fields": {
+        "schema": "native-large-parent-schedule-parity-v1",
+        "authenticated_backend": false,
+        "genesis_fixture": "2100 explicitly seeded 4080-byte string cells; original native validator and one signed admitted seed block; not default-genesis historical growth",
+        "complete_key_utf8_and_canonical_value_bytes": 8625548,
+        "early_capacity_observed_lower_bound_bytes": 8391103,
+        "native_result": {
+          "Ok": "ok"
+        },
+        "original_cpu_receipt": {
+          "accounting_unavailable": false,
+          "finished_workers": 2,
+          "known_workers": 2,
+          "live_paid_cpu_ns": 2343462337,
+          "live_refused": false,
+          "owner_cpu_ns": 2342489402,
+          "residual_cpu_ns": 26658,
+          "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+          "scoped_worker_cpu_ns": 999593,
+          "spawned_workers": 2,
+          "started_workers": 2,
+          "total_cpu_ns": 2343488995
+        },
+        "all_honest_service_qualified": false,
+        "host_qualified": false,
+        "budget_depletion_demonstrated": false
+      }
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/runs/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/targeted/records/exact-14.log",
+      "line": 8,
+      "byte_offset": 34324,
+      "raw_line_bytes": 18528,
+      "raw_line_sha256": "8475b34187792913c398b0e362f4cfffc945ac92c583737056a688802cbba9f9",
+      "selected_original_fields": {
+        "schema": "native-large-parent-original-dispatch-diagnostic-v1",
+        "authenticated_backend": true,
+        "complete_key_utf8_and_canonical_value_bytes": 8625548,
+        "observed_held_capacity_lower_bound_bytes": 8391103,
+        "original_native_result": {
+          "Ok": "ok"
+        },
+        "original_dispatch_result": {
+          "Ok": "ok"
+        },
+        "actual_cpu_flow_before": {
+          "balance_identity_verified": true,
+          "booked_reservation_ns": 0,
+          "credited_refill_ns": 0,
+          "discarded_refill_ns": 0,
+          "initial_credit_ns": 2000000000,
+          "live_debited_cpu_ns": 0,
+          "live_owners": 0,
+          "paid_cpu_debit_ns": 0,
+          "remaining_paid_credit_ns": 2000000000,
+          "schema": "public-v3-local-actual-cpu-flow-v1",
+          "settled_full_cpu_ns": 0,
+          "settlement_discard_ns": 0,
+          "settlement_residual_cpu_ns": 0,
+          "stored_credit_ns": 2000000000,
+          "unsettled_known_live_cpu_ns": 0
+        },
+        "actual_cpu_flow_after": {
+          "balance_identity_verified": true,
+          "booked_reservation_ns": 0,
+          "credited_refill_ns": 526325738,
+          "discarded_refill_ns": 12762011,
+          "initial_credit_ns": 2000000000,
+          "live_debited_cpu_ns": 1997738745,
+          "live_owners": 0,
+          "paid_cpu_debit_ns": 1997744956,
+          "remaining_paid_credit_ns": 528580782,
+          "schema": "public-v3-local-actual-cpu-flow-v1",
+          "settled_full_cpu_ns": 1997744956,
+          "settlement_discard_ns": 0,
+          "settlement_residual_cpu_ns": 6211,
+          "stored_credit_ns": 528580782,
+          "unsettled_known_live_cpu_ns": 0
+        },
+        "cpu_budget_before": {
+          "accounting_unavailable": false,
+          "burst_ns": 2000000000,
+          "in_flight": 0,
+          "refill_ns_per_second": 250000000,
+          "schema": "public-v3-local-stored-cpu-budget-v1",
+          "start_reserve_ns": 100000000,
+          "stored_credit_ns": 2000000000,
+          "worker_limit": 2
+        },
+        "cpu_budget_after": {
+          "accounting_unavailable": false,
+          "burst_ns": 2000000000,
+          "in_flight": 0,
+          "refill_ns_per_second": 250000000,
+          "schema": "public-v3-local-stored-cpu-budget-v1",
+          "start_reserve_ns": 100000000,
+          "stored_credit_ns": 528580782,
+          "worker_limit": 2
+        },
+        "dispatch_elapsed_ns": "2156067602",
+        "active_state_unchanged_on_refusal": null,
+        "refusal_readback_error": null,
+        "measurement_scope": "actual original metered dispatch; observation after outcome, no alternative execution, refill or altered acceptance"
+      }
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/runs/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/targeted/records/exact-14.log",
+      "line": 9,
+      "byte_offset": 52852,
+      "raw_line_bytes": 16632,
+      "raw_line_sha256": "61dacff2e6583b53c7ac0085ffea4df7117fc365479ddb23381363c92bb525bd",
+      "selected_original_fields": {
+        "schema": "native-large-parent-arithmetic-stages-v1",
+        "authenticated_backend": true,
+        "measurement_scope": "existing stage counters sampled outside the original paid CPU operation; no budget or schedule changes"
+      }
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/runs/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/targeted/records/exact-14.log",
+      "line": 10,
+      "byte_offset": 69484,
+      "raw_line_bytes": 1078,
+      "raw_line_sha256": "ebb2a5a7a4350ede603e9228cb94cbb4531df1024c9aaa1e58de219b289bc5f1",
+      "selected_original_fields": {
+        "schema": "native-large-parent-schedule-parity-v1",
+        "authenticated_backend": true,
+        "genesis_fixture": "2100 explicitly seeded 4080-byte string cells; original native validator and one signed admitted seed block; not default-genesis historical growth",
+        "complete_key_utf8_and_canonical_value_bytes": 8625548,
+        "early_capacity_observed_lower_bound_bytes": 8391103,
+        "native_result": {
+          "Ok": "ok"
+        },
+        "original_cpu_receipt": {
+          "accounting_unavailable": false,
+          "finished_workers": 2,
+          "known_workers": 2,
+          "live_paid_cpu_ns": 1997738745,
+          "live_refused": false,
+          "owner_cpu_ns": 1996776746,
+          "residual_cpu_ns": 6211,
+          "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+          "scoped_worker_cpu_ns": 968210,
+          "spawned_workers": 2,
+          "started_workers": 2,
+          "total_cpu_ns": 1997744956
+        },
+        "all_honest_service_qualified": false,
+        "host_qualified": false,
+        "budget_depletion_demonstrated": false
+      }
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/runs/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/targeted/records/exact-15.log",
+      "line": 5,
+      "byte_offset": 242,
+      "raw_line_bytes": 18639,
+      "raw_line_sha256": "117b360a08d50f9f432f2dac543c4a6636b17d945dee246bcff1206c31c9feba",
+      "selected_original_fields": {
+        "schema": "native-large-parent-original-dispatch-diagnostic-v1",
+        "authenticated_backend": true,
+        "complete_key_utf8_and_canonical_value_bytes": 8625548,
+        "observed_held_capacity_lower_bound_bytes": 8391103,
+        "original_native_result": {
+          "Ok": "ok"
+        },
+        "original_dispatch_result": {
+          "Ok": "ok"
+        },
+        "actual_cpu_flow_before": {
+          "balance_identity_verified": true,
+          "booked_reservation_ns": 0,
+          "credited_refill_ns": 0,
+          "discarded_refill_ns": 0,
+          "initial_credit_ns": 2000000000,
+          "live_debited_cpu_ns": 0,
+          "live_owners": 0,
+          "paid_cpu_debit_ns": 0,
+          "remaining_paid_credit_ns": 2000000000,
+          "schema": "public-v3-local-actual-cpu-flow-v1",
+          "settled_full_cpu_ns": 0,
+          "settlement_discard_ns": 0,
+          "settlement_residual_cpu_ns": 0,
+          "stored_credit_ns": 2000000000,
+          "unsettled_known_live_cpu_ns": 0
+        },
+        "actual_cpu_flow_after": {
+          "balance_identity_verified": true,
+          "booked_reservation_ns": 0,
+          "credited_refill_ns": 488856129,
+          "discarded_refill_ns": 12679883,
+          "initial_credit_ns": 2000000000,
+          "live_debited_cpu_ns": 1955488261,
+          "live_owners": 0,
+          "paid_cpu_debit_ns": 1955495817,
+          "remaining_paid_credit_ns": 533360312,
+          "schema": "public-v3-local-actual-cpu-flow-v1",
+          "settled_full_cpu_ns": 1955495817,
+          "settlement_discard_ns": 0,
+          "settlement_residual_cpu_ns": 7556,
+          "stored_credit_ns": 533360312,
+          "unsettled_known_live_cpu_ns": 0
+        },
+        "cpu_budget_before": {
+          "accounting_unavailable": false,
+          "burst_ns": 2000000000,
+          "in_flight": 0,
+          "refill_ns_per_second": 250000000,
+          "schema": "public-v3-local-stored-cpu-budget-v1",
+          "start_reserve_ns": 100000000,
+          "stored_credit_ns": 2000000000,
+          "worker_limit": 2
+        },
+        "cpu_budget_after": {
+          "accounting_unavailable": false,
+          "burst_ns": 2000000000,
+          "in_flight": 0,
+          "refill_ns_per_second": 250000000,
+          "schema": "public-v3-local-stored-cpu-budget-v1",
+          "start_reserve_ns": 100000000,
+          "stored_credit_ns": 533360312,
+          "worker_limit": 2
+        },
+        "dispatch_elapsed_ns": "2005854440",
+        "active_state_unchanged_on_refusal": null,
+        "refusal_readback_error": null,
+        "measurement_scope": "actual original metered dispatch; observation after outcome, no alternative execution, refill or altered acceptance"
+      }
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/runs/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/targeted/records/exact-15.log",
+      "line": 6,
+      "byte_offset": 18881,
+      "raw_line_bytes": 16629,
+      "raw_line_sha256": "abd6a9d5b2d557182aa63a0c449fc13d4e53c5bea6233ee6d752694c91cc13b9",
+      "selected_original_fields": {
+        "schema": "native-large-parent-arithmetic-stages-v1",
+        "authenticated_backend": true,
+        "measurement_scope": "existing stage counters sampled outside the original paid CPU operation; no budget or schedule changes"
+      }
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/runs/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/targeted/records/exact-15.log",
+      "line": 7,
+      "byte_offset": 35510,
+      "raw_line_bytes": 1078,
+      "raw_line_sha256": "c7e3809e825c8034f6e422464fd0e51fac1024e5790097003ed13e76486808bf",
+      "selected_original_fields": {
+        "schema": "native-large-parent-schedule-parity-v1",
+        "authenticated_backend": true,
+        "genesis_fixture": "2100 explicitly seeded 4080-byte string cells; original native validator and one signed admitted seed block; not default-genesis historical growth",
+        "complete_key_utf8_and_canonical_value_bytes": 8625548,
+        "early_capacity_observed_lower_bound_bytes": 8391103,
+        "native_result": {
+          "Ok": "ok"
+        },
+        "original_cpu_receipt": {
+          "accounting_unavailable": false,
+          "finished_workers": 2,
+          "known_workers": 2,
+          "live_paid_cpu_ns": 1955488261,
+          "live_refused": false,
+          "owner_cpu_ns": 1954495994,
+          "residual_cpu_ns": 7556,
+          "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+          "scoped_worker_cpu_ns": 999823,
+          "spawned_workers": 2,
+          "started_workers": 2,
+          "total_cpu_ns": 1955495817
+        },
+        "all_honest_service_qualified": false,
+        "host_qualified": false,
+        "budget_depletion_demonstrated": false
+      }
+    }
+  ],
+  "scope": "Readback of the sole original exact-14 and exact-15 executions; all raw logs retained. No replay, new measurement, budget change, or paired performance claim.",
+  "legacy_arithmetic_observer_does_not_measure_commitment_root_cache": true,
+  "qualification": {
+    "original_business_gates": false,
+    "history_4105": false,
+    "four_second_pressure": false,
+    "throughput": false,
+    "whole_chain_quantum_security": false
+  }
+}

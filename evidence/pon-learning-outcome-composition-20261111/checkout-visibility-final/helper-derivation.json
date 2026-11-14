@@ -1,0 +1,11 @@
+{
+  "derived_sha256": "9c42662fa4f4ffa53860e3593b754f6ca2de4a81cffdf2342e4711711e969d3e",
+  "expected_entries": 29041,
+  "expected_head": "04f5b5515774aab6663bb80cf7831fe07367ba81",
+  "only_replacement": {
+    "after": "ROOT = Path(\"/home/qian-qi/work/chain-pon-outcome-7612-final\")",
+    "before": "ROOT = Path(\"/home/qian-qi/work/chain-pon-outcome-7612-publish\")"
+  },
+  "original_sha256": "6c8ae308445f6b42078be33fd3fc133db4984fa024e4012ec785f60677911fec",
+  "output_directory": "/home/qian-qi/work/chain-pon-outcome-7612-checkout-visibility-final"
+}

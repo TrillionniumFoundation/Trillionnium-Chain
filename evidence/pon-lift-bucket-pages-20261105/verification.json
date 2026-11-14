@@ -1,0 +1,104 @@
+{
+  "base_commit": "36c8effa32f004fdde30c139eab206af7f4fad8f",
+  "local_validated_source_commit": "bee753f411f9f1f0c6ba5f8dfcd15ee9c444c26c",
+  "local_validated_source_tree": "372d5472a7efbbae3f782292c685bdfa47b2f4d5",
+  "native_store_sha256": "450079e9ff43407677aee8c4b0f0d5ded0b953e1f706f10289980ad01b49b6a0",
+  "toolchain": "Rust 1.95.0; original profiles; locked; default runtime features",
+  "native_results": {
+    "account_store": {
+      "passed": 27,
+      "failed": 0,
+      "ignored": 4
+    },
+    "native_authenticated": {
+      "passed": 92,
+      "failed": 0,
+      "ignored": 1
+    },
+    "distinct_passed": 119,
+    "native_constants_roster_subset": {
+      "passed": 11,
+      "ignored": 2
+    }
+  },
+  "static_results": {
+    "source_controls": 37,
+    "ci_controls": 100,
+    "roster_controls": 10,
+    "source_pins": 522,
+    "inventory_unchanged": true,
+    "strict_all_feature_workspace_clippy": "PASS",
+    "format": "PASS"
+  },
+  "software_charge_bytes": {
+    "first_page": 9192,
+    "eager": 983080,
+    "full_paged": 991272,
+    "hard_ceiling_unchanged": 1048576,
+    "is_rss": false
+  },
+  "original_business_gate": "NOT QUALIFIED; unchanged four-second >=16 hostile W1 criteria",
+  "raw_files": {
+    "lift-pages-clippy.txt": {
+      "bytes": 249,
+      "sha256": "09f1cb4e4a0e8d95e0f938992cc8c3ae1be288600994784e000981071c411696"
+    },
+    "lift-pages-final-account.txt": {
+      "bytes": 8837,
+      "sha256": "23b5b6a91a112a509ba7179c0cbc7191c7da8c85a0ff323bcef15ec7c789d72f"
+    },
+    "lift-pages-final-clippy.txt": {
+      "bytes": 194,
+      "sha256": "5127d2d33fe00d2a569a693a6d97bf509b149cfa0cbf667871141254a7122b0d"
+    },
+    "lift-pages-final-elf.txt": {
+      "bytes": 152,
+      "sha256": "8a7b02fad0ab048f8a2c2fc68f14f8e79fa66f8a814f271b91ce153a97a37f1c"
+    },
+    "lift-pages-final-fmt.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "lift-pages-final-owner.txt": {
+      "bytes": 22762,
+      "sha256": "9be8266d944c8b4227455c509ce5e8e3671a5e95980362ae727e9cf1020757ae"
+    },
+    "lift-pages-final-roster.txt": {
+      "bytes": 4090,
+      "sha256": "bd5671161766b54dfced5b40fe20ec0a22035f4128665c2827f27d4917956266"
+    },
+    "lift-pages-final-static.txt": {
+      "bytes": 18715,
+      "sha256": "02c183b11b0347904dc02f2fdf6ba45abf7fac9ec0e6364afa42d66e8240d228"
+    },
+    "lift-pages-fmt.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "lift-pages-native.txt": {
+      "bytes": 1465,
+      "sha256": "12d3cdb082944cea46e98f351ae43edca9fec71409f33d6eef0cabf5dd6ced01"
+    },
+    "lift-pages-preflight.txt": {
+      "bytes": 160,
+      "sha256": "dd02de5f36255f7542baa98cd5981a5d42b1462f19690688ab68b373e156b6c6"
+    },
+    "lift-pages-roster-controls.txt": {
+      "bytes": 1133,
+      "sha256": "2e91e8dda58521c75a1ef59b438fe7e359fdd2c0ce54b32c019879919db5a703"
+    },
+    "lift-pages-roster-result.json": {
+      "bytes": 987,
+      "sha256": "4c3edaeb4d7e8404e2a13dc4cb15df90df6d597123cb54cd1fa45229bd090786"
+    },
+    "lift-pages-static.txt": {
+      "bytes": 17582,
+      "sha256": "14603417f0aad688897c6dee8a3408577f36f0faa945ace17a7ca0ca8013b759"
+    },
+    "validated-source.patch": {
+      "bytes": 29207,
+      "sha256": "30577e23645d24ec6b47f1340f84994581c882f259fa7a6c97b07f85dda1cdf7"
+    }
+  },
+  "zip_sha256": "342d84c9bb7ef7f2ada3c28ce522e935ce25c6f9b02373c618e4ef95505ed6e9"
+}

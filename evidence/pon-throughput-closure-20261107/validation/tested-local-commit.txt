@@ -1,0 +1,8 @@
+tree 807e589d4cb8c2c0d2c2123e8e4ff0870d6a1eb7
+parent e70f13448aad715286fb8eb56fc802b09db643a3
+author Codex <codex@openai.com> 1794048011 -0500
+committer Codex <codex@openai.com> 1794048074 -0500
+
+perf(pon): reduce bounded ingress and legacy reorg work with complete accounting
+
+Signed-off-by: Codex <codex@openai.com>

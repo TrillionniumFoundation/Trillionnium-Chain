@@ -1,0 +1,1 @@
+{"host":"rog","executable":"/usr/bin/python3","args":["/home/qian-qi/work/joint-tail-native-8e76-20261110-runner.py","--source-commit","4716bade250f327b012a098418f4eece6b73fcaa"],"cwd":"/home/qian-qi","idempotency_key":"joint-tail-rust-gates-20261110-8e76-r1","timeout_seconds":3600,"cpu_quota_percent":200,"memory_max_bytes":17179869184,"nice":10}

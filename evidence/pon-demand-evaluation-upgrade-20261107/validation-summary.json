@@ -1,0 +1,215 @@
+{
+  "archive": {
+    "bytes": 815768,
+    "members": 116,
+    "path": "observations.tar.xz",
+    "sha256": "6f44cd25007340171a6f22b048e6cb295a1ec62d298d8bca50759389c8a87e2b"
+  },
+  "commands": [
+    {
+      "elapsed_seconds": 13.207,
+      "exit_code": 0,
+      "label": "final-ci-contract",
+      "log": "validation/frozen/final-ci-contract.log",
+      "log_sha256": "436f7524df03c26f1418a2e47c7e45422dc3d2cdd40bf56fc6e211df42934391",
+      "python_test_counts": [
+        102
+      ],
+      "receipt": "validation/frozen/final-ci-contract.json",
+      "rust_test_counts": []
+    },
+    {
+      "elapsed_seconds": 2.66,
+      "exit_code": 0,
+      "label": "final-fuzz-cargo-graph",
+      "log": "validation/frozen/final-fuzz-cargo-graph.log",
+      "log_sha256": "3fc95447037d959372453c8adabb41fa7a9e90d1103b63592f78fd0fdb88f87e",
+      "python_test_counts": [],
+      "receipt": "validation/frozen/final-fuzz-cargo-graph.json",
+      "rust_test_counts": []
+    },
+    {
+      "elapsed_seconds": 2.755,
+      "exit_code": 0,
+      "label": "final-m12",
+      "log": "validation/frozen/final-m12.log",
+      "log_sha256": "cc6efb9da8528af4e3e87a20fec73539dcb80a25a57a2e41d562d232db365a7a",
+      "python_test_counts": [],
+      "receipt": "validation/frozen/final-m12.json",
+      "rust_test_counts": [
+        [
+          "49",
+          "0"
+        ]
+      ]
+    },
+    {
+      "elapsed_seconds": 4.954,
+      "exit_code": 0,
+      "label": "final-native-no-gain",
+      "log": "validation/frozen/final-native-no-gain.log",
+      "log_sha256": "8c2f3c4685930172703903d5f5f74c6e82698f57d93196e18349731bb16df950",
+      "python_test_counts": [],
+      "receipt": "validation/frozen/final-native-no-gain.json",
+      "rust_test_counts": [
+        [
+          "2",
+          "0"
+        ]
+      ]
+    },
+    {
+      "elapsed_seconds": 3.679,
+      "exit_code": 0,
+      "label": "final-new-references",
+      "log": "validation/frozen/final-new-references.log",
+      "log_sha256": "b77ef2f3877fee7b1a06612f077795f136461fd83d62e5fe720a22eba0f164ce",
+      "python_test_counts": [
+        52
+      ],
+      "receipt": "validation/frozen/final-new-references.json",
+      "rust_test_counts": []
+    },
+    {
+      "elapsed_seconds": 2.755,
+      "exit_code": 0,
+      "label": "final-patch-whitespace",
+      "log": "validation/frozen/final-patch-whitespace.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "python_test_counts": [],
+      "receipt": "validation/frozen/final-patch-whitespace.json",
+      "rust_test_counts": []
+    },
+    {
+      "elapsed_seconds": 2.729,
+      "exit_code": 0,
+      "label": "final-pq-source-pins",
+      "log": "validation/frozen/final-pq-source-pins.log",
+      "log_sha256": "8bd004599cd53f5124e7235699ee9406bbf1cfd027cf372dbd14d1e0a30d13c0",
+      "python_test_counts": [],
+      "receipt": "validation/frozen/final-pq-source-pins.json",
+      "rust_test_counts": []
+    },
+    {
+      "elapsed_seconds": 2.471,
+      "exit_code": 0,
+      "label": "final-preflight",
+      "log": "validation/frozen/final-preflight.log",
+      "log_sha256": "f4acfa659f158248ed0da6063edfb0360c71860ff1d80378665d699b3c225965",
+      "python_test_counts": [],
+      "receipt": "validation/frozen/final-preflight.json",
+      "rust_test_counts": []
+    },
+    {
+      "elapsed_seconds": 76.918,
+      "exit_code": 0,
+      "label": "final-repository",
+      "log": "validation/frozen/final-repository.log",
+      "log_sha256": "48e41fdb9d6533f87fab65d7c24b0fd23dbbdaba46bf1e794d82326894ae4b9d",
+      "python_test_counts": [],
+      "receipt": "validation/frozen/final-repository.json",
+      "rust_test_counts": []
+    },
+    {
+      "elapsed_seconds": 9.506,
+      "exit_code": 0,
+      "label": "final-retained-model-boundaries",
+      "log": "validation/frozen/final-retained-model-boundaries.log",
+      "log_sha256": "7e9d0bdd87c689c71a21304df4fa0a7c5b37f7cefe6337ec028274c145e1bcd4",
+      "python_test_counts": [
+        131
+      ],
+      "receipt": "validation/frozen/final-retained-model-boundaries.json",
+      "rust_test_counts": []
+    },
+    {
+      "elapsed_seconds": 3.667,
+      "exit_code": 0,
+      "label": "final-root-cargo-graph",
+      "log": "validation/frozen/final-root-cargo-graph.log",
+      "log_sha256": "16b6ee33bfa4aa36b0e230bec422c266c3ff2099cd2113f227818747294f77eb",
+      "python_test_counts": [],
+      "receipt": "validation/frozen/final-root-cargo-graph.json",
+      "rust_test_counts": []
+    },
+    {
+      "elapsed_seconds": 24.278,
+      "exit_code": 0,
+      "label": "final-rustfmt",
+      "log": "validation/frozen/final-rustfmt.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "python_test_counts": [],
+      "receipt": "validation/frozen/final-rustfmt.json",
+      "rust_test_counts": []
+    },
+    {
+      "elapsed_seconds": 260.651,
+      "exit_code": 0,
+      "label": "final-source-integrity",
+      "log": "validation/frozen/final-source-integrity.log",
+      "log_sha256": "97c21fae5fd7469fa5b621edbb0257a12e794e555d247b3e0e061c14cc3e1812",
+      "python_test_counts": [
+        130
+      ],
+      "receipt": "validation/frozen/final-source-integrity.json",
+      "rust_test_counts": []
+    },
+    {
+      "elapsed_seconds": 33.13,
+      "exit_code": 0,
+      "label": "final-strict-clippy",
+      "log": "validation/frozen/final-strict-clippy.log",
+      "log_sha256": "2cec01fa0ce6873efd12bb135fcb1a9ac45f66fd13f3e1ebbd83ddf3288ab574",
+      "python_test_counts": [],
+      "receipt": "validation/frozen/final-strict-clippy.json",
+      "rust_test_counts": []
+    },
+    {
+      "elapsed_seconds": 3.11,
+      "exit_code": 0,
+      "label": "final-toolchain",
+      "log": "validation/frozen/final-toolchain.log",
+      "log_sha256": "2ccf995b4468a30404afd9b8cb9b4ab5cd1390a997233af6c83054cda8f4c0d9",
+      "python_test_counts": [],
+      "receipt": "validation/frozen/final-toolchain.json",
+      "rust_test_counts": []
+    }
+  ],
+  "demand_tests": 29,
+  "full_node_lib_harness_qualified": false,
+  "fuzz_cargo_graph": {
+    "packages": 147,
+    "resolve_nodes": 147,
+    "workspace_members": 1
+  },
+  "hepta_current_adoption_qualified": false,
+  "independent_demand_proven": false,
+  "local_executed_commit": "99220dd03626760d6cb015f66bb133d1d61217ec",
+  "native_demand_export_adapter_implemented": false,
+  "native_integration_backend_scenarios": 6,
+  "native_integration_tests": 2,
+  "native_public_git_fetch_verified": true,
+  "prior_frozen_commit": "a4121fe4e0c0e2c479fa89a6bc81a500b1414904",
+  "prior_results_transferred_to_final": false,
+  "production_activation": false,
+  "publication_method": "Git Data; all ten source trees independently matched local trees",
+  "published_source_commit": "ed0ad15c5aaf0b0ca0c6edbb1c67b9976a5019dd",
+  "real_independent_evaluation_measured": false,
+  "real_training_measured": false,
+  "root_cargo_graph": {
+    "packages": 180,
+    "resolve_nodes": 180,
+    "workspace_members": 26
+  },
+  "schema": "pon-demand-evaluation-upgrade-validation-v1",
+  "source_manifest": {
+    "bytes": 1026962687,
+    "commit": "99220dd03626760d6cb015f66bb133d1d61217ec",
+    "entries": 10689,
+    "source_manifest": "source-eee5205da5f0ebe7bec439bc609f866172353574cdc2f2e6783be09d510714d5.json",
+    "source_sha256": "eee5205da5f0ebe7bec439bc609f866172353574cdc2f2e6783be09d510714d5",
+    "tree": "a4db639e2c346b914ade186697182727a7e43ca4"
+  },
+  "source_tree": "a4db639e2c346b914ade186697182727a7e43ca4",
+  "upgrade_tests": 23
+}

@@ -1,0 +1,81 @@
+{
+  "artifact_sha256": {
+    "hardening-green-tests.stderr.txt": "437b072e0d6f33877fade2733cc7d364b6ea81c76f56613a231b689c249c9cc2",
+    "hardening-green-tests.stdout.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "hardening-reader.patch": "e4aa01a6a45c81b4bdfe327ba09bf770b9770ef7ef2eed6903db5835bb02b644",
+    "hardening-red-tests.stderr.txt": "46d9ce33f55890b828eb0b3663cc185be5812a82249f0e37f75d3a4bb9b464a7",
+    "hardening-red-tests.stdout.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "projection-hardening.json": "48dc8c4387b77113c9b875f18acc44734c31942d5a8227b6fa4b1e57cb1d9599",
+    "projection-hardening.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "fresh_WAN_runs": 0,
+  "green": {
+    "argv": [
+      "python3",
+      "-B",
+      "formal/throughput-v1/test_cell_model_metrics.py",
+      "-v"
+    ],
+    "failed": 0,
+    "log": "hardening-green-tests.stderr.txt",
+    "reader_sha256": "01a7ff175172b0f155cf6b0c72288a79b03550a95aa3d25d4f0fce2a05f373c3",
+    "registered_tests": 32,
+    "returncode": 0,
+    "tests_sha256": "af0e1a66b536232e1354143b31823f286a6587c65a2a693d400cb95ca24a8069"
+  },
+  "native_Cell_runs": 0,
+  "native_model_runs": 0,
+  "production_activation": false,
+  "projection": {
+    "argv": [
+      "python3",
+      "-B",
+      "formal/throughput-v1/cell_model_metrics.py",
+      "--manifest",
+      "evidence/pon-throughput-20261108/cell-model/input-manifest.json",
+      "--manifest-sha256",
+      "9e3c64afcd03bb17ac8746d1146a98c78d214000ccaf71ed2aed0ea96a6a3d25"
+    ],
+    "elapsed_ns": 59975986,
+    "file": "projection-hardening.json",
+    "identical_to_prior_projection": true,
+    "returncode": 0
+  },
+  "red": {
+    "argv": [
+      "python3",
+      "-B",
+      "formal/throughput-v1/test_cell_model_metrics.py",
+      "-v"
+    ],
+    "failing_methods": 4,
+    "failing_mutation_subcases": 7,
+    "log": "hardening-red-tests.stderr.txt",
+    "reader_sha256": "a10a40523783b0985f863e7d9f4814fd49217db9237bf7e9f1776b682115902f",
+    "registered_tests": 32,
+    "returncode": 1,
+    "tests_sha256": "688456f128a7a037facd914e30f8d37107002883cb28dafebd5ea08396fd39df"
+  },
+  "same_projection_sources": true,
+  "schema": "trnm-cell-model-reader-hardening-validation-v1",
+  "scope": "four independently reproduced record-consistency gaps; not a native/WAN rerun",
+  "scoped_separate_agent_review": {
+    "operator_independence": false,
+    "original_four_mutations_rejected": true,
+    "original_pinned_projection_preserved": true,
+    "reviewed_reader_sha256": "01a7ff175172b0f155cf6b0c72288a79b03550a95aa3d25d4f0fce2a05f373c3",
+    "reviewer": "confirmed_tps"
+  },
+  "source_after_projection": {
+    "formal/throughput-v1/cell_model_metrics.py": "01a7ff175172b0f155cf6b0c72288a79b03550a95aa3d25d4f0fce2a05f373c3",
+    "formal/throughput-v1/test_cell_model_metrics.py": "af0e1a66b536232e1354143b31823f286a6587c65a2a693d400cb95ca24a8069",
+    "scripts/ci/test_smollm_command_receipts.py": "79c0fcc8619f21e7d8795dae4ed7276fd19372eab533093e8c30a92fbddd7fc2",
+    "scripts/run_smollm_cell_replica_research.py": "67a2312f785727cbabe3b6d4414d9c9e3c2040541a4b61f5903ed3bcbfca8851"
+  },
+  "source_before_projection": {
+    "formal/throughput-v1/cell_model_metrics.py": "01a7ff175172b0f155cf6b0c72288a79b03550a95aa3d25d4f0fce2a05f373c3",
+    "formal/throughput-v1/test_cell_model_metrics.py": "af0e1a66b536232e1354143b31823f286a6587c65a2a693d400cb95ca24a8069",
+    "scripts/ci/test_smollm_command_receipts.py": "79c0fcc8619f21e7d8795dae4ed7276fd19372eab533093e8c30a92fbddd7fc2",
+    "scripts/run_smollm_cell_replica_research.py": "67a2312f785727cbabe3b6d4414d9c9e3c2040541a4b61f5903ed3bcbfca8851"
+  }
+}

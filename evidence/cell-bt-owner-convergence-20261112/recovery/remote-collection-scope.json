@@ -1,0 +1,178 @@
+{
+  "actual_local_core_files": [
+    {
+      "actual_original_bytes_retrieved": true,
+      "bytes": 9984,
+      "expected_bytes_not_used_as_retrieval_substitute": true,
+      "kind": "source",
+      "local_path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/model-final-three-small-readback/source-inputs.native-v2-env2.json",
+      "sha256": "3d4b4bbd30f1c37dc9986a5e512d13ae4d93a330a00fde904bd9b3fcf381083e"
+    },
+    {
+      "actual_original_bytes_retrieved": true,
+      "bytes": 13842,
+      "expected_bytes_not_used_as_retrieval_substitute": true,
+      "kind": "audit",
+      "local_path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/model-final-three-small-readback/source-inputs.native-v2-env2.verification.json",
+      "sha256": "2a5db7a61d5340511895cdc6b2e2675b2cc87aaa2a38b2a8815c8bc4059edd47"
+    },
+    {
+      "actual_original_bytes_retrieved": true,
+      "bytes": 40002,
+      "expected_bytes_not_used_as_retrieval_substitute": true,
+      "kind": "config",
+      "local_path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/root-model-admission-review/model-config.actual.json",
+      "sha256": "f0e314ac93b175ada1a56969cfef58fe4e0236ed8c3e6b1cb0c2764f8b230150"
+    },
+    {
+      "actual_original_bytes_retrieved": true,
+      "bytes": 3490,
+      "expected_bytes_not_used_as_retrieval_substitute": true,
+      "kind": "observation",
+      "local_path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/model-observation-actual-readback/observation.json",
+      "sha256": "f90651535d987073260a69c14aaa66e5a05de98b1c8f53c7ea9e61507c7fae50"
+    },
+    {
+      "actual_original_bytes_retrieved": true,
+      "bytes": 82443,
+      "expected_bytes_not_used_as_retrieval_substitute": true,
+      "kind": "native_result",
+      "local_path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/model-native-result-readback/native-result.json",
+      "sha256": "7e69ad30d35e984cf8e7d871bce91f7ec50f5e7c530a29c584454eab79c262a0"
+    },
+    {
+      "actual_original_bytes_retrieved": true,
+      "bytes": 2354,
+      "expected_bytes_not_used_as_retrieval_substitute": true,
+      "kind": "two_forward_receipts",
+      "local_path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/model-forward-observations-readback/next-use-observations.json",
+      "sha256": "5cc5bf2bdd55158d6636689de9f72840b88cbc072a21dfd0ea70eb9a5768a097"
+    },
+    {
+      "actual_original_bytes_retrieved": true,
+      "bytes": 3710,
+      "expected_bytes_not_used_as_retrieval_substitute": true,
+      "kind": "controller_wrapper_stdout",
+      "local_path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/model-frozen02-authoritative/native.stdout",
+      "sha256": "bf2e6e9a37e69e4ba6a4208cb73bf1fb164e6ce751ddf30d244336978e568a14"
+    }
+  ],
+  "collection_scope": {
+    "all_remote_model_raw_logs_copied_locally": false,
+    "all_remote_preparation_files_copied_locally": false,
+    "model_pass_has_separate_verified_core_original_evidence": true,
+    "model_weights_arenas_shards_or_runtime_bulk_files_transferred": false,
+    "no_new_model_or_test_execution": true
+  },
+  "model_job": {
+    "authoritative_state": "succeeded",
+    "exit_code": 0,
+    "id": "1a1cf4e5d08-2564-19e3",
+    "no_reexecution": true
+  },
+  "model_result_archive": {
+    "archive_path": "/home/qq/work/chain-bt-4a0b-frozen02-validation/checkpoints/model-result-01/model-result.tar.gz",
+    "bytes": null,
+    "collector_sha256": "74f84af648d84973736ae60d89cb9c005628b7abdb15847977ad8a8d4dfbddc3",
+    "complete_local_copy": false,
+    "initial_start_response": "MCP request timed out; retained",
+    "known_job_state": "launched",
+    "receipt_path": "/home/qq/work/chain-bt-4a0b-frozen02-validation/checkpoints/model-result-01/receipt.json",
+    "request_sha256": "446f45fe41537b1eb0dd95d5e223b0440a8bd89bb8bd11a2726ef984eedd9a66",
+    "same_key_reconciliation_job_id": "1a1cf655c98-2564-1a11",
+    "sha256": null,
+    "terminal_status": null,
+    "unknown_collection_completion_does_not_mean_model_failed": true
+  },
+  "native_process_streams": {
+    "actual_native_stdout_stderr_fully_retrieved_locally": false,
+    "controller_3710_byte_stdout_is_different_from_native_stdout": true,
+    "native_stdout_source_contract": "The unchanged B native entry prints the same report object serialized into native-result.json; its exact stream bytes are still pending retrieval.",
+    "stderr_remote_path": "/home/qq/work/chain-bt-4a0b-frozen02-validation/real-native-env2-bf34a669dc4b3617-attempt01-wrapper/native.stderr",
+    "stdout_remote_path": "/home/qq/work/chain-bt-4a0b-frozen02-validation/real-native-env2-bf34a669dc4b3617-attempt01-wrapper/native.stdout"
+  },
+  "operation": "bf34a669dc4b3617d97bee356f1cadf3504f3c5993999c5136ce1d6b0cd6f9c2",
+  "preceding_scope_record_sha256": "1761e804ae707f01a0879e1ba7fafe0273f9d9f43ecac7dec1720f73cb7aa135",
+  "preparation_archive": {
+    "authoritative_terminal_status_not_yet_retrieved": true,
+    "collector_job_id": "1a1cf52710c-2564-19ed",
+    "collector_stdout_bytes": 1304,
+    "collector_stdout_completed_passed": true,
+    "collector_stdout_sha256": "58ad258065058a5ee84d98f42544d4c0e6c7703081af3f3bccb65d0031e8e6e0",
+    "exact_uncompressed_tar": {
+      "bytes": 7383040,
+      "complete_local_copy": false,
+      "sha256_from_remote_receipt": "f146f12fe3d8d32c2179a439d2187793ffb5247542500731c398f65db8b7317e"
+    },
+    "gzip": {
+      "bytes": 642201,
+      "complete_local_copy": false,
+      "path": "/home/qq/work/chain-bt-4a0b-frozen02-validation/checkpoints/final-model-bindings-01/final-model-bindings.tar.gz",
+      "sha256_from_remote_receipt": "2f1815b9461394cf920f68fe0018b563c4a7f0d5be7d2c2f4c6a89a0ebfdfd36"
+    },
+    "large_archive_source_files_extracted_locally": false,
+    "manifest": {
+      "archive_members": 97,
+      "complete_local_copy": false,
+      "deferred_files": 104,
+      "included_source_files": 96,
+      "path": "/home/qq/work/chain-bt-4a0b-frozen02-validation/checkpoints/final-model-bindings-01/manifest.json",
+      "sha256_from_remote_receipt": "56389873c819c5c641f069e593144fcad6f9765b30b2b5ee0f9e76c38b3f9916",
+      "uncompressed_included_bytes": 7310873
+    },
+    "partial_immutable_sdk_pages": [
+      {
+        "file_offset": 32768,
+        "locally_retained_sdk_page_offsets": [
+          0
+        ],
+        "operation_id": "3cc65178de91af1b9a1ab7cc0fad9e90fd097a5cbb9e154b32df2b1f5f7dae5e",
+        "sdk_fully_reassembled_and_verified": false,
+        "sdk_sha256": "55805469b6cfd1177f71412b709d4ef50a0e5214b0abb87d2e811c1307486be5",
+        "sdk_total_bytes": 87843
+      },
+      {
+        "file_offset": 98304,
+        "locally_retained_sdk_page_offsets": [
+          0
+        ],
+        "operation_id": "f51d2979a05e7947467267956d1baf726a2c0db41006eec678fc86446786a775",
+        "sdk_fully_reassembled_and_verified": false,
+        "sdk_sha256": "253d21478072a5c8d21c5b31d738a6158ea6d17940a9bd689c3ca709ed281ac5",
+        "sdk_total_bytes": 87844
+      }
+    ],
+    "paused_pagination_note": "Some successful page metadata was observed before a local read loop was terminated; its uncommitted store values are not counted as retained file bytes. The immutable controller payloads remain resumable.",
+    "status_read_errors_retained": [
+      "remote helper failed with 255; Connection closed by 10.77.0.2 port 22",
+      "MCP request timed out"
+    ],
+    "xz": {
+      "bytes": 268836,
+      "complete_local_copy": false,
+      "locally_verified_file_ranges": [
+        {
+          "bytes": 32768,
+          "next_offset": 32768,
+          "offset": 0,
+          "sha256": "f472897645a210d3cc830c1cf9d5ef9b216cd625aec90b444579d856f0e7530e"
+        }
+      ],
+      "path": "/home/qq/work/chain-bt-4a0b-frozen02-validation/checkpoints/final-model-bindings-01/final-model-bindings.tar.xz",
+      "sha256_from_remote_receipt": "5bf9c756c3cc09f66031ee58b65193e6a4da73825d7df8266f2f1ede255fffbb",
+      "version": "66306:48806791:268836:1794480059087665709:1794480059087665709"
+    },
+    "xz_transport_receipt": {
+      "authoritative_terminal_status_not_yet_retrieved": true,
+      "job_id": "1a1cf58aa41-2564-19f8",
+      "original_gzip_unchanged_reported": true,
+      "path": "/home/qq/work/chain-bt-4a0b-frozen02-validation/checkpoints/final-model-bindings-01/transport-xz.json",
+      "same_tar_bytes_reported": true,
+      "stdout_bytes": 819,
+      "stdout_sha256": "74d47a1b2199cb9ebc758df966f353d994ded815a77bc133fd97f03e111b8394"
+    }
+  },
+  "recorded_at_utc": "2026-11-12T10:58:58.295190+00:00",
+  "schema": "trnm.bt-remote-collection-scope.v2",
+  "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"
+}

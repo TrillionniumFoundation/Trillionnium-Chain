@@ -1,0 +1,10 @@
+{
+  "job_id": "1a1be274bef-138b0-8d5",
+  "execution_program": "/usr/bin/python3",
+  "arguments": [
+    "-c",
+    "import json,subprocess,os\nenv=dict(os.environ);env[\"PYTHONDONTWRITEBYTECODE\"]=\"1\"\ncommands=[\n[\"python3\",\"scripts/refresh_distributed_source_inventory.py\",\"--check\"],\n[\"git\",\"status\",\"--short\"],\n[\"rg\",\"-n\",\"mod .*reorg|mod .*readback|fn .*reorg|fn .*readback\",\"trillionnium/crates/trnm-pon-node/src\"]]\nfor cmd in commands:\n p=subprocess.run(cmd,capture_output=True,text=True,env=env)\n print(json.dumps({\"command\":cmd,\"exit_code\":p.returncode,\"stdout\":p.stdout,\"stderr\":p.stderr}))\n"
+  ],
+  "cwd": "/home/qian-qi/work/chain-time-credit-20261108-qf01",
+  "idempotency_key": null
+}

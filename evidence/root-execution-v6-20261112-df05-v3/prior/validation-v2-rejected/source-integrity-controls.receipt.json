@@ -1,0 +1,29 @@
+{
+  "bytes": 7928,
+  "command": [
+    "/usr/bin/python3",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/ci",
+    "-p",
+    "test_ci_source_integrity.py",
+    "-v"
+  ],
+  "cwd": "/home/qian-qi/work/chain-root-operation-recovered-20261112-df05",
+  "elapsed_ns": 20650759184,
+  "executed": true,
+  "exit_code": 0,
+  "expected_source": "92934b64f80ee9b20bcc070a08ca0966b7c5741d",
+  "log": "source-integrity-controls.log",
+  "name": "source-integrity-controls",
+  "process_exit_code": 0,
+  "sha256": "8ec82a1f4a73dc86b21bf82fee2d956840f70ffee5020e4d7c497af258923e2f",
+  "source": "92934b64f80ee9b20bcc070a08ca0966b7c5741d",
+  "source_after_verified": true,
+  "source_before_verified": true,
+  "source_verified": true,
+  "timed_out": false
+}

@@ -1,0 +1,127 @@
+[
+  {
+    "name": "chain-converged-repository-truth",
+    "command": [
+      "bash",
+      "scripts/ci/ci_job.sh",
+      "repository-truth"
+    ],
+    "returncode": 0,
+    "seconds": 1740.381193080102,
+    "log_sha256": "31aa2b4fcebfca958dfa97a0cf1ac9f07cedca4407fdc31c06b66abd5c8a8fc5"
+  },
+  {
+    "name": "chain-converged-source-integrity",
+    "command": [
+      "python3",
+      "scripts/ci/test_ci_source_integrity.py"
+    ],
+    "returncode": 0,
+    "seconds": 3.8234737240709364,
+    "log_sha256": "30275bb023d87edf97a2412052c9248fe67708ffc48c7ec9622d5e2882e19e85"
+  },
+  {
+    "name": "chain-converged-plan-reference",
+    "command": [
+      "bash",
+      "scripts/ci/check_canonical_development_plan.sh"
+    ],
+    "returncode": 0,
+    "seconds": 294.326296773972,
+    "log_sha256": "4e605731b0ff019dc4aa7b04e33842034b2fd147083d78637d262f39810a35fb"
+  },
+  {
+    "name": "chain-converged-graph",
+    "command": [
+      "cargo",
+      "metadata",
+      "--locked",
+      "--offline",
+      "--format-version",
+      "1"
+    ],
+    "returncode": 0,
+    "seconds": 0.234712254954502,
+    "log_sha256": "5e5cba4953cf5115061631c3b22da295e946f1fff35e786831dafed9df3dc245"
+  },
+  {
+    "name": "chain-converged-payment",
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "store::funding::tests::native_payment_bridge_task_exact_signed_transition_net_balance_and_reorg",
+      "--",
+      "--exact",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "returncode": 0,
+    "seconds": 51.61229781899601,
+    "log_sha256": "ea7c880eca659af43fe827351f11429b23928ca2f6fe927cabe8a77aecae09f3"
+  },
+  {
+    "name": "chain-converged-root-cache",
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "root_rejection_cache",
+      "--",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "returncode": 0,
+    "seconds": 8.728389470954426,
+    "log_sha256": "d689700c8c8284a92612fa0b1fd61be3cfb41d10eb73b2f8f28fc8a0b2dc8384"
+  },
+  {
+    "name": "chain-converged-inventory-clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "--locked",
+      "--offline",
+      "--workspace",
+      "--all-targets",
+      "--all-features",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "returncode": 0,
+    "seconds": 26.502049537026323,
+    "log_sha256": "8ee2f52ece510599465a8a3b055a41c306a14b4cac14e44a42752ae39e8ae340"
+  },
+  {
+    "name": "chain-converged-inventory-fmt",
+    "command": [
+      "cargo",
+      "fmt",
+      "--all",
+      "--check"
+    ],
+    "returncode": 0,
+    "seconds": 17.92850662197452,
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "chain-converged-diff",
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "returncode": 0,
+    "seconds": 0.042643873021006584,
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

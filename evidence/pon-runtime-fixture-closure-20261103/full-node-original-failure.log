@@ -1,0 +1,18 @@
+
+---- store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart stdout ----
+TRNM_PQ_PHASE_DIAGNOSTIC {"budgets_unchanged":true,"cpu_is_calling_thread_only":true,"failure_checkpoint_saved":false,"has_open_operations":false,"has_open_records":false,"last_failure":null,"last_service_failure":null,"last_tcp_failure":null,"mark_order":["transport_entered","cas_commit_attempted","cas_committed","local_commit_attempted","local_committed","matching_cas_receipt","fixture_delay_entered"],"measurement_failures":0,"nested_intervals_are_not_additive":true,"observation_has_authority":false,"operation_ids_are_process_local":true,"phase_totals":[],"process_id":1592,"record_capacity":8,"records":[],"records_closed":0,"records_completed":0,"records_overwritten":0,"records_started":0,"schema":"pon-pq-test-phase-observation-v1","scope_snapshot_is_final":true,"snapshot_is_not_service_completion":true}
+
+thread 'store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart' (1591) panicked at crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs:128:17:
+independent witness exited before ready (exit status: 101): 
+thread 'store::pq_rollback_witness::combined_tests::independent_witness_process_child' (1593) panicked at crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs:191:71:
+called `Result::unwrap()` on an `Err` value: Os { code: 1, kind: PermissionDenied, message: "Operation not permitted" }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+TRNM_PQ_PHASE_DIAGNOSTIC {"budgets_unchanged":true,"cpu_is_calling_thread_only":true,"failure_checkpoint_saved":false,"has_open_operations":false,"has_open_records":false,"last_failure":null,"last_service_failure":null,"last_tcp_failure":null,"mark_order":["transport_entered","cas_commit_attempted","cas_committed","local_commit_attempted","local_committed","matching_cas_receipt","fixture_delay_entered"],"measurement_failures":0,"nested_intervals_are_not_additive":true,"observation_has_authority":false,"operation_ids_are_process_local":true,"phase_totals":[],"process_id":11,"record_capacity":8,"records":[],"records_closed":0,"records_completed":0,"records_overwritten":0,"records_started":0,"schema":"pon-pq-test-phase-observation-v1","scope_snapshot_is_final":true,"snapshot_is_not_service_completion":true}
+
+
+failures:
+    store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart
+
+test result: FAILED. 947 passed; 1 failed; 23 ignored; 0 measured; 0 filtered out; finished in 1451.74s
+

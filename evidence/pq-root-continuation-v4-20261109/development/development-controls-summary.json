@@ -1,0 +1,32 @@
+[
+  {
+    "script": "test_ci_source_integrity.py",
+    "exit": 0,
+    "seconds": 3.065
+  },
+  {
+    "script": "test_pq_research_integration.py",
+    "exit": 0,
+    "seconds": 61.374
+  },
+  {
+    "script": "test_pq_chain_claim_guard.py",
+    "exit": 0,
+    "seconds": 0.323
+  },
+  {
+    "script": "pq_chain_claim_guard.py",
+    "exit": 0,
+    "seconds": 0.045
+  },
+  {
+    "script": "test_pq_authority_effect_register.py",
+    "exit": 0,
+    "seconds": 0.43
+  },
+  {
+    "script": "pq_authority_effect_register.py",
+    "exit": 0,
+    "seconds": 0.044
+  }
+]

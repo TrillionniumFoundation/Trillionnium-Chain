@@ -1,0 +1,42 @@
+{
+  "schema": "trnm-independent-history-driver-preparation-v1",
+  "created_utc": "2026-11-07T20:59:17.952019+00:00",
+  "prepared_only": true,
+  "driver": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/history-supplement-validation/run-history-supplement-v1.py",
+    "bytes": 18940,
+    "sha256": "830c0147fc10422e0753c78506594bbe93487597943470f7f146079845d1cae7"
+  },
+  "requirements": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/history-supplement-validation/requirements.json",
+    "bytes": 2380,
+    "sha256": "4f2b1988ca8045daa3215d4e4d9311eda568d65db79c6f10100463d0772e99b0"
+  },
+  "frozen_main_driver": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/run-targeted-native-v2.py",
+    "bytes": 17019,
+    "sha256": "2a6ecccef6e51cc110165e3debf9a07a1803c3959452cf8db896fc66aad2398f"
+  },
+  "frozen_main_requirements": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-validation/requirements-v2.json",
+    "bytes": 11795,
+    "sha256": "2aee4a85af649777966c2d3a57e7252e35e48ba2ea70da4608e6a0bfa7ad4f42"
+  },
+  "supplement_plan": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-node-history-supplement-plan-v1.json",
+    "bytes": 2935,
+    "sha256": "385208de60de97d125bc5d2be7fe54170c00a323f9e92473cefdcb9b3bdae5b1"
+  },
+  "scope": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-node-history-scope-v1/scope.json",
+    "bytes": 6409,
+    "sha256": "646ebbeb99b82a3dc0792162b16a1ef95cd68aff9a224e18ab2f506b0c5452c1"
+  },
+  "syntax_validation": "ast.parse only; driver is not imported or run",
+  "source_edits": false,
+  "git_writes": false,
+  "cargo_commands": false,
+  "native_test_bodies": false,
+  "original_sixteen_library_denominator_unchanged": true,
+  "separate_integration_denominator": 1
+}

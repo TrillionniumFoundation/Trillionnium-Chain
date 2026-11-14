@@ -1,0 +1,10 @@
+{
+  "bytes": 597,
+  "native_validation_result_changed": false,
+  "old_path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-transfer/chunk-0-tool-result.json",
+  "preserved_path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-transfer-transport/read-0-limit32768-timeout-tool-result.json",
+  "reason": "Tool-error envelope kept outside the verified raw-chunk glob; no archive bytes were returned or accepted.",
+  "recorded_utc": "2026-11-11T06:35:14.137050+00:00",
+  "schema": "transport-error-file-preservation-v1",
+  "sha256": "ddd1b6c4873c3f0011cb88e0815f6efc5b6215e2bfab1fcf854582de8143815a"
+}

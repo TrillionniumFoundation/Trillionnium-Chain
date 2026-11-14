@@ -1,0 +1,24 @@
+{
+  "actual_oid": "bacdb53b3df17b083a7785d5b423373f6d79985e",
+  "bytes": 1414611,
+  "command": [
+    "/usr/bin/git",
+    "--no-replace-objects",
+    "cat-file",
+    "blob",
+    "bacdb53b3df17b083a7785d5b423373f6d79985e"
+  ],
+  "entry_created": true,
+  "existing_path_replaced": false,
+  "exit_code": 0,
+  "expected_bytes": 1414611,
+  "expected_oid": "bacdb53b3df17b083a7785d5b423373f6d79985e",
+  "finished_at": "2026-11-12T01:55:19.881945+00:00",
+  "path": "evidence/pon-w1-fresh-runtime-20261107/qualification-C1/qualification-raw.tar.gz",
+  "path_base64": "ZXZpZGVuY2UvcG9uLXcxLWZyZXNoLXJ1bnRpbWUtMjAyNjExMDcvcXVhbGlmaWNhdGlvbi1DMS9xdWFsaWZpY2F0aW9uLXJhdy50YXIuZ3o=",
+  "result": "RESTORED_EXACT_HEAD_BLOB",
+  "sha256": "dd43317265e13c8014079adfe146dcf60b15ae0830d108abc480c0a499be1325",
+  "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81",
+  "started_at": "2026-11-12T01:55:19.853925+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

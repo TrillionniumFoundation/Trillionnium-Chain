@@ -1,0 +1,5 @@
+[
+  "neuron_generation_update_bootstrap::learning::tests::actual_same_model_use_cold_reopens_without_new_nonce_or_journal_work",
+  "neuron_generation_update_bootstrap::learning::tests::retained_use_rejects_failed_cancelled_rejected_and_late_work",
+  "neuron_generation_update_bootstrap::learning::tests::current_withdrawal_and_revocation_refuse_new_learning_observations_and_recovery"
+]

@@ -1,0 +1,40 @@
+{
+  "argv": [
+    "/usr/bin/env",
+    "PYTHONWARNINGS=error::ResourceWarning",
+    "/usr/bin/python3",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "formal/pon-nakamoto-v1",
+    "-p",
+    "test_pq_account_migration.py",
+    "-v"
+  ],
+  "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+  "elapsed_seconds": 2.8730245099868625,
+  "exit_code": 0,
+  "finished_unix_seconds": 1794126202.8301451,
+  "label": "upstream-migration-signatures",
+  "logs": {
+    "upstream-migration-signatures.stderr.log": {
+      "bytes": 1271,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/integrated-source-02/upstream-migration-signatures.stderr.log",
+      "sha256": "e688d67278624782cf771a1ede29f9bc504e2c7386426c4c207a69d70d53393b"
+    },
+    "upstream-migration-signatures.stdout.log": {
+      "bytes": 0,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/integrated-source-02/upstream-migration-signatures.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "passed": true,
+  "readback": {
+    "reported_test_counts": [
+      7
+    ]
+  },
+  "started_unix_seconds": 1794126199.9571204
+}

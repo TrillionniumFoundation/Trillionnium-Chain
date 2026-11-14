@@ -1,0 +1,16 @@
+{"kind":"profile","memfd_flags":11,"required_seals":47,"pause_ms_between_operations":5}
+{"kind":"snapshot","stage":"validated","device":1,"inode":5757156,"size":28,"uid":1000,"gid":1000,"mode":33024,"mtime":1794061673,"mtime_nsec":223264998,"ctime":1794061673,"ctime_nsec":224264977,"seals":47,"bytes_equal":true}
+{"kind":"operation","name":"write_at","ok":false,"errno":1}
+{"kind":"snapshot","stage":"after_write_at","device":1,"inode":5757156,"size":28,"uid":1000,"gid":1000,"mode":33024,"mtime":1794061673,"mtime_nsec":229264874,"ctime":1794061673,"ctime_nsec":229264874,"seals":47,"bytes_equal":true}
+{"kind":"operation","name":"shrink","ok":false,"errno":1}
+{"kind":"snapshot","stage":"after_shrink","device":1,"inode":5757156,"size":28,"uid":1000,"gid":1000,"mode":33024,"mtime":1794061673,"mtime_nsec":229264874,"ctime":1794061673,"ctime_nsec":229264874,"seals":47,"bytes_equal":true}
+{"kind":"operation","name":"grow","ok":false,"errno":1}
+{"kind":"snapshot","stage":"after_grow","device":1,"inode":5757156,"size":28,"uid":1000,"gid":1000,"mode":33024,"mtime":1794061673,"mtime_nsec":229264874,"ctime":1794061673,"ctime_nsec":229264874,"seals":47,"bytes_equal":true}
+{"kind":"operation","name":"chmod_add_exec","ok":false,"errno":1}
+{"kind":"snapshot","stage":"after_chmod_add_exec","device":1,"inode":5757156,"size":28,"uid":1000,"gid":1000,"mode":33024,"mtime":1794061673,"mtime_nsec":229264874,"ctime":1794061673,"ctime_nsec":229264874,"seals":47,"bytes_equal":true}
+{"kind":"operation","name":"chmod_same_mode","ok":true,"errno":null}
+{"kind":"snapshot","stage":"after_chmod_same_mode","device":1,"inode":5757156,"size":28,"uid":1000,"gid":1000,"mode":33024,"mtime":1794061673,"mtime_nsec":229264874,"ctime":1794061673,"ctime_nsec":249264461,"seals":47,"bytes_equal":true}
+{"kind":"operation","name":"set_modified","ok":true,"errno":null}
+{"kind":"snapshot","stage":"after_set_modified","device":1,"inode":5757156,"size":28,"uid":1000,"gid":1000,"mode":33024,"mtime":1,"mtime_nsec":0,"ctime":1794061673,"ctime_nsec":254264358,"seals":47,"bytes_equal":true}
+{"kind":"operation","name":"chmod_nonexec_mode","ok":true,"errno":null}
+{"kind":"snapshot","stage":"after_chmod_nonexec_mode","device":1,"inode":5757156,"size":28,"uid":1000,"gid":1000,"mode":33152,"mtime":1,"mtime_nsec":0,"ctime":1794061673,"ctime_nsec":259264254,"seals":47,"bytes_equal":true}

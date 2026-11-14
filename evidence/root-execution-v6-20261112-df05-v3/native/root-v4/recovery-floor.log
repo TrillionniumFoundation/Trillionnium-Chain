@@ -1,0 +1,18 @@
+warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: normal Cargo loader directory set incomplete: missing=["/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib"]; observed=["/data/chain-root-operation-v6-df05-target-v3/debug", "/data/chain-root-operation-v6-df05-target-v3/debug/deps", "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib"]; allowed=["/data/chain-root-operation-v6-df05-target-v3/debug", "/data/chain-root-operation-v6-df05-target-v3/debug/deps", "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib", "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib"]
+   Compiling trnm-pon-node v0.1.0 (/data/chain-root-operation-owned-20261112-df05-v4/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.17s
+     Running tests/recovery_floor_v4_native.rs (/data/chain-root-operation-v6-df05-target-v3/debug/deps/recovery_floor_v4_native-5bdc8bd5c0c84c47)
+
+running 9 tests
+test native_floor_v4_common_restore_contrast_stale_pin_accepts_surviving_pin_rejects ... ok
+test native_floor_v4_complete_enrollment_binding_precedes_storage_and_anchor ... ok
+test native_floor_v4_exact_signed_ancestor_survives_append_and_reopen ... ok
+test native_floor_v4_fresh_anchor_authentication_remains_required ... ok
+test native_floor_v4_higher_counter_cannot_replace_exact_signed_ancestry ... ok
+test native_floor_v4_history_below_external_lower_bound_is_refused ... ok
+test native_floor_v4_invalid_pin_shapes_are_refused ... ok
+test native_floor_v4_pending_bytes_do_not_become_authority_from_head_match ... ok
+test native_floor_v4_pending_target_needs_signed_replay_and_explicit_completion ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 424.04s
+

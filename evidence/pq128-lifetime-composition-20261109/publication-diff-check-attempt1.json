@@ -1,0 +1,14 @@
+{
+  "recorded_utc": "2026-11-09T14:12:28.868833+00:00",
+  "argv": [
+    "git",
+    "diff",
+    "--cached",
+    "--check"
+  ],
+  "exit_code": 2,
+  "source_commit": "1ab303e38b9cf7292bba8ab5026aa4bc46e5db0f",
+  "scope": "evidence staging; raw patch context contains trailing spaces; retain exact bytes using gzip before restaging",
+  "stdout_sha256": "43d8cd03c23bcb8f87f48cd29a0e76b3b385e0e8acfcd87a4e6ffc0cc4020352",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

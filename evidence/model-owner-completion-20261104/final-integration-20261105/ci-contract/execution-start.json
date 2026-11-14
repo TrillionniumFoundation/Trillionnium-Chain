@@ -1,0 +1,24 @@
+{
+  "before": {
+    "dirty": false,
+    "head": "7d347fa80e2cd3fd19d0010c3465581143b8d2e1",
+    "observed_at_utc": "2026-11-05T02:58:49.514978+00:00",
+    "staged_diff": "",
+    "status_porcelain": "",
+    "tracked_diff": "",
+    "tree": "30309765887b6d2f54a5e37d58f8608dc60a2518"
+  },
+  "commands": {},
+  "expected_head": "7d347fa80e2cd3fd19d0010c3465581143b8d2e1",
+  "initial_tmpfs_free_bytes": 1498296320,
+  "no_source_edits_requested": true,
+  "schema": "exact-source-ci-contract-verification-v1",
+  "started_at_utc": "2026-11-05T02:58:49.534882+00:00",
+  "suite_runs_authorized": 1,
+  "suite_runs_started": 0,
+  "temporary_root": "/dev/shm/trnm-model-owner-f4976366a32a-ci-contract-tmp",
+  "temporary_root_identity": {
+    "device": 26,
+    "inode": 103581
+  }
+}

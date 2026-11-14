@@ -1,0 +1,71 @@
+{
+  "schema": "trnm.cell.late-node-composition-audit.v1",
+  "tested_storage_source": "b110ba5bc1f755e5988c1b1f710243677976bcc8",
+  "storage_evidence_parent": "ea3fed764e0f6e3196a1a43357ecf77381c13a42",
+  "incoming_node_parent": "bd2777f9cc74df10ba07ae8202584ed0fb90a519",
+  "storage_m06_m12_and_weight_loading_scopes_equal_tested_storage_source": [
+    "trillionnium/crates/trnm-data-availability",
+    "trillionnium/crates/trnm-mvcc-fee",
+    "trillionnium/crates/trnm-service-settlement",
+    "scripts/llm_parent_material.py",
+    "scripts/llm_runtime_pilot.py",
+    "scripts/test_llm_parent_material.py",
+    "scripts/test_llm_runtime_artifact_loading.py",
+    "scripts/test_llm_runtime_pilot.py"
+  ],
+  "cargo_manifests_and_lockfiles_equal_tested_storage_source": true,
+  "entire_node_src_and_tests_equal_incoming_parent": true,
+  "incoming_preserved_paths": [
+    {
+      "path": ".github/workflows/pon-legacy-reorg-cost-20261104.yml",
+      "incoming_blob": "822a4ab34e0b88dd7fae0f136ef4a1368f8ccd49",
+      "composed_blob": "822a4ab34e0b88dd7fae0f136ef4a1368f8ccd49"
+    },
+    {
+      "path": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "incoming_blob": "b1008dd47c5067ae4e264e048ccf0067db84f7f1",
+      "composed_blob": "b1008dd47c5067ae4e264e048ccf0067db84f7f1"
+    },
+    {
+      "path": "evidence/pon-retained-runtime-readback-20261104/93e-legacy-reorg-profiling-candidate-handoff-v2.json",
+      "incoming_blob": "f6fba73b5ad843f07d86eb943a3bb258b5a2efe7",
+      "composed_blob": "f6fba73b5ad843f07d86eb943a3bb258b5a2efe7"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "incoming_blob": "4056ebb4146c711e8c62588bf8e0a7881900c02b",
+      "composed_blob": "4056ebb4146c711e8c62588bf8e0a7881900c02b"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/legacy_reorg_observation_tests.rs",
+      "incoming_blob": "d50f5e607f5aed311174808b980f50e95cac929f",
+      "composed_blob": "d50f5e607f5aed311174808b980f50e95cac929f"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs",
+      "incoming_blob": "6540d88dc33064ab504607bfa9b7340d42a3c585",
+      "composed_blob": "6540d88dc33064ab504607bfa9b7340d42a3c585"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/reorg_cancellation.rs",
+      "incoming_blob": "4dd89831914b44a2f58c270c9726abd539620ec5",
+      "composed_blob": "4dd89831914b44a2f58c270c9726abd539620ec5"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/ancestry_long_sync.rs",
+      "incoming_blob": "e04a6c60dab06388aae7ee7c95c68424d90628f9",
+      "composed_blob": "e04a6c60dab06388aae7ee7c95c68424d90628f9"
+    }
+  ],
+  "resolved_paths": [
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs"
+  ],
+  "required_paths": 343,
+  "pinned_blobs": 429,
+  "required_paths_are_exact_parent_union": true,
+  "pinned_paths_are_exact_parent_union": true,
+  "missing_or_mismatched_pins": [],
+  "qualification_assertions_unchanged": true,
+  "runtime_tests_executed_by_this_audit": false
+}

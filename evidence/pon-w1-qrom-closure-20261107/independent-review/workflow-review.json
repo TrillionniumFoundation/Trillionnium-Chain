@@ -1,0 +1,34 @@
+{
+  "cases": [
+    {
+      "actual_fixture_commit": "30f95dfd866d1cacd6ff169d9690f411063e10da",
+      "actual_tiny_fixture_tests_run": 6,
+      "kind": "head",
+      "matching_named_record_and_softened_failure_refused": true,
+      "negative_exit": 1,
+      "positive_exit": 0,
+      "retained_fixture_directory": "/workspace/scratch/4a83c49617d8/qrom-closure-workflow-review/head",
+      "tracked_fixture_entries": 10
+    },
+    {
+      "actual_fixture_commit": "b91d1d1ade633010cc87a733a1e271c395206167",
+      "actual_tiny_fixture_tests_run": 6,
+      "kind": "prospective-merge",
+      "matching_named_record_and_softened_failure_refused": true,
+      "negative_exit": 1,
+      "positive_exit": 0,
+      "retained_fixture_directory": "/workspace/scratch/4a83c49617d8/qrom-closure-workflow-review/prospective-merge",
+      "tracked_fixture_entries": 12
+    }
+  ],
+  "main_repository_source_integrity_qualified": false,
+  "post_quantum_soundness_qualified": false,
+  "reviewed_sha256": {
+    ".github/workflows/pon-w1-qrom-closure.yml": "3b5de1c18ecb262edf59e275b44a33b4c6303ea5b6df9265670adf6166912806",
+    "scripts/ci/test_w1_qrom_closure_controls.py": "db4cceae28ecc8a230c55c600251397d7c27ce4e37d6cd0feccaa711fbd18651",
+    "scripts/ci/verify_ci_source.py": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946",
+    "scripts/ci/w1_qrom_closure_controls.py": "a971cfbf4b76cf22dbceecfe74e931581ecae846d6be58810041ebb02448c546"
+  },
+  "scope": "actual workflow source/named/completion shell blocks on a small Git fixture; not main-repository completion or security qualification",
+  "unconditional_project_security_bits": null
+}

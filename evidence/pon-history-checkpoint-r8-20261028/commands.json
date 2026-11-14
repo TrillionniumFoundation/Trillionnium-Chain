@@ -1,0 +1,1506 @@
+[
+  {
+    "schema": "history-checkpoint-exact-source-control-v1",
+    "name": "baseline-build",
+    "source_commit": "189ba3adfd9a22c7cfc1537eab535e9eb7c442df",
+    "source_tree": "ff572fb27e4fb5df9a80b3e2ec5096c697964200",
+    "source_status": "",
+    "source_scope": "all tracked materialized trillionnium and config inputs plus toolchain/preflight/AGENTS; includes tracked source dirty diff; no PQ feature",
+    "source_manifest_sha256": "b4f32d3d765d0ab0e83c0ff24279affde23828016f51d8540d884393c7e29e0e",
+    "source_paths": 1075,
+    "source_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "argv": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "--no-run",
+      "--offline",
+      "--locked",
+      "--config",
+      "profile.test.package.trnm-pon-node.debug=0",
+      "--message-format=json"
+    ],
+    "env_overrides": {
+      "PATH": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/root/.codex/tmp/arg0/codex-arg0fWQ07S:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback",
+      "CARGO_TARGET_DIR": "/tmp/target-history-56818e4fba76",
+      "CARGO_BUILD_JOBS": "1",
+      "CARGO_INCREMENTAL": "0"
+    },
+    "started_utc": "2026-10-28T03:29:08.317184+00:00",
+    "elapsed_seconds": 0.13341780999326147,
+    "exit_code": 101,
+    "timed_out": false,
+    "outer_timeout_seconds": 600,
+    "child_user_seconds": 0.016829,
+    "child_system_seconds": 0.036334,
+    "child_max_rss_kib": 34184,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "9273e007da3a94acdf94e86246351f14637fedecf333e8607b15817693cf428d"
+  },
+  {
+    "schema": "history-checkpoint-exact-source-control-v1",
+    "name": "baseline-build-cargo-cache",
+    "source_commit": "189ba3adfd9a22c7cfc1537eab535e9eb7c442df",
+    "source_tree": "ff572fb27e4fb5df9a80b3e2ec5096c697964200",
+    "source_status": "",
+    "source_scope": "all tracked materialized trillionnium and config inputs plus toolchain/preflight/AGENTS; includes tracked source dirty diff; no PQ feature",
+    "source_manifest_sha256": "b4f32d3d765d0ab0e83c0ff24279affde23828016f51d8540d884393c7e29e0e",
+    "source_paths": 1075,
+    "source_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "argv": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "--no-run",
+      "--offline",
+      "--locked",
+      "--config",
+      "profile.test.package.trnm-pon-node.debug=0",
+      "--message-format=json"
+    ],
+    "env_overrides": {
+      "PATH": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/root/.codex/tmp/arg0/codex-arg0fWQ07S:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback",
+      "CARGO_TARGET_DIR": "/tmp/target-history-56818e4fba76",
+      "CARGO_BUILD_JOBS": "1",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_HOME": "/tmp/pure-pon-cargo-20261027"
+    },
+    "started_utc": "2026-10-28T03:29:24.916580+00:00",
+    "elapsed_seconds": 357.20037506500375,
+    "exit_code": 0,
+    "timed_out": false,
+    "outer_timeout_seconds": 600,
+    "child_user_seconds": 351.83074,
+    "child_system_seconds": 5.764978999999999,
+    "child_max_rss_kib": 1977244,
+    "stdout_sha256": "1fd5a95338f8ceb1fff9887bb1596b1ccbe42f28b9f7d3d334362bae2cde8029",
+    "stderr_sha256": "dda4336fea4d1df0f4703d38d68966bdcbbb4d31ff6cdd4f29f9d17162e59a90"
+  },
+  {
+    "schema": "history-checkpoint-exact-source-control-v1",
+    "name": "baseline-history-original",
+    "source_commit": "189ba3adfd9a22c7cfc1537eab535e9eb7c442df",
+    "source_tree": "ff572fb27e4fb5df9a80b3e2ec5096c697964200",
+    "source_status": "",
+    "source_scope": "all tracked materialized trillionnium and config inputs plus toolchain/preflight/AGENTS; includes tracked source dirty diff; no PQ feature",
+    "source_manifest_sha256": "b4f32d3d765d0ab0e83c0ff24279affde23828016f51d8540d884393c7e29e0e",
+    "source_paths": 1075,
+    "source_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "argv": [
+      "/tmp/target-history-56818e4fba76/history-r8-baseline-189ba3-node",
+      "ingress::history_import::tests::",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "env_overrides": {
+      "PATH": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/root/.codex/tmp/arg0/codex-arg0fWQ07S:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback",
+      "CARGO_TARGET_DIR": "/tmp/target-history-56818e4fba76",
+      "CARGO_BUILD_JOBS": "1",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_HOME": "/tmp/pure-pon-cargo-20261027"
+    },
+    "started_utc": "2026-10-28T03:35:47.091558+00:00",
+    "elapsed_seconds": 7.006168805994093,
+    "exit_code": 0,
+    "timed_out": false,
+    "outer_timeout_seconds": 120,
+    "child_user_seconds": 0.269663,
+    "child_system_seconds": 0.092723,
+    "child_max_rss_kib": 18184,
+    "stdout_sha256": "a7412b4bf6aba1f3f3a15ef300e69c38d9ea70d630ebde29f4ecd7d580ca18a2",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "binary_sha256": "74df89fe26a5fee3741bbbc24353570cc63672bc5de438067e8d8e3b8ac8aca2"
+  },
+  {
+    "schema": "history-checkpoint-exact-source-control-v1",
+    "name": "baseline-native-inactive",
+    "source_commit": "189ba3adfd9a22c7cfc1537eab535e9eb7c442df",
+    "source_tree": "ff572fb27e4fb5df9a80b3e2ec5096c697964200",
+    "source_status": "",
+    "source_scope": "all tracked materialized trillionnium and config inputs plus toolchain/preflight/AGENTS; includes tracked source dirty diff; no PQ feature",
+    "source_manifest_sha256": "b4f32d3d765d0ab0e83c0ff24279affde23828016f51d8540d884393c7e29e0e",
+    "source_paths": 1075,
+    "source_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "argv": [
+      "/tmp/target-history-56818e4fba76/history-r8-baseline-189ba3-node",
+      "store::native_authenticated_tests::native_inactive_page_parents_use_checked_material_without_early_activation",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "env_overrides": {
+      "PATH": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/root/.codex/tmp/arg0/codex-arg0fWQ07S:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback",
+      "CARGO_TARGET_DIR": "/tmp/target-history-56818e4fba76",
+      "CARGO_BUILD_JOBS": "1",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_HOME": "/tmp/pure-pon-cargo-20261027"
+    },
+    "started_utc": "2026-10-28T03:35:54.392250+00:00",
+    "elapsed_seconds": 3.04369565199886,
+    "exit_code": 0,
+    "timed_out": false,
+    "outer_timeout_seconds": 90,
+    "child_user_seconds": 1.345221,
+    "child_system_seconds": 0.062268000000000004,
+    "child_max_rss_kib": 31448,
+    "stdout_sha256": "51ab33879ae0edd1b1d8070c9b985ae2c3cee49c83e835af39b0541993748273",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "binary_sha256": "74df89fe26a5fee3741bbbc24353570cc63672bc5de438067e8d8e3b8ac8aca2"
+  },
+  {
+    "schema": "history-checkpoint-exact-source-control-v1",
+    "name": "baseline-native-graph",
+    "source_commit": "189ba3adfd9a22c7cfc1537eab535e9eb7c442df",
+    "source_tree": "ff572fb27e4fb5df9a80b3e2ec5096c697964200",
+    "source_status": "",
+    "source_scope": "all tracked materialized trillionnium and config inputs plus toolchain/preflight/AGENTS; includes tracked source dirty diff; no PQ feature",
+    "source_manifest_sha256": "b4f32d3d765d0ab0e83c0ff24279affde23828016f51d8540d884393c7e29e0e",
+    "source_paths": 1075,
+    "source_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "argv": [
+      "/tmp/target-history-56818e4fba76/history-r8-baseline-189ba3-node",
+      "native_node_reader_",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "env_overrides": {
+      "PATH": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/root/.codex/tmp/arg0/codex-arg0fWQ07S:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback",
+      "CARGO_TARGET_DIR": "/tmp/target-history-56818e4fba76",
+      "CARGO_BUILD_JOBS": "1",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_HOME": "/tmp/pure-pon-cargo-20261027"
+    },
+    "started_utc": "2026-10-28T03:35:57.695202+00:00",
+    "elapsed_seconds": 0.23591894599667285,
+    "exit_code": 0,
+    "timed_out": false,
+    "outer_timeout_seconds": 60,
+    "child_user_seconds": 0.028411,
+    "child_system_seconds": 0.039034,
+    "child_max_rss_kib": 16844,
+    "stdout_sha256": "0b4f940b06828a951a46eda85f77fced2c36df2c28f32e0b7d8be6995d8bcc29",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "binary_sha256": "74df89fe26a5fee3741bbbc24353570cc63672bc5de438067e8d8e3b8ac8aca2"
+  },
+  {
+    "schema": "history-checkpoint-exact-source-control-v1",
+    "name": "candidate-build",
+    "source_commit": "189ba3adfd9a22c7cfc1537eab535e9eb7c442df",
+    "source_tree": "ff572fb27e4fb5df9a80b3e2ec5096c697964200",
+    "source_status": "M trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs\n M trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs",
+    "source_scope": "all tracked materialized trillionnium and config inputs plus toolchain/preflight/AGENTS; includes tracked source dirty diff; no PQ feature",
+    "source_manifest_sha256": "ef5e88c5fc7cf5854a6eb498e4f83330863b15e776939e9a64a67ebbd7909dff",
+    "source_paths": 1075,
+    "source_diff_sha256": "280b641963732226f8ea96ae68b70d2adfd95abf8bc2f3410397ff5dd9510583",
+    "argv": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "--no-run",
+      "--offline",
+      "--locked",
+      "--config",
+      "profile.test.package.trnm-pon-node.debug=0",
+      "--message-format=json"
+    ],
+    "env_overrides": {
+      "PATH": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/root/.codex/tmp/arg0/codex-arg0fWQ07S:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback",
+      "CARGO_TARGET_DIR": "/tmp/target-history-56818e4fba76",
+      "CARGO_BUILD_JOBS": "1",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_HOME": "/tmp/pure-pon-cargo-20261027"
+    },
+    "started_utc": "2026-10-28T03:36:11.654886+00:00",
+    "elapsed_seconds": 293.9778386459948,
+    "exit_code": 0,
+    "timed_out": false,
+    "outer_timeout_seconds": 600,
+    "child_user_seconds": 291.05094099999997,
+    "child_system_seconds": 3.627792,
+    "child_max_rss_kib": 1978700,
+    "stdout_sha256": "eb0f23240aebcdb93b273ef187dfa1598e6118456cff317bc658bdba1a0515be",
+    "stderr_sha256": "5d577202c6eaad08c2b68b38010b5bf0a74d81627f320e48cdc71bd03ca7b0b8"
+  },
+  {
+    "schema": "history-checkpoint-exact-source-control-v1",
+    "name": "candidate-history-boundaries",
+    "source_commit": "189ba3adfd9a22c7cfc1537eab535e9eb7c442df",
+    "source_tree": "ff572fb27e4fb5df9a80b3e2ec5096c697964200",
+    "source_status": "M trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs\n M trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs",
+    "runner_sha256": "a650f474fd0442f8e2dbd278b0e81547cf16c42b0c5535ddd95d377f38bf11be",
+    "source_scope": "all tracked materialized trillionnium and config inputs plus toolchain/preflight/AGENTS; includes tracked source dirty diff; no PQ feature",
+    "source_manifest_sha256": "ef5e88c5fc7cf5854a6eb498e4f83330863b15e776939e9a64a67ebbd7909dff",
+    "source_paths": 1075,
+    "source_diff_sha256": "280b641963732226f8ea96ae68b70d2adfd95abf8bc2f3410397ff5dd9510583",
+    "argv": [
+      "/tmp/target-history-56818e4fba76/history-r8-candidate-node",
+      "ingress::history_import::tests::",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "env_overrides": {
+      "PATH": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/root/.codex/tmp/arg0/codex-arg0fWQ07S:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback",
+      "CARGO_TARGET_DIR": "/tmp/target-history-56818e4fba76",
+      "CARGO_BUILD_JOBS": "1",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_HOME": "/tmp/pure-pon-cargo-20261027"
+    },
+    "started_utc": "2026-10-28T03:41:23.350244+00:00",
+    "elapsed_seconds": 11.161633965006331,
+    "exit_code": 101,
+    "timed_out": false,
+    "outer_timeout_seconds": 180,
+    "child_user_seconds": 0.651099,
+    "child_system_seconds": 0.16202899999999998,
+    "child_max_rss_kib": 26164,
+    "stdout_sha256": "51d996719ecc2c56254d68e1b29cfa1d3bcd3cf7b60d50ac7d3910494be50892",
+    "stderr_sha256": "b60fc3e5b9fe9ca69255ed03431bb5e4d7788c70fa194c1ec6f4d2375cc72244",
+    "binary_sha256": "bbc2e67a525c14907f41dfe74e8a0a2d4cb007e2a6178046e450461c366e0d0b",
+    "harness_results": [
+      {
+        "outcome": "FAILED",
+        "passed": 11,
+        "failed": 1,
+        "ignored": 1
+      }
+    ],
+    "zero_tests_executed": false
+  },
+  {
+    "schema": "history-checkpoint-exact-source-control-v1",
+    "name": "candidate-native-inactive",
+    "source_commit": "189ba3adfd9a22c7cfc1537eab535e9eb7c442df",
+    "source_tree": "ff572fb27e4fb5df9a80b3e2ec5096c697964200",
+    "source_status": "M trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs\n M trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs",
+    "runner_sha256": "a650f474fd0442f8e2dbd278b0e81547cf16c42b0c5535ddd95d377f38bf11be",
+    "source_scope": "all tracked materialized trillionnium and config inputs plus toolchain/preflight/AGENTS; includes tracked source dirty diff; no PQ feature",
+    "source_manifest_sha256": "ef5e88c5fc7cf5854a6eb498e4f83330863b15e776939e9a64a67ebbd7909dff",
+    "source_paths": 1075,
+    "source_diff_sha256": "280b641963732226f8ea96ae68b70d2adfd95abf8bc2f3410397ff5dd9510583",
+    "argv": [
+      "/tmp/target-history-56818e4fba76/history-r8-candidate-node",
+      "store::native_authenticated_tests::native_inactive_page_parents_use_checked_material_without_early_activation",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "env_overrides": {
+      "PATH": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/root/.codex/tmp/arg0/codex-arg0fWQ07S:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback",
+      "CARGO_TARGET_DIR": "/tmp/target-history-56818e4fba76",
+      "CARGO_BUILD_JOBS": "1",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_HOME": "/tmp/pure-pon-cargo-20261027"
+    },
+    "started_utc": "2026-10-28T03:41:34.786411+00:00",
+    "elapsed_seconds": 2.8400167689978844,
+    "exit_code": 0,
+    "timed_out": false,
+    "outer_timeout_seconds": 90,
+    "child_user_seconds": 1.176441,
+    "child_system_seconds": 0.066134,
+    "child_max_rss_kib": 33948,
+    "stdout_sha256": "f9544583c6174fd28252cd456381c9d6f622d3b144f881debc9b5b047f6aff6d",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "binary_sha256": "bbc2e67a525c14907f41dfe74e8a0a2d4cb007e2a6178046e450461c366e0d0b",
+    "harness_results": [
+      {
+        "outcome": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0
+      }
+    ],
+    "zero_tests_executed": false
+  },
+  {
+    "schema": "history-checkpoint-exact-source-control-v1",
+    "name": "candidate-native-graph",
+    "source_commit": "189ba3adfd9a22c7cfc1537eab535e9eb7c442df",
+    "source_tree": "ff572fb27e4fb5df9a80b3e2ec5096c697964200",
+    "source_status": "M trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs\n M trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs",
+    "runner_sha256": "a650f474fd0442f8e2dbd278b0e81547cf16c42b0c5535ddd95d377f38bf11be",
+    "source_scope": "all tracked materialized trillionnium and config inputs plus toolchain/preflight/AGENTS; includes tracked source dirty diff; no PQ feature",
+    "source_manifest_sha256": "ef5e88c5fc7cf5854a6eb498e4f83330863b15e776939e9a64a67ebbd7909dff",
+    "source_paths": 1075,
+    "source_diff_sha256": "280b641963732226f8ea96ae68b70d2adfd95abf8bc2f3410397ff5dd9510583",
+    "argv": [
+      "/tmp/target-history-56818e4fba76/history-r8-candidate-node",
+      "native_node_reader_",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "env_overrides": {
+      "PATH": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/root/.codex/tmp/arg0/codex-arg0fWQ07S:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback",
+      "CARGO_TARGET_DIR": "/tmp/target-history-56818e4fba76",
+      "CARGO_BUILD_JOBS": "1",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_HOME": "/tmp/pure-pon-cargo-20261027"
+    },
+    "started_utc": "2026-10-28T03:41:37.882308+00:00",
+    "elapsed_seconds": 0.1801986520003993,
+    "exit_code": 0,
+    "timed_out": false,
+    "outer_timeout_seconds": 60,
+    "child_user_seconds": 0.021134,
+    "child_system_seconds": 0.039212,
+    "child_max_rss_kib": 17524,
+    "stdout_sha256": "431a3015402da138d85d08856d86806cbbb956e68167f777a51e8824af90de60",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "binary_sha256": "bbc2e67a525c14907f41dfe74e8a0a2d4cb007e2a6178046e450461c366e0d0b",
+    "harness_results": [
+      {
+        "outcome": "ok",
+        "passed": 3,
+        "failed": 0,
+        "ignored": 1
+      }
+    ],
+    "zero_tests_executed": false
+  },
+  {
+    "schema": "history-checkpoint-exact-source-control-v1",
+    "name": "candidate-admission-parent",
+    "source_commit": "189ba3adfd9a22c7cfc1537eab535e9eb7c442df",
+    "source_tree": "ff572fb27e4fb5df9a80b3e2ec5096c697964200",
+    "source_status": "M trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs\n M trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs",
+    "runner_sha256": "a650f474fd0442f8e2dbd278b0e81547cf16c42b0c5535ddd95d377f38bf11be",
+    "source_scope": "all tracked materialized trillionnium and config inputs plus toolchain/preflight/AGENTS; includes tracked source dirty diff; no PQ feature",
+    "source_manifest_sha256": "ef5e88c5fc7cf5854a6eb498e4f83330863b15e776939e9a64a67ebbd7909dff",
+    "source_paths": 1075,
+    "source_diff_sha256": "280b641963732226f8ea96ae68b70d2adfd95abf8bc2f3410397ff5dd9510583",
+    "argv": [
+      "/tmp/target-history-56818e4fba76/history-r8-candidate-node",
+      "store::admission_parent_tests::",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "env_overrides": {
+      "PATH": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/root/.codex/tmp/arg0/codex-arg0fWQ07S:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback",
+      "CARGO_TARGET_DIR": "/tmp/target-history-56818e4fba76",
+      "CARGO_BUILD_JOBS": "1",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_HOME": "/tmp/pure-pon-cargo-20261027"
+    },
+    "started_utc": "2026-10-28T03:41:38.331052+00:00",
+    "elapsed_seconds": 0.2817371099954471,
+    "exit_code": 0,
+    "timed_out": false,
+    "outer_timeout_seconds": 90,
+    "child_user_seconds": 0.17412099999999997,
+    "child_system_seconds": 0.024640000000000002,
+    "child_max_rss_kib": 22472,
+    "stdout_sha256": "ab557ba0a3de2000a0ac247bd40d51ac155070d7a2fa9c9143433cedf662680b",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "binary_sha256": "bbc2e67a525c14907f41dfe74e8a0a2d4cb007e2a6178046e450461c366e0d0b",
+    "harness_results": [
+      {
+        "outcome": "ok",
+        "passed": 4,
+        "failed": 0,
+        "ignored": 0
+      }
+    ],
+    "zero_tests_executed": false
+  },
+  {
+    "schema": "history-checkpoint-exact-source-control-v1",
+    "name": "candidate-cpu-live",
+    "source_commit": "189ba3adfd9a22c7cfc1537eab535e9eb7c442df",
+    "source_tree": "ff572fb27e4fb5df9a80b3e2ec5096c697964200",
+    "source_status": "M trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs\n M trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs",
+    "runner_sha256": "a650f474fd0442f8e2dbd278b0e81547cf16c42b0c5535ddd95d377f38bf11be",
+    "source_scope": "all tracked materialized trillionnium and config inputs plus toolchain/preflight/AGENTS; includes tracked source dirty diff; no PQ feature",
+    "source_manifest_sha256": "ef5e88c5fc7cf5854a6eb498e4f83330863b15e776939e9a64a67ebbd7909dff",
+    "source_paths": 1075,
+    "source_diff_sha256": "280b641963732226f8ea96ae68b70d2adfd95abf8bc2f3410397ff5dd9510583",
+    "argv": [
+      "/tmp/target-history-56818e4fba76/history-r8-candidate-node",
+      "ingress::public_v3::scalar_cpu::tests::",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "env_overrides": {
+      "PATH": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/root/.codex/tmp/arg0/codex-arg0fWQ07S:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback",
+      "CARGO_TARGET_DIR": "/tmp/target-history-56818e4fba76",
+      "CARGO_BUILD_JOBS": "1",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_HOME": "/tmp/pure-pon-cargo-20261027"
+    },
+    "started_utc": "2026-10-28T03:41:38.860851+00:00",
+    "elapsed_seconds": 0.02368495900009293,
+    "exit_code": 0,
+    "timed_out": false,
+    "outer_timeout_seconds": 60,
+    "child_user_seconds": 0.0,
+    "child_system_seconds": 0.0048309999999999985,
+    "child_max_rss_kib": 14120,
+    "stdout_sha256": "3f36460c174f7632656fa55673716dcab065babcbfd5202eed6cb7b5a055c364",
+    "stderr_sha256": "ea3e61a93a14298d8bf0a360b2cc3faf9f230b04dc7b749f4296cfc71dda8b3a",
+    "binary_sha256": "bbc2e67a525c14907f41dfe74e8a0a2d4cb007e2a6178046e450461c366e0d0b",
+    "harness_results": [
+      {
+        "outcome": "ok",
+        "passed": 13,
+        "failed": 0,
+        "ignored": 0
+      }
+    ],
+    "zero_tests_executed": false
+  },
+  {
+    "schema": "history-checkpoint-exact-source-control-v1",
+    "name": "candidate-cpu-completion",
+    "source_commit": "189ba3adfd9a22c7cfc1537eab535e9eb7c442df",
+    "source_tree": "ff572fb27e4fb5df9a80b3e2ec5096c697964200",
+    "source_status": "M trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs\n M trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs",
+    "runner_sha256": "a650f474fd0442f8e2dbd278b0e81547cf16c42b0c5535ddd95d377f38bf11be",
+    "source_scope": "all tracked materialized trillionnium and config inputs plus toolchain/preflight/AGENTS; includes tracked source dirty diff; no PQ feature",
+    "source_manifest_sha256": "ef5e88c5fc7cf5854a6eb498e4f83330863b15e776939e9a64a67ebbd7909dff",
+    "source_paths": 1075,
+    "source_diff_sha256": "280b641963732226f8ea96ae68b70d2adfd95abf8bc2f3410397ff5dd9510583",
+    "argv": [
+      "/tmp/target-history-56818e4fba76/history-r8-candidate-node",
+      "ingress::public_v3::scalar_cpu::completion_tests::",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "env_overrides": {
+      "PATH": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/root/.codex/tmp/arg0/codex-arg0fWQ07S:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback",
+      "CARGO_TARGET_DIR": "/tmp/target-history-56818e4fba76",
+      "CARGO_BUILD_JOBS": "1",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_HOME": "/tmp/pure-pon-cargo-20261027"
+    },
+    "started_utc": "2026-10-28T03:41:39.139604+00:00",
+    "elapsed_seconds": 2.2380249479901977,
+    "exit_code": 0,
+    "timed_out": false,
+    "outer_timeout_seconds": 120,
+    "child_user_seconds": 0.5722229999999999,
+    "child_system_seconds": 0.122434,
+    "child_max_rss_kib": 18940,
+    "stdout_sha256": "6d765141c2d6e43d6241d13b36266d4ccac8f9d017e7334dd254e9dd55804d0d",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "binary_sha256": "bbc2e67a525c14907f41dfe74e8a0a2d4cb007e2a6178046e450461c366e0d0b",
+    "harness_results": [
+      {
+        "outcome": "ok",
+        "passed": 11,
+        "failed": 0,
+        "ignored": 0
+      }
+    ],
+    "zero_tests_executed": false
+  },
+  {
+    "schema": "history-checkpoint-exact-source-control-v1",
+    "name": "candidate-cpu-poison",
+    "source_commit": "189ba3adfd9a22c7cfc1537eab535e9eb7c442df",
+    "source_tree": "ff572fb27e4fb5df9a80b3e2ec5096c697964200",
+    "source_status": "M trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs\n M trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs",
+    "runner_sha256": "a650f474fd0442f8e2dbd278b0e81547cf16c42b0c5535ddd95d377f38bf11be",
+    "source_scope": "all tracked materialized trillionnium and config inputs plus toolchain/preflight/AGENTS; includes tracked source dirty diff; no PQ feature",
+    "source_manifest_sha256": "ef5e88c5fc7cf5854a6eb498e4f83330863b15e776939e9a64a67ebbd7909dff",
+    "source_paths": 1075,
+    "source_diff_sha256": "280b641963732226f8ea96ae68b70d2adfd95abf8bc2f3410397ff5dd9510583",
+    "argv": [
+      "/tmp/target-history-56818e4fba76/history-r8-candidate-node",
+      "ingress::public_v3::tests::live_cpu_poisoned_request_registry_disables_global_starts_without_deadlock",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "env_overrides": {
+      "PATH": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/root/.codex/tmp/arg0/codex-arg0fWQ07S:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback",
+      "CARGO_TARGET_DIR": "/tmp/target-history-56818e4fba76",
+      "CARGO_BUILD_JOBS": "1",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_HOME": "/tmp/pure-pon-cargo-20261027"
+    },
+    "started_utc": "2026-10-28T03:41:41.649423+00:00",
+    "elapsed_seconds": 0.025376026998856105,
+    "exit_code": 0,
+    "timed_out": false,
+    "outer_timeout_seconds": 60,
+    "child_user_seconds": 0.0,
+    "child_system_seconds": 0.0026539999999999992,
+    "child_max_rss_kib": 14120,
+    "stdout_sha256": "870b35e099790ae6b3ff1b66622354c5c8e9dab73f55fae7d33079362fa87625",
+    "stderr_sha256": "15f28f0ee80a4bf1a2552e96ceec098ef95b36d6b0575db790e1dac32858d9d5",
+    "binary_sha256": "bbc2e67a525c14907f41dfe74e8a0a2d4cb007e2a6178046e450461c366e0d0b",
+    "harness_results": [
+      {
+        "outcome": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0
+      }
+    ],
+    "zero_tests_executed": false
+  },
+  {
+    "schema": "history-checkpoint-exact-source-control-v1",
+    "name": "candidate-reorg-cancellation",
+    "source_commit": "189ba3adfd9a22c7cfc1537eab535e9eb7c442df",
+    "source_tree": "ff572fb27e4fb5df9a80b3e2ec5096c697964200",
+    "source_status": "M trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs\n M trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs",
+    "runner_sha256": "a650f474fd0442f8e2dbd278b0e81547cf16c42b0c5535ddd95d377f38bf11be",
+    "source_scope": "all tracked materialized trillionnium and config inputs plus toolchain/preflight/AGENTS; includes tracked source dirty diff; no PQ feature",
+    "source_manifest_sha256": "ef5e88c5fc7cf5854a6eb498e4f83330863b15e776939e9a64a67ebbd7909dff",
+    "source_paths": 1075,
+    "source_diff_sha256": "280b641963732226f8ea96ae68b70d2adfd95abf8bc2f3410397ff5dd9510583",
+    "argv": [
+      "/tmp/target-history-56818e4fba76/history-r8-candidate-node",
+      "store::reorg_cancellation::tests::",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "env_overrides": {
+      "PATH": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/root/.codex/tmp/arg0/codex-arg0fWQ07S:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback",
+      "CARGO_TARGET_DIR": "/tmp/target-history-56818e4fba76",
+      "CARGO_BUILD_JOBS": "1",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_HOME": "/tmp/pure-pon-cargo-20261027"
+    },
+    "started_utc": "2026-10-28T03:41:41.918564+00:00",
+    "elapsed_seconds": 0.9827260150050279,
+    "exit_code": 0,
+    "timed_out": false,
+    "outer_timeout_seconds": 120,
+    "child_user_seconds": 0.7124159999999999,
+    "child_system_seconds": 0.08251599999999999,
+    "child_max_rss_kib": 25600,
+    "stdout_sha256": "128ed400d221c5f6bf4cefcb98b354fb7c0b0d7a84396139e99bfc72494fb34e",
+    "stderr_sha256": "6971ff5998cd0a00c92185d2956cb4ed109e340ded3634100500d15859114836",
+    "binary_sha256": "bbc2e67a525c14907f41dfe74e8a0a2d4cb007e2a6178046e450461c366e0d0b",
+    "harness_results": [
+      {
+        "outcome": "ok",
+        "passed": 14,
+        "failed": 0,
+        "ignored": 2
+      }
+    ],
+    "zero_tests_executed": false
+  },
+  {
+    "schema": "history-checkpoint-exact-source-control-v1",
+    "name": "candidate-reorg-real-depletion",
+    "source_commit": "189ba3adfd9a22c7cfc1537eab535e9eb7c442df",
+    "source_tree": "ff572fb27e4fb5df9a80b3e2ec5096c697964200",
+    "source_status": "M trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs\n M trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs",
+    "runner_sha256": "a650f474fd0442f8e2dbd278b0e81547cf16c42b0c5535ddd95d377f38bf11be",
+    "source_scope": "all tracked materialized trillionnium and config inputs plus toolchain/preflight/AGENTS; includes tracked source dirty diff; no PQ feature",
+    "source_manifest_sha256": "ef5e88c5fc7cf5854a6eb498e4f83330863b15e776939e9a64a67ebbd7909dff",
+    "source_paths": 1075,
+    "source_diff_sha256": "280b641963732226f8ea96ae68b70d2adfd95abf8bc2f3410397ff5dd9510583",
+    "argv": [
+      "/tmp/target-history-56818e4fba76/history-r8-candidate-node",
+      "store::reorg_cancellation::tests::actual_full_w1_depletion_terminates_intent_and_admits_an_independent_honest_mutation",
+      "--nocapture",
+      "--test-threads=1",
+      "--ignored"
+    ],
+    "env_overrides": {
+      "PATH": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/root/.codex/tmp/arg0/codex-arg0fWQ07S:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback",
+      "CARGO_TARGET_DIR": "/tmp/target-history-56818e4fba76",
+      "CARGO_BUILD_JOBS": "1",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_HOME": "/tmp/pure-pon-cargo-20261027"
+    },
+    "started_utc": "2026-10-28T03:41:43.153634+00:00",
+    "elapsed_seconds": 3.042731825989904,
+    "exit_code": 0,
+    "timed_out": false,
+    "outer_timeout_seconds": 120,
+    "child_user_seconds": 2.652674,
+    "child_system_seconds": 0.06418599999999999,
+    "child_max_rss_kib": 23576,
+    "stdout_sha256": "c8bdba355ccbabba6e7170bea2572e6332937d7dc9680549278efeece2a831e0",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "binary_sha256": "bbc2e67a525c14907f41dfe74e8a0a2d4cb007e2a6178046e450461c366e0d0b",
+    "harness_results": [
+      {
+        "outcome": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0
+      }
+    ],
+    "zero_tests_executed": false
+  },
+  {
+    "schema": "history-checkpoint-exact-source-control-v1",
+    "name": "candidate-host-parent",
+    "source_commit": "189ba3adfd9a22c7cfc1537eab535e9eb7c442df",
+    "source_tree": "ff572fb27e4fb5df9a80b3e2ec5096c697964200",
+    "source_status": "M trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs\n M trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs",
+    "runner_sha256": "a650f474fd0442f8e2dbd278b0e81547cf16c42b0c5535ddd95d377f38bf11be",
+    "source_scope": "all tracked materialized trillionnium and config inputs plus toolchain/preflight/AGENTS; includes tracked source dirty diff; no PQ feature",
+    "source_manifest_sha256": "ef5e88c5fc7cf5854a6eb498e4f83330863b15e776939e9a64a67ebbd7909dff",
+    "source_paths": 1075,
+    "source_diff_sha256": "280b641963732226f8ea96ae68b70d2adfd95abf8bc2f3410397ff5dd9510583",
+    "argv": [
+      "/tmp/target-history-56818e4fba76/history-r8-candidate-node",
+      "host_kernel_parent::",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "env_overrides": {
+      "PATH": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/root/.codex/tmp/arg0/codex-arg0fWQ07S:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback",
+      "CARGO_TARGET_DIR": "/tmp/target-history-56818e4fba76",
+      "CARGO_BUILD_JOBS": "1",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_HOME": "/tmp/pure-pon-cargo-20261027"
+    },
+    "started_utc": "2026-10-28T03:41:46.468001+00:00",
+    "elapsed_seconds": 0.04003536301024724,
+    "exit_code": 0,
+    "timed_out": false,
+    "outer_timeout_seconds": 60,
+    "child_user_seconds": 0.0,
+    "child_system_seconds": 0.0023219999999999994,
+    "child_max_rss_kib": 14116,
+    "stdout_sha256": "9ca146aef1ef7f2e0bff2be2f6451a639709684250a32f9ff38d32ac52a1d645",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "binary_sha256": "bbc2e67a525c14907f41dfe74e8a0a2d4cb007e2a6178046e450461c366e0d0b",
+    "harness_results": [
+      {
+        "outcome": "ok",
+        "passed": 11,
+        "failed": 0,
+        "ignored": 0
+      }
+    ],
+    "zero_tests_executed": false
+  },
+  {
+    "schema": "history-checkpoint-exact-source-control-v1",
+    "name": "candidate-host-required",
+    "source_commit": "189ba3adfd9a22c7cfc1537eab535e9eb7c442df",
+    "source_tree": "ff572fb27e4fb5df9a80b3e2ec5096c697964200",
+    "source_status": "M trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs\n M trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs",
+    "runner_sha256": "a650f474fd0442f8e2dbd278b0e81547cf16c42b0c5535ddd95d377f38bf11be",
+    "source_scope": "all tracked materialized trillionnium and config inputs plus toolchain/preflight/AGENTS; includes tracked source dirty diff; no PQ feature",
+    "source_manifest_sha256": "ef5e88c5fc7cf5854a6eb498e4f83330863b15e776939e9a64a67ebbd7909dff",
+    "source_paths": 1075,
+    "source_diff_sha256": "280b641963732226f8ea96ae68b70d2adfd95abf8bc2f3410397ff5dd9510583",
+    "argv": [
+      "/tmp/target-history-56818e4fba76/history-r8-candidate-node",
+      "ingress::tests::public_loopback_history_requires_real_fixed_host_parent",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "env_overrides": {
+      "PATH": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/root/.codex/tmp/arg0/codex-arg0fWQ07S:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback",
+      "CARGO_TARGET_DIR": "/tmp/target-history-56818e4fba76",
+      "CARGO_BUILD_JOBS": "1",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_HOME": "/tmp/pure-pon-cargo-20261027"
+    },
+    "started_utc": "2026-10-28T03:41:46.763178+00:00",
+    "elapsed_seconds": 0.02123216500331182,
+    "exit_code": 0,
+    "timed_out": false,
+    "outer_timeout_seconds": 60,
+    "child_user_seconds": 0.002459,
+    "child_system_seconds": 0.0,
+    "child_max_rss_kib": 14112,
+    "stdout_sha256": "894d98d5b3a7721ab72a78c458c40e627f46ff64668585e910a18333238d652a",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "binary_sha256": "bbc2e67a525c14907f41dfe74e8a0a2d4cb007e2a6178046e450461c366e0d0b",
+    "harness_results": [
+      {
+        "outcome": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0
+      }
+    ],
+    "zero_tests_executed": false
+  },
+  {
+    "schema": "history-checkpoint-exact-source-control-v1",
+    "name": "candidate-corrected-build",
+    "source_commit": "189ba3adfd9a22c7cfc1537eab535e9eb7c442df",
+    "source_tree": "ff572fb27e4fb5df9a80b3e2ec5096c697964200",
+    "source_status": "M scripts/ci/check_public_readiness_evidence.py\n M scripts/ci/test_public_readiness_evidence.py\n M trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs\n M trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs",
+    "runner_sha256": "a650f474fd0442f8e2dbd278b0e81547cf16c42b0c5535ddd95d377f38bf11be",
+    "source_scope": "all tracked materialized trillionnium and config inputs plus toolchain/preflight/AGENTS; includes tracked source dirty diff; no PQ feature",
+    "source_manifest_sha256": "34d8566623803d6aed74ebc92b5674bc726cca9534ec724f951ae2d8e526b5f1",
+    "source_paths": 1075,
+    "source_diff_sha256": "2ba402624b5ff159c11ed42a4ede60832dceaf827ad56324fb31770ddad90e5d",
+    "argv": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "--no-run",
+      "--offline",
+      "--locked",
+      "--config",
+      "profile.test.package.trnm-pon-node.debug=0",
+      "--message-format=json"
+    ],
+    "env_overrides": {
+      "PATH": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/root/.codex/tmp/arg0/codex-arg0fWQ07S:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback",
+      "CARGO_TARGET_DIR": "/tmp/target-history-56818e4fba76",
+      "CARGO_BUILD_JOBS": "1",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_HOME": "/tmp/pure-pon-cargo-20261027"
+    },
+    "started_utc": "2026-10-28T03:55:33.566508+00:00",
+    "elapsed_seconds": 293.0904605609976,
+    "exit_code": 0,
+    "timed_out": false,
+    "outer_timeout_seconds": 600,
+    "child_user_seconds": 290.086718,
+    "child_system_seconds": 3.902781,
+    "child_max_rss_kib": 1989472,
+    "stdout_sha256": "591eb148e0acdfae151ed01c50821a128c7ec35f83218bbc33cef93e68b60123",
+    "stderr_sha256": "5d577202c6eaad08c2b68b38010b5bf0a74d81627f320e48cdc71bd03ca7b0b8",
+    "harness_results": [],
+    "zero_tests_executed": false
+  },
+  {
+    "schema": "history-checkpoint-exact-source-control-v1",
+    "name": "candidate-corrected-history-boundaries",
+    "source_commit": "189ba3adfd9a22c7cfc1537eab535e9eb7c442df",
+    "source_tree": "ff572fb27e4fb5df9a80b3e2ec5096c697964200",
+    "source_status": "M scripts/ci/check_public_readiness_evidence.py\n M scripts/ci/test_public_readiness_evidence.py\n M trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs\n M trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs",
+    "runner_sha256": "a650f474fd0442f8e2dbd278b0e81547cf16c42b0c5535ddd95d377f38bf11be",
+    "source_scope": "all tracked materialized trillionnium and config inputs plus toolchain/preflight/AGENTS; includes tracked source dirty diff; no PQ feature",
+    "source_manifest_sha256": "34d8566623803d6aed74ebc92b5674bc726cca9534ec724f951ae2d8e526b5f1",
+    "source_paths": 1075,
+    "source_diff_sha256": "2ba402624b5ff159c11ed42a4ede60832dceaf827ad56324fb31770ddad90e5d",
+    "argv": [
+      "/tmp/target-history-56818e4fba76/history-r8-candidate-corrected-node",
+      "ingress::history_import::tests::",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "env_overrides": {
+      "PATH": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/root/.codex/tmp/arg0/codex-arg0fWQ07S:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback",
+      "CARGO_TARGET_DIR": "/tmp/target-history-56818e4fba76",
+      "CARGO_BUILD_JOBS": "1",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_HOME": "/tmp/pure-pon-cargo-20261027"
+    },
+    "started_utc": "2026-10-28T04:01:57.665312+00:00",
+    "elapsed_seconds": 11.113563658000203,
+    "exit_code": 0,
+    "timed_out": false,
+    "outer_timeout_seconds": 180,
+    "child_user_seconds": 0.6847219999999999,
+    "child_system_seconds": 0.107891,
+    "child_max_rss_kib": 27156,
+    "stdout_sha256": "ad28f73ea7c3ac8463e53eb0d7d48b20055f73c16e2cc4b6cce0b04bf6c16717",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "binary_sha256": "3aae89ff283f8329625363bbfa95b366b36492e0be5de07354a6a9b696719db4",
+    "harness_results": [
+      {
+        "outcome": "ok",
+        "passed": 12,
+        "failed": 0,
+        "ignored": 1
+      }
+    ],
+    "zero_tests_executed": false
+  },
+  {
+    "schema": "history-checkpoint-exact-source-control-v1",
+    "name": "candidate-corrected-native-inactive",
+    "source_commit": "189ba3adfd9a22c7cfc1537eab535e9eb7c442df",
+    "source_tree": "ff572fb27e4fb5df9a80b3e2ec5096c697964200",
+    "source_status": "M scripts/ci/check_public_readiness_evidence.py\n M scripts/ci/test_public_readiness_evidence.py\n M trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs\n M trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs",
+    "runner_sha256": "a650f474fd0442f8e2dbd278b0e81547cf16c42b0c5535ddd95d377f38bf11be",
+    "source_scope": "all tracked materialized trillionnium and config inputs plus toolchain/preflight/AGENTS; includes tracked source dirty diff; no PQ feature",
+    "source_manifest_sha256": "34d8566623803d6aed74ebc92b5674bc726cca9534ec724f951ae2d8e526b5f1",
+    "source_paths": 1075,
+    "source_diff_sha256": "2ba402624b5ff159c11ed42a4ede60832dceaf827ad56324fb31770ddad90e5d",
+    "argv": [
+      "/tmp/target-history-56818e4fba76/history-r8-candidate-corrected-node",
+      "store::native_authenticated_tests::native_inactive_page_parents_use_checked_material_without_early_activation",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "env_overrides": {
+      "PATH": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/root/.codex/tmp/arg0/codex-arg0fWQ07S:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback",
+      "CARGO_TARGET_DIR": "/tmp/target-history-56818e4fba76",
+      "CARGO_BUILD_JOBS": "1",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_HOME": "/tmp/pure-pon-cargo-20261027"
+    },
+    "started_utc": "2026-10-28T04:02:09.046657+00:00",
+    "elapsed_seconds": 2.6388671250024345,
+    "exit_code": 0,
+    "timed_out": false,
+    "outer_timeout_seconds": 90,
+    "child_user_seconds": 1.20166,
+    "child_system_seconds": 0.046249,
+    "child_max_rss_kib": 33772,
+    "stdout_sha256": "7bf05a589c700ddaecccecff40d60de5c93e46eb09685ae2780f84dbae87f3f4",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "binary_sha256": "3aae89ff283f8329625363bbfa95b366b36492e0be5de07354a6a9b696719db4",
+    "harness_results": [
+      {
+        "outcome": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0
+      }
+    ],
+    "zero_tests_executed": false
+  },
+  {
+    "schema": "history-checkpoint-exact-source-control-v1",
+    "name": "candidate-corrected-native-graph",
+    "source_commit": "189ba3adfd9a22c7cfc1537eab535e9eb7c442df",
+    "source_tree": "ff572fb27e4fb5df9a80b3e2ec5096c697964200",
+    "source_status": "M scripts/ci/check_public_readiness_evidence.py\n M scripts/ci/test_public_readiness_evidence.py\n M trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs\n M trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs",
+    "runner_sha256": "a650f474fd0442f8e2dbd278b0e81547cf16c42b0c5535ddd95d377f38bf11be",
+    "source_scope": "all tracked materialized trillionnium and config inputs plus toolchain/preflight/AGENTS; includes tracked source dirty diff; no PQ feature",
+    "source_manifest_sha256": "34d8566623803d6aed74ebc92b5674bc726cca9534ec724f951ae2d8e526b5f1",
+    "source_paths": 1075,
+    "source_diff_sha256": "2ba402624b5ff159c11ed42a4ede60832dceaf827ad56324fb31770ddad90e5d",
+    "argv": [
+      "/tmp/target-history-56818e4fba76/history-r8-candidate-corrected-node",
+      "native_node_reader_",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "env_overrides": {
+      "PATH": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/root/.codex/tmp/arg0/codex-arg0fWQ07S:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback",
+      "CARGO_TARGET_DIR": "/tmp/target-history-56818e4fba76",
+      "CARGO_BUILD_JOBS": "1",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_HOME": "/tmp/pure-pon-cargo-20261027"
+    },
+    "started_utc": "2026-10-28T04:02:11.955447+00:00",
+    "elapsed_seconds": 0.18165842499001883,
+    "exit_code": 0,
+    "timed_out": false,
+    "outer_timeout_seconds": 60,
+    "child_user_seconds": 0.02132,
+    "child_system_seconds": 0.043202,
+    "child_max_rss_kib": 18200,
+    "stdout_sha256": "431a3015402da138d85d08856d86806cbbb956e68167f777a51e8824af90de60",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "binary_sha256": "3aae89ff283f8329625363bbfa95b366b36492e0be5de07354a6a9b696719db4",
+    "harness_results": [
+      {
+        "outcome": "ok",
+        "passed": 3,
+        "failed": 0,
+        "ignored": 1
+      }
+    ],
+    "zero_tests_executed": false
+  },
+  {
+    "schema": "history-checkpoint-exact-source-control-v1",
+    "name": "candidate-corrected-admission-parent",
+    "source_commit": "189ba3adfd9a22c7cfc1537eab535e9eb7c442df",
+    "source_tree": "ff572fb27e4fb5df9a80b3e2ec5096c697964200",
+    "source_status": "M scripts/ci/check_public_readiness_evidence.py\n M scripts/ci/test_public_readiness_evidence.py\n M trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs\n M trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs",
+    "runner_sha256": "a650f474fd0442f8e2dbd278b0e81547cf16c42b0c5535ddd95d377f38bf11be",
+    "source_scope": "all tracked materialized trillionnium and config inputs plus toolchain/preflight/AGENTS; includes tracked source dirty diff; no PQ feature",
+    "source_manifest_sha256": "34d8566623803d6aed74ebc92b5674bc726cca9534ec724f951ae2d8e526b5f1",
+    "source_paths": 1075,
+    "source_diff_sha256": "2ba402624b5ff159c11ed42a4ede60832dceaf827ad56324fb31770ddad90e5d",
+    "argv": [
+      "/tmp/target-history-56818e4fba76/history-r8-candidate-corrected-node",
+      "store::admission_parent_tests::",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "env_overrides": {
+      "PATH": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/root/.codex/tmp/arg0/codex-arg0fWQ07S:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback",
+      "CARGO_TARGET_DIR": "/tmp/target-history-56818e4fba76",
+      "CARGO_BUILD_JOBS": "1",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_HOME": "/tmp/pure-pon-cargo-20261027"
+    },
+    "started_utc": "2026-10-28T04:02:12.400815+00:00",
+    "elapsed_seconds": 0.2823935100022936,
+    "exit_code": 0,
+    "timed_out": false,
+    "outer_timeout_seconds": 90,
+    "child_user_seconds": 0.191306,
+    "child_system_seconds": 0.008174,
+    "child_max_rss_kib": 22344,
+    "stdout_sha256": "ab557ba0a3de2000a0ac247bd40d51ac155070d7a2fa9c9143433cedf662680b",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "binary_sha256": "3aae89ff283f8329625363bbfa95b366b36492e0be5de07354a6a9b696719db4",
+    "harness_results": [
+      {
+        "outcome": "ok",
+        "passed": 4,
+        "failed": 0,
+        "ignored": 0
+      }
+    ],
+    "zero_tests_executed": false
+  },
+  {
+    "schema": "history-checkpoint-exact-source-control-v1",
+    "name": "candidate-corrected-cpu-live",
+    "source_commit": "189ba3adfd9a22c7cfc1537eab535e9eb7c442df",
+    "source_tree": "ff572fb27e4fb5df9a80b3e2ec5096c697964200",
+    "source_status": "M scripts/ci/check_public_readiness_evidence.py\n M scripts/ci/test_public_readiness_evidence.py\n M trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs\n M trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs",
+    "runner_sha256": "a650f474fd0442f8e2dbd278b0e81547cf16c42b0c5535ddd95d377f38bf11be",
+    "source_scope": "all tracked materialized trillionnium and config inputs plus toolchain/preflight/AGENTS; includes tracked source dirty diff; no PQ feature",
+    "source_manifest_sha256": "34d8566623803d6aed74ebc92b5674bc726cca9534ec724f951ae2d8e526b5f1",
+    "source_paths": 1075,
+    "source_diff_sha256": "2ba402624b5ff159c11ed42a4ede60832dceaf827ad56324fb31770ddad90e5d",
+    "argv": [
+      "/tmp/target-history-56818e4fba76/history-r8-candidate-corrected-node",
+      "ingress::public_v3::scalar_cpu::tests::",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "env_overrides": {
+      "PATH": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/root/.codex/tmp/arg0/codex-arg0fWQ07S:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback",
+      "CARGO_TARGET_DIR": "/tmp/target-history-56818e4fba76",
+      "CARGO_BUILD_JOBS": "1",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_HOME": "/tmp/pure-pon-cargo-20261027"
+    },
+    "started_utc": "2026-10-28T04:02:12.978578+00:00",
+    "elapsed_seconds": 0.02666778099955991,
+    "exit_code": 0,
+    "timed_out": false,
+    "outer_timeout_seconds": 60,
+    "child_user_seconds": 0.0,
+    "child_system_seconds": 0.004219999999999998,
+    "child_max_rss_kib": 14100,
+    "stdout_sha256": "3f36460c174f7632656fa55673716dcab065babcbfd5202eed6cb7b5a055c364",
+    "stderr_sha256": "b5eba4cc33d14c42c3e06df3cd4064eb7e94685651d149500de08fd2d54d99e0",
+    "binary_sha256": "3aae89ff283f8329625363bbfa95b366b36492e0be5de07354a6a9b696719db4",
+    "harness_results": [
+      {
+        "outcome": "ok",
+        "passed": 13,
+        "failed": 0,
+        "ignored": 0
+      }
+    ],
+    "zero_tests_executed": false
+  },
+  {
+    "schema": "history-checkpoint-exact-source-control-v1",
+    "name": "candidate-corrected-cpu-completion",
+    "source_commit": "189ba3adfd9a22c7cfc1537eab535e9eb7c442df",
+    "source_tree": "ff572fb27e4fb5df9a80b3e2ec5096c697964200",
+    "source_status": "M scripts/ci/check_public_readiness_evidence.py\n M scripts/ci/test_public_readiness_evidence.py\n M trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs\n M trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs",
+    "runner_sha256": "a650f474fd0442f8e2dbd278b0e81547cf16c42b0c5535ddd95d377f38bf11be",
+    "source_scope": "all tracked materialized trillionnium and config inputs plus toolchain/preflight/AGENTS; includes tracked source dirty diff; no PQ feature",
+    "source_manifest_sha256": "34d8566623803d6aed74ebc92b5674bc726cca9534ec724f951ae2d8e526b5f1",
+    "source_paths": 1075,
+    "source_diff_sha256": "2ba402624b5ff159c11ed42a4ede60832dceaf827ad56324fb31770ddad90e5d",
+    "argv": [
+      "/tmp/target-history-56818e4fba76/history-r8-candidate-corrected-node",
+      "ingress::public_v3::scalar_cpu::completion_tests::",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "env_overrides": {
+      "PATH": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/root/.codex/tmp/arg0/codex-arg0fWQ07S:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback",
+      "CARGO_TARGET_DIR": "/tmp/target-history-56818e4fba76",
+      "CARGO_BUILD_JOBS": "1",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_HOME": "/tmp/pure-pon-cargo-20261027"
+    },
+    "started_utc": "2026-10-28T04:02:13.266582+00:00",
+    "elapsed_seconds": 2.2912684030015953,
+    "exit_code": 0,
+    "timed_out": false,
+    "outer_timeout_seconds": 120,
+    "child_user_seconds": 0.580876,
+    "child_system_seconds": 0.12712299999999999,
+    "child_max_rss_kib": 18480,
+    "stdout_sha256": "0dc485cd63b4ccf6361f153e67b4ceca81168f02d6dd42b29fe8a835fabcdad0",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "binary_sha256": "3aae89ff283f8329625363bbfa95b366b36492e0be5de07354a6a9b696719db4",
+    "harness_results": [
+      {
+        "outcome": "ok",
+        "passed": 11,
+        "failed": 0,
+        "ignored": 0
+      }
+    ],
+    "zero_tests_executed": false
+  },
+  {
+    "schema": "history-checkpoint-exact-source-control-v1",
+    "name": "candidate-corrected-cpu-poison",
+    "source_commit": "189ba3adfd9a22c7cfc1537eab535e9eb7c442df",
+    "source_tree": "ff572fb27e4fb5df9a80b3e2ec5096c697964200",
+    "source_status": "M scripts/ci/check_public_readiness_evidence.py\n M scripts/ci/test_public_readiness_evidence.py\n M trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs\n M trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs",
+    "runner_sha256": "a650f474fd0442f8e2dbd278b0e81547cf16c42b0c5535ddd95d377f38bf11be",
+    "source_scope": "all tracked materialized trillionnium and config inputs plus toolchain/preflight/AGENTS; includes tracked source dirty diff; no PQ feature",
+    "source_manifest_sha256": "34d8566623803d6aed74ebc92b5674bc726cca9534ec724f951ae2d8e526b5f1",
+    "source_paths": 1075,
+    "source_diff_sha256": "2ba402624b5ff159c11ed42a4ede60832dceaf827ad56324fb31770ddad90e5d",
+    "argv": [
+      "/tmp/target-history-56818e4fba76/history-r8-candidate-corrected-node",
+      "ingress::public_v3::tests::live_cpu_poisoned_request_registry_disables_global_starts_without_deadlock",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "env_overrides": {
+      "PATH": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/root/.codex/tmp/arg0/codex-arg0fWQ07S:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback",
+      "CARGO_TARGET_DIR": "/tmp/target-history-56818e4fba76",
+      "CARGO_BUILD_JOBS": "1",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_HOME": "/tmp/pure-pon-cargo-20261027"
+    },
+    "started_utc": "2026-10-28T04:02:15.834014+00:00",
+    "elapsed_seconds": 0.019109668995952234,
+    "exit_code": 0,
+    "timed_out": false,
+    "outer_timeout_seconds": 60,
+    "child_user_seconds": 0.002405,
+    "child_system_seconds": 0.0,
+    "child_max_rss_kib": 14120,
+    "stdout_sha256": "870b35e099790ae6b3ff1b66622354c5c8e9dab73f55fae7d33079362fa87625",
+    "stderr_sha256": "cffb17f0a38afa925a7624edaa00e3c85b50e298fe83698ac4271df2afe92d1d",
+    "binary_sha256": "3aae89ff283f8329625363bbfa95b366b36492e0be5de07354a6a9b696719db4",
+    "harness_results": [
+      {
+        "outcome": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0
+      }
+    ],
+    "zero_tests_executed": false
+  },
+  {
+    "schema": "history-checkpoint-exact-source-control-v1",
+    "name": "candidate-corrected-reorg-cancellation",
+    "source_commit": "189ba3adfd9a22c7cfc1537eab535e9eb7c442df",
+    "source_tree": "ff572fb27e4fb5df9a80b3e2ec5096c697964200",
+    "source_status": "M scripts/ci/check_public_readiness_evidence.py\n M scripts/ci/test_public_readiness_evidence.py\n M trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs\n M trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs",
+    "runner_sha256": "a650f474fd0442f8e2dbd278b0e81547cf16c42b0c5535ddd95d377f38bf11be",
+    "source_scope": "all tracked materialized trillionnium and config inputs plus toolchain/preflight/AGENTS; includes tracked source dirty diff; no PQ feature",
+    "source_manifest_sha256": "34d8566623803d6aed74ebc92b5674bc726cca9534ec724f951ae2d8e526b5f1",
+    "source_paths": 1075,
+    "source_diff_sha256": "2ba402624b5ff159c11ed42a4ede60832dceaf827ad56324fb31770ddad90e5d",
+    "argv": [
+      "/tmp/target-history-56818e4fba76/history-r8-candidate-corrected-node",
+      "store::reorg_cancellation::tests::",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "env_overrides": {
+      "PATH": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/root/.codex/tmp/arg0/codex-arg0fWQ07S:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback",
+      "CARGO_TARGET_DIR": "/tmp/target-history-56818e4fba76",
+      "CARGO_BUILD_JOBS": "1",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_HOME": "/tmp/pure-pon-cargo-20261027"
+    },
+    "started_utc": "2026-10-28T04:02:16.124419+00:00",
+    "elapsed_seconds": 1.0348924129939405,
+    "exit_code": 0,
+    "timed_out": false,
+    "outer_timeout_seconds": 120,
+    "child_user_seconds": 0.760069,
+    "child_system_seconds": 0.081174,
+    "child_max_rss_kib": 25684,
+    "stdout_sha256": "3458c463dda846d4f143f159a392a398c7b3d715e768afeb44c7d8214ab42233",
+    "stderr_sha256": "b411879fdbdc3bb64a1ad1061dae5081aa64292b943c308d46b35f903e6d3893",
+    "binary_sha256": "3aae89ff283f8329625363bbfa95b366b36492e0be5de07354a6a9b696719db4",
+    "harness_results": [
+      {
+        "outcome": "ok",
+        "passed": 14,
+        "failed": 0,
+        "ignored": 2
+      }
+    ],
+    "zero_tests_executed": false
+  },
+  {
+    "schema": "history-checkpoint-exact-source-control-v1",
+    "name": "candidate-corrected-reorg-real-depletion",
+    "source_commit": "189ba3adfd9a22c7cfc1537eab535e9eb7c442df",
+    "source_tree": "ff572fb27e4fb5df9a80b3e2ec5096c697964200",
+    "source_status": "M scripts/ci/check_public_readiness_evidence.py\n M scripts/ci/test_public_readiness_evidence.py\n M trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs\n M trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs",
+    "runner_sha256": "a650f474fd0442f8e2dbd278b0e81547cf16c42b0c5535ddd95d377f38bf11be",
+    "source_scope": "all tracked materialized trillionnium and config inputs plus toolchain/preflight/AGENTS; includes tracked source dirty diff; no PQ feature",
+    "source_manifest_sha256": "34d8566623803d6aed74ebc92b5674bc726cca9534ec724f951ae2d8e526b5f1",
+    "source_paths": 1075,
+    "source_diff_sha256": "2ba402624b5ff159c11ed42a4ede60832dceaf827ad56324fb31770ddad90e5d",
+    "argv": [
+      "/tmp/target-history-56818e4fba76/history-r8-candidate-corrected-node",
+      "store::reorg_cancellation::tests::actual_full_w1_depletion_terminates_intent_and_admits_an_independent_honest_mutation",
+      "--nocapture",
+      "--test-threads=1",
+      "--ignored"
+    ],
+    "env_overrides": {
+      "PATH": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/root/.codex/tmp/arg0/codex-arg0fWQ07S:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback",
+      "CARGO_TARGET_DIR": "/tmp/target-history-56818e4fba76",
+      "CARGO_BUILD_JOBS": "1",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_HOME": "/tmp/pure-pon-cargo-20261027"
+    },
+    "started_utc": "2026-10-28T04:02:17.431884+00:00",
+    "elapsed_seconds": 3.0426273490011226,
+    "exit_code": 0,
+    "timed_out": false,
+    "outer_timeout_seconds": 120,
+    "child_user_seconds": 2.645812,
+    "child_system_seconds": 0.076597,
+    "child_max_rss_kib": 24008,
+    "stdout_sha256": "bd8df069ac2bba7b1b46aa478764990f5741ba5e2e8f551296a09f7e36a72aa8",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "binary_sha256": "3aae89ff283f8329625363bbfa95b366b36492e0be5de07354a6a9b696719db4",
+    "harness_results": [
+      {
+        "outcome": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0
+      }
+    ],
+    "zero_tests_executed": false
+  },
+  {
+    "schema": "history-checkpoint-exact-source-control-v1",
+    "name": "candidate-corrected-host-parent",
+    "source_commit": "189ba3adfd9a22c7cfc1537eab535e9eb7c442df",
+    "source_tree": "ff572fb27e4fb5df9a80b3e2ec5096c697964200",
+    "source_status": "M scripts/ci/check_public_readiness_evidence.py\n M scripts/ci/test_public_readiness_evidence.py\n M trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs\n M trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs",
+    "runner_sha256": "a650f474fd0442f8e2dbd278b0e81547cf16c42b0c5535ddd95d377f38bf11be",
+    "source_scope": "all tracked materialized trillionnium and config inputs plus toolchain/preflight/AGENTS; includes tracked source dirty diff; no PQ feature",
+    "source_manifest_sha256": "34d8566623803d6aed74ebc92b5674bc726cca9534ec724f951ae2d8e526b5f1",
+    "source_paths": 1075,
+    "source_diff_sha256": "2ba402624b5ff159c11ed42a4ede60832dceaf827ad56324fb31770ddad90e5d",
+    "argv": [
+      "/tmp/target-history-56818e4fba76/history-r8-candidate-corrected-node",
+      "host_kernel_parent::",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "env_overrides": {
+      "PATH": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/root/.codex/tmp/arg0/codex-arg0fWQ07S:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback",
+      "CARGO_TARGET_DIR": "/tmp/target-history-56818e4fba76",
+      "CARGO_BUILD_JOBS": "1",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_HOME": "/tmp/pure-pon-cargo-20261027"
+    },
+    "started_utc": "2026-10-28T04:02:20.762669+00:00",
+    "elapsed_seconds": 0.024750292010139674,
+    "exit_code": 0,
+    "timed_out": false,
+    "outer_timeout_seconds": 60,
+    "child_user_seconds": 0.0,
+    "child_system_seconds": 0.002868,
+    "child_max_rss_kib": 14112,
+    "stdout_sha256": "9ca146aef1ef7f2e0bff2be2f6451a639709684250a32f9ff38d32ac52a1d645",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "binary_sha256": "3aae89ff283f8329625363bbfa95b366b36492e0be5de07354a6a9b696719db4",
+    "harness_results": [
+      {
+        "outcome": "ok",
+        "passed": 11,
+        "failed": 0,
+        "ignored": 0
+      }
+    ],
+    "zero_tests_executed": false
+  },
+  {
+    "schema": "history-checkpoint-exact-source-control-v1",
+    "name": "candidate-corrected-host-required",
+    "source_commit": "189ba3adfd9a22c7cfc1537eab535e9eb7c442df",
+    "source_tree": "ff572fb27e4fb5df9a80b3e2ec5096c697964200",
+    "source_status": "M scripts/ci/check_public_readiness_evidence.py\n M scripts/ci/test_public_readiness_evidence.py\n M trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs\n M trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs",
+    "runner_sha256": "a650f474fd0442f8e2dbd278b0e81547cf16c42b0c5535ddd95d377f38bf11be",
+    "source_scope": "all tracked materialized trillionnium and config inputs plus toolchain/preflight/AGENTS; includes tracked source dirty diff; no PQ feature",
+    "source_manifest_sha256": "34d8566623803d6aed74ebc92b5674bc726cca9534ec724f951ae2d8e526b5f1",
+    "source_paths": 1075,
+    "source_diff_sha256": "2ba402624b5ff159c11ed42a4ede60832dceaf827ad56324fb31770ddad90e5d",
+    "argv": [
+      "/tmp/target-history-56818e4fba76/history-r8-candidate-corrected-node",
+      "ingress::tests::public_loopback_history_requires_real_fixed_host_parent",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "env_overrides": {
+      "PATH": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/root/.codex/tmp/arg0/codex-arg0fWQ07S:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback",
+      "CARGO_TARGET_DIR": "/tmp/target-history-56818e4fba76",
+      "CARGO_BUILD_JOBS": "1",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_HOME": "/tmp/pure-pon-cargo-20261027"
+    },
+    "started_utc": "2026-10-28T04:02:21.045669+00:00",
+    "elapsed_seconds": 0.020324967001215555,
+    "exit_code": 0,
+    "timed_out": false,
+    "outer_timeout_seconds": 60,
+    "child_user_seconds": 0.0,
+    "child_system_seconds": 0.002445,
+    "child_max_rss_kib": 14104,
+    "stdout_sha256": "894d98d5b3a7721ab72a78c458c40e627f46ff64668585e910a18333238d652a",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "binary_sha256": "3aae89ff283f8329625363bbfa95b366b36492e0be5de07354a6a9b696719db4",
+    "harness_results": [
+      {
+        "outcome": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0
+      }
+    ],
+    "zero_tests_executed": false
+  },
+  {
+    "schema": "history-checkpoint-exact-source-control-v1",
+    "name": "candidate-corrected-preflight",
+    "source_commit": "189ba3adfd9a22c7cfc1537eab535e9eb7c442df",
+    "source_tree": "ff572fb27e4fb5df9a80b3e2ec5096c697964200",
+    "source_status": "M scripts/ci/check_public_readiness_evidence.py\n M scripts/ci/test_public_readiness_evidence.py\n M trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs\n M trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs",
+    "runner_sha256": "a650f474fd0442f8e2dbd278b0e81547cf16c42b0c5535ddd95d377f38bf11be",
+    "source_scope": "all tracked materialized trillionnium and config inputs plus toolchain/preflight/AGENTS; includes tracked source dirty diff; no PQ feature",
+    "source_manifest_sha256": "34d8566623803d6aed74ebc92b5674bc726cca9534ec724f951ae2d8e526b5f1",
+    "source_paths": 1075,
+    "source_diff_sha256": "2ba402624b5ff159c11ed42a4ede60832dceaf827ad56324fb31770ddad90e5d",
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "env_overrides": {
+      "PATH": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/root/.codex/tmp/arg0/codex-arg0fWQ07S:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback",
+      "CARGO_TARGET_DIR": "/tmp/target-history-56818e4fba76",
+      "CARGO_BUILD_JOBS": "1",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_HOME": "/tmp/pure-pon-cargo-20261027"
+    },
+    "started_utc": "2026-10-28T04:02:25.922258+00:00",
+    "elapsed_seconds": 0.08213324900134467,
+    "exit_code": 0,
+    "timed_out": false,
+    "outer_timeout_seconds": 30,
+    "child_user_seconds": 0.035794999999999993,
+    "child_system_seconds": 0.009615999999999998,
+    "child_max_rss_kib": 14116,
+    "stdout_sha256": "68cc74176760739c512b8dffdda10bffd0db07762eef6da6e32f6cedaf971862",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "harness_results": [],
+    "zero_tests_executed": false
+  },
+  {
+    "schema": "history-checkpoint-exact-source-control-v1",
+    "name": "candidate-corrected-clippy",
+    "source_commit": "189ba3adfd9a22c7cfc1537eab535e9eb7c442df",
+    "source_tree": "ff572fb27e4fb5df9a80b3e2ec5096c697964200",
+    "source_status": "M scripts/ci/check_public_readiness_evidence.py\n M scripts/ci/test_public_readiness_evidence.py\n M trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs\n M trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs",
+    "runner_sha256": "a650f474fd0442f8e2dbd278b0e81547cf16c42b0c5535ddd95d377f38bf11be",
+    "source_scope": "all tracked materialized trillionnium and config inputs plus toolchain/preflight/AGENTS; includes tracked source dirty diff; no PQ feature",
+    "source_manifest_sha256": "34d8566623803d6aed74ebc92b5674bc726cca9534ec724f951ae2d8e526b5f1",
+    "source_paths": 1075,
+    "source_diff_sha256": "2ba402624b5ff159c11ed42a4ede60832dceaf827ad56324fb31770ddad90e5d",
+    "argv": [
+      "cargo",
+      "clippy",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "--tests",
+      "--offline",
+      "--locked",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "env_overrides": {
+      "PATH": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/root/.codex/tmp/arg0/codex-arg0fWQ07S:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback",
+      "CARGO_TARGET_DIR": "/tmp/target-history-56818e4fba76",
+      "CARGO_BUILD_JOBS": "1",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_HOME": "/tmp/pure-pon-cargo-20261027"
+    },
+    "started_utc": "2026-10-28T04:02:28.570033+00:00",
+    "elapsed_seconds": 56.06673547399987,
+    "exit_code": 0,
+    "timed_out": false,
+    "outer_timeout_seconds": 240,
+    "child_user_seconds": 52.33133,
+    "child_system_seconds": 3.3613259999999996,
+    "child_max_rss_kib": 1246372,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "dfb5b2acea5cf4e8f6bc8c9edff7a4e7752b12c8238ad468bd6edd41f9d3e2fc",
+    "harness_results": [],
+    "zero_tests_executed": false
+  },
+  {
+    "schema": "history-checkpoint-exact-source-control-v1",
+    "name": "candidate-corrected-fmt",
+    "source_commit": "189ba3adfd9a22c7cfc1537eab535e9eb7c442df",
+    "source_tree": "ff572fb27e4fb5df9a80b3e2ec5096c697964200",
+    "source_status": "M scripts/ci/check_public_readiness_evidence.py\n M scripts/ci/test_public_readiness_evidence.py\n M trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs\n M trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs",
+    "runner_sha256": "a650f474fd0442f8e2dbd278b0e81547cf16c42b0c5535ddd95d377f38bf11be",
+    "source_scope": "all tracked materialized trillionnium and config inputs plus toolchain/preflight/AGENTS; includes tracked source dirty diff; no PQ feature",
+    "source_manifest_sha256": "34d8566623803d6aed74ebc92b5674bc726cca9534ec724f951ae2d8e526b5f1",
+    "source_paths": 1075,
+    "source_diff_sha256": "2ba402624b5ff159c11ed42a4ede60832dceaf827ad56324fb31770ddad90e5d",
+    "argv": [
+      "rustfmt",
+      "--edition",
+      "2021",
+      "--check",
+      "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+      "trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs"
+    ],
+    "env_overrides": {
+      "PATH": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/root/.codex/tmp/arg0/codex-arg0fWQ07S:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback",
+      "CARGO_TARGET_DIR": "/tmp/target-history-56818e4fba76",
+      "CARGO_BUILD_JOBS": "1",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_HOME": "/tmp/pure-pon-cargo-20261027"
+    },
+    "started_utc": "2026-10-28T04:03:43.766861+00:00",
+    "elapsed_seconds": 0.08674382900062483,
+    "exit_code": 0,
+    "timed_out": false,
+    "outer_timeout_seconds": 30,
+    "child_user_seconds": 0.030223999999999997,
+    "child_system_seconds": 0.012279000000000002,
+    "child_max_rss_kib": 41732,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "harness_results": [],
+    "zero_tests_executed": false
+  },
+  {
+    "schema": "history-checkpoint-exact-source-control-v1",
+    "name": "candidate-corrected-cargo-graph",
+    "source_commit": "189ba3adfd9a22c7cfc1537eab535e9eb7c442df",
+    "source_tree": "ff572fb27e4fb5df9a80b3e2ec5096c697964200",
+    "source_status": "M scripts/ci/check_public_readiness_evidence.py\n M scripts/ci/test_public_readiness_evidence.py\n M trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs\n M trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs",
+    "runner_sha256": "a650f474fd0442f8e2dbd278b0e81547cf16c42b0c5535ddd95d377f38bf11be",
+    "source_scope": "all tracked materialized trillionnium and config inputs plus toolchain/preflight/AGENTS; includes tracked source dirty diff; no PQ feature",
+    "source_manifest_sha256": "34d8566623803d6aed74ebc92b5674bc726cca9534ec724f951ae2d8e526b5f1",
+    "source_paths": 1075,
+    "source_diff_sha256": "2ba402624b5ff159c11ed42a4ede60832dceaf827ad56324fb31770ddad90e5d",
+    "argv": [
+      "cargo",
+      "metadata",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--offline",
+      "--locked",
+      "--format-version",
+      "1",
+      "--no-deps"
+    ],
+    "env_overrides": {
+      "PATH": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/root/.codex/tmp/arg0/codex-arg0fWQ07S:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback",
+      "CARGO_TARGET_DIR": "/tmp/target-history-56818e4fba76",
+      "CARGO_BUILD_JOBS": "1",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_HOME": "/tmp/pure-pon-cargo-20261027"
+    },
+    "started_utc": "2026-10-28T04:03:43.982790+00:00",
+    "elapsed_seconds": 0.03349164599785581,
+    "exit_code": 0,
+    "timed_out": false,
+    "outer_timeout_seconds": 30,
+    "child_user_seconds": 0.005039,
+    "child_system_seconds": 0.009077999999999998,
+    "child_max_rss_kib": 20556,
+    "stdout_sha256": "877c912d3bf538056e78e9816262743d1b6925d8faec7dc00fcca628569f0584",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "harness_results": [],
+    "zero_tests_executed": false
+  },
+  {
+    "schema": "history-checkpoint-exact-source-control-v1",
+    "name": "candidate-corrected-diff-check",
+    "source_commit": "189ba3adfd9a22c7cfc1537eab535e9eb7c442df",
+    "source_tree": "ff572fb27e4fb5df9a80b3e2ec5096c697964200",
+    "source_status": "M scripts/ci/check_public_readiness_evidence.py\n M scripts/ci/test_public_readiness_evidence.py\n M trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs\n M trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs",
+    "runner_sha256": "a650f474fd0442f8e2dbd278b0e81547cf16c42b0c5535ddd95d377f38bf11be",
+    "source_scope": "all tracked materialized trillionnium and config inputs plus toolchain/preflight/AGENTS; includes tracked source dirty diff; no PQ feature",
+    "source_manifest_sha256": "34d8566623803d6aed74ebc92b5674bc726cca9534ec724f951ae2d8e526b5f1",
+    "source_paths": 1075,
+    "source_diff_sha256": "2ba402624b5ff159c11ed42a4ede60832dceaf827ad56324fb31770ddad90e5d",
+    "argv": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "env_overrides": {
+      "PATH": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/root/.codex/tmp/arg0/codex-arg0fWQ07S:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback",
+      "CARGO_TARGET_DIR": "/tmp/target-history-56818e4fba76",
+      "CARGO_BUILD_JOBS": "1",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_HOME": "/tmp/pure-pon-cargo-20261027"
+    },
+    "started_utc": "2026-10-28T04:03:44.139630+00:00",
+    "elapsed_seconds": 0.03325535700423643,
+    "exit_code": 0,
+    "timed_out": false,
+    "outer_timeout_seconds": 30,
+    "child_user_seconds": 0.0021680000000000007,
+    "child_system_seconds": 0.01324,
+    "child_max_rss_kib": 14096,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "harness_results": [],
+    "zero_tests_executed": false
+  },
+  {
+    "schema": "history-checkpoint-exact-source-control-v1",
+    "name": "packaging-preflight",
+    "source_commit": "189ba3adfd9a22c7cfc1537eab535e9eb7c442df",
+    "source_tree": "ff572fb27e4fb5df9a80b3e2ec5096c697964200",
+    "source_status": "M scripts/ci/check_public_readiness_evidence.py\n M scripts/ci/test_public_readiness_evidence.py\n M trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs\n M trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs",
+    "runner_sha256": "a650f474fd0442f8e2dbd278b0e81547cf16c42b0c5535ddd95d377f38bf11be",
+    "source_scope": "all tracked materialized trillionnium and config inputs plus toolchain/preflight/AGENTS; includes tracked source dirty diff; no PQ feature",
+    "source_manifest_sha256": "34d8566623803d6aed74ebc92b5674bc726cca9534ec724f951ae2d8e526b5f1",
+    "source_paths": 1075,
+    "source_diff_sha256": "0c8f5f68c8f5780075262eb9666a83a7e7e5228de1cefa2ee640a34239d871a5",
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "env_overrides": {
+      "PATH": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/root/.codex/tmp/arg0/codex-arg0fWQ07S:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback",
+      "CARGO_TARGET_DIR": "/tmp/target-history-56818e4fba76",
+      "CARGO_BUILD_JOBS": "1",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_HOME": "/tmp/pure-pon-cargo-20261027"
+    },
+    "started_utc": "2026-10-28T04:07:58.445711+00:00",
+    "elapsed_seconds": 0.08236255899828393,
+    "exit_code": 0,
+    "timed_out": false,
+    "outer_timeout_seconds": 30,
+    "child_user_seconds": 0.04441199999999999,
+    "child_system_seconds": 0.010532000000000001,
+    "child_max_rss_kib": 14108,
+    "stdout_sha256": "68cc74176760739c512b8dffdda10bffd0db07762eef6da6e32f6cedaf971862",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "harness_results": [],
+    "zero_tests_executed": false
+  }
+]

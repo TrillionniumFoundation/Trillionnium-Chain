@@ -1,0 +1,1561 @@
+{
+  "archive_scope": "fixed manifest-bound native output, sixteen safe preparation files, and four safe historical receipts",
+  "binding": {
+    "base_branch": "fix/chain-root-operation-owned-20261112-df05-v4",
+    "base_pr": 945,
+    "branch": "fix/chain-checkpoint-probe-20261112-df05",
+    "fresh_target": "/data/chain-checkpoint-probe-target-20261112-df05-v2",
+    "helper_sha256": "6b42ffccdd9ff216d1ec786813ba3059e0c89550ffbc8c6af6304f415884c40c",
+    "native_finished_sha256": "ed09e9b1fd824662fb1b3f6ab17a9dc0fc388db3eed8cc07739bda2279a9d2e5",
+    "native_manifest_sha256": "fb70e02fa7cd81b461ab8af1847c7bcc79adc29b9979662503524be6b125133f",
+    "native_summary_sha256": "46ec9da44e3d182e84204302f8fa0c7798bc128ced80b59274ceacda6e95bc1a",
+    "operation_key": "chain-checkpoint-probe-native-publication-20261112-df05-v2",
+    "parent_evidence": "09e4801308366fac01e55bcbdcf8bdfd4e6d2810",
+    "parent_publication_receipt": {
+      "bytes": 576,
+      "sha256": "300d5e0a437cf83f9cbc1ae92793cd0b1e2e3b1e2f41f0974bf446d14bc11917"
+    },
+    "parent_tree": "f322d45faaa204b641ed2565feca662ef096b161",
+    "prior_target_reused": false,
+    "prior_validation_failure": {
+      "bytes": 955,
+      "sha256": "e9095da2df962a6b8b5bf68e2ab3b93e1e7c03ae6884a652abcc07a566db12b0"
+    },
+    "prior_validation_invocation": {
+      "bytes": 587,
+      "sha256": "73f55f8e8e7f10075e4ab561e873cbdafbb0b304ccb947aa08205d6cc9c5a005"
+    },
+    "publisher_sha256": "551cd7bb1fad9d51f2e52d2d043e564c0b1a974b0b240c740530fef7be3d5692",
+    "repository": "TrillionniumFoundation/Trillionnium-Chain",
+    "schema": "checkpoint-probe-publication-intent-v1",
+    "source": "7d4303f1a9ba3c259b92e58b85126eef3c5378a1",
+    "source_preparation": {
+      "frozen_bytes": 3752,
+      "frozen_sha256": "58038e56cfcaea54326b24e2135096994e4b79b3cb6ce84b1db1ba11577903c1",
+      "input_sha256": "6579384ea2a04432b4cfa563b02fdc2afae38b71e416c454801d5b8380bdb6ba",
+      "safe_manifest_sha256": "4e60535f7a6f5c2108052004a69d4fb3295b973352f3b3f08314dfb262563f28"
+    },
+    "source_preparation_program_sha256": "07e8a8ecf0c3759608634ea62c85405b25b2019af705a9fb1f453ac89d673104",
+    "source_tree": "2a580a0444f56c0e70e0d73a7fad1120367d1e9e",
+    "staging_recovery_receipt": {
+      "bytes": 764,
+      "sha256": "2912fa242b8cdcdbb1c2244da2e47d8749074f3e95e9d76e5722e241599cb166"
+    },
+    "validation_directory": "/data/chain-checkpoint-probe-validation-20261112-df05-v2",
+    "validation_driver_sha256": "45af75877c19be74c3f0ae31214180c3765d4825f4ebf44af56de3711a01c210",
+    "validation_input_sha256": "8e971550d9e38459169f28d81cc40072f8572cd81d1733b674ebc8e1f3a68fe6",
+    "validation_operation_key": "chain-checkpoint-probe-native-validation-20261112-df05-v2"
+  },
+  "chunk_byte_cap": 4194304,
+  "native_commands": [
+    {
+      "bytes": 171,
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/data/chain-checkpoint-probe-20261112-df05",
+      "elapsed_ns": 12981594937,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "7d4303f1a9ba3c259b92e58b85126eef3c5378a1",
+      "log": "preflight.log",
+      "name": "preflight",
+      "process_exit_code": 0,
+      "sha256": "fddacc8f229c38067116f1b9c30ef45dc2b348de2bbd7fa37490b97a2adfff5e",
+      "source": "7d4303f1a9ba3c259b92e58b85126eef3c5378a1",
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "target_after_identity": {
+        "device": 2067,
+        "gid": 1000,
+        "inode": 26345745,
+        "mode": 448,
+        "uid": 1000
+      },
+      "target_before_identity": {
+        "device": 2067,
+        "gid": 1000,
+        "inode": 26345745,
+        "mode": 448,
+        "uid": 1000
+      },
+      "target_identity_error": null,
+      "timed_out": false
+    },
+    {
+      "bytes": 196,
+      "command": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+        "-Vv"
+      ],
+      "cwd": "/data/chain-checkpoint-probe-20261112-df05",
+      "elapsed_ns": 12692225292,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "7d4303f1a9ba3c259b92e58b85126eef3c5378a1",
+      "log": "rustc-version.log",
+      "name": "rustc-version",
+      "process_exit_code": 0,
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+      "source": "7d4303f1a9ba3c259b92e58b85126eef3c5378a1",
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "target_after_identity": {
+        "device": 2067,
+        "gid": 1000,
+        "inode": 26345745,
+        "mode": 448,
+        "uid": 1000
+      },
+      "target_before_identity": {
+        "device": 2067,
+        "gid": 1000,
+        "inode": 26345745,
+        "mode": 448,
+        "uid": 1000
+      },
+      "target_identity_error": null,
+      "timed_out": false
+    },
+    {
+      "bytes": 36,
+      "command": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "-V"
+      ],
+      "cwd": "/data/chain-checkpoint-probe-20261112-df05",
+      "elapsed_ns": 12597847534,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "7d4303f1a9ba3c259b92e58b85126eef3c5378a1",
+      "log": "cargo-version.log",
+      "name": "cargo-version",
+      "process_exit_code": 0,
+      "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5",
+      "source": "7d4303f1a9ba3c259b92e58b85126eef3c5378a1",
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "target_after_identity": {
+        "device": 2067,
+        "gid": 1000,
+        "inode": 26345745,
+        "mode": 448,
+        "uid": 1000
+      },
+      "target_before_identity": {
+        "device": 2067,
+        "gid": 1000,
+        "inode": 26345745,
+        "mode": 448,
+        "uid": 1000
+      },
+      "target_identity_error": null,
+      "timed_out": false
+    },
+    {
+      "bytes": 795,
+      "command": [
+        "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN/install/bin/openssl",
+        "version",
+        "-a"
+      ],
+      "cwd": "/data/chain-checkpoint-probe-20261112-df05",
+      "elapsed_ns": 12442523795,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "7d4303f1a9ba3c259b92e58b85126eef3c5378a1",
+      "log": "openssl-version.log",
+      "name": "openssl-version",
+      "process_exit_code": 0,
+      "sha256": "6a5f30b4dc344636f86abaecceec752798a15d5b4c6ecd161bb4631538d5f00c",
+      "source": "7d4303f1a9ba3c259b92e58b85126eef3c5378a1",
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "target_after_identity": {
+        "device": 2067,
+        "gid": 1000,
+        "inode": 26345745,
+        "mode": 448,
+        "uid": 1000
+      },
+      "target_before_identity": {
+        "device": 2067,
+        "gid": 1000,
+        "inode": 26345745,
+        "mode": 448,
+        "uid": 1000
+      },
+      "target_identity_error": null,
+      "timed_out": false
+    },
+    {
+      "bytes": 848218,
+      "command": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1",
+        "--manifest-path",
+        "trillionnium/Cargo.toml"
+      ],
+      "cwd": "/data/chain-checkpoint-probe-20261112-df05",
+      "elapsed_ns": 13007857278,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "7d4303f1a9ba3c259b92e58b85126eef3c5378a1",
+      "log": "metadata-default.log",
+      "name": "metadata-default",
+      "process_exit_code": 0,
+      "sha256": "d320eb82aab5fa81cee9f85fb02970adc5cde2edd0ba12b8f455353e9b59b70b",
+      "source": "7d4303f1a9ba3c259b92e58b85126eef3c5378a1",
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "target_after_identity": {
+        "device": 2067,
+        "gid": 1000,
+        "inode": 26345745,
+        "mode": 448,
+        "uid": 1000
+      },
+      "target_before_identity": {
+        "device": 2067,
+        "gid": 1000,
+        "inode": 26345745,
+        "mode": 448,
+        "uid": 1000
+      },
+      "target_identity_error": null,
+      "timed_out": false
+    },
+    {
+      "bytes": 863254,
+      "command": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1",
+        "--all-features",
+        "--manifest-path",
+        "trillionnium/Cargo.toml"
+      ],
+      "cwd": "/data/chain-checkpoint-probe-20261112-df05",
+      "elapsed_ns": 12664208991,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "7d4303f1a9ba3c259b92e58b85126eef3c5378a1",
+      "log": "metadata-all-features.log",
+      "name": "metadata-all-features",
+      "process_exit_code": 0,
+      "sha256": "467b32686b0d8ecae7bee0d8700590283e3b8eda5a6ee79fd2e1027f134762c4",
+      "source": "7d4303f1a9ba3c259b92e58b85126eef3c5378a1",
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "target_after_identity": {
+        "device": 2067,
+        "gid": 1000,
+        "inode": 26345745,
+        "mode": 448,
+        "uid": 1000
+      },
+      "target_before_identity": {
+        "device": 2067,
+        "gid": 1000,
+        "inode": 26345745,
+        "mode": 448,
+        "uid": 1000
+      },
+      "target_identity_error": null,
+      "timed_out": false
+    },
+    {
+      "bytes": 735883,
+      "command": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1",
+        "--manifest-path",
+        "tests/fuzz/Cargo.toml"
+      ],
+      "cwd": "/data/chain-checkpoint-probe-20261112-df05",
+      "elapsed_ns": 12742995114,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "7d4303f1a9ba3c259b92e58b85126eef3c5378a1",
+      "log": "metadata-fuzz.log",
+      "name": "metadata-fuzz",
+      "process_exit_code": 0,
+      "sha256": "ad05a941188831b44dc3b217b0e3a99ed39c621c90345291654bf296a3f772f5",
+      "source": "7d4303f1a9ba3c259b92e58b85126eef3c5378a1",
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "target_after_identity": {
+        "device": 2067,
+        "gid": 1000,
+        "inode": 26345745,
+        "mode": 448,
+        "uid": 1000
+      },
+      "target_before_identity": {
+        "device": 2067,
+        "gid": 1000,
+        "inode": 26345745,
+        "mode": 448,
+        "uid": 1000
+      },
+      "target_identity_error": null,
+      "timed_out": false
+    },
+    {
+      "bytes": 494,
+      "command": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "cwd": "/data/chain-checkpoint-probe-20261112-df05",
+      "elapsed_ns": 38792706200,
+      "executed": true,
+      "exit_code": 1,
+      "expected_source": "7d4303f1a9ba3c259b92e58b85126eef3c5378a1",
+      "log": "format.log",
+      "name": "format",
+      "process_exit_code": 1,
+      "sha256": "d80865e3239c62e3bff4d9f8133ea29bbe35ca8972c049d8ba787ba8a8502f51",
+      "source": "7d4303f1a9ba3c259b92e58b85126eef3c5378a1",
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "target_after_identity": {
+        "device": 2067,
+        "gid": 1000,
+        "inode": 26345745,
+        "mode": 448,
+        "uid": 1000
+      },
+      "target_before_identity": {
+        "device": 2067,
+        "gid": 1000,
+        "inode": 26345745,
+        "mode": 448,
+        "uid": 1000
+      },
+      "target_identity_error": null,
+      "timed_out": false
+    },
+    {
+      "bytes": 7922,
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_ci_source_integrity.py",
+        "-v"
+      ],
+      "cwd": "/data/chain-checkpoint-probe-20261112-df05",
+      "elapsed_ns": 27501152787,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "7d4303f1a9ba3c259b92e58b85126eef3c5378a1",
+      "log": "source-integrity-controls.log",
+      "name": "source-integrity-controls",
+      "process_exit_code": 0,
+      "sha256": "9da4a5671d2162b7680513015192151350a60b94015ba00f11150dc8e213cc51",
+      "source": "7d4303f1a9ba3c259b92e58b85126eef3c5378a1",
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "target_after_identity": {
+        "device": 2067,
+        "gid": 1000,
+        "inode": 26345745,
+        "mode": 448,
+        "uid": 1000
+      },
+      "target_before_identity": {
+        "device": 2067,
+        "gid": 1000,
+        "inode": 26345745,
+        "mode": 448,
+        "uid": 1000
+      },
+      "target_identity_error": null,
+      "timed_out": false
+    },
+    {
+      "bytes": 307,
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/check_repository.py"
+      ],
+      "cwd": "/data/chain-checkpoint-probe-20261112-df05",
+      "elapsed_ns": 57545438826,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "7d4303f1a9ba3c259b92e58b85126eef3c5378a1",
+      "log": "repository-links.log",
+      "name": "repository-links",
+      "process_exit_code": 0,
+      "sha256": "200ab56c7cc5e95af55e57a835cf396ee049bb9bc3cb2367b55329f48d2863ec",
+      "source": "7d4303f1a9ba3c259b92e58b85126eef3c5378a1",
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "target_after_identity": {
+        "device": 2067,
+        "gid": 1000,
+        "inode": 26345745,
+        "mode": 448,
+        "uid": 1000
+      },
+      "target_before_identity": {
+        "device": 2067,
+        "gid": 1000,
+        "inode": 26345745,
+        "mode": 448,
+        "uid": 1000
+      },
+      "target_identity_error": null,
+      "timed_out": false
+    },
+    {
+      "bytes": 558,
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "cwd": "/data/chain-checkpoint-probe-20261112-df05",
+      "elapsed_ns": 22382039141,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "7d4303f1a9ba3c259b92e58b85126eef3c5378a1",
+      "log": "research-corpus.log",
+      "name": "research-corpus",
+      "process_exit_code": 0,
+      "sha256": "b41d7152e22d36e82128355e3191f8057ef44e37fd6217cfe5afbe4145f99f04",
+      "source": "7d4303f1a9ba3c259b92e58b85126eef3c5378a1",
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "target_after_identity": {
+        "device": 2067,
+        "gid": 1000,
+        "inode": 26345745,
+        "mode": 448,
+        "uid": 1000
+      },
+      "target_before_identity": {
+        "device": 2067,
+        "gid": 1000,
+        "inode": 26345745,
+        "mode": 448,
+        "uid": 1000
+      },
+      "target_identity_error": null,
+      "timed_out": false
+    },
+    {
+      "bytes": 35,
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "cwd": "/data/chain-checkpoint-probe-20261112-df05",
+      "elapsed_ns": 17761752839,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "7d4303f1a9ba3c259b92e58b85126eef3c5378a1",
+      "log": "source-inventory.log",
+      "name": "source-inventory",
+      "process_exit_code": 0,
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "source": "7d4303f1a9ba3c259b92e58b85126eef3c5378a1",
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "target_after_identity": {
+        "device": 2067,
+        "gid": 1000,
+        "inode": 26345745,
+        "mode": 448,
+        "uid": 1000
+      },
+      "target_before_identity": {
+        "device": 2067,
+        "gid": 1000,
+        "inode": 26345745,
+        "mode": 448,
+        "uid": 1000
+      },
+      "target_identity_error": null,
+      "timed_out": false
+    },
+    {
+      "bytes": 11206,
+      "command": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-checkpoint-store",
+        "--",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "cwd": "/data/chain-checkpoint-probe-20261112-df05",
+      "elapsed_ns": 24013588738,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "7d4303f1a9ba3c259b92e58b85126eef3c5378a1",
+      "log": "checkpoint-package.log",
+      "name": "checkpoint-package",
+      "process_exit_code": 0,
+      "sha256": "1ecb250b2577a965fe87adb9e49c93c548ddc858d8fc12ddef8db0bd1548c807",
+      "source": "7d4303f1a9ba3c259b92e58b85126eef3c5378a1",
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "target_after_identity": {
+        "device": 2067,
+        "gid": 1000,
+        "inode": 26345745,
+        "mode": 448,
+        "uid": 1000
+      },
+      "target_before_identity": {
+        "device": 2067,
+        "gid": 1000,
+        "inode": 26345745,
+        "mode": 448,
+        "uid": 1000
+      },
+      "target_identity_error": null,
+      "timed_out": false
+    },
+    {
+      "bytes": 7236,
+      "command": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/data/chain-checkpoint-probe-20261112-df05",
+      "elapsed_ns": 190610642719,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "7d4303f1a9ba3c259b92e58b85126eef3c5378a1",
+      "log": "strict-workspace-clippy.log",
+      "name": "strict-workspace-clippy",
+      "process_exit_code": 0,
+      "sha256": "999ae4c2d515f972881292b4b8e46310e5a4366311bc730033e9a8a5b80aff31",
+      "source": "7d4303f1a9ba3c259b92e58b85126eef3c5378a1",
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "target_after_identity": {
+        "device": 2067,
+        "gid": 1000,
+        "inode": 26345745,
+        "mode": 448,
+        "uid": 1000
+      },
+      "target_before_identity": {
+        "device": 2067,
+        "gid": 1000,
+        "inode": 26345745,
+        "mode": 448,
+        "uid": 1000
+      },
+      "target_identity_error": null,
+      "timed_out": false
+    }
+  ],
+  "old_root_source": "87943f6229d8785c3f431ede5eadba62b634ab8c",
+  "old_root_tree": "5d2538f404e32319ea1084a6c79f37c52503546f",
+  "originals": [
+    {
+      "bytes": 17096,
+      "original_path": "native/SUMMARY.json",
+      "parts": [
+        {
+          "bytes": 17096,
+          "path": "native/SUMMARY.json",
+          "sha256": "46ec9da44e3d182e84204302f8fa0c7798bc128ced80b59274ceacda6e95bc1a"
+        }
+      ],
+      "sha256": "46ec9da44e3d182e84204302f8fa0c7798bc128ced80b59274ceacda6e95bc1a"
+    },
+    {
+      "bytes": 36,
+      "original_path": "native/cargo-version.log",
+      "parts": [
+        {
+          "bytes": 36,
+          "path": "native/cargo-version.log",
+          "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5"
+        }
+      ],
+      "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5"
+    },
+    {
+      "bytes": 939,
+      "original_path": "native/cargo-version.receipt.json",
+      "parts": [
+        {
+          "bytes": 939,
+          "path": "native/cargo-version.receipt.json",
+          "sha256": "5b5ac7f8fef8188b9932d69e72033b83774fd7715a231cc14bcc0fc1758df55a"
+        }
+      ],
+      "sha256": "5b5ac7f8fef8188b9932d69e72033b83774fd7715a231cc14bcc0fc1758df55a"
+    },
+    {
+      "bytes": 11206,
+      "original_path": "native/checkpoint-package.log",
+      "parts": [
+        {
+          "bytes": 11206,
+          "path": "native/checkpoint-package.log",
+          "sha256": "1ecb250b2577a965fe87adb9e49c93c548ddc858d8fc12ddef8db0bd1548c807"
+        }
+      ],
+      "sha256": "1ecb250b2577a965fe87adb9e49c93c548ddc858d8fc12ddef8db0bd1548c807"
+    },
+    {
+      "bytes": 1118,
+      "original_path": "native/checkpoint-package.receipt.json",
+      "parts": [
+        {
+          "bytes": 1118,
+          "path": "native/checkpoint-package.receipt.json",
+          "sha256": "7406d051b388a106cef04914755a41aee1a87a0de72d0107c9bafa661f56fd92"
+        }
+      ],
+      "sha256": "7406d051b388a106cef04914755a41aee1a87a0de72d0107c9bafa661f56fd92"
+    },
+    {
+      "bytes": 15281,
+      "original_path": "native/commands.json",
+      "parts": [
+        {
+          "bytes": 15281,
+          "path": "native/commands.json",
+          "sha256": "b8199e271bebbd733aa59808bdbe32aa053476e6e1a28d3669b2613e59a473c4"
+        }
+      ],
+      "sha256": "b8199e271bebbd733aa59808bdbe32aa053476e6e1a28d3669b2613e59a473c4"
+    },
+    {
+      "bytes": 27244,
+      "original_path": "native/driver.py",
+      "parts": [
+        {
+          "bytes": 27244,
+          "path": "native/driver.py",
+          "sha256": "45af75877c19be74c3f0ae31214180c3765d4825f4ebf44af56de3711a01c210"
+        }
+      ],
+      "sha256": "45af75877c19be74c3f0ae31214180c3765d4825f4ebf44af56de3711a01c210"
+    },
+    {
+      "bytes": 4816,
+      "original_path": "native/environment.json",
+      "parts": [
+        {
+          "bytes": 4816,
+          "path": "native/environment.json",
+          "sha256": "a84f5f95a37939f6a962d98f17637499e0b3a2a7b8533b6a01f34bc3824a8137"
+        }
+      ],
+      "sha256": "a84f5f95a37939f6a962d98f17637499e0b3a2a7b8533b6a01f34bc3824a8137"
+    },
+    {
+      "bytes": 494,
+      "original_path": "native/format.log",
+      "parts": [
+        {
+          "bytes": 494,
+          "path": "native/format.log",
+          "sha256": "d80865e3239c62e3bff4d9f8133ea29bbe35ca8972c049d8ba787ba8a8502f51"
+        }
+      ],
+      "sha256": "d80865e3239c62e3bff4d9f8133ea29bbe35ca8972c049d8ba787ba8a8502f51"
+    },
+    {
+      "bytes": 1019,
+      "original_path": "native/format.receipt.json",
+      "parts": [
+        {
+          "bytes": 1019,
+          "path": "native/format.receipt.json",
+          "sha256": "9ead55c8865a21cfc7aa79cd40044ffd73d5712c83cb3a7cb2ef620f5a324166"
+        }
+      ],
+      "sha256": "9ead55c8865a21cfc7aa79cd40044ffd73d5712c83cb3a7cb2ef620f5a324166"
+    },
+    {
+      "bytes": 587,
+      "original_path": "native/invocation.json",
+      "parts": [
+        {
+          "bytes": 587,
+          "path": "native/invocation.json",
+          "sha256": "a3f887b6292a5750270599c89730b9f689c702e3de64901a831e96ae86cbffa8"
+        }
+      ],
+      "sha256": "a3f887b6292a5750270599c89730b9f689c702e3de64901a831e96ae86cbffa8"
+    },
+    {
+      "bytes": 863254,
+      "original_path": "native/metadata-all-features.log",
+      "parts": [
+        {
+          "bytes": 863254,
+          "path": "native/metadata-all-features.log",
+          "sha256": "467b32686b0d8ecae7bee0d8700590283e3b8eda5a6ee79fd2e1027f134762c4"
+        }
+      ],
+      "sha256": "467b32686b0d8ecae7bee0d8700590283e3b8eda5a6ee79fd2e1027f134762c4"
+    },
+    {
+      "bytes": 1107,
+      "original_path": "native/metadata-all-features.receipt.json",
+      "parts": [
+        {
+          "bytes": 1107,
+          "path": "native/metadata-all-features.receipt.json",
+          "sha256": "80fe960a3344b5e4a46c6e23e17b575ecbb4eb736c635380e5069d7cc1d8efe9"
+        }
+      ],
+      "sha256": "80fe960a3344b5e4a46c6e23e17b575ecbb4eb736c635380e5069d7cc1d8efe9"
+    },
+    {
+      "bytes": 848218,
+      "original_path": "native/metadata-default.log",
+      "parts": [
+        {
+          "bytes": 848218,
+          "path": "native/metadata-default.log",
+          "sha256": "d320eb82aab5fa81cee9f85fb02970adc5cde2edd0ba12b8f455353e9b59b70b"
+        }
+      ],
+      "sha256": "d320eb82aab5fa81cee9f85fb02970adc5cde2edd0ba12b8f455353e9b59b70b"
+    },
+    {
+      "bytes": 1075,
+      "original_path": "native/metadata-default.receipt.json",
+      "parts": [
+        {
+          "bytes": 1075,
+          "path": "native/metadata-default.receipt.json",
+          "sha256": "845156694b214cc7f78c768f9f656998d5d31f224cef13ab33e376b68dbebd5a"
+        }
+      ],
+      "sha256": "845156694b214cc7f78c768f9f656998d5d31f224cef13ab33e376b68dbebd5a"
+    },
+    {
+      "bytes": 735883,
+      "original_path": "native/metadata-fuzz.log",
+      "parts": [
+        {
+          "bytes": 735883,
+          "path": "native/metadata-fuzz.log",
+          "sha256": "ad05a941188831b44dc3b217b0e3a99ed39c621c90345291654bf296a3f772f5"
+        }
+      ],
+      "sha256": "ad05a941188831b44dc3b217b0e3a99ed39c621c90345291654bf296a3f772f5"
+    },
+    {
+      "bytes": 1067,
+      "original_path": "native/metadata-fuzz.receipt.json",
+      "parts": [
+        {
+          "bytes": 1067,
+          "path": "native/metadata-fuzz.receipt.json",
+          "sha256": "2e1052bb4cdc50644f1b1dc5210c990bf6d6012290ac8be9340784dc19812f68"
+        }
+      ],
+      "sha256": "2e1052bb4cdc50644f1b1dc5210c990bf6d6012290ac8be9340784dc19812f68"
+    },
+    {
+      "bytes": 795,
+      "original_path": "native/openssl-version.log",
+      "parts": [
+        {
+          "bytes": 795,
+          "path": "native/openssl-version.log",
+          "sha256": "6a5f30b4dc344636f86abaecceec752798a15d5b4c6ecd161bb4631538d5f00c"
+        }
+      ],
+      "sha256": "6a5f30b4dc344636f86abaecceec752798a15d5b4c6ecd161bb4631538d5f00c"
+    },
+    {
+      "bytes": 989,
+      "original_path": "native/openssl-version.receipt.json",
+      "parts": [
+        {
+          "bytes": 989,
+          "path": "native/openssl-version.receipt.json",
+          "sha256": "a8921ee4e488c6133866f64022f92bd2c20d76e81c5de7fd73d65c0c55a56596"
+        }
+      ],
+      "sha256": "a8921ee4e488c6133866f64022f92bd2c20d76e81c5de7fd73d65c0c55a56596"
+    },
+    {
+      "bytes": 175,
+      "original_path": "native/physical-after.json",
+      "parts": [
+        {
+          "bytes": 175,
+          "path": "native/physical-after.json",
+          "sha256": "2c027d5b332d3ec4fba57562ed39ccb1e6bf212f038ef77b89ee8047802049ea"
+        }
+      ],
+      "sha256": "2c027d5b332d3ec4fba57562ed39ccb1e6bf212f038ef77b89ee8047802049ea"
+    },
+    {
+      "bytes": 175,
+      "original_path": "native/physical-before.json",
+      "parts": [
+        {
+          "bytes": 175,
+          "path": "native/physical-before.json",
+          "sha256": "2c027d5b332d3ec4fba57562ed39ccb1e6bf212f038ef77b89ee8047802049ea"
+        }
+      ],
+      "sha256": "2c027d5b332d3ec4fba57562ed39ccb1e6bf212f038ef77b89ee8047802049ea"
+    },
+    {
+      "bytes": 4407,
+      "original_path": "native/plan.json",
+      "parts": [
+        {
+          "bytes": 4407,
+          "path": "native/plan.json",
+          "sha256": "afa9768cae5440a96b330e7161c6dd09be9170d21723604761675abcebac2211"
+        }
+      ],
+      "sha256": "afa9768cae5440a96b330e7161c6dd09be9170d21723604761675abcebac2211"
+    },
+    {
+      "bytes": 171,
+      "original_path": "native/preflight.log",
+      "parts": [
+        {
+          "bytes": 171,
+          "path": "native/preflight.log",
+          "sha256": "fddacc8f229c38067116f1b9c30ef45dc2b348de2bbd7fa37490b97a2adfff5e"
+        }
+      ],
+      "sha256": "fddacc8f229c38067116f1b9c30ef45dc2b348de2bbd7fa37490b97a2adfff5e"
+    },
+    {
+      "bytes": 888,
+      "original_path": "native/preflight.receipt.json",
+      "parts": [
+        {
+          "bytes": 888,
+          "path": "native/preflight.receipt.json",
+          "sha256": "761ccaabb9c3e7629745c583ab85daf41cb5f998d12adce70744e540c5885a57"
+        }
+      ],
+      "sha256": "761ccaabb9c3e7629745c583ab85daf41cb5f998d12adce70744e540c5885a57"
+    },
+    {
+      "bytes": 3453,
+      "original_path": "native/prior-environment.json",
+      "parts": [
+        {
+          "bytes": 3453,
+          "path": "native/prior-environment.json",
+          "sha256": "62cf6344c0c44f0da02f1bb2ab0c3ef13a90f4744ae6ab81c2354ef2d0ae877e"
+        }
+      ],
+      "sha256": "62cf6344c0c44f0da02f1bb2ab0c3ef13a90f4744ae6ab81c2354ef2d0ae877e"
+    },
+    {
+      "bytes": 932,
+      "original_path": "native/prior-owner-closure.json",
+      "parts": [
+        {
+          "bytes": 932,
+          "path": "native/prior-owner-closure.json",
+          "sha256": "7aa7112152b3b5dced644f39214d8ee3fe929ed3fc13a48a0ed8465ed1de3f32"
+        }
+      ],
+      "sha256": "7aa7112152b3b5dced644f39214d8ee3fe929ed3fc13a48a0ed8465ed1de3f32"
+    },
+    {
+      "bytes": 576,
+      "original_path": "native/prior-publication-receipt.json",
+      "parts": [
+        {
+          "bytes": 576,
+          "path": "native/prior-publication-receipt.json",
+          "sha256": "300d5e0a437cf83f9cbc1ae92793cd0b1e2e3b1e2f41f0974bf446d14bc11917"
+        }
+      ],
+      "sha256": "300d5e0a437cf83f9cbc1ae92793cd0b1e2e3b1e2f41f0974bf446d14bc11917"
+    },
+    {
+      "bytes": 2978,
+      "original_path": "native/prior-socket-finished.json",
+      "parts": [
+        {
+          "bytes": 2978,
+          "path": "native/prior-socket-finished.json",
+          "sha256": "e131fb1e0be745133e7adca67be122320228b75f59e816a63fb3adabc1bdaab8"
+        }
+      ],
+      "sha256": "e131fb1e0be745133e7adca67be122320228b75f59e816a63fb3adabc1bdaab8"
+    },
+    {
+      "bytes": 376,
+      "original_path": "native/prior-validation-finished.json",
+      "parts": [
+        {
+          "bytes": 376,
+          "path": "native/prior-validation-finished.json",
+          "sha256": "425085b6fbecceb1bafc4465dab115338357388492ebcd532ecfef7fdb42c011"
+        }
+      ],
+      "sha256": "425085b6fbecceb1bafc4465dab115338357388492ebcd532ecfef7fdb42c011"
+    },
+    {
+      "bytes": 307,
+      "original_path": "native/repository-links.log",
+      "parts": [
+        {
+          "bytes": 307,
+          "path": "native/repository-links.log",
+          "sha256": "200ab56c7cc5e95af55e57a835cf396ee049bb9bc3cb2367b55329f48d2863ec"
+        }
+      ],
+      "sha256": "200ab56c7cc5e95af55e57a835cf396ee049bb9bc3cb2367b55329f48d2863ec"
+    },
+    {
+      "bytes": 926,
+      "original_path": "native/repository-links.receipt.json",
+      "parts": [
+        {
+          "bytes": 926,
+          "path": "native/repository-links.receipt.json",
+          "sha256": "0a9de3984985908f19bc0cddd571a674ba02f9ae3a9b8926898be4e3d7a4057d"
+        }
+      ],
+      "sha256": "0a9de3984985908f19bc0cddd571a674ba02f9ae3a9b8926898be4e3d7a4057d"
+    },
+    {
+      "bytes": 558,
+      "original_path": "native/research-corpus.log",
+      "parts": [
+        {
+          "bytes": 558,
+          "path": "native/research-corpus.log",
+          "sha256": "b41d7152e22d36e82128355e3191f8057ef44e37fd6217cfe5afbe4145f99f04"
+        }
+      ],
+      "sha256": "b41d7152e22d36e82128355e3191f8057ef44e37fd6217cfe5afbe4145f99f04"
+    },
+    {
+      "bytes": 937,
+      "original_path": "native/research-corpus.receipt.json",
+      "parts": [
+        {
+          "bytes": 937,
+          "path": "native/research-corpus.receipt.json",
+          "sha256": "d2921e1a6bb99fb1460f1a2d3e59895191766ea9064aa8f6ab34186fa67de349"
+        }
+      ],
+      "sha256": "d2921e1a6bb99fb1460f1a2d3e59895191766ea9064aa8f6ab34186fa67de349"
+    },
+    {
+      "bytes": 196,
+      "original_path": "native/rustc-version.log",
+      "parts": [
+        {
+          "bytes": 196,
+          "path": "native/rustc-version.log",
+          "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+        }
+      ],
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+    },
+    {
+      "bytes": 941,
+      "original_path": "native/rustc-version.receipt.json",
+      "parts": [
+        {
+          "bytes": 941,
+          "path": "native/rustc-version.receipt.json",
+          "sha256": "a254be23c2084fc5feca4ce37d0fad11555d42d9de1334d5d95da3a459a5d255"
+        }
+      ],
+      "sha256": "a254be23c2084fc5feca4ce37d0fad11555d42d9de1334d5d95da3a459a5d255"
+    },
+    {
+      "bytes": 423,
+      "original_path": "native/source-after.json",
+      "parts": [
+        {
+          "bytes": 423,
+          "path": "native/source-after.json",
+          "sha256": "e3e777cde10aee772bedf53b94eeb450a0b2fd840c2c3df114933bc9ff3e3735"
+        }
+      ],
+      "sha256": "e3e777cde10aee772bedf53b94eeb450a0b2fd840c2c3df114933bc9ff3e3735"
+    },
+    {
+      "bytes": 423,
+      "original_path": "native/source-before.json",
+      "parts": [
+        {
+          "bytes": 423,
+          "path": "native/source-before.json",
+          "sha256": "e3e777cde10aee772bedf53b94eeb450a0b2fd840c2c3df114933bc9ff3e3735"
+        }
+      ],
+      "sha256": "e3e777cde10aee772bedf53b94eeb450a0b2fd840c2c3df114933bc9ff3e3735"
+    },
+    {
+      "bytes": 7922,
+      "original_path": "native/source-integrity-controls.log",
+      "parts": [
+        {
+          "bytes": 7922,
+          "path": "native/source-integrity-controls.log",
+          "sha256": "9da4a5671d2162b7680513015192151350a60b94015ba00f11150dc8e213cc51"
+        }
+      ],
+      "sha256": "9da4a5671d2162b7680513015192151350a60b94015ba00f11150dc8e213cc51"
+    },
+    {
+      "bytes": 1032,
+      "original_path": "native/source-integrity-controls.receipt.json",
+      "parts": [
+        {
+          "bytes": 1032,
+          "path": "native/source-integrity-controls.receipt.json",
+          "sha256": "4d45ee33aed6a1bf4eeba639b6f2bd791eaf015c73e4de23fdd30b7f45195174"
+        }
+      ],
+      "sha256": "4d45ee33aed6a1bf4eeba639b6f2bd791eaf015c73e4de23fdd30b7f45195174"
+    },
+    {
+      "bytes": 35,
+      "original_path": "native/source-inventory.log",
+      "parts": [
+        {
+          "bytes": 35,
+          "path": "native/source-inventory.log",
+          "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+        }
+      ],
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    },
+    {
+      "bytes": 957,
+      "original_path": "native/source-inventory.receipt.json",
+      "parts": [
+        {
+          "bytes": 957,
+          "path": "native/source-inventory.receipt.json",
+          "sha256": "afcc0195930b68d66e6ee18c0b167a2b13d249197dad2551704c89ce9c48301e"
+        }
+      ],
+      "sha256": "afcc0195930b68d66e6ee18c0b167a2b13d249197dad2551704c89ce9c48301e"
+    },
+    {
+      "bytes": 3752,
+      "original_path": "native/source-preparation.json",
+      "parts": [
+        {
+          "bytes": 3752,
+          "path": "native/source-preparation.json",
+          "sha256": "58038e56cfcaea54326b24e2135096994e4b79b3cb6ce84b1db1ba11577903c1"
+        }
+      ],
+      "sha256": "58038e56cfcaea54326b24e2135096994e4b79b3cb6ce84b1db1ba11577903c1"
+    },
+    {
+      "bytes": 7236,
+      "original_path": "native/strict-workspace-clippy.log",
+      "parts": [
+        {
+          "bytes": 7236,
+          "path": "native/strict-workspace-clippy.log",
+          "sha256": "999ae4c2d515f972881292b4b8e46310e5a4366311bc730033e9a8a5b80aff31"
+        }
+      ],
+      "sha256": "999ae4c2d515f972881292b4b8e46310e5a4366311bc730033e9a8a5b80aff31"
+    },
+    {
+      "bytes": 1151,
+      "original_path": "native/strict-workspace-clippy.receipt.json",
+      "parts": [
+        {
+          "bytes": 1151,
+          "path": "native/strict-workspace-clippy.receipt.json",
+          "sha256": "e56a9fd11fc294b6684504ac5f1447c4094f8358d31de69d3b9b403a0fe66430"
+        }
+      ],
+      "sha256": "e56a9fd11fc294b6684504ac5f1447c4094f8358d31de69d3b9b403a0fe66430"
+    },
+    {
+      "bytes": 7103,
+      "original_path": "native/ARTIFACT_MANIFEST.json",
+      "parts": [
+        {
+          "bytes": 7103,
+          "path": "native/ARTIFACT_MANIFEST.json",
+          "sha256": "fb70e02fa7cd81b461ab8af1847c7bcc79adc29b9979662503524be6b125133f"
+        }
+      ],
+      "sha256": "fb70e02fa7cd81b461ab8af1847c7bcc79adc29b9979662503524be6b125133f"
+    },
+    {
+      "bytes": 572,
+      "original_path": "native/VALIDATION_FINISHED.json",
+      "parts": [
+        {
+          "bytes": 572,
+          "path": "native/VALIDATION_FINISHED.json",
+          "sha256": "ed09e9b1fd824662fb1b3f6ab17a9dc0fc388db3eed8cc07739bda2279a9d2e5"
+        }
+      ],
+      "sha256": "ed09e9b1fd824662fb1b3f6ab17a9dc0fc388db3eed8cc07739bda2279a9d2e5"
+    },
+    {
+      "bytes": 118,
+      "original_path": "source-preparation/BASE_PHYSICAL.json",
+      "parts": [
+        {
+          "bytes": 118,
+          "path": "source-preparation/BASE_PHYSICAL.json",
+          "sha256": "961ce08cbc2ad09233aa71306ce22cee414a77f0fcbc11334f514a9afcbc8992"
+        }
+      ],
+      "sha256": "961ce08cbc2ad09233aa71306ce22cee414a77f0fcbc11334f514a9afcbc8992"
+    },
+    {
+      "bytes": 118,
+      "original_path": "source-preparation/COMMITTED_PHYSICAL.json",
+      "parts": [
+        {
+          "bytes": 118,
+          "path": "source-preparation/COMMITTED_PHYSICAL.json",
+          "sha256": "8acf22f7e00a3ac2cdb4f5e804fe98a8d32128dedfe3ec5d104d460f91ee7f8d"
+        }
+      ],
+      "sha256": "8acf22f7e00a3ac2cdb4f5e804fe98a8d32128dedfe3ec5d104d460f91ee7f8d"
+    },
+    {
+      "bytes": 1892,
+      "original_path": "source-preparation/FOUR_PATH_DELTA.json",
+      "parts": [
+        {
+          "bytes": 1892,
+          "path": "source-preparation/FOUR_PATH_DELTA.json",
+          "sha256": "e166aeaa0cc8fbbf0ad2404c424114f2e8a055301c6123d7c1df914331b61c99"
+        }
+      ],
+      "sha256": "e166aeaa0cc8fbbf0ad2404c424114f2e8a055301c6123d7c1df914331b61c99"
+    },
+    {
+      "bytes": 433,
+      "original_path": "source-preparation/PREFLIGHT_BEFORE_EDIT.receipt.json",
+      "parts": [
+        {
+          "bytes": 433,
+          "path": "source-preparation/PREFLIGHT_BEFORE_EDIT.receipt.json",
+          "sha256": "8af5c88cdcadc7ad0476cc0347e4099bbb938ead3eeac6fcded386a01982ddb0"
+        }
+      ],
+      "sha256": "8af5c88cdcadc7ad0476cc0347e4099bbb938ead3eeac6fcded386a01982ddb0"
+    },
+    {
+      "bytes": 0,
+      "original_path": "source-preparation/PREFLIGHT_BEFORE_EDIT.stderr",
+      "parts": [
+        {
+          "bytes": 0,
+          "path": "source-preparation/PREFLIGHT_BEFORE_EDIT.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 171,
+      "original_path": "source-preparation/PREFLIGHT_BEFORE_EDIT.stdout",
+      "parts": [
+        {
+          "bytes": 171,
+          "path": "source-preparation/PREFLIGHT_BEFORE_EDIT.stdout",
+          "sha256": "fddacc8f229c38067116f1b9c30ef45dc2b348de2bbd7fa37490b97a2adfff5e"
+        }
+      ],
+      "sha256": "fddacc8f229c38067116f1b9c30ef45dc2b348de2bbd7fa37490b97a2adfff5e"
+    },
+    {
+      "bytes": 433,
+      "original_path": "source-preparation/PREFLIGHT_COMMITTED.receipt.json",
+      "parts": [
+        {
+          "bytes": 433,
+          "path": "source-preparation/PREFLIGHT_COMMITTED.receipt.json",
+          "sha256": "093ce3cce897091653d9d94109d27c732f90a9fdd55b5c9711f33a0a40b905e0"
+        }
+      ],
+      "sha256": "093ce3cce897091653d9d94109d27c732f90a9fdd55b5c9711f33a0a40b905e0"
+    },
+    {
+      "bytes": 0,
+      "original_path": "source-preparation/PREFLIGHT_COMMITTED.stderr",
+      "parts": [
+        {
+          "bytes": 0,
+          "path": "source-preparation/PREFLIGHT_COMMITTED.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 171,
+      "original_path": "source-preparation/PREFLIGHT_COMMITTED.stdout",
+      "parts": [
+        {
+          "bytes": 171,
+          "path": "source-preparation/PREFLIGHT_COMMITTED.stdout",
+          "sha256": "fddacc8f229c38067116f1b9c30ef45dc2b348de2bbd7fa37490b97a2adfff5e"
+        }
+      ],
+      "sha256": "fddacc8f229c38067116f1b9c30ef45dc2b348de2bbd7fa37490b97a2adfff5e"
+    },
+    {
+      "bytes": 449,
+      "original_path": "source-preparation/PREFLIGHT_STAGED.receipt.json",
+      "parts": [
+        {
+          "bytes": 449,
+          "path": "source-preparation/PREFLIGHT_STAGED.receipt.json",
+          "sha256": "0f9a2a012de2996039422fcebe56d1dc0bf0fb933fdcdccb53cd874441086713"
+        }
+      ],
+      "sha256": "0f9a2a012de2996039422fcebe56d1dc0bf0fb933fdcdccb53cd874441086713"
+    },
+    {
+      "bytes": 0,
+      "original_path": "source-preparation/PREFLIGHT_STAGED.stderr",
+      "parts": [
+        {
+          "bytes": 0,
+          "path": "source-preparation/PREFLIGHT_STAGED.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 174,
+      "original_path": "source-preparation/PREFLIGHT_STAGED.stdout",
+      "parts": [
+        {
+          "bytes": 174,
+          "path": "source-preparation/PREFLIGHT_STAGED.stdout",
+          "sha256": "8873a1ccea895e918fb87e4ee5e86a87936e5038eef112c1342f88aaa064f2cc"
+        }
+      ],
+      "sha256": "8873a1ccea895e918fb87e4ee5e86a87936e5038eef112c1342f88aaa064f2cc"
+    },
+    {
+      "bytes": 99,
+      "original_path": "source-preparation/SHARED_CONFIG_IDENTITY.json",
+      "parts": [
+        {
+          "bytes": 99,
+          "path": "source-preparation/SHARED_CONFIG_IDENTITY.json",
+          "sha256": "91e12998e09241637a3e556c10890e269079ea03507ae0cc7dfd8833c3dd4a48"
+        }
+      ],
+      "sha256": "91e12998e09241637a3e556c10890e269079ea03507ae0cc7dfd8833c3dd4a48"
+    },
+    {
+      "bytes": 232,
+      "original_path": "source-preparation/STORAGE_ADMISSION.json",
+      "parts": [
+        {
+          "bytes": 232,
+          "path": "source-preparation/STORAGE_ADMISSION.json",
+          "sha256": "ae924174b94801a3df570139fc72044585c727fed5ee65fdf85702f69930ddc0"
+        }
+      ],
+      "sha256": "ae924174b94801a3df570139fc72044585c727fed5ee65fdf85702f69930ddc0"
+    },
+    {
+      "bytes": 423,
+      "original_path": "source-preparation/VERIFIED_PHYSICAL_SOURCE.json",
+      "parts": [
+        {
+          "bytes": 423,
+          "path": "source-preparation/VERIFIED_PHYSICAL_SOURCE.json",
+          "sha256": "e3e777cde10aee772bedf53b94eeb450a0b2fd840c2c3df114933bc9ff3e3735"
+        }
+      ],
+      "sha256": "e3e777cde10aee772bedf53b94eeb450a0b2fd840c2c3df114933bc9ff3e3735"
+    },
+    {
+      "bytes": 23953,
+      "original_path": "source-preparation/driver.py",
+      "parts": [
+        {
+          "bytes": 23953,
+          "path": "source-preparation/driver.py",
+          "sha256": "07e8a8ecf0c3759608634ea62c85405b25b2019af705a9fb1f453ac89d673104"
+        }
+      ],
+      "sha256": "07e8a8ecf0c3759608634ea62c85405b25b2019af705a9fb1f453ac89d673104"
+    },
+    {
+      "bytes": 3752,
+      "original_path": "source-preparation/FROZEN.json",
+      "parts": [
+        {
+          "bytes": 3752,
+          "path": "source-preparation/FROZEN.json",
+          "sha256": "58038e56cfcaea54326b24e2135096994e4b79b3cb6ce84b1db1ba11577903c1"
+        }
+      ],
+      "sha256": "58038e56cfcaea54326b24e2135096994e4b79b3cb6ce84b1db1ba11577903c1"
+    },
+    {
+      "bytes": 2903,
+      "original_path": "source-preparation/SAFE_MANIFEST.json",
+      "parts": [
+        {
+          "bytes": 2903,
+          "path": "source-preparation/SAFE_MANIFEST.json",
+          "sha256": "4e60535f7a6f5c2108052004a69d4fb3295b973352f3b3f08314dfb262563f28"
+        }
+      ],
+      "sha256": "4e60535f7a6f5c2108052004a69d4fb3295b973352f3b3f08314dfb262563f28"
+    },
+    {
+      "bytes": 238,
+      "original_path": "prior-publication/original-staging-refusal.json",
+      "parts": [
+        {
+          "bytes": 238,
+          "path": "prior-publication/original-staging-refusal.json",
+          "sha256": "6e4a705932b6049a5fd27ab68d0fbbd60d1076045756c1864f6cf9fb7d7cf0f2"
+        }
+      ],
+      "sha256": "6e4a705932b6049a5fd27ab68d0fbbd60d1076045756c1864f6cf9fb7d7cf0f2"
+    },
+    {
+      "bytes": 764,
+      "original_path": "prior-publication/STAGED.json",
+      "parts": [
+        {
+          "bytes": 764,
+          "path": "prior-publication/STAGED.json",
+          "sha256": "2912fa242b8cdcdbb1c2244da2e47d8749074f3e95e9d76e5722e241599cb166"
+        }
+      ],
+      "sha256": "2912fa242b8cdcdbb1c2244da2e47d8749074f3e95e9d76e5722e241599cb166"
+    },
+    {
+      "bytes": 955,
+      "original_path": "prior-validation-v1/FAILED.json",
+      "parts": [
+        {
+          "bytes": 955,
+          "path": "prior-validation-v1/FAILED.json",
+          "sha256": "e9095da2df962a6b8b5bf68e2ab3b93e1e7c03ae6884a652abcc07a566db12b0"
+        }
+      ],
+      "sha256": "e9095da2df962a6b8b5bf68e2ab3b93e1e7c03ae6884a652abcc07a566db12b0"
+    },
+    {
+      "bytes": 587,
+      "original_path": "prior-validation-v1/invocation.json",
+      "parts": [
+        {
+          "bytes": 587,
+          "path": "prior-validation-v1/invocation.json",
+          "sha256": "73f55f8e8e7f10075e4ab561e873cbdafbb0b304ccb947aa08205d6cc9c5a005"
+        }
+      ],
+      "sha256": "73f55f8e8e7f10075e4ab561e873cbdafbb0b304ccb947aa08205d6cc9c5a005"
+    }
+  ],
+  "prior_runtime_closure_basis": "controller-pinned authoritative terminal projection; not a claim inferred from GitHub",
+  "prior_target_reused_or_recreated": false,
+  "prior_validation_admission_failure_preserved": true,
+  "prior_validation_v1_command_records": 0,
+  "private_sdk_input_or_indexes_included": false,
+  "production_activation": false,
+  "qualification": {
+    "all_original_commands_passed": false,
+    "arm_verified": false,
+    "checkpoint_package": {
+      "blocks": [
+        {
+          "consistent": true,
+          "counts": {
+            "failed": 0,
+            "filtered_out": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 18
+          },
+          "declared": 18,
+          "observed_test_lines": 18,
+          "status": "ok"
+        },
+        {
+          "consistent": true,
+          "counts": {
+            "failed": 0,
+            "filtered_out": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 15
+          },
+          "declared": 15,
+          "observed_test_lines": 15,
+          "status": "ok"
+        },
+        {
+          "consistent": true,
+          "counts": {
+            "failed": 0,
+            "filtered_out": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 15
+          },
+          "declared": 15,
+          "observed_test_lines": 15,
+          "status": "ok"
+        },
+        {
+          "consistent": true,
+          "counts": {
+            "failed": 0,
+            "filtered_out": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 6
+          },
+          "declared": 6,
+          "observed_test_lines": 6,
+          "status": "ok"
+        },
+        {
+          "consistent": true,
+          "counts": {
+            "failed": 0,
+            "filtered_out": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 4
+          },
+          "declared": 4,
+          "observed_test_lines": 4,
+          "status": "ok"
+        },
+        {
+          "consistent": true,
+          "counts": {
+            "failed": 0,
+            "filtered_out": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 0
+          },
+          "declared": 0,
+          "observed_test_lines": 0,
+          "status": "ok"
+        }
+      ],
+      "complete_success": true,
+      "parse_errors": [],
+      "scope": "full trnm-checkpoint-store package on the new source",
+      "socket_tests": {
+        "complete_checkpoint_request_rejects_a_copied_lease_replacement": [
+          "ok"
+        ],
+        "copied_lease_record_cannot_replace_a_live_checkpoint_endpoint": [
+          "ok"
+        ],
+        "different_admitted_journal_cannot_replace_a_live_checkpoint_endpoint": [
+          "ok"
+        ],
+        "rejected_nonprivate_socket_parent_does_not_unlink_existing_listener": [
+          "ok"
+        ]
+      }
+    },
+    "native_scope_pass": false,
+    "old_root_s879_results_relabelled": false,
+    "original_three_30s_campaigns_verified": false,
+    "production_activation": false,
+    "prospective_merge_verified": false,
+    "source_integrity_controls": {
+      "complete_success": true,
+      "ending_status": [
+        "OK"
+      ],
+      "observed_success_lines": 43,
+      "summary_counts": [
+        43
+      ]
+    },
+    "status": "HOLD",
+    "whole_chain_pq_qualified": false
+  },
+  "raw_original_bytes_preserved": true,
+  "root_s879_suite_results_relabelled": false,
+  "schema": "checkpoint-probe-publication-package-v1",
+  "status": "HOLD"
+}

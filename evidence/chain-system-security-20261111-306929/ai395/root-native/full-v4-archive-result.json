@@ -1,0 +1,44 @@
+{
+  "all_members_regular_and_verified": true,
+  "archive": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-full-v4-bac6b765-archive-20261112-306929/root-v4-full-original-observations.tar.gz",
+  "binary_copies": [
+    {
+      "bytes": 257669568,
+      "post_execution_copy_not_live_inode_attestation": true,
+      "preserved_copy": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-full-v4-bac6b765-archive-20261112-306929/preserved-native-binaries/recovery_floor_v4_native-d92b8a2dd8958aba",
+      "reused_prior_preserved_copy": false,
+      "sha256": "b380fefea1f97caeb0906b2c3763dd8e91de1e8f0ddd9beeac2200287b6bd24f",
+      "source": "/home/qq/chain-system-security-20261112-306929/trillionnium/target/debug/deps/recovery_floor_v4_native-d92b8a2dd8958aba"
+    },
+    {
+      "bytes": 256754520,
+      "post_execution_copy_not_live_inode_attestation": true,
+      "preserved_copy": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-full-v4-bac6b765-archive-20261112-306929/preserved-native-binaries/root_budget_v4_native-3d3a8766ab85074c",
+      "reused_prior_preserved_copy": false,
+      "sha256": "cf7dc435fa25fe8d96e869f7b96793df5be2aa96c96cea22ea9d0fe38f598a1b",
+      "source": "/home/qq/chain-system-security-20261112-306929/trillionnium/target/debug/deps/root_budget_v4_native-3d3a8766ab85074c"
+    },
+    {
+      "bytes": 258139216,
+      "post_execution_copy_not_live_inode_attestation": true,
+      "preserved_copy": "/home/qq/chain-system-security-native-receipts-20261112-306929/root-native-bac6b765-archive-20261112-306929/preserved-native-binaries/root_effect_readback_v4_native-2310b7cf782b61a7",
+      "reused_prior_preserved_copy": true,
+      "sha256": "03f30ef41f384bd72c92f468361c669b3e761556ace61524cdccd9f9be026b4e",
+      "source": "/home/qq/chain-system-security-20261112-306929/trillionnium/target/debug/deps/root_effect_readback_v4_native-2310b7cf782b61a7"
+    }
+  ],
+  "binary_new_copy_count": 2,
+  "binary_preserved_count": 3,
+  "bytes": 9153,
+  "log_bindings_verified": 4,
+  "members": 18,
+  "original_bytes_unchanged": true,
+  "original_files": 16,
+  "reader_cap_4mib_respected": true,
+  "schema": "trnm-root-full-v4-original-archive-result-v1",
+  "sha256": "52ad50744d78a873f6b770b975b8abb62c6f9ecd99d183862ee40c20e5cc9d11",
+  "single_member_max_bytes": 6903,
+  "source": "bac6b7659bd7e2d633e25c2da0add60f6a10c7fb",
+  "status": "HOLD",
+  "transport_parts": []
+}

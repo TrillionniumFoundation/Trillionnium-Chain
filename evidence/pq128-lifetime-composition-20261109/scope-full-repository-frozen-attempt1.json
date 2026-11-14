@@ -1,0 +1,30 @@
+{
+  "label": "scope-full-repository-frozen-attempt1",
+  "command": [
+    "python3",
+    "-B",
+    "scripts/ci/check_repository.py"
+  ],
+  "cwd": "/workspace/scratch/678905e225be/chain-lifetime",
+  "before": {
+    "head": "cb56a6c37fe29235c1cc2376cd8d7978b028212d",
+    "tree": "25b45e6a3b6c58923e699b6e5dfaddb31b9d6aff",
+    "head_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "index_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "started_utc": "2026-11-09T13:59:11.167066+00:00",
+  "state": "completed",
+  "returncode": 2,
+  "elapsed_seconds": 45.524856392999936,
+  "finished_utc": "2026-11-09T13:59:56.705587+00:00",
+  "after": {
+    "head": "cb56a6c37fe29235c1cc2376cd8d7978b028212d",
+    "tree": "25b45e6a3b6c58923e699b6e5dfaddb31b9d6aff",
+    "head_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "index_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout_bytes": 0,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_bytes": 84,
+  "stderr_sha256": "e9d6779920685ac8631f9cfe3fc344fa5a64886cd36ed304305284c108a90361"
+}

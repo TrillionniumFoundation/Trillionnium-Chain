@@ -1,0 +1,7 @@
+{
+  "schema": "trnm.paged-owned-probe-absence.v1",
+  "checked_unix_ns": 1794304647237152086,
+  "owned_probe_processes": [],
+  "absent": true,
+  "scope": "exact owned probe workspace; no processes signalled"
+}

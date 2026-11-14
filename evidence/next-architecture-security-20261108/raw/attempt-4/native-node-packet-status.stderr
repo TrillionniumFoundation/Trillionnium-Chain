@@ -1,0 +1,3 @@
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/work/chain-next-architecture-security-20261108-8720/trillionnium/crates/trnm-pon-node)
+    Finished `release` profile [optimized] target(s) in 6.25s
+     Running tests/native_node.rs (/home/qian-qi/work/chain-next-architecture-security-20261108-8720-target/release/deps/native_node-227f6e9802733dfd)

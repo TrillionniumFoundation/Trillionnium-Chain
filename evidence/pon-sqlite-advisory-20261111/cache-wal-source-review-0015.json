@@ -1,0 +1,16 @@
+{
+  "schema": "sqlite-cache-wal-source-review-v1",
+  "sqlite_c_sha256": "0c657666d819f261cc4007526ad57e1669de9949df7a8ea847aa284a2bf0ee52",
+  "max_sector_bytes": 65536,
+  "function_sha256": {
+    "walFrames": "877b7a23f98ef583ccdc9ffdf629dcd7dd6df813f15deb9bfc9ba9a6d7274a4c",
+    "walWriteOneFrame": "0d04f4597c13f7c1b80f03e1d1eca2bc313ba445653ac71166ebe3d1a1d8ddfb",
+    "sqlite3SectorSize": "a7e978d86ce28364ed080e1ed2d047cc0a2fda840a603bc0466b1e34e81f5958",
+    "unixShmMap": "7c8107778d65a1cc11c659de9a2f0e9ef07a07285c2f9c2120b4a8e32fbcc4b9"
+  },
+  "wal_frames_and_sector_clamp_match_previous_qualified_source": true,
+  "unix_shm_change": "64-bit nByte/iPg/nMap/i and realloc64; original nReqRegion rounding unchanged",
+  "cache_schema_changed": false,
+  "cache_quota_and_deadline_changed": false,
+  "whole_chain_qualified": false
+}

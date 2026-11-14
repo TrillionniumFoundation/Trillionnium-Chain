@@ -1,0 +1,29 @@
+{
+  "bytes": 8862,
+  "command": [
+    "/usr/bin/python3",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/ci",
+    "-p",
+    "test_pq_root_dependency_register.py",
+    "-v"
+  ],
+  "cwd": "/data/chain-root-operation-owned-20261112-df05-v4",
+  "elapsed_ns": 14098560240,
+  "executed": true,
+  "exit_code": 0,
+  "expected_source": "87943f6229d8785c3f431ede5eadba62b634ab8c",
+  "log": "root-gate-controls.log",
+  "name": "root-gate-controls",
+  "process_exit_code": 0,
+  "sha256": "6845484b1898230c5c03b788fbdb97b6fea66621e631143730cc9cba3f3eb0a3",
+  "source": "87943f6229d8785c3f431ede5eadba62b634ab8c",
+  "source_after_verified": true,
+  "source_before_verified": true,
+  "source_verified": true,
+  "timed_out": false
+}

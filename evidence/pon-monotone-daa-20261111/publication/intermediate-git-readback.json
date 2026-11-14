@@ -1,0 +1,210 @@
+{
+  "archive_bytes": 4657951,
+  "archive_path": "/workspace/scratch/7f73fe002713/daa-native-archive-recovery-v1/native-run-d23488c5-v1.tar.gz",
+  "archive_sha256": "6c33da56842862608e365acb7c69d72175538556a2a76b74254f7b0357de9c81",
+  "checkout_performed": false,
+  "destination_created": true,
+  "evidence_only_changed_paths": [
+    "evidence/pon-monotone-daa-20261111/native/native-run-d23488c5-v1-archive.json",
+    "evidence/pon-monotone-daa-20261111/native/native-run-d23488c5-v1.tar.gz",
+    "evidence/pon-monotone-daa-20261111/native/recovery-publication.json"
+  ],
+  "finished_utc": "2026-11-12T01:17:51.628671+00:00",
+  "frozen_source_commit": "d23488c5f9b4a6696c3799b12f14b8af0a1b81fc",
+  "native_archive_git_blob": "ff602d470bff8cc2516a7ef33d4308eb4ef2ae42",
+  "native_archive_git_path": "evidence/pon-monotone-daa-20261111/native/native-run-d23488c5-v1.tar.gz",
+  "native_or_reader_execution_performed": false,
+  "partial_rpc_transfer_status": "PARTIAL_PAUSED_FOR_GIT_RECOVERY",
+  "publication_commit": "31f7740ed57eb3bca2e17f7e0a5f4f63cb320f5f",
+  "published_descriptor": {
+    "bytes": 4657951,
+    "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/native-run-d23488c5-v1.tar.gz",
+    "sha256": "6c33da56842862608e365acb7c69d72175538556a2a76b74254f7b0357de9c81"
+  },
+  "result": "PASS",
+  "retained_rpc_chunk_count": 36,
+  "retained_rpc_chunks_match_git_bytes": [
+    {
+      "bytes": 65536,
+      "offset": 0,
+      "sha256": "aa9200be03d4d3c3144906d359ed77324052a0d3d4bc2731cc97b971238b880a"
+    },
+    {
+      "bytes": 65536,
+      "offset": 131072,
+      "sha256": "50c7c65d2dd231f6fa758b6536554926b5fb1e54f507b40291dfb16d763d48ee"
+    },
+    {
+      "bytes": 65536,
+      "offset": 196608,
+      "sha256": "82f87781d582b56f649f7e5848a0b48e2d0566f4af303bf74436fd7b44831d3a"
+    },
+    {
+      "bytes": 65536,
+      "offset": 262144,
+      "sha256": "9e71abffaaa79410a925e20005f2862141dc7095155523dd447540bea081fc8c"
+    },
+    {
+      "bytes": 65536,
+      "offset": 327680,
+      "sha256": "d8e323bd30cf16a9ebc2c080b18325866030f8ebe96a4ab61d70887c1e7c9a7e"
+    },
+    {
+      "bytes": 65536,
+      "offset": 393216,
+      "sha256": "f8b89f2a17958369ec317bf9b07f3bfbd7e819888c2929c2bd9f2e48ac27edb7"
+    },
+    {
+      "bytes": 65536,
+      "offset": 458752,
+      "sha256": "94868c4e2217d6a5fe0b0ae6cfa5a7d13c16f950dd419a6066601cecbb835491"
+    },
+    {
+      "bytes": 65536,
+      "offset": 524288,
+      "sha256": "7a836b902f527d41c847897f59a607ec948319f41b028ca52a991495c95341cd"
+    },
+    {
+      "bytes": 65536,
+      "offset": 589824,
+      "sha256": "b3d8c55b1248ce447a680fb3aa124492e5c853ff2bf11f6f8b72a2f0123cd4e1"
+    },
+    {
+      "bytes": 65536,
+      "offset": 655360,
+      "sha256": "814b2e6e8b09d9bb9d98d51961c77097acd16b73e0d0d28636f9a0d28a17372c"
+    },
+    {
+      "bytes": 65536,
+      "offset": 720896,
+      "sha256": "0b28c0e9cfc71c7263e42d9a548c99c667b432764420be4c3c618315a38e8238"
+    },
+    {
+      "bytes": 65536,
+      "offset": 786432,
+      "sha256": "ca23540dd7daa5bd41bea6b089da63efdb50f6fe02b32d4314b9c862f4335ee7"
+    },
+    {
+      "bytes": 65536,
+      "offset": 851968,
+      "sha256": "e2b38303f92bfb058b68667dbe88f1764990ebc090055a24035f32598cf86eae"
+    },
+    {
+      "bytes": 65536,
+      "offset": 917504,
+      "sha256": "00868fc8e3a75219864aefdd7d7537845de4d5dacf5bb9706443b8c8e5da4ab9"
+    },
+    {
+      "bytes": 65536,
+      "offset": 983040,
+      "sha256": "19c3cdca06b6911627f2d26da81273cc2b0751c79199920159767f42afeb7b8e"
+    },
+    {
+      "bytes": 65536,
+      "offset": 1048576,
+      "sha256": "ed315847a81b7128e2177b9d8276ecd810aa38bb988e18a0de40aa6efd712a36"
+    },
+    {
+      "bytes": 65536,
+      "offset": 1114112,
+      "sha256": "d927124d04dc018cf27b4a0298b7076541939050ee3b13be885eebd912cbe38f"
+    },
+    {
+      "bytes": 65536,
+      "offset": 1179648,
+      "sha256": "ffa20c2c5f87a476ef5eb38f065a10e13636c0ee794a28edd301c5b62dfd358d"
+    },
+    {
+      "bytes": 65536,
+      "offset": 1245184,
+      "sha256": "d432a1daa93b940b7c15354af3d82660465c902e36c6e61b82adaca60f250ae6"
+    },
+    {
+      "bytes": 65536,
+      "offset": 1310720,
+      "sha256": "87aaae51ee08ac5eebe06fd3ab27e0cfee40747b1a8ab458ae0608a141344a84"
+    },
+    {
+      "bytes": 65536,
+      "offset": 1376256,
+      "sha256": "9f4cd7f46ac5a4e5347e53530f9a0f998a2dc88c40e99c586cf817e7b11fa489"
+    },
+    {
+      "bytes": 65536,
+      "offset": 1441792,
+      "sha256": "af539aa4167daee4211d0451afa9db5e689ddd2bc580d6bf14140321bd96a3d8"
+    },
+    {
+      "bytes": 65536,
+      "offset": 1507328,
+      "sha256": "55a311b25c92a51e319edda416220c366b7b4ecbc646767d484a861eed00b38a"
+    },
+    {
+      "bytes": 65536,
+      "offset": 1572864,
+      "sha256": "3421ca809850eff2527b4f0b5121d440189ba4282924daa159f8a09d1396dc2c"
+    },
+    {
+      "bytes": 65536,
+      "offset": 1638400,
+      "sha256": "c3795d58d9d9844f84a2e6996ae7b0439dbc7cbbdcb52fb8f4a63d27bed3fa6e"
+    },
+    {
+      "bytes": 65536,
+      "offset": 1703936,
+      "sha256": "97a262664fc2a5db142317f5a4ab0260be3b33668b7d17a580ccf3e969d3db59"
+    },
+    {
+      "bytes": 65536,
+      "offset": 1769472,
+      "sha256": "28726e26c52c90bc10bd197306e86a22494a0173da680f70272df22373ec7221"
+    },
+    {
+      "bytes": 65536,
+      "offset": 1835008,
+      "sha256": "0cb40c98869b747d6d84b43b452d2b6bf1e560f5d3b87bb6901fdc7db9637b49"
+    },
+    {
+      "bytes": 65536,
+      "offset": 1900544,
+      "sha256": "22bfec206600f3981d59a30f8d3fb6f0dc3b5ffceb1240c5e7770946251ffafc"
+    },
+    {
+      "bytes": 65536,
+      "offset": 1966080,
+      "sha256": "94fb8eb1c2936da15d9b84f7b42ea6c1cabfa0a080504fd096bbcde8fc85e885"
+    },
+    {
+      "bytes": 65536,
+      "offset": 2031616,
+      "sha256": "4c259b39ed760bf05eade35119fd0c31d9309aba034cf5b75925f3fda8ebbbd4"
+    },
+    {
+      "bytes": 65536,
+      "offset": 2097152,
+      "sha256": "427097bebb953554a535af7b00deeca9f2cb41460ed611e3d82c88d0dc417a2f"
+    },
+    {
+      "bytes": 65536,
+      "offset": 2949120,
+      "sha256": "9c3ff7205db814b527ac0519cc66f51ff1a8399811e8cef5406b53313a935608"
+    },
+    {
+      "bytes": 65536,
+      "offset": 3014656,
+      "sha256": "25740cb05990b3ff53686194d70d7dfeb03e298fcf4af8cc72caa94ae26aef78"
+    },
+    {
+      "bytes": 65536,
+      "offset": 3080192,
+      "sha256": "9b0b04d07d4715aa44dde4bd3494fc375ccc8c8b601793e32eab447107d46312"
+    },
+    {
+      "bytes": 65536,
+      "offset": 3145728,
+      "sha256": "33b0d94a6e9992fcbcecce7936a4b66bcba2ee1aaa876cbea496d1ba7d0cd8f4"
+    }
+  ],
+  "schema": "pon-native-archive-git-readback-v1",
+  "started_utc": "2026-11-12T01:17:16.076114+00:00"
+}

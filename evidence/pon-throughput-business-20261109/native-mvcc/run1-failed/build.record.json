@@ -1,0 +1,52 @@
+{
+  "argv": [
+    "/workspace/scratch/a6fe7c2e72c7/pq-validation/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "test",
+    "--locked",
+    "--release",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-mvcc-fee",
+    "--lib",
+    "--no-run",
+    "--message-format=json"
+  ],
+  "cwd": "/workspace/scratch/a0d4983b1065/chain-throughput",
+  "disk_after": {
+    "free_bytes": 0,
+    "total_bytes": 67586535424,
+    "used_bytes": 64169635840
+  },
+  "disk_before": {
+    "free_bytes": 8554483712,
+    "total_bytes": 67586535424,
+    "used_bytes": 55579303936
+  },
+  "exit_code": 101,
+  "extra_env": {},
+  "name": "build",
+  "rusage": {
+    "ru_idrss": 0,
+    "ru_inblock": 17152224,
+    "ru_isrss": 0,
+    "ru_ixrss": 0,
+    "ru_majflt": 3917,
+    "ru_maxrss": 360736,
+    "ru_minflt": 2149593,
+    "ru_msgrcv": 0,
+    "ru_msgsnd": 0,
+    "ru_nivcsw": 102036,
+    "ru_nsignals": 0,
+    "ru_nswap": 0,
+    "ru_nvcsw": 30423,
+    "ru_oublock": 553432,
+    "ru_stime": 51.908059,
+    "ru_utime": 238.324616
+  },
+  "rusage_maxrss_unit": "KiB (Linux)",
+  "stderr_sha256": "dfb2a08285380b23d7567c04ff810581e3ad7f89c56cd1d531f00aad9c87aade",
+  "stdout_sha256": "b481a799f28f9cc5d5cdd50e5afcd379f5e1f18a700bf786d5dd48b61e649876",
+  "waited_pid": 18,
+  "wall_ns": 501164135730
+}

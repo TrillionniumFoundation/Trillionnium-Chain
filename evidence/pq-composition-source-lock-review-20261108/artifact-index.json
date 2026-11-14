@@ -1,0 +1,71 @@
+{
+  "schema": "trnm-pq-composition-review-artifacts-v1",
+  "files": {
+    "README.md": {
+      "bytes": 1644,
+      "sha256": "157d8c6c54a923001ef2b8d9b7ac658efefb51b2e403778eaa28d316773cd259"
+    },
+    "before-update-effect.json": {
+      "bytes": 486,
+      "sha256": "11e0c832ae9d1437be2030d9e63f763555a6fbd7a106630bc8f80b88dab29ea9"
+    },
+    "before-update-effect.stderr": {
+      "bytes": 164,
+      "sha256": "58bea8ca40011468a1536549488f50c69f7a58d21400b5c16375d04bc53a1439"
+    },
+    "before-update-effect.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "before-update-lifetime.json": {
+      "bytes": 478,
+      "sha256": "a41f70bba0452253602b552924d55f34c8c0807d7bd3c1b63be6ead45a9cc10a"
+    },
+    "before-update-lifetime.stderr": {
+      "bytes": 175,
+      "sha256": "8780782d6ec3c5b7e8d49b5d8e8fc0090cac19866aa188a2dc1f762fa7af3e5a"
+    },
+    "before-update-lifetime.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "original-authority-effect-register.json": {
+      "bytes": 14196,
+      "sha256": "0414760dd3873cee796d396084d53f9a79cabfccd41a2839e068dee03b27a95a"
+    },
+    "original-lifetime-budget.json": {
+      "bytes": 17620,
+      "sha256": "87108ad195c79d17eebbc0f34e320f7141763b507487cc82a3f62d5945fb9b23"
+    },
+    "original-lifetime-source-lock.json": {
+      "bytes": 2173,
+      "sha256": "97d8c0a229f1f863c5f54a800f1405a4a68f60cac5899b4f2973deeb000900c8"
+    },
+    "r1-incomplete-full-source.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "r1-incomplete-full-source.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "r1-prior-full-source-collector.py.txt": {
+      "bytes": 4844,
+      "sha256": "b1f5209f7a8ae9e3a2fcdf2b7f8d025499568df5786ba2e7b8ae0b61397a9ac7"
+    },
+    "r1-prior-full-source-timeout.json": {
+      "bytes": 735,
+      "sha256": "75fc129149f4c10e047b9bb3fda9a51e20fb3f8569c80f7c8c4b6d7bf368e6f2"
+    },
+    "review.json": {
+      "bytes": 175930,
+      "sha256": "6f60f998d621009e4f06055bdc91f048d36c11e289708c47c19c5f09a29ab4d1"
+    },
+    "static-owner-reference-observation.json": {
+      "bytes": 1997,
+      "sha256": "b6959b8a30379a78afa96ea75f79a07f3e919e54c70007670c88999d4c0b5fff"
+    }
+  },
+  "index_excludes_itself": true,
+  "qualification": "HOLD_NO_GO"
+}

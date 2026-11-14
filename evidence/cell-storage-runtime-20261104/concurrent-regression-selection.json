@@ -1,0 +1,169 @@
+{
+  "schema": "trnm.remote-advance-regression-selection.v1",
+  "source_commit": "fc86ed8e927a8eb4e048b160437126a6c0b96c0d",
+  "source_tree": "bd26fb15aa023cbd090662384c25fa52f52b0bc8",
+  "cargo_lock_blob": "ce7b3d41c35e691bb4c21c3b6dc5be6b2bd8155e",
+  "execution_status": "NOT_RUN_READ_ONLY_SELECTION",
+  "counts_basis": "Static source inventory; not native execution or pass evidence.",
+  "environment": {
+    "RUSTC": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+    "CARGO_BUILD_JOBS": "1"
+  },
+  "original_profiles_preserved": true,
+  "additional_features": [],
+  "rustflags_override": null,
+  "preflight": [
+    "bash",
+    "scripts/project-preflight.sh"
+  ],
+  "preserve_original_scopes": {
+    "m06_exact": 5,
+    "node_storage_service": 15,
+    "node_growth_activation_exact": 2,
+    "other_original_cell_runtime_checks": true
+  },
+  "additional_owner_selected_tests": 17,
+  "optional_diagnostic_selected_tests": 4,
+  "groups": [
+    {
+      "group": "capacity_progress",
+      "package": "trnm-mvcc-fee",
+      "expected_selected_tests": 9,
+      "argv": [
+        "/root/.cargo/bin/cargo",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-mvcc-fee",
+        "--test",
+        "capacity_progress"
+      ],
+      "purpose": "Preserve complete-source progress checkpoints, cancellation payload and state-error precedence; 2 added, 2 strengthened, 5 retained test functions."
+    },
+    {
+      "group": "continuity_new_range_tests",
+      "package": "trnm-mvcc-fee",
+      "expected_selected_tests": 2,
+      "argv": [
+        "/root/.cargo/bin/cargo",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-mvcc-fee",
+        "--lib",
+        "continuity_v1::range_tests::"
+      ],
+      "purpose": "Complete liability/account-proof order and all split-source cancellation cuts; separate from original capacity_range_tests."
+    },
+    {
+      "group": "growth_new_range_tests",
+      "package": "trnm-mvcc-fee",
+      "expected_selected_tests": 3,
+      "argv": [
+        "/root/.cargo/bin/cargo",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-mvcc-fee",
+        "--lib",
+        "pon_executor::growth::range_tests::"
+      ],
+      "purpose": "Working/account namespace boundaries, exact aggregation and mandatory-owner error order; separate from original prefix_scan_tests."
+    },
+    {
+      "group": "listener_domain_admission",
+      "package": "trnm-pon-node",
+      "expected_selected_tests": 1,
+      "exact_test_name": "ingress::public_v3::intake_domain_tests::one_node_cannot_spawn_a_fifth_worker_queue_service_from_the_same_domain",
+      "argv": [
+        "/root/.cargo/bin/cargo",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "ingress::public_v3::intake_domain_tests::one_node_cannot_spawn_a_fifth_worker_queue_service_from_the_same_domain",
+        "--",
+        "--exact"
+      ],
+      "purpose": "An already-full listener domain refuses before waiting on the Node owner or allocating queues."
+    },
+    {
+      "group": "startup_epoch_cancellation",
+      "package": "trnm-pon-node",
+      "expected_selected_tests": 1,
+      "exact_test_name": "ingress::public_v3::intake_domain_tests::public_epoch_start_keeps_original_deadline_and_stop_while_owner_is_busy",
+      "argv": [
+        "/root/.cargo/bin/cargo",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "ingress::public_v3::intake_domain_tests::public_epoch_start_keeps_original_deadline_and_stop_while_owner_is_busy",
+        "--",
+        "--exact"
+      ],
+      "purpose": "Second Node-owner acquisition shares the original startup deadline and stop flag."
+    },
+    {
+      "group": "mandatory_owner_funding_path",
+      "package": "trnm-pon-node",
+      "expected_selected_tests": 1,
+      "exact_test_name": "store::growth::tests::mandatory_capacity::native_growth_v2_mandatory_owner_cap_excludes_new_miner_but_refunds_and_matures",
+      "argv": [
+        "/root/.cargo/bin/cargo",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "store::growth::tests::mandatory_capacity::native_growth_v2_mandatory_owner_cap_excludes_new_miner_but_refunds_and_matures",
+        "--",
+        "--exact"
+      ],
+      "purpose": "Existing real Node regression newly selected because mandatory_owners changed: 32 owners, miner refusal, refunds and reward maturity."
+    },
+    {
+      "group": "diagnostic_lifecycle_publication",
+      "package": "trnm-pon-node",
+      "expected_selected_tests": 4,
+      "conditional": "Run when recording native evidence for fc86 request lifecycle fields; not funding/confirmation authority.",
+      "argv": [
+        "/root/.cargo/bin/cargo",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "ingress::public_v3::request_observation::tests::lifecycle_"
+      ],
+      "purpose": "Clock publication and actual task-owner exit ordering."
+    }
+  ],
+  "receipt_requirement": "Use the original recorder and check_required_native_test.py for exact selectors; verify nonzero expected selection counts. Preserve 55257 receipts with their original source identity.",
+  "cargo_entry_point_note": "Use the ordinary rustup Cargo entry point; direct toolchain Cargo omits a loader directory required by the original SQLite native build fence. Absolute canonical RUSTC remains unchanged.",
+  "execution_result_manifest": "exact-fc86ed8e/concurrent-owner-executions.json",
+  "selection_status_note": "The original NOT_RUN value describes creation of this static selection; completed execution evidence is kept separately and does not overwrite that observation."
+}

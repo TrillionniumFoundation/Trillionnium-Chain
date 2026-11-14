@@ -1,0 +1,20 @@
+{
+  "files": {
+    "raw-counters-and-state-shapes.json": {
+      "bytes": 98104,
+      "sha256": "18814413f21bf6ab89a803b44290d8e4ab8b9659986158c3fdd8f175caaf534d"
+    },
+    "read_internal_evidence.py": {
+      "bytes": 7610,
+      "sha256": "e134d6ef86ce6f085d4a1c1c2e14ef3ea6d8f65d868b12a10eec3e9862a440a7"
+    },
+    "reader-receipt.json": {
+      "bytes": 777,
+      "sha256": "f10c5b42fc671189c34335026a709d53c8df254e0f664f46db6e6a47f3a28403"
+    },
+    "review.json": {
+      "bytes": 30495,
+      "sha256": "8e821be2100646483aa258dddf127b2c454c3080ee969dd31dab90892b4a274d"
+    }
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "bytes": 61074,
+  "complete_native_counts": "required in final immutable configuration; no old whole-crate count embedded",
+  "known_child_banner": "exact three observed lines under the single named retained DA parent; child result count zero",
+  "native_commands_executed": 0,
+  "new_gates": [
+    "complete-content-vector",
+    "node-storage-owner-native",
+    "storage-convergence-ci-controls",
+    "storage-descriptor-vector",
+    "version-retention-vector"
+  ],
+  "previous_runner_sha256_unchanged": "806329aaa71ff9952ebefa84995ebd0a0ae576e6e89ed0774cb77f7891892d4a",
+  "required_new_roster_counts": {
+    "complete-da-native": {
+      "discovery": 9,
+      "host_handoff": 2,
+      "retained_shard_plan": 5,
+      "shard_provider": 15,
+      "snapshot": 12,
+      "version_retention": 22
+    },
+    "node-storage-owner-native": {
+      "retained_shard_plan": 1,
+      "shard": 3,
+      "version": 5
+    }
+  },
+  "retained_gate_argv_ast_unchanged": 19,
+  "retained_helpers": [
+    "require",
+    "unique_object",
+    "json_load",
+    "file_identity",
+    "read_json_file",
+    "scrub_environment",
+    "cargo_config_inputs",
+    "native_results",
+    "save_summary",
+    "event"
+  ],
+  "retained_methods": [
+    "checkpoint",
+    "probe",
+    "task_path",
+    "mount_receipt",
+    "host_receipt",
+    "validate_provider"
+  ],
+  "runner_executed": false,
+  "runner_sha256": "aa19862eb0efd8531a92c041fe7cea232dbcccaa6c3f375dfc7f1fee8b122b0d",
+  "schema": "storage-convergence-exact-runner-static-review-v1",
+  "status": "PASS",
+  "synthetic_control_branch_ast_unchanged": true,
+  "synthetic_parser_controls_passed": 30,
+  "total_gates": 24
+}

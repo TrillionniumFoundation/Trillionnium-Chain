@@ -1,0 +1,42 @@
+{
+  "artifact_id": 13586467463,
+  "status": "COMPONENT_READBACK_COMPLETE",
+  "attempted": true,
+  "errors": [],
+  "business_qualification": false,
+  "family": "rank-batch",
+  "arch": "arm64",
+  "source_kind": "head",
+  "tested_commit": "819309fd312298e099642e1253b1d4ba07113e98",
+  "stage1_status": null,
+  "stage1_errors": [],
+  "stage1_sha256": "69f2b1e28bdf8354870382a6210704af05422de85ed7fbc9b0d894d0a5728303",
+  "command": [
+    "/usr/bin/python3",
+    "/home/qian-qi/throughput-final-ci-observation-20261107/read_w1_pure_records_819_v2.py",
+    "/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-read-v1/13586467463"
+  ],
+  "observer_timeout_seconds": 240,
+  "started_utc": "2026-11-07T20:17:48.338551+00:00",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_ns": 71924446341,
+  "stdout": {
+    "path": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-read-v1/13586467463/pure-v2.stdout",
+    "bytes": 166,
+    "sha256": "69dd41802d24158d224bb7b9e8392a54c685359721999304ef0adf70a8b60f12"
+  },
+  "stderr": {
+    "path": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-read-v1/13586467463/pure-v2.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "pure_readback": {
+    "path": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-components-read-v1/13586467463/readback-pure-v2.json",
+    "bytes": 45403,
+    "sha256": "5c53c777bdf749c26e48b027e22572672ef488cbb83e154390415ee54c2e91cb"
+  },
+  "native_campaign_commands": 66,
+  "native_manifests": 1,
+  "finished_utc": "2026-11-07T20:19:00.265389+00:00"
+}

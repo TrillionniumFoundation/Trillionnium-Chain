@@ -1,0 +1,132 @@
+{
+  "command_tail": [
+    "--exact",
+    "value_pool_component_registered",
+    "--ignored",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "created_utc": "2026-11-03T16:18:05.801278+00:00",
+  "frozen_files": {
+    "analyze_benchmark.py": "faf742e0ee78a81ebc5bec87e17acfa8f24a7697bf5c5e9209f90cbc59d13590",
+    "benchmark-plan.json": "ba7e661ff8871b3ed423a57cb2c2d71cdbf3df42096f72f07bd8908605114046",
+    "run_benchmark.py": "5d935a7996f70c514e753ec5cb440f1dfe16e2daf4e1fac48d85dd585adbdffa",
+    "source-freeze.json": "b8f0ac38e239552acae1693f95b7c62109aedcd9178be632f1296285eab25e4b",
+    "source-freeze.patch": "111bb65c0a066ea02a793f8138f5afabd7ad5cafbf79c171d04aafcbc827c3c1",
+    "value_pool_component.rs": "e92fdd30b459f4afaf762458e7863d7cc1f1bb0a63e990f11a229cdd67c937d6"
+  },
+  "measurement_started": false,
+  "schema": "value-pool-execution-freeze-v1",
+  "variants": {
+    "baseline": {
+      "cargo_json_sha256": "500d0a25a3c6139f3135fed7f161faa9584471f73fab4f2e9b5e090876196b21",
+      "cargo_stderr_sha256": "79442065de3b49f739a98e8091861503b2199b8029d83ca59148b5b17c2b0a32",
+      "driver_features": [
+        "default"
+      ],
+      "driver_profile": {
+        "debug_assertions": true,
+        "debuginfo": 2,
+        "opt_level": "3",
+        "overflow_checks": true,
+        "test": true
+      },
+      "executable": "/workspace/scratch/abae1861b451/value-pool-baseline-target/debug/deps/value_pool_component-48b8537ec2f28d14",
+      "executable_bytes": 56664872,
+      "executable_sha256": "dbe480e4b1e0cae1423c05b36b2fc4f29a9a31fdc6f97578da94a43de6af4d21",
+      "preflight_sha256": "2b060e8a43ada8bc9c3e2a89d1f5b779628a8f2715621ecead29bd27c7a34562",
+      "profiles": {
+        "trnm_mvcc_fee": {
+          "features": [
+            "default"
+          ],
+          "package_id": "path+file:///workspace/scratch/abae1861b451/value-pool-baseline/trillionnium/crates/trnm-mvcc-fee#0.1.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 2,
+            "opt_level": "1",
+            "overflow_checks": true,
+            "test": false
+          },
+          "source": "/workspace/scratch/abae1861b451/value-pool-baseline/trillionnium/crates/trnm-mvcc-fee/src/lib.rs"
+        },
+        "trnm_protocol": {
+          "features": [],
+          "package_id": "path+file:///workspace/scratch/abae1861b451/value-pool-baseline/trillionnium/crates/trnm-protocol#0.1.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 2,
+            "opt_level": "3",
+            "overflow_checks": true,
+            "test": false
+          },
+          "source": "/workspace/scratch/abae1861b451/value-pool-baseline/trillionnium/crates/trnm-protocol/src/lib.rs"
+        }
+      },
+      "source_identity": {
+        "driver_sha256": "e92fdd30b459f4afaf762458e7863d7cc1f1bb0a63e990f11a229cdd67c937d6",
+        "expected_measured_tree": "372c0bbdf7a6eb396bca8cb59325576f3e30f3bc",
+        "head": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+        "tracked_patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "untracked_files": [
+          "trillionnium/crates/trnm-pon-node/tests/value_pool_component.rs"
+        ]
+      }
+    },
+    "candidate": {
+      "cargo_json_sha256": "0676e470e16ba72ba511e3867cf7b115d8a719178d69c37782e8d37f44b77d4e",
+      "cargo_stderr_sha256": "54288df52baedc5d6045ae50dae4f3dc9fa70ecd063504922360b8f4c1a01ee7",
+      "driver_features": [
+        "default"
+      ],
+      "driver_profile": {
+        "debug_assertions": true,
+        "debuginfo": 2,
+        "opt_level": "3",
+        "overflow_checks": true,
+        "test": true
+      },
+      "executable": "/workspace/scratch/abae1861b451/value-pool-target/debug/deps/value_pool_component-48b8537ec2f28d14",
+      "executable_bytes": 57235680,
+      "executable_sha256": "474e1c85a9723acc6d748f118e000abdc5f45e2bb2ebf6d9edd97c32e425d305",
+      "preflight_sha256": "f9aa4ba34b76d9e434dfc941a8719cab42ac16284b95a59c4dc0011de38c91f0",
+      "profiles": {
+        "trnm_mvcc_fee": {
+          "features": [
+            "default"
+          ],
+          "package_id": "path+file:///workspace/scratch/abae1861b451/chain-value-pool/trillionnium/crates/trnm-mvcc-fee#0.1.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 2,
+            "opt_level": "1",
+            "overflow_checks": true,
+            "test": false
+          },
+          "source": "/workspace/scratch/abae1861b451/chain-value-pool/trillionnium/crates/trnm-mvcc-fee/src/lib.rs"
+        },
+        "trnm_protocol": {
+          "features": [],
+          "package_id": "path+file:///workspace/scratch/abae1861b451/chain-value-pool/trillionnium/crates/trnm-protocol#0.1.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 2,
+            "opt_level": "3",
+            "overflow_checks": true,
+            "test": false
+          },
+          "source": "/workspace/scratch/abae1861b451/chain-value-pool/trillionnium/crates/trnm-protocol/src/lib.rs"
+        }
+      },
+      "source_identity": {
+        "driver_sha256": "e92fdd30b459f4afaf762458e7863d7cc1f1bb0a63e990f11a229cdd67c937d6",
+        "expected_measured_tree": "414e1e6973019b127edab9e5c03ff9a1cc76efcf",
+        "head": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+        "tracked_patch_sha256": "111bb65c0a066ea02a793f8138f5afabd7ad5cafbf79c171d04aafcbc827c3c1",
+        "untracked_files": [
+          "trillionnium/crates/trnm-pon-node/tests/value_pool_component.rs"
+        ]
+      }
+    }
+  }
+}

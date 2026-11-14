@@ -1,0 +1,124 @@
+[
+  {
+    "name": "recovery-floor",
+    "argv": [
+      "cargo",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--features",
+      "pq-root-v3",
+      "--test",
+      "recovery_floor_v4_native",
+      "--",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "source": "0d99924005b70b1308bf3e62c53e9300fbb4aac4",
+    "exit_code": 0,
+    "elapsed_seconds": 169.4881191579625,
+    "log": "recovery-floor.log",
+    "bytes": 4169,
+    "sha256": "d53798396aaf1dd1123a91e235e7fce467c2b6e4bbb10c01bdf990ce63c43933",
+    "observation": {
+      "tests": [
+        "native_floor_v4_complete_enrollment_binding_precedes_storage_and_anchor",
+        "native_floor_v4_exact_signed_ancestor_survives_append_and_reopen",
+        "native_floor_v4_fresh_anchor_authentication_remains_required",
+        "native_floor_v4_higher_counter_cannot_replace_exact_signed_ancestry",
+        "native_floor_v4_history_below_external_lower_bound_is_refused",
+        "native_floor_v4_invalid_pin_shapes_are_refused",
+        "native_floor_v4_pending_bytes_do_not_become_authority_from_head_match",
+        "native_floor_v4_pending_target_needs_signed_replay_and_explicit_completion"
+      ],
+      "passed": 8,
+      "filtered_out": 0
+    },
+    "error": null
+  },
+  {
+    "name": "provider-readback",
+    "argv": [
+      "cargo",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--features",
+      "pq-root-v3",
+      "--test",
+      "root_effect_readback_v4_native",
+      "--",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "source": "0d99924005b70b1308bf3e62c53e9300fbb4aac4",
+    "exit_code": 0,
+    "elapsed_seconds": 313.9623902121093,
+    "log": "provider-readback.log",
+    "bytes": 1461,
+    "sha256": "553cb8b94bea00dd54eb6a30b29d2eed355cd44b9d9621ddde70e754e78d6354",
+    "observation": {
+      "tests": [
+        "native_provider_v4_callback_cannot_replace_cancel_or_replenish_budget",
+        "native_provider_v4_complete_request_and_both_signature_families_are_required",
+        "native_provider_v4_enrollment_requires_floor_complete_bytes_kind_and_attempt",
+        "native_provider_v4_foreign_replaced_linked_and_truncated_journals_refuse",
+        "native_provider_v4_later_root_provider_alias_refuses_before_transport",
+        "native_provider_v4_lost_and_unknown_reads_keep_original_operation_pending",
+        "native_provider_v4_orphan_epochs_require_explicit_same_epoch_reconciliation",
+        "native_provider_v4_oversized_journal_refuses_before_lookup",
+        "native_provider_v4_real_declaration_reopens_without_effect_authority",
+        "native_provider_v4_replays_original_operation_after_authority_rotation",
+        "native_provider_v4_unknown_does_not_erase_known_outcome_and_conflicts_refuse",
+        "native_provider_v4_unresolved_orphan_is_not_replaced_by_new_epoch"
+      ],
+      "passed": 12,
+      "filtered_out": 0
+    },
+    "error": null
+  },
+  {
+    "name": "callback-budget",
+    "argv": [
+      "cargo",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--features",
+      "pq-root-v3",
+      "--test",
+      "root_budget_v4_native",
+      "--",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "source": "0d99924005b70b1308bf3e62c53e9300fbb4aac4",
+    "exit_code": 0,
+    "elapsed_seconds": 3.368602003902197,
+    "log": "callback-budget.log",
+    "bytes": 885,
+    "sha256": "bbbd8e70f70791ef419446c8d66049cd20fd353c2f095f520b2effff2e16b6f5",
+    "observation": {
+      "tests": [
+        "native_budget_v4_transport_error_cannot_hide_budget_replacement",
+        "native_budget_v4_transport_error_latches_observed_external_cancellation",
+        "native_budget_v4_unmodified_transport_error_is_preserved",
+        "native_budget_v4_unmodified_writer_error_is_preserved",
+        "native_budget_v4_writer_error_cannot_hide_budget_replacement",
+        "native_budget_v4_writer_error_latches_observed_external_cancellation"
+      ],
+      "passed": 6,
+      "filtered_out": 0
+    },
+    "error": null
+  }
+]

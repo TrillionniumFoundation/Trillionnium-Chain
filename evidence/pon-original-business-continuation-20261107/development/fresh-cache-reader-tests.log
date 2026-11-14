@@ -1,0 +1,56 @@
+..........E.....F..F..F....
+======================================================================
+ERROR: test_cache_configuration_retains_exact_positive_submillisecond_lifetime (__main__.FreshRefusalControls.test_cache_configuration_retains_exact_positive_submillisecond_lifetime)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/ae364bcbabfb/publication-check/scripts/ci/test_run_w1_fresh_service_v1.py", line 171, in test_cache_configuration_retains_exact_positive_submillisecond_lifetime
+    observed = self.validate_doc(doc)['negative_cache_observation']['configuration']
+               ^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/ae364bcbabfb/publication-check/scripts/ci/test_run_w1_fresh_service_v1.py", line 132, in validate_doc
+    return fresh.validate_fresh_report(path)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/ae364bcbabfb/publication-check/scripts/ci/run_w1_fresh_service_v1.py", line 323, in validate_fresh_report
+    cache = validate_negative_cache_observation(doc, phases)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/ae364bcbabfb/publication-check/scripts/ci/run_w1_fresh_service_v1.py", line 113, in validate_negative_cache_observation
+    require(configuration == current, 'FRESH_CACHE_CONFIGURATION_CHANGED')
+  File "/workspace/scratch/ae364bcbabfb/publication-check/scripts/ci/run_w1_fresh_service_v1.py", line 35, in require
+    raise ValueError(message)
+ValueError: FRESH_CACHE_CONFIGURATION_CHANGED
+
+======================================================================
+FAIL: test_enabled_mode_requires_both_phases_and_every_started_attempt_observation (__main__.FreshRefusalControls.test_enabled_mode_requires_both_phases_and_every_started_attempt_observation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/ae364bcbabfb/publication-check/scripts/ci/test_run_w1_fresh_service_v1.py", line 163, in test_enabled_mode_requires_both_phases_and_every_started_attempt_observation
+    with self.assertRaisesRegex(ValueError, 'FRESH_CACHE_NO_OBSERVED_ATTEMPTS'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_historical_disabled_and_current_observed_mode_keep_distinct_scope (__main__.FreshRefusalControls.test_historical_disabled_and_current_observed_mode_keep_distinct_scope)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/ae364bcbabfb/publication-check/scripts/ci/test_run_w1_fresh_service_v1.py", line 139, in test_historical_disabled_and_current_observed_mode_keep_distinct_scope
+    self.assertEqual([row['full_replay_started'] for row in current['phases']], [1, 1])
+AssertionError: Lists differ: [15, 32] != [1, 1]
+
+First differing element 0:
+15
+1
+
+- [15, 32]
++ [1, 1]
+
+======================================================================
+FAIL: test_incomplete_and_cheap_error_path_is_not_counted_as_complete_native_replay (__main__.FreshRefusalControls.test_incomplete_and_cheap_error_path_is_not_counted_as_complete_native_replay)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/ae364bcbabfb/publication-check/scripts/ci/test_run_w1_fresh_service_v1.py", line 216, in test_incomplete_and_cheap_error_path_is_not_counted_as_complete_native_replay
+    self.assertEqual(phases[0]['completed_cache_observations'], 0)
+AssertionError: 14 != 0
+
+----------------------------------------------------------------------
+Ran 27 tests in 3.021s
+
+FAILED (failures=3, errors=1)

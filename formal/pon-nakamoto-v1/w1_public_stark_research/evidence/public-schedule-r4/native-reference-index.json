@@ -1,0 +1,150 @@
+{
+  "archive_sha256": "5c46ff71c0afc15d0a76adf8dde4137fb4b629471c1c597c06df60d98c6da4c3",
+  "files": [
+    {
+      "path": "failed-setup-block01/executed.py",
+      "bytes": 5459,
+      "sha256": "ebf674ff7b372c6f79b2efcbe886d769cc70d3fe996f3430247888facad680b4"
+    },
+    {
+      "path": "failed-setup-block01/failure.json",
+      "bytes": 888,
+      "sha256": "afb6ec3b947e82d60f12bbf1594d1320524df242cd0841d2bf3b20f8de1b397b"
+    },
+    {
+      "path": "declared-clear-block02/00-retained/resource.txt",
+      "bytes": 1132,
+      "sha256": "ff88d1587c5299dfc8c0797151d5432f0657cb829db5853ef9652630b2e406e7"
+    },
+    {
+      "path": "declared-clear-block02/00-retained/result.json",
+      "bytes": 3375,
+      "sha256": "fffbb937ddcdc53d87bde53b9683bc4ef486de34996d6ed5157d471dcbd8b7d4"
+    },
+    {
+      "path": "declared-clear-block02/00-retained/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "declared-clear-block02/00-retained/stdout.jsonl",
+      "bytes": 1601,
+      "sha256": "4a5a8232b8dab69c4a01579af7cf30096528511ab78c89f6bdcc950530cb378b"
+    },
+    {
+      "path": "declared-clear-block02/01-dense/resource.txt",
+      "bytes": 1126,
+      "sha256": "55248df16e9896cba71dac980bd2e821d9d15a0ce728e0a7e18ba874126c82fe"
+    },
+    {
+      "path": "declared-clear-block02/01-dense/result.json",
+      "bytes": 3361,
+      "sha256": "f7172aaaae40405f04bd2f261c779d99adc5a0e977427c533324dbee56a87a7f"
+    },
+    {
+      "path": "declared-clear-block02/01-dense/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "declared-clear-block02/01-dense/stdout.jsonl",
+      "bytes": 1596,
+      "sha256": "2e5509596fce78cee4b6fa19af172adde333040371a11df4cf12997d981e18b9"
+    },
+    {
+      "path": "declared-clear-block02/02-dense/resource.txt",
+      "bytes": 1127,
+      "sha256": "842e6c12a61f50ad0e92724d2e7558f31964ea8b523cb78e31785a7f6ab020fe"
+    },
+    {
+      "path": "declared-clear-block02/02-dense/result.json",
+      "bytes": 3364,
+      "sha256": "f05ce803f5eedc69c5a93f212f66d893dd395cbcd65803b963765a290e1eb609"
+    },
+    {
+      "path": "declared-clear-block02/02-dense/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "declared-clear-block02/02-dense/stdout.jsonl",
+      "bytes": 1599,
+      "sha256": "a89fc38247f4cde3f6bbc1e1bc94f2e36442c2c306c4a97d68585abf3c341214"
+    },
+    {
+      "path": "declared-clear-block02/03-retained/resource.txt",
+      "bytes": 1133,
+      "sha256": "9254e67e9f1fdcdbc8985707d593cefe9965d262f892dcfacd236eae945b7ed6"
+    },
+    {
+      "path": "declared-clear-block02/03-retained/result.json",
+      "bytes": 3373,
+      "sha256": "15a573eb144c6d8730d7bd6a5d880a7ae223f0c37cc293d5e48513ee2a353f82"
+    },
+    {
+      "path": "declared-clear-block02/03-retained/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "declared-clear-block02/03-retained/stdout.jsonl",
+      "bytes": 1599,
+      "sha256": "7a36ad499ccce1081aa53789552afcb3080c95db7e88072ca8abe88781b006ee"
+    },
+    {
+      "path": "declared-clear-block02/04-retained/resource.txt",
+      "bytes": 1132,
+      "sha256": "6b34f143c7ac66310a1569f4d1b4d633d9a21fc4749581825aa780205aeec185"
+    },
+    {
+      "path": "declared-clear-block02/04-retained/result.json",
+      "bytes": 3375,
+      "sha256": "fabb0731cf905662771b3d72c31e39a0317a9773ab96ea8969063be75d83ceb6"
+    },
+    {
+      "path": "declared-clear-block02/04-retained/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "declared-clear-block02/04-retained/stdout.jsonl",
+      "bytes": 1592,
+      "sha256": "696c2d85b7d7df8ecda42bb39945b2c7d53e815fc3baeef12dcb62a2a5edee6e"
+    },
+    {
+      "path": "declared-clear-block02/05-dense/resource.txt",
+      "bytes": 1127,
+      "sha256": "48bafa11c52a7712be32c47ecabe80a19d12fee032e2592d39dade067b45c4ee"
+    },
+    {
+      "path": "declared-clear-block02/05-dense/result.json",
+      "bytes": 3357,
+      "sha256": "26840ffbd9cfd528ae4f53da8d849375d053039b888e8f41bd22387857532bea"
+    },
+    {
+      "path": "declared-clear-block02/05-dense/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "declared-clear-block02/05-dense/stdout.jsonl",
+      "bytes": 1592,
+      "sha256": "3eaeba20c9fe6c311b0edfaec3bafb04641730429e3bb026116abc9b51ebea5a"
+    },
+    {
+      "path": "declared-clear-block02/executed.py",
+      "bytes": 5672,
+      "sha256": "693037d69fda98acfd7bb9afda9cfe21b88f8e6618044dddbfd6497fed846c6f"
+    },
+    {
+      "path": "declared-clear-block02/manifest.json",
+      "bytes": 267132,
+      "sha256": "8ff956f75efb698baf708fd659e163ed105a15707c8b7ede07334a141de729fc"
+    },
+    {
+      "path": "declared-clear-block02/summary.json",
+      "bytes": 2032,
+      "sha256": "c0812fa5d5e0b12ddca6d2cd231f73d18a1c45e06e4992ca0a47de12a91c0e77"
+    }
+  ]
+}

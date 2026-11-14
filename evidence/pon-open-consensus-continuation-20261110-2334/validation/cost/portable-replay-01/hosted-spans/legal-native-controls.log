@@ -1,0 +1,16 @@
+running 13 tests
+test tests::exact_shards_reject_unfrozen_targets_horizons_and_extra_arguments ... ok
+test tests::last_product_mutation_wraps_canonically_and_changes_only_that_word ... ok
+test tests::public_dispatch_keeps_complete_bytes_and_all_misses ... ok
+test tests::v2_final_sample_keeps_both_legal_producers_and_complete_negative_verification ... ok
+test tests::valid_acquisition_and_late_product_refusal_keep_full_statement_identity ... ok
+test tests::versions_keep_exact_namespaces_and_eight_new_sample_streams ... ok
+test w1_cost_producers::observed_search_tests::complete_observed_stream_matches_retained_wrapper_byte_for_byte ... ok
+test w1_cost_producers::observed_search_tests::completion_observer_failure_never_starts_another_attempt ... ok
+test w1_cost_producers::observed_search_tests::malformed_generated_proof_has_started_and_failed_record ... ok
+test w1_cost_producers::observed_search_tests::native_failure_retains_completed_attempt_and_failed_begin ... ok
+test w1_cost_producers::observed_search_tests::observer_begin_refusal_precedes_native_generation ... ok
+test w1_material::tests::default_materials_include_exact_continuity_fixture_and_reported_ranks ... ok
+test w1_material::tests::material_bytes_require_exact_length_and_canonical_field_values ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s

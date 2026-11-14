@@ -1,0 +1,23 @@
+{
+  "head": "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+  "tree": "8de2f7b477aa41b75e9818634fc3aaf04f12f4df",
+  "parent": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+  "branch": "fix/chain-native-completion-20261108-70ae",
+  "author": {
+    "name": "ProfHepta",
+    "email": "102159240+ProfHepta@users.noreply.github.com",
+    "date": "2026-11-09T03:56:53+00:00"
+  },
+  "committer": {
+    "name": "ProfHepta",
+    "email": "102159240+ProfHepta@users.noreply.github.com",
+    "date": "2026-11-09T03:56:53+00:00"
+  },
+  "paths": {
+    "config/pon/applicability-v1.json": "bf411fef2d8519285493b7e8ebcd44e3165b308d",
+    "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md": "0f249a4c8764eb68ec50c1146e0fc7a3665e5af8"
+  },
+  "patch_sha256": "552d4f5a89e8d8c1f48af9006602fa80d7199633068f997057b48230a4553600",
+  "qualification": "HOLD_NO_GO",
+  "runtime_validation": "pending exact committed-source R3 campaign"
+}

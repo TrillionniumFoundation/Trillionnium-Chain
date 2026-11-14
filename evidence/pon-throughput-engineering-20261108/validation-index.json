@@ -1,0 +1,419 @@
+{
+  "instrumented_same_test_repeat_passes_separate": 1,
+  "native_libtest_counts_without_strace": {
+    "failed": 0,
+    "ignored": 9,
+    "passed": 235,
+    "zero_test_commands": 1
+  },
+  "python_control_test_methods": 400,
+  "qualification": "HOLD_NO_GO",
+  "records": [
+    {
+      "elapsed_ns": 27194166742,
+      "exit_code": 0,
+      "log": "frozen-native/frozen-cell-persistent.log",
+      "log_sha256": "69ea5153ad434a3576d881c98ac27e9a8c7ed2d6cf71152a49632ad668a18cae",
+      "receipt": "frozen-native/frozen-cell-persistent.json",
+      "status": "command_succeeded",
+      "test_summaries": [
+        {
+          "failed": 0,
+          "ignored": 0,
+          "passed": 36
+        }
+      ],
+      "verification": "exact before/after source and retained log digest match"
+    },
+    {
+      "elapsed_ns": 134140567280,
+      "exit_code": 0,
+      "log": "frozen-native/frozen-mvcc-library.log",
+      "log_sha256": "b4cee99d63ecc263b808014238e1cd5d3232a0d23fa83796b7941490290c82b0",
+      "receipt": "frozen-native/frozen-mvcc-library.json",
+      "status": "command_succeeded",
+      "test_summaries": [
+        {
+          "failed": 0,
+          "ignored": 9,
+          "passed": 146
+        }
+      ],
+      "verification": "exact before/after source and retained log digest match"
+    },
+    {
+      "elapsed_ns": 7764894104,
+      "exit_code": 0,
+      "log": "frozen-native/frozen-node-cancel-settlement-corrected.log",
+      "log_sha256": "969845a4bc1a894d192f10737e2f1045fb9b33cbdaf323c03b47b75156832240",
+      "receipt": "frozen-native/frozen-node-cancel-settlement-corrected.json",
+      "status": "command_succeeded",
+      "test_summaries": [
+        {
+          "failed": 0,
+          "ignored": 0,
+          "passed": 1
+        }
+      ],
+      "verification": "exact before/after source and retained log digest match"
+    },
+    {
+      "elapsed_ns": 7597374184,
+      "execution_class": "zero-test selection; required-test guard rejected",
+      "exit_code": 0,
+      "log": "frozen-native/frozen-node-cancel-settlement.log",
+      "log_sha256": "11017353be632006a1b880f74e2c2136e3623557d040af88b5e8beee6db8b60e",
+      "receipt": "frozen-native/frozen-node-cancel-settlement.json",
+      "status": "command_succeeded",
+      "test_summaries": [
+        {
+          "failed": 0,
+          "ignored": 0,
+          "passed": 0
+        }
+      ],
+      "verification": "exact before/after source and retained log digest match"
+    },
+    {
+      "elapsed_ns": 7785202959,
+      "exit_code": 0,
+      "log": "frozen-native/frozen-node-disconnect-cancel.log",
+      "log_sha256": "20bfcca1c8a84cc64cb160f8d455a7fac7b0d9264b36785171c351677b911e8b",
+      "receipt": "frozen-native/frozen-node-disconnect-cancel.json",
+      "status": "command_succeeded",
+      "test_summaries": [
+        {
+          "failed": 0,
+          "ignored": 0,
+          "passed": 1
+        }
+      ],
+      "verification": "exact before/after source and retained log digest match"
+    },
+    {
+      "elapsed_ns": 7999841818,
+      "execution_class": "linked inventory only; no test bodies executed",
+      "exit_code": 0,
+      "log": "frozen-native/frozen-node-linked-inventory.log",
+      "log_sha256": "c789ff54caa4687ccc6ea33f5bf4eff757bc728abb6e3c9eb705d641f84f4d96",
+      "receipt": "frozen-native/frozen-node-linked-inventory.json",
+      "status": "command_succeeded",
+      "test_summaries": [],
+      "verification": "exact before/after source and retained log digest match"
+    },
+    {
+      "elapsed_ns": 12612706954,
+      "exit_code": 0,
+      "log": "frozen-native/frozen-node-peer-polling.log",
+      "log_sha256": "68d8e89b53979a373bb18b81a3b6750d6644528ac41081db04f79d9c67c68b04",
+      "receipt": "frozen-native/frozen-node-peer-polling.json",
+      "status": "command_succeeded",
+      "test_summaries": [
+        {
+          "failed": 0,
+          "ignored": 0,
+          "passed": 15
+        }
+      ],
+      "verification": "exact before/after source and retained log digest match"
+    },
+    {
+      "elapsed_ns": 34583573073,
+      "exit_code": 0,
+      "log": "frozen-native/frozen-node-request-observation.log",
+      "log_sha256": "655120bf2c27021835569ef020db782811c42e2f037ac8548e3a660d71815d98",
+      "receipt": "frozen-native/frozen-node-request-observation.json",
+      "status": "command_succeeded",
+      "test_summaries": [
+        {
+          "failed": 0,
+          "ignored": 0,
+          "passed": 30
+        }
+      ],
+      "verification": "exact before/after source and retained log digest match"
+    },
+    {
+      "elapsed_ns": 7884758942,
+      "exit_code": 0,
+      "log": "frozen-native/frozen-node-unknown-clock.log",
+      "log_sha256": "9c79670bee0a9296383425cbffb9db7935e1125500de187081cd71282cd74c79",
+      "receipt": "frozen-native/frozen-node-unknown-clock.json",
+      "status": "command_succeeded",
+      "test_summaries": [
+        {
+          "failed": 0,
+          "ignored": 0,
+          "passed": 1
+        }
+      ],
+      "verification": "exact before/after source and retained log digest match"
+    },
+    {
+      "elapsed_ns": 12333018989,
+      "exit_code": 0,
+      "log": "frozen-native/frozen-request-accounting.log",
+      "log_sha256": "aebbf5f8726fe8a3e6fe5ac2e10382fdcbc79b7e69134c6564aa12158ebfe0f5",
+      "receipt": "frozen-native/frozen-request-accounting.json",
+      "status": "command_succeeded",
+      "test_summaries": [
+        {
+          "failed": 0,
+          "ignored": 0,
+          "passed": 1
+        }
+      ],
+      "verification": "exact before/after source and retained log digest match"
+    },
+    {
+      "elapsed_ns": 279733759460,
+      "exit_code": 0,
+      "log": "frozen-native/frozen-task-observation.log",
+      "log_sha256": "5b4c66d20878417e2ca7a0c46b4cae8e9f273130f9ceea832147025cd29f7541",
+      "receipt": "frozen-native/frozen-task-observation.json",
+      "status": "command_succeeded",
+      "test_summaries": [
+        {
+          "failed": 0,
+          "ignored": 0,
+          "passed": 4
+        }
+      ],
+      "verification": "exact before/after source and retained log digest match"
+    },
+    {
+      "elapsed_ns": 7833279138,
+      "exit_code": 0,
+      "log": "frozen-controls/frozen-ci-contract.log",
+      "log_sha256": "1811739ab56176be2d74cfd1b12a86ba05919a96769d5479faca6db12f37dd54",
+      "receipt": "frozen-controls/frozen-ci-contract.json",
+      "status": "command_succeeded",
+      "test_summaries": [],
+      "verification": "exact before/after source and retained log digest match"
+    },
+    {
+      "elapsed_ns": 91924155385,
+      "exit_code": 101,
+      "log": "frozen-controls/frozen-clippy-all.log",
+      "log_sha256": "f68f92e12d541340b7b141f1476c52abdd3b4bb833745131cef25c72ee3a47c3",
+      "receipt": "frozen-controls/frozen-clippy-all.json",
+      "status": "command_failed",
+      "test_summaries": [],
+      "verification": "exact before/after source and retained log digest match"
+    },
+    {
+      "elapsed_ns": 128163824297,
+      "exit_code": 0,
+      "log": "frozen-controls/frozen-clippy-pinned-provider.log",
+      "log_sha256": "98781b5a1354b1ddd8f44946052e2d4bb646e5a08d63d51baab7db670461fa2c",
+      "receipt": "frozen-controls/frozen-clippy-pinned-provider.json",
+      "status": "command_succeeded",
+      "test_summaries": [],
+      "verification": "exact before/after source and retained log digest match"
+    },
+    {
+      "elapsed_ns": 8108034932,
+      "exit_code": 0,
+      "log": "frozen-controls/frozen-command-receipt-controls.log",
+      "log_sha256": "f5593aebec4f07b88b95aa586c3a499b6b5b8e45c519835f1afb001377a3cfc9",
+      "python_test_methods": 8,
+      "receipt": "frozen-controls/frozen-command-receipt-controls.json",
+      "status": "command_succeeded",
+      "test_summaries": [],
+      "verification": "exact before/after source and retained log digest match"
+    },
+    {
+      "elapsed_ns": 7867260694,
+      "exit_code": 0,
+      "log": "frozen-controls/frozen-distributed-inventory.log",
+      "log_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "receipt": "frozen-controls/frozen-distributed-inventory.json",
+      "status": "command_succeeded",
+      "test_summaries": [],
+      "verification": "exact before/after source and retained log digest match"
+    },
+    {
+      "elapsed_ns": 26567875810,
+      "exit_code": 0,
+      "log": "frozen-controls/frozen-formatting.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "receipt": "frozen-controls/frozen-formatting.json",
+      "status": "command_succeeded",
+      "test_summaries": [],
+      "verification": "exact before/after source and retained log digest match"
+    },
+    {
+      "elapsed_ns": 13761519359,
+      "exit_code": 0,
+      "log": "frozen-controls/frozen-fullpath-controls.log",
+      "log_sha256": "01016be70d86302ff19c55d30173df8aa0aaec5549811e912dca716e940d533c",
+      "python_test_methods": 109,
+      "receipt": "frozen-controls/frozen-fullpath-controls.json",
+      "status": "command_succeeded",
+      "test_summaries": [],
+      "verification": "exact before/after source and retained log digest match"
+    },
+    {
+      "elapsed_ns": 8135353355,
+      "exit_code": 0,
+      "log": "frozen-controls/frozen-graph-all-features.log",
+      "log_sha256": "163c5143ef20aefc70fa83b8cf63c523977c11b3c237f08de6da40d8e1342691",
+      "receipt": "frozen-controls/frozen-graph-all-features.json",
+      "status": "command_succeeded",
+      "test_summaries": [],
+      "verification": "exact before/after source and retained log digest match"
+    },
+    {
+      "elapsed_ns": 21429486167,
+      "exit_code": 0,
+      "log": "frozen-controls/frozen-graph-default.log",
+      "log_sha256": "a1934a0dd158aaf2c0a21c6496605e4cce4f897d7e081d0a944061549bef8b46",
+      "receipt": "frozen-controls/frozen-graph-default.json",
+      "status": "command_succeeded",
+      "test_summaries": [],
+      "verification": "exact before/after source and retained log digest match"
+    },
+    {
+      "elapsed_ns": 13181809889,
+      "exit_code": 1,
+      "expected_exit": 1,
+      "interpretation": "valid historical HOLD readback; no current native execution",
+      "log": "frozen-controls/frozen-historical-campaign-readback.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "receipt": "frozen-controls/frozen-historical-campaign-readback.json",
+      "status": "command_failed",
+      "test_summaries": [],
+      "verification": "exact before/after source and retained log digest match"
+    },
+    {
+      "elapsed_ns": 8131243061,
+      "exit_code": 1,
+      "expected_exit": 1,
+      "interpretation": "original prerequisites not met; no original campaign execution",
+      "log": "frozen-controls/frozen-host-prerequisites.log",
+      "log_sha256": "c5da6cef79a8eb64be88ee2f5e36505a51c3ca3ff516becbe005a1bfb9919fef",
+      "receipt": "frozen-controls/frozen-host-prerequisites.json",
+      "status": "command_failed",
+      "test_summaries": [],
+      "verification": "exact before/after source and retained log digest match"
+    },
+    {
+      "elapsed_ns": 10473899174,
+      "exit_code": 0,
+      "log": "frozen-controls/frozen-original-host-controls.log",
+      "log_sha256": "f88b7a054b8387bd6f194387ade558df42ec3891c1957730e1a5530464225f0d",
+      "python_test_methods": 79,
+      "receipt": "frozen-controls/frozen-original-host-controls.json",
+      "status": "command_succeeded",
+      "test_summaries": [],
+      "verification": "exact before/after source and retained log digest match"
+    },
+    {
+      "elapsed_ns": 8171281525,
+      "exit_code": 0,
+      "log": "frozen-controls/frozen-original-report-reproduction.log",
+      "log_sha256": "6a0f9ad1f855c82e2c22f88e15945715eb5fc03de363bc9e1fb1ab6c7695e7bf",
+      "receipt": "frozen-controls/frozen-original-report-reproduction.json",
+      "status": "command_succeeded",
+      "test_summaries": [],
+      "verification": "exact before/after source and retained log digest match"
+    },
+    {
+      "elapsed_ns": 8445938901,
+      "exit_code": 0,
+      "log": "frozen-controls/frozen-phase-reader-controls.log",
+      "log_sha256": "5a798566e868d54cc8c8bd3bf5f15d9e37fe2f772e74352b55f0a94552a31c9d",
+      "python_test_methods": 65,
+      "receipt": "frozen-controls/frozen-phase-reader-controls.json",
+      "status": "command_succeeded",
+      "test_summaries": [],
+      "verification": "exact before/after source and retained log digest match"
+    },
+    {
+      "elapsed_ns": 459544757323,
+      "exit_code": 0,
+      "log": "frozen-controls/frozen-pq-provider-preparation.log",
+      "log_sha256": "1dc7b5d221fbaef051f78aefb587c1a572ebf8da99c13009e839b5c70987c21b",
+      "receipt": "frozen-controls/frozen-pq-provider-preparation.json",
+      "status": "command_succeeded",
+      "test_summaries": [],
+      "verification": "exact before/after source and retained log digest match"
+    },
+    {
+      "elapsed_ns": 106483039342,
+      "exit_code": 0,
+      "log": "frozen-controls/frozen-source-and-links.log",
+      "log_sha256": "3b5c8ff8827a0c1d403f82cb4998752ddb4cb8f6a48d555e72b5f5e0dbfc44bd",
+      "receipt": "frozen-controls/frozen-source-and-links.json",
+      "status": "command_succeeded",
+      "test_summaries": [],
+      "verification": "exact before/after source and retained log digest match"
+    },
+    {
+      "elapsed_ns": 13474373894,
+      "exit_code": 0,
+      "log": "frozen-controls/frozen-source-negative-controls.log",
+      "log_sha256": "f99877310ea4803dc9f8f592c8d16c6207b5cfb60d8c86c818714b79a63e276c",
+      "python_test_methods": 43,
+      "receipt": "frozen-controls/frozen-source-negative-controls.json",
+      "status": "command_succeeded",
+      "test_summaries": [],
+      "verification": "exact before/after source and retained log digest match"
+    },
+    {
+      "elapsed_ns": 7961558610,
+      "exit_code": 0,
+      "log": "frozen-controls/frozen-source-pins.log",
+      "log_sha256": "3f4796c104b869bef26edcf320a9d50922cd6eec22f71d3e296e577d15862036",
+      "receipt": "frozen-controls/frozen-source-pins.json",
+      "status": "command_succeeded",
+      "test_summaries": [],
+      "verification": "exact before/after source and retained log digest match"
+    },
+    {
+      "elapsed_ns": 8990583997,
+      "exit_code": 0,
+      "log": "frozen-controls/frozen-throughput-controls.log",
+      "log_sha256": "93ef28419324a2ed1722059cc6cf6eefc912f4d44af94ef286d7dad70e41c047",
+      "python_test_methods": 96,
+      "receipt": "frozen-controls/frozen-throughput-controls.json",
+      "status": "command_succeeded",
+      "test_summaries": [],
+      "verification": "exact before/after source and retained log digest match"
+    },
+    {
+      "elapsed_ns": 261123821812,
+      "execution_class": "compile only; no test bodies executed",
+      "exit_code": 0,
+      "log": "frozen-instrumentation/frozen-accounting-binary.log",
+      "log_sha256": "0d4d45686ca95272910cd557cba89535f04937129841402872b34964ca30f60c",
+      "receipt": "frozen-instrumentation/frozen-accounting-binary.json",
+      "status": "command_succeeded",
+      "test_summaries": [],
+      "verification": "exact before/after source and retained log digest match"
+    },
+    {
+      "elapsed_ns": 13035237362,
+      "exit_code": 0,
+      "log": "frozen-instrumentation/frozen-instrumented-accounting.log",
+      "log_sha256": "c47e968e93791b43bbaa0e5c418bc3623294bc0f94c9e784f278319592a3e7f2",
+      "receipt": "frozen-instrumentation/frozen-instrumented-accounting.json",
+      "status": "command_succeeded",
+      "test_summaries": [
+        {
+          "failed": 0,
+          "ignored": 0,
+          "passed": 1
+        }
+      ],
+      "verification": "exact before/after source and retained log digest match"
+    }
+  ],
+  "schema": "throughput-engineering-command-index-v1",
+  "scope": "ignored, zero-test, inventory-only and compile-only commands are not successful test executions; no-strace tests still enable observers as declared; elapsed_ns includes source checks/build/command and is not service time; command success is not original throughput acceptance",
+  "source": {
+    "baseline": "dbc1ca09c3db57ae683671a0e7c37ca0aca01f71",
+    "head": "92529f8492545e6c395044165b4f5d7c3fb0972a",
+    "tree": "e96be99451284479b474acb5dce7443ef0a957b4"
+  }
+}

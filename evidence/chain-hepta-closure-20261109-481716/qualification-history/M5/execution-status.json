@@ -1,0 +1,111 @@
+{
+  "authority": "DENY_ALL",
+  "independent_wan_qualification": false,
+  "native_compilation": {
+    "M4": {
+      "all_five_libraries_passed": false,
+      "check_elapsed_seconds": 39.009401555,
+      "check_exit": 0,
+      "clippy_elapsed_seconds": 30.007221033,
+      "clippy_exit": 0,
+      "evidence": "native/M4/README.md",
+      "local_status": "NOT_STARTED_INSUFFICIENT_DISK",
+      "remote_host": "rog",
+      "retained_attempt_01": "NOT_STARTED_WRONG_PACKAGE_NAME",
+      "retained_attempt_02": {
+        "completed_libraries": {
+          "crypto": 196,
+          "data_availability": 714
+        },
+        "node_completed": false,
+        "original_summary_nested_count_error_retained_and_corrected": true,
+        "protocol_started": false,
+        "release_bundle_started": false,
+        "status": "TIMEOUT_INCOMPLETE"
+      },
+      "retained_attempt_03": {
+        "cargo_exit": 101,
+        "crypto_passed": 196,
+        "data_availability_failed": 1,
+        "data_availability_passed": 713,
+        "elapsed_seconds": 23.932759582,
+        "failed_test": "cell::residency::sealed_loader::tests::copied_byte_corruption_is_rejected_by_postseal_full_hash_without_partial_bundle",
+        "other_three_libraries_started": false,
+        "status": "FAILED"
+      },
+      "source_commit": "e4e4a8e049915ba09d9e97444b4709ce8769ce81"
+    },
+    "M5": {
+      "all_five_libraries_passed": null,
+      "evidence": null,
+      "source_commit": "3ad605ecdac4b3b123dff83c1cb7458430acd776",
+      "source_tree": "fbbb4dca143775bae75ea825ff502f368e122ebb",
+      "status": "PREPARING_FRESH_FIXED_SOURCE_VALIDATION"
+    },
+    "daemon_execution_performed": false,
+    "scope": "all-feature workspace library check/Clippy and selected retained libraries; no ordinary daemon or original campaign"
+  },
+  "observed_at_utc": "2026-11-09T15:57:06.981202+00:00",
+  "ordinary_daemon_learning_qualification": false,
+  "original_campaign_rerun_performed": false,
+  "production_activation": false,
+  "publication": {
+    "actor": "ProfHepta",
+    "all_hosted_checks_passed": false,
+    "candidate_source_publish_status_at_record_time": "M5_FROZEN_NOT_YET_ATTEMPTED",
+    "candidate_source_pushed": false,
+    "channel": "HeptaRuntime main local Git/gh",
+    "checks_cancelled": 2,
+    "checks_failure": 0,
+    "checks_in_progress": 0,
+    "checks_observed_at_utc": "2026-11-09T15:04:02.102516Z",
+    "checks_queued": 140,
+    "checks_skipped": 3,
+    "checks_snapshot": "publication/publication-observation-M4-02.json",
+    "checks_source_commit": "e4e4a8e049915ba09d9e97444b4709ce8769ce81",
+    "checks_success": 4,
+    "checks_total": 149,
+    "draft": true,
+    "evidence_child_pushed": false,
+    "evidence_child_status_at_record_time": "not_yet_attempted",
+    "first_push_exit": 128,
+    "historical_checks_not_M5_checks": true,
+    "new_reader_checks_queued": 6,
+    "pr_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/847",
+    "prepublication_readiness": {
+      "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+      "draft": true,
+      "observed_at_utc": "2026-11-09T15:59:08.947957Z",
+      "open": true,
+      "path": "publication/publication-readiness-M5-01.json",
+      "pr_head": "e4e4a8e049915ba09d9e97444b4709ce8769ce81",
+      "profhepta_push_access": true,
+      "write_performed": false
+    },
+    "published_source_commit": "e4e4a8e049915ba09d9e97444b4709ce8769ce81",
+    "second_push_exit": 0,
+    "source_branch_pushed": true
+  },
+  "python_controls_M5": {
+    "commands_exit_zero": 7,
+    "completed_at_utc": "2026-11-09T15:54:09.442213Z",
+    "full_test_files": {
+      "campaign_reader": 23,
+      "ci_contract": 176,
+      "corpus": 59,
+      "proof_profile": 26,
+      "scope": 11
+    },
+    "input_hash_count": 1380,
+    "qualified_native_daemon": false,
+    "source_before_after_unchanged": true,
+    "source_commit": "3ad605ecdac4b3b123dff83c1cb7458430acd776",
+    "source_tree": "fbbb4dca143775bae75ea825ff502f368e122ebb",
+    "summary": "validation/M5-controls/summary.json",
+    "summary_sha256": "57a89e4409a8a097c1f01dd6370a72fc851f83393f2877b00df800565b6a30e1"
+  },
+  "qualification": "HOLD_NO_GO",
+  "schema": "trnm-chain-hepta-closure-execution-status-v1",
+  "source_commit": "3ad605ecdac4b3b123dff83c1cb7458430acd776",
+  "source_tree": "fbbb4dca143775bae75ea825ff502f368e122ebb"
+}

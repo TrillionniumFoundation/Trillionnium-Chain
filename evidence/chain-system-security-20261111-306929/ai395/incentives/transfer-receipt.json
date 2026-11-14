@@ -1,0 +1,1189 @@
+{
+  "archive": "/home/qq/chain-system-security-20261112-306929/trillionnium/target/chain-system-security-receipts/incentive-bac6b7659bd7-raw-20261112.tar.xz",
+  "chunks": [
+    {
+      "bytes": 65536,
+      "chunk_sha256": "f6006f326e5a5b1844fd39b118b749813bb6dc19f417f99db9937d0116457986",
+      "next_offset": 65536,
+      "offset": 0
+    },
+    {
+      "bytes": 65536,
+      "chunk_sha256": "e8d5ef874d3867875361bc6062bfdec6866380ed56c595870f35ae6d01a672ee",
+      "next_offset": 131072,
+      "offset": 65536
+    },
+    {
+      "bytes": 65536,
+      "chunk_sha256": "1beff9e153a51f226fbfa72da7970f37476fb1d21e8d700e9c1a391280047d30",
+      "next_offset": 196608,
+      "offset": 131072
+    },
+    {
+      "bytes": 65536,
+      "chunk_sha256": "c05710ea9892c1379fc34b6956e9a156a3062f30f98c1583da4c2d0de8e4e5b7",
+      "next_offset": 262144,
+      "offset": 196608
+    },
+    {
+      "bytes": 65536,
+      "chunk_sha256": "9b88e828498ba5c176082e04c00067e881761dd8945b68673c57a120b0173ed6",
+      "next_offset": 327680,
+      "offset": 262144
+    },
+    {
+      "bytes": 65536,
+      "chunk_sha256": "bdfb2979a68ef3fc5d18dce3dc28d392cc01d657f4f7a4a9e3f315dfbc337650",
+      "next_offset": 393216,
+      "offset": 327680
+    },
+    {
+      "bytes": 65536,
+      "chunk_sha256": "f9b5e3e5b2780f03b063f18c7a9e40c46244232469db300364ed89f20843eccb",
+      "next_offset": 458752,
+      "offset": 393216
+    },
+    {
+      "bytes": 65536,
+      "chunk_sha256": "c37e56c049683dd7833a70865361ec4636585c30631fe5a7f952d2c9c1b128b2",
+      "next_offset": 524288,
+      "offset": 458752
+    },
+    {
+      "bytes": 65536,
+      "chunk_sha256": "fc0f66bce2e9f2a9ef19b44303d268d79bda0475bf3ef23e2a8efa60f7c9c9ea",
+      "next_offset": 589824,
+      "offset": 524288
+    },
+    {
+      "bytes": 65536,
+      "chunk_sha256": "ae3c96a2a5a516602220d10e64ec448ded072eed693041493e3a435f6a9a0959",
+      "next_offset": 655360,
+      "offset": 589824
+    },
+    {
+      "bytes": 65536,
+      "chunk_sha256": "5b6d674ec9b971f04d203568b03ed6457a6d909f0c544658416e9b650120e348",
+      "next_offset": 720896,
+      "offset": 655360
+    },
+    {
+      "bytes": 65536,
+      "chunk_sha256": "2bfed11681b66f2f15c05b1a6a750f58f9ecb40674ba289cb8d706f13363a910",
+      "next_offset": 786432,
+      "offset": 720896
+    },
+    {
+      "bytes": 65536,
+      "chunk_sha256": "4033a24511488d9f2b4bd338810c053f2cf9638675a8e8f37c5cbe5ade381a19",
+      "next_offset": 851968,
+      "offset": 786432
+    },
+    {
+      "bytes": 65536,
+      "chunk_sha256": "cdadc30715d016cb194be86a1b703465d55718eb9122af5bc0e922a6e24344cf",
+      "next_offset": 917504,
+      "offset": 851968
+    },
+    {
+      "bytes": 65536,
+      "chunk_sha256": "4245b9d98c42991800b834ac655378cb9843361031abe27da2f969fa4c9d5e5b",
+      "next_offset": 983040,
+      "offset": 917504
+    },
+    {
+      "bytes": 65536,
+      "chunk_sha256": "e9036ef91741520e928e72ac07f41edc3297a0a91ef1931569647913edb4fb44",
+      "next_offset": 1048576,
+      "offset": 983040
+    },
+    {
+      "bytes": 65536,
+      "chunk_sha256": "cc970001db923e579b6f626d63bc344ab931e79f48e885824291cab4e42d79e1",
+      "next_offset": 1114112,
+      "offset": 1048576
+    },
+    {
+      "bytes": 65536,
+      "chunk_sha256": "a1da12af8ecb2c363b6695687bb29677ccc1be1e1e21e35646ef72080f11f2a0",
+      "next_offset": 1179648,
+      "offset": 1114112
+    },
+    {
+      "bytes": 65536,
+      "chunk_sha256": "b244b55234420694be85285c49e325294f44444ec938c31bf9337b29d2b80c15",
+      "next_offset": 1245184,
+      "offset": 1179648
+    },
+    {
+      "bytes": 65536,
+      "chunk_sha256": "54e41c614a61df70995c64795131577db78182289f5e8759acc6763e12ae2294",
+      "next_offset": 1310720,
+      "offset": 1245184
+    },
+    {
+      "bytes": 65536,
+      "chunk_sha256": "81fa258ec8b5c9ab4288ff95a2d2bb4641f8ff0db0bd1be5070a38e48039347f",
+      "next_offset": 1376256,
+      "offset": 1310720
+    },
+    {
+      "bytes": 65536,
+      "chunk_sha256": "4f7e38b555fabdf133207e53f1f59bc1ba45eb7735e8f9acbfc5a5bbfc88a225",
+      "next_offset": 1441792,
+      "offset": 1376256
+    },
+    {
+      "bytes": 65536,
+      "chunk_sha256": "8d4c714ee237c519964c9b82d4cdf7b2702a92d3dcfaf87712b6f503fd867628",
+      "next_offset": 1507328,
+      "offset": 1441792
+    },
+    {
+      "bytes": 65536,
+      "chunk_sha256": "7c5eec9de742ec7e102cb4c419095f0ff7bb9063fa917000e0cd74a7ff086e1b",
+      "next_offset": 1572864,
+      "offset": 1507328
+    },
+    {
+      "bytes": 65536,
+      "chunk_sha256": "9148b4962e4fab5cb94211764692add8aaef01d67ce939564d67735db68edf45",
+      "next_offset": 1638400,
+      "offset": 1572864
+    },
+    {
+      "bytes": 65536,
+      "chunk_sha256": "1d1a3915aa2eaad1c375459658daf347cf5ed1d428fdb239fc31e52ebef66f45",
+      "next_offset": 1703936,
+      "offset": 1638400
+    },
+    {
+      "bytes": 65536,
+      "chunk_sha256": "ab1ec30ecd928c349c711afa89fa7e7d06ef786ed3a7ab6b3d57bc3fc2065b47",
+      "next_offset": 1769472,
+      "offset": 1703936
+    },
+    {
+      "bytes": 65536,
+      "chunk_sha256": "3ca383113d43f909cdd9127471c684ca72d394111ffcb6d3c0c8acad9f1ff509",
+      "next_offset": 1835008,
+      "offset": 1769472
+    },
+    {
+      "bytes": 47832,
+      "chunk_sha256": "2b84f198b3527d170b079da3a5d6e1c3cfc86b539daceba345041d741d5ac01e",
+      "next_offset": 1882840,
+      "offset": 1835008
+    }
+  ],
+  "export_driver": {
+    "bytes": 57924,
+    "path": "/home/qq/chain-system-security-20261112-306929/trillionnium/target/chain-system-security-receipts/incentive-export-bac6b7659bd7-20261112-v1.py",
+    "sha256": "e9cf8007553ff92e94ff3567bc55e9e000f58a38ec483e772ce0973c962f1d9d"
+  },
+  "export_pty": {
+    "archive_path": "/home/qq/.local/state/hepta-runtime-mac-worker/terminals/dpty-06e2bebaaaaa71c9e73f44e89ad2887965454a1e5b108432890a03a0fadc1b00/output.log",
+    "bytes": 1666,
+    "session_id": "dpty-06e2bebaaaaa71c9e73f44e89ad2887965454a1e5b108432890a03a0fadc1b00",
+    "sha256": "82027ab7408d0e4ff8e8a69072c3f1e5aac880ff577a5a4d1671d97214d7a8ef",
+    "status": {
+      "boot": "b1620269-aaef-43e7-bf47-bc6eb1c1a447",
+      "bytes_seen": 1666,
+      "bytes_stored": 1666,
+      "capture_error": null,
+      "closed": false,
+      "created_unix_ms": 1794449430974,
+      "exit_code": 0,
+      "output_complete": true,
+      "owner_pid": 2302585,
+      "pid": 2302586,
+      "state": "exited"
+    }
+  },
+  "extraction_performed": false,
+  "final_identity": {
+    "bytes": 1882840,
+    "chunks": 29,
+    "sha256": "3d543e24395320c860d342f396ad492baa76365128be1ee91a296ffc23ca09c9",
+    "version": "66306:49727274:1882840:1794449443080999636:1794449443080999636"
+  },
+  "native_tests_started": false,
+  "observations": [
+    {
+      "label": "export_write_initial",
+      "result": {
+        "content": [
+          {
+            "text": "tool call error: tool call failed for `codex_apps/h.binary_write`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out",
+            "type": "text"
+          }
+        ],
+        "isError": true
+      }
+    },
+    {
+      "label": "export_write_file_info",
+      "result": {
+        "content": [
+          {
+            "text": "tool call error: tool call failed for `codex_apps/h.file_info`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out",
+            "type": "text"
+          }
+        ],
+        "isError": true
+      }
+    },
+    {
+      "label": "export_write_file_info_retry",
+      "result": {
+        "content": [
+          {
+            "text": "tool call error: tool call failed for `codex_apps/h.file_info`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out",
+            "type": "text"
+          }
+        ],
+        "isError": true
+      }
+    },
+    {
+      "label": "export_same_path_readback",
+      "result": {
+        "content": [
+          {
+            "text": "remote helper on ai395-lan failed with 1\nstdout:\n\nstderr:\nFileNotFoundError: [Errno 2] No such file or directory: 'incentive-export-bac6b7659bd7-20261112-v1.py'",
+            "type": "text"
+          }
+        ],
+        "isError": true,
+        "structuredContent": {
+          "error_code": "INVALID_ARGUMENT"
+        }
+      }
+    },
+    {
+      "label": "export_same_path_write_reconciliation",
+      "result": {
+        "content": [
+          {
+            "json": {
+              "mode": 384,
+              "sha256": "e9cf8007553ff92e94ff3567bc55e9e000f58a38ec483e772ce0973c962f1d9d",
+              "size": 57924,
+              "version": "66306:49727273:57924:1794449417689907441:1794449417689915013",
+              "written": 57924
+            },
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    {
+      "label": "export_pty_start",
+      "result": {
+        "content": [
+          {
+            "json": {
+              "audit_recorded": true,
+              "automatic_retry": false,
+              "host": "ai395",
+              "persistent_across_runtime_restart": true,
+              "reused": false,
+              "session_id": "dpty-06e2bebaaaaa71c9e73f44e89ad2887965454a1e5b108432890a03a0fadc1b00",
+              "status": {
+                "boot": "b1620269-aaef-43e7-bf47-bc6eb1c1a447",
+                "bytes_seen": 0,
+                "bytes_stored": 0,
+                "capture_error": null,
+                "created_unix_ms": 1794449430974,
+                "output_complete": false,
+                "owner_pid": 2302585,
+                "pid": 2302586,
+                "state": "running"
+              }
+            },
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    {
+      "label": "rawpack_initial",
+      "result": {
+        "content": [
+          {
+            "text": "tool call error: tool call failed for `codex_apps/h.binary_read`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out",
+            "type": "text"
+          }
+        ],
+        "isError": true
+      }
+    },
+    {
+      "label": "rawpack_first_retry",
+      "result": {
+        "content": [
+          {
+            "json": {
+              "chunk_sha256": "f6006f326e5a5b1844fd39b118b749813bb6dc19f417f99db9937d0116457986",
+              "data_base64_characters": 87384,
+              "data_base64_omitted_from_transfer_metadata": true,
+              "eof": false,
+              "next_offset": 65536,
+              "offset": 0,
+              "path": "/home/qq/chain-system-security-20261112-306929/trillionnium/target/chain-system-security-receipts/incentive-bac6b7659bd7-raw-20261112.tar.xz",
+              "size": 1882840,
+              "version": "66306:49727274:1882840:1794449443080999636:1794449443080999636"
+            },
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    {
+      "label": "incentive_ai395_rawpack_fetch_65536",
+      "result": {
+        "offset": 65536,
+        "result": {
+          "content": [
+            {
+              "json": {
+                "chunk_sha256": "e8d5ef874d3867875361bc6062bfdec6866380ed56c595870f35ae6d01a672ee",
+                "data_base64_characters": 87384,
+                "data_base64_omitted_from_transfer_metadata": true,
+                "eof": false,
+                "next_offset": 131072,
+                "offset": 65536,
+                "path": "/home/qq/chain-system-security-20261112-306929/trillionnium/target/chain-system-security-receipts/incentive-bac6b7659bd7-raw-20261112.tar.xz",
+                "size": 1882840,
+                "version": "66306:49727274:1882840:1794449443080999636:1794449443080999636"
+              },
+              "type": "text"
+            }
+          ],
+          "isError": false,
+          "structuredContent": null
+        }
+      }
+    },
+    {
+      "label": "incentive_ai395_rawpack_fetch_131072",
+      "result": {
+        "offset": 131072,
+        "result": {
+          "content": [
+            {
+              "json": {
+                "chunk_sha256": "1beff9e153a51f226fbfa72da7970f37476fb1d21e8d700e9c1a391280047d30",
+                "data_base64_characters": 87384,
+                "data_base64_omitted_from_transfer_metadata": true,
+                "eof": false,
+                "next_offset": 196608,
+                "offset": 131072,
+                "path": "/home/qq/chain-system-security-20261112-306929/trillionnium/target/chain-system-security-receipts/incentive-bac6b7659bd7-raw-20261112.tar.xz",
+                "size": 1882840,
+                "version": "66306:49727274:1882840:1794449443080999636:1794449443080999636"
+              },
+              "type": "text"
+            }
+          ],
+          "isError": false,
+          "structuredContent": null
+        }
+      }
+    },
+    {
+      "label": "incentive_ai395_rawpack_fetch_196608",
+      "result": {
+        "offset": 196608,
+        "result": {
+          "content": [
+            {
+              "json": {
+                "chunk_sha256": "c05710ea9892c1379fc34b6956e9a156a3062f30f98c1583da4c2d0de8e4e5b7",
+                "data_base64_characters": 87384,
+                "data_base64_omitted_from_transfer_metadata": true,
+                "eof": false,
+                "next_offset": 262144,
+                "offset": 196608,
+                "path": "/home/qq/chain-system-security-20261112-306929/trillionnium/target/chain-system-security-receipts/incentive-bac6b7659bd7-raw-20261112.tar.xz",
+                "size": 1882840,
+                "version": "66306:49727274:1882840:1794449443080999636:1794449443080999636"
+              },
+              "type": "text"
+            }
+          ],
+          "isError": false,
+          "structuredContent": null
+        }
+      }
+    },
+    {
+      "label": "incentive_ai395_rawpack_fetch_262144",
+      "result": {
+        "offset": 262144,
+        "result": {
+          "content": [
+            {
+              "json": {
+                "chunk_sha256": "9b88e828498ba5c176082e04c00067e881761dd8945b68673c57a120b0173ed6",
+                "data_base64_characters": 87384,
+                "data_base64_omitted_from_transfer_metadata": true,
+                "eof": false,
+                "next_offset": 327680,
+                "offset": 262144,
+                "path": "/home/qq/chain-system-security-20261112-306929/trillionnium/target/chain-system-security-receipts/incentive-bac6b7659bd7-raw-20261112.tar.xz",
+                "size": 1882840,
+                "version": "66306:49727274:1882840:1794449443080999636:1794449443080999636"
+              },
+              "type": "text"
+            }
+          ],
+          "isError": false,
+          "structuredContent": null
+        }
+      }
+    },
+    {
+      "label": "incentive_ai395_rawpack_fetch_327680",
+      "result": {
+        "offset": 327680,
+        "result": {
+          "content": [
+            {
+              "json": {
+                "chunk_sha256": "bdfb2979a68ef3fc5d18dce3dc28d392cc01d657f4f7a4a9e3f315dfbc337650",
+                "data_base64_characters": 87384,
+                "data_base64_omitted_from_transfer_metadata": true,
+                "eof": false,
+                "next_offset": 393216,
+                "offset": 327680,
+                "path": "/home/qq/chain-system-security-20261112-306929/trillionnium/target/chain-system-security-receipts/incentive-bac6b7659bd7-raw-20261112.tar.xz",
+                "size": 1882840,
+                "version": "66306:49727274:1882840:1794449443080999636:1794449443080999636"
+              },
+              "type": "text"
+            }
+          ],
+          "isError": false,
+          "structuredContent": null
+        }
+      }
+    },
+    {
+      "label": "incentive_ai395_rawpack_fetch_393216",
+      "result": {
+        "offset": 393216,
+        "result": {
+          "content": [
+            {
+              "json": {
+                "chunk_sha256": "f9b5e3e5b2780f03b063f18c7a9e40c46244232469db300364ed89f20843eccb",
+                "data_base64_characters": 87384,
+                "data_base64_omitted_from_transfer_metadata": true,
+                "eof": false,
+                "next_offset": 458752,
+                "offset": 393216,
+                "path": "/home/qq/chain-system-security-20261112-306929/trillionnium/target/chain-system-security-receipts/incentive-bac6b7659bd7-raw-20261112.tar.xz",
+                "size": 1882840,
+                "version": "66306:49727274:1882840:1794449443080999636:1794449443080999636"
+              },
+              "type": "text"
+            }
+          ],
+          "isError": false,
+          "structuredContent": null
+        }
+      }
+    },
+    {
+      "label": "incentive_ai395_rawpack_fetch_458752",
+      "result": {
+        "offset": 458752,
+        "result": {
+          "content": [
+            {
+              "json": {
+                "chunk_sha256": "c37e56c049683dd7833a70865361ec4636585c30631fe5a7f952d2c9c1b128b2",
+                "data_base64_characters": 87384,
+                "data_base64_omitted_from_transfer_metadata": true,
+                "eof": false,
+                "next_offset": 524288,
+                "offset": 458752,
+                "path": "/home/qq/chain-system-security-20261112-306929/trillionnium/target/chain-system-security-receipts/incentive-bac6b7659bd7-raw-20261112.tar.xz",
+                "size": 1882840,
+                "version": "66306:49727274:1882840:1794449443080999636:1794449443080999636"
+              },
+              "type": "text"
+            }
+          ],
+          "isError": false,
+          "structuredContent": null
+        }
+      }
+    },
+    {
+      "label": "incentive_ai395_rawpack_fetch_524288",
+      "result": {
+        "offset": 524288,
+        "result": {
+          "content": [
+            {
+              "json": {
+                "chunk_sha256": "fc0f66bce2e9f2a9ef19b44303d268d79bda0475bf3ef23e2a8efa60f7c9c9ea",
+                "data_base64_characters": 87384,
+                "data_base64_omitted_from_transfer_metadata": true,
+                "eof": false,
+                "next_offset": 589824,
+                "offset": 524288,
+                "path": "/home/qq/chain-system-security-20261112-306929/trillionnium/target/chain-system-security-receipts/incentive-bac6b7659bd7-raw-20261112.tar.xz",
+                "size": 1882840,
+                "version": "66306:49727274:1882840:1794449443080999636:1794449443080999636"
+              },
+              "type": "text"
+            }
+          ],
+          "isError": false,
+          "structuredContent": null
+        }
+      }
+    },
+    {
+      "label": "incentive_ai395_rawpack_fetch_589824",
+      "result": {
+        "offset": 589824,
+        "result": {
+          "content": [
+            {
+              "json": {
+                "chunk_sha256": "ae3c96a2a5a516602220d10e64ec448ded072eed693041493e3a435f6a9a0959",
+                "data_base64_characters": 87384,
+                "data_base64_omitted_from_transfer_metadata": true,
+                "eof": false,
+                "next_offset": 655360,
+                "offset": 589824,
+                "path": "/home/qq/chain-system-security-20261112-306929/trillionnium/target/chain-system-security-receipts/incentive-bac6b7659bd7-raw-20261112.tar.xz",
+                "size": 1882840,
+                "version": "66306:49727274:1882840:1794449443080999636:1794449443080999636"
+              },
+              "type": "text"
+            }
+          ],
+          "isError": false,
+          "structuredContent": null
+        }
+      }
+    },
+    {
+      "label": "incentive_ai395_rawpack_fetch_655360",
+      "result": {
+        "offset": 655360,
+        "result": {
+          "content": [
+            {
+              "json": {
+                "chunk_sha256": "5b6d674ec9b971f04d203568b03ed6457a6d909f0c544658416e9b650120e348",
+                "data_base64_characters": 87384,
+                "data_base64_omitted_from_transfer_metadata": true,
+                "eof": false,
+                "next_offset": 720896,
+                "offset": 655360,
+                "path": "/home/qq/chain-system-security-20261112-306929/trillionnium/target/chain-system-security-receipts/incentive-bac6b7659bd7-raw-20261112.tar.xz",
+                "size": 1882840,
+                "version": "66306:49727274:1882840:1794449443080999636:1794449443080999636"
+              },
+              "type": "text"
+            }
+          ],
+          "isError": false,
+          "structuredContent": null
+        }
+      }
+    },
+    {
+      "label": "incentive_ai395_rawpack_fetch_720896",
+      "result": {
+        "offset": 720896,
+        "result": {
+          "content": [
+            {
+              "json": {
+                "chunk_sha256": "2bfed11681b66f2f15c05b1a6a750f58f9ecb40674ba289cb8d706f13363a910",
+                "data_base64_characters": 87384,
+                "data_base64_omitted_from_transfer_metadata": true,
+                "eof": false,
+                "next_offset": 786432,
+                "offset": 720896,
+                "path": "/home/qq/chain-system-security-20261112-306929/trillionnium/target/chain-system-security-receipts/incentive-bac6b7659bd7-raw-20261112.tar.xz",
+                "size": 1882840,
+                "version": "66306:49727274:1882840:1794449443080999636:1794449443080999636"
+              },
+              "type": "text"
+            }
+          ],
+          "isError": false,
+          "structuredContent": null
+        }
+      }
+    },
+    {
+      "label": "incentive_ai395_rawpack_fetch_786432",
+      "result": {
+        "offset": 786432,
+        "result": {
+          "content": [
+            {
+              "json": {
+                "chunk_sha256": "4033a24511488d9f2b4bd338810c053f2cf9638675a8e8f37c5cbe5ade381a19",
+                "data_base64_characters": 87384,
+                "data_base64_omitted_from_transfer_metadata": true,
+                "eof": false,
+                "next_offset": 851968,
+                "offset": 786432,
+                "path": "/home/qq/chain-system-security-20261112-306929/trillionnium/target/chain-system-security-receipts/incentive-bac6b7659bd7-raw-20261112.tar.xz",
+                "size": 1882840,
+                "version": "66306:49727274:1882840:1794449443080999636:1794449443080999636"
+              },
+              "type": "text"
+            }
+          ],
+          "isError": false,
+          "structuredContent": null
+        }
+      }
+    },
+    {
+      "label": "incentive_ai395_rawpack_fetch_851968",
+      "result": {
+        "offset": 851968,
+        "result": {
+          "content": [
+            {
+              "json": {
+                "chunk_sha256": "cdadc30715d016cb194be86a1b703465d55718eb9122af5bc0e922a6e24344cf",
+                "data_base64_characters": 87384,
+                "data_base64_omitted_from_transfer_metadata": true,
+                "eof": false,
+                "next_offset": 917504,
+                "offset": 851968,
+                "path": "/home/qq/chain-system-security-20261112-306929/trillionnium/target/chain-system-security-receipts/incentive-bac6b7659bd7-raw-20261112.tar.xz",
+                "size": 1882840,
+                "version": "66306:49727274:1882840:1794449443080999636:1794449443080999636"
+              },
+              "type": "text"
+            }
+          ],
+          "isError": false,
+          "structuredContent": null
+        }
+      }
+    },
+    {
+      "label": "incentive_ai395_rawpack_fetch_917504",
+      "result": {
+        "offset": 917504,
+        "result": {
+          "content": [
+            {
+              "json": {
+                "chunk_sha256": "4245b9d98c42991800b834ac655378cb9843361031abe27da2f969fa4c9d5e5b",
+                "data_base64_characters": 87384,
+                "data_base64_omitted_from_transfer_metadata": true,
+                "eof": false,
+                "next_offset": 983040,
+                "offset": 917504,
+                "path": "/home/qq/chain-system-security-20261112-306929/trillionnium/target/chain-system-security-receipts/incentive-bac6b7659bd7-raw-20261112.tar.xz",
+                "size": 1882840,
+                "version": "66306:49727274:1882840:1794449443080999636:1794449443080999636"
+              },
+              "type": "text"
+            }
+          ],
+          "isError": false,
+          "structuredContent": null
+        }
+      }
+    },
+    {
+      "label": "incentive_ai395_rawpack_fetch_983040",
+      "result": {
+        "offset": 983040,
+        "result": {
+          "content": [
+            {
+              "json": {
+                "chunk_sha256": "e9036ef91741520e928e72ac07f41edc3297a0a91ef1931569647913edb4fb44",
+                "data_base64_characters": 87384,
+                "data_base64_omitted_from_transfer_metadata": true,
+                "eof": false,
+                "next_offset": 1048576,
+                "offset": 983040,
+                "path": "/home/qq/chain-system-security-20261112-306929/trillionnium/target/chain-system-security-receipts/incentive-bac6b7659bd7-raw-20261112.tar.xz",
+                "size": 1882840,
+                "version": "66306:49727274:1882840:1794449443080999636:1794449443080999636"
+              },
+              "type": "text"
+            }
+          ],
+          "isError": false,
+          "structuredContent": null
+        }
+      }
+    },
+    {
+      "label": "incentive_ai395_rawpack_fetch_1048576",
+      "result": {
+        "offset": 1048576,
+        "result": {
+          "content": [
+            {
+              "json": {
+                "chunk_sha256": "cc970001db923e579b6f626d63bc344ab931e79f48e885824291cab4e42d79e1",
+                "data_base64_characters": 87384,
+                "data_base64_omitted_from_transfer_metadata": true,
+                "eof": false,
+                "next_offset": 1114112,
+                "offset": 1048576,
+                "path": "/home/qq/chain-system-security-20261112-306929/trillionnium/target/chain-system-security-receipts/incentive-bac6b7659bd7-raw-20261112.tar.xz",
+                "size": 1882840,
+                "version": "66306:49727274:1882840:1794449443080999636:1794449443080999636"
+              },
+              "type": "text"
+            }
+          ],
+          "isError": false,
+          "structuredContent": null
+        }
+      }
+    },
+    {
+      "label": "incentive_ai395_rawpack_fetch_1114112",
+      "result": {
+        "offset": 1114112,
+        "result": {
+          "content": [
+            {
+              "json": {
+                "chunk_sha256": "a1da12af8ecb2c363b6695687bb29677ccc1be1e1e21e35646ef72080f11f2a0",
+                "data_base64_characters": 87384,
+                "data_base64_omitted_from_transfer_metadata": true,
+                "eof": false,
+                "next_offset": 1179648,
+                "offset": 1114112,
+                "path": "/home/qq/chain-system-security-20261112-306929/trillionnium/target/chain-system-security-receipts/incentive-bac6b7659bd7-raw-20261112.tar.xz",
+                "size": 1882840,
+                "version": "66306:49727274:1882840:1794449443080999636:1794449443080999636"
+              },
+              "type": "text"
+            }
+          ],
+          "isError": false,
+          "structuredContent": null
+        }
+      }
+    },
+    {
+      "label": "incentive_ai395_rawpack_fetch_1179648",
+      "result": {
+        "offset": 1179648,
+        "result": {
+          "content": [
+            {
+              "json": {
+                "chunk_sha256": "b244b55234420694be85285c49e325294f44444ec938c31bf9337b29d2b80c15",
+                "data_base64_characters": 87384,
+                "data_base64_omitted_from_transfer_metadata": true,
+                "eof": false,
+                "next_offset": 1245184,
+                "offset": 1179648,
+                "path": "/home/qq/chain-system-security-20261112-306929/trillionnium/target/chain-system-security-receipts/incentive-bac6b7659bd7-raw-20261112.tar.xz",
+                "size": 1882840,
+                "version": "66306:49727274:1882840:1794449443080999636:1794449443080999636"
+              },
+              "type": "text"
+            }
+          ],
+          "isError": false,
+          "structuredContent": null
+        }
+      }
+    },
+    {
+      "label": "incentive_ai395_rawpack_fetch_1245184",
+      "result": {
+        "offset": 1245184,
+        "result": {
+          "content": [
+            {
+              "json": {
+                "chunk_sha256": "54e41c614a61df70995c64795131577db78182289f5e8759acc6763e12ae2294",
+                "data_base64_characters": 87384,
+                "data_base64_omitted_from_transfer_metadata": true,
+                "eof": false,
+                "next_offset": 1310720,
+                "offset": 1245184,
+                "path": "/home/qq/chain-system-security-20261112-306929/trillionnium/target/chain-system-security-receipts/incentive-bac6b7659bd7-raw-20261112.tar.xz",
+                "size": 1882840,
+                "version": "66306:49727274:1882840:1794449443080999636:1794449443080999636"
+              },
+              "type": "text"
+            }
+          ],
+          "isError": false,
+          "structuredContent": null
+        }
+      }
+    },
+    {
+      "label": "incentive_ai395_rawpack_fetch_1310720",
+      "result": {
+        "offset": 1310720,
+        "result": {
+          "content": [
+            {
+              "text": "tool call error: tool call failed for `codex_apps/h.binary_read`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out",
+              "type": "text"
+            }
+          ],
+          "isError": true
+        }
+      }
+    },
+    {
+      "label": "incentive_ai395_rawpack_retry_1310720",
+      "result": {
+        "offset": 1310720,
+        "result": {
+          "content": [
+            {
+              "text": "tool call error: tool call failed for `codex_apps/h.binary_read`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out",
+              "type": "text"
+            }
+          ],
+          "isError": true
+        }
+      }
+    },
+    {
+      "label": "incentive_ai395_rawpack_single_retry_1310720",
+      "result": {
+        "content": [
+          {
+            "json": {
+              "chunk_sha256": "81fa258ec8b5c9ab4288ff95a2d2bb4641f8ff0db0bd1be5070a38e48039347f",
+              "data_base64_characters": 87384,
+              "data_base64_omitted_from_transfer_metadata": true,
+              "eof": false,
+              "next_offset": 1376256,
+              "offset": 1310720,
+              "path": "/home/qq/chain-system-security-20261112-306929/trillionnium/target/chain-system-security-receipts/incentive-bac6b7659bd7-raw-20261112.tar.xz",
+              "size": 1882840,
+              "version": "66306:49727274:1882840:1794449443080999636:1794449443080999636"
+            },
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    {
+      "label": "incentive_ai395_rawpack_fetch_1376256",
+      "result": {
+        "offset": 1376256,
+        "result": {
+          "content": [
+            {
+              "json": {
+                "chunk_sha256": "4f7e38b555fabdf133207e53f1f59bc1ba45eb7735e8f9acbfc5a5bbfc88a225",
+                "data_base64_characters": 87384,
+                "data_base64_omitted_from_transfer_metadata": true,
+                "eof": false,
+                "next_offset": 1441792,
+                "offset": 1376256,
+                "path": "/home/qq/chain-system-security-20261112-306929/trillionnium/target/chain-system-security-receipts/incentive-bac6b7659bd7-raw-20261112.tar.xz",
+                "size": 1882840,
+                "version": "66306:49727274:1882840:1794449443080999636:1794449443080999636"
+              },
+              "type": "text"
+            }
+          ],
+          "isError": false,
+          "structuredContent": null
+        }
+      }
+    },
+    {
+      "label": "incentive_ai395_rawpack_fetch_1441792",
+      "result": {
+        "offset": 1441792,
+        "result": {
+          "content": [
+            {
+              "text": "tool call error: tool call failed for `codex_apps/h.binary_read`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out",
+              "type": "text"
+            }
+          ],
+          "isError": true
+        }
+      }
+    },
+    {
+      "label": "incentive_ai395_rawpack_retry_1441792",
+      "result": {
+        "offset": 1441792,
+        "result": {
+          "content": [
+            {
+              "text": "tool call error: tool call failed for `codex_apps/h.binary_read`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out",
+              "type": "text"
+            }
+          ],
+          "isError": true
+        }
+      }
+    },
+    {
+      "label": "incentive_ai395_rawpack_single_retry_1441792",
+      "result": {
+        "content": [
+          {
+            "json": {
+              "chunk_sha256": "8d4c714ee237c519964c9b82d4cdf7b2702a92d3dcfaf87712b6f503fd867628",
+              "data_base64_characters": 87384,
+              "data_base64_omitted_from_transfer_metadata": true,
+              "eof": false,
+              "next_offset": 1507328,
+              "offset": 1441792,
+              "path": "/home/qq/chain-system-security-20261112-306929/trillionnium/target/chain-system-security-receipts/incentive-bac6b7659bd7-raw-20261112.tar.xz",
+              "size": 1882840,
+              "version": "66306:49727274:1882840:1794449443080999636:1794449443080999636"
+            },
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    {
+      "label": "incentive_ai395_rawpack_fetch_1507328",
+      "result": {
+        "offset": 1507328,
+        "result": {
+          "content": [
+            {
+              "text": "tool call error: tool call failed for `codex_apps/h.binary_read`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out",
+              "type": "text"
+            }
+          ],
+          "isError": true
+        }
+      }
+    },
+    {
+      "label": "incentive_ai395_rawpack_retry_1507328",
+      "result": {
+        "offset": 1507328,
+        "result": {
+          "content": [
+            {
+              "text": "tool call error: tool call failed for `codex_apps/h.binary_read`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out",
+              "type": "text"
+            }
+          ],
+          "isError": true
+        }
+      }
+    },
+    {
+      "label": "incentive_ai395_rawpack_single_retry_1507328",
+      "result": {
+        "content": [
+          {
+            "json": {
+              "chunk_sha256": "7c5eec9de742ec7e102cb4c419095f0ff7bb9063fa917000e0cd74a7ff086e1b",
+              "data_base64_characters": 87384,
+              "data_base64_omitted_from_transfer_metadata": true,
+              "eof": false,
+              "next_offset": 1572864,
+              "offset": 1507328,
+              "path": "/home/qq/chain-system-security-20261112-306929/trillionnium/target/chain-system-security-receipts/incentive-bac6b7659bd7-raw-20261112.tar.xz",
+              "size": 1882840,
+              "version": "66306:49727274:1882840:1794449443080999636:1794449443080999636"
+            },
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    {
+      "label": "incentive_ai395_rawpack_fetch_1572864",
+      "result": {
+        "offset": 1572864,
+        "result": {
+          "content": [
+            {
+              "json": {
+                "chunk_sha256": "9148b4962e4fab5cb94211764692add8aaef01d67ce939564d67735db68edf45",
+                "data_base64_characters": 87384,
+                "data_base64_omitted_from_transfer_metadata": true,
+                "eof": false,
+                "next_offset": 1638400,
+                "offset": 1572864,
+                "path": "/home/qq/chain-system-security-20261112-306929/trillionnium/target/chain-system-security-receipts/incentive-bac6b7659bd7-raw-20261112.tar.xz",
+                "size": 1882840,
+                "version": "66306:49727274:1882840:1794449443080999636:1794449443080999636"
+              },
+              "type": "text"
+            }
+          ],
+          "isError": false,
+          "structuredContent": null
+        }
+      }
+    },
+    {
+      "label": "incentive_ai395_rawpack_fetch_1638400",
+      "result": {
+        "offset": 1638400,
+        "result": {
+          "content": [
+            {
+              "json": {
+                "chunk_sha256": "1d1a3915aa2eaad1c375459658daf347cf5ed1d428fdb239fc31e52ebef66f45",
+                "data_base64_characters": 87384,
+                "data_base64_omitted_from_transfer_metadata": true,
+                "eof": false,
+                "next_offset": 1703936,
+                "offset": 1638400,
+                "path": "/home/qq/chain-system-security-20261112-306929/trillionnium/target/chain-system-security-receipts/incentive-bac6b7659bd7-raw-20261112.tar.xz",
+                "size": 1882840,
+                "version": "66306:49727274:1882840:1794449443080999636:1794449443080999636"
+              },
+              "type": "text"
+            }
+          ],
+          "isError": false,
+          "structuredContent": null
+        }
+      }
+    },
+    {
+      "label": "incentive_ai395_rawpack_fetch_1703936",
+      "result": {
+        "offset": 1703936,
+        "result": {
+          "content": [
+            {
+              "json": {
+                "chunk_sha256": "ab1ec30ecd928c349c711afa89fa7e7d06ef786ed3a7ab6b3d57bc3fc2065b47",
+                "data_base64_characters": 87384,
+                "data_base64_omitted_from_transfer_metadata": true,
+                "eof": false,
+                "next_offset": 1769472,
+                "offset": 1703936,
+                "path": "/home/qq/chain-system-security-20261112-306929/trillionnium/target/chain-system-security-receipts/incentive-bac6b7659bd7-raw-20261112.tar.xz",
+                "size": 1882840,
+                "version": "66306:49727274:1882840:1794449443080999636:1794449443080999636"
+              },
+              "type": "text"
+            }
+          ],
+          "isError": false,
+          "structuredContent": null
+        }
+      }
+    },
+    {
+      "label": "incentive_ai395_rawpack_fetch_1769472",
+      "result": {
+        "offset": 1769472,
+        "result": {
+          "content": [
+            {
+              "json": {
+                "chunk_sha256": "3ca383113d43f909cdd9127471c684ca72d394111ffcb6d3c0c8acad9f1ff509",
+                "data_base64_characters": 87384,
+                "data_base64_omitted_from_transfer_metadata": true,
+                "eof": false,
+                "next_offset": 1835008,
+                "offset": 1769472,
+                "path": "/home/qq/chain-system-security-20261112-306929/trillionnium/target/chain-system-security-receipts/incentive-bac6b7659bd7-raw-20261112.tar.xz",
+                "size": 1882840,
+                "version": "66306:49727274:1882840:1794449443080999636:1794449443080999636"
+              },
+              "type": "text"
+            }
+          ],
+          "isError": false,
+          "structuredContent": null
+        }
+      }
+    },
+    {
+      "label": "incentive_ai395_rawpack_fetch_1835008",
+      "result": {
+        "offset": 1835008,
+        "result": {
+          "content": [
+            {
+              "text": "tool call error: tool call failed for `codex_apps/h.binary_read`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out",
+              "type": "text"
+            }
+          ],
+          "isError": true
+        }
+      }
+    },
+    {
+      "label": "incentive_ai395_rawpack_retry_1835008",
+      "result": {
+        "offset": 1835008,
+        "result": {
+          "content": [
+            {
+              "text": "tool call error: tool call failed for `codex_apps/h.binary_read`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out",
+              "type": "text"
+            }
+          ],
+          "isError": true
+        }
+      }
+    },
+    {
+      "label": "incentive_ai395_rawpack_single_retry_1835008",
+      "result": {
+        "content": [
+          {
+            "json": {
+              "chunk_sha256": "2b84f198b3527d170b079da3a5d6e1c3cfc86b539daceba345041d741d5ac01e",
+              "data_base64_characters": 63776,
+              "data_base64_omitted_from_transfer_metadata": true,
+              "eof": true,
+              "next_offset": 1882840,
+              "offset": 1835008,
+              "path": "/home/qq/chain-system-security-20261112-306929/trillionnium/target/chain-system-security-receipts/incentive-bac6b7659bd7-raw-20261112.tar.xz",
+              "size": 1882840,
+              "version": "66306:49727274:1882840:1794449443080999636:1794449443080999636"
+            },
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    }
+  ],
+  "pinned_remote_version": "66306:49727274:1882840:1794449443080999636:1794449443080999636",
+  "schema": "chain-incentive-version-pinned-transfer-observations-v1",
+  "scope": "serialized tool-return metadata; original archive bytes verified independently, not raw HTTP transport",
+  "source_commit": "bac6b7659bd7e2d633e25c2da0add60f6a10c7fb"
+}

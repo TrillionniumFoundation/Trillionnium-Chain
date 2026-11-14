@@ -1,0 +1,37 @@
+{
+  "all_33_original_tests_raw_unchanged": true,
+  "base_head": "7d8d4c59fcd01480a12e1c64835b202079091800",
+  "changed_current_metadata_paths": [
+    "config/pon/hash-use-contract-v1.json",
+    "scripts/ci/hash_use_contract.py",
+    "docs/security/HASH_USE_CONTRACT_V1.md"
+  ],
+  "changed_source_pins": [
+    "config/pon/pq-proof-profile-binding-v1.json",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/store.rs",
+    "trillionnium/crates/trnm-pon-node/src/lib.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell.rs",
+    "trillionnium/crates/trnm-pon-node/src/store.rs"
+  ],
+  "corpus_and_soleplan_not_modified": true,
+  "new_source_map_sha256": "15a8d91e0b2c50908d17c6bb9743e8ef5a44927814e59354874d77d9654f9ee7",
+  "not_committed": true,
+  "original_failed_linux_bytes": 400321,
+  "original_failed_linux_files": 39,
+  "reader_ast_only_one_literal_change": true,
+  "review_base_unchanged": true,
+  "schema": "hash-use-minimal-current-map-edit-proof-v1",
+  "semantics_sha256_unchanged": true,
+  "source_deltas_combined": {
+    "bytes": 21217,
+    "path": "/private/tmp/chain-hash-use-current-binding-evidence-20261114/apply-v1/six-reviewed-source-deltas.patch",
+    "sha256": "db21f73ea5b3a89cb32af7321fbc2720c4b289480a412a3101e71afe689664fd"
+  },
+  "test_file_sha256": "6f70a7335ae33f0f5adcaf14fcc6fb783da16c59e945eab2fd637ed25cee881f",
+  "working_patch": {
+    "bytes": 7739,
+    "path": "/private/tmp/chain-hash-use-current-binding-evidence-20261114/apply-v1/working.stdout",
+    "sha256": "f206dacc7f3d822c52c1090701c81cec63733dee1b43b69b62a60ad357580dd2"
+  }
+}

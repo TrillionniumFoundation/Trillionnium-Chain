@@ -1,0 +1,37 @@
+{
+  "schema": "TRNM-W1-PACKAGING-PREFLIGHT-RECOVERY1",
+  "source": "tool return records, not native proof measurements",
+  "failed_before_first_packaging_commit": {
+    "branch": "evidence/w1-full-succinct-20261028-r7",
+    "command": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "exit_code": 2,
+    "stdout": "project boundary failed: not an allowed development branch\n",
+    "cause": "branch prefix is outside the declared allowed development branch patterns",
+    "following_local_commit_was_not_short_circuited": true,
+    "claim_passed": false
+  },
+  "correction": {
+    "branch": "fix/chain-w1-full-succinct-20261028-r7",
+    "action": "rename the local packaging branch to the existing allowed development convention; no policy file or guard was changed",
+    "preflight_tool_result": {
+      "chunk_id": "be530d",
+      "wall_time_seconds": 0.000038147,
+      "exit_code": 0,
+      "original_token_count": 43,
+      "output": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 25, \"branch\": \"fix/chain-w1-full-succinct-20261028-r7\", \"remote_policy_mutated\": false}\n"
+    },
+    "head": "ce687f2be31277e14d59dbf18944a0db1b0c59e6",
+    "tree": "1483627860936772bc65dfce29b4e2dc2a7d7d57",
+    "working_tree_clean": true
+  },
+  "frozen_runtime_source_affected": false,
+  "runtime_sources": {
+    "prover": "64be7c4ad51d432e7736ad135476262e23e968f5",
+    "hardened_verifier": "dd4fb0a65a734bdccac23a061dc0d6c72b69188f"
+  },
+  "remote_ref_changed_by_this_packaging": false,
+  "complete_work_package_accepted": false
+}

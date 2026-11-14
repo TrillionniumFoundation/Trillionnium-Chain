@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/workspace/scratch/d4d2da8133e2/chain-pq-closure/scripts/ci/test_w1_qrom_workflow_gate.py", line 178, in execute
+    exec(compile(self.codes[step], str(WORKFLOW) + ':' + step, 'exec'),
+  File "/workspace/scratch/d4d2da8133e2/chain-pq-closure/.github/workflows/pon-w1-qrom-implementation.yml:report_scopes", line 150, in <module>
+  File "/workspace/scratch/d4d2da8133e2/chain-pq-closure/.github/workflows/pon-w1-qrom-implementation.yml:report_scopes", line 47, in exact_observation
+  File "/workspace/scratch/d4d2da8133e2/chain-pq-closure/.github/workflows/pon-w1-qrom-implementation.yml:report_scopes", line 19, in require
+ValueError: current-source mapping: differs from the actual reviewed-source observation

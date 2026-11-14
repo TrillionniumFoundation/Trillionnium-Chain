@@ -1,0 +1,30 @@
+{
+  "changed_da_library_input_files": [],
+  "changed_workspace_source_files": [],
+  "command": [
+    "/workspace/scratch/a6fe7c2e72c7/pq-validation/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "--jobs",
+    "2",
+    "-p",
+    "trnm-data-availability",
+    "--lib",
+    "cell::network::budget_tests::fetch_persistence_and_corrupt_cache_repair_keep_original_deadline_under_writer_lock",
+    "--",
+    "--test-threads=1",
+    "--exact"
+  ],
+  "completed_at_utc": "2026-11-09T14:20:03.082676+00:00",
+  "da_library_inputs_unchanged": true,
+  "elapsed_seconds": 1.1977301759998227,
+  "exit_code": 0,
+  "log_sha256": "3e1bea49804dc2d045931001bb40d27cefa7a66f76264caa0787863c05c12f89",
+  "source_end_manifest_sha256": "b22d8b1754b5b5b48010fc21d2fae3ac536ee85002f080b46ed878ed177c408e",
+  "source_start_manifest_sha256": "b22d8b1754b5b5b48010fc21d2fae3ac536ee85002f080b46ed878ed177c408e",
+  "started_at_utc": "2026-11-09T14:20:01.402639+00:00",
+  "test_result_lines": [
+    "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 760 filtered out; finished in 0.80s"
+  ]
+}

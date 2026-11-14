@@ -1,0 +1,488 @@
+{
+  "schema": "trnm-heplcp03-interop-local-validation-v1",
+  "scope": "selected-local-source-controls-and-original-native-codec-fixture-only",
+  "chain_base_commit": "df927b6ffaecff293b9e9428e3ba516f47cd101a",
+  "imported_next_use_commit": "d9ef94f34339c8f76591fa54c14724c54805af36",
+  "hepta_codec_source_commit": "f97f3c90ac1ac3d5171fd9f25b3e34431f44a367",
+  "tested_source_kind": "uncommitted-local-selected-file-snapshot",
+  "source_before": {
+    ".github/workflows/cell-learning-business-readback.yml": {
+      "sha256": "2d949cb562ce3358a24a0cfda90602a703eed6c9972b2413efe42a965ab924d8",
+      "bytes": 3424
+    },
+    ".github/workflows/chain-hepta-closure-candidate.yml": {
+      "sha256": "1ca8d5f74e04a85260ddca7ad717237c926261ab057d5f684cf0682da02c4c29",
+      "bytes": 3544
+    },
+    ".github/workflows/release-finality-reference.yml": {
+      "sha256": "5a6557916152305febe25d83d3927d9e7a5920ecc6d2213cfc85577505794b0f",
+      "bytes": 9375
+    },
+    "docs/development/CELL_LEARNING_BUSINESS_READBACK_V1.md": {
+      "sha256": "b52af5624e8ec2f3f5fd2d04b54f63a4a3a9d937929800ac36b0a22759a74608",
+      "bytes": 11276
+    },
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": {
+      "sha256": "671f701fa94a75d5f2fd6fcd7be26ce6d8cc5453a188c9f8105fa7ffbeda1f9c",
+      "bytes": 859169
+    },
+    "docs/development/specs/pon/HEPLCP03_TRAINER_NO_UPDATE_INTEROP_V1.md": {
+      "sha256": "e591cb5c8392eb843265cb35eee9f3f7f2cc5b8cb6ce53f00bd87f8fa936e433",
+      "bytes": 6038
+    },
+    "scripts/cell_adoption_readback.py": {
+      "sha256": "883226d303ee23613b7580e3549653db160175c473c51a49b3e49409426bdf17",
+      "bytes": 30156
+    },
+    "scripts/cell_learning_business_economics.py": {
+      "sha256": "b7cb87ce511bc5d87a379c7b2eae4036e81bedd0222f18d252869ebb900cb507",
+      "bytes": 17691
+    },
+    "scripts/cell_learning_business_join.py": {
+      "sha256": "81ab688b91012c1996cf54d0bba1517bbc25c470b4792e1b3222f1b24751fb49",
+      "bytes": 20877
+    },
+    "scripts/cell_learning_completion_join.py": {
+      "sha256": "8343d5bada4f1a4188201f7e9a252919449f96644ca9ab4515c8e2424c542f09",
+      "bytes": 7573
+    },
+    "scripts/cell_learning_iteration_join.py": {
+      "sha256": "dae48842510ff454b7a8bcdef71576ec7e6d0d6d22e31cb819ea300fa608e230",
+      "bytes": 26802
+    },
+    "scripts/cell_learning_scope_join.py": {
+      "sha256": "aae4af0b6e4f0e1f776055251f74758317254a575496e3267a589c3078657cca",
+      "bytes": 8626
+    },
+    "scripts/ci/check_ci_contract.py": {
+      "sha256": "7f262c4ca42304eac26ab910bd8674c3ab33c82841fc6689d6d13cf75d7e5d37",
+      "bytes": 155690
+    },
+    "scripts/ci/ci_job.sh": {
+      "sha256": "ef970ddc8c6b05195b5e0d984d30a047e75f991ef890062913f6ec47c0a46532",
+      "bytes": 40276
+    },
+    "scripts/ci/run_cell_learning_business_readback.py": {
+      "sha256": "1bbfc95dab603bd4af75b0aed1cee65b3437d244bfc48a80dcadeee4e46e42cf",
+      "bytes": 11875
+    },
+    "scripts/ci/test_ci_contract.py": {
+      "sha256": "e0525c100b11a668a85cd07c45888112618a8b8871a0f3149156424e7cea1f89",
+      "bytes": 187824
+    },
+    "scripts/test_cell_learning_business_economics.py": {
+      "sha256": "a962805044ba372384d5e6856fd54ee2fb53cf430f60ce374b62d8264b40965c",
+      "bytes": 19961
+    },
+    "scripts/test_cell_learning_business_join.py": {
+      "sha256": "9968c970da6b1790140a2718c3feaf33d3898181ec834a836dba71833a72c6b6",
+      "bytes": 24385
+    },
+    "scripts/test_cell_learning_iteration_join.py": {
+      "sha256": "64980f42a4e4b4115097c653cb66f42f7e3010d6f7eb9da5140bd0a6d0c36666",
+      "bytes": 29404
+    },
+    "scripts/test_cell_learning_training_no_update_join.py": {
+      "sha256": "9cf6ec2f1e707e9eafe8ccb603d6590678d8ea420eab62c19b9541fb76d1db1a",
+      "bytes": 29941
+    },
+    "evidence/heplcp03-interop-20261111/native-fixture.json": {
+      "sha256": "492d1f9d27a9e8561aecc4cac9c55c8052ffb2d64dc86b2eff24c429826ff2f0",
+      "bytes": 24538
+    },
+    "evidence/heplcp03-interop-20261111/source-inputs.json": {
+      "sha256": "e27eb28bd83510c60e245a0b7c69d35f7118768d3a014f23558d7386e39a444d",
+      "bytes": 21724
+    },
+    "evidence/heplcp03-interop-20261111/exporter.rs": {
+      "sha256": "31bfe850e1d81f709803216751af5d1b2777551af3440af5c14ab9ad79981a6d",
+      "bytes": 6914
+    },
+    "evidence/heplcp03-interop-20261111/isolated-workspace.toml": {
+      "sha256": "55c81c4442579fde9b0ec24df5bd6ec3207bb9396335e35379b1d3b5a63f8967",
+      "bytes": 326
+    },
+    "evidence/heplcp03-interop-20261111/exporter-package.toml": {
+      "sha256": "0351e303c67b2d56025e24c43bb6481acd915312fae8bba2f4b098adb8837e27",
+      "bytes": 232
+    },
+    "evidence/heplcp03-interop-20261111/isolated-Cargo.lock": {
+      "sha256": "b43f2edd9d9e958d5da66387ff0cd9d9cbf375072d4cade76639d77d3e18d0c6",
+      "bytes": 10141
+    }
+  },
+  "commands": [
+    {
+      "label": "adoption",
+      "argv": [
+        "python3",
+        "scripts/test_cell_adoption_readback.py",
+        "-v"
+      ],
+      "returncode": 0,
+      "expected_tests": 26,
+      "observed_test_counts": [
+        "26"
+      ],
+      "passed": true,
+      "seconds": 0.7878793139998379
+    },
+    {
+      "label": "iteration",
+      "argv": [
+        "python3",
+        "scripts/test_cell_learning_iteration_join.py",
+        "-v"
+      ],
+      "returncode": 0,
+      "expected_tests": 25,
+      "observed_test_counts": [
+        "25"
+      ],
+      "passed": true,
+      "seconds": 1.2980161769999086
+    },
+    {
+      "label": "completion",
+      "argv": [
+        "python3",
+        "scripts/test_cell_learning_completion_join.py",
+        "-v"
+      ],
+      "returncode": 0,
+      "expected_tests": 13,
+      "observed_test_counts": [
+        "13"
+      ],
+      "passed": true,
+      "seconds": 2.8150070359999972
+    },
+    {
+      "label": "scope",
+      "argv": [
+        "python3",
+        "scripts/test_cell_learning_scope_join.py",
+        "-v"
+      ],
+      "returncode": 0,
+      "expected_tests": 11,
+      "observed_test_counts": [
+        "11"
+      ],
+      "passed": true,
+      "seconds": 2.5834275130000606
+    },
+    {
+      "label": "economics",
+      "argv": [
+        "python3",
+        "scripts/test_cell_learning_business_economics.py",
+        "-v"
+      ],
+      "returncode": 0,
+      "expected_tests": 29,
+      "observed_test_counts": [
+        "29"
+      ],
+      "passed": true,
+      "seconds": 0.6180294709999998
+    },
+    {
+      "label": "business",
+      "argv": [
+        "python3",
+        "scripts/test_cell_learning_business_join.py",
+        "-v"
+      ],
+      "returncode": 0,
+      "expected_tests": 24,
+      "observed_test_counts": [
+        "24"
+      ],
+      "passed": true,
+      "seconds": 1.396781418999808
+    },
+    {
+      "label": "trainer-no-update",
+      "argv": [
+        "python3",
+        "scripts/test_cell_learning_training_no_update_join.py",
+        "-v"
+      ],
+      "returncode": 0,
+      "expected_tests": 17,
+      "observed_test_counts": [
+        "17"
+      ],
+      "passed": true,
+      "seconds": 3.31750660900002
+    },
+    {
+      "label": "ci-contract-selected",
+      "argv": [
+        "python3",
+        "scripts/ci/test_ci_contract.py",
+        "MergedQualificationLaneTests",
+        "-v"
+      ],
+      "returncode": 0,
+      "expected_tests": 10,
+      "observed_test_counts": [
+        "10"
+      ],
+      "passed": true,
+      "seconds": 29.833181674999878
+    },
+    {
+      "label": "source-integrity",
+      "argv": [
+        "python3",
+        "scripts/ci/test_ci_source_integrity.py",
+        "-v"
+      ],
+      "returncode": 0,
+      "expected_tests": 43,
+      "observed_test_counts": [
+        "43"
+      ],
+      "passed": true,
+      "seconds": 21.143571814000097
+    }
+  ],
+  "ordinary_task_executed": false,
+  "actual_training_executed": false,
+  "independent_consumer_verified": false,
+  "learning_signatures_verified": false,
+  "hepta_final_use_accepted": false,
+  "settlement_verified": false,
+  "production_activation": false,
+  "full_chain_native_tests_executed": false,
+  "full_repository_validation_passed": false,
+  "full_native_clippy_passed": false,
+  "full_native_formatting_passed": false,
+  "hosted_ci_executed": false,
+  "qualification": "HOLD_NO_GO",
+  "authority": "DENY_ALL",
+  "source_after": {
+    ".github/workflows/cell-learning-business-readback.yml": {
+      "sha256": "2d949cb562ce3358a24a0cfda90602a703eed6c9972b2413efe42a965ab924d8",
+      "bytes": 3424
+    },
+    ".github/workflows/chain-hepta-closure-candidate.yml": {
+      "sha256": "1ca8d5f74e04a85260ddca7ad717237c926261ab057d5f684cf0682da02c4c29",
+      "bytes": 3544
+    },
+    ".github/workflows/release-finality-reference.yml": {
+      "sha256": "5a6557916152305febe25d83d3927d9e7a5920ecc6d2213cfc85577505794b0f",
+      "bytes": 9375
+    },
+    "docs/development/CELL_LEARNING_BUSINESS_READBACK_V1.md": {
+      "sha256": "b52af5624e8ec2f3f5fd2d04b54f63a4a3a9d937929800ac36b0a22759a74608",
+      "bytes": 11276
+    },
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": {
+      "sha256": "671f701fa94a75d5f2fd6fcd7be26ce6d8cc5453a188c9f8105fa7ffbeda1f9c",
+      "bytes": 859169
+    },
+    "docs/development/specs/pon/HEPLCP03_TRAINER_NO_UPDATE_INTEROP_V1.md": {
+      "sha256": "e591cb5c8392eb843265cb35eee9f3f7f2cc5b8cb6ce53f00bd87f8fa936e433",
+      "bytes": 6038
+    },
+    "scripts/cell_adoption_readback.py": {
+      "sha256": "883226d303ee23613b7580e3549653db160175c473c51a49b3e49409426bdf17",
+      "bytes": 30156
+    },
+    "scripts/cell_learning_business_economics.py": {
+      "sha256": "b7cb87ce511bc5d87a379c7b2eae4036e81bedd0222f18d252869ebb900cb507",
+      "bytes": 17691
+    },
+    "scripts/cell_learning_business_join.py": {
+      "sha256": "81ab688b91012c1996cf54d0bba1517bbc25c470b4792e1b3222f1b24751fb49",
+      "bytes": 20877
+    },
+    "scripts/cell_learning_completion_join.py": {
+      "sha256": "8343d5bada4f1a4188201f7e9a252919449f96644ca9ab4515c8e2424c542f09",
+      "bytes": 7573
+    },
+    "scripts/cell_learning_iteration_join.py": {
+      "sha256": "dae48842510ff454b7a8bcdef71576ec7e6d0d6d22e31cb819ea300fa608e230",
+      "bytes": 26802
+    },
+    "scripts/cell_learning_scope_join.py": {
+      "sha256": "aae4af0b6e4f0e1f776055251f74758317254a575496e3267a589c3078657cca",
+      "bytes": 8626
+    },
+    "scripts/ci/check_ci_contract.py": {
+      "sha256": "7f262c4ca42304eac26ab910bd8674c3ab33c82841fc6689d6d13cf75d7e5d37",
+      "bytes": 155690
+    },
+    "scripts/ci/ci_job.sh": {
+      "sha256": "ef970ddc8c6b05195b5e0d984d30a047e75f991ef890062913f6ec47c0a46532",
+      "bytes": 40276
+    },
+    "scripts/ci/run_cell_learning_business_readback.py": {
+      "sha256": "1bbfc95dab603bd4af75b0aed1cee65b3437d244bfc48a80dcadeee4e46e42cf",
+      "bytes": 11875
+    },
+    "scripts/ci/test_ci_contract.py": {
+      "sha256": "e0525c100b11a668a85cd07c45888112618a8b8871a0f3149156424e7cea1f89",
+      "bytes": 187824
+    },
+    "scripts/test_cell_learning_business_economics.py": {
+      "sha256": "a962805044ba372384d5e6856fd54ee2fb53cf430f60ce374b62d8264b40965c",
+      "bytes": 19961
+    },
+    "scripts/test_cell_learning_business_join.py": {
+      "sha256": "9968c970da6b1790140a2718c3feaf33d3898181ec834a836dba71833a72c6b6",
+      "bytes": 24385
+    },
+    "scripts/test_cell_learning_iteration_join.py": {
+      "sha256": "64980f42a4e4b4115097c653cb66f42f7e3010d6f7eb9da5140bd0a6d0c36666",
+      "bytes": 29404
+    },
+    "scripts/test_cell_learning_training_no_update_join.py": {
+      "sha256": "9cf6ec2f1e707e9eafe8ccb603d6590678d8ea420eab62c19b9541fb76d1db1a",
+      "bytes": 29941
+    },
+    "evidence/heplcp03-interop-20261111/native-fixture.json": {
+      "sha256": "492d1f9d27a9e8561aecc4cac9c55c8052ffb2d64dc86b2eff24c429826ff2f0",
+      "bytes": 24538
+    },
+    "evidence/heplcp03-interop-20261111/source-inputs.json": {
+      "sha256": "e27eb28bd83510c60e245a0b7c69d35f7118768d3a014f23558d7386e39a444d",
+      "bytes": 21724
+    },
+    "evidence/heplcp03-interop-20261111/exporter.rs": {
+      "sha256": "31bfe850e1d81f709803216751af5d1b2777551af3440af5c14ab9ad79981a6d",
+      "bytes": 6914
+    },
+    "evidence/heplcp03-interop-20261111/isolated-workspace.toml": {
+      "sha256": "55c81c4442579fde9b0ec24df5bd6ec3207bb9396335e35379b1d3b5a63f8967",
+      "bytes": 326
+    },
+    "evidence/heplcp03-interop-20261111/exporter-package.toml": {
+      "sha256": "0351e303c67b2d56025e24c43bb6481acd915312fae8bba2f4b098adb8837e27",
+      "bytes": 232
+    },
+    "evidence/heplcp03-interop-20261111/isolated-Cargo.lock": {
+      "sha256": "b43f2edd9d9e958d5da66387ff0cd9d9cbf375072d4cade76639d77d3e18d0c6",
+      "bytes": 10141
+    }
+  },
+  "selected_source_bytes_unchanged": true,
+  "python_controls_passed": true,
+  "python_tests_passed": 198,
+  "native_original_controls": {
+    "passed": 2,
+    "failed": 0,
+    "ignored": 0,
+    "filtered": 113,
+    "scope": "original f97 library tests in isolated source-matched workspace"
+  },
+  "additional_checks": [
+    {
+      "label": "preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "label": "native-source-unchanged",
+      "argv": [
+        "git",
+        "diff",
+        "--exit-code",
+        "HEAD",
+        "--",
+        "trillionnium",
+        "config"
+      ],
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "label": "source-inventory",
+      "argv": [
+        "python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "label": "diff-check",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "returncode": 0,
+      "passed": true
+    }
+  ],
+  "cargo_graph_check": {
+    "argv": [
+      "cargo",
+      "metadata",
+      "--locked",
+      "--offline",
+      "--no-deps",
+      "--format-version",
+      "1",
+      "--manifest-path",
+      "trillionnium/Cargo.toml"
+    ],
+    "returncode": 0,
+    "workspace_member_count": 26,
+    "members": [
+      "path+file:///workspace/scratch/b4d6d3702e3a/chain-nextuse-work/trillionnium/crates/trnm-audit-events#0.1.0",
+      "path+file:///workspace/scratch/b4d6d3702e3a/chain-nextuse-work/trillionnium/crates/trnm-governance-guard#0.1.0",
+      "path+file:///workspace/scratch/b4d6d3702e3a/chain-nextuse-work/trillionnium/crates/trnm-escrow-vault#0.1.0",
+      "path+file:///workspace/scratch/b4d6d3702e3a/chain-nextuse-work/trillionnium/crates/trnm-types#0.1.0",
+      "path+file:///workspace/scratch/b4d6d3702e3a/chain-nextuse-work/trillionnium/crates/trnm-executor#0.1.0",
+      "path+file:///workspace/scratch/b4d6d3702e3a/chain-nextuse-work/trillionnium/crates/trnm-bench#0.1.0",
+      "path+file:///workspace/scratch/b4d6d3702e3a/chain-nextuse-work/trillionnium/crates/trnm-mempool#0.1.0",
+      "path+file:///workspace/scratch/b4d6d3702e3a/chain-nextuse-work/trillionnium/crates/trnm-worker-agent#0.1.0",
+      "path+file:///workspace/scratch/b4d6d3702e3a/chain-nextuse-work/trillionnium/crates/trnm-oracle#0.1.0",
+      "path+file:///workspace/scratch/b4d6d3702e3a/chain-nextuse-work/trillionnium/crates/trnm-research-protocol#0.1.0",
+      "path+file:///workspace/scratch/b4d6d3702e3a/chain-nextuse-work/trillionnium/crates/trnm-crypto-primitives#0.1.0",
+      "path+file:///workspace/scratch/b4d6d3702e3a/chain-nextuse-work/trillionnium/crates/trnm-protocol#0.1.0",
+      "path+file:///workspace/scratch/b4d6d3702e3a/chain-nextuse-work/trillionnium/crates/trnm-peer-lease#0.1.0",
+      "path+file:///workspace/scratch/b4d6d3702e3a/chain-nextuse-work/trillionnium/crates/trnm-data-availability#0.1.0",
+      "path+file:///workspace/scratch/b4d6d3702e3a/chain-nextuse-work/trillionnium/crates/trnm-task-kernel#0.1.0",
+      "path+file:///workspace/scratch/b4d6d3702e3a/chain-nextuse-work/trillionnium/crates/trnm-mvcc-fee#0.1.0",
+      "path+file:///workspace/scratch/b4d6d3702e3a/chain-nextuse-work/trillionnium/crates/trnm-verification-profiles#0.1.0",
+      "path+file:///workspace/scratch/b4d6d3702e3a/chain-nextuse-work/trillionnium/crates/trnm-service-settlement#0.1.0",
+      "path+file:///workspace/scratch/b4d6d3702e3a/chain-nextuse-work/trillionnium/crates/trnm-control-plane#0.1.0",
+      "path+file:///workspace/scratch/b4d6d3702e3a/chain-nextuse-work/trillionnium/crates/trnm-state-import#0.1.0",
+      "path+file:///workspace/scratch/b4d6d3702e3a/chain-nextuse-work/trillionnium/crates/trnm-release-bundle#0.1.0",
+      "path+file:///workspace/scratch/b4d6d3702e3a/chain-nextuse-work/trillionnium/crates/trnm-checkpoint-store#0.1.0",
+      "path+file:///workspace/scratch/b4d6d3702e3a/chain-nextuse-work/trillionnium/crates/trnm-checkpoint-types#0.1.0",
+      "path+file:///workspace/scratch/b4d6d3702e3a/chain-nextuse-work/trillionnium/crates/trnm-transport#0.1.0",
+      "path+file:///workspace/scratch/b4d6d3702e3a/chain-nextuse-work/trillionnium/crates/trnm-pon-node#0.1.0",
+      "path+file:///workspace/scratch/b4d6d3702e3a/chain-nextuse-work/trillionnium/crates/trnm-sqlite-io-boundary#0.1.0"
+    ],
+    "cargo_toml_sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+    "cargo_lock_sha256": "759c42c62d7b9a72d93c533039b5bf47f3508efabf1f1ee63f5eee59b9b9e55f",
+    "full_dependency_resolution_performed": false
+  },
+  "new_markdown_local_links": {
+    "passed": true,
+    "links_checked": 13,
+    "scope": [
+      "docs/development/specs/pon/HEPLCP03_TRAINER_NO_UPDATE_INTEROP_V1.md",
+      "evidence/heplcp03-interop-20261111/README.md"
+    ]
+  },
+  "historical_output_byte_comparisons": {
+    "passed": true,
+    "completion_reports": 2,
+    "business_reports": 2,
+    "original_bindings_raw_bytes_used": true
+  },
+  "source_controlled_delivery_note": "Local controls precede the delivery commit; selected source hashes bind changed bytes. The final Git commit/tree and file manifest are supplied separately to avoid a self-referential evidence hash."
+}

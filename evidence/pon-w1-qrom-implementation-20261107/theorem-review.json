@@ -1,0 +1,128 @@
+{
+  "schema": "TRNM-W1-QROM-THEOREM-REVIEW1",
+  "date": "2026-11-07",
+  "source_base_commit": "cb114b13bf848a77634e40a08b31b30c7c758e7b",
+  "paper": "https://eprint.iacr.org/2025/2166",
+  "authors": [
+    "Alessandro Chiesa",
+    "Zijing Di",
+    "Zihan Hu",
+    "Yuxi Zheng"
+  ],
+  "title": "How to Prove Post-Quantum Security for Succinct Non-Interactive Reductions",
+  "publication_metadata": "EUROCRYPT 2026; IACR lists a major revision",
+  "latest_revision_date_observed": "2026-03-02",
+  "latest_pdf_retrieval": {
+    "url": "https://eprint.iacr.org/2025/2166.pdf",
+    "observed_http_status": 403,
+    "full_text_reviewed": false
+  },
+  "indexed_manuscript": {
+    "url": "https://files01.core.ac.uk/download/690750245.pdf",
+    "date": "2026-01-01",
+    "scope": "Selected formal theorem statements and interface definitions read from the indexed author manuscript; not an audit of every proof.",
+    "latest_revision_equivalence_established": false
+  },
+  "statements": [
+    {
+      "id": "Theorem 6.10",
+      "page": 46,
+      "component_expression_implemented": true,
+      "implementation_hypotheses_instantiated": false
+    },
+    {
+      "id": "Theorem 8.3",
+      "page": 53,
+      "four_named_component_expressions_implemented": true,
+      "actual_poseidon2_merkle_construction_instantiated": false
+    },
+    {
+      "id": "Theorem 10.6",
+      "pages": [
+        72,
+        73
+      ],
+      "sequential_composition_read": true,
+      "full_composed_bound_implemented": false,
+      "compatible_relations_and_same_emulated_oracle_proved": false
+    },
+    {
+      "id": "Theorem 11.3",
+      "pages": [
+        78,
+        79
+      ],
+      "full_compiler_bound_read": true,
+      "mass_maximization_and_query_overheads_implemented": false,
+      "full_bound_instantiated": false
+    }
+  ],
+  "notation_reconciliation": {
+    "status": "UNRESOLVED",
+    "scope": "January indexed manuscript only; not a claim of error in the latest revision.",
+    "observation": "Definition 7.3 and Theorem 8.3 list w_MultiExtract and w_VC in different positional orders for the online term. Theorem 11.3 therefore requires authoritative version/notation reconciliation before mechanical positional substitution.",
+    "current_policy": "Use named w_VC in the isolated Theorem 8.3 expression and leave Theorem 11.3 output null."
+  },
+  "reference_correction": {
+    "https://eprint.iacr.org/2023/1071": {
+      "title": "Fiat-Shamir Security of FRI and Related SNARKs",
+      "role": "RBR and Fiat-Shamir background, not the later RS counterexamples"
+    },
+    "https://eprint.iacr.org/2025/2046": {
+      "title": "On Reed-Solomon Proximity Gaps Conjectures",
+      "role": "Counterexamples to the original specified up-to-capacity conjectures"
+    },
+    "https://cic.iacr.org/p/3/3/44": {
+      "title": "Small-field hash-based SNARGs are less sound than conjectured",
+      "role": "Small-base-field/list-size and toy-protocol obstruction; not a complete W1 forgery"
+    }
+  },
+  "qualification": {
+    "qrom_theorem_instantiated": false,
+    "post_quantum_soundness_qualified": false,
+    "complete_w1_soundness_qualified": false,
+    "quantum_work_qualified": false,
+    "pq_signature_qualification_inferred": false,
+    "production_qualified": false,
+    "consensus_admission": false,
+    "security_bits_quantum": null
+  },
+  "formal_publication": {
+    "url": "https://link.springer.com/chapter/10.1007/978-3-032-25336-1_14",
+    "doi": "10.1007/978-3-032-25336-1_14",
+    "first_online": "2026-05-09",
+    "lncs_volume": 16547,
+    "pages": [
+      389,
+      415
+    ],
+    "retrieved": "Official publication metadata, abstract and notes only; subscription preview",
+    "full_text_reviewed": false
+  },
+  "additional_latest_fulltext_attempts": [
+    {
+      "url": "https://link.springer.com/content/pdf/10.1007/978-3-032-25336-1_14.pdf",
+      "result": "not accessible"
+    },
+    {
+      "url": "https://infoscience.epfl.ch/entities/publication/029a1aad-a83a-4e7a-bbf7-03819bb7dd4b",
+      "result": "HTTP 429"
+    },
+    {
+      "url": "https://ic-people.epfl.ch/~achiesa/",
+      "result": "paper link returns to ePrint; no separate fulltext located"
+    },
+    {
+      "url": "https://dizidizidi.github.io/index.html",
+      "result": "paper link returns to ePrint"
+    },
+    {
+      "url": "https://zihanhu.cn/",
+      "result": "paper link returns to ePrint; slides are not the authoritative manuscript"
+    },
+    {
+      "url": "https://eurocrypt.iacr.org/2026/program.php",
+      "result": "official proceedings links, no separate author fulltext located"
+    }
+  ]
+}

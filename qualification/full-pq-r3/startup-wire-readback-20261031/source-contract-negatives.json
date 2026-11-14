@@ -1,0 +1,8 @@
+{
+  "command": [
+    "python3",
+    "scripts/ci/test_pq_research_integration.py"
+  ],
+  "exit_code": 0,
+  "log_sha256": "3bdfdca50241a1eedb3f7a26fb62e62a47e88162529eb5c5b2be1bb732ce6a2b"
+}

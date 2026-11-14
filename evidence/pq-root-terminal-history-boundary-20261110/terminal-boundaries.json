@@ -1,0 +1,163 @@
+{
+  "actual_lifetime_failure_bound": null,
+  "all_original_runs_passed": false,
+  "artifact_id": 13762887011,
+  "artifact_zip_sha256": "7998dea9c8bd1e7f1b5e4f4cc795265983e6e6ac46718f19594b94b2767cecd4",
+  "diagnostic_only": true,
+  "original_workload": {
+    "attacker_processes": [
+      0,
+      24,
+      24
+    ],
+    "business_blocks": 21,
+    "phase_seconds": 30,
+    "seed_blocks": 4,
+    "seed_transfers": 1024
+  },
+  "production_qualified": false,
+  "runs": [
+    {
+      "finite_experiment_criteria_met": false,
+      "number": 1,
+      "phases": [
+        {
+          "finite_phase_criteria_met": false,
+          "first_observed_deadline_stage": "admission",
+          "genuine_budget_depletion_observed": false,
+          "history_calls": 11,
+          "mode": "baseline",
+          "receiver_client_state_equal": false,
+          "signed_rounds_confirmed_in_window": false,
+          "stage_attribution_status": "observed_deadline_at_stage",
+          "terminal_import_error": "PUBLIC_REQUEST_DEADLINE",
+          "terminal_import_succeeded": false,
+          "terminal_network_status": "ok"
+        },
+        {
+          "finite_phase_criteria_met": false,
+          "first_observed_deadline_stage": "submit_result",
+          "genuine_budget_depletion_observed": false,
+          "history_calls": 7,
+          "mode": "from-zero",
+          "receiver_client_state_equal": false,
+          "signed_rounds_confirmed_in_window": false,
+          "stage_attribution_status": "observed_deadline_at_stage",
+          "terminal_import_error": "PUBLIC_REQUEST_DEADLINE",
+          "terminal_import_succeeded": false,
+          "terminal_network_status": "ok"
+        },
+        {
+          "finite_phase_criteria_met": false,
+          "first_observed_deadline_stage": "submit_result",
+          "genuine_budget_depletion_observed": false,
+          "history_calls": 7,
+          "mode": "late-product",
+          "receiver_client_state_equal": false,
+          "signed_rounds_confirmed_in_window": false,
+          "stage_attribution_status": "observed_deadline_at_stage",
+          "terminal_import_error": "PUBLIC_REQUEST_DEADLINE",
+          "terminal_import_succeeded": false,
+          "terminal_network_status": "ok"
+        }
+      ],
+      "raw_report_sha256": "f49934336738b3431fc30042b06f66aeebab1f0eabd6d706fd04dc796bcfea4a"
+    },
+    {
+      "finite_experiment_criteria_met": false,
+      "number": 2,
+      "phases": [
+        {
+          "finite_phase_criteria_met": false,
+          "first_observed_deadline_stage": "admission",
+          "genuine_budget_depletion_observed": false,
+          "history_calls": 11,
+          "mode": "baseline",
+          "receiver_client_state_equal": false,
+          "signed_rounds_confirmed_in_window": false,
+          "stage_attribution_status": "observed_deadline_at_stage",
+          "terminal_import_error": "PUBLIC_REQUEST_DEADLINE",
+          "terminal_import_succeeded": false,
+          "terminal_network_status": "ok"
+        },
+        {
+          "finite_phase_criteria_met": false,
+          "first_observed_deadline_stage": "submit_result",
+          "genuine_budget_depletion_observed": false,
+          "history_calls": 7,
+          "mode": "from-zero",
+          "receiver_client_state_equal": false,
+          "signed_rounds_confirmed_in_window": false,
+          "stage_attribution_status": "observed_deadline_at_stage",
+          "terminal_import_error": "PUBLIC_REQUEST_DEADLINE",
+          "terminal_import_succeeded": false,
+          "terminal_network_status": "ok"
+        },
+        {
+          "finite_phase_criteria_met": false,
+          "first_observed_deadline_stage": "admission",
+          "genuine_budget_depletion_observed": false,
+          "history_calls": 7,
+          "mode": "late-product",
+          "receiver_client_state_equal": false,
+          "signed_rounds_confirmed_in_window": false,
+          "stage_attribution_status": "observed_deadline_at_stage",
+          "terminal_import_error": "PUBLIC_REQUEST_DEADLINE",
+          "terminal_import_succeeded": false,
+          "terminal_network_status": "ok"
+        }
+      ],
+      "raw_report_sha256": "447c4ad2d94a1adfe685de31be8332c5d3ea33783c1a1ad3744ec68dda313199"
+    },
+    {
+      "finite_experiment_criteria_met": false,
+      "number": 3,
+      "phases": [
+        {
+          "finite_phase_criteria_met": false,
+          "first_observed_deadline_stage": "admission",
+          "genuine_budget_depletion_observed": false,
+          "history_calls": 11,
+          "mode": "baseline",
+          "receiver_client_state_equal": false,
+          "signed_rounds_confirmed_in_window": false,
+          "stage_attribution_status": "observed_deadline_at_stage",
+          "terminal_import_error": "PUBLIC_REQUEST_DEADLINE",
+          "terminal_import_succeeded": false,
+          "terminal_network_status": "ok"
+        },
+        {
+          "finite_phase_criteria_met": false,
+          "first_observed_deadline_stage": "submit_result",
+          "genuine_budget_depletion_observed": false,
+          "history_calls": 7,
+          "mode": "from-zero",
+          "receiver_client_state_equal": false,
+          "signed_rounds_confirmed_in_window": false,
+          "stage_attribution_status": "observed_deadline_at_stage",
+          "terminal_import_error": "PUBLIC_REQUEST_DEADLINE",
+          "terminal_import_succeeded": false,
+          "terminal_network_status": "ok"
+        },
+        {
+          "finite_phase_criteria_met": false,
+          "first_observed_deadline_stage": "submit_result",
+          "genuine_budget_depletion_observed": false,
+          "history_calls": 7,
+          "mode": "late-product",
+          "receiver_client_state_equal": false,
+          "signed_rounds_confirmed_in_window": false,
+          "stage_attribution_status": "observed_deadline_at_stage",
+          "terminal_import_error": "PUBLIC_REQUEST_DEADLINE",
+          "terminal_import_succeeded": false,
+          "terminal_network_status": "ok"
+        }
+      ],
+      "raw_report_sha256": "4c4578087502925829605eb450e323d4f895ae3805746a5b86adf671687789cf"
+    }
+  ],
+  "schema": "pq-root-terminal-history-boundary-audit-v1",
+  "source_commit": "df927b6ffaecff293b9e9428e3ba516f47cd101a",
+  "source_tree": "a883a05b590fb8b0113b3715f4294eee7a00275b",
+  "workflow_run_id": 42793318645
+}

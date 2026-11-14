@@ -1,0 +1,14 @@
+{
+  "schema": "trnm-root-v3-local-campaign",
+  "source": "a44344b25d12328fedd883a335585f03d059060b",
+  "source_unchanged": true,
+  "commands_passed": 35,
+  "commands_total": 35,
+  "status": "HOLD",
+  "actual_lifetime_failure_bound": null,
+  "whole_chain_pq_qualified": false,
+  "composition_coverage_proved": false,
+  "production_activation": false,
+  "full_protocol_lane_executed": false,
+  "full_workspace_tests_executed": false
+}

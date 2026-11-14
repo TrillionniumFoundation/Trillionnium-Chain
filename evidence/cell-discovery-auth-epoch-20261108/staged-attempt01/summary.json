@@ -1,0 +1,74 @@
+[
+  {
+    "label": "preflight",
+    "command": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.15906786918640137
+  },
+  {
+    "label": "format",
+    "command": [
+      "cargo",
+      "fmt",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 21.30426287651062
+  },
+  {
+    "label": "graph",
+    "command": [
+      "cargo",
+      "metadata",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "--format-version",
+      "1"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.24270892143249512
+  },
+  {
+    "label": "fuzz-graph",
+    "command": [
+      "cargo",
+      "metadata",
+      "--manifest-path",
+      "tests/fuzz/Cargo.toml",
+      "--locked",
+      "--offline",
+      "--format-version",
+      "1"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.22220492362976074
+  },
+  {
+    "label": "discovery-native",
+    "command": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-data-availability",
+      "--lib",
+      "cell::discovery::pq::",
+      "--",
+      "--test-threads=1"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 243.01909732818604
+  }
+]

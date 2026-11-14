@@ -1,0 +1,19 @@
+{
+  "all_other_json_fields_equal_to_original": true,
+  "library_private_retention_record_read_or_copied": false,
+  "original_receipt_bytes": 692,
+  "original_receipt_path": "/workspace/scratch/481716a90d06/verification/history-snapshot-download/download-receipt.json",
+  "original_receipt_preserved": true,
+  "original_receipt_sha256": "2fa673e337faea4a8c821fde2c3d182040d6d716359d043fc913ef2690d35ab4",
+  "public_receipt": {
+    "bytes": 628,
+    "path": "connector-download-receipt-public.json",
+    "sha256": "8687c42873ee8a4d925a68dcfb6515273768d6f3c986a0e894dd0f3a73833511"
+  },
+  "removed_fields": [
+    "file_reference_id"
+  ],
+  "removed_values_not_retained": true,
+  "schema": "trnm.connector-receipt-public-projection.v1",
+  "signed_url_present_in_original": false
+}

@@ -1,0 +1,78 @@
+{
+  "schema": "trnm-admission-publication-controls-runner-adaptation-v1",
+  "prepared_utc": "2026-11-07T22:16:31.375430+00:00",
+  "state": "PREPARED_NOT_EXECUTED_WAITING_EXPLICIT_FROZEN_HEAD_TREE_WINDOW",
+  "future_worktree": "/home/qian-qi/chain-throughput-local-admin-20261107/work-admission-publication-20261107",
+  "expected_head": null,
+  "expected_tree": null,
+  "original_runner": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-source-validation-20261107/run-final-controls-v3.py",
+    "bytes": 17911,
+    "sha256": "27bde97006593d37a7fbae3b93d10d81c0178c9342659e8671f585c4c3b09c81"
+  },
+  "runner": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-publication-source-controls-preparation-20261107/run-final-controls-v3-admission-publication.py",
+    "bytes": 17918,
+    "sha256": "2fbf7c91d7d58b83c75f2b6f6a88b5cd3ed666581cfb9a4a81145a9054748ed9"
+  },
+  "patch": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-publication-source-controls-preparation-20261107/ROOT-ONLY.diff",
+    "bytes": 672,
+    "sha256": "89d019a4f81dc8935a2b26624777a6e04a32b5f917b3b16daeea1569e6c55cd4"
+  },
+  "only_changed_assignment": "ROOT",
+  "original_root_assignment": "ROOT = BASE / \"work-final-business-20261107\"",
+  "new_root_assignment": "ROOT = BASE / \"work-admission-publication-20261107\"",
+  "inverse_replacement_equals_original_bytes": true,
+  "all_bytes_outside_root_assignment_equal": true,
+  "ast_except_root_assignment_equal": true,
+  "ast_parse_only_not_imported_or_executed": true,
+  "original_roster": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-source-validation-20261107/prepared-test-roster-v3.json",
+    "bytes": 225337,
+    "sha256": "950e9ceff839a8c599f4ebdb4a1b6d72bd7719f48557c76c832b74b8518aed72"
+  },
+  "prepared_roster_suite_count": 17,
+  "prepared_roster_method_count": 666,
+  "d_source_roster_verified": false,
+  "original_source_verifier_sha256_in_unchanged_runner": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946",
+  "unchanged": [
+    "all original commands and timeouts",
+    "original roster path, hash and exact method names",
+    "original actual Python/runtime checks",
+    "original Cell child 30-second bound",
+    "strict denominator/OK reader",
+    "complete source verifier before and after",
+    "failure preservation and no rerun behavior",
+    "PREP/output safety constraints"
+  ],
+  "future_output_pattern": "/home/qian-qi/chain-throughput-local-admin-20261107/final-source-validation-20261107/admission-publication/FULL_FROZEN_HEAD",
+  "future_argv": [
+    "/usr/bin/python3",
+    "-B",
+    "/home/qian-qi/chain-throughput-local-admin-20261107/admission-publication-source-controls-preparation-20261107/run-final-controls-v3-admission-publication.py",
+    "--expected-head",
+    "FULL_FROZEN_HEAD",
+    "--output",
+    "/home/qian-qi/chain-throughput-local-admin-20261107/final-source-validation-20261107/admission-publication/FULL_FROZEN_HEAD",
+    "--execute"
+  ],
+  "preparation_access_scope": {
+    "original_runner_and_roster_read_only": true,
+    "new_external_preparation_directory_only_written": true,
+    "d_directory_created_or_probed": false,
+    "c2_worktree_accessed_or_modified": false,
+    "git_commands_executed": 0,
+    "tests_executed": 0,
+    "cargo_commands_executed": 0,
+    "source_mutations": false
+  },
+  "future_execution_requirements": [
+    "Explicit root authorization for the frozen full D commit and tree.",
+    "Independent D output directory must not already exist.",
+    "Recheck original runner and roster identities before launch.",
+    "The original complete source verifier and roster checks bind actual D before controls.",
+    "D controls do not relabel native execution on C2 as native execution on D."
+  ],
+  "original_runner_and_roster_bytes_unchanged_after_preparation": true
+}

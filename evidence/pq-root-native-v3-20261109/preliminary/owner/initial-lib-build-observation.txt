@@ -1,0 +1,13 @@
+Observed preliminary build failure; this note is not a full raw command log.
+Source: captured exec session 10190. Exit code 101.
+Command target: cargo test --locked --offline --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --features pq-root-v3 root_recovery_v3 --lib --no-run
+No test-profile override was used.
+
+The compiler reported two unused std::result::Result warnings for rusqlite progress_handler calls in src/root_recovery_v3/storage.rs (the reset and handler installation). Those calls were later corrected.
+
+Terminal diagnostic:
+error: could not compile `trnm-pon-node` (lib test); 2 warnings emitted
+Caused by: rustc for the trnm_pon_node lib test target did not exit successfully (signal: 9, SIGKILL: kill).
+
+The cause of SIGKILL was not established. This is not a successful test result and is not relabeled as an infrastructure exemption.
+Subsequent validation uses the public API integration target tests/root_recovery_v3_native.rs, preserving the original locked default test profile. Subsequent complete raw logs are separate files in this directory.

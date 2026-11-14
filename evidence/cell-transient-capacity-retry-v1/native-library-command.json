@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "/workspace/scratch/56818e4fba76/toolchains/rust-1.95.0/bin/cargo",
+    "test",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "--offline",
+    "-p",
+    "trnm-data-availability",
+    "--lib",
+    "--",
+    "--test-threads=1"
+  ],
+  "returncode": 0,
+  "elapsed_seconds": 100.7012330510006
+}

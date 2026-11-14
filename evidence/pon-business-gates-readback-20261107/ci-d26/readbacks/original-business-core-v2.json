@@ -1,0 +1,310 @@
+{
+  "schema": "trnm-d26-original-business-core-v2",
+  "head": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+  "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+  "merge": "7805f1445aec6a31152b50c3d28f5eb6db63305c",
+  "tested_tree": "cef3563653b982a8043326ad4b53a4b93ab63906",
+  "status": "HOLD",
+  "window_ns": 4000000000,
+  "pressure_workers": 16,
+  "original_budgets_changed": false,
+  "full_report": {
+    "path": "/home/qian-qi/throughput-ci-observation-20261107/original-business-readback-v1.json",
+    "bytes": 39272,
+    "sha256": "540ea335e37500cf3808739e0e79f5007c1c7a0e2740326efbebc2f2c4354041"
+  },
+  "service": [
+    {
+      "arch": "x64",
+      "source": "head",
+      "run": 42383368690,
+      "job": 128435695005,
+      "artifact": 13579620050,
+      "source_before_after_equal": true,
+      "manifest_files_verified": 50,
+      "native_exits": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "native_execution_completed": true,
+      "strict_error": "ValueError: CONFIRMATION_TARGET",
+      "report_sha256": "5ae16b042fd6165d53012c592ac07ed1aec731fd753b5c76a13fa614278bd7f1",
+      "baseline": {
+        "confirmed": 1,
+        "latency_ns": 3089871221
+      },
+      "pressure": {
+        "confirmed": 0,
+        "latency_ns": null,
+        "attack_calls": 323,
+        "honest_submissions": 7,
+        "history_requests": 3,
+        "verification_errors": []
+      }
+    },
+    {
+      "arch": "arm64",
+      "source": "head",
+      "run": 42383368690,
+      "job": 128435695013,
+      "artifact": 13579291550,
+      "source_before_after_equal": true,
+      "manifest_files_verified": 50,
+      "native_exits": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "native_execution_completed": true,
+      "strict_error": "ValueError: CONFIRMATION_TARGET",
+      "report_sha256": "358dcd468342cff8d5c89ab12171c4a21cd8777370ff00eaaca7c4ef045a0789",
+      "baseline": {
+        "confirmed": 1,
+        "latency_ns": 1880231159
+      },
+      "pressure": {
+        "confirmed": 0,
+        "latency_ns": null,
+        "attack_calls": 433,
+        "honest_submissions": 7,
+        "history_requests": 7,
+        "verification_errors": [
+          "PUBLIC_REQUEST_DEADLINE"
+        ]
+      }
+    },
+    {
+      "arch": "arm64",
+      "source": "prospective-merge",
+      "run": 42383368690,
+      "job": 128435695112,
+      "artifact": 13578932781,
+      "source_before_after_equal": true,
+      "manifest_files_verified": 50,
+      "native_exits": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "native_execution_completed": true,
+      "strict_error": "ValueError: CONFIRMATION_TARGET",
+      "report_sha256": "263c83741e5deace1fc5044d9a691f065e37e36bb0de016b88437912476c19a9",
+      "baseline": {
+        "confirmed": 1,
+        "latency_ns": 1813400169
+      },
+      "pressure": {
+        "confirmed": 0,
+        "latency_ns": null,
+        "attack_calls": 427,
+        "honest_submissions": 7,
+        "history_requests": 6,
+        "verification_errors": [
+          "PUBLIC_REQUEST_DEADLINE"
+        ]
+      }
+    },
+    {
+      "arch": "x64",
+      "source": "prospective-merge",
+      "run": 42383368690,
+      "job": 128435695024,
+      "artifact": 13578359852,
+      "source_before_after_equal": true,
+      "manifest_files_verified": 50,
+      "native_exits": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "native_execution_completed": true,
+      "strict_error": "ValueError: CONFIRMATION_TARGET",
+      "report_sha256": "cd10ebe4c1d4f39ba4809d1e5fd85c0c73a533ff1fcb23bbe1bee4683047b192",
+      "baseline": {
+        "confirmed": 1,
+        "latency_ns": 2200594307
+      },
+      "pressure": {
+        "confirmed": 0,
+        "latency_ns": null,
+        "attack_calls": 446,
+        "honest_submissions": 7,
+        "history_requests": 6,
+        "verification_errors": [
+          "PUBLIC_REQUEST_DEADLINE"
+        ]
+      }
+    }
+  ],
+  "fresh": [
+    {
+      "source": "prospective-merge",
+      "run": 42383368504,
+      "job": 128435635920,
+      "artifact": 13579195615,
+      "source_before_after_equal": true,
+      "cohorts": {
+        "original": {
+          "native_exit": 0,
+          "strict_error": "ValueError: CONFIRMATION_TARGET",
+          "report_sha256": "bfccb69f222d47c81f1993799de161d4332cbaaf79e04c8749586f4ca776eebb",
+          "baseline": {
+            "confirmed": 1,
+            "latency_ns": 2809179884
+          },
+          "pressure": {
+            "confirmed": 0,
+            "latency_ns": null,
+            "attack_calls": 375,
+            "honest_submissions": 7,
+            "history_requests": 4,
+            "verification_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ]
+          },
+          "cache_path_subcheck_passed": null,
+          "cache_path_subcheck_status": "not_applicable_original_retained_proof",
+          "cache_path_subcheck_reason": "The fresh-only cache path validator was not executed for the original repeated-proof cohort; its cache hits are expected, and the original strict confirmation failure remains unchanged."
+        },
+        "fresh": {
+          "native_exit": 101,
+          "strict_error": "ValueError: FRESH_BUSINESS_TARGET",
+          "report_sha256": "9e6ca962f1e1accefbe5814266f593c0352d156c46d63e015a19d054a2d4cc6f",
+          "baseline": {
+            "confirmed": 1,
+            "latency_ns": 2681831260
+          },
+          "pressure": {
+            "confirmed": 0,
+            "latency_ns": null,
+            "attack_calls": 247,
+            "honest_submissions": 7,
+            "history_requests": 2,
+            "verification_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ]
+          },
+          "cache_path_subcheck_passed": true,
+          "cache_path_subcheck_status": "passed"
+        }
+      }
+    },
+    {
+      "source": "head",
+      "run": 42383368504,
+      "job": 128435635921,
+      "artifact": 13578867108,
+      "source_before_after_equal": true,
+      "cohorts": {
+        "original": {
+          "native_exit": 0,
+          "strict_error": "ValueError: CONFIRMATION_TARGET",
+          "report_sha256": "fe9281dd293ad9497cc19a29ffc8947497e8a85c410d021966dc89725a5dcab8",
+          "baseline": {
+            "confirmed": 1,
+            "latency_ns": 3091485863
+          },
+          "pressure": {
+            "confirmed": 0,
+            "latency_ns": null,
+            "attack_calls": 310,
+            "honest_submissions": 7,
+            "history_requests": 3,
+            "verification_errors": []
+          },
+          "cache_path_subcheck_passed": null,
+          "cache_path_subcheck_status": "not_applicable_original_retained_proof",
+          "cache_path_subcheck_reason": "The fresh-only cache path validator was not executed for the original repeated-proof cohort; its cache hits are expected, and the original strict confirmation failure remains unchanged."
+        },
+        "fresh": {
+          "native_exit": 101,
+          "strict_error": "ValueError: FRESH_BUSINESS_TARGET",
+          "report_sha256": "a73b842c90db8d29cca14a420979c49774588c5941dab7d286f4524d846f5bf3",
+          "baseline": {
+            "confirmed": 1,
+            "latency_ns": 3015196232
+          },
+          "pressure": {
+            "confirmed": 0,
+            "latency_ns": null,
+            "attack_calls": 205,
+            "honest_submissions": 7,
+            "history_requests": 1,
+            "verification_errors": [
+              "PUBLIC_REQUEST_DEADLINE"
+            ]
+          },
+          "cache_path_subcheck_passed": true,
+          "cache_path_subcheck_status": "passed"
+        }
+      }
+    }
+  ],
+  "all_jobs": 37,
+  "native_lanes": 34,
+  "as_of": "2026-11-07T15:35:13.531018+00:00",
+  "job_counts": {
+    "success": 20,
+    "failure": 11,
+    "in_progress": 6
+  },
+  "still_running_jobs": [
+    {
+      "id": 128435695023,
+      "name": "native priorities (ubuntu-24.04, prospective-merge, history)"
+    },
+    {
+      "id": 128435695055,
+      "name": "native priorities (ubuntu-24.04, head, history)"
+    },
+    {
+      "id": 128435695075,
+      "name": "native priorities (ubuntu-24.04-arm, head, history)"
+    },
+    {
+      "id": 128435695076,
+      "name": "native priorities (ubuntu-24.04, head, state)"
+    },
+    {
+      "id": 128435695086,
+      "name": "native priorities (ubuntu-24.04-arm, prospective-merge, history)"
+    },
+    {
+      "id": 128435695218,
+      "name": "native priorities (ubuntu-24.04, prospective-merge, state)"
+    }
+  ],
+  "native_gate_validated": false,
+  "correction": {
+    "supersedes": "/home/qian-qi/throughput-ci-observation-20261107/original-business-core-v1.json",
+    "superseded_sha256": "0560e6a7a4a3786c12e74f62b0cbfd504d28ce257574e83f2345a124820d2b30",
+    "reason": "Distinguish not-applicable fresh-only path subcheck from failure; preserve all original report bytes and business results.",
+    "changes": [
+      {
+        "artifact_id": 13579195615,
+        "old_original_subcheck_boolean": false,
+        "new_original_subcheck_boolean": null,
+        "new_status": "not_applicable_original_retained_proof",
+        "original_report_sha256": "bfccb69f222d47c81f1993799de161d4332cbaaf79e04c8749586f4ca776eebb",
+        "original_business_error_unchanged": "ValueError: CONFIRMATION_TARGET"
+      },
+      {
+        "artifact_id": 13578867108,
+        "old_original_subcheck_boolean": false,
+        "new_original_subcheck_boolean": null,
+        "new_status": "not_applicable_original_retained_proof",
+        "original_report_sha256": "fe9281dd293ad9497cc19a29ffc8947497e8a85c410d021966dc89725a5dcab8",
+        "original_business_error_unchanged": "ValueError: CONFIRMATION_TARGET"
+      }
+    ]
+  }
+}

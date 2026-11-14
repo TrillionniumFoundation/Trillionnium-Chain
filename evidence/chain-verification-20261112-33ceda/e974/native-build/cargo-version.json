@@ -1,0 +1,61 @@
+{
+  "after": {
+    "base": null,
+    "candidate": "e974fd617e0e2c0d1fc88584b1301a7ffb714a73",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "e974fd617e0e2c0d1fc88584b1301a7ffb714a73",
+    "tested_tree": "4b72a88414c8ce17f7ef33fc3aa9a346028452cb",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2597003428,
+    "tracked_entries": 28775,
+    "tracked_worktree_verified": true
+  },
+  "argv": [
+    "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "-V"
+  ],
+  "before": {
+    "base": null,
+    "candidate": "e974fd617e0e2c0d1fc88584b1301a7ffb714a73",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "e974fd617e0e2c0d1fc88584b1301a7ffb714a73",
+    "tested_tree": "4b72a88414c8ce17f7ef33fc3aa9a346028452cb",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2597003428,
+    "tracked_entries": 28775,
+    "tracked_worktree_verified": true
+  },
+  "cwd": "/home/qq/chain-verification-33ceda-20261112",
+  "elapsed_ns": 3235699275,
+  "environment": {
+    "CARGO_BUILD_JOBS": "1",
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CARGO_INCREMENTAL": null,
+    "CARGO_TARGET_DIR": "/home/qq/chain-system-security-20261112-306929/trillionnium/target",
+    "GITHUB_RUN_ATTEMPT": null,
+    "GITHUB_RUN_ID": null,
+    "OPENSSL_DIR": "/home/qq/chain-system-security-root-provider-20261112-306929/trnm-pq-provider-3.5.9.6hHYb0FI/install",
+    "OPENSSL_STATIC": "1",
+    "RUNNER_ARCH": null,
+    "RUSTC": "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+    "RUSTC_WORKSPACE_WRAPPER": null,
+    "RUSTC_WRAPPER": null,
+    "RUSTFLAGS": null,
+    "RUST_TEST_THREADS": "1",
+    "TRNM_PQ_OPENSSL": "/home/qq/chain-system-security-root-provider-20261112-306929/trnm-pq-provider-3.5.9.6hHYb0FI/install/bin/openssl",
+    "TRNM_PQ_OPENSSL_SHA256": "09362cd9a4f5ef29e9cdd9fe26092a706ffe589f1e52c8c5572bd74df7ccdc1d",
+    "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+  },
+  "exit_code": 0,
+  "log_bytes": 36,
+  "log_file": "cargo-version.log",
+  "log_sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5",
+  "schema": "trnm-pq-native-command-v1",
+  "started_utc": "2026-11-12T07:42:47.524615+00:00",
+  "status": "command_succeeded",
+  "whole_chain_quantum_security_qualified": false
+}

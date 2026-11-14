@@ -1,0 +1,33 @@
+{
+  "audit_recorded": true,
+  "job": {
+    "args": [
+      "-c",
+      "python3 -u -B /home/qq/work/run-chain-c1-gates-resume-20261109-cadence-01.py"
+    ],
+    "created_unix_ms": 1794199426727,
+    "cwd": "/home/qq/work/chain-hepta-accounting-d9bb-20261109",
+    "env_keys": [],
+    "executable": "/bin/sh",
+    "execution_mode": "operator",
+    "host": "ai395",
+    "id": "1a1be9e96a7-5e21-1b7",
+    "idempotency_key": "chain-c1-strict-clippy-resume-20261109-cadence-01",
+    "launch_error": null,
+    "launch_state": "launched",
+    "remote_job_dir": "/home/qq/.local/state/hepta-runtime-mac-worker/jobs/1a1be9e96a7-5e21-1b7",
+    "request_digest": "585cc340b82764c4524189c980afbb34709ba391cfdc1320b3b8ecf4c7a9ca13",
+    "request_fingerprint": 6367178655929951428,
+    "ssh_target": "ai395-lan",
+    "system_jobctl": false,
+    "unit": "hepta-runtime-job-1a1be9e96a7-5e21-1b7"
+  },
+  "launch": {
+    "backend": "systemd",
+    "launcher_pid": null,
+    "ok": true,
+    "unit": "hepta-runtime-job-1a1be9e96a7-5e21-1b7"
+  },
+  "local_record_pending": false,
+  "reused": false
+}

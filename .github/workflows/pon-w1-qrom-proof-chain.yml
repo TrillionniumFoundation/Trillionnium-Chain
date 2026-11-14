@@ -1,0 +1,319 @@
+name: W1 QROM proof-chain observations
+on:
+  pull_request:
+    paths:
+      - scripts/w1_*.py
+      - scripts/ci/**
+      - scripts/project-preflight.sh
+      - formal/pon-nakamoto-v1/**
+      - config/pon/w1-*.json
+      - evidence/pon-w1-*/**
+      - docs/security/W1_*.md
+      - .github/workflows/pon-w1-qrom-proof-chain.yml
+      - PROJECT_ID
+      - PROJECT_BOUNDARY.json
+      - AGENTS.md
+permissions:
+  contents: read
+concurrency:
+  group: w1-qrom-proof-chain-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+env:
+  PYTHONDONTWRITEBYTECODE: "1"
+jobs:
+  proof-chain:
+    name: W1 proof-chain (${{ matrix.source }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        source: [head, prospective-merge]
+    env:
+      SOURCE_KIND: ${{ matrix.source }}
+      EXPECTED_SOURCE: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+      EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
+    steps:
+      - name: Reserve fresh observations
+        id: observations
+        shell: bash
+        run: |
+          set -euo pipefail
+          w1_chain_out="$RUNNER_TEMP/w1-qrom-proof-chain-$SOURCE_KIND-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir "$w1_chain_out"
+          printf 'W1_CHAIN_OUT=%s\n' "$w1_chain_out" >> "$GITHUB_ENV"
+          python3 --version > "$w1_chain_out/python-version.txt" 2>&1
+      - name: Checkout exact source
+        id: checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.EXPECTED_SOURCE }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify source before execution
+        id: source_before
+        if: always() && steps.observations.outcome == 'success' && steps.checkout.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$W1_CHAIN_OUT/source-before.json" 2>&1 | tee "$W1_CHAIN_OUT/source-before.log"
+      - name: Check project boundary
+        id: preflight
+        if: always() && steps.source_before.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash scripts/project-preflight.sh --audit 2>&1 | tee "$W1_CHAIN_OUT/preflight.log"
+      - name: Execute pinned named controls
+        id: controls
+        if: always() && steps.preflight.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/w1_qrom_proof_chain_controls.py run --output "$W1_CHAIN_OUT" 2>&1 | tee "$W1_CHAIN_OUT/controls.log"
+      - name: Independently require complete successful test identities
+        id: completion
+        if: always() && steps.controls.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/w1_qrom_proof_chain_controls.py check --output "$W1_CHAIN_OUT" 2>&1 | tee "$W1_CHAIN_OUT/completion.log"
+          python3 - "$W1_CHAIN_OUT" <<'PY' 2>&1 | tee "$W1_CHAIN_OUT/completion-independent.log"
+          from collections import Counter
+          import hashlib
+          import json
+          from pathlib import Path
+          import sys
+          out = Path(sys.argv[1])
+          def require(condition, message):
+              if not condition:
+                  raise ValueError(message)
+          def unique(pairs):
+              result = {}
+              for key, value in pairs:
+                  require(key not in result, 'duplicate JSON key')
+                  result[key] = value
+              return result
+          def read(path):
+              raw = path.read_bytes()
+              require(len(raw) <= 512 * 1024, 'oversized completion record')
+              return json.loads(raw, object_pairs_hook=unique)
+          roster_path = Path('evidence/pon-w1-qrom-proof-chain-20261108/required-tests.json')
+          roster_hash = hashlib.sha256(roster_path.read_bytes()).hexdigest()
+          require(roster_hash == '54dceecf6a8fb6d5f91252cbb79427ba92563663c2e8248cf61a10ecb581911c', 'independent roster pin')
+          required = read(roster_path)['suites']
+          actual = read(out / 'named-controls.json')
+          require(actual['schema'] == 'TRNM-W1-QROM-PROOF-CHAIN-CONTROLS1'
+                  and actual['roster_sha256'] == roster_hash, 'completion identity')
+          require(type(actual['suites']) is list and len(actual['suites']) == len(required),
+                  'missing test suite completion')
+          count = 0
+          for expected, row in zip(required, actual['suites']):
+              module, names = expected['module'], expected['tests']
+              require(row['module'] == module and row['exception'] is None, 'module failed to complete')
+              require(actual['test_source_sha256'][module] == hashlib.sha256(
+                  Path('scripts/ci', module + '.py').read_bytes()).hexdigest(), 'test source identity')
+              require(type(row['tests_run']) is int and row['tests_run'] == len(names), 'test count')
+              for field in ('registered', 'started', 'successful'):
+                  require(type(row[field]) is list and Counter(row[field]) == Counter(names),
+                          'missing/duplicate test identity')
+              for field in ('skipped', 'failures', 'errors', 'expected_failures', 'unexpected_successes'):
+                  require(row[field] == [], 'unsuccessful test')
+              count += len(names)
+          expected_qualification = {'complete_w1_soundness_qualified': False,
+              'post_quantum_soundness_qualified': False, 'quantum_work_qualified': False,
+              'production_qualified': False, 'unconditional_project_security_bits': None}
+          require(actual['qualification'] == expected_qualification and all(
+              actual['qualification'][key] is value for key, value in expected_qualification.items()),
+              'qualification changed')
+          checker = read(out / 'completion.log')
+          require(checker == {'result': 'PASS', 'actual_successful_tests': count,
+                             'qualification': expected_qualification}
+                  and type(checker['actual_successful_tests']) is int, 'checker did not complete')
+          with (out / 'completion-independent.json').open('x') as stream:
+              json.dump({'result': 'PASS', 'roster_sha256': roster_hash,
+                         'actual_successful_tests': count}, stream, sort_keys=True)
+              stream.write('\n')
+          print('Independently required all ' + str(count) + ' named successful controls.')
+          PY
+      - name: Replay historical transcript and every opening
+        id: replay
+        if: always() && steps.preflight.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/w1_fri_query_replay.py --output "$W1_CHAIN_OUT/fri-query-replay.json" 2>&1 | tee "$W1_CHAIN_OUT/replay.log"
+      - name: Reproduce separate P3 expression
+        id: query_expression
+        if: always() && steps.preflight.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/w1_query_expression_feasibility.py > "$W1_CHAIN_OUT/query-expression.json" 2> "$W1_CHAIN_OUT/query-expression.stderr.log"
+      - name: Evaluate unknown and explicitly hypothetical BCS envelopes
+        id: bcs
+        if: always() && steps.preflight.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/w1_qrom_bcs_budget.py > "$W1_CHAIN_OUT/bcs-unknown.json" 2> "$W1_CHAIN_OUT/bcs-unknown.stderr.log"
+          python3 scripts/w1_qrom_bcs_budget.py --example > "$W1_CHAIN_OUT/bcs-example.json" 2> "$W1_CHAIN_OUT/bcs-example.stderr.log"
+      - name: Require candidate identities and bounded conclusions
+        id: report_scopes
+        if: always() && steps.replay.outcome == 'success' && steps.query_expression.outcome == 'success' && steps.bcs.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - "$W1_CHAIN_OUT" <<'PY' 2>&1 | tee "$W1_CHAIN_OUT/report-scopes.log"
+          import hashlib
+          import json
+          from pathlib import Path
+          import sys
+          out = Path(sys.argv[1])
+          def read(name):
+              return json.loads((out / name).read_text())
+          def require(condition, message):
+              if not condition:
+                  raise ValueError(message)
+          def qualification(actual, false_keys, null_keys, true_keys=()):
+              expected = dict.fromkeys(false_keys, False)
+              expected.update(dict.fromkeys(null_keys, None))
+              expected.update(dict.fromkeys(true_keys, True))
+              require(type(actual) is dict and set(actual) == set(expected)
+                      and all(actual[key] is value for key, value in expected.items()),
+                      'missing, promoted or mistyped qualification')
+          r = read('fri-query-replay.json')
+          q = read('query-expression.json')
+          u, e = read('bcs-unknown.json'), read('bcs-example.json')
+          require(r['schema'] == 'TRNM-W1-FRI-QUERY-REPLAY1'
+                  and r['profile_id'] == 'trnm-w1-risc0-3.0.6-poseidon2-join-v2'
+                  and r['input_profile_source_head'] == '0c830e0be8939ce80c8443c9ad68021b87343a00',
+                  'RISC Zero candidate identity changed')
+          require(r['receipt']['sha256'] == '6c72828c9d05a62175e08fa3e7e1d0d5e85e785ad96b5beb5ec7a2e2490c26ee'
+                  and r['reproduced_checks']['merkle_openings_verified'] == 350
+                  and len(r['queries']) == 50
+                  and sum(t['opened_leaf_count'] for t in r['merkle_trees']) == 350,
+                  'incomplete fixed-input replay')
+          require(q['schema'] == 'TRNM-W1-QUERY-EXPRESSION-FEASIBILITY1'
+                  and q['profile']['application_revision'] == 'cc836dfc13ef0006eb0878abd8cb5eca9a76bec0'
+                  and q['profile']['risc0_parameter_transfer_qualified'] is False,
+                  'P3 source attribution changed')
+          for report in (u, e):
+              require(report['schema'] == 'TRNM-W1-CDHZ-MARCH-BCS-ASSUMED-EXPRESSION1', 'BCS schema changed')
+              qualification(report['qualification'], (
+                  'complete_manuscript_proof_independently_verified', 'author_erratum_claimed',
+                  'component_hypotheses_proved_for_implementation', 'actual_joint_oracle_model_proved',
+                  'qrom_theorem_instantiated', 'complete_w1_soundness_qualified',
+                  'post_quantum_soundness_qualified', 'quantum_work_qualified',
+                  'production_qualified', 'consensus_admission'),
+                  ('unconditional_project_security_bits', 'whole_lifetime_failure_bound'),
+                  ('pinned_january_to_march_statement_correspondence_verified',))
+          require(u['arithmetic_maximized_upper_expression'] is None
+                  and e['conditional_expression_on_declared_query_domains'] is not None,
+                  'unknown or hypothetical arithmetic scope lost')
+          qualification(q['qualification'], (
+              'end_to_end_qualified', 'noninteractive_qualified', 'quantum_qualified',
+              'recursive_qualified', 'lifecycle_qualified', 'pq128_qualified',
+              'theorem_6_10_mapping_qualified', 'theorem_11_3_mapping_qualified'), (
+              'unconditional_project_security_bits', 'complete_noninteractive_security_bits',
+              'quantum_security_bits', 'recursive_security_bits', 'lifecycle_security_bits'))
+          qualification(r['qualification'], (
+              'air_validity_checked', 'all_recursive_program_semantics_verified',
+              'complete_receipt_verified', 'complete_w1_soundness_qualified', 'consensus_admission',
+              'deep_ali_evaluation_checked', 'fri_folding_equations_checked',
+              'post_quantum_soundness_qualified', 'production_qualified', 'qrom_instantiated',
+              'quantum_work_qualified', 'terminal_polynomial_evaluations_checked'), ('security_bits_quantum',))
+          report_names = ('fri-query-replay.json', 'query-expression.json', 'bcs-unknown.json', 'bcs-example.json')
+          with (out / 'report-scopes-independent.json').open('x') as stream:
+              json.dump({'schema': 'TRNM-W1-QROM-REPORT-SCOPES1', 'result': 'PASS',
+                  'strict_qualification_checked': True, 'reports_sha256': {
+                      name: hashlib.sha256((out / name).read_bytes()).hexdigest()
+                      for name in report_names}}, stream, sort_keys=True)
+              stream.write('\n')
+          print('Fixed candidates remain distinct; implementation checks and hypothetical arithmetic only.')
+          PY
+      - name: Verify source after execution
+        id: source_after
+        if: always() && steps.source_before.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$W1_CHAIN_OUT/source-after.json" 2>&1 | tee "$W1_CHAIN_OUT/source-after.log"
+      - name: Require every stage and unchanged exact source
+        id: complete
+        if: always()
+        env:
+          STEP_RECORDS: ${{ toJSON(steps) }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - "$W1_CHAIN_OUT" <<'PY'
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+          import sys
+          out = Path(sys.argv[1])
+          steps = json.loads(os.environ['STEP_RECORDS'])
+          required = ('observations', 'checkout', 'source_before', 'preflight', 'controls',
+                      'completion', 'replay', 'query_expression', 'bcs', 'report_scopes', 'source_after')
+          incomplete = [name for name in required if any(
+              steps.get(name, {}).get(field) != 'success' for field in ('outcome', 'conclusion'))]
+          identity_error = None
+          try:
+              before = json.loads((out / 'source-before.json').read_text())
+              after = json.loads((out / 'source-after.json').read_text())
+              if (before != after or before.get('tested_commit') != os.environ['EXPECTED_SOURCE']
+                      or before.get('tracked_worktree_verified') is not True):
+                  raise ValueError('source identity or bytes changed')
+              completion = json.loads((out / 'completion-independent.json').read_text())
+              if (completion.get('result') != 'PASS'
+                      or completion.get('roster_sha256') != '54dceecf6a8fb6d5f91252cbb79427ba92563663c2e8248cf61a10ecb581911c'
+                      or type(completion.get('actual_successful_tests')) is not int
+                      or completion['actual_successful_tests'] != 69):
+                  raise ValueError('independent named completion missing or incomplete')
+              boundary = json.loads((out / 'preflight.log').read_text())
+              if (boundary.get('result') != 'PASS' or boundary.get('mode') != '--audit'
+                      or boundary.get('project') != 'trillionnium-chain'
+                      or boundary.get('remote_policy_mutated') is not False):
+                  raise ValueError('project boundary check did not complete')
+              scopes = json.loads((out / 'report-scopes-independent.json').read_text())
+              names = ('fri-query-replay.json', 'query-expression.json', 'bcs-unknown.json', 'bcs-example.json')
+              if (scopes.get('schema') != 'TRNM-W1-QROM-REPORT-SCOPES1'
+                      or scopes.get('result') != 'PASS' or scopes.get('strict_qualification_checked') is not True
+                      or scopes.get('reports_sha256') != {
+                          name: hashlib.sha256((out / name).read_bytes()).hexdigest() for name in names}):
+                  raise ValueError('report scope check did not complete or report bytes changed')
+          except (OSError, ValueError, TypeError, KeyError) as error:
+              identity_error = str(error)
+          passed = not incomplete and identity_error is None
+          result = {'schema': 'TRNM-W1-QROM-PROOF-CHAIN-HOSTED1', 'source_kind': os.environ['SOURCE_KIND'],
+                    'expected_source': os.environ['EXPECTED_SOURCE'], 'steps': steps,
+                    'required_stages': required, 'failed_or_skipped_stages': incomplete,
+                    'source_identity_error': identity_error, 'all_required_observations_passed': passed,
+                    'post_quantum_soundness_qualified': False, 'complete_w1_soundness_qualified': False,
+                    'production_qualified': False, 'unconditional_project_security_bits': None}
+          with (out / 'ci-status.json').open('x') as stream:
+              json.dump(result, stream, indent=2, sort_keys=True)
+              stream.write('\n')
+          if not passed:
+              raise SystemExit('Required observations incomplete: ' + ', '.join(incomplete) + '; ' + str(identity_error))
+          print('All exact-source observations completed; QROM qualification remains HOLD.')
+          PY
+      - name: Retain full observations and failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: w1-qrom-proof-chain-${{ matrix.source }}-${{ env.EXPECTED_SOURCE }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/w1-qrom-proof-chain-${{ matrix.source }}-${{ github.run_id }}-${{ github.run_attempt }}/
+          if-no-files-found: error
+          retention-days: 30

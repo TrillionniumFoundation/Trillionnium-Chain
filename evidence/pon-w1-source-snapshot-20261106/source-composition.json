@@ -1,0 +1,24 @@
+{
+  "common_base": "5bb29d6ae39fa0c71f9151f3dce31fa1a3ab1800",
+  "integration_commits_since_common_base": 97,
+  "integration_head": "840522d0b65b4989f1a2a1d09c0ad51af1a1956d",
+  "integration_tree": "70377cc0a9c8d029907f6c49bbb8dee1435a6cd1",
+  "pinned_blobs": 688,
+  "previous_w1_head": "d9fd07c473998bd236207c1b7db4233f0eafd7fe",
+  "production_activation": false,
+  "required_paths": 607,
+  "resolution": {
+    "corpus": "Preserve the entire integration corpus and change only the W1 transparent workflow pin to its actual combined-source blob.",
+    "plan": "Preserve the entire integration plan as an exact prefix, then append the W1 branch suffix after the common base."
+  },
+  "retained_plan_suffix_bytes": 3866,
+  "schema": "trnm-w1-source-composition-v1",
+  "source_integrity_is_cryptographic_qualification": false,
+  "textual_conflicts": [
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+  ],
+  "w1_fix_tree": "a61b43f8030a3c673da792a9dd7ff241f13af63c",
+  "whole_chain_pq_qualified": false,
+  "workflow_git_blob": "576ce233210de95844a4be5a496c7f296afa27cf"
+}

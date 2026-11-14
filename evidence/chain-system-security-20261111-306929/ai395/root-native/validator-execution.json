@@ -1,0 +1,12 @@
+{
+  "schema": "trnm-root-archive-validator-execution-v1",
+  "argv": [
+    "/usr/bin/python3",
+    "/home/qq/chain-system-security-root-native-evidence-20261112-306929/root-native/verify_archives.py"
+  ],
+  "exit_code": 0,
+  "scope": "archive revalidation only; no native execution",
+  "stdout_sha256": "9ece69d2c929c24e63ce1fad1da38df7e50bc9528f47442b7fd159fddf436a0f",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "shared_source_or_refs_modified": false
+}

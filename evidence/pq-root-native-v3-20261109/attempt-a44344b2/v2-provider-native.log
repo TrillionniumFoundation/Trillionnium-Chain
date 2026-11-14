@@ -1,0 +1,11 @@
+test_each_family_bitflip_or_absence_refuses (__main__.ProviderReadbackNativeTests.test_each_family_bitflip_or_absence_refuses) ... ok
+test_original_signatures_cannot_authenticate_rebound_request (__main__.ProviderReadbackNativeTests.test_original_signatures_cannot_authenticate_rebound_request) ... ok
+test_original_signatures_cannot_clear_later_orphan_epoch (__main__.ProviderReadbackNativeTests.test_original_signatures_cannot_clear_later_orphan_epoch) ... ok
+test_other_pinned_provider_roster_cannot_verify_the_receipt (__main__.ProviderReadbackNativeTests.test_other_pinned_provider_roster_cannot_verify_the_receipt) ... ok
+test_real_both_family_signatures_authenticate_exact_reconciliation (__main__.ProviderReadbackNativeTests.test_real_both_family_signatures_authenticate_exact_reconciliation) ... ok
+test_root_approval_domain_cannot_be_used_as_provider_receipt (__main__.ProviderReadbackNativeTests.test_root_approval_domain_cannot_be_used_as_provider_receipt) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 2.848s
+
+OK

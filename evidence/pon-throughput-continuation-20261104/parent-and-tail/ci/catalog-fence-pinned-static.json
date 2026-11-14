@@ -1,0 +1,238 @@
+{
+  "bash_scripts_checked": 44,
+  "comparison_base": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+  "current_source_pins_match_actual_git_blobs": [
+    {
+      "actual_git_hash_object": "a7035222bc51cfe7f60e891398230c3179accc82",
+      "current_literal": "a7035222bc51cfe7f60e891398230c3179accc82",
+      "old_literal": "900b9dc8034856c6ee04caf0e1fd99bdbda6fc76",
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+    },
+    {
+      "actual_git_hash_object": "abb5f3193ee4d7f02633be4e3f6fdd3e1365a5e9",
+      "current_literal": "abb5f3193ee4d7f02633be4e3f6fdd3e1365a5e9",
+      "old_literal": "abb5f3193ee4d7f02633be4e3f6fdd3e1365a5e9",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/history_page.rs",
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+    },
+    {
+      "actual_git_hash_object": "aa6c50f60f631574b341632be63d6cf20f40a8d1",
+      "current_literal": "aa6c50f60f631574b341632be63d6cf20f40a8d1",
+      "old_literal": "aa6c50f60f631574b341632be63d6cf20f40a8d1",
+      "path": "trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs",
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+    },
+    {
+      "actual_git_hash_object": "5517d80793c7c9653c26e884a93f79d325b7470b",
+      "current_literal": "5517d80793c7c9653c26e884a93f79d325b7470b",
+      "old_literal": "e99453b1abe6ce589f003be199b5553241cba398",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+    },
+    {
+      "actual_git_hash_object": "cecb8a984c02ffca7590e69c4392223ea748b40f",
+      "current_literal": "cecb8a984c02ffca7590e69c4392223ea748b40f",
+      "old_literal": "cecb8a984c02ffca7590e69c4392223ea748b40f",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_fixed_blob_tests.rs",
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+    },
+    {
+      "actual_git_hash_object": "7301aeb3033913f080b23767bfca52a2bf76d45b",
+      "current_literal": "7301aeb3033913f080b23767bfca52a2bf76d45b",
+      "old_literal": "7301aeb3033913f080b23767bfca52a2bf76d45b",
+      "path": "trillionnium/crates/trnm-pon-node/tests/authenticated_storage_cli.rs",
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+    },
+    {
+      "actual_git_hash_object": "e3ec8bf4bdd510f3fe718e63a4df595d342c61c6",
+      "current_literal": "e3ec8bf4bdd510f3fe718e63a4df595d342c61c6",
+      "old_literal": "e3ec8bf4bdd510f3fe718e63a4df595d342c61c6",
+      "path": "formal/pon-nakamoto-v1/work_query_bound.py",
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+    },
+    {
+      "actual_git_hash_object": "526f155f2215184aa607da6d453423ca6930ded2",
+      "current_literal": "526f155f2215184aa607da6d453423ca6930ded2",
+      "old_literal": "526f155f2215184aa607da6d453423ca6930ded2",
+      "path": "formal/pon-nakamoto-v1/test_work_query_bound.py",
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+    },
+    {
+      "actual_git_hash_object": "c8567475a36cf449d9fd2b33363a545fbd4704ab",
+      "current_literal": "c8567475a36cf449d9fd2b33363a545fbd4704ab",
+      "old_literal": "c8567475a36cf449d9fd2b33363a545fbd4704ab",
+      "path": "trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs",
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+    },
+    {
+      "actual_git_hash_object": "79a7c0ab6812d5a536f551241cee9a12ebdfb494",
+      "current_literal": "79a7c0ab6812d5a536f551241cee9a12ebdfb494",
+      "old_literal": "79a7c0ab6812d5a536f551241cee9a12ebdfb494",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs",
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+    },
+    {
+      "actual_git_hash_object": "3fcbc873fcc89de208922e6ffd74361442797bed",
+      "current_literal": "3fcbc873fcc89de208922e6ffd74361442797bed",
+      "old_literal": "3fcbc873fcc89de208922e6ffd74361442797bed",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic.rs",
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+    },
+    {
+      "actual_git_hash_object": "74af81e2e181f6639dd1719a65d91c0ba5323c9b",
+      "current_literal": "74af81e2e181f6639dd1719a65d91c0ba5323c9b",
+      "old_literal": "74af81e2e181f6639dd1719a65d91c0ba5323c9b",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs",
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+    },
+    {
+      "actual_git_hash_object": "0f611459c4c1c37488861ba36c82ba8302e40c4c",
+      "current_literal": "0f611459c4c1c37488861ba36c82ba8302e40c4c",
+      "old_literal": "0f611459c4c1c37488861ba36c82ba8302e40c4c",
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+    },
+    {
+      "actual_git_hash_object": "ba1ebbe9e2b8f8b4d38c0d03037647d35f8b9b3b",
+      "current_literal": "ba1ebbe9e2b8f8b4d38c0d03037647d35f8b9b3b",
+      "old_literal": "ba1ebbe9e2b8f8b4d38c0d03037647d35f8b9b3b",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs",
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+    },
+    {
+      "actual_git_hash_object": "27b6342619ee051c57944de88b4bbab33ff4627c",
+      "current_literal": "27b6342619ee051c57944de88b4bbab33ff4627c",
+      "old_literal": "27b6342619ee051c57944de88b4bbab33ff4627c",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/tests.rs",
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+    },
+    {
+      "actual_git_hash_object": "ec6420becaba837f22d45c917d15554a8e653275",
+      "current_literal": "ec6420becaba837f22d45c917d15554a8e653275",
+      "old_literal": "ec6420becaba837f22d45c917d15554a8e653275",
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs",
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+    }
+  ],
+  "embedded_python_blocks_compiled": 7,
+  "expected_pre_write_count": 13,
+  "expected_registry_counts_awaiting_actual_native_list": {
+    "native_authenticated": 104,
+    "post_write": 36,
+    "pre_write": 13
+  },
+  "head": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+  "new_direct_append_controls": 2,
+  "new_m06_controls": 5,
+  "new_scope_controls": 22,
+  "old_pq_49_roster_preserved": true,
+  "old_steps_parameters_and_deadlines_preserved": true,
+  "original_workspace_expected_selected_count": 74,
+  "replay_script": "parameterized derivative; original script and historical outputs are separately retained",
+  "result": "PASS",
+  "scope": "workflow YAML, shell, embedded Python and source-name static checks only; synthetic reader controls are not native execution",
+  "synthetic_reader_cases": [
+    {
+      "case": "synthetic-complete-shape",
+      "exit_code": 0,
+      "expected_accept": true
+    },
+    {
+      "case": "replaced-required-prewrite-0",
+      "exit_code": 1,
+      "expected_accept": false
+    },
+    {
+      "case": "replaced-required-prewrite-1",
+      "exit_code": 1,
+      "expected_accept": false
+    },
+    {
+      "case": "replaced-required-prewrite-2",
+      "exit_code": 1,
+      "expected_accept": false
+    },
+    {
+      "case": "replaced-required-prewrite-3",
+      "exit_code": 1,
+      "expected_accept": false
+    },
+    {
+      "case": "replaced-required-prewrite-4",
+      "exit_code": 1,
+      "expected_accept": false
+    },
+    {
+      "case": "replaced-required-prewrite-5",
+      "exit_code": 1,
+      "expected_accept": false
+    },
+    {
+      "case": "replaced-required-prewrite-6",
+      "exit_code": 1,
+      "expected_accept": false
+    },
+    {
+      "case": "replaced-required-prewrite-7",
+      "exit_code": 1,
+      "expected_accept": false
+    },
+    {
+      "case": "replaced-required-prewrite-8",
+      "exit_code": 1,
+      "expected_accept": false
+    },
+    {
+      "case": "replaced-required-prewrite-9",
+      "exit_code": 1,
+      "expected_accept": false
+    },
+    {
+      "case": "replaced-required-prewrite-10",
+      "exit_code": 1,
+      "expected_accept": false
+    },
+    {
+      "case": "replaced-required-prewrite-11",
+      "exit_code": 1,
+      "expected_accept": false
+    },
+    {
+      "case": "replaced-required-prewrite-12",
+      "exit_code": 1,
+      "expected_accept": false
+    },
+    {
+      "case": "duplicate-name",
+      "exit_code": 1,
+      "expected_accept": false
+    },
+    {
+      "case": "missing-old-nonpost",
+      "exit_code": 1,
+      "expected_accept": false
+    },
+    {
+      "case": "duplicate-summary",
+      "exit_code": 1,
+      "expected_accept": false
+    },
+    {
+      "case": "ignored-cost",
+      "exit_code": 1,
+      "expected_accept": false
+    },
+    {
+      "case": "replaced-current-accounts",
+      "exit_code": 1,
+      "expected_accept": false
+    }
+  ],
+  "workflow_sha256": {
+    ".github/workflows/pon-original-workspace-large-state-cpu.yml": "1c42fda995a62ce6f95f50fbc792e3f939572bc007e033917ac5bd0039a83ee9",
+    ".github/workflows/pon-pq-system-continuation.yml": "f96895a19a3f877c5b28059ac6afbdb3b1049a038f016c198b6ab6add8222fc0",
+    ".github/workflows/pon-recent-batch-acceptance.yml": "0b94ae1efe32a77211b1607689555edabe2fd21d0494b0c5e341de0269bc9b58"
+  },
+  "yaml_files": 3
+}

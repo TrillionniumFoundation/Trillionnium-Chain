@@ -1,0 +1,101 @@
+{
+  "actual_original_campaign_successes": 0,
+  "planned_runs": 3,
+  "runs": [
+    {
+      "run": 1,
+      "raw_report_sha256": "e3098f2939cc29aface6793d2bea5ca4e8c83cf3cca8c70e0a1ee97cc25bf54a",
+      "phases": [
+        {
+          "mode": "baseline",
+          "confirmed_rounds": 1,
+          "observed_rounds": 2,
+          "scheduled_rounds": 3,
+          "criteria": false,
+          "window_seconds": 30
+        },
+        {
+          "mode": "from-zero",
+          "confirmed_rounds": 0,
+          "observed_rounds": 1,
+          "scheduled_rounds": 3,
+          "criteria": false,
+          "window_seconds": 30
+        },
+        {
+          "mode": "late-product",
+          "confirmed_rounds": 0,
+          "observed_rounds": 1,
+          "scheduled_rounds": 3,
+          "criteria": false,
+          "window_seconds": 30
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "raw_report_sha256": "7522b7c14f3a743e5960401a3eb69efa20af39c3b1485abb191682b22d794ab0",
+      "phases": [
+        {
+          "mode": "baseline",
+          "confirmed_rounds": 1,
+          "observed_rounds": 2,
+          "scheduled_rounds": 3,
+          "criteria": false,
+          "window_seconds": 30
+        },
+        {
+          "mode": "from-zero",
+          "confirmed_rounds": 0,
+          "observed_rounds": 1,
+          "scheduled_rounds": 3,
+          "criteria": false,
+          "window_seconds": 30
+        },
+        {
+          "mode": "late-product",
+          "confirmed_rounds": 0,
+          "observed_rounds": 1,
+          "scheduled_rounds": 3,
+          "criteria": false,
+          "window_seconds": 30
+        }
+      ]
+    },
+    {
+      "run": 3,
+      "raw_report_sha256": "230a1fb406b2b68ef2869313dfc74e94c0eebe25ba342fb60f7c479f8facd349",
+      "phases": [
+        {
+          "mode": "baseline",
+          "confirmed_rounds": 1,
+          "observed_rounds": 2,
+          "scheduled_rounds": 3,
+          "criteria": false,
+          "window_seconds": 30
+        },
+        {
+          "mode": "from-zero",
+          "confirmed_rounds": 0,
+          "observed_rounds": 1,
+          "scheduled_rounds": 3,
+          "criteria": false,
+          "window_seconds": 30
+        },
+        {
+          "mode": "late-product",
+          "confirmed_rounds": 0,
+          "observed_rounds": 1,
+          "scheduled_rounds": 3,
+          "criteria": false,
+          "window_seconds": 30
+        }
+      ]
+    }
+  ],
+  "qualification": "HOLD_NO_GO",
+  "actual_joint_obligations_closed": 0,
+  "native_cp_cg_cq": null,
+  "six_successor_bound": null,
+  "lifetime_bound": null
+}

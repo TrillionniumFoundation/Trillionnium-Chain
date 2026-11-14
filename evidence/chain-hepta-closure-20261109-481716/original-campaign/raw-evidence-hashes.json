@@ -1,0 +1,262 @@
+{
+  "artifact_integrity_is_not_execution_authenticity": true,
+  "complete_member_payloads_previously_verified_by_v2_reader": {
+    "manifest_sha256": "9710a213553110e9347790a34775d92d9ba20d55a7f13a5e633e78ea0d63689b",
+    "no_unlisted_zip_members": true,
+    "verified_member_bytes": 584959164,
+    "verified_members": 1765,
+    "zip_bytes": 76441344,
+    "zip_sha256": "4e8a243caf2aadf4a195b4cb96dbb0229a0e001a830f0e9de2c4f853ee7dff5c"
+  },
+  "evidence_is_native_execution_of_observed_integration_candidate": false,
+  "large_report_payloads_not_copied": [
+    "run-1-raw/report.json",
+    "run-1-phase-readback.json",
+    "run-2-raw/report.json",
+    "run-2-phase-readback.json",
+    "run-3-raw/report.json",
+    "run-3-phase-readback.json"
+  ],
+  "latest_audit": {
+    "bytes": 2033029,
+    "local_path": "/workspace/scratch/481716a90d06/chain_acceptance/campaign0746-outcomes-v2.json",
+    "reader_receipt": "reader-attempts/reader-v2-attempt01.json",
+    "reader_source_sha256": "1fc55e57ed086d7179004d82bf64507f82fa33a7b3cc6e26c5fd7a6d2135c692",
+    "retained_as": "campaign0746-outcomes-v2.json.gz",
+    "sha256": "1b95b9e8bee728922480a8e40eb9730e750fc64a4c50c0e5cefe2ced1b38585a"
+  },
+  "manifest": {
+    "archive_member": "artifact-files.json",
+    "bytes": 319639,
+    "former_local_locator": "/workspace/scratch/481716a90d06/chain_acceptance/campaign0746.zip!/artifact-files.json",
+    "members": 1765,
+    "no_unlisted_zip_members": true,
+    "retained_as": "artifact-files.json.gz",
+    "retained_local_path": "/workspace/scratch/481716a90d06/chain_acceptance/final-evidence/artifact-files.json.gz",
+    "sha256": "9710a213553110e9347790a34775d92d9ba20d55a7f13a5e633e78ea0d63689b",
+    "total_member_bytes": 584959164
+  },
+  "origin": {
+    "actions_run_id": 42591962205,
+    "actions_run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42591962205",
+    "artifact_id": 13662172930,
+    "artifact_name": "pon-native-campaign-x64-head-release-0746a462e80067b78317597f2fa4bacf5e3db958-1"
+  },
+  "original_source": {
+    "head": "0746a462e80067b78317597f2fa4bacf5e3db958",
+    "repository": "TrillionniumFoundation/Trillionnium-Chain",
+    "tree": "03c69f3120a84f49fd7a76d9564bba4ef0c4b24e"
+  },
+  "retained_binary": {
+    "bytes": 12646984,
+    "path": "public_v3_multiprocess.bin",
+    "sha256": "3afe1ecc5953bb4e5b3066fe07fb11b68a74faac787f4f81c5c15209a97a86f1"
+  },
+  "schema": "retained-original-campaign-evidence-identities-v1",
+  "selected_member_hashes": [
+    {
+      "bytes": 303,
+      "copied_as": "raw-small/SCOPE.txt",
+      "path": "SCOPE.txt",
+      "sha256": "ce6e78baf98f002f35edf9e67a9c04614f5ba357365acff42313d8dc18542ab9"
+    },
+    {
+      "bytes": 595,
+      "copied_as": "raw-small/binary-before.json",
+      "path": "binary-before.json",
+      "sha256": "feb859553b411b74044753233ad6781bb777708ac53e791efd78d5a1f06586bf"
+    },
+    {
+      "bytes": 8561,
+      "copied_as": "raw-small/results.json",
+      "path": "results.json",
+      "sha256": "29c2c1945ee58936e4b9454b03be5b6ba41e1a37bc79f92856746bda10a27ce5"
+    },
+    {
+      "bytes": 912,
+      "copied_as": "raw-small/build.step.json",
+      "path": "build.step.json",
+      "sha256": "ab74375167edea7c8df2ff521cf91808f156b2a871dfb9d31a6caf7feb6479a6"
+    },
+    {
+      "bytes": 423,
+      "copied_as": "raw-small/source-before.json",
+      "path": "source-before.json",
+      "sha256": "417122c7f5cfd676cff06cfd11423379efdeff99716d9d82bdac8aaa6d3e22c4"
+    },
+    {
+      "bytes": 423,
+      "copied_as": "raw-small/source-before-build.json",
+      "path": "source-before-build.json",
+      "sha256": "417122c7f5cfd676cff06cfd11423379efdeff99716d9d82bdac8aaa6d3e22c4"
+    },
+    {
+      "bytes": 423,
+      "copied_as": "raw-small/source-before-campaigns.json",
+      "path": "source-before-campaigns.json",
+      "sha256": "417122c7f5cfd676cff06cfd11423379efdeff99716d9d82bdac8aaa6d3e22c4"
+    },
+    {
+      "bytes": 423,
+      "copied_as": "raw-small/source-after-native.json",
+      "path": "source-after-native.json",
+      "sha256": "417122c7f5cfd676cff06cfd11423379efdeff99716d9d82bdac8aaa6d3e22c4"
+    },
+    {
+      "bytes": 423,
+      "copied_as": "raw-small/source-after.json",
+      "path": "source-after.json",
+      "sha256": "417122c7f5cfd676cff06cfd11423379efdeff99716d9d82bdac8aaa6d3e22c4"
+    },
+    {
+      "bytes": 1368,
+      "copied_as": "raw-small/run-1-result.json",
+      "path": "run-1-result.json",
+      "sha256": "e57e32e79d5b6898d1c932214ab69e88cf382cb05fabe10d75740a4f86cc251d"
+    },
+    {
+      "bytes": 1013,
+      "copied_as": "raw-small/run-1.step.json",
+      "path": "run-1.step.json",
+      "sha256": "214400c56506aa488e2c1769054cd3aa52ad5601b53697e125bdfce60e40e20c"
+    },
+    {
+      "bytes": 423,
+      "copied_as": "raw-small/run-1-source-after.json",
+      "path": "run-1-source-after.json",
+      "sha256": "417122c7f5cfd676cff06cfd11423379efdeff99716d9d82bdac8aaa6d3e22c4"
+    },
+    {
+      "bytes": 271,
+      "copied_as": "raw-small/run-1.stdout.log",
+      "path": "run-1.stdout.log",
+      "sha256": "898be967c7524e6e22142657d49fc556169f7722a5f869ee0a19e14f0a84f35c"
+    },
+    {
+      "bytes": 1615,
+      "copied_as": "raw-small/run-1.stderr.log",
+      "path": "run-1.stderr.log",
+      "sha256": "87b752c64c7555c54a3757f462c03ab479181820809cdb163f5024f45fb18297"
+    },
+    {
+      "bytes": 1368,
+      "copied_as": "raw-small/run-2-result.json",
+      "path": "run-2-result.json",
+      "sha256": "03adc9cd58009c2886429ee4e6f2a40660c9f35017fb4d7724f6a012641ab4eb"
+    },
+    {
+      "bytes": 1013,
+      "copied_as": "raw-small/run-2.step.json",
+      "path": "run-2.step.json",
+      "sha256": "26bba20b3c5382401b0f59317d92e02f3b818938cbe276d04a3055f101087560"
+    },
+    {
+      "bytes": 423,
+      "copied_as": "raw-small/run-2-source-after.json",
+      "path": "run-2-source-after.json",
+      "sha256": "417122c7f5cfd676cff06cfd11423379efdeff99716d9d82bdac8aaa6d3e22c4"
+    },
+    {
+      "bytes": 271,
+      "copied_as": "raw-small/run-2.stdout.log",
+      "path": "run-2.stdout.log",
+      "sha256": "7f68d9f73f51f281cea9c2694eedf2d6e7abc3bddd1fa49d8030ede850fb9755"
+    },
+    {
+      "bytes": 1615,
+      "copied_as": "raw-small/run-2.stderr.log",
+      "path": "run-2.stderr.log",
+      "sha256": "33b91577eac89de0c382077c9c98dabfbc97560b9aae300ef4188d1b1f544cc8"
+    },
+    {
+      "bytes": 1368,
+      "copied_as": "raw-small/run-3-result.json",
+      "path": "run-3-result.json",
+      "sha256": "0b4ba991dbdf2b24379f93739a4dca8c9e04c7a4dd20821da6bf385de2e58784"
+    },
+    {
+      "bytes": 1013,
+      "copied_as": "raw-small/run-3.step.json",
+      "path": "run-3.step.json",
+      "sha256": "9c94ab5a425791a332dce1adb30f56817f65060b49e2defbf7f56b40a83fd6f7"
+    },
+    {
+      "bytes": 423,
+      "copied_as": "raw-small/run-3-source-after.json",
+      "path": "run-3-source-after.json",
+      "sha256": "417122c7f5cfd676cff06cfd11423379efdeff99716d9d82bdac8aaa6d3e22c4"
+    },
+    {
+      "bytes": 271,
+      "copied_as": "raw-small/run-3.stdout.log",
+      "path": "run-3.stdout.log",
+      "sha256": "5c3a0bc96453bb598a8fe91596915ce34f5ea3792e757a3e9e1395bd227eef39"
+    },
+    {
+      "bytes": 1615,
+      "copied_as": "raw-small/run-3.stderr.log",
+      "path": "run-3.stderr.log",
+      "sha256": "25cb7c5cf2593d65744684db9a8a6ebce76bdd4836bd134902e5243632fe12ea"
+    },
+    {
+      "bytes": 48614177,
+      "copied_as": null,
+      "path": "run-1-raw/report.json",
+      "sha256": "39c4098846dbbb802f962989a0774d09c95a80c0db3b04a69923adfce8b5c307"
+    },
+    {
+      "bytes": 1803820,
+      "copied_as": null,
+      "path": "run-1-phase-readback.json",
+      "sha256": "009cff5046c22c1912cb3a657bf434c3730f6ac1bb4eca6da1c3a3fa95262252"
+    },
+    {
+      "bytes": 48774711,
+      "copied_as": null,
+      "path": "run-2-raw/report.json",
+      "sha256": "43c8fb8fa28c560522be595b58e98e483c62631a76766f42efa24f088e366822"
+    },
+    {
+      "bytes": 1803988,
+      "copied_as": null,
+      "path": "run-2-phase-readback.json",
+      "sha256": "c6ce5780860c19de54b18620ba1121317afd7403dba5dc537097387be51b14c0"
+    },
+    {
+      "bytes": 48449148,
+      "copied_as": null,
+      "path": "run-3-raw/report.json",
+      "sha256": "5699de385790f39f3e5684140b97fb81ebba892036442295a3628591de9e0156"
+    },
+    {
+      "bytes": 1802872,
+      "copied_as": null,
+      "path": "run-3-phase-readback.json",
+      "sha256": "05e521e6168b77318e8ac308318460c0724af6d1eda1cae402aa520df875ff6c"
+    },
+    {
+      "bytes": 12646984,
+      "copied_as": null,
+      "path": "public_v3_multiprocess.bin",
+      "sha256": "3afe1ecc5953bb4e5b3066fe07fb11b68a74faac787f4f81c5c15209a97a86f1"
+    },
+    {
+      "bytes": 11686,
+      "copied_as": null,
+      "path": "run-native-campaign.py",
+      "sha256": "c1dfb715aaf8c0c86d66c9ebee6cf64c4a829b89fdf93767e2ce9f847b8534c0"
+    }
+  ],
+  "selected_small_members_rehashed_during_packaging": true,
+  "zip": {
+    "bytes": 76441344,
+    "cache_removal_receipt": "local-raw-zip-removal.json",
+    "copied_into_package": false,
+    "former_local_path": "/workspace/scratch/481716a90d06/chain_acceptance/campaign0746.zip",
+    "local_copy_present": false,
+    "local_raw_zip_removed_for_disk_pressure": true,
+    "rehashed_before_authorized_cache_removal": true,
+    "remote_artifact_metadata": "remote-artifact.json",
+    "sha256": "4e8a243caf2aadf4a195b4cb96dbb0229a0e001a830f0e9de2c4f853ee7dff5c"
+  }
+}

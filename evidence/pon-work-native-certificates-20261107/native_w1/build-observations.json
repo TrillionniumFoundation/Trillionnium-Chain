@@ -1,0 +1,107 @@
+{
+  "checks": [
+    {
+      "check": "toolchain",
+      "command": [
+        "/workspace/scratch/270e2a9ce94f/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+        "--version",
+        "--verbose"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.0175139319999289,
+      "stdout_sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "check": "cargo-version",
+      "command": [
+        "/workspace/scratch/270e2a9ce94f/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "--version"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.007331097000133013,
+      "stdout_sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "check": "locked-graph",
+      "command": [
+        "/workspace/scratch/270e2a9ce94f/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--format-version",
+        "1"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.12902261500130408,
+      "stdout_sha256": "bd8118409fc8247db75d7e90d19452d54729f7e9c2f1f08b6b006e1edd873d21",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "check": "bridge-build",
+      "command": [
+        "/workspace/scratch/270e2a9ce94f/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "build",
+        "--release",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-crypto-primitives",
+        "--example",
+        "pon_work_io",
+        "--example",
+        "pon_zero_io"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 25.31541592999929,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "de175b49b9f5b2a5a9066283e182dd1dd73d071d34c02a7e5ad529f682ed83a9"
+    },
+    {
+      "check": "bridge-clippy",
+      "command": [
+        "/workspace/scratch/270e2a9ce94f/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo-clippy",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-crypto-primitives",
+        "--example",
+        "pon_work_io",
+        "--example",
+        "pon_zero_io",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 12.925510123001004,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "f7850c122e1822437d1a62b936a875b60ff4f8cf61d2d05b838a092af92f6aa8"
+    },
+    {
+      "check": "bridge-format",
+      "command": [
+        "/workspace/scratch/270e2a9ce94f/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustfmt",
+        "--check",
+        "--edition",
+        "2021",
+        "trillionnium/crates/trnm-crypto-primitives/examples/pon_work_io.rs",
+        "trillionnium/crates/trnm-crypto-primitives/examples/pon_zero_io.rs"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.017340345999400597,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "lockfile_unchanged": true,
+  "network_used": false
+}

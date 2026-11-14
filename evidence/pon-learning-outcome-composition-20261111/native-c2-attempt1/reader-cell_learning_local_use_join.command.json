@@ -1,0 +1,40 @@
+{
+  "accepted": true,
+  "command": [
+    "python3",
+    "-B",
+    "scripts/test_cell_learning_local_use_join.py",
+    "-v"
+  ],
+  "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-publish",
+  "elapsed_seconds": 3.224062,
+  "execution_error": null,
+  "exit_code": 0,
+  "expected_python_tests": null,
+  "expected_rust_tests": null,
+  "finished_utc": "2026-11-12T01:00:10.535587+00:00",
+  "interrupted": false,
+  "label": "reader-cell_learning_local_use_join",
+  "observations": {
+    "build_script_events": [],
+    "cargo_json_errors": [],
+    "python_ok": true,
+    "python_tests": [
+      19
+    ],
+    "rust_tests": [],
+    "unqualified": false
+  },
+  "python_suite_required": true,
+  "rejections": [],
+  "source_snapshot_sha256": null,
+  "sqlite_package_id": "path+file:///home/qian-qi/work/chain-pon-outcome-7612-publish/trillionnium/crates/trnm-sqlite-io-boundary#0.1.0",
+  "sqlite_witness_required": false,
+  "sqlite_witnesses": [],
+  "started_utc": "2026-11-12T01:00:07.311535+00:00",
+  "stderr": "reader-cell_learning_local_use_join.stderr",
+  "stderr_sha256": "5ad6dc4d5659131137327dec9574f68a01a6c05134af1952542b85c9feff29f4",
+  "stdout": "reader-cell_learning_local_use_join.stdout",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "timed_out": false
+}

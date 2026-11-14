@@ -1,0 +1,32 @@
+{
+  "head": "96a98a635def8c13b2d4f234aa1daee59c57afa0",
+  "tree": "0fe4e15495f0ce643db9f222ca087e518618df7b",
+  "command": [
+    "cargo",
+    "build",
+    "--release",
+    "--locked",
+    "--offline",
+    "-p",
+    "trnm-pon-node",
+    "--bin",
+    "trnm-pon-node",
+    "--example",
+    "hepta_task_fixture"
+  ],
+  "returncode": 0,
+  "seconds": 0.33830703189596534,
+  "log_sha256": "79ebf1c9ff5e05f48fb0c6ea52b184a87bded725e977ad03d405ba503c7f18b6",
+  "binaries": [
+    {
+      "path": "/tmp/trnm-pn-convergence-20261023/target-integration/release/trnm-pon-node",
+      "sha256": "f79374344cacee4b7a1d4b472bf916222e1603fae0ae7fd6980b2749fd412a13",
+      "bytes": 12721328
+    },
+    {
+      "path": "/tmp/trnm-pn-convergence-20261023/target-integration/release/examples/hepta_task_fixture",
+      "sha256": "814694f4e3be133742405fcddb5c0f0febad9eabe534d1e03934f2bb65e917c8",
+      "bytes": 7225624
+    }
+  ]
+}

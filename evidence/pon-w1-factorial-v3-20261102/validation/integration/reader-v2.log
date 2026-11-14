@@ -1,0 +1,16 @@
+test_actual_thirty_shard_grid_has_eight_new_samples_and_strict_prefixes (__main__.LegalStrategyV2ReaderTests.test_actual_thirty_shard_grid_has_eight_new_samples_and_strict_prefixes) ... ok
+test_all_eight_samples_pay_setup_search_and_all_verifiers (__main__.LegalStrategyV2ReaderTests.test_all_eight_samples_pay_setup_search_and_all_verifiers) ... ok
+test_eighth_sample_exhaustion_keeps_every_miss_and_no_winner (__main__.LegalStrategyV2ReaderTests.test_eighth_sample_exhaustion_keeps_every_miss_and_no_winner) ... ok
+test_framing_duplicate_fields_truncation_and_qualification_still_fail (__main__.LegalStrategyV2ReaderTests.test_framing_duplicate_fields_truncation_and_qualification_still_fail) ... ok
+test_missing_misses_hidden_preparation_and_late_negative_are_retained (__main__.LegalStrategyV2ReaderTests.test_missing_misses_hidden_preparation_and_late_negative_are_retained) ... ok
+test_missing_or_repeated_last_sample_cannot_be_hidden_by_end_counts (__main__.LegalStrategyV2ReaderTests.test_missing_or_repeated_last_sample_cannot_be_hidden_by_end_counts) ... ok
+test_relabeling_eight_historical_domain_samples_does_not_create_v2 (__main__.LegalStrategyV2ReaderTests.test_relabeling_eight_historical_domain_samples_does_not_create_v2) ... ok
+test_two_seven_nine_or_boolean_samples_are_not_eight (__main__.LegalStrategyV2ReaderTests.test_two_seven_nine_or_boolean_samples_are_not_eight) ... ok
+test_v2_freezes_eight_samples_and_evidence_only_capacity (__main__.LegalStrategyV2ReaderTests.test_v2_freezes_eight_samples_and_evidence_only_capacity) ... ok
+test_versioned_records_can_be_interleaved_without_global_switching (__main__.LegalStrategyV2ReaderTests.test_versioned_records_can_be_interleaved_without_global_switching) ... ok
+test_versions_reject_each_others_records_and_mixed_streams (__main__.LegalStrategyV2ReaderTests.test_versions_reject_each_others_records_and_mixed_streams) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 63.388s
+
+OK

@@ -1,0 +1,94 @@
+{
+  "schema": "trnm-cell-concurrent-owner-execution-v1",
+  "status": "PASS",
+  "source_commit": "fc86ed8e927a8eb4e048b160437126a6c0b96c0d",
+  "source_tree": "bd26fb15aa023cbd090662384c25fa52f52b0bc8",
+  "passed": 21,
+  "groups": [
+    {
+      "group": "capacity_progress",
+      "passed": 9,
+      "failed": 0,
+      "ignored": 0,
+      "receipt": "cell-runtime-overlap-capacity-progress.json",
+      "tests": [
+        "cancellation_payload_cannot_be_reinterpreted_as_invalid_state",
+        "malformed_state_keeps_original_error_and_cannot_publish_partial_capacity",
+        "complete_scan_preserves_shared_zero_reward_and_archive_reservations",
+        "non_clone_cancellation_payload_keeps_its_identity",
+        "wrong_profile_rejects_before_progress_without_upgrading_old_context",
+        "complete_namespace_ranges_preserve_full_map_results_with_future_and_boundary_rows",
+        "namespace_seeks_keep_lexical_rejection_precedence_and_original_queue_checks",
+        "every_interruption_cut_stops_without_publishing_or_mutating_and_can_retry",
+        "complete_scan_matches_legacy_at_batch_and_capacity_boundaries"
+      ]
+    },
+    {
+      "group": "continuity_new_range_tests",
+      "passed": 2,
+      "failed": 0,
+      "ignored": 0,
+      "receipt": "cell-runtime-overlap-continuity-new-range-tests.json",
+      "tests": [
+        "continuity_v1::range_tests::complete_liability_ranges_keep_account_proof_calls_in_canonical_order",
+        "continuity_v1::range_tests::split_monetary_and_archive_ranges_keep_all_cancellation_cuts"
+      ]
+    },
+    {
+      "group": "growth_new_range_tests",
+      "passed": 3,
+      "failed": 0,
+      "ignored": 0,
+      "receipt": "cell-runtime-overlap-growth-new-range-tests.json",
+      "tests": [
+        "pon_executor::growth::range_tests::borrowed_working_ranges_preserve_all_nonaccount_keys_and_pointer_identity",
+        "pon_executor::growth::range_tests::proved_account_aggregation_keeps_malformed_suffix_rows_overflow_and_error_order",
+        "pon_executor::growth::range_tests::mandatory_owner_ranges_keep_shared_future_zero_and_lexical_capacity_errors"
+      ]
+    },
+    {
+      "group": "listener_domain_admission",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0,
+      "receipt": "cell-runtime-overlap-listener-domain-admission.json",
+      "tests": [
+        "ingress::public_v3::intake_domain_tests::one_node_cannot_spawn_a_fifth_worker_queue_service_from_the_same_domain"
+      ]
+    },
+    {
+      "group": "startup_epoch_cancellation",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0,
+      "receipt": "cell-runtime-overlap-startup-epoch-cancellation.json",
+      "tests": [
+        "ingress::public_v3::intake_domain_tests::public_epoch_start_keeps_original_deadline_and_stop_while_owner_is_busy"
+      ]
+    },
+    {
+      "group": "mandatory_owner_funding_path",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0,
+      "receipt": "cell-runtime-overlap-mandatory-owner-funding-path.json",
+      "tests": [
+        "store::growth::tests::mandatory_capacity::native_growth_v2_mandatory_owner_cap_excludes_new_miner_but_refunds_and_matures"
+      ]
+    },
+    {
+      "group": "diagnostic_lifecycle_publication",
+      "passed": 4,
+      "failed": 0,
+      "ignored": 0,
+      "receipt": "cell-runtime-overlap-diagnostic-lifecycle-publication.json",
+      "tests": [
+        "ingress::public_v3::request_observation::tests::lifecycle_keeps_task_and_connection_closure_order_independent",
+        "ingress::public_v3::request_observation::tests::lifecycle_retains_disconnect_until_actual_task_owner_exits",
+        "ingress::public_v3::request_observation::tests::lifecycle_snapshot_hides_clocks_until_their_close_publication_is_observed",
+        "ingress::public_v3::request_observation::tests::lifecycle_unknown_clock_is_not_zero_and_snapshot_cannot_block_closure"
+      ]
+    }
+  ],
+  "native_model_or_pq_qualification": false
+}

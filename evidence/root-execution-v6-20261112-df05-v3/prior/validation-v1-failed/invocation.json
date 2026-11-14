@@ -1,0 +1,8 @@
+{
+  "base": "8970e2c81abbf48e2a4d3f0802d79624ab20fadd",
+  "cloud_source": "87bf6bb07c4ccdd75741cfb79c7447d8d8c54758",
+  "driver_sha256": "65addcbeb56eff0214b46eaaca02ba3389698f6e29c9ff54de85033254abff6f",
+  "expected_tree": "b1882c2e46827abfd1db5f8744be043d5776df6d",
+  "operation_key": "root-operation-20261112-df05-native-validation-v1",
+  "scope": "original complete Root runners and exact-source gates; no external effects; no publication in this process"
+}

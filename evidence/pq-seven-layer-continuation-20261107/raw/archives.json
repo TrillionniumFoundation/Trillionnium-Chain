@@ -1,0 +1,49 @@
+{
+  "archives": [
+    {
+      "archive": "frozen-validation.tar.gz",
+      "bytes": 1288093,
+      "sha256": "250ecfcacbf6503124c814ec9feb7fee8f49cb5e0a888b60c0883c157e1bd539",
+      "uncompressed_bytes": 11198397
+    },
+    {
+      "archive": "reader-race.tar.gz",
+      "bytes": 55454,
+      "sha256": "313b4ebcf054f583214d99f521bc1ffe08921aac7e81070592eeca8c06596fe6",
+      "uncompressed_bytes": 298977
+    },
+    {
+      "archive": "historical-ci.tar.gz",
+      "bytes": 5855276,
+      "sha256": "778dbd421af191dd70d8544196827863537d7016d86f7ec23fa118ca68373194",
+      "uncompressed_bytes": 8870507
+    },
+    {
+      "archive": "supporting-reviews.tar.gz",
+      "bytes": 120535,
+      "sha256": "1227280df9f8bc15d30fc9ef34d49ce1ecbcea7c39090f10bb3fb65d4cf614b7",
+      "uncompressed_bytes": 600607
+    }
+  ],
+  "build_caches_included": false,
+  "native_elf_bodies_included": false,
+  "production_activation": false,
+  "schema": "trnm-pq-seven-layer-archives-v1",
+  "terminal_outcomes": {
+    "native": {
+      "all_commands_succeeded": false,
+      "not_executed": []
+    },
+    "quantum": {
+      "all_commands_succeeded": true,
+      "not_executed": []
+    },
+    "source": {
+      "all_commands_succeeded": true,
+      "not_executed": []
+    }
+  },
+  "tested_commit": "e36cfb88956a0e35e53d74c5ab71c94c628439d9",
+  "tested_tree": "b2586f06e82de55484a2e5752563e8b669c3ea17",
+  "whole_chain_pq_qualified": false
+}

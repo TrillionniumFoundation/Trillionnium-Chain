@@ -2625,6 +2625,7 @@ fn open_existing_requires_precreated_regular_nonsymlink_store() {
 
     drop(TaskKernelStoreV1::open(config.clone()).expect("create store"));
     drop(TaskKernelStoreV1::open_existing(config.clone()).expect("strict reopen"));
+    drop(TaskKernelStoreV1::open(config.clone()).expect("normal regular reopen"));
 
     let directory_path = fixture.directory.path().join("not-a-store-file");
     fs::create_dir(&directory_path).expect("directory object");
@@ -2641,13 +2642,342 @@ fn open_existing_requires_precreated_regular_nonsymlink_store() {
     {
         let symlink_path = fixture.directory.path().join("store-link.sqlite");
         std::os::unix::fs::symlink(&config.path, &symlink_path).expect("store symlink");
-        let mut symlink_config = config;
+        let mut symlink_config = config.clone();
         symlink_config.path = symlink_path;
         assert_eq!(
-            TaskKernelStoreV1::open_existing(symlink_config)
+            TaskKernelStoreV1::open_existing(symlink_config.clone())
                 .expect_err("symlink store path")
                 .code(),
             AgentMarketErrorCodeV1::StoreFailure
         );
+        assert_eq!(
+            TaskKernelStoreV1::open(symlink_config)
+                .expect_err("normal open rejects symlink store path")
+                .code(),
+            AgentMarketErrorCodeV1::StoreFailure
+        );
+        let missing = fixture.directory.path().join("missing-store.sqlite");
+        let dangling = fixture.directory.path().join("dangling-store.sqlite");
+        std::os::unix::fs::symlink(&missing, &dangling).expect("dangling store symlink");
+        let mut dangling_config = config;
+        dangling_config.path = dangling;
+        assert_eq!(
+            TaskKernelStoreV1::open(dangling_config)
+                .expect_err("normal open rejects dangling store path")
+                .code(),
+            AgentMarketErrorCodeV1::StoreFailure
+        );
+        assert!(!missing.exists(), "refusal must not create the link target");
     }
+}
+
+#[cfg(unix)]
+#[test]
+fn sqlite_sidecar_objects_refuse_creation_and_reopen_without_file_effects() {
+    use std::os::unix::fs::symlink;
+
+    for existing in [false, true] {
+        let fixture = Fixture::new();
+        let config = fixture.config(0);
+        let database = config.path.clone();
+        if existing {
+            drop(TaskKernelStoreV1::open(config.clone()).expect("initial store"));
+        }
+        let original = fs::read(&database).ok();
+        for suffix in ["-wal", "-shm", "-journal"] {
+            let mut name = database.as_os_str().to_os_string();
+            name.push(suffix);
+            let sidecar = std::path::PathBuf::from(name);
+            let target = database.parent().unwrap().join(format!("missing{suffix}"));
+            for dangling in [true, false] {
+                if dangling {
+                    symlink(&target, &sidecar).unwrap();
+                } else {
+                    fs::write(&sidecar, b"unresolved sidecar bytes").unwrap();
+                }
+                let error = TaskKernelStoreV1::open(config.clone())
+                    .expect_err("sidecar object must refuse before SQLite is opened");
+                assert_eq!(error.code(), AgentMarketErrorCodeV1::SidecarPresent);
+                if existing {
+                    let error = TaskKernelStoreV1::open_existing(config.clone())
+                        .expect_err("existing opener must enforce the same sidecar boundary");
+                    assert_eq!(error.code(), AgentMarketErrorCodeV1::SidecarPresent);
+                }
+                assert_eq!(
+                    fs::read(&database).ok(),
+                    original,
+                    "database must remain unchanged"
+                );
+                if dangling {
+                    assert_eq!(fs::read_link(&sidecar).unwrap(), target);
+                    assert!(
+                        !target.exists(),
+                        "refusal must not create the symlink target"
+                    );
+                } else {
+                    assert_eq!(fs::read(&sidecar).unwrap(), b"unresolved sidecar bytes");
+                }
+                fs::remove_file(&sidecar).unwrap();
+            }
+        }
+        drop(TaskKernelStoreV1::open(config.clone()).expect("clean store remains available"));
+        TaskKernelStoreV1::open_existing(config.clone()).expect("clean reopen remains available");
+    }
+}
+
+#[cfg(unix)]
+#[test]
+fn sqlite_sidecar_inspection_error_refuses_before_database_creation() {
+    let fixture = Fixture::new();
+    let mut config = fixture.config(0);
+    config.path = config.path.with_file_name("a".repeat(255));
+    let database = config.path.clone();
+    let mut probe = database.as_os_str().to_os_string();
+    probe.push("-journal");
+    let cause = fs::symlink_metadata(&probe).expect_err("overlong sidecar fixture");
+    assert_ne!(cause.kind(), std::io::ErrorKind::NotFound);
+    let error = TaskKernelStoreV1::open(config)
+        .expect_err("inspection failure cannot be treated as sidecar absence");
+    assert_eq!(error.code(), AgentMarketErrorCodeV1::StoreFailure);
+    assert!(error.message().starts_with("cannot inspect SQLite sidecar"));
+    assert!(!database.exists(), "refusal must precede database creation");
+    assert_eq!(fs::read_dir(fixture.directory.path()).unwrap().count(), 0);
+}
+
+struct SharedBondLeaseFixture {
+    fixture: Fixture,
+    store: TaskKernelStoreV1,
+    requester_cap: CapabilityGrantBodyV1,
+    requester_session: SessionKeyGrantBodyV1,
+    leases: Vec<TaskLeaseBodyV1>,
+}
+
+impl SharedBondLeaseFixture {
+    fn new() -> Self {
+        let mut fixture = Fixture::new();
+        fixture.trust.provider_bond_funding = 200;
+        let store = fixture.store(0);
+        let (requester_cap, requester_session, provider_cap, provider_session) =
+            fixture.setup_agents(&store);
+        let mut leases = Vec::new();
+        for nonce in 0..3 {
+            // Three funded tasks fit the original 700-unit capability budget.
+            // All bids exist before any lease consumes the shared 200-unit bond.
+            let mut task = fixture.task_operation(1, nonce);
+            task.expected_funding_account_version = nonce;
+            task.escrow_terms.funded_amount = 220;
+            task.escrow_terms.provider_payment_cap = 50;
+            task.task_offer_body.requester_capability_id =
+                Some(requester_cap.capability_id().unwrap());
+            task.task_offer_body.escrow_terms_hash =
+                digest_value("trnm.portable.v2.escrow-terms.v1", &task.escrow_terms).unwrap();
+            let charge = KernelResourceChargeV1 {
+                asset_charges: vec![AssetChargeV1 {
+                    asset_id: hash(80),
+                    amount: 220,
+                }],
+                ..empty_charge()
+            };
+            store
+                .execute(&fixture.session_command(
+                    false,
+                    1,
+                    nonce,
+                    nonce,
+                    &requester_cap,
+                    &requester_session,
+                    SessionBody::Task(task.clone(), charge),
+                ))
+                .expect("fund distinct task");
+            let mut bid = fixture.bid_body(&task, 3, nonce);
+            bid.maximum_price = 50;
+            bid.provider_capability_id = Some(provider_cap.capability_id().unwrap());
+            store
+                .execute(&fixture.session_command(
+                    true,
+                    3,
+                    nonce,
+                    nonce,
+                    &provider_cap,
+                    &provider_session,
+                    SessionBody::Bid(bid.clone(), empty_charge()),
+                ))
+                .expect("admit distinct bid before holds");
+            leases.push(fixture.lease_body(&task, &bid));
+        }
+        Self {
+            fixture,
+            store,
+            requester_cap,
+            requester_session,
+            leases,
+        }
+    }
+
+    fn lease_command(&self, index: usize, nonce: u64, bond_version: u64) -> KernelCommandV1 {
+        self.fixture.session_command(
+            false,
+            2,
+            nonce,
+            nonce,
+            &self.requester_cap,
+            &self.requester_session,
+            SessionBody::Lease(
+                self.leases[index].clone(),
+                0,
+                0,
+                bond_version,
+                empty_charge(),
+            ),
+        )
+    }
+}
+
+fn assert_liability_head_unchanged(before: &AgentMarketFreshReadbackV1, store: &TaskKernelStoreV1) {
+    let after = store.fresh_readback().expect("complete durable readback");
+    assert_eq!(after.sequence(), before.sequence());
+    assert_eq!(after.durable_state_root(), before.durable_state_root());
+    assert_eq!(after.durable_journal_root(), before.durable_journal_root());
+    assert_eq!(
+        after.durable_committed_block_root(),
+        before.durable_committed_block_root()
+    );
+}
+
+#[test]
+fn shared_bond_outstanding_leases_exhaust_collateral_without_partial_commit() {
+    let market = SharedBondLeaseFixture::new();
+    for index in 0..2 {
+        market
+            .store
+            .execute(&market.lease_command(index, index as u64, index as u64))
+            .expect("reserve distinct outstanding liability");
+        let lease = &market.leases[index];
+        assert_eq!(
+            market
+                .store
+                .task_state(lease.task_id)
+                .unwrap()
+                .active_lease_id,
+            Some(lease.lease_id().unwrap())
+        );
+        let escrow = market.store.escrow_state(lease.escrow_id).unwrap();
+        assert_eq!((escrow.available, escrow.reserved), (170, 50));
+        assert_eq!(escrow.active_reservations.len(), 1);
+        assert_eq!(
+            escrow.active_reservations[0].source_object_id,
+            Hash32V1(lease.lease_id().unwrap().0)
+        );
+    }
+    let bond = market
+        .store
+        .bond_state(market.fixture.trust.provider_bond_id)
+        .unwrap();
+    assert_eq!((bond.version, bond.available, bond.held), (2, 0, 200));
+    assert_eq!((bond.released, bond.slashed, bond.closed), (0, 0, false));
+    let before = market.store.fresh_readback().unwrap();
+    let third = market.lease_command(2, 2, 2);
+    assert_eq!(
+        market.store.execute(&third).unwrap_err().code(),
+        AgentMarketErrorCodeV1::InvalidState
+    );
+    assert_liability_head_unchanged(&before, &market.store);
+    let third_lease = &market.leases[2];
+    let task = market.store.task_state(third_lease.task_id).unwrap();
+    assert_eq!(
+        (task.revision, task.status, task.active_lease_id),
+        (0, 0, None)
+    );
+    let escrow = market.store.escrow_state(third_lease.escrow_id).unwrap();
+    assert_eq!(
+        (escrow.version, escrow.available, escrow.reserved),
+        (0, 220, 0)
+    );
+    let reopened = TaskKernelStoreV1::open_existing(market.fixture.config(0)).unwrap();
+    assert_eq!(reopened.bond_state(bond.bond_id).unwrap(), bond);
+    assert_liability_head_unchanged(&before, &reopened);
+}
+
+#[test]
+fn shared_bond_stale_handle_rechecks_collateral_and_preserves_rejected_nonce() {
+    let market = SharedBondLeaseFixture::new();
+    // Two independently opened handles prepare obligations against version zero.
+    // This checks concurrent outstanding obligations and a stale caller, not
+    // simultaneous-writer liveness through the fail-closed sidecar boundary.
+    let stale_handle = TaskKernelStoreV1::open_existing(market.fixture.config(0)).unwrap();
+    let stale_second = market.lease_command(1, 1, 0);
+    market
+        .store
+        .execute(&market.lease_command(0, 0, 0))
+        .unwrap();
+    let before = market.store.fresh_readback().unwrap();
+    assert_eq!(
+        stale_handle.execute(&stale_second).unwrap_err().code(),
+        AgentMarketErrorCodeV1::InvalidState
+    );
+    assert_liability_head_unchanged(&before, &stale_handle);
+    let bond = stale_handle
+        .bond_state(market.fixture.trust.provider_bond_id)
+        .unwrap();
+    assert_eq!((bond.version, bond.available, bond.held), (1, 100, 100));
+    // Rejection consumed neither authorization nonce nor any portion of the
+    // second escrow. A newly signed command binds the now-current bond version.
+    let second = market.lease_command(1, 1, 1);
+    assert!(!stale_handle.execute(&second).unwrap().is_replay());
+    let bond = market.store.bond_state(bond.bond_id).unwrap();
+    assert_eq!((bond.version, bond.available, bond.held), (2, 0, 200));
+    assert_eq!(
+        market.store.fresh_readback().unwrap().sequence(),
+        before.sequence() + 1
+    );
+}
+
+#[test]
+fn shared_bond_ack_loss_reopen_and_exact_replay_keep_one_hold_per_lease() {
+    let market = SharedBondLeaseFixture::new();
+    let first = market.lease_command(0, 0, 0);
+    let second = market.lease_command(1, 1, 1);
+    let before = market.store.fresh_readback().unwrap();
+    assert_eq!(
+        market
+            .store
+            .execute_with_fault(&first, CommitFaultV1::NotAppliedAckLost)
+            .unwrap_err()
+            .code(),
+        AgentMarketErrorCodeV1::CommitUncertain
+    );
+    assert_liability_head_unchanged(&before, &market.store);
+    assert_eq!(
+        market
+            .store
+            .execute_with_fault(&first, CommitFaultV1::AppliedAckLost)
+            .unwrap_err()
+            .code(),
+        AgentMarketErrorCodeV1::CommitUncertain
+    );
+    let committed = market.store.fresh_readback().unwrap();
+    assert_eq!(committed.sequence(), before.sequence() + 1);
+    drop(market.store);
+    let reopened = TaskKernelStoreV1::open_existing(market.fixture.config(0)).unwrap();
+    let first_receipt = reopened
+        .execute(&first)
+        .expect("reconcile exact committed lease");
+    assert!(first_receipt.is_replay());
+    assert_liability_head_unchanged(&committed, &reopened);
+    let bond = reopened
+        .bond_state(market.fixture.trust.provider_bond_id)
+        .unwrap();
+    assert_eq!((bond.version, bond.available, bond.held), (1, 100, 100));
+    reopened
+        .execute(&second)
+        .expect("second independently funded hold");
+    let two_holds = reopened.fresh_readback().unwrap();
+    let replay = reopened
+        .execute(&first)
+        .expect("old lease remains readback only");
+    assert!(replay.is_replay());
+    assert_eq!(replay.receipt(), first_receipt.receipt());
+    assert_liability_head_unchanged(&two_holds, &reopened);
+    let bond = reopened.bond_state(bond.bond_id).unwrap();
+    assert_eq!((bond.version, bond.available, bond.held), (2, 0, 200));
 }

@@ -1,0 +1,263 @@
+# Current-source W1 mapping V2
+
+Status: **HOLD**. This is an explicit source-compatibility continuation under the
+sole [development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md).
+It does not replace the historical implementation contract, its test roster,
+its failed workflow results or its unknown cryptographic obligations.
+
+## Active selected mapping, 2026-11-14
+
+The active contract binds checkpoint
+`5c04c60e463462d9df8884786e0d5bb32af08a64`, with 145 inputs in
+the same six local Cargo-reachable crates and 16 selected project paths.
+Its 50,313 bytes have SHA-256
+`77f3901f137119ce245bf361990990b51ecb9affdc87f273404c4330a2870ee5`.
+The paired proof descriptor is
+`8e95754db175bf8f2c4b3ffc0afe46f7b1eff476479d15fb2c005bf6d79dd0f1`.
+
+The later local corrective checkpoint `fc39da5f35298ce8a4c34aa5bdb25849648612f9`
+does not change these 145 selected input bytes. Node `store.rs` and the
+CI reader fixes are outside this mapping's source inventory, so this mapping
+retains its existing checkpoint and digest. That equality does not qualify the
+whole successor checkout or reproduce a historical native run. The detailed
+145-input changes and current named CI correspondence are recorded below.
+All qualification flags remain false; the upstream current-approval list stays
+empty and the 15 proof obligations remain unresolved.
+
+## Retained independent-lock review, 2026-11-14
+
+At this retained checkpoint, the mapping bound source
+`d9e6aa1ec8d1cdf4f506238f2df452c8c6215b00`.
+The independent native and V2 verifier locks previously failed full
+`cargo metadata --locked` because their shared crypto dependency now requires
+Ed25519 3.0 and Curve25519 5.0. The same manifest constraints were resolved;
+no guest lock or historical proof material was rewritten.
+
+Within this selected mapping, exactly one of 16 project inputs and one of
+140 local-closure inputs changes: `w1_v2_verifier/Cargo.lock`, now 46,018 bytes,
+SHA-256 `93a68edce98e5c61e0cba33ebfbe392ff52df24633347da5a214ac8eb6eae24b`.
+All unchanged-version registry checksums and RISC Zero 3.0.6 package identities
+are retained. Relative to the historical V1 project roster, the reviewed
+difference set now contains the verifier entry, funded-service wire source and
+this lock.
+
+Both standalone crates passed complete `--locked --offline` dependency graphs,
+their original release tests (including the three named V2 saved-proof controls),
+formatting, strict Clippy and release builds on Rust 1.95.0 macOS arm64.
+These separate native observations do not change this mapping reader's scope.
+The prior pin refusals remain recorded. The eight literal inputs, proof/image
+identity, historical V1 reader and contract, 15 unresolved obligations and
+upstream current-use withdrawal remain unchanged.
+
+The profile-binding and upstream-security descriptors reference the same updated
+mapping bytes; the route registry rebinds only that mapping and V2 lock.
+No route, receipt format, approved profile, qualification flag or budget changes.
+
+## Earlier source reviews
+
+The earlier source review described Chain
+`39336622c63df1ae746d83a76bb53202cd01ba17`. The preceding dependency mapping
+reviewed `189b9b5959d836ef6ae96e14fb285948e4920aa9`; its observations remain
+historical. The retained V1 implementation contract is based on
+`cb114b13bf848a77634e40a08b31b30c7c758e7b`.
+At that earlier review, comparison of its entire project-file roster with
+`39336622` gave two changed files:
+
+| File | Historical bytes | Current bytes | Reviewed difference |
+| --- | ---: | ---: | --- |
+| `formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs` | 9,233 | 11,172 | Adds the explicit `--native-once` command and dispatch branch. It performs one native replay with an independently supplied header. Existing receipt-verification dispatch is retained. |
+| `trillionnium/crates/trnm-protocol/src/pon_wire.rs` | 32,354 | 32,654 | Adds exact funded-service reservation and decision decoding for additional forms of tags 2 and 5. The previously accepted fixed-length forms retain their branches. |
+
+Changing those two source pins alone would leave new local dependencies outside
+the selected mapping. The new contract therefore fixes all Rust source files
+under the six reachable local path crates, their manifests and existing lock
+files, workspace inputs and eight literal include materials. This includes
+`funded_service_task_v1.rs`, the state-root arithmetic module, the remaining
+protocol modules, the crypto crate and the relation/guest/verifier sources.
+The preceding current-source mapping, at
+`e8e2fcb8d811638eb5fa757d28590fbe8e408e61`, recorded 134 files. Relative to #827,
+that combined #824/#825/#827 source
+also changes the grouped factored-producer library and its example. Their
+reviewed additions implement exact B(Ax) preparation/execution and a separate
+example selector; they do not change or call W1. The remaining 132 closure
+files were byte-identical to #827, including manifests, locks and include inputs.
+
+The earlier #835/#836/#837 integration recorded **137** files, bound by exact blobs
+from commit `44e96b1a841a50613d0b93484c5e576caec9f81f`, tree
+`c297ebb14fcbeeb5f8acf13b3143a66b8b3b6db8`. Of the preceding 134 files, only
+`trillionnium/Cargo.lock` and `trnm-crypto-primitives/src/lib.rs` change: the lock
+retains both the storage `getrandom` and optional release OpenSSL dependency
+edges, while the crypto export adds the independent root module. Three files
+are newly inventoried: `trnm-crypto-primitives/src/pq_root_v3.rs`, its
+`src/pq_root_v3/tests.rs`, and `tests/pq_root_v3_native.rs`. All 16 selected
+project files, saved proof materials, helper scripts, upstream snapshot,
+proof parameters and 15 unresolved obligations remain byte-identical to the
+prior current mapping. No root native test or new proof execution is implied.
+
+The preceding integration contract SHA-256 was
+`e2c5377ac02c0ed47e7f69125fbcabe61072d42597b3208264abaa5be2961c78`.
+Its pre-update checker refused the changed lockfile; that failure remains
+retained. Ten missing tracked evidence inputs, totaling 1,430,534 bytes, were
+materialized individually from the frozen commit and checked against both Git
+blob and index identities. No original fixture bytes were changed.
+
+The dependency-security continuation binds the same 137-file roster to
+commit `189b9b5959d836ef6ae96e14fb285948e4920aa9`, tree
+`35c9394cc41d4c8c5e555ba421311f0d5c1b1126`. Only `trillionnium/Cargo.lock`
+changes within that local closure: the reviewed graph selects bundled
+`rusqlite 0.41.0` / `libsqlite3-sys 0.39.0` and their required
+hashlink/hashbrown resolution. The 16 selected project inputs, saved proof
+materials, historical V1 reader/contract, helpers, proof parameters and all 15
+unresolved obligations retain their exact bytes. The other upgraded application
+manifests and locks are outside this selected mapping and require their own
+complete dependency and native checks.
+
+That dependency continuation used contract SHA-256
+`846efa5cedfb811ae8255a5b3d5c0223e6e89180a89c9670e7bcb9204cbbed30`.
+
+The 2026-11-10 continuation preserves all **137** existing closure records and
+adds exactly `trnm-crypto-primitives/examples/pon_from_zero_filter_cost_v1.rs`,
+for **138** inputs. Its 15,343 bytes have SHA-256
+`78665546a09da49bc100da9357743781eae282379a6eae40f0e286d7cbbc8cde`,
+read from source `39336622c63df1ae746d83a76bb53202cd01ba17`, tree
+`42fbd7d5a7f00b75000cb4aa242e578a8f941d59`. The example measures finite existing
+native PNW1 components. It does not change the selected RISC Zero proof relation.
+All 16 selected project records, saved proof materials, helper scripts, historical
+reader/contract, parameters, eight literal includes and 15 unresolved obligations
+retain their bytes. The original 14 control methods remain; their existing
+closure-count assertion now includes the added example.
+
+The 138-input count retains the original crate-root and literal-data inventory
+scope. This reader does not enumerate Rust `#[path]` imports outside those roots.
+The new example, like the older expensive-verifier example, imports
+`trnm-pon-node/examples/support/w1_from_zero.rs`; that helper remains outside this
+selected inventory. The separate native experiment guards the whole tracked
+source. This mapping does not establish a complete Rust include/build graph.
+
+The actual pre-update current reader on evidence child
+`42d6ab45598cbba3d476a3c558b7fce562f13877` exited 2 with
+`local Rust source inventory differs`. Retain that failure independently of the
+historical V1 refusal. At that retained checkpoint the contract SHA-256 was
+`272275f202b896b74b7f7499695fa3f50b28a36465806c60b8c369e2e76db5b9`.
+This source rebinding supplies no native execution or new security conclusion.
+Native observations on `39336622` retain that identity; the binding successor
+requires its own consistency checks and inherits no execution qualification.
+
+The current checker verifies the local Cargo path graph,
+exact Rust-file inventory, literal include set and declared absence of build
+inputs. Newly added Rust files or previously absent build scripts require an
+explicit review and new contract; they are not silently included.
+
+The two entry manifests are the V2 verifier and the V2 guest. This source
+inventory includes local test sources and their literal fixtures. It is not
+a claim that those tests ran, that every source is reachable in a production
+build, or that registry dependencies and toolchain inputs are completely
+reviewed. Existing Cargo locks remain byte-pinned, but this reader does not
+run Cargo or recompute its complete resolution graph.
+
+## Separate entry and preserved historical result
+
+The explicit contract is
+[w1-qrom-implementation-current-v2.json](../../config/pon/w1-qrom-implementation-current-v2.json).
+Run:
+
+```sh
+python3 scripts/ci/test_w1_qrom_current_implementation_audit.py
+python3 scripts/w1_qrom_current_implementation_audit.py --repo-root . --output /absolute/new-current-map.json
+```
+
+The output file is create-only. A previous receipt is never overwritten.
+The original V1 contract, original implementation reader and original workflow
+remain unchanged. The new reader first verifies their byte identities and
+retains the expected V1 source-contract refusal. It then uses the retained
+pure mapping functions with the separately pinned current inputs. It does not
+rewrite old constants, weaken old checks or claim that the historical named
+roster or workflow passed.
+
+The new mapping reaches the same saved V2 fixture, independently reconstructed
+control root, image constant, parameter digest, locked selected packages and
+FRI transcript. Actual local source files and the local path graph are checked
+before and after mapping. Source fingerprints describe consistency with a
+reviewed inventory. They do not authenticate the executor or establish Git
+ancestry, whole-checkout atomicity, third-party implementation review, the
+loaded native executable or a provider build.
+
+## Interpretation
+
+Successful execution emits
+`CURRENT_MAPPING_REPRODUCED_SECURITY_HOLD`. All existing qualification flags
+remain false; security bits and lifetime budgets remain null/unadopted. Every
+existing proof obligation remains unresolved. A saved-artifact metadata mapping
+does not generate a new proof or perform fresh cryptographic verification.
+This continuation does not establish a QROM theorem, extraction/state-restoration
+assumptions, recursive soundness, whole-chain composition, quantum work cost,
+DAA security, positive honest service or production admission.
+
+The first development execution used a minimal, explicit input projection of
+the reviewed source after an attempted full worktree checkout failed from
+ENOSPC. The complete original checkout was not edited. Git automatically
+removed the incomplete new worktree. The reader and 14 controls passed first on the #827 projection and were
+rerun on the explicitly reviewed combined-source projection; those results are source/mapping observations only. The combined-source projection was moved to a task-owned in-memory filesystem
+after a further ENOSPC refusal. This is not an independent executor. No native Rust
+test or new native executable was produced by this continuation. Applying the
+patch to another combined candidate requires checking all fixed inputs again;
+another branch's passing record cannot substitute for that execution.
+
+## Consolidated current source review, 2026-11-14
+
+Current mapping checkpoint 5c04c60e463462d9df8884786e0d5bb32af08a64 enumerates 145 inputs across the same six
+Cargo-reachable crates. Nine prior inputs changed and five Rust files were
+added. The new paths are the explicit root cost example, low_rank_prefix.rs,
+the test-only statement_boundaries.rs, task_product_facts.rs and its tests.
+All 131 other prior closure inputs and the eight literal includes keep their
+bytes. The SP27 example is in trnm-research-protocol, outside this closure.
+
+Only pon_work.rs changes among the 16 selected project paths compared with
+the preceding current mapping. The historical-V1 difference set contains four
+paths. Saved proof assets, guest lock/image, historical reader and contract,
+helpers, proof parameters and all 15 unresolved obligations remain unchanged.
+The original historical refusal still names the V2 verifier src/main.rs
+byte bound. Current contract: 50313 bytes, SHA-256 77f3901f137119ce245bf361990990b51ecb9affdc87f273404c4330a2870ee5.
+
+The real Cargo edges and complete Rust directory inventory within these roots
+were enumerated from fixed Git bytes. External Rust #[path] imports and
+third-party implementations remain outside this selected inventory. Independent
+controls require every new source and reject missing or changed bytes. Source
+mapping performs no native verification and grants no current proof-use approval
+or security qualification.
+
+### Current CI consumer correspondence
+
+The current named roster retains its preceding 75 controls and adds the two
+independent consolidated-source controls, for 77 exact names. The supplemental
+roster retains the original eight historical names unchanged and carries the
+same 16 current mapping controls, for 24 names. Both runners still require the
+complete registered, started and successful identities with no skips.
+
+The historical-on-current diagnostic binds the four reviewed differences in
+project-file order: verifier source, verifier lock, current PoN work source, and
+protocol wire source. Missing, duplicate, substituted-digest and mutually edited
+map/report difference sets are refused. This updates current CI correspondence;
+the fixed historical job, original historical roster, saved reports and
+cryptographic qualification are unchanged.
+
+### Exact current semantics correspondence
+
+The frozen 2026-11-07 semantics report and the 2026-11-09 observation retain
+their original SHA-256 values and bytes. The current correspondence reader
+uses the explicit TRNM-W1-SEMANTICS-CURRENT-CORRESPONDENCE3 namespace. It
+checks the V2 verifier lock and the zkVM lock against independently reviewed
+current digests, then permits only provenance lock-check SHA fields 0 and 2
+to differ from the original historical report. Guest lock field 1, every other
+report property, and all qualification values must match exactly. This does
+not assert that the full dependency graphs are equivalent.
+
+The original named-runner controls select the fixed historical job by its
+exact boundaries and unchanged hash. Relocated report and budget mutations
+execute the actual current supplemental_report_scopes step; final-status
+controls call the current verifier CLI named by the exact workflow command.
+Its independent 14-stage roster, current receipt namespace, original drift
+stdout/stderr, and nested supplemental receipts are all checked. Reused step
+names cannot route current controls to a historical consumer that ignores them.
+The original Mac compiler refusal is retained; its eight native C controls
+subsequently pass with installed GCC 15 and the original OpenMP and warning flags.

@@ -1,0 +1,9 @@
+{
+  "argv": [
+    "bash",
+    "scripts/project-preflight.sh"
+  ],
+  "exit_code": 0,
+  "stdout": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-verification-isolation-20261112-33ceda\", \"remote_policy_mutated\": false}\n",
+  "stderr": ""
+}

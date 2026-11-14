@@ -1,0 +1,21 @@
+{
+  "all_six_primary_targets_pass": true,
+  "command": [
+    "python3",
+    "/workspace/scratch/7318d5f890d1/chain-throughput/evidence/pon-throughput-continuation-20261104/parent-and-tail/state/prefix-three-arm/compare_v4.py",
+    "/workspace/scratch/7318d5f890d1/throughput-readback/m06-prefix-three-arm-b811-once/measurement.stdout"
+  ],
+  "comparisons": 18,
+  "decision_status": "HOLD",
+  "executable_sha256": "3fd395f7145793fafb1a5653d128349e2fecefd17d1679304ae269df4c459d9b",
+  "exit_code": 1,
+  "extra_production_and_parent_test_sha256_verified": true,
+  "failed_comparisons": 2,
+  "native_process_and_single_selector_verified": true,
+  "native_source_and_executable_unchanged": true,
+  "passed_comparisons": 16,
+  "reader_sha256": "ba1c7bed4889d675a9bf30998b59f30ab1af0b49433df4b137fafc2620a5ba45",
+  "reader_stdout_sha256": "14ff8e53a497f94b3a2146f558c92e0a28fd1da3595b77eb9920b09a648e232b",
+  "scope": "one local preregistered component experiment; no rerun, sample exclusion, Node or business gate replacement",
+  "source_manifest_sha256": "d88c742223b09b2597aeefed95191869528410f2765e7d25a5a7f62cf6243430"
+}

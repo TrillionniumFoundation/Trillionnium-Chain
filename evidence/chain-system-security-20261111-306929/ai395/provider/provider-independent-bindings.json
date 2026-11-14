@@ -1,0 +1,38 @@
+{
+  "schema": "provider-archive-independent-bindings-v1",
+  "artifact_integrity": "PASS",
+  "checks": [
+    {
+      "check": "result_log_binding",
+      "path": "prepare.stdout.log",
+      "passed": true
+    },
+    {
+      "check": "result_log_binding",
+      "path": "prepare.stderr.log",
+      "passed": true
+    },
+    {
+      "check": "result_log_binding",
+      "path": "observations/pq-provider/build-and-smoke.log",
+      "passed": true
+    },
+    {
+      "check": "exact_C5_preparation_script_git_blob_and_sha256",
+      "git_blob": "0ce5ac9563282db998a66402a74bdafa2cf7a051",
+      "sha256": "ccdcf7e8bb9871607c73adc78624a607b616c227b7fe581b96c48761a3805bfa",
+      "passed": true
+    },
+    {
+      "check": "preparation_and_provider_receipt_scope_and_input_pin_consistency",
+      "passed": true,
+      "input_binaries_downloaded_or_executed_in_this_readback": false
+    }
+  ],
+  "full_original_log_bytes": 1323704,
+  "full_original_log_sha256": "68513cdf163bc2e56094ea68050a7e6549d5d39437417dc104ca4a07516613ef",
+  "provider_result": "PREPARED_AND_SMOKE_VERIFIED",
+  "new_root_native_execution": false,
+  "new_provider_build": false,
+  "production_activation": false
+}

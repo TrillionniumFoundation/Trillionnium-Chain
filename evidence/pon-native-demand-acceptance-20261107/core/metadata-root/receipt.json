@@ -1,0 +1,41 @@
+{
+  "cargo_graph": {
+    "packages": 180,
+    "workspace_members": 26
+  },
+  "child_max_rss_kib": 1718516,
+  "child_system_cpu_seconds": 0.06938799999999645,
+  "child_user_cpu_seconds": 0.14010400000006484,
+  "command": [
+    "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "metadata",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--all-features",
+    "--format-version",
+    "1"
+  ],
+  "elapsed_seconds": 0.8801651000976562,
+  "exit_code": 0,
+  "independent_business_acceptance": false,
+  "label": "metadata-root",
+  "logs": {
+    "stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout.log": {
+      "bytes": 863223,
+      "sha256": "1ec54313dda4cafa54b7b47e75964a4cf7ba3adcba8cd01cc317450f359473af"
+    }
+  },
+  "schema": "pon-h-core-reexecution-v1",
+  "source_after_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+  "source_before_sha256": "f9b57e33935e7c767accd80b193b88bc51d42ff1e1e6d33d9da4d5f60725ee98",
+  "source_commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+  "source_tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899",
+  "source_unchanged": true,
+  "started_unix_seconds": 1794066539.4559047
+}

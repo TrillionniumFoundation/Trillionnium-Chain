@@ -1,0 +1,139 @@
+{
+  "candidate": "a9909fe579dd938005b9d17074f7937c8fa8eb98",
+  "commands": [
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "label": "source-preflight",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "c32203b226220547f074c87c1e888e954c9e0f255d476247f1e8cc713924626d"
+    },
+    {
+      "argv": [
+        "git",
+        "worktree",
+        "add",
+        "-b",
+        "test/chain-verification-counterfactual-v3-20261112-33ceda",
+        "/home/qq/chain-verification-counterfactual-v3-33ceda-20261112",
+        "a9909fe579dd938005b9d17074f7937c8fa8eb98"
+      ],
+      "exit_code": 0,
+      "label": "create-worktree",
+      "stderr_sha256": "73592a235af54b16ca50763b77d96d536f0897bd4e6dd364231322859366711c",
+      "stdout_sha256": "2519b9b99ad1ef9d659eec5911086c94d14a3d4e3139b9c30c67ab0177e80eec"
+    },
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "label": "counterfactual-preflight",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "c910aa1a6888f5d398090ceaca8ffb4a72d68d5d0635fec9670d23af04a9e45e"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--binary"
+      ],
+      "exit_code": 0,
+      "label": "counterfactual-diff",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "66256993d7bad961038bc31e1b5fe7ac63cefd1d4d8dac9c42950699b99ef5bb"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--name-only"
+      ],
+      "exit_code": 0,
+      "label": "counterfactual-files",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "6d9b0a61ea28bff245383bece9a9b5314ce473a24a8dd647d30acd19d1b2625a"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "label": "diff-check",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "git",
+        "add",
+        "--",
+        "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs"
+      ],
+      "exit_code": 0,
+      "label": "stage-counterfactual",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--staged"
+      ],
+      "exit_code": 0,
+      "label": "staged-preflight",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "4752272d4a458483d3c236962ded47aa9959500fa3f3b2d41f6198b563df73f8"
+    },
+    {
+      "argv": [
+        "git",
+        "commit",
+        "-m",
+        "test: retain pre-fix dispatch and output behavior for adversarial comparison"
+      ],
+      "exit_code": 0,
+      "label": "commit-counterfactual",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "2a379d9d985919a4bddb9fc7f2561b60d2df7fd8acf6174c2aecf8c84684df22"
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit_code": 0,
+      "label": "counterfactual-head",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "4fa57b5d6db85835f1788b544af9eb95ae1f1733406720b512918f0620f74835"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "a464210ab88088fb27237a711bab819403ac0ab3",
+        "--output",
+        "/home/qq/chain-verification-validation-33ceda-20261112/counterfactual-v3-preparation-v1/physical-source.json"
+      ],
+      "exit_code": 0,
+      "label": "counterfactual-identity",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "50ea14ffa59059ecc5750a7f4038ae18ae3469ffdeb5d5d321aca0e941fd9354"
+    }
+  ],
+  "counterfactual_only": true,
+  "retained_behavior_source": "8970e2c81abbf48e2a4d3f0802d79624ab20fadd",
+  "tests_executed": false
+}

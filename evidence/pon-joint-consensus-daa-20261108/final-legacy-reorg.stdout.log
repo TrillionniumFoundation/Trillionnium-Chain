@@ -1,0 +1,10 @@
+
+running 5 tests
+test store::legacy_reorg_root_tests::legacy_reorg_root_keeps_all_tail_cancellation_boundaries_and_rollback ... ok
+test store::legacy_reorg_root_tests::legacy_reorg_root_keeps_signed_history_cursor_and_cold_publication ... ok
+test store::legacy_reorg_root_tests::legacy_reorg_root_never_selects_the_growth_or_authenticated_relation ... ok
+test store::legacy_reorg_root_tests::legacy_reorg_root_preserves_pq_v2_and_v6_state_validation ... ok
+test store::legacy_reorg_root_tests::legacy_reorg_root_rechecks_untouched_rows_root_claims_and_original_errors ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 1182 filtered out; finished in 3.73s
+

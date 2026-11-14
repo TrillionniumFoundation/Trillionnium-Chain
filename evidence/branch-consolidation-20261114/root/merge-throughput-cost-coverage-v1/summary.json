@@ -1,0 +1,101 @@
+{
+  "prior": "48257979322b8ef6d2394aab53b6ee439b7fc88b",
+  "target": "09e5ab311f31db1f3371bd4b207856f7b18bb83f",
+  "base": "4e0943b7168640f1ea7355eade92d172c29fa9c9",
+  "head": "63f3704a26ce2181b66f075a27d5478e18b388e9",
+  "tree": "fe33eec259623323f7df6ffa61f88220480b9e01",
+  "source_reader_byte_identical": true,
+  "old_test_methods_unchanged": 25,
+  "old_test_methods_adapted": 1,
+  "new_whole_analyzer_refusal_control": 1,
+  "steps": [
+    {
+      "label": "preflight",
+      "exit": 0,
+      "seconds": 0.053,
+      "sha256": "2e0930e3e5b93d19ab63db0fe013c910ee3255283942eeab771e4db4aec002ec"
+    },
+    {
+      "label": "merge",
+      "exit": 1,
+      "seconds": 0.198,
+      "sha256": "c9337f0c930d943c7b0a261df57b3ba6994f4d0a01ae719781e38a6f06e61137"
+    },
+    {
+      "label": "stage-resolved",
+      "exit": 0,
+      "seconds": 0.037,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "reader-controls",
+      "exit": 0,
+      "seconds": 0.213,
+      "sha256": "5e1c1d6ea64559351b5c9c08a9183d0be668c3579d9655a9a32aaa62ba522393"
+    },
+    {
+      "label": "source-guards",
+      "exit": 0,
+      "seconds": 1.257,
+      "sha256": "e265486323059630b266d7f50416127831c78eca777dd8101b837dd32db9a2e0"
+    },
+    {
+      "label": "ci-contract",
+      "exit": 0,
+      "seconds": 0.072,
+      "sha256": "d1490790908dab724ab473f615ff7440375869323608112fd5364b2c9d58cd4d"
+    },
+    {
+      "label": "corpus",
+      "exit": 0,
+      "seconds": 0.54,
+      "sha256": "5a471edb004b8ae53a23a0e725c464ea25b8454efdf5cf3c61503aed45e225aa"
+    },
+    {
+      "label": "shell",
+      "exit": 0,
+      "seconds": 0.008,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "diff",
+      "exit": 0,
+      "seconds": 0.048,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "precommit",
+      "exit": 0,
+      "seconds": 0.051,
+      "sha256": "2e0930e3e5b93d19ab63db0fe013c910ee3255283942eeab771e4db4aec002ec"
+    },
+    {
+      "label": "stage",
+      "exit": 0,
+      "seconds": 0.028,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "commit",
+      "exit": 0,
+      "seconds": 0.072,
+      "sha256": "8f98218d6948647c5b171d06561791927bb1b7bad45c73e35c1e4ffdcd228168"
+    }
+  ],
+  "paths": [
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "scripts/ci/check_ci_contract.py",
+    "scripts/ci/check_pq_research_integration.py",
+    "scripts/ci/ci_job.sh",
+    "scripts/ci/test_ci_contract.py",
+    "scripts/ci/test_pq_research_integration.py",
+    "scripts/ci/test_throughput_cost_coverage.py",
+    "scripts/ci/throughput_cost_coverage.py"
+  ],
+  "resolved_metadata": [
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+  ],
+  "qualification_promoted": false
+}

@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "/workspace/scratch/d95a703b8dd6/toolchain/cargo/bin/cargo",
+    "metadata",
+    "--manifest-path",
+    "tests/fuzz/Cargo.toml",
+    "--locked",
+    "--offline",
+    "--format-version",
+    "1"
+  ],
+  "correction": "initial validation command used a nonexistent trillionnium/fuzz path; existing actual manifest is tests/fuzz/Cargo.toml",
+  "elapsed_ns": 211315256,
+  "exit_code": 0,
+  "prior_failure_preserved": true,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "56c6bcfdc30871304ad64078c4ffe9ef59d8008b6a9c3872aa6266dc0d5d05d5"
+}

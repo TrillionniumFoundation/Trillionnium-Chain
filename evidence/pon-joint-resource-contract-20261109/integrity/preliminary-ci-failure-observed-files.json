@@ -1,0 +1,36 @@
+{
+  "archive_sha256": "6629c99816d9a4dd5ec71cc44a255ac8bf8a009b52b891d727979d4b1103f666",
+  "files": [
+    {
+      "bytes": 38427,
+      "path": "preliminary-ci-failure/ci_job-between-prefix-and-fromzero.sh",
+      "sha256": "7f6de7edc79933f28a52881746918518ac885f0a66847639857dd1323b632349"
+    },
+    {
+      "bytes": 228,
+      "path": "preliminary-ci-failure/fromzero-order-refusal.txt",
+      "sha256": "362079ac722aff881663fc811181c05e683183562e3f951c7cf0b16a56f015ab"
+    },
+    {
+      "bytes": 857,
+      "path": "preliminary-ci-failure/observation.json",
+      "sha256": "f72ce50d4dd1549e53120108cbb47a54b93e92afb5049b35fd4d532c8699f773"
+    },
+    {
+      "bytes": 148055,
+      "path": "preliminary-ci-failure/scripts/ci/check_ci_contract.py",
+      "sha256": "f0cebc11536906afc426bb05e720f5ca94d3a55b6adb14194ba2737135a77299"
+    },
+    {
+      "bytes": 38427,
+      "path": "preliminary-ci-failure/scripts/ci/ci_job.sh",
+      "sha256": "1d9f1354f36d344a1ad0b7382faefff53f357016423a2287a08a3201405062e2"
+    },
+    {
+      "bytes": 172645,
+      "path": "preliminary-ci-failure/scripts/ci/test_ci_contract.py",
+      "sha256": "9568b3f0e9e2cfa9cb5b1469b40d56c1b6ddfbfedceb2ff161b1450ece584a4c"
+    }
+  ],
+  "schema": "independent-archive-member-hashes-v1"
+}

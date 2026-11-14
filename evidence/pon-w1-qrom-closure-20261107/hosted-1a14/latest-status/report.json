@@ -1,0 +1,233 @@
+{
+  "observed_utc": "2026-11-07T14:22:01.676629+00:00",
+  "runs": [
+    {
+      "conclusion": null,
+      "head_sha": "1a14f7d4826363daefac9ec10131c66d7e70ece7",
+      "jobs": [
+        {
+          "conclusion": "failure",
+          "id": 128422919456,
+          "name": "protocol-contract",
+          "status": "completed"
+        },
+        {
+          "conclusion": null,
+          "id": 128422919644,
+          "name": "rust-baseline shard (runtime)",
+          "status": "in_progress"
+        },
+        {
+          "conclusion": "success",
+          "id": 128422919648,
+          "name": "W1 actual reuse V3 (x64, head)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 128422919664,
+          "name": "prospective Rust shard (quality)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 128422919672,
+          "name": "repository-truth",
+          "status": "completed"
+        },
+        {
+          "conclusion": null,
+          "id": 128422919683,
+          "name": "prospective Rust shard (runtime)",
+          "status": "in_progress"
+        },
+        {
+          "conclusion": "failure",
+          "id": 128422919693,
+          "name": "cross-arch-cost (x64)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 128422919741,
+          "name": "fuzz-smoke",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 128422919744,
+          "name": "W1 actual reuse V3 (arm64, prospective-merge)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "failure",
+          "id": 128422919765,
+          "name": "external-evidence-contract",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 128422919768,
+          "name": "W1 actual reuse V3 (arm64, head)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "failure",
+          "id": 128422919834,
+          "name": "prospective-merge (protocol-contract)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "failure",
+          "id": 128422919836,
+          "name": "cross-arch-cost (arm64)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 128422919844,
+          "name": "rust-baseline shard (quality)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 128422919848,
+          "name": "prospective-merge (fuzz-smoke)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "failure",
+          "id": 128422919867,
+          "name": "prospective-merge (external-evidence-contract)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 128422919898,
+          "name": "W1 actual reuse V3 (x64, prospective-merge)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 128422919976,
+          "name": "prospective-merge (repository-truth)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 128424500636,
+          "name": "cross-arch-cost-consistency",
+          "status": "completed"
+        }
+      ],
+      "label": "baseline",
+      "run_id": 42379162489,
+      "status": "in_progress"
+    },
+    {
+      "conclusion": "failure",
+      "head_sha": "1a14f7d4826363daefac9ec10131c66d7e70ece7",
+      "jobs": [
+        {
+          "conclusion": "success",
+          "id": 128422919251,
+          "name": "TAP21 actual SDK interoperability (ubuntu-24.04, head)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "failure",
+          "id": 128422919329,
+          "name": "PQ network and witness (ubuntu-24.04, head)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 128422919362,
+          "name": "TAP21 actual SDK interoperability (ubuntu-24.04-arm, prospective-merge)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 128422919403,
+          "name": "TAP21 actual SDK interoperability (ubuntu-24.04-arm, head)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "failure",
+          "id": 128422919410,
+          "name": "PQ network and witness (ubuntu-24.04-arm, head)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 128422919416,
+          "name": "CPQ1 complete candidate observations (ubuntu-24.04, head)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 128422919428,
+          "name": "CPQ1 complete candidate observations (ubuntu-24.04-arm, prospective-merge)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 128422919453,
+          "name": "CPQ1 complete candidate observations (ubuntu-24.04-arm, head)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 128422919461,
+          "name": "CPQ1 complete candidate observations (ubuntu-24.04, prospective-merge)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 128422919471,
+          "name": "TAP21 actual SDK interoperability (ubuntu-24.04, prospective-merge)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 128422919478,
+          "name": "ML-DSA independent C implementation (ubuntu-24.04-arm, head)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 128422919482,
+          "name": "ML-DSA independent C implementation (ubuntu-24.04, prospective-merge)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 128422919483,
+          "name": "ML-DSA independent C implementation (ubuntu-24.04, head)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "failure",
+          "id": 128422919505,
+          "name": "PQ network and witness (ubuntu-24.04, prospective-merge)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "failure",
+          "id": 128422919518,
+          "name": "PQ network and witness (ubuntu-24.04-arm, prospective-merge)",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "id": 128422919570,
+          "name": "ML-DSA independent C implementation (ubuntu-24.04-arm, prospective-merge)",
+          "status": "completed"
+        }
+      ],
+      "label": "pq-network",
+      "run_id": 42379162513,
+      "status": "completed"
+    }
+  ]
+}

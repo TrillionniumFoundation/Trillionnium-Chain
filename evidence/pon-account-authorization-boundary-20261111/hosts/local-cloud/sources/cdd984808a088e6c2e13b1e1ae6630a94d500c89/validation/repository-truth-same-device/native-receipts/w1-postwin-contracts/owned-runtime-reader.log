@@ -1,0 +1,12 @@
+test_archive_ambiguous_json_and_path_escape_never_enter_owner_observation (test_w1_owned_generation_runtime_v2.OwnerRuntimeTests.test_archive_ambiguous_json_and_path_escape_never_enter_owner_observation) ... ok
+test_archive_reads_exact_regular_member_and_rejects_duplicate_or_link (test_w1_owned_generation_runtime_v2.OwnerRuntimeTests.test_archive_reads_exact_regular_member_and_rejects_duplicate_or_link) ... ok
+test_complete_fact_never_overrides_actual_cancellation_or_missing_stage (test_w1_owned_generation_runtime_v2.OwnerRuntimeTests.test_complete_fact_never_overrides_actual_cancellation_or_missing_stage) ... ok
+test_local_generate_parses_large_real_pins_but_keeps_containment_gate (test_w1_owned_generation_runtime_v2.OwnerRuntimeTests.test_local_generate_parses_large_real_pins_but_keeps_containment_gate) ... ok
+test_local_generate_rejects_via_shared_loader_before_target_open_or_dispatch (test_w1_owned_generation_runtime_v2.OwnerRuntimeTests.test_local_generate_rejects_via_shared_loader_before_target_open_or_dispatch) ... ok
+test_receipt_fact_does_not_hide_nonzero_or_unreconciled_owned_processes (test_w1_owned_generation_runtime_v2.OwnerRuntimeTests.test_receipt_fact_does_not_hide_nonzero_or_unreconciled_owned_processes) ... ok
+test_verified_controller_does_not_substitute_for_complete_worker_archive (test_w1_owned_generation_runtime_v2.OwnerRuntimeTests.test_verified_controller_does_not_substitute_for_complete_worker_archive) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.099s
+
+OK

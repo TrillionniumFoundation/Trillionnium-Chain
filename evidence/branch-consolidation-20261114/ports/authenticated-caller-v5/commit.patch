@@ -1,0 +1,394 @@
+commit eb3a02048eb219558697dffa710e41de8e471899
+Author:     Qian QI <102159240+ProfHepta@users.noreply.github.com>
+AuthorDate: Sat Nov 14 12:14:32 2026 +0800
+Commit:     Qian QI <102159240+ProfHepta@users.noreply.github.com>
+CommitDate: Sat Nov 14 12:14:32 2026 +0800
+
+    Retain explicit authenticated caller V5 observation boundary
+
+diff --git a/config/pon/pq-cross-branch-corpus-v1.json b/config/pon/pq-cross-branch-corpus-v1.json
+index bc67866745010c9ed9ab0e08d8a25c43081e1843..e7fe5a8ad7dab7065b169c17e77ba82a8c8b3ead 100644
+--- a/config/pon/pq-cross-branch-corpus-v1.json
++++ b/config/pon/pq-cross-branch-corpus-v1.json
+@@ -211,7 +211,7 @@
+     "config/systemd/trnmponpublic.slice": "8981b6aeed4c08c21679664940366b36a991444a",
+     "docs/development/INCENTIVE_LIABILITY_BOUNDARIES_20261112.md": "f35458d00efc7e373a395a0daadcd43fbee5394d",
+     "docs/development/SOURCE_INCENTIVE_RESEARCH_CONTRACT_20261112.md": "402c845c07991a5111fc714c4491da9211279e50",
+-    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": "dcd02b37d3ea4e8d8508d754d6bd3194ca888b39",
++    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": "59b72243c392f6a07e466678d7610ae661588d5c",
+     "docs/development/TRNM_PUBLIC_CALLER_GRANTS_R20_20261114.md": "eed255c9a0160788699087c4ddb92c67dd1d55f4",
+     "docs/development/specs/pon/CELL_BEP52_PEER_V1.md": "b83e92b8b31b217337ff3685668290a9e03d3a3b",
+     "docs/development/specs/pon/CELL_BRANCH_COMPOSITION_20261113.md": "7713e91ebd6613059fe5c768c3511fdf15611447",
+@@ -1715,7 +1715,7 @@
+     "scripts/ci/check_cross_repo_candidate.py": "aa0e0e9e1575e60fc9f5aa5e876a7832c6a68b3e",
+     "scripts/ci/check_growth_scale_observation.py": "0a239b85ffd00bc3ce5609f7dd190fc2562c00b8",
+     "scripts/ci/check_native_constants_roster.py": "22921da3bac06cde78319b5b9492a56751f4c6ae",
+-    "scripts/ci/check_pq_research_integration.py": "c92cc1b9cf8664816721f62cfcf04643e0f26b45",
++    "scripts/ci/check_pq_research_integration.py": "5601cd1b148d1c7f7dd88a1c60451b4b50e0791e",
+     "scripts/ci/check_public_readiness_evidence.py": "d5919849d69b0d4adc89615b1005c1279140f79d",
+     "scripts/ci/check_sqlite_build_requalification.py": "568f4b9a00235a69f48d63a517a0fb2910fe9653",
+     "scripts/ci/check_w1_native_roster.py": "3dbbb1cd5475ef2f776848882eb069ea488d89d2",
+@@ -1793,7 +1793,7 @@
+     "scripts/ci/test_pon_decentralization_audit.py": "58cf9a04484e24dc903afb1ca7c66f5154eb11c8",
+     "scripts/ci/test_pon_monotone_daa_reader.py": "5d132f4a788b35de573ab863d207cd6e2b8cdcbf",
+     "scripts/ci/test_pon_proof_latency.py": "4190b4e073df6bb82a1fa3c349d87ed0bb295e5c",
+-    "scripts/ci/test_pon_public_v3_phase_read.py": "69333ac9685ef006cea231bb8513f34b9419782d",
++    "scripts/ci/test_pon_public_v3_phase_read.py": "ec44035e965267b180273ed3187e373767c38134",
+     "scripts/ci/test_pon_public_v3_policy_read.py": "73bcf4d1483f293a7f9e0feb451e7ab8fe0fac82",
+     "scripts/ci/test_pon_w1_false_trace_reuse_reader_v1.py": "1b96793032939fd6e28816da8d169761ea7ee23f",
+     "scripts/ci/test_pon_w1_preparation_strategy_reader_v4.py": "eed2a0b664dfb727d87bff51e0a3b40511b5b2e9",
+@@ -1810,7 +1810,7 @@
+     "scripts/ci/test_pq_lifetime_budget.py": "fde7fa3f388db9ab9f9760b9229f928a7b2f2767",
+     "scripts/ci/test_pq_lifetime_composition.py": "5350c9232e030d0de6d6e0102d9f9b5b64604f50",
+     "scripts/ci/test_pq_proof_profile_binding.py": "2a3992af77a06302b6beb8959cffe9fdc694245e",
+-    "scripts/ci/test_pq_research_integration.py": "df27b6995c41c10719c2b0d239fba7e74f3bb773",
++    "scripts/ci/test_pq_research_integration.py": "bb1a764f7a1baee29820698e45b5b4a8ad9835c3",
+     "scripts/ci/test_pq_root_campaign_readback.py": "0531ba2435fe03dd384f50cb97a8614653d1f274",
+     "scripts/ci/test_pq_root_custody_review_v1.py": "63d1dd99c10daa80705c4a1aa74f72b7e37294c9",
+     "scripts/ci/test_pq_root_custody_review_v2.py": "0c08ba2bd1c849f76bf8ca27260af63dc232d8e3",
+@@ -2352,7 +2352,7 @@
+     "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls_endpoint.rs": "91a4cced81579c44769abe9b2b1244546c607250",
+     "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls_profile.rs": "3175a397a00274d15baa1e0a1dc4f01eb320b48a",
+     "trillionnium/crates/trnm-pon-node/src/ingress/public_v2.rs": "e359ba90bb714c6e04233f32cdd12e817a09ed8b",
+-    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs": "edf5a9c4267a78327bf433bb611822d824323a3c",
++    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs": "b9bbe75b8509eaf10a73b50aab7e7892f6796e64",
+     "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/caller_grant_tests.rs": "d51558492a278d7ac97932f1c8af60eb34790f77",
+     "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/canonical_packet.rs": "d4ddbdb52d877f5e629002ef45051711f6fa62c3",
+     "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/canonical_packet/tests.rs": "7ff63d8d607e039d88429fad1df89a0fb808298f",
+@@ -2367,7 +2367,7 @@
+     "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/pq_identity/verifier_cache.rs": "62484e2884da3bc72d820dc9865b567b15688de2",
+     "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/pq_identity/verifier_cache_tests.rs": "32216f44db3a70aa66fb633b04ab9de06ec3a2c4",
+     "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/pq_identity_tests.rs": "1858f8412c2c985395e3ab339cb6a417b47e8cdd",
+-    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs": "afd32a5a2b938a0f9e9d8c4f5e5b992163cad06f",
++    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs": "7919f646c4fd9f44000b0f59493fa71e84f991ea",
+     "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs": "a7fd76834d321f57cc46a6559e2bcc3f046de0c5",
+     "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_history_handoff_tests.rs": "5a5069903f6667239c47db1a1857c7ce6c8e4dbb",
+     "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_native_completion_tests.rs": "45fea5275bfe9971fc095f0607db7fa72718e758",
+diff --git a/docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md b/docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md
+index dcd02b37d3ea4e8d8508d754d6bd3194ca888b39..59b72243c392f6a07e466678d7610ae661588d5c 100644
+--- a/docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md
++++ b/docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md
+@@ -14992,3 +14992,9 @@ Selected the three independent 1d11f875 statement-boundary controls. They exerci
+ ### 2026-11-14 retained literal-aware Rust token reader
+ 
+ Preserved the pure token and explicit structural-token APIs and all five original controls from 29e1f194. The complete input string is the only observation source; the helper retains literal prefixes, joint operators, lifetime forms and nested-comment boundaries. These original closed-source lexical controls do not constitute a full Rust grammar parser, compiler result, runtime security qualification, or authority to replace the current PQ/History contracts. The current repository-truth lane invokes their original five controls exactly once, backed by an independent command-mutation list and literal source omission/byte-mutation refusals.
++
++## 2026-11-14 — Explicit authenticated-caller observation V5
++
++The current default PublicRequestObserver::new retains the complete V4 observation schema and all existing cost, wait, lifecycle, error and timing fields. The separately selected new_with_authenticated_callers constructor emits V5 and records a caller only after the real signature check succeeds. Claimed Hello identities and invalid signatures do not bind this field. A second binding retains the first value and records a measurement failure.
++
++This is local observation only. It changes no signed request domain, admission result, r20 resource account, expiry, fresh Host check or production qualification. Existing V4 readers continue to reject V5. The original two branch controls retain their substantive assertions with the explicit schema literals adapted to the current V4/V5 namespace; an exact default V4 serialization control and a V4-reader rejection control cover the compatibility boundary. Native controls require actual Linux execution; source integrity alone does not certify them.
+diff --git a/scripts/ci/check_pq_research_integration.py b/scripts/ci/check_pq_research_integration.py
+index c92cc1b9cf8664816721f62cfcf04643e0f26b45..5601cd1b148d1c7f7dd88a1c60451b4b50e0791e 100644
+--- a/scripts/ci/check_pq_research_integration.py
++++ b/scripts/ci/check_pq_research_integration.py
+@@ -1287,6 +1287,15 @@ PARTIAL_CAMPAIGN_READER_REQUIRED_PATHS = frozenset((
+ NATIVE_REQUIRED_PATHS |= PARTIAL_CAMPAIGN_READER_REQUIRED_PATHS
+ 
+ 
++
++# Authenticated-caller observation is explicitly v5; the default v4 remains unchanged.
++AUTHENTICATED_CALLER_OBSERVATION_REQUIRED_PATHS = frozenset((
++    'trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs',
++    'trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs',
++    'scripts/ci/test_pon_public_v3_phase_read.py',
++))
++NATIVE_REQUIRED_PATHS |= AUTHENTICATED_CALLER_OBSERVATION_REQUIRED_PATHS
++
+ def is_pq_source(parts: tuple[str, ...]) -> bool:
+     """Recognize versioned pq3 modules, pq.rs, cell_pq and older prefixes."""
+     return any(
+diff --git a/scripts/ci/test_pon_public_v3_phase_read.py b/scripts/ci/test_pon_public_v3_phase_read.py
+index 69333ac9685ef006cea231bb8513f34b9419782d..ec44035e965267b180273ed3187e373767c38134 100644
+--- a/scripts/ci/test_pon_public_v3_phase_read.py
++++ b/scripts/ci/test_pon_public_v3_phase_read.py
+@@ -1366,6 +1366,21 @@ class ReaderTests(unittest.TestCase):
+             with self.subTest(index=index), self.assertRaises(ValueError):
+                 reader.execution_summary([wrong], True, observer_v4=True)
+ 
++    def test_current_v4_consumer_rejects_opt_in_authenticated_caller_v5(self):
++        phase = attribution_phase([], [], [], [record_v4()])
++        phase['receiver_observation'].update(
++            schema='public-v3-local-request-resource-observation-v4',
++            cpu_includes_reactor_authentication_or_response_signing=True,
++            cpu_includes_reactor_authentication=False, dispatch_cpu_includes_paid_body_decode=True,
++            dispatch_cpu_includes_response_signing=True, phase_parent_links_are_inclusive=True,
++            cpu_wait_is_outside_dispatch=True, monotonic_epoch_is_observer_local=True)
++        summary = reader.phase_summary(phase)
++        self.assertEqual(len(summary['receiver']['all_retained_records']['submit_phases']), 19)
++        phase['receiver_observation']['schema'] = 'public-v3-local-request-resource-observation-v5'
++        phase['receiver_observation']['records'][0]['authenticated_caller'] = '13' * 32
++        with self.assertRaisesRegex(ValueError, 'unknown observer schema'):
++            reader.phase_summary(phase)
++
+     def test_v4_scope_is_explicit_and_does_not_relabel_v3(self):
+         phase = attribution_phase([], [], [], [record_v4()])
+         phase['receiver_observation'].update(
+diff --git a/scripts/ci/test_pq_research_integration.py b/scripts/ci/test_pq_research_integration.py
+index df27b6995c41c10719c2b0d239fba7e74f3bb773..bb1a764f7a1baee29820698e45b5b4a8ad9835c3 100644
+--- a/scripts/ci/test_pq_research_integration.py
++++ b/scripts/ci/test_pq_research_integration.py
+@@ -2454,5 +2454,42 @@ class CorpusGateTests(unittest.TestCase):
+         self.assertIs(result["node_activated"], False)
+ 
+ 
++    def test_authenticated_caller_v5_sources_cannot_omit_or_mutate(self):
++        # Independent literals: deriving this list from the checker would hide omissions.
++        dependencies = (
++            'trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs',
++            'trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs',
++            'scripts/ci/test_pon_public_v3_phase_read.py',
++        )
++        self.assertTrue(set(dependencies).issubset(NATIVE_REQUIRED_PATHS))
++        original = copy.deepcopy(self.manifest)
++        for name in dependencies:
++            for omission in ('required', 'pin', 'required-and-pin'):
++                self.manifest = copy.deepcopy(original)
++                if omission in ('required', 'required-and-pin'):
++                    self.manifest['required_paths'].remove(name)
++                if omission in ('pin', 'required-and-pin'):
++                    del self.manifest['pinned_blobs'][name]
++                self.save()
++                with self.subTest(path=name, omission=omission), self.assertRaises(IntegrityError):
++                    check(self.root)
++        self.manifest = original
++        self.save()
++        for name in dependencies:
++            path = self.root / name
++            before = path.read_bytes()
++            try:
++                path.write_bytes(before + b'changed authenticated caller observation')
++                with self.subTest(path=name), self.assertRaisesRegex(IntegrityError, 'changed source'):
++                    check(self.root)
++            finally:
++                path.write_bytes(before)
++        result = check(self.root)
++        self.assertEqual(result['status'], 'HOLD_NO_GO')
++        self.assertIs(result['cryptographic_acceptance'], False)
++        self.assertIs(result['node_activated'], False)
++
++
++
+ if __name__ == "__main__":
+     unittest.main()
+diff --git a/trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs b/trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs
+index edf5a9c4267a78327bf433bb611822d824323a3c..b9bbe75b8509eaf10a73b50aab7e7892f6796e64 100644
+--- a/trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs
++++ b/trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs
+@@ -3041,6 +3041,9 @@ fn serve_public_protected_v3_inner(
+                                         .signature_refusals += 1;
+                                     return Err(error);
+                                 }
++                                if let Some(observation) = &conn.observation {
++                                    observation.authenticated_caller(&cookie.caller);
++                                }
+                                 if let Err(e) = spent.reserve(
+                                     cookie.id()?,
+                                     cookie.expires_tick_ms,
+@@ -4542,6 +4545,63 @@ mod tests {
+         }
+     }
+     #[test]
++    fn authenticated_caller_observation_requires_real_signature_on_tcp() {
++        let directory = tempfile::tempdir().unwrap();
++        let settings = Settings::development(Some(super::super::now().unwrap() - 100)).unwrap();
++        let owner = shared(Node::open(directory.path(), settings, 1).unwrap());
++        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
++        let address = listener.local_addr().unwrap();
++        let stop = Arc::new(AtomicBool::new(false));
++        let signal = stop.clone();
++        let observer = PublicRequestObserver::new_with_authenticated_callers(2).unwrap();
++        let records = observer.clone();
++        let metrics = Arc::new(Mutex::new(PublicMetrics::default()));
++        let counters = metrics.clone();
++        let policy = PublicPolicy::new(8, Duration::from_secs(2)).unwrap();
++        let worker = thread::spawn(move || {
++            serve_public_protected_v3_with_request_observer(
++                listener,
++                owner,
++                Duration::from_secs(8),
++                signal,
++                PublicServer::new(identity(71), policy).unwrap(),
++                counters,
++                records,
++            )
++            .unwrap()
++        });
++        let raw = serde_json::to_vec(&Request::Head).unwrap();
++        let mut claimed = hello(2, raw.len());
++        claimed.digest = hash(b"public-request-body-v3", &[&raw]);
++        // The Hello claims caller 72, but caller 73 signs the real server's
++        // challenge. A received Hello/body digest is not authentication.
++        assert!(paid_grant(address, claimed, &identity(73), policy).is_err());
++        wait_metric(&metrics, |value| value.signature_refusals == 1);
++        let mut socket = paid_grant(address, claimed, &identity(72), policy).unwrap();
++        client_write(&mut socket, &raw, Instant::now() + Duration::from_secs(2)).unwrap();
++        let response =
++            client_frame(&mut socket, 16384, Instant::now() + Duration::from_secs(2)).unwrap();
++        assert!(serde_json::from_slice::<Response>(&response).unwrap().ok);
++        stop.store(true, Ordering::Release);
++        worker.join().unwrap();
++        let snapshot = observer.snapshot();
++        assert_eq!(
++            snapshot.schema,
++            "public-v3-local-request-resource-observation-v5"
++        );
++        assert_eq!(snapshot.records.len(), 2);
++        assert!(snapshot.records[0].body_digest.is_some());
++        assert!(snapshot.records[0].authenticated_caller.is_none());
++        assert_eq!(
++            snapshot.records[1].authenticated_caller.as_deref(),
++            Some(identity(72).public_key())
++        );
++        assert!(snapshot
++            .records
++            .iter()
++            .all(|row| row.complete && !row.observation_failed));
++    }
++    #[test]
+     fn request_observer_matches_independent_client_received_signed_frame_lengths() {
+         let directory = tempfile::tempdir().unwrap();
+         let settings = Settings::development(Some(super::super::now().unwrap() - 100)).unwrap();
+diff --git a/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs b/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs
+index afd32a5a2b938a0f9e9d8c4f5e5b992163cad06f..7919f646c4fd9f44000b0f59493fa71e84f991ea 100644
+--- a/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs
++++ b/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs
+@@ -539,6 +539,10 @@ pub struct PublicRequestObservation {
+     pub connection_id: Option<u64>,
+     pub operation: Option<u8>,
+     pub body_digest: Option<Hash>,
++    /// Only the opt-in v5 observer records a caller after actual signature
++    /// verification. A claimed Hello identity never authenticates this field.
++    #[serde(skip_serializing_if = "Option::is_none")]
++    pub authenticated_caller: Option<String>,
+     /// Successful socket accept through the actual connection/task owners.
+     /// This is a local diagnostic clock, not a remote confirmation or authority.
+     pub lifecycle: PublicRequestLifecycleObservation,
+@@ -592,6 +596,7 @@ impl PublicRequestObservation {
+             connection_id: None,
+             operation: None,
+             body_digest: None,
++            authenticated_caller: None,
+             lifecycle: PublicRequestLifecycleObservation {
+                 schema: "public-v3-request-lifecycle-v1",
+                 accepted_ns,
+@@ -688,6 +693,7 @@ struct Cell {
+ struct Inner {
+     epoch: Instant,
+     capacity: usize,
++    authenticated_callers: bool,
+     rows: Box<[OnceLock<Arc<Cell>>]>,
+     seen: AtomicU64,
+     omitted: AtomicU64,
+@@ -758,6 +764,15 @@ impl PublicRequestObservationSnapshot {
+ 
+ impl PublicRequestObserver {
+     pub fn new(capacity: usize) -> super::Result<Self> {
++        Self::with_caller_mode(capacity, false)
++    }
++
++    /// Explicit local v5 observation. This grants no admission or consensus right.
++    pub fn new_with_authenticated_callers(capacity: usize) -> super::Result<Self> {
++        Self::with_caller_mode(capacity, true)
++    }
++
++    fn with_caller_mode(capacity: usize, authenticated_callers: bool) -> super::Result<Self> {
+         super::ensure(
+             (1..=MAX_REQUEST_OBSERVATION_RECORDS).contains(&capacity),
+             "PUBLIC_OBSERVATION_CAPACITY",
+@@ -765,6 +780,7 @@ impl PublicRequestObserver {
+         Ok(Self(Arc::new(Inner {
+             epoch: Instant::now(),
+             capacity,
++            authenticated_callers,
+             rows: (0..capacity).map(|_| OnceLock::new()).collect(),
+             seen: AtomicU64::new(0),
+             omitted: AtomicU64::new(0),
+@@ -880,7 +896,11 @@ impl PublicRequestObserver {
+             }
+         }
+         PublicRequestObservationSnapshot {
+-            schema: "public-v3-local-request-resource-observation-v4",
++            schema: if self.0.authenticated_callers {
++                "public-v3-local-request-resource-observation-v5"
++            } else {
++                "public-v3-local-request-resource-observation-v4"
++            },
+             capacity: self.0.capacity,
+             accepted_connections_seen: self.0.seen.load(Ordering::Acquire),
+             records_not_retained: self.0.omitted.load(Ordering::Acquire),
+@@ -1049,6 +1069,18 @@ impl ConnectionObservation {
+             true
+         });
+     }
++    pub(super) fn authenticated_caller(&self, caller: &str) {
++        if !self.inner.authenticated_callers {
++            return;
++        }
++        self.handle().update(|row| {
++            if row.authenticated_caller.is_some() {
++                return false;
++            }
++            row.authenticated_caller = Some(caller.to_owned());
++            true
++        });
++    }
+     #[cfg(test)]
+     pub(super) fn frame(&self, phase: usize, read: usize, written: usize, complete: bool) {
+         self.record_frame(phase, read, written, complete, None);
+@@ -1575,6 +1607,55 @@ fn thread_cpu_ns() -> Option<u64> {
+ 
+ #[cfg(test)]
+ mod tests {
++    #[test]
++    fn authenticated_caller_requires_explicit_v4_and_single_binding() {
++        let caller = "13".repeat(32);
++        let legacy = PublicRequestObserver::new(1).unwrap();
++        let connection = legacy.connection().unwrap();
++        connection.authenticated_caller(&caller);
++        drop(connection);
++        let snapshot = legacy.snapshot();
++        assert_eq!(
++            snapshot.schema,
++            "public-v3-local-request-resource-observation-v4"
++        );
++        assert!(snapshot.records[0].authenticated_caller.is_none());
++        assert!(serde_json::to_value(&snapshot.records[0])
++            .unwrap()
++            .get("authenticated_caller")
++            .is_none());
++
++        let observer = PublicRequestObserver::new_with_authenticated_callers(1).unwrap();
++        let connection = observer.connection().unwrap();
++        connection.identity(7);
++        connection.request(1, [9; 32]);
++        assert!(observer.snapshot().records[0]
++            .authenticated_caller
++            .is_none());
++        connection.authenticated_caller(&caller);
++        connection.authenticated_caller(&"14".repeat(32));
++        drop(connection);
++        let snapshot = observer.snapshot();
++        assert_eq!(
++            snapshot.schema,
++            "public-v3-local-request-resource-observation-v5"
++        );
++        assert_eq!(
++            snapshot.records[0].authenticated_caller.as_deref(),
++            Some(caller.as_str())
++        );
++        assert!(!snapshot.coverage_complete());
++        assert_eq!(snapshot.measurement_failures, 1);
++    }
++
++    #[test]
++    fn default_observer_preserves_complete_v4_serialization() {
++        let snapshot = PublicRequestObserver::new(2).unwrap().snapshot();
++        let expected = br#"{"schema":"public-v3-local-request-resource-observation-v4","capacity":2,"accepted_connections_seen":0,"records_not_retained":0,"measurement_failures":0,"counter_overflow":false,"records":[],"observation_has_consensus_authority":false,"cpu_intervals_are_nested_not_additive":true,"cpu_includes_reactor_authentication_or_response_signing":true,"cpu_includes_reactor_authentication":false,"dispatch_cpu_includes_paid_body_decode":true,"dispatch_cpu_includes_response_signing":true,"submit_phase_cpu_excludes_scoped_workers":true,"phase_parent_links_are_inclusive":true,"cpu_wait_is_outside_dispatch":true,"monotonic_epoch_is_observer_local":true,"stream_bytes_are_physical_network_bytes":false}"#;
++        assert_eq!(serde_json::to_vec(&snapshot).unwrap(), expected);
++        assert!(snapshot.coverage_complete());
++    }
++
+     #[test]
+     fn active_phase_context_is_lock_free_and_uses_declared_nested_spans() {
+         let observation = TaskObservation::local(Instant::now());

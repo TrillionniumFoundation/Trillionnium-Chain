@@ -1,0 +1,692 @@
+{
+  "entrypoints": [
+    {
+      "classification": "ordinary_explicit_linux_cli",
+      "entrypoint": "trnm-pon-node m15-release-owner-initialize-v1 / m15-release-owner-status-v1",
+      "fresh_authority": "Deployment revalidation, signed clock/frontier requests, full proof replay, retained time floor.",
+      "implemented": "Fixed OS deployment root and independently pinned trust config; initialize requires fresh absent namespace; status/open authenticates external frontier and replays retained proofs. Neither result grants execution.",
+      "persistence": "Private locked owner directory, content-addressed proof records, index and independent M15 frontier.",
+      "refs": [
+        {
+          "lines": [
+            1411
+          ],
+          "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+          "symbol": "run"
+        },
+        {
+          "lines": [
+            114
+          ],
+          "path": "trillionnium/crates/trnm-pon-node/src/release_owner.rs",
+          "symbol": "run_admin"
+        },
+        {
+          "lines": [
+            72
+          ],
+          "path": "trillionnium/crates/trnm-pon-node/src/release_owner/owner.rs",
+          "symbol": "Owner::initialize/open/reload"
+        },
+        {
+          "lines": [
+            66
+          ],
+          "path": "trillionnium/crates/trnm-pon-node/src/release_owner/transaction.rs",
+          "symbol": "TransactionStore::initialize/open_existing"
+        },
+        {
+          "lines": [
+            10
+          ],
+          "path": "trillionnium/crates/trnm-pon-node/src/release_owner/deployment.rs",
+          "symbol": "Deployment::load"
+        }
+      ]
+    },
+    {
+      "classification": "ordinary_explicit_linux_cli",
+      "entrypoint": "trnm-pon-node m15-release-owner-publish-v1 --publication <absolute-file>",
+      "fresh_authority": "Owner supplies observed_at from authenticated clock; replay/check_current and exact root/role windows are repeated before independent CAS.",
+      "implemented": "Canonical RootRotation or Release proofs. Roles 1..4 are NodeSoftware, ProtocolConfiguration, CellManifest, CellActivation. Dual-quorum root rotation and actual source/SBOM/provenance bundle checks feed the durable owner.",
+      "persistence": "Append exactly one immutable proof record; durable pending and attempt precede external CAS; complete index and frontier bind all retained M15 records.",
+      "refs": [
+        {
+          "lines": [
+            191
+          ],
+          "path": "trillionnium/crates/trnm-pon-node/src/release_owner/proof_wire.rs",
+          "symbol": "Publication / role"
+        },
+        {
+          "lines": [
+            184
+          ],
+          "path": "trillionnium/crates/trnm-pon-node/src/release_owner/proof_state.rs",
+          "symbol": "State::verify_publication_material"
+        },
+        {
+          "lines": [
+            118
+          ],
+          "path": "trillionnium/crates/trnm-pon-node/src/release_owner/owner.rs",
+          "symbol": "Owner::publish / commit_record"
+        },
+        {
+          "lines": [
+            517
+          ],
+          "path": "trillionnium/crates/trnm-release-bundle/src/pq_release.rs",
+          "symbol": "PqReleaseAuthorityV1::accept_bundle"
+        }
+      ]
+    },
+    {
+      "classification": "ordinary_real_installer_explicit_profile",
+      "entrypoint": "trnm-pon-node m15-release-owner-install-v1 --artifact <path> --artifact-name <signed-name>",
+      "fresh_authority": "Current role before copying and current transition/root windows with held image checks during Owner::append.",
+      "implemented": "Checks current NodeSoftware and exact signed artifact name/hash/size/platform; seals actual source bytes, verifies native static ELF and durably installs a content-addressed executable plus Installation record.",
+      "limits": "Linux x86_64/aarch64 static ELF only; PT_INTERP/external dynamic dependencies/search/audit paths refuse. Installation does not execute the program.",
+      "persistence": "artifact-<digest>.elf and Installation record under the same locked owner; immutable create-only objects; fsync/readback.",
+      "refs": [
+        {
+          "lines": [
+            14
+          ],
+          "path": "trillionnium/crates/trnm-pon-node/src/release_owner/catalog.rs",
+          "symbol": "catalog::install"
+        },
+        {
+          "lines": [
+            77
+          ],
+          "path": "trillionnium/crates/trnm-pon-node/src/release_owner/sealed.rs",
+          "symbol": "Sealed"
+        },
+        {
+          "lines": [
+            31
+          ],
+          "path": "trillionnium/crates/trnm-pon-node/src/release_owner/elf.rs",
+          "symbol": "elf::verify"
+        },
+        {
+          "lines": [
+            298
+          ],
+          "path": "trillionnium/crates/trnm-pon-node/src/release_owner/files.rs",
+          "symbol": "Files::put_sealed"
+        }
+      ]
+    },
+    {
+      "classification": "ordinary_real_launcher_explicit_profile",
+      "entrypoint": "trnm-pon-node m15-release-owner-launch-v1",
+      "fresh_authority": "Owner::revalidate_current checks NodeSoftware and ProtocolConfiguration plus root/checkpoint/time; final finish_observation checks local identity and conservative current time interval before exec.",
+      "implemented": "No caller-selected root/program/argv/environment. Current ProtocolConfiguration supplies complete contract and input digest. Opens authenticated installed artifact, sealed config and held working directory, commits one LaunchAttempt, rechecks fresh authority, then execveat on the same sealed FD.",
+      "limits": "CAS and entering the kernel are not atomic. Error leaves unknown attempt; no path fallback or automatic redispatch. A launch record is not proof exec or Node open completed.",
+      "persistence": "LaunchAttempt binds nonce, process PID/start/boot/namespace, installation, program, signed contract, root generation/checkpoint and descriptor IDs before exec.",
+      "refs": [
+        {
+          "lines": [
+            45
+          ],
+          "path": "trillionnium/crates/trnm-pon-node/src/release_owner/launch.rs",
+          "symbol": "launch::execute"
+        },
+        {
+          "lines": [
+            164
+          ],
+          "path": "trillionnium/crates/trnm-pon-node/src/release_owner/launch.rs",
+          "symbol": "execveat final use"
+        },
+        {
+          "lines": [
+            90
+          ],
+          "path": "trillionnium/crates/trnm-pon-node/src/release_owner/execution_wire.rs",
+          "symbol": "Contract::validate"
+        },
+        {
+          "lines": [
+            330
+          ],
+          "path": "trillionnium/crates/trnm-pon-node/src/release_owner/proof_state.rs",
+          "symbol": "State::current_contract"
+        }
+      ]
+    },
+    {
+      "classification": "ordinary_actual_native_consumer_explicit_profile",
+      "entrypoint": "trnm-pon-node operator-continuous-m15-v1 (sealed handoff from launcher)",
+      "fresh_authority": "Session::admit opens a fresh owner; Admission::revalidate runs after taking actual Node mutex and immediately before owner frame. Refresh revalidates again before view mutation.",
+      "implemented": "Consumes pending launch by a durable one-shot Claim before Node open. Checks actual process image/argv/environment/FD/config/cwd against retained attempt. Node startup and every control frame receive fresh current-use admission; Refresh must match newly signed current inputs.",
+      "limits": "Requires PqV3 operator context; background receiver_service is explicitly unsupported because it lacks its own current-use gate. Existing operator-continuous and development CLI paths are not automatically upgraded.",
+      "persistence": "Claim remains consumed through replay/cold reopen; Node keeps its own original continuous journal and execution checks.",
+      "refs": [
+        {
+          "lines": [
+            1337
+          ],
+          "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+          "symbol": "m15_continuous_command"
+        },
+        {
+          "lines": [
+            58
+          ],
+          "path": "trillionnium/crates/trnm-pon-node/src/release_owner.rs",
+          "symbol": "open_controller"
+        },
+        {
+          "lines": [
+            95
+          ],
+          "path": "trillionnium/crates/trnm-pon-node/src/release_owner/consumer.rs",
+          "symbol": "Session::consume"
+        },
+        {
+          "lines": [
+            185
+          ],
+          "path": "trillionnium/crates/trnm-pon-node/src/release_owner/consumer.rs",
+          "symbol": "Session::admit"
+        },
+        {
+          "lines": [
+            220
+          ],
+          "path": "trillionnium/crates/trnm-pon-node/src/release_owner/consumer.rs",
+          "symbol": "Admission::revalidate"
+        },
+        {
+          "lines": [
+            395
+          ],
+          "path": "trillionnium/crates/trnm-pon-node/src/operator_continuous_controller.rs",
+          "symbol": "Controller::open_configuration"
+        },
+        {
+          "lines": [
+            502
+          ],
+          "path": "trillionnium/crates/trnm-pon-node/src/operator_continuous_controller.rs",
+          "symbol": "Controller::apply"
+        },
+        {
+          "lines": [
+            209
+          ],
+          "path": "trillionnium/crates/trnm-pon-node/src/operator_continuous_controller.rs",
+          "symbol": "validate_m15_configuration"
+        }
+      ]
+    },
+    {
+      "classification": "ordinary_native_signed_frontier_service",
+      "entrypoint": "trnm-pon-node m15-release-owner-frontier-initialize-v1 / m15-release-owner-frontier-serve-v1",
+      "fresh_authority": "Fixed root-owned /etc/trillionnium/m15-frontier-service-v1.json; distinct owner/frontier/clock keys; final conservative BOOTTIME clock-window check at CAS admission.",
+      "implemented": "Separate nonroot service UID/key/storage; authenticates owner ML-DSA requests, binds challenge/request/namespace, obtains signed clock sample, serializes exact expected-to-next CAS, fsyncs before signed response.",
+      "limits": "Reopen requires independently pre-retained expected_frontier and expected_time_floor. This source supplies no independent operational custody or recovery-anchor service; simultaneous rollback of all authorities remains outside evidence.",
+      "persistence": "independent-frontier.json binds namespace/config/frontier/time_floor; held file lock and atomic fsynced canonical row.",
+      "refs": [
+        {
+          "lines": [
+            68
+          ],
+          "path": "trillionnium/crates/trnm-pon-node/src/release_owner/frontier_service.rs",
+          "symbol": "Service::open/answer/serve"
+        },
+        {
+          "lines": [
+            55
+          ],
+          "path": "trillionnium/crates/trnm-pon-node/src/release_owner/service_store.rs",
+          "symbol": "Store::open"
+        },
+        {
+          "lines": [
+            108
+          ],
+          "path": "trillionnium/crates/trnm-pon-node/src/release_owner/service_store.rs",
+          "symbol": "Store::decide"
+        },
+        {
+          "lines": [
+            7
+          ],
+          "path": "trillionnium/crates/trnm-pon-node/src/release_owner/service_configuration.rs",
+          "symbol": "Configuration"
+        },
+        {
+          "lines": [
+            156
+          ],
+          "path": "trillionnium/crates/trnm-pon-node/src/release_owner/clock_contract.rs",
+          "symbol": "Sample::check"
+        }
+      ]
+    },
+    {
+      "classification": "durable_role_publication_not_cell_runtime_activation",
+      "entrypoint": "CellManifest / CellActivation metadata via m15-release-owner-publish-v1",
+      "fresh_authority": "Current root/role/checkpoint/time checked at publication; the kernel also exposes check_current(CellActivation,...).",
+      "implemented": "M15 journal accepts/replays all four roles; CellActivation requires matching unexpired current-generation CellManifest; role version advances and historical-content rollback needs explicit approval.",
+      "limits": "No Cell content installation or CURRENT/model-runtime effect is issued by this metadata acceptance. State::current_contract consumes only NodeSoftware and ProtocolConfiguration for Node execution; the source scan finds no CellActivation runtime consumer in the inspected Rust production source.",
+      "persistence": "These are retained M15 publication records, committed through the real owner/frontier.",
+      "refs": [
+        {
+          "lines": [
+            184
+          ],
+          "path": "trillionnium/crates/trnm-pon-node/src/release_owner/proof_state.rs",
+          "symbol": "State::verify_publication_material generic Cell roles"
+        },
+        {
+          "lines": [
+            330
+          ],
+          "path": "trillionnium/crates/trnm-pon-node/src/release_owner/proof_state.rs",
+          "symbol": "State::current_contract Node/config-only binding"
+        },
+        {
+          "lines": [
+            428
+          ],
+          "path": "trillionnium/crates/trnm-release-bundle/src/pq_release.rs",
+          "symbol": "PqReleaseAuthorityV1::check_current CellActivation"
+        },
+        {
+          "lines": [
+            591
+          ],
+          "path": "trillionnium/crates/trnm-release-bundle/src/pq_release.rs",
+          "symbol": "PqReleaseAuthorityV1::accept_with_quorum CellActivation"
+        }
+      ]
+    },
+    {
+      "classification": "ordinary_cell_acquisition_current_pin_observation",
+      "entrypoint": "trnm-cell fetch-release / verify-release --authentication-profile <PQ profile>",
+      "fresh_authority": "CLI pins immutable acquisition policy for this command; runtime host must supply actual current owner view. Supplied/cached view alone is not independent freshness.",
+      "implemented": "CLI supplies network/parameters/key pin/generation/sequence/time, checks ML-DSA authorization and original lifetime before cache/network acquisition. VerifiedCellPqReleaseV2::release_at requires the complete current expectation on every access.",
+      "limits": "No M15 PqReleaseAuthority/current frontier connection in this CLI. No CURRENT update, FinalUse grant, model-quality approval, or running-consumer revocation.",
+      "persistence": "Cell content/cache/closure storage is separate from M15 owner journal.",
+      "refs": [
+        {
+          "lines": [
+            590
+          ],
+          "path": "trillionnium/crates/trnm-data-availability/src/bin/trnm-cell.rs",
+          "symbol": "ReleaseAuthentication::parse/verify"
+        },
+        {
+          "lines": [
+            669
+          ],
+          "path": "trillionnium/crates/trnm-data-availability/src/bin/trnm-cell.rs",
+          "symbol": "CLI immutable acquisition boundary"
+        },
+        {
+          "lines": [
+            378
+          ],
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/pq.rs",
+          "symbol": "VerifiedCellPqReleaseV2::release_at"
+        },
+        {
+          "lines": [
+            232
+          ],
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/release.rs",
+          "symbol": "Cell release closure limitations"
+        }
+      ]
+    },
+    {
+      "classification": "separate_local_governance_component",
+      "entrypoint": "GovernanceGuard local API",
+      "implemented": "Caller roles, distinct proposer/executor, timelocks and parameter versions remain local owner checks.",
+      "limits": "No proof here that ProtocolConfiguration ML-DSA roles are connected to an independently authenticated network governance entry. M15 signed Node configuration is narrower than full governance integration.",
+      "refs": [
+        {
+          "lines": [
+            112
+          ],
+          "path": "trillionnium/crates/trnm-governance-guard/src/lib.rs",
+          "symbol": "GovernanceGuard"
+        },
+        {
+          "lines": [
+            190
+          ],
+          "path": "trillionnium/crates/trnm-governance-guard/src/lib.rs",
+          "symbol": "GovernanceGuard::propose"
+        }
+      ]
+    },
+    {
+      "classification": "separate_checkpoint_journal_domain",
+      "entrypoint": "trnm-external-node-checkpoint-v2 register-new / reopen / journal-checkpoint",
+      "implemented": "Actual journal daemon distinguishes fresh registration from reopen; reopen consumes an independently retained complete journal checkpoint.",
+      "limits": "This is not the M15 frontier protocol and not PNQ2 PqWitnessV4. The checkpoint journal does not by itself bind FinalUse/ProviderEffect meaning or independently retain its own recovery pin.",
+      "refs": [
+        {
+          "lines": [
+            54
+          ],
+          "path": "trillionnium/crates/trnm-checkpoint-store/src/main.rs",
+          "symbol": "checkpoint CLI main"
+        },
+        {
+          "lines": [
+            1
+          ],
+          "path": "trillionnium/crates/trnm-pon-node/src/release_owner/frontier.rs",
+          "symbol": "M15 domain distinction"
+        },
+        {
+          "lines": [
+            114
+          ],
+          "path": "docs/security/PQ_RECOVERY_RELEASE_TRANSPORT_BOUNDARIES_V1.md",
+          "symbol": "FinalUse/provider integration boundary"
+        }
+      ]
+    }
+  ],
+  "in_progress_native_observation": {
+    "causal_diagnosis": "pending buffered panic details; not inferred from names",
+    "current_m15_service_qualification": false,
+    "does_not_replace_final_reader_result": true,
+    "failed_inline_rows_observed_so_far": 31,
+    "log": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/native/node-full.log",
+    "m15_service_failed_inline_rows": [
+      "release_owner::service_tests::actual_signed_clock_wrong_request_nonce_namespace_or_backward_floor_fences",
+      "release_owner::service_tests::admitted_completion_after_expiry_lost_reply_is_exact_and_cold_does_not_redispatch",
+      "release_owner::service_tests::clock_reply_then_real_elapsed_expiry_refuses_without_cas",
+      "release_owner::service_tests::durable_preparation_then_real_elapsed_expiry_refuses_without_cas",
+      "release_owner::service_tests::last_clock_callback_lock_row_or_provisioning_drift_refuses_and_retains_fault",
+      "release_owner::service_tests::prepared_failure_keeps_canonical_row_and_temp_is_not_admission",
+      "release_owner::service_tests::signed_cas_uses_exact_old_once_and_returns_only_the_observed_lower_floor",
+      "release_owner::service_tests::wrong_signature_domain_binding_namespace_and_nonce_cannot_mutate_or_fence"
+    ],
+    "partial_log_bytes": 99765,
+    "partial_log_sha256": "18580711d733b727cd3cdf859dac25f0ffefc8134657cd4ac163ace09ac0408b",
+    "receipt_status": "running",
+    "scope": "unsealed partial log observation only; final suite accounting requires complete recorder and parent readback"
+  },
+  "method": "Read-only frozen-source inventory; no commands executed through the product, no tests rerun, no source/reader mutation. Hashes verified against frozen Git blobs.",
+  "open_boundaries": [
+    "Fixed OS root/trust configuration, offline threshold keys, signing seeds, independent clock/frontier operation and pre-stop pins need real custody and independent recovery evidence.",
+    "M15 frontier is a distinct namespace/index domain, not full Node account/block/Cell/FinalUse/external-effect coverage; PNQ2 three-table witness and complete checkpoint journal remain distinct.",
+    "A durable LaunchAttempt/Claim is a consumed reservation, not proof exec/Node open or an external business effect completed. Unknown outcomes are retained and never imply a fresh dispatch.",
+    "CellManifest and CellActivation metadata can be published durably, but this does not install Cell bytes, choose CURRENT, establish model quality, or compose runtime FinalUse/provider effects.",
+    "Existing operator-continuous, development Node paths, trnm-cell acquisition, LLM installed-ELF/material utilities and local GovernanceGuard are not automatically enrolled by the explicit M15 profile.",
+    "M15 background receiver is explicitly refused; normal dynamic installers, package-manager pipelines, complete TUF repository/delegation client and all alternate installation paths remain separate.",
+    "Physical power-loss, simultaneous rollback of all retained authorities, cross-host custody and independent whole-system acceptance are not established by local code or component tests."
+  ],
+  "production_source_symbol_scan": {
+    "limitation": "Bounded source/reference scan, not exhaustive dynamic control-flow analysis or proof about external repositories.",
+    "matches": [
+      "trillionnium/crates/trnm-release-bundle/src/pq_release.rs:49:    CellActivation = 4,",
+      "trillionnium/crates/trnm-release-bundle/src/pq_release.rs:55:    PqReleaseRoleV1::CellActivation,",
+      "trillionnium/crates/trnm-release-bundle/src/pq_release.rs:292:pub struct PqReleaseAuthorityV1 {",
+      "trillionnium/crates/trnm-release-bundle/src/pq_release.rs:307:impl PqReleaseAuthorityV1 {",
+      "trillionnium/crates/trnm-release-bundle/src/pq_release.rs:428:        if role == PqReleaseRoleV1::CellActivation {",
+      "trillionnium/crates/trnm-release-bundle/src/pq_release.rs:591:        if metadata.role == PqReleaseRoleV1::CellActivation {",
+      "trillionnium/crates/trnm-release-bundle/src/pq_release.rs:673:    authority: &'root PqReleaseAuthorityV1,",
+      "trillionnium/crates/trnm-release-bundle/src/pq_release.rs:681:        authority: &'root PqReleaseAuthorityV1,",
+      "trillionnium/crates/trnm-release-bundle/src/pq_release/initial_root_material.rs:2:    encode_root_message, next_checkpoint, PqReleaseAuthorityV1, PqReleaseErrorV1, PqReleaseRootV1,",
+      "trillionnium/crates/trnm-release-bundle/src/pq_release/initial_root_material.rs:59:impl PqReleaseAuthorityV1 {",
+      "trillionnium/crates/trnm-release-bundle/src/pq_release/bundle_quorum.rs:2:    verify_quorum, PqReleaseAuthorityV1, PqReleaseErrorV1, PqReleaseMetadataV1, PqReleaseRoleV1,",
+      "trillionnium/crates/trnm-release-bundle/src/pq_release/bundle_quorum.rs:18:        authority: &PqReleaseAuthorityV1,",
+      "trillionnium/crates/trnm-pon-node/src/release_owner/proof_wire.rs:53:        4 => Ok(PqReleaseRoleV1::CellActivation),",
+      "trillionnium/crates/trnm-pon-node/src/release_owner.rs:127:            \"m15-release-owner-initialize-v1\"",
+      "trillionnium/crates/trnm-pon-node/src/release_owner.rs:128:            | \"m15-release-owner-status-v1\"",
+      "trillionnium/crates/trnm-pon-node/src/release_owner.rs:129:            | \"m15-release-owner-launch-v1\"",
+      "trillionnium/crates/trnm-pon-node/src/release_owner.rs:130:            | \"m15-release-owner-frontier-initialize-v1\"",
+      "trillionnium/crates/trnm-pon-node/src/release_owner.rs:131:            | \"m15-release-owner-frontier-serve-v1\" => &[],",
+      "trillionnium/crates/trnm-pon-node/src/release_owner.rs:132:            \"m15-release-owner-publish-v1\" => &[\"--publication\"],",
+      "trillionnium/crates/trnm-pon-node/src/release_owner.rs:133:            \"m15-release-owner-install-v1\" => &[\"--artifact\", \"--artifact-name\"],",
+      "trillionnium/crates/trnm-pon-node/src/release_owner.rs:141:            \"m15-release-owner-frontier-initialize-v1\" => frontier_service::Service::open(true)?",
+      "trillionnium/crates/trnm-pon-node/src/release_owner.rs:144:            \"m15-release-owner-frontier-serve-v1\" => {",
+      "trillionnium/crates/trnm-pon-node/src/release_owner.rs:148:            \"m15-release-owner-initialize-v1\" => {",
+      "trillionnium/crates/trnm-pon-node/src/release_owner.rs:155:            \"m15-release-owner-status-v1\" => {",
+      "trillionnium/crates/trnm-pon-node/src/release_owner.rs:163:            \"m15-release-owner-publish-v1\" => {",
+      "trillionnium/crates/trnm-pon-node/src/release_owner.rs:170:            \"m15-release-owner-install-v1\" => {",
+      "trillionnium/crates/trnm-pon-node/src/release_owner.rs:179:            \"m15-release-owner-launch-v1\" => {",
+      "trillionnium/crates/trnm-pon-node/src/release_owner/proof_state.rs:14:    PqReleaseAuthorityV1, PqReleaseRoleV1 as Role, PqReleaseRootV1,",
+      "trillionnium/crates/trnm-pon-node/src/release_owner/proof_state.rs:53:    pub authority: PqReleaseAuthorityV1,",
+      "trillionnium/crates/trnm-pon-node/src/release_owner/proof_state.rs:66:        let authority = PqReleaseAuthorityV1::bootstrap_pinned(",
+      "trillionnium/crates/trnm-pon-node/src/operator_continuous_controller.rs:212:    Ok(crate::release_owner::inputs_digest(",
+      "trillionnium/crates/trnm-pon-node/src/operator_continuous_controller.rs:369:    m15: Option<crate::release_owner::Session>,",
+      "trillionnium/crates/trnm-pon-node/src/operator_continuous_controller.rs:388:        session: crate::release_owner::Session,",
+      "trillionnium/crates/trnm-pon-node/src/operator_continuous_controller.rs:399:        #[cfg(target_os = \"linux\")] m15: Option<crate::release_owner::Session>,",
+      "trillionnium/crates/trnm-pon-node/src/operator_continuous_controller.rs:519:            Some(crate::release_owner::inputs_digest(",
+      "trillionnium/crates/trnm-pon-node/src/main.rs:1353:    let mut controller = trnm_pon_node::release_owner::open_controller(",
+      "trillionnium/crates/trnm-pon-node/src/main.rs:1411:    if command.starts_with(\"m15-release-owner-\") {",
+      "trillionnium/crates/trnm-pon-node/src/main.rs:1412:        return trnm_pon_node::release_owner::run_admin(&command, &args);"
+    ],
+    "pattern": "PqReleaseAuthorityV1|CellActivation|release_owner::|m15-release-owner-",
+    "scope": "trillionnium/crates/**/src/**/*.rs excluding test/fixture path names"
+  },
+  "qualification": {
+    "all_installation_entrypoints_composed": false,
+    "cell_current_finaluse_composed": false,
+    "claim_guard": "HOLD",
+    "independent_custody_qualified": false,
+    "independent_recovery_anchors_qualified": false,
+    "production_qualified": false,
+    "whole_chain_pq_qualified": false
+  },
+  "schema": "task-m15-installer-source-readback-v1",
+  "scope_controls": {
+    "current_phase_13_command_plan_does_not_select_this_ignored_test": true,
+    "historical_full_node_evidence": "evidence/pq-m15-native-followthrough-20261107/README.md binds 1c14fab4, not current e36; library harness is not ordinary CLI evidence.",
+    "ignore_reason": "requires reviewed static Node/test artifacts and a fresh rootless user/mount/PID namespace",
+    "isolated_native_selector": "release_owner::native_consumer_tests::isolated_fixed_root_static_node_claim_refresh_and_revocation",
+    "isolated_native_selector_is_ignored": true,
+    "native_full_library_does_not_execute_isolated_selector_by_default": true,
+    "raw_m15_isolated_execution_evidence_not_identified_in_this_readonly_inventory": true,
+    "separate_isolated_fixture_bounds": {
+      "fixture_uids": [
+        1000,
+        1001
+      ],
+      "maximum_steps": 32,
+      "service_rpc_seconds": 2,
+      "wall_seconds": 180
+    }
+  },
+  "source_files": {
+    "docs/security/PQ_AUTHORITY_SURFACE_AUDIT_20261031.md": {
+      "bytes": 23778,
+      "sha256": "dc84cce60488156b96cb614db90da26a61b00f102eab76abeda1cd9807dda4e2",
+      "worktree_matches_frozen_blob": true
+    },
+    "docs/security/PQ_RECOVERY_RELEASE_TRANSPORT_BOUNDARIES_V1.md": {
+      "bytes": 19212,
+      "sha256": "20eb7964afde8a1ae5dd321bca59639563aa3b22ae2c37415e178a16fb2f2950",
+      "worktree_matches_frozen_blob": true
+    },
+    "evidence/pq-m15-native-followthrough-20261107/README.md": {
+      "bytes": 7550,
+      "sha256": "9fd074420f0d2e4f21fe731be5d1c70765329c76f46f91ae644f4d9199705680",
+      "worktree_matches_frozen_blob": true
+    },
+    "scripts/llm_cell_installed_executable.py": {
+      "bytes": 4895,
+      "sha256": "e65dbd0c7998b25ceaf362581c42714d483ba8b29a6a9e15b5da968ae4f66231",
+      "worktree_matches_frozen_blob": true
+    },
+    "scripts/llm_cell_release.py": {
+      "bytes": 12530,
+      "sha256": "3846fc7e03e1edee09b53d3ab0a09bfcff45a9190d793b09a73ad43e2d911bfb",
+      "worktree_matches_frozen_blob": true
+    },
+    "scripts/llm_runtime_release.py": {
+      "bytes": 27323,
+      "sha256": "0fed4045d6a5d9f27a411a416653e337b42ebaa5e6078511f3632a1a06285d07",
+      "worktree_matches_frozen_blob": true
+    },
+    "scripts/m15_isolated_native_run.py": {
+      "bytes": 16905,
+      "sha256": "3740012398fd8c1ef0231865e740722ec3e61e52c0f30d4a271a138fb2dba075",
+      "worktree_matches_frozen_blob": true
+    },
+    "scripts/m15_static_native_build.py": {
+      "bytes": 16374,
+      "sha256": "bf50e2459810ccbc780551b08a416020247912db13d91b0cbe931c43fa63a78e",
+      "worktree_matches_frozen_blob": true
+    },
+    "trillionnium/crates/trnm-checkpoint-store/src/main.rs": {
+      "bytes": 7914,
+      "sha256": "ca8bfddb3ca1c511f44cb924ecc2bb7d14f57889d6a0af719d11089fad192b34",
+      "worktree_matches_frozen_blob": true
+    },
+    "trillionnium/crates/trnm-data-availability/src/bin/trnm-cell.rs": {
+      "bytes": 38450,
+      "sha256": "3ff57ff1afd1a13ff6c60a78448d599f6d49c03c79f8312888b0aa9242ea6c60",
+      "worktree_matches_frozen_blob": true
+    },
+    "trillionnium/crates/trnm-data-availability/src/cell/pq.rs": {
+      "bytes": 15114,
+      "sha256": "02b49659012605943d2cea3a4e30a4e44ebec04a7f3ed381ea203f0ef8fd2d73",
+      "worktree_matches_frozen_blob": true
+    },
+    "trillionnium/crates/trnm-data-availability/src/cell/release.rs": {
+      "bytes": 22157,
+      "sha256": "857617faae16c557566e740ef463c78ea3465eeaa2b15853870b27b6a0f1419b",
+      "worktree_matches_frozen_blob": true
+    },
+    "trillionnium/crates/trnm-governance-guard/src/lib.rs": {
+      "bytes": 75198,
+      "sha256": "a4dcc15c268be8e4c690f3765837a868a145b3a59e8b0f4ff5c68c4ea769aacc",
+      "worktree_matches_frozen_blob": true
+    },
+    "trillionnium/crates/trnm-pon-node/src/main.rs": {
+      "bytes": 128303,
+      "sha256": "a1d921c8e3af5f9ee3d3a2e8924323eab058905fada0119b82038e78edd9965e",
+      "worktree_matches_frozen_blob": true
+    },
+    "trillionnium/crates/trnm-pon-node/src/operator_continuous_controller.rs": {
+      "bytes": 27820,
+      "sha256": "f99cecfff1d68508ff4ffb126f26daa74f61713594245eec82bf3bb5d56b999c",
+      "worktree_matches_frozen_blob": true
+    },
+    "trillionnium/crates/trnm-pon-node/src/release_owner.rs": {
+      "bytes": 7890,
+      "sha256": "350702d2221a3f343c3968174e1ec5ae7b9179f0cf3e372db7d0614ee6784ab6",
+      "worktree_matches_frozen_blob": true
+    },
+    "trillionnium/crates/trnm-pon-node/src/release_owner/catalog.rs": {
+      "bytes": 2357,
+      "sha256": "069f34c31607a5d5863767de1b0bc501b39a784baf6defe91c1c53072d024923",
+      "worktree_matches_frozen_blob": true
+    },
+    "trillionnium/crates/trnm-pon-node/src/release_owner/clock_contract.rs": {
+      "bytes": 6444,
+      "sha256": "c3316e46b63ee47a2467dfe5a31d9ab934881d2d4dde0137b93a51f09b158b92",
+      "worktree_matches_frozen_blob": true
+    },
+    "trillionnium/crates/trnm-pon-node/src/release_owner/consumer.rs": {
+      "bytes": 8947,
+      "sha256": "03a9ec5e9e88e5e8647a3cccd933b29e3cc46a378bcb0cffe4110890d068a020",
+      "worktree_matches_frozen_blob": true
+    },
+    "trillionnium/crates/trnm-pon-node/src/release_owner/deployment.rs": {
+      "bytes": 4597,
+      "sha256": "15703b8c5e8fcf381e674ede3d576ce334dc7e28607da6cfbaca31a02004ca1d",
+      "worktree_matches_frozen_blob": true
+    },
+    "trillionnium/crates/trnm-pon-node/src/release_owner/elf.rs": {
+      "bytes": 4338,
+      "sha256": "b95f98a7a1d36ffabc52fb24bef2f95efc2a17f2851c041c572874b7b32694bd",
+      "worktree_matches_frozen_blob": true
+    },
+    "trillionnium/crates/trnm-pon-node/src/release_owner/execution_wire.rs": {
+      "bytes": 7790,
+      "sha256": "d5cf18d7986958e5ed1fde4db8977b3143fde87207a3bbd640dc9c6e3ccca19d",
+      "worktree_matches_frozen_blob": true
+    },
+    "trillionnium/crates/trnm-pon-node/src/release_owner/files.rs": {
+      "bytes": 14335,
+      "sha256": "c1121e09d570710c0c2cf3bec392acf1e7bbb8f9f9d41c8d79e679f1e92be863",
+      "worktree_matches_frozen_blob": true
+    },
+    "trillionnium/crates/trnm-pon-node/src/release_owner/frontier.rs": {
+      "bytes": 3929,
+      "sha256": "b830d10c077e9d4d2a5e79e8867ac37c5d945d3785ca3ce51b66874c8f625507",
+      "worktree_matches_frozen_blob": true
+    },
+    "trillionnium/crates/trnm-pon-node/src/release_owner/frontier_service.rs": {
+      "bytes": 5931,
+      "sha256": "ebce1d727a1e8c89327b53b345d7e4da9b3329dbeb955b1a7356214b541c3273",
+      "worktree_matches_frozen_blob": true
+    },
+    "trillionnium/crates/trnm-pon-node/src/release_owner/launch.rs": {
+      "bytes": 6353,
+      "sha256": "fb781ab58deb2037af0a18786c2edb96024b8c1a7a660f76016bb1de282c2d35",
+      "worktree_matches_frozen_blob": true
+    },
+    "trillionnium/crates/trnm-pon-node/src/release_owner/native_consumer_tests.rs": {
+      "bytes": 14162,
+      "sha256": "19f8dd3a69cb240b8c5ee269632b1033185413fc9f28258a15af02cc0c30bbc5",
+      "worktree_matches_frozen_blob": true
+    },
+    "trillionnium/crates/trnm-pon-node/src/release_owner/owner.rs": {
+      "bytes": 10969,
+      "sha256": "a095a3f712dfd0548836b2930f23f2296d81ed2577d4c659579d26081e01eab3",
+      "worktree_matches_frozen_blob": true
+    },
+    "trillionnium/crates/trnm-pon-node/src/release_owner/proof_state.rs": {
+      "bytes": 19757,
+      "sha256": "90d5c76b771d6a82fc80e19f76aa7f7103d1fcc5ab7cb8c17c42c0c3d7a5933b",
+      "worktree_matches_frozen_blob": true
+    },
+    "trillionnium/crates/trnm-pon-node/src/release_owner/proof_wire.rs": {
+      "bytes": 6857,
+      "sha256": "2846784a6f8728450e1ae8e1b0375134c89fd43cdd870a7b049576317bc9374f",
+      "worktree_matches_frozen_blob": true
+    },
+    "trillionnium/crates/trnm-pon-node/src/release_owner/sealed.rs": {
+      "bytes": 9488,
+      "sha256": "aa4cb204e30b56b88de179b39f8ccb0f3a0c230698aa66cc7b58e3d2c4b503f1",
+      "worktree_matches_frozen_blob": true
+    },
+    "trillionnium/crates/trnm-pon-node/src/release_owner/service_configuration.rs": {
+      "bytes": 5896,
+      "sha256": "ce08c9a464ccc27bcb52838bfb73416e4b0e5ed5df29622f3f7439c7e5787a90",
+      "worktree_matches_frozen_blob": true
+    },
+    "trillionnium/crates/trnm-pon-node/src/release_owner/service_store.rs": {
+      "bytes": 8222,
+      "sha256": "b4a3a5c375db867241d3df56a78f0347af4853d785be285c77f92d0adfde89d8",
+      "worktree_matches_frozen_blob": true
+    },
+    "trillionnium/crates/trnm-pon-node/src/release_owner/transaction.rs": {
+      "bytes": 12269,
+      "sha256": "1542a6533a4b8a971816e9a816632164394ec0a0018e578973c2d2b81aadf239",
+      "worktree_matches_frozen_blob": true
+    },
+    "trillionnium/crates/trnm-release-bundle/src/pq_release.rs": {
+      "bytes": 30636,
+      "sha256": "093a791afdc25617411d9da7ce83042a9fcc45e29316a176a326ea7363882d82",
+      "worktree_matches_frozen_blob": true
+    }
+  },
+  "stale_documentation": {
+    "finding": "The older absence claims for an M15 product installer/configuration consumer are superseded by the explicit release_owner code in e36. Its separate warning about missing Cell runtime activation and full qualification remains applicable.",
+    "not_modified_during_frozen_validation": true,
+    "path": "docs/security/PQ_AUTHORITY_SURFACE_AUDIT_20261031.md"
+  },
+  "tested_source_head": "e36cfb88956a0e35e53d74c5ab71c94c628439d9",
+  "tested_source_tree": "b2586f06e82de55484a2e5752563e8b669c3ea17",
+  "updated_audit_row": {
+    "conclusion": "已形成具体 Node 安装—启动—消费接线。完整安装/升级入口、Cell CURRENT/运行时激活、FinalUse/外部效果组合，以及独立密钥托管和新鲜恢复锚点仍未验收；不能据此宣称完整治理或整链 PQ。",
+    "current": "真实 ML-DSA 角色/轮换已接显式 Linux M15 持久 owner、签名前沿服务、实际封存 ELF 安装/启动、一次性 Claim，以及 Node 打开和控制帧的当前授权复核；四类发布记录均可持久化。",
+    "layer": "发布与治理"
+  }
+}

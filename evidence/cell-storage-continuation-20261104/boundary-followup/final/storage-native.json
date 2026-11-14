@@ -1,0 +1,62 @@
+{
+  "after": {
+    "base": null,
+    "candidate": "211e330fd1cfbdaf3e9ff552714df29c840ce675",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "211e330fd1cfbdaf3e9ff552714df29c840ce675",
+    "tested_tree": "a18dc9ffc20efe435ae8ebceecdca537b7013261",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 947687690,
+    "tracked_entries": 9024,
+    "tracked_worktree_verified": true
+  },
+  "argv": [
+    "bash",
+    "-c",
+    "set -euo pipefail\ncargo test --locked --offline --manifest-path trillionnium/Cargo.toml -p trnm-data-availability --tests -- --nocapture 2>&1 | tee /workspace/scratch/73305aff6ced/observations/final/m09-tests.log\ncargo test --locked --offline --manifest-path trillionnium/Cargo.toml -p trnm-data-availability --doc 2>&1 | tee /workspace/scratch/73305aff6ced/observations/final/m09-doc.log"
+  ],
+  "before": {
+    "base": null,
+    "candidate": "211e330fd1cfbdaf3e9ff552714df29c840ce675",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "211e330fd1cfbdaf3e9ff552714df29c840ce675",
+    "tested_tree": "a18dc9ffc20efe435ae8ebceecdca537b7013261",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 947687690,
+    "tracked_entries": 9024,
+    "tracked_worktree_verified": true
+  },
+  "cwd": "/workspace/scratch/73305aff6ced/validation-a9b860",
+  "elapsed_ns": 307732334622,
+  "environment": {
+    "CARGO_BUILD_JOBS": "1",
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_TARGET_DIR": "/workspace/scratch/73305aff6ced/target",
+    "GITHUB_RUN_ATTEMPT": null,
+    "GITHUB_RUN_ID": null,
+    "OPENSSL_DIR": "/workspace/scratch/e537ad232c79/native-runtime-acceptance/provider/trnm-pq-provider-3.5.9.P6cfOXrY/install",
+    "OPENSSL_STATIC": "1",
+    "RUNNER_ARCH": null,
+    "RUSTC": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+    "RUSTC_WORKSPACE_WRAPPER": null,
+    "RUSTC_WRAPPER": null,
+    "RUSTFLAGS": null,
+    "RUST_TEST_THREADS": "1",
+    "TRNM_PQ_OPENSSL": "/workspace/scratch/e537ad232c79/native-runtime-acceptance/provider/trnm-pq-provider-3.5.9.P6cfOXrY/install/bin/openssl",
+    "TRNM_PQ_OPENSSL_SHA256": "08e4988f44357113a30082b8b37b368c722dc6be82d07a8e3c3585b75e301955",
+    "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+  },
+  "exit_code": 0,
+  "log_bytes": 46711,
+  "log_file": "storage-native.log",
+  "log_sha256": "36f359ca9aa6df7bf79aa6f608179981b2f5b1724476c97ae24af21079a293db",
+  "schema": "trnm-pq-native-command-v1",
+  "started_utc": "2026-11-05T00:25:30.506665+00:00",
+  "status": "command_succeeded",
+  "whole_chain_quantum_security_qualified": false
+}

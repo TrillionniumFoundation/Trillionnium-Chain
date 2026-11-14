@@ -1,0 +1,33 @@
+{
+  "schema": "parent-carry-known-write-hold-v1",
+  "decision": "HOLD; restore default implementation to b811 owned paths",
+  "archive_created_utc": "2026-11-04T08:17:22.795486+00:00",
+  "default_restore_base": "b8116f65789a85148254f870c678a44f895316de",
+  "historically_tested_base": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+  "physical_page_ownership_established": false,
+  "bypass_reproduced": false,
+  "fresh_ddl_rootpage_catalog_qualification_is_a_page_ownership_proof": false,
+  "small_changed_fixture_latest_cpu_regression_percent": 10.787252104047361,
+  "performance_rules_relaxed": false,
+  "size_threshold_added": false,
+  "b811_composed_candidate_native_execution": null,
+  "boundary_new_test_source_count": 9,
+  "boundary_exact_archived_source_execution": null,
+  "boundary_note": "Earlier conversation observed 22 tests, but a durable exact source/ELF/raw receipt was not located, and two explicit drop calls were subsequently changed to lexical scopes. This archive does not qualify the final nine new controls as PASS. The older thirteen-test log is not substituted.",
+  "owned_paths": [
+    "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs",
+    "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/frontier_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/pre_write.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/pre_write_tests.rs",
+    "trillionnium/crates/trnm-sqlite-io-boundary/src/lib.rs",
+    "trillionnium/crates/trnm-sqlite-io-boundary/src/transaction_scope.rs",
+    "trillionnium/crates/trnm-sqlite-io-boundary/src/known_write_scope_tests.rs"
+  ],
+  "historical_full_native_reconstruction": {
+    "f56": "../tcp/native/tested-native-from-73ab.patch.gz",
+    "0e9d_overlay": "../tcp/trimmed-schema/from-f56.patch.gz"
+  }
+}

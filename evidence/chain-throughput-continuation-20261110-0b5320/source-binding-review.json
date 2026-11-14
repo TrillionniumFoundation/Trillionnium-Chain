@@ -1,0 +1,21 @@
+{
+  "schema": "pon-throughput-source-binding-review-v1",
+  "prior_curated_source": "85a905b9e47cea0d76144253abb4a483b58bc2be",
+  "current_curated_source": "5ec9b4490fbfd22df4527e3b75ec74d6986572cf",
+  "curated_maps": [
+    {
+      "file": "config/pon/pq128-source-lock-v1.json",
+      "path_count": 15,
+      "all_reviewed_bytes_unchanged_from_prior": true
+    },
+    {
+      "file": "config/pon/pq-authority-effects-v1.json",
+      "path_count": 44,
+      "all_reviewed_bytes_unchanged_from_prior": true
+    }
+  ],
+  "authority_canonical_digest": "186b74a7fd61c1b62b18d27aad19a1aa75f633ee4968e49d0453f4ced10ee6de",
+  "coverage_complete": false,
+  "whole_business_liveness_qualified": false,
+  "production_activation": false
+}

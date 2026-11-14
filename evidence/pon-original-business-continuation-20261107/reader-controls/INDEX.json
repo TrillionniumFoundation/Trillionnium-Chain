@@ -1,0 +1,143 @@
+{
+  "schema": "retained-reader-controls-index-v1",
+  "scope": "Local reader, process ownership and Host/History adapter controls only; no native campaign, no Host provisioning, no GitHub Actions original acceptance",
+  "head": "96e1eede091153199894532c91430bfc0f8e4572",
+  "source_inventory_changed_during_four_suites": [],
+  "total_local_unittest_cases": 263,
+  "all_local_suites_succeeded": true,
+  "commands": [
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_run_from_zero_native.py"
+      ],
+      "cwd": "/workspace/scratch/ae364bcbabfb/publication-check",
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_ns": 18320142576,
+      "tests": 149,
+      "unittest_success": true,
+      "log": "/workspace/scratch/ae364bcbabfb/continuation-acceptance/retained-reader-controls/test_run_from_zero_native.log",
+      "log_bytes": 24541,
+      "log_sha256": "d785620caa62cbf3589b7efdbd252fe73006691946b94814b45cbe11024c9d58",
+      "test_source_before": "d94052e5777392461da80c3470d08222cc72f14a0e82f9b477b9fcf0da3f870b"
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_run_w1_fresh_service_v1.py"
+      ],
+      "cwd": "/workspace/scratch/ae364bcbabfb/publication-check",
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_ns": 4075426015,
+      "tests": 29,
+      "unittest_success": true,
+      "log": "/workspace/scratch/ae364bcbabfb/continuation-acceptance/retained-reader-controls/test_run_w1_fresh_service_v1.log",
+      "log_bytes": 128,
+      "log_sha256": "16433f8247dee2e495387b8fe5aa63f4c6e21128dd4e44c9b6bbacc06f629a1c",
+      "test_source_before": "4bcad9c87197e3334d912ecfe3257439959c4a04658ef7c762d98070d8334f62"
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_from_zero_host_ci.py"
+      ],
+      "cwd": "/workspace/scratch/ae364bcbabfb/publication-check",
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_ns": 1418466221,
+      "tests": 78,
+      "unittest_success": true,
+      "log": "/workspace/scratch/ae364bcbabfb/continuation-acceptance/retained-reader-controls/test_from_zero_host_ci.log",
+      "log_bytes": 177,
+      "log_sha256": "07f741e4276b061106ed45799fcd38e240cb2c540c0509bf5ef283c93e224c65",
+      "test_source_before": "dacbf0878bbdae540de1b2338a70ce7810608be221d4c2479a55a739302b32a3"
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_ci_observation_process.py"
+      ],
+      "cwd": "/workspace/scratch/ae364bcbabfb/publication-check",
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_ns": 6090216143,
+      "tests": 7,
+      "unittest_success": true,
+      "log": "/workspace/scratch/ae364bcbabfb/continuation-acceptance/retained-reader-controls/test_ci_observation_process.log",
+      "log_bytes": 1102,
+      "log_sha256": "48abf5c56ca98dbf6a4462e15b734c0bc2a93c62444b6802a3e0cab1220da0fd",
+      "test_source_before": "52cd36b22d529406365b05b431dd943c3b7526ff942a0438555d30467c284720"
+    }
+  ],
+  "retained_failures_command": {
+    "argv": [
+      "python3",
+      "-B",
+      "/workspace/scratch/ae364bcbabfb/continuation-acceptance/retained-reader-controls/read_retained_failures.py"
+    ],
+    "exit_code": 0,
+    "log": "retained-failure-readback.json",
+    "log_sha256": "ef1f89ab7a15704263e175409f2ffbc104346e5d11e1b8dfcb797abf1ab9dab5",
+    "stderr": "retained-failure-readback.stderr.log",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "all_four_remain_refused": true
+  },
+  "original_business_gate_started": false,
+  "github_actions_matrix_started": false,
+  "files": {
+    "manifest.json": {
+      "bytes": 41420,
+      "sha256": "2a28836e3edf8e92bb2c4e0e8bae0c738c998ecbb890af8a1f7440464a2eab26"
+    },
+    "read_retained_failures.py": {
+      "bytes": 3860,
+      "sha256": "6a940ec368cb80e26678a471691d5b366134fe5f728981e3b0dec1b6391a7e70"
+    },
+    "retained-failure-readback.json": {
+      "bytes": 3459,
+      "sha256": "ef1f89ab7a15704263e175409f2ffbc104346e5d11e1b8dfcb797abf1ab9dab5"
+    },
+    "retained-failure-readback.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "test_ci_observation_process.json": {
+      "bytes": 587,
+      "sha256": "3012017cac409476090c4aef314a6c1245db00ebb0a37227ce3c9f601baa3760"
+    },
+    "test_ci_observation_process.log": {
+      "bytes": 1102,
+      "sha256": "48abf5c56ca98dbf6a4462e15b734c0bc2a93c62444b6802a3e0cab1220da0fd"
+    },
+    "test_from_zero_host_ci.json": {
+      "bytes": 577,
+      "sha256": "7413ba2dbf6f8504884148bada90a8ea5f71e4fb76eb4ac8a63e89a83b9606fb"
+    },
+    "test_from_zero_host_ci.log": {
+      "bytes": 177,
+      "sha256": "07f741e4276b061106ed45799fcd38e240cb2c540c0509bf5ef283c93e224c65"
+    },
+    "test_run_from_zero_native.json": {
+      "bytes": 587,
+      "sha256": "0492beb70df222eeef121bfd4a82ed52d1ccc278bf81f977f4564c4ad1d3c6f2"
+    },
+    "test_run_from_zero_native.log": {
+      "bytes": 24541,
+      "sha256": "d785620caa62cbf3589b7efdbd252fe73006691946b94814b45cbe11024c9d58"
+    },
+    "test_run_w1_fresh_service_v1.json": {
+      "bytes": 589,
+      "sha256": "b5d49901951e305bec9f2548c1fc2bfc6027ade148d7cedd9e025bc167d9f122"
+    },
+    "test_run_w1_fresh_service_v1.log": {
+      "bytes": 128,
+      "sha256": "16433f8247dee2e495387b8fe5aa63f4c6e21128dd4e44c9b6bbacc06f629a1c"
+    }
+  }
+}

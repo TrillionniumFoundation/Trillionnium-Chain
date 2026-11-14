@@ -1,0 +1,14 @@
+{
+  "schema": "retained-evidence-package-storage-observation-v1",
+  "stage": "recording-prior-workflow-pin-stop",
+  "write_completed": false,
+  "exception": "OSError: [Errno 28] No space left on device",
+  "observed_disk_total_bytes": 67586535424,
+  "observed_disk_used_bytes": 64204423168,
+  "observed_disk_free_bytes": 0,
+  "subsequent_action": "Parent authorized removal only of the independently rehashed, remotely available local campaign0746.zip cache after preserved-output checks.",
+  "removal_receipt": "../local-raw-zip-removal.json",
+  "native_execution_performed": false,
+  "repository_mutated": false,
+  "scope": "Packaging storage observation only; not a reader or native campaign attempt."
+}

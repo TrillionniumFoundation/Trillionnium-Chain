@@ -1,0 +1,227 @@
+{
+  "schema": "trnm-1c-composition-growth-static-review-v1",
+  "scope": "Four auto-merged production/test files and their exact supporting local/remote source paths; public_v3.rs conflicts are owned by budget and excluded.",
+  "binding": {
+    "ours": "8f1c0267f419d4b737b524515ea5b55d3d440ec2",
+    "incoming": "1c885019fdf1cc2f33af8da0780da603fff1c353",
+    "base": "33a170e863a413279d6611457d907913a54e9e5a",
+    "head_observed": "8f1c0267f419d4b737b524515ea5b55d3d440ec2",
+    "merge_head_observed": "1c885019fdf1cc2f33af8da0780da603fff1c353",
+    "merge_in_progress": true,
+    "final_merge_tree": null
+  },
+  "qualification": false,
+  "runtime_executed": false,
+  "build_executed": false,
+  "repo_files_modified_by_reviewer": false,
+  "static_review_result": "NO_BLOCKING_MERGE_ISSUE_FOUND_IN_REVIEWED_SCOPE",
+  "blocking_findings": [],
+  "findings": [
+    {
+      "area": "pon_executor",
+      "result": "Incoming mandatory namespace range selection is retained in full; local BeforeHeaderContext enum and documentation remain. Five cleanup prefixes and three monetary prefixes retain lexical order, pre-cleanup key snapshot and complete monetary input; no account/root validation is removed."
+    },
+    {
+      "area": "ingress",
+      "result": "Original typed header callback forwarding and local zero-parent/zero-W1 refusal regression remain. Incoming retry predicate admits Cancelled or exact local Capacity+PublicQueueBusy only, keeps original pending authenticated request binding, and does not convert remote text/local-integrity overrides/other capacity or invalid W1 into retry."
+    },
+    {
+      "area": "store",
+      "result": "Only incoming Growth next_nonces dispatch is added relative to ours. Original nonce batch dimension/uniqueness checks precede dispatch. Local header context region is byte-identical to ours, including inner Result final epoch check, control error precedence, fresh context and original control at CommitFence."
+    },
+    {
+      "area": "growth_nonce",
+      "result": "Incoming one-snapshot multiproof query, 1..256 distinct-owner constraints, requested order, absent account and overflow behavior, corruption/foreign epoch tests, branch/reorg/reopen checks are preserved. This API reserves no nonce or execution authority and has no end-to-end deadline control."
+    },
+    {
+      "area": "growth_header",
+      "result": "growth.rs, recovery.rs, header_window and scale tests equal ours. Target/time single window and final growth_guard covering duplicate/new precheck returns are intact."
+    },
+    {
+      "area": "test_inventory",
+      "result": "growth/tests.rs differs from incoming only by local mod header_window; incoming three nonce batch tests and extensions of original signed branches/reorg/reopen test remain. Native tests were not run by this review."
+    },
+    {
+      "area": "diagnostic_api",
+      "result": "request_observation.rs equals ours. Only dispatch/terminal bounded text diagnostic slots exist; ResponseEncoding phase does not provide a second full text error slot. No reactive phase timing or dispatch outcome should be fabricated for late encoding errors."
+    }
+  ],
+  "limitations": [
+    "Static source and Git blob review only; no claim of compiler or native runtime success.",
+    "public_v3.rs completion conflict resolution requires separate review.",
+    "Original 4-second/16-producer gate, latest whole-workspace compilation, native runtime and six-scenario qualification remain unaccepted.",
+    "Prior results and latest SIGBUS/ENOSPC receipts remain bound to their recorded source; no result is relabelled."
+  ],
+  "files": [
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "worktree_git_blob": "7460399683377fe4b4a656d2b22b245c965f54bc",
+      "worktree_sha256": "dc9c0f634af73356b4fe055beabf6c058aa5122fd230c9d9abe12cfbb8315f0f",
+      "worktree_bytes": 149100,
+      "ours_git_blob": "ba10f535aa85bff07935d48c6e09452a9718f26e",
+      "theirs_git_blob": "950a9320636e8c68207ca01b0b67f6450bdcd304",
+      "equals_ours": false,
+      "equals_theirs": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+      "worktree_git_blob": "8619f003694361afe4e10c7eb4e7aa7df41a0dbe",
+      "worktree_sha256": "86ba0b079409073ed4d96116c4b05e0772946fbe8f9b21760a8d155d5f0c327d",
+      "worktree_bytes": 211805,
+      "ours_git_blob": "2bf114c585424d1e5b19a3bfec300600be01d908",
+      "theirs_git_blob": "ae73ee11346ca1ba4ebf22310f9162befc32409c",
+      "equals_ours": false,
+      "equals_theirs": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "worktree_git_blob": "3a9fd5d7fbda0026413d70dda65a7ab6590ef6bb",
+      "worktree_sha256": "adfda6fee54f3cf2d88a76ed826abc3cda313925db6e185bbad211de3eef0990",
+      "worktree_bytes": 340153,
+      "ours_git_blob": "1cb46ea79a361c56f7c808bd92b77d9f620615a6",
+      "theirs_git_blob": "0e30e12fbcc2cd951ceff2ea6d89006073a27ad3",
+      "equals_ours": false,
+      "equals_theirs": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests.rs",
+      "worktree_git_blob": "166f5ce0b1196bc528e36e000ebc2b55a9ec01b7",
+      "worktree_sha256": "0104406b0f9eb2c1016222b83b0dd8f67da66b73b851649b10e1d2e5154a9b1b",
+      "worktree_bytes": 84681,
+      "ours_git_blob": "faaa4c077b7800041f173ac62af0f2ec80d21383",
+      "theirs_git_blob": "c2cae5fd6b81d0819be56730948dcfcd9e1c5b39",
+      "equals_ours": false,
+      "equals_theirs": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth.rs",
+      "worktree_git_blob": "ca99e919691c545257f07f66113e1e9a7a9cb893",
+      "worktree_sha256": "a1e490cdd91f3f8c5fee5daa0663feaac9d2a0009a9bef45090ab66966079132",
+      "worktree_bytes": 30802,
+      "ours_git_blob": "ca99e919691c545257f07f66113e1e9a7a9cb893",
+      "theirs_git_blob": "9dc7d2020294b0638bcf466f49c77a9e7bbafbbd",
+      "equals_ours": true,
+      "equals_theirs": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs",
+      "worktree_git_blob": "8af15e409691099f528d2a6932d0d836e996b0f4",
+      "worktree_sha256": "511f240c4acaa0aab067a4a5f899c14a6289ca56ae31912fb271be38bad05790",
+      "worktree_bytes": 29832,
+      "ours_git_blob": "8af15e409691099f528d2a6932d0d836e996b0f4",
+      "theirs_git_blob": "c12b91dcb9d5a45b9782a78486660b2712a15e8b",
+      "equals_ours": true,
+      "equals_theirs": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests/header_window.rs",
+      "worktree_git_blob": "ea1e2a7c9a108063abfda2084abb61ade8838efe",
+      "worktree_sha256": "905376753f6014b87ebcb5b7a022e32b15ea78afee44b25ff68b2d2e6cb5b291",
+      "worktree_bytes": 14785,
+      "ours_git_blob": "ea1e2a7c9a108063abfda2084abb61ade8838efe",
+      "theirs_git_blob": null,
+      "equals_ours": true,
+      "equals_theirs": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests/scale_observation.rs",
+      "worktree_git_blob": "15d3fc248c618916cd730ceefec60a06c8a5651c",
+      "worktree_sha256": "5828aa9e90217c1bd5b7f1d7888c7da6aa79fd9f4986b17435f2b147fc05e8d0",
+      "worktree_bytes": 32595,
+      "ours_git_blob": "15d3fc248c618916cd730ceefec60a06c8a5651c",
+      "theirs_git_blob": "5f538b98f2808294321928f1426358095d001051",
+      "equals_ours": true,
+      "equals_theirs": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/admission_header_tests.rs",
+      "worktree_git_blob": "bae5cba609b84c78550c7f4d7e67d0ab9ffde24a",
+      "worktree_sha256": "e896b4189854b201732b8e0f18ae051af17b9590f4ddedc2378c7e5af667255b",
+      "worktree_bytes": 14447,
+      "ours_git_blob": "bae5cba609b84c78550c7f4d7e67d0ab9ffde24a",
+      "theirs_git_blob": null,
+      "equals_ours": true,
+      "equals_theirs": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/detached_admission.rs",
+      "worktree_git_blob": "5a881abe6b660933f31f4c16b66e1f1f42daf5cd",
+      "worktree_sha256": "a2e7ce3294be9600294283e74245a65b9ea193aa686fc4afe1a53365fb0a98a5",
+      "worktree_bytes": 21475,
+      "ours_git_blob": "5a881abe6b660933f31f4c16b66e1f1f42daf5cd",
+      "theirs_git_blob": "f33fecef7776e0f8ee98176a19e5e31d45489a83",
+      "equals_ours": true,
+      "equals_theirs": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs",
+      "worktree_git_blob": "435baefdf9d38fb4959f006bfe6dd9f1c3476214",
+      "worktree_sha256": "3c42247c342773efbe6524d2a19533049217096f05aecdd24c62780b558e8808",
+      "worktree_bytes": 64625,
+      "ours_git_blob": "435baefdf9d38fb4959f006bfe6dd9f1c3476214",
+      "theirs_git_blob": "435baefdf9d38fb4959f006bfe6dd9f1c3476214",
+      "equals_ours": true,
+      "equals_theirs": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth/observation.rs",
+      "worktree_git_blob": "88a1cdd1429ce748e07d19e30dcda880a8aa4e99",
+      "worktree_sha256": "07862d8682dcca7b79e1305f1853bd2f118aaf66f9b47ba150ff8d9a96358cfe",
+      "worktree_bytes": 11412,
+      "ours_git_blob": "86c66650788bd105a09a1e3d28ff326a9d911385",
+      "theirs_git_blob": "88a1cdd1429ce748e07d19e30dcda880a8aa4e99",
+      "equals_ours": false,
+      "equals_theirs": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/authenticated_recovery_tests.rs",
+      "worktree_git_blob": "efac53fdbb15bc7a56b56c8c5b3534cf76ac73f7",
+      "worktree_sha256": "6ae451a6df72f14451fd590b90387611007716491ee7a052025a4f0ad9d0294d",
+      "worktree_bytes": 24039,
+      "ours_git_blob": "4b30a383eb667543cb67d6e9a4e1070d54755417",
+      "theirs_git_blob": "efac53fdbb15bc7a56b56c8c5b3534cf76ac73f7",
+      "equals_ours": false,
+      "equals_theirs": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/prefix_scan_tests.rs",
+      "worktree_git_blob": "cfd44e53cae61728bf58c5315fa1e76f1965aef8",
+      "worktree_sha256": "24d627cd00fcf52ab5481ca5ec7eba7daadaf873f7ac33b6b81ff6fcc287049a",
+      "worktree_bytes": 28840,
+      "ours_git_blob": "c3679dd549b2e1019dd699e1ab876e44309cce6f",
+      "theirs_git_blob": "cfd44e53cae61728bf58c5315fa1e76f1965aef8",
+      "equals_ours": false,
+      "equals_theirs": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/integer_factor_candidate_v2.rs",
+      "worktree_git_blob": "ccd4d4a7a7ede5cb935e0d48c82d74920c15c1aa",
+      "worktree_sha256": "11c771e02e4ae446dfdbb5026b2317f4fc75ea0f98f66505b1619494d794b676",
+      "worktree_bytes": 21172,
+      "ours_git_blob": "a851de96edd22342b78ce7aa2db60f8e2c051f0e",
+      "theirs_git_blob": "ccd4d4a7a7ede5cb935e0d48c82d74920c15c1aa",
+      "equals_ours": false,
+      "equals_theirs": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/model_evidence_v3.rs",
+      "worktree_git_blob": "c496d0ee1cd5d04e5a7b0cef8b3fe20206de39bf",
+      "worktree_sha256": "9055bba1820b307ca3450953370504ee661ff4020151f67f468ce43dc215ad2f",
+      "worktree_bytes": 24084,
+      "ours_git_blob": "d0d51121eb77a62c8d42167dd872273ac3eaf860",
+      "theirs_git_blob": "c496d0ee1cd5d04e5a7b0cef8b3fe20206de39bf",
+      "equals_ours": false,
+      "equals_theirs": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/model_evolution_v5.rs",
+      "worktree_git_blob": "7bebea6cb8890313168832c66129b8286908a546",
+      "worktree_sha256": "d49801ca533604279c7666ce13173cd839f59e3df6f460962cf17ad12c942549",
+      "worktree_bytes": 11529,
+      "ours_git_blob": "00e4740e93e00bcc99d4010b75e0b6a3faaa92f1",
+      "theirs_git_blob": "7bebea6cb8890313168832c66129b8286908a546",
+      "equals_ours": false,
+      "equals_theirs": true
+    }
+  ]
+}

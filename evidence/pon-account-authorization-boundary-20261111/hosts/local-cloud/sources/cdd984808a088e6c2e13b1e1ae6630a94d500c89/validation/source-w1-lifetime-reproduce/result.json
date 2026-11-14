@@ -1,0 +1,26 @@
+{
+  "id": "source-w1-lifetime-reproduce",
+  "argv": [
+    "python3",
+    "scripts/w1_lifetime_ledger.py",
+    "--input",
+    "evidence/pon-w1-lifetime-account-boundary-20261110/project-input.json"
+  ],
+  "returncode": 0,
+  "launch_error": null,
+  "elapsed_seconds": 0.2450381809994724,
+  "finished_utc": "2026-11-11T01:34:46.339110+00:00",
+  "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_status_after": "",
+  "stdout_sha256": "b050b861ec172305d708ba7c01ca47d547b1646cc3daee1d6aec9877d2cf3390",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "pass": true,
+  "qualification_granted": false,
+  "child_resources": {
+    "user_cpu_seconds": 0.078091,
+    "system_cpu_seconds": 0.011973999999999999,
+    "maximum_rss_kib": 15476,
+    "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis"
+  }
+}

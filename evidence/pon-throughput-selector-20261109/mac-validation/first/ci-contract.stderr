@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/Users/qianqi/work/chain-throughput-continue-20261109-48c53a/scripts/ci/check_ci_contract.py", line 888, in <module>
+    print(json.dumps(validate(), sort_keys=True))
+                     ~~~~~~~~^^
+  File "/Users/qianqi/work/chain-throughput-continue-20261109-48c53a/scripts/ci/check_ci_contract.py", line 634, in validate
+    require(source.is_file() and not source.is_symlink(),
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            'required useful Cell test source is missing: ' + name)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/qianqi/work/chain-throughput-continue-20261109-48c53a/scripts/ci/check_ci_contract.py", line 451, in require
+    raise ValueError('CI contract: ' + message)
+ValueError: CI contract: required useful Cell test source is missing: test_useful_cell_numeric_v1.py

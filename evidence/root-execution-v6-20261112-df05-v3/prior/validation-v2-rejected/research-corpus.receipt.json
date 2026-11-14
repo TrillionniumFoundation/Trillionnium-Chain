@@ -1,0 +1,22 @@
+{
+  "bytes": 558,
+  "command": [
+    "/usr/bin/python3",
+    "-B",
+    "scripts/ci/check_pq_research_integration.py"
+  ],
+  "cwd": "/home/qian-qi/work/chain-root-operation-recovered-20261112-df05",
+  "elapsed_ns": 13983517723,
+  "executed": true,
+  "exit_code": 0,
+  "expected_source": "92934b64f80ee9b20bcc070a08ca0966b7c5741d",
+  "log": "research-corpus.log",
+  "name": "research-corpus",
+  "process_exit_code": 0,
+  "sha256": "0c370d643214a2f56ca81806aab806048e3266b47ad43de7e15adfb734418bcc",
+  "source": "92934b64f80ee9b20bcc070a08ca0966b7c5741d",
+  "source_after_verified": true,
+  "source_before_verified": true,
+  "source_verified": true,
+  "timed_out": false
+}

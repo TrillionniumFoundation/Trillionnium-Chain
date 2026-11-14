@@ -1,0 +1,24 @@
+{
+  "source_scope": "uncommitted pre-fix development draft",
+  "old_source_sha256": null,
+  "fixed_source_commit": "103cdf67108a667d8570388f9dd402210c160157",
+  "findings": [
+    {
+      "id": "one-shot-iterator-consumption",
+      "observation": "Consumed action, outcome or credit iterators could erase declarations; one reproduced draft reported a positive-credit zero-cost loop feasible.",
+      "repair": "Validate exact containers and record/value types before traversal; reject iterators without consuming them.",
+      "regression_file": "formal/pon-nakamoto-v1/test_amortized_cost_potential.py"
+    },
+    {
+      "id": "constraint-label-collision",
+      "observation": "Colon concatenation could map distinct state/action pairs to the same label.",
+      "repair": "Canonical JSON-array components and strict label-kind/arity checks."
+    },
+    {
+      "id": "model-name-type",
+      "observation": "Boolean/integer model names were not consistently rejected.",
+      "repair": "Require exact nonempty strings and exact supported datatypes."
+    }
+  ],
+  "old_executable_replay_claimed": false
+}

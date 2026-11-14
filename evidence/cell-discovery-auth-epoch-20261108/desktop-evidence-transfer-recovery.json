@@ -1,0 +1,41 @@
+{
+  "schema": "cell-desktop-evidence-transfer-recovery-v1",
+  "scope": "Evidence-file transfer and task-cache recovery only; source validation ran separately on ai395.",
+  "failed_archive_write": "remote helper on desktop-ts failed with 1\nstdout:\n\nstderr:\nOSError: [Errno 28] No space left on device",
+  "failed_write_destination_readback": "remote helper on desktop-ts failed with 1\nstdout:\n\nstderr:\nFileNotFoundError: [Errno 2] No such file or directory: 'chain-cell-f2568-ai395-c3-pass.tar.gz'",
+  "original_cleanup_launch": {
+    "automatic_retry": false,
+    "job_id": "1a1bca6807a-138b0-3ce",
+    "outcome": "unknown",
+    "reconcile_via": "process_status",
+    "state": "launch_unknown",
+    "status_authoritative": false
+  },
+  "original_cleanup_status_readback": "remote helper on desktop-ts failed with 1\nstdout:\n\nstderr:\nTraceback (most recent call last):\n  File \"<string>\", line 6, in <module>\n  File \"<string>\", line 25, in private_job_directory\nFileNotFoundError: [Errno 2] No such file or directory: '1a1bca6807a-138b0-3ce'",
+  "bootstrap_dependency_file_delete": "Successfully deleted ssh://desktop/home/qian-qi/work/chain-cell-storage-discovery-f2568-target/debug/deps/trnm_data_availability-2640c265b42f8e43.d",
+  "bounded_editor_binary_delete_refusal": "remote helper on desktop-ts failed with 1\nstdout:\n\nstderr:\nTraceback (most recent call last):\n  File \"<string>\", line 45, in <module>\nValueError: file exceeds 1 MiB bounded file capability",
+  "bootstrap_generated_binary_before": {
+    "metadata": {
+      "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gid": 1000,
+      "link_count": 1,
+      "metadata_platform": "linux",
+      "mode": 448,
+      "uid": 1000,
+      "xattr_names": [],
+      "xattr_sha256": {}
+    },
+    "mode": 448,
+    "path": "/home/qian-qi/work/chain-cell-storage-discovery-f2568-target/debug/deps/trnm_data_availability-2640c265b42f8e43",
+    "sha256": "35bd8ac9d6ab877fa40b37d4eefbe21657524ffc6e54d18811a612a3e1133d9a",
+    "size": 91209464,
+    "version": "2050:4465583:91209464:1794163560215019172:1794163560232018522"
+  },
+  "bootstrap_generated_binary_zero_write": "{\"mode\":448,\"sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"size\":0,\"version\":\"2050:4465582:0:1794166559456812473:1794166559527810456\",\"written\":0}",
+  "reconciled_cleanup_job": "1a1bca9dd0a-138b0-3e2",
+  "recovered_archive": {
+    "bytes": 228648,
+    "sha256": "129b80bcbe8a1510d122d61be38bbad6596b76ff2da83785b8a17cd7bfa951b2"
+  },
+  "interpretation": "The transfer reported ENOSPC. Later cleanup sampled about 20.94 GB free before removing remaining task cache; concurrent host capacity changes are not attributed to this task. The initial unknown launch had no remote job directory and systemd reported not-found/inactive/MainPID=0 before the successful cleanup."
+}

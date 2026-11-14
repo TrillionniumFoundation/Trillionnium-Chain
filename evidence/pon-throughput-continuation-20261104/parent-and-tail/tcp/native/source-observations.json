@@ -1,0 +1,41 @@
+[
+  {
+    "attempt": 1,
+    "byte_identical_observations": [
+      {
+        "bytes": 177323,
+        "original_observation": "tail-native-73ab-attempt-1/source-before.json",
+        "raw_file_sha256": "bfebe502d784a88628d5d83f2b76a90bb4b53f6ea3f4b7f3a9d5129753ddff9c"
+      },
+      {
+        "bytes": 177323,
+        "original_observation": "tail-native-73ab-attempt-1/source-after-build.json",
+        "raw_file_sha256": "bfebe502d784a88628d5d83f2b76a90bb4b53f6ea3f4b7f3a9d5129753ddff9c"
+      }
+    ],
+    "canonical_native_input_map_sha256": "e11653cd7fb5633c85bf9d6e4cb4f478e094fcbad0aad81d8f93b573f2a92950",
+    "retained_manifest": "native/source-attempt-1.json.gz"
+  },
+  {
+    "attempt": 2,
+    "byte_identical_observations": [
+      {
+        "bytes": 177323,
+        "original_observation": "tail-native-73ab-attempt-2/source-before.json",
+        "raw_file_sha256": "a6328a50145e1cd86bd9b73696524869a0ea37475423ce2eccd073bdd18c8f7b"
+      },
+      {
+        "bytes": 177323,
+        "original_observation": "tail-native-73ab-attempt-2/source-after-build.json",
+        "raw_file_sha256": "a6328a50145e1cd86bd9b73696524869a0ea37475423ce2eccd073bdd18c8f7b"
+      },
+      {
+        "bytes": 177323,
+        "original_observation": "tail-native-73ab-attempt-2/source-after-tests.json",
+        "raw_file_sha256": "a6328a50145e1cd86bd9b73696524869a0ea37475423ce2eccd073bdd18c8f7b"
+      }
+    ],
+    "canonical_native_input_map_sha256": "f56cc35bd9c9462c931776cc4e08fedeeaa7c73df5f00b2907cc2a057bc81381",
+    "retained_manifest": "native/source-attempt-2.json.gz"
+  }
+]

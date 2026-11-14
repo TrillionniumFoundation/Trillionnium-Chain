@@ -1,0 +1,1016 @@
+{
+  "actual_c4_overall_status": "failed",
+  "actual_original_outer_exit_code": 1,
+  "all_requested_gates_passed": false,
+  "all_source_before_after_final_equal": true,
+  "command_outcomes": [
+    {
+      "actual_exit_code": 0,
+      "label": "preflight",
+      "log_bytes": 172,
+      "log_sha256": "d5666f8590d5a99a8682e93f336df428b274db3309e398b3431864870158a26b",
+      "owner_exit_code": 0,
+      "receipt_sha256": "34fadecfb6cd465d4e5ab6e681802002d65624d96adb29f635acc38af25c117c",
+      "status": "passed",
+      "timed_out": false
+    },
+    {
+      "actual_exit_code": 0,
+      "label": "compiler",
+      "log_bytes": 196,
+      "log_sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+      "owner_exit_code": 0,
+      "receipt_sha256": "1d19758f84e8eba914e74c3691727fc9070ba04e6a85e4298ff9f2d7a5dbf6d4",
+      "status": "passed",
+      "timed_out": false
+    },
+    {
+      "actual_exit_code": 0,
+      "label": "inventory",
+      "log_bytes": 35,
+      "log_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "owner_exit_code": 0,
+      "receipt_sha256": "eb8a6187f9d3cf2302feb4f68507a28ecf362af4861bfbefdd558957903b1474",
+      "status": "passed",
+      "timed_out": false
+    },
+    {
+      "actual_exit_code": 0,
+      "label": "repository",
+      "log_bytes": 307,
+      "log_sha256": "88cee37fab53dbd14cf8b7a4369763565c25280a1de27d70c1ffe624435b6d99",
+      "owner_exit_code": 0,
+      "receipt_sha256": "3050729805c210c665f0e358f191c41d2380ae2f894ead5a01c0c692edac98ac",
+      "status": "passed",
+      "timed_out": false
+    },
+    {
+      "actual_exit_code": 0,
+      "label": "ci-source",
+      "log_bytes": 591,
+      "log_sha256": "caad3127cf0dc95694e206b48bcc4375faf908863ca60dcfeb3ea57d4f9b66fc",
+      "owner_exit_code": 0,
+      "receipt_sha256": "4c609afb33e020fd5fb3359ed36687caf151b72700f9d4d391e870285e579b9b",
+      "status": "passed",
+      "timed_out": false
+    },
+    {
+      "actual_exit_code": 1,
+      "label": "corpus-source",
+      "log_bytes": 121,
+      "log_sha256": "ffc0e9d8ff902b78ddb7167d8d1c9b3edebe6c6a784cf4c7e28c0aceead58ca5",
+      "owner_exit_code": 1,
+      "receipt_sha256": "fb3340d264a0bea66263c2a23437e6b49a507bd7c20b50abab29b74f2d74d442",
+      "status": "failed",
+      "timed_out": false
+    },
+    {
+      "actual_exit_code": 0,
+      "label": "claim-source",
+      "log_bytes": 4835,
+      "log_sha256": "ec7636cf8fcf30c9dde5e11b69b869a0ace73873b7e3952dc9cfe7208481a288",
+      "owner_exit_code": 0,
+      "receipt_sha256": "88501d4b4d5eabc937b8fa5ca353cd8b28199684a215d2506b678aabeb97c513",
+      "status": "passed",
+      "timed_out": false
+    },
+    {
+      "actual_exit_code": 0,
+      "label": "source-integrity-controls",
+      "log_bytes": 7586,
+      "log_sha256": "2f4f89ca136754069a45ddca6675d2d3a19f05bc1f2be93cab700c28ae3e80b1",
+      "owner_exit_code": 0,
+      "receipt_sha256": "497304a8dadaa9433b5d24e3883b28359f80dc36f576bf70d6ead3eab4ad90d8",
+      "status": "passed",
+      "timed_out": false
+    },
+    {
+      "actual_exit_code": 0,
+      "label": "from-zero-host-controls",
+      "log_bytes": 178,
+      "log_sha256": "67790255ef62aa7c0f64095d57f5a88500905ffb109789d3f07cdc70e6f9c5d4",
+      "owner_exit_code": 0,
+      "receipt_sha256": "6b8918c84083013dfb30595dbabff6b5cd4f6a26381aec2394372e62e4c465ed",
+      "status": "passed",
+      "timed_out": false
+    },
+    {
+      "actual_exit_code": 0,
+      "label": "workspace-metadata-default",
+      "log_bytes": 834558,
+      "log_sha256": "d7a29f75d00f1c83e032bcd917e0100c5ed1d8fb969f47cc641ef2cfc6cf19e0",
+      "owner_exit_code": 0,
+      "receipt_sha256": "18a95c07629f4a0f6e8833d4f67f4b78971a04bd3931a75c203eaed4047d4c01",
+      "status": "passed",
+      "timed_out": false
+    },
+    {
+      "actual_exit_code": 0,
+      "label": "workspace-metadata-all-features",
+      "log_bytes": 849594,
+      "log_sha256": "7a4fbb4df92ea74f47560154a6a98ae2108702db97362d95d2a36ee8ba3490d5",
+      "owner_exit_code": 0,
+      "receipt_sha256": "15a81bb3680fdd4e82ca4be65d77fa4fda8c770bb31c1cb0ac212b5ecf938a4a",
+      "status": "passed",
+      "timed_out": false
+    },
+    {
+      "actual_exit_code": 0,
+      "label": "fuzz-metadata-default",
+      "log_bytes": 725283,
+      "log_sha256": "d039f391bbd5d77d4242e04df8f8da0f26cd14398c1b0739369ac512b7a8e14a",
+      "owner_exit_code": 0,
+      "receipt_sha256": "70b32faf60a762c27e920969cecc6dd14035bc5a1dc79a3c55204d1b9a1c9249",
+      "status": "passed",
+      "timed_out": false
+    },
+    {
+      "actual_exit_code": 0,
+      "label": "fuzz-metadata-all-features",
+      "log_bytes": 725283,
+      "log_sha256": "d039f391bbd5d77d4242e04df8f8da0f26cd14398c1b0739369ac512b7a8e14a",
+      "owner_exit_code": 0,
+      "receipt_sha256": "066c0d9405c3d6c50a427bf0371d1c3dd2784cf52d33112f4b40d7e2dc117cba",
+      "status": "passed",
+      "timed_out": false
+    },
+    {
+      "actual_exit_code": 0,
+      "label": "workspace-fmt",
+      "log_bytes": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "owner_exit_code": 0,
+      "receipt_sha256": "52c964304eb95ddc81ee0176a9413cd24a10b47f7f0ec9323912cca02bc25461",
+      "status": "passed",
+      "timed_out": false
+    },
+    {
+      "actual_exit_code": 0,
+      "label": "fuzz-fmt",
+      "log_bytes": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "owner_exit_code": 0,
+      "receipt_sha256": "c88cf15fac1b535706eb84ee90d146770ecfb16e69e319641b2f26580a9d19d3",
+      "status": "passed",
+      "timed_out": false
+    },
+    {
+      "actual_exit_code": 0,
+      "label": "root-register-controls",
+      "log_bytes": 7227,
+      "log_sha256": "bdd08b5b09143e3c4525022e5c1113361445d85d5c79f03b85bf7bc6898909e4",
+      "owner_exit_code": 0,
+      "receipt_sha256": "cbaa2e9734550be75ae407bdb93a73a597f8c8e4ac8ac21dce854787ad646b58",
+      "status": "passed",
+      "timed_out": false
+    },
+    {
+      "actual_exit_code": 0,
+      "label": "root-register-reproduce",
+      "log_bytes": 7896,
+      "log_sha256": "ba105760040e55b26e7c24c3074da6f274920a844d91c6c9606bb5415a6d0678",
+      "owner_exit_code": 0,
+      "receipt_sha256": "a6318712f1764cc83e5d7326fa9858c2b550e58e71f70903391d8e597b42f01d",
+      "status": "passed",
+      "timed_out": false
+    },
+    {
+      "actual_exit_code": 0,
+      "label": "root-register-report-cmp",
+      "log_bytes": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "owner_exit_code": 0,
+      "receipt_sha256": "288fd5096928c935290d8d017bc050ddae8cb10b55f33a2dabf8d9a0332c5c8f",
+      "status": "passed",
+      "timed_out": false
+    },
+    {
+      "actual_exit_code": 0,
+      "label": "corpus-controls",
+      "log_bytes": 161,
+      "log_sha256": "aa41f5024b6e75c25c8a3fa78dea3f64b1b95238b5f83c422cab4392f6dc4e9d",
+      "owner_exit_code": 0,
+      "receipt_sha256": "586dfce4f7af5c2a73ad76cf3e3d779c12a9f231a7b6a0083ffc6d565a056728",
+      "status": "passed",
+      "timed_out": false
+    },
+    {
+      "actual_exit_code": 0,
+      "label": "claim-controls",
+      "log_bytes": 154,
+      "log_sha256": "cb5c7e9e1020eb2f993128e680bca3dd30a423956ce0740a276405444c270053",
+      "owner_exit_code": 0,
+      "receipt_sha256": "54824adbde4f0e396819b46823197eebb3786e4569d632469f8d20ec71069b38",
+      "status": "passed",
+      "timed_out": false
+    },
+    {
+      "actual_exit_code": 0,
+      "label": "node-lib-build",
+      "log_bytes": 109733,
+      "log_sha256": "cf325ba70235e2c98306b0d1dadd3f80d2103f6507efa125bc4cc5fb5082e40a",
+      "owner_exit_code": 0,
+      "receipt_sha256": "d68e79edd0c7eb1917ea4bae6f40c79b37bf1418827ee144374739e7f4ff3874",
+      "status": "passed",
+      "timed_out": false
+    },
+    {
+      "actual_exit_code": 1,
+      "label": "focused-native-batch",
+      "log_bytes": 6065,
+      "log_sha256": "8df50239ba2fcdc4001995b2a9cad71d6ccc0330dbe13669525ed736362fe4c2",
+      "owner_exit_code": 1,
+      "receipt_sha256": "f249c8705225b16cfbdca418fa3dba028367ac290fecd4c6dc2b96c5e810855a",
+      "status": "failed",
+      "timed_out": false
+    },
+    {
+      "actual_exit_code": 0,
+      "label": "strict-clippy",
+      "log_bytes": 166,
+      "log_sha256": "4c716fb5258807a25e5c484411155e4829370e325e9e70e62fc2f53911873a0b",
+      "owner_exit_code": 0,
+      "receipt_sha256": "49b712d9468eee3608b68fe9aa5ce32c3cd7ac91a1992d22ddbc0269b5a4f37e",
+      "status": "passed",
+      "timed_out": false
+    }
+  ],
+  "commit_preparation": {
+    "actual_commit_exit_code": 0,
+    "actual_physical_source_command_exit_code": 0,
+    "fresh_full_physical_check_executed_by_collector": false,
+    "original_outer_exit_code": 1,
+    "original_outer_failure_preserved": true,
+    "source_reconciliation_sha256": "4297e7bcef207b9c5f2f67a5460d7c063571aa5bb72a4c1c0f29d1be2c2f89dc"
+  },
+  "complete_source_receipts": 23,
+  "current_head_or_worktree_not_used_as_C4_evidence": true,
+  "failed_labels": [
+    "corpus-source",
+    "focused-native-batch"
+  ],
+  "native": {
+    "actual_cargo_fresh": false,
+    "actual_elf_bytes_copied": false,
+    "actual_elf_sha256_from_original_observations": "486632abadaeb612945ecc51ac2364b682f85c892356a5527b7955311da0f1f2",
+    "actual_inventory_invocations": 1,
+    "actual_named_controls_passed": 63,
+    "actual_native_failures": [
+      {
+        "error": "native exit, timeout, or live ELF identity failed",
+        "label": "pnq2-42",
+        "native_exit_code": 101,
+        "owner_exit_code": 101,
+        "required_test": "store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart",
+        "timed_out": false
+      }
+    ],
+    "actual_native_rows": 65,
+    "component_validation_passed": false,
+    "focused_extra_controls_passed": 5,
+    "fresh_target_claimed": false,
+    "named_controls_required": 64,
+    "outer_command_and_batch_passed": false,
+    "retained_controls_passed": 51,
+    "supplemental_controls_passed": 7,
+    "transcript_proofs": [
+      {
+        "label": "native-list",
+        "log_identity": {
+          "bytes": 161057,
+          "sha256": "907fcec793c13cf0969db01dc8398176fed9956d8989e222e29dd489117218d2"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": false,
+        "test": null
+      },
+      {
+        "label": "pnq2-01",
+        "log_identity": {
+          "bytes": 381,
+          "sha256": "fb31e46c99b977578f3b229d4cdb4dc2e2ceadf3949b885075a53195eb79fbf6"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "ingress::pq_network::live_admission_tests::pq_client_completion_keeps_real_signature_and_response_context_checks"
+      },
+      {
+        "label": "pnq2-02",
+        "log_identity": {
+          "bytes": 369,
+          "sha256": "b297d10764d66fd203e86f29555462a2b83c072e0441b677e01864ef18147465"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "ingress::pq_network::live_admission_tests::pq_client_late_verified_response_cannot_renew_original_deadline"
+      },
+      {
+        "label": "pnq2-03",
+        "log_identity": {
+          "bytes": 361,
+          "sha256": "f8e2f25da3c467eeedf5a679b1f9e604cba5b8dd585b95c1533d48f826c55866"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "ingress::pq_network::live_admission_tests::pq_client_verified_response_rechecks_original_signed_expiry"
+      },
+      {
+        "label": "pnq2-04",
+        "log_identity": {
+          "bytes": 387,
+          "sha256": "78e64a3d568888151a1838688b59a13bc52ab0a63c5c4458826ccb7edd06336d"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "ingress::pq_network::live_admission_tests::elapsed_deadline_refuses_before_charge_and_cached_replay_stays_live_only"
+      },
+      {
+        "label": "pnq2-05",
+        "log_identity": {
+          "bytes": 371,
+          "sha256": "f2a554c488ee55488096ba2e233461767e7916de01c44577126d77e844e816cf"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "ingress::pq_network::live_admission_tests::deadline_cancels_signature_owner_wait_without_waiting_for_unlock"
+      },
+      {
+        "label": "pnq2-06",
+        "log_identity": {
+          "bytes": 373,
+          "sha256": "26cc399206ea9f335a3ea4ac2a288a4f693fa030b51d8724d746dbc23034c966"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "ingress::pq_network::live_admission_tests::expiry_cancels_signature_owner_wait_and_preserves_unused_sequence"
+      },
+      {
+        "label": "pnq2-07",
+        "log_identity": {
+          "bytes": 365,
+          "sha256": "3f8edc6c592edbce4fb5c098be45e10ef431d5e0240e50783b015b8870218e62"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "ingress::pq_network::live_admission_tests::cancelled_intake_does_not_allocate_or_spend_connection_credit"
+      },
+      {
+        "label": "pnq2-08",
+        "log_identity": {
+          "bytes": 391,
+          "sha256": "50f6001181b0d057a9360978e2f84c45467d216fc28b082e4fb9e757a0302611"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "ingress::pq_network::live_admission_tests::failed_signature_keeps_charge_then_same_sequence_executes_real_pq_transfer"
+      },
+      {
+        "label": "pnq2-09",
+        "log_identity": {
+          "bytes": 343,
+          "sha256": "c73e8e801615fad53861ccc588db346c5fdc1564ffd9a4ae3be0ea2450c70b0e"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "ingress::pq_network::tests::cold_pq_reopen_rejects_orphan_requests_outside_pinned_peer_roster"
+      },
+      {
+        "label": "pnq2-10",
+        "log_identity": {
+          "bytes": 333,
+          "sha256": "5b63fa4f3d14137f7e155c8f0a251979f33cc24743060e8c4f8dcd5f55c5396d"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "ingress::pq_network::tests::cold_pq_reopen_rejects_extra_resource_rows_outside_singleton"
+      },
+      {
+        "label": "pnq2-11",
+        "log_identity": {
+          "bytes": 18280,
+          "sha256": "b9cea0b473fcf092e6c0f209f18f89022436d81d8f30e31a22c0c674b3f088c0"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "pq_rollback_witness::tests::cancellation_after_signing_before_send_preserves_same_client"
+      },
+      {
+        "label": "pnq2-12",
+        "log_identity": {
+          "bytes": 2077,
+          "sha256": "0c3d4cb50e39e407381d50424d24b55507925ab8a972c5afdb6cab7d041b2c4e"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "pq_rollback_witness::tests::schema_rejects_extra_sqlite_objects_and_oversized_sql_text"
+      },
+      {
+        "label": "pnq2-13",
+        "log_identity": {
+          "bytes": 6196,
+          "sha256": "93733c408f3d6e90148281dbce4de0bf0e29cb765f169f8f0e96a64eda45db7c"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "pq_rollback_witness::tests::same_keys_under_different_binding_generation_cannot_authorize_current"
+      },
+      {
+        "label": "pnq2-14",
+        "log_identity": {
+          "bytes": 12468,
+          "sha256": "19b9fdf73a7a24e913a06ae723b2ab4386838fdaf6161ff393a6bfb4fb2d72c8"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "pq_rollback_witness::tests::authenticated_matching_late_cas_is_known_success_and_client_stays_usable"
+      },
+      {
+        "label": "pnq2-15",
+        "log_identity": {
+          "bytes": 297,
+          "sha256": "cdbc740f0f31ce1f973ecfcdfa6734166a1274378a0fc2dcf81846ac8927d2ce"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "pq_rollback_witness::tests::slow_drip_read_obeys_one_absolute_deadline"
+      },
+      {
+        "label": "pnq2-16",
+        "log_identity": {
+          "bytes": 299,
+          "sha256": "3414af589f1264e51aacf669e7cc794c0b315d5213e7cbed69effd91af33d471"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "pq_rollback_witness::tests::slow_drip_write_obeys_one_absolute_deadline"
+      },
+      {
+        "label": "pnq2-17",
+        "log_identity": {
+          "bytes": 16718,
+          "sha256": "38dc8314c161cc8ac052d166a6d9494a1ab8ac5e5bc7f579ad7a458c97f18e49"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "store::pq_rollback_witness::tests::guarded_charge_pending_revocation_survive_service_cold_restart"
+      },
+      {
+        "label": "pnq2-18",
+        "log_identity": {
+          "bytes": 17524,
+          "sha256": "e1f514c0453267735b6fa9830566a4585fd1c1f440ff88fc13613f1ea4ca4826"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "store::pq_rollback_witness::tests::whole_node_old_sqlite_and_checkpoint_restore_is_rejected"
+      },
+      {
+        "label": "pnq2-19",
+        "log_identity": {
+          "bytes": 16887,
+          "sha256": "3bb52dfbb55b79b126a81bde75dda18042b2846d2d9f7cb555401c30e3645703"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "store::pq_rollback_witness::tests::witness_outage_latches_owner_without_refunding_or_charging_quota"
+      },
+      {
+        "label": "pnq2-20",
+        "log_identity": {
+          "bytes": 16553,
+          "sha256": "f61e04261ab02363aa6cc6372262f8f6b91cccc9fb8573d5d9bb6956d3773fa3"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "store::pq_rollback_witness::tests::lost_successful_cas_reply_never_revives_old_local_authority"
+      },
+      {
+        "label": "pnq2-21",
+        "log_identity": {
+          "bytes": 16573,
+          "sha256": "efb1f2f5bd45102fb12960694f76a8ba4ca88796fc49cb1f920b66e71fae2158"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "store::pq_rollback_witness::tests::local_commit_failure_after_external_cas_is_permanently_detectable"
+      },
+      {
+        "label": "pnq2-22",
+        "log_identity": {
+          "bytes": 14437,
+          "sha256": "f84622b5d0566119cdd040d467cba0feea8f1d8511f4d4b5b79a8f7de8b54cfc"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "store::pq_rollback_witness::tests::captured_signed_reply_cannot_answer_a_new_random_challenge"
+      },
+      {
+        "label": "pnq2-23",
+        "log_identity": {
+          "bytes": 15748,
+          "sha256": "fb2b6c6b8a2877f66caa647157ed01bbde3d3dfab62501ce2c29bc36e6415fde"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "store::pq_rollback_witness::tests::guarded_namespace_requires_explicit_guarded_open_and_existing_node"
+      },
+      {
+        "label": "pnq2-24",
+        "log_identity": {
+          "bytes": 16220,
+          "sha256": "2712ea9f793c8e7c3ff7c6068b99a841f4097211955375695525b70604feb141"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "store::pq_rollback_witness::tests::missing_external_state_is_not_enrolled_on_open_and_registration_is_exclusive"
+      },
+      {
+        "label": "pnq2-25",
+        "log_identity": {
+          "bytes": 34995,
+          "sha256": "0c5754d01ac67c1ffc94643e0736cd3bc990d4818298fc7b243edb9265d4e4cd"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "store::pq_rollback_witness::tests::pending_permission_and_revocation_are_rechecked_under_fresh_predecessor"
+      },
+      {
+        "label": "pnq2-26",
+        "log_identity": {
+          "bytes": 17107,
+          "sha256": "652438f612781346edabbc9da069eb025f85afbb2e3e961725d52f74dab5dcb7"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "store::pq_rollback_witness::tests::oversized_restored_fixed_blob_is_rejected_before_hashing_and_external_advance"
+      },
+      {
+        "label": "pnq2-27",
+        "log_identity": {
+          "bytes": 8483,
+          "sha256": "9c1a96b0e3d5adcb81398c5caae8307343814cce240fee308c3da0e1d8f4ae8e"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "store::pq_rollback_witness::tests::binding_generation_policy_and_distinct_identity_are_mandatory"
+      },
+      {
+        "label": "pnq2-28",
+        "log_identity": {
+          "bytes": 16081,
+          "sha256": "a86b5917e9788f43b7eac6ab5b07ebffd4ed8a8cf3bb0e5be9360db88d45d920"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "store::pq_rollback_witness::tests::exact_cas_retry_is_idempotent_but_fork_skip_and_wrap_refuse"
+      },
+      {
+        "label": "pnq2-29",
+        "log_identity": {
+          "bytes": 15037,
+          "sha256": "3080218c32a83ab0ff36b6e3a5ee4c26db5657b65850dbca762f60fabd0a63fd"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "store::pq_rollback_witness::tests::replacing_external_database_path_is_rejected_while_old_descriptor_is_locked"
+      },
+      {
+        "label": "pnq2-30",
+        "log_identity": {
+          "bytes": 16366,
+          "sha256": "2b6e115214ac347f3722f89c9f426164368620b06b883594cfc952c301f65332"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "store::pq_rollback_witness::tests::live_cancellation_after_current_prevents_pending_insert_and_owner_can_resume"
+      },
+      {
+        "label": "pnq2-31",
+        "log_identity": {
+          "bytes": 16865,
+          "sha256": "38868045464306e49332936f229063f94df788c9e95bb0ae8e188d2bc872c421"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "store::pq_rollback_witness::tests::expired_before_current_transport_does_not_poison_guarded_owner"
+      },
+      {
+        "label": "pnq2-32",
+        "log_identity": {
+          "bytes": 17595,
+          "sha256": "72256e4e02489cc52b65ae60cc9b938329cfefb7eeceee5e5f79f7425f48df3b"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "store::pq_rollback_witness::tests::uncertain_revocation_invalidates_epoch_of_already_admitted_work"
+      },
+      {
+        "label": "pnq2-33",
+        "log_identity": {
+          "bytes": 16755,
+          "sha256": "fc3a9da0b70c61927b66b94aa866684503b2592520a4c8a3bc1b148ea42584b8"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "store::pq_rollback_witness::tests::authenticated_successful_cas_commits_before_late_live_cancellation"
+      },
+      {
+        "label": "pnq2-34",
+        "log_identity": {
+          "bytes": 33302,
+          "sha256": "7c683903d7a432b19b955518e29f2b4070865830c17836475efe0d85dd7ff5aa"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "store::pq_rollback_witness::tests::oversized_local_binding_and_checkpoint_are_rejected_before_blob_copy"
+      },
+      {
+        "label": "pnq2-35",
+        "log_identity": {
+          "bytes": 6685,
+          "sha256": "3506d1c6acb2febbf7d95de32b0d1244b91a673360cf213194f5b2044f327c4e"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "store::pq_rollback_witness::tests::non_system_trigger_with_sqlitex_prefix_cannot_hide_from_schema_check"
+      },
+      {
+        "label": "pnq2-36",
+        "log_identity": {
+          "bytes": 36959,
+          "sha256": "3ece9b04d758b92ac370339efe7e3bfc8a98978a589cbbdece424b2bb302008b"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "store::pq_rollback_witness::tests::oversized_external_binding_and_roots_are_rejected_before_blob_copy"
+      },
+      {
+        "label": "pnq2-37",
+        "log_identity": {
+          "bytes": 16764,
+          "sha256": "76a3ec3002e45635f0bbc05333984b91ec99fd93b69c33e42ddae984a7b791fd"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "store::pq_rollback_witness::tests::authenticated_cas_receipt_after_original_deadline_still_aligns_local_commit"
+      },
+      {
+        "label": "pnq2-38",
+        "log_identity": {
+          "bytes": 16788,
+          "sha256": "2aca6e2ce5aba799e12c866486a731577fd27d5c26d13e59365b6aa9706addfa"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "store::pq_rollback_witness::tests::committed_expiry_retirement_publishes_epoch_even_when_live_callback_refuses"
+      },
+      {
+        "label": "pnq2-39",
+        "log_identity": {
+          "bytes": 16401,
+          "sha256": "f392960bbc0d487d0db439145785ea2d5514614f9dfb3060cc81381adea82ad5"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "store::pq_rollback_witness::tests::lost_retirement_cas_reply_preserves_terminal_zero_epoch"
+      },
+      {
+        "label": "pnq2-40",
+        "log_identity": {
+          "bytes": 17716,
+          "sha256": "17b53530765971c8f8f03ac02711ff4cbe25c031a7f0d5bfecbf9192aa92b0fa"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "store::pq_rollback_witness::tests::cached_permission_is_rechecked_after_actual_native_tcp_success"
+      },
+      {
+        "label": "pnq2-41",
+        "log_identity": {
+          "bytes": 79862,
+          "sha256": "0629a32b4e1077129da827f377a053703c2aa40670976e8ecbc251fcb090797e"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "store::pq_rollback_witness::tests::cold_reopen_rejects_oversized_metadata_and_accepts_exact_operator_repair"
+      },
+      {
+        "label": "pnq2-42",
+        "log_identity": {
+          "bytes": 31504,
+          "sha256": "df7ff178df67e358a59e7c71458a08696646c9b74c03d09563341e864b3b845d"
+        },
+        "native_exit_code": 101,
+        "owner_exit_code": 101,
+        "passed": false,
+        "test": "store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart"
+      },
+      {
+        "label": "pnq2-43",
+        "log_identity": {
+          "bytes": 17366,
+          "sha256": "5e11a30cbc67940930fe4ac20d3b0a06b4fdf73d74f1e9c07d326b2b2bb60ab2"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "pq_rollback_witness::tests::malformed_local_checkpoints_never_enter_transport_or_poison_client"
+      },
+      {
+        "label": "pnq2-44",
+        "log_identity": {
+          "bytes": 18365,
+          "sha256": "0fbc87889f9e435ad45f2f180408ae707f44fd69862b279cb9babaf6383c7925"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "pq_rollback_witness::tests::signed_current_cannot_regress_or_change_an_observed_generation"
+      },
+      {
+        "label": "pnq2-45",
+        "log_identity": {
+          "bytes": 17834,
+          "sha256": "364a8b69796bb4380a92a4ed693583c3336fa4a464a85f6c1f2263d61f8e26ac"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "pq_rollback_witness::tests::independent_clients_accept_other_writers_advances_and_cold_reopen"
+      },
+      {
+        "label": "pnq2-46",
+        "log_identity": {
+          "bytes": 27701,
+          "sha256": "765d6c4c5f8a0031d4c19de6b23d065632670adc813bec1dd05cec3ce09a7347"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "pq_rollback_witness::tests::active_owner_requires_its_known_head_for_current_and_cas"
+      },
+      {
+        "label": "pnq2-47",
+        "log_identity": {
+          "bytes": 15409,
+          "sha256": "4f7c9b4ad37d753a85557387419d3b770a039957675dc0ac8d8a577d31f448b7"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "pq_rollback_witness::tests::failed_local_commit_fences_owner_until_explicit_reopen"
+      },
+      {
+        "label": "pnq2-48",
+        "log_identity": {
+          "bytes": 351,
+          "sha256": "0ff51229b6dcd096ff376a1071ca89c3019216d24105b841ad2e34395185403f"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "pq_rollback_witness::tests::durable_predecessor_shape_distinguishes_registration_from_advancement"
+      },
+      {
+        "label": "pnq2-49",
+        "log_identity": {
+          "bytes": 16053,
+          "sha256": "fcd72880cf109822d086d39d58e5bf5167d88bd2c3e53760b955a23165111e54"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "pq_rollback_witness::tests::cold_reopen_requires_exact_independently_retained_checkpoint"
+      },
+      {
+        "label": "pnq2-50",
+        "log_identity": {
+          "bytes": 1298,
+          "sha256": "a3c214fab9aa82c62dd18f3186878cde31cac22d5729d2b88447c02940851fe4"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "pq_rollback_witness::tests::invalid_external_checkpoint_is_rejected_before_touching_recovery_storage"
+      },
+      {
+        "label": "pnq2-51",
+        "log_identity": {
+          "bytes": 16724,
+          "sha256": "71a360bbd7da7f8ae83210696b02fc073532cc566acc09342ece89281147679e"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "store::pq_rollback_witness::tests::ordinary_admission_reuses_fresh_witness_guard_without_rechecking_unchanged_state"
+      },
+      {
+        "label": "pnq2-52",
+        "log_identity": {
+          "bytes": 17494,
+          "sha256": "74266196db0ae45b4b9f6e89e3f86a46498c6cd60e877a199fd14bdda270647e"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "store::pq_rollback_witness::tests::expired_admission_commits_retirement_then_obtains_a_new_witness_guard"
+      },
+      {
+        "label": "supplemental-01",
+        "log_identity": {
+          "bytes": 349,
+          "sha256": "77f77733f24b0245e576538967697c6b8444942e9686a855c2eb89b8085e5640"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "ingress::account_scope_tests::invalid_account_scope_refuses_classical_session_and_signed_request"
+      },
+      {
+        "label": "supplemental-02",
+        "log_identity": {
+          "bytes": 341,
+          "sha256": "c978d0ba4e4e6c97efc37ab396d47036dc3a70dbb8cd62d77cbea66fc2e64482"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "ingress::account_scope_tests::current_local_scope_refuses_previously_valid_classical_request"
+      },
+      {
+        "label": "supplemental-03",
+        "log_identity": {
+          "bytes": 349,
+          "sha256": "301da3a2ecf85f40451c4c8906a52a8adac94b57773b382c3524c9d061ff92cf"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "ingress::account_scope_tests::invalid_account_scope_never_connects_or_advances_classical_clients"
+      },
+      {
+        "label": "supplemental-04",
+        "log_identity": {
+          "bytes": 351,
+          "sha256": "93f65005a655c6e9d9795581e53eb6c8ed9d362ceff62be4e550dd2e6f48d0b8"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "ingress::account_scope_tests::valid_development_scope_retains_classical_signature_and_socket_path"
+      },
+      {
+        "label": "supplemental-05",
+        "log_identity": {
+          "bytes": 343,
+          "sha256": "7b8d6d96714efd9c86111524150e6b80762c1b2afd5c8004be31782c91998017"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "ingress::account_scope_tests::explicit_pq_selector_retains_classical_route_refusal_precedence"
+      },
+      {
+        "label": "supplemental-06",
+        "log_identity": {
+          "bytes": 17108,
+          "sha256": "d14e5847a1526c5002f7126c15cb95a98608e7356641adbb45d07e7c873b2e99"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "pq_rollback_witness::tests::live_retry_refuses_changed_durable_predecessor_at_the_same_head"
+      },
+      {
+        "label": "supplemental-07",
+        "log_identity": {
+          "bytes": 35013,
+          "sha256": "0999e6fd541298d431f813b1d92b8c4d2a56e6ba629b19c85b77928b3d69fe2e"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "pq_rollback_witness::tests::cold_reopen_refuses_database_retry_history_and_accepts_new_successors"
+      },
+      {
+        "label": "witness-retained-01",
+        "log_identity": {
+          "bytes": 18967,
+          "sha256": "dae127c276af02ca818238a2396090b96db56d89c84197d2399e8254041e09bc"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "pq_rollback_witness::tests::known_checkpoint_preserves_exact_retry_and_unobserved_other_writer_progress"
+      },
+      {
+        "label": "m12-recovery-01",
+        "log_identity": {
+          "bytes": 408,
+          "sha256": "ed2b66930f75bfdd3cc969222b5a1b695e60b9bb6f7729c61dcbec933c9ba3fa"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "store::async_w1_generation_v2::tests::recovery_v3::lost_or_corrupt_cas_ack_recovers_same_operation_pending_without_redispatch"
+      },
+      {
+        "label": "m12-recovery-02",
+        "log_identity": {
+          "bytes": 387,
+          "sha256": "61669db46425f6b9600d588b68870e77a280e2f8a1303b8a6cef3ce69dac1d05"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "store::async_w1_generation_v2::tests::recovery_v3::independent_service_reopen_pin_rejects_restored_witness_database"
+      },
+      {
+        "label": "m12-recovery-03",
+        "log_identity": {
+          "bytes": 401,
+          "sha256": "892ccb7694bedadf90970cd6787e37419b500ef18df86073f930b8f6a4d4f841"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "store::async_w1_generation_v2::tests::recovery_v3::local_commit_without_external_commit_remains_quarantined_on_cold_reopen"
+      },
+      {
+        "label": "cleanup-01",
+        "log_identity": {
+          "bytes": 29834,
+          "sha256": "a1067f6a84a7d7523c11ea4717826ad2f0d024c6babeb8ab5eea2d3da301e25d"
+        },
+        "native_exit_code": 0,
+        "owner_exit_code": 0,
+        "passed": true,
+        "test": "store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_cleanup_preserves_primary_error_and_child_diagnostics"
+      }
+    ]
+  },
+  "new_native_builds_executed_by_collector": false,
+  "new_tests_executed_by_collector": false,
+  "production_activation": false,
+  "schema": "trnm-c4-retained-final-evidence-verification-v1",
+  "source": "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+  "source_identity": {
+    "base": null,
+    "candidate": "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+    "tested_tree": "15fd9e7a2f4121dce861e9e96b78d8196d3892fb",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2578250705,
+    "tracked_entries": 28315,
+    "tracked_worktree_verified": true
+  },
+  "strict_clippy_actual_exit_code": 0,
+  "strict_clippy_actual_status": "passed",
+  "tree": "15fd9e7a2f4121dce861e9e96b78d8196d3892fb",
+  "whole_chain_quantum_security_qualified": false
+}

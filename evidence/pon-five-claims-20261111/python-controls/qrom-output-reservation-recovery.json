@@ -1,0 +1,58 @@
+{
+  "prior_failed_attempts_preserved": true,
+  "results": [
+    {
+      "command": [
+        "python3",
+        "scripts/ci/w1_qrom_closure_controls.py",
+        "run",
+        "--roster-sha256",
+        "ee2b11492a362bd4be2f2df4e7ad691f4dd8a78cd9df884979cb3409e117745f",
+        "--output",
+        ".git/pon-five-claims-bindings-d6cb-297bb40798ca/qrom-closure"
+      ],
+      "exit": 0,
+      "name": "qrom-closure-run-recovery",
+      "reported_test_counts": [
+        19,
+        16,
+        10,
+        22,
+        9,
+        8,
+        21
+      ],
+      "seconds": 27.750301122665405,
+      "stderr_bytes": 19679,
+      "stderr_sha256": "d674d5343c0ba2a91e5346e7c5b38ef83139c020738bd630abea1e13d4f6492b",
+      "stdout_bytes": 349,
+      "stdout_sha256": "30321c598d571e9a810d7d5c2319cc4eedc62d9ee6e3a35717234af23e9481b5"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/w1_qrom_closure_controls.py",
+        "check",
+        "--roster-sha256",
+        "ee2b11492a362bd4be2f2df4e7ad691f4dd8a78cd9df884979cb3409e117745f",
+        "--output",
+        ".git/pon-five-claims-bindings-d6cb-297bb40798ca/qrom-closure"
+      ],
+      "exit": 0,
+      "name": "qrom-closure-check-recovery",
+      "reported_test_counts": [],
+      "seconds": 0.0944826602935791,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 349,
+      "stdout_sha256": "30321c598d571e9a810d7d5c2319cc4eedc62d9ee6e3a35717234af23e9481b5"
+    }
+  ],
+  "setup_correction": "Reserved the output directory as required by the existing workflow; no source, test roster, test case, input, parameter, or acceptance rule changed.",
+  "source": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+  "source_after": {
+    "head": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+    "status": "",
+    "tree": "129267332b2ef87d3d66d014fddeb894faa9379f"
+  }
+}

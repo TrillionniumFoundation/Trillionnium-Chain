@@ -1,0 +1,25 @@
+{
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "/workspace/scratch/481716a90d06/chain_acceptance/prepared/audit_native_campaign_outcomes.py",
+    "--artifact-zip",
+    "/workspace/scratch/481716a90d06/chain_acceptance/campaign0746.zip",
+    "--expected-zip-sha256",
+    "4e8a243caf2aadf4a195b4cb96dbb0229a0e001a830f0e9de2c4f853ee7dff5c",
+    "--expected-manifest-sha256",
+    "9710a213553110e9347790a34775d92d9ba20d55a7f13a5e633e78ea0d63689b",
+    "--expected-head",
+    "0746a462e80067b78317597f2fa4bacf5e3db958",
+    "--expected-tree",
+    "03c69f3120a84f49fd7a76d9564bba4ef0c4b24e"
+  ],
+  "returncode": 0,
+  "wall_ns": 7517867646,
+  "max_rss_kib": 232652,
+  "user_cpu_seconds": 6.53835,
+  "system_cpu_seconds": 0.966259,
+  "reader_sha256_before": "1fc55e57ed086d7179004d82bf64507f82fa33a7b3cc6e26c5fd7a6d2135c692",
+  "reader_sha256_after": "1fc55e57ed086d7179004d82bf64507f82fa33a7b3cc6e26c5fd7a6d2135c692",
+  "output_sha256": "1b95b9e8bee728922480a8e40eb9730e750fc64a4c50c0e5cefe2ced1b38585a",
+  "scope": "single audit child; no native Node execution"
+}

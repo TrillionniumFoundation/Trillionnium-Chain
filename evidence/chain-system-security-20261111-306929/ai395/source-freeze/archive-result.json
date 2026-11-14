@@ -1,0 +1,17 @@
+{
+  "schema": "root-metadata-static-archive-result-v1",
+  "status": "ARCHIVED_ORIGINAL_COMPLETED_OBSERVATIONS",
+  "archive": {
+    "path": "/home/qq/chain-system-security-native-receipts-20261112-306929/metadata-freeze-original-observations-20261112-306929.tar.gz",
+    "bytes": 188878,
+    "sha256": "d2c41611e9e185b71fe78d52667fee6bff84f40307900a9feede5387f9056cab"
+  },
+  "source_payload_count": 89,
+  "tar_member_count": 90,
+  "inner_manifest_sha256": "e6fa1b0e30605fb461e5f97700cd4a95420251b7f407717915e42ab08d4a9d3b",
+  "every_source_byte_unchanged_before_after": true,
+  "new_provider_build": false,
+  "new_native_execution": false,
+  "source_checkout_modified": false,
+  "production_activation": false
+}

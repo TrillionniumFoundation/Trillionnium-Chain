@@ -1,0 +1,166 @@
+{
+  "schema": "pon-observability-retained-host-refusal-v1",
+  "baseline_source_commit": "f8362822b406463ac3dfcc911a0c3eda1686e32d",
+  "scope": "Read-only source, retained log and current host diagnosis. Only this new evidence JSON is written; frozen model/spec and runtime guards are unchanged.",
+  "retained_failure": {
+    "name": "retained-native-node-and-work",
+    "command": [
+      "/workspace/scratch/270e2a9ce94f/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "test",
+      "--profile",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--test",
+      "native_node",
+      "--test",
+      "work_header_binding",
+      "--test",
+      "continuity_authenticated",
+      "--config",
+      "profile.test.package.trnm-pon-node.opt-level=0"
+    ],
+    "exit_code": 101,
+    "stdout_archive": "evidence/pon-actual-certificates-20261107/integration/attempt-04-complete-components/retained-native-node-and-work.stdout.gz",
+    "stdout_raw_sha256": "2f19001a5ad7e0fe15819165ad0ad10d99693f877cb67ebfc0811008b3f2196c",
+    "test_target": "native_node",
+    "selector": "test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner",
+    "assertion_source": "trillionnium/crates/trnm-pon-node/tests/native_node.rs:1590",
+    "error": "PUBLIC_HOST_KERNEL_PARENT",
+    "passed": 29,
+    "failed": 1,
+    "ignored": 1,
+    "ignored_test_was_preexisting_owned_subprocess_helper": true,
+    "failed_operation": "authenticated sync CLI; prior first push and repeated push assertions completed",
+    "status_remains_failure": true
+  },
+  "source_trace": [
+    {
+      "source": "trillionnium/crates/trnm-pon-node/tests/native_node.rs",
+      "function": "test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner",
+      "fact": "The sync command contains --auth-secret, --server-public and --session-generation and asserts sync.status.success() at line 1590."
+    },
+    {
+      "source": "trillionnium/crates/trnm-pon-node/src/main.rs",
+      "function": "priced_sync_context",
+      "fact": "Any of those authentication options marks History sync as requiring the fixed Host resource owner, even for a loopback peer."
+    },
+    {
+      "source": "trillionnium/crates/trnm-pon-node/src/main.rs",
+      "function": "sync_host_kernel_owner",
+      "fact": "Passes FIXED_PUBLIC_KERNEL_PARENT to require_host_kernel_budget; the sync branch invokes this before its History page/import loop."
+    },
+    {
+      "source": "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+      "function": "KernelBudget::open",
+      "fact": "The fixed path is /sys/fs/cgroup/trnmponpublic.slice. Failure of fs::canonicalize(user_path) is mapped to PUBLIC_HOST_KERNEL_PARENT. Later checks require exact approved canonical spelling, cgroup-v2 files, root ownership/no group-or-other write, actual calling-thread membership, and finite unchanged limits."
+    },
+    {
+      "source": "trillionnium/crates/trnm-pon-node/tests/support/current_elf_host.rs",
+      "function": "execute_in_fixed_host",
+      "fact": "Outside the actual qualifying Host, local invocations retain the original refusal. Only the existing genuine CI route delegates the exact current ELF/CLI; its child must still satisfy the real kernel checks."
+    }
+  ],
+  "current_host_read_only_observation": {
+    "observed_at_utc": "2026-11-07T14:41:35.463488+00:00",
+    "historical_failure_time_kernel_snapshot": false,
+    "clock_authenticated": false,
+    "fixed_parent": "/sys/fs/cgroup/trnmponpublic.slice",
+    "fixed_parent_exists": false,
+    "fixed_parent_is_symlink": false,
+    "cgroup_v2_controllers_present": false,
+    "parent_canonicalize": {
+      "result": "error",
+      "class": "FileNotFoundError",
+      "errno": 2
+    },
+    "/proc/thread-self/cgroup": "0::/\n",
+    "/proc/self/cgroup": "0::/\n",
+    "selected_current_environment": {
+      "CI": null,
+      "GITHUB_ACTIONS": null,
+      "TRNM_PUBLIC_FIXTURE_HOST_CHILD": null,
+      "TRNM_PUBLIC_FIXTURE_CLI_BINARY": null,
+      "TRNM_CI_RECEIPT_DIR": null
+    }
+  },
+  "diagnosis": {
+    "current_missing_fixed_parent_is_sufficient_for_same_error": true,
+    "retained_error_identifies_fixed_parent_open_boundary_not_pid_check": true,
+    "exact_historical_open_subcheck_attested_by_log_alone": false,
+    "observation_limit": "The retained stderr exposes the shared fixed-parent error code, not an instrumented per-subcheck kernel snapshot. The current ENOENT is a direct sufficient explanation on this host; no unsupported historical filesystem attestation is claimed.",
+    "guard_and_test_source_changed_from_baseline": false,
+    "native_owner_census_called_by_failed_test_or_cli": false,
+    "all_business_behavior_on_qualified_host_proved_by_this_diagnosis": false
+  },
+  "baseline_byte_comparisons": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+      "byte_identical_to_baseline": true,
+      "sha256": "6f4cf524831e8af8e23c954764e388d6d167f125c3de0dd19ce235630ce7df7d"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+      "byte_identical_to_baseline": true,
+      "sha256": "c56b50263e5e47c1da51dc9b2c679a8383762e4837cadd24cfd8ca82aebccc66"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/native_node.rs",
+      "byte_identical_to_baseline": true,
+      "sha256": "b4e22a0ce007d613e8e53656641c48150c0f0ed6b952c4a16ea27ec0c6475d98"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/support/current_elf_host.rs",
+      "byte_identical_to_baseline": true,
+      "sha256": "ef7582a4f8e00c0bb3162a951b3bfbe9f322e56c13244942b005e34398f9354e"
+    },
+    {
+      "path": "scripts/ci/run_public_fixture_native.py",
+      "byte_identical_to_baseline": true,
+      "sha256": "23e7a41ab61e0266483b51e51e58cac80be6d06fd2977835bd76c50c76f35df8"
+    },
+    {
+      "path": "scripts/ci/public_fixture_host_lease.py",
+      "byte_identical_to_baseline": true,
+      "sha256": "792c1c599082b0ce67e128e6dbbf0c99f583dd41f4af0091838cc10adcc98d70"
+    }
+  ],
+  "additional_independent_source_diagnostic": {
+    "path": "evidence/pon-actual-certificates-20261107/native_owner/host_gate_source_diagnostic.json",
+    "sha256": "ebdfe47455b2b96bc54870100898ecb9e9c90f59c7865ae419da39abe1093374"
+  },
+  "execution_extent": {
+    "retained_stderr_started_targets": [
+      "continuity_authenticated",
+      "native_node"
+    ],
+    "work_header_binding_started_in_failed_combined_command": false,
+    "unrun_suffix_must_not_be_reported_passed": true,
+    "root_followup": "Run the still-unexecuted targets separately with original assertions; keep the failed aggregate observation and overall failure visible."
+  },
+  "minimum_safe_verification": {
+    "current_host": "Keep the existing refusal; complete only the separately unrun component checks without changing their assertions.",
+    "qualifying_host": "Re-execute this exact original test/current ELF through the existing genuine source-bound CI Host route or an already correctly administrator-provisioned fixed parent, with real membership and limits. A marker or guessed directory is not Host evidence.",
+    "baseline_paired_run": "Not performed and not necessary for this narrow diagnosis: the relevant guard, test and route bytes are identical and the required parent is currently absent. A repeat on the same unqualified host would not clear the failure or test later authenticated-sync behavior."
+  },
+  "prohibited_changes_not_performed": {
+    "ci_identity_flags_set": false,
+    "fake_parent_directory_created": false,
+    "cgroup_limits_or_membership_modified": false,
+    "authentication_or_process_checks_relaxed": false,
+    "test_skipped_or_filtered_to_claim_aggregate_pass": false,
+    "native_runtime_or_test_source_edited": false,
+    "baseline_runtime_experiment_performed": false
+  },
+  "inspection_notes": [
+    {
+      "observation": "An exploratory rg command also named nonexistent scripts/ci/run_architecture_host_ci.py and returned exit 2 for that missing path.",
+      "resolution": "Used the actual current_elf_host.rs, run_public_fixture_native.py and public_fixture_host_lease.py paths; no source changed."
+    }
+  ],
+  "overall_gate_result_promoted_to_pass": false
+}

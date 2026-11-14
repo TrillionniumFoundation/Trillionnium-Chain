@@ -1,0 +1,54 @@
+name: PoN original quarter-core feasibility evidence
+on:
+  pull_request:
+    paths:
+      - scripts/ci/host_budget_feasibility.py
+      - scripts/ci/pq_source_reader.py
+      - scripts/ci/test_host_budget_feasibility.py
+      - evidence/pon-original-host-cost-20261110/host-phase-summary.json
+      - .github/workflows/pon-original-quarter-core-feasibility.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: pon-original-quarter-core-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+jobs:
+  source-head-observation:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.EXPECTED_HEAD }}
+          persist-credentials: false
+      - name: Bind original source and run strict accounting tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+          test -z "$(git status --porcelain --untracked-files=all)"
+          python3 -m unittest discover -s scripts/ci -p test_host_budget_feasibility.py -v
+          python3 scripts/ci/host_budget_feasibility.py \
+            --source evidence/pon-original-host-cost-20261110/host-phase-summary.json \
+            --output "$RUNNER_TEMP/quarter-core-observations.json"
+          python3 - "$RUNNER_TEMP/quarter-core-observations.json" <<'PY'
+          import json, sys
+          o=json.load(open(sys.argv[1]))
+          assert o["original_runs"] == 3 and o["original_phases"] == 9
+          assert not o["all_original_phase_gates_met"] and not o["production_qualified"]
+          assert len(o["rows"]) == 9 and all(not x["original_phase_accepted"] for x in o["rows"])
+          PY
+          test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+          test -z "$(git status --porcelain --untracked-files=all)"
+      - name: Retain derived accounting with original failure label
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: pon-original-quarter-core-failure-accounting-${{ env.EXPECTED_HEAD }}
+          path: ${{ runner.temp }}/quarter-core-observations.json
+          if-no-files-found: warn
+          retention-days: 30

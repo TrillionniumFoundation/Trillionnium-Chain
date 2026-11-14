@@ -1,0 +1,136 @@
+{
+  "prior": "ceb1d127ed760b1607f72bdec87e61ee185f52a6",
+  "target": "3eb2cfdd9c123a2418c138e4c18940bcc584d878",
+  "base": "a06fab1ec850e103ead9fee7ed7bc42cb4267165",
+  "head": "2d87fa0307d1b7b0a758ac893dfa0615fee54b51",
+  "tree": "036fb09068b5c3777988e885df10ce9fd644f211",
+  "exact_source_blobs": {
+    "scripts/ci/check_sqlite_build_requalification.py": "568f4b9a00235a69f48d63a517a0fb2910fe9653",
+    "scripts/ci/test_sqlite_build_requalification.py": "8be908906b3aebc7db4c9d345d7292e4b35cc6c9",
+    "scripts/ci/public_host_ci_observation.py": "160c489693f3ec600e2e015c30773d66cff3bcdf",
+    "scripts/ci/run_w1_rank_batch_v5.py": "75e994cdd74842b543bba65273628deb834ac73a",
+    "scripts/ci/test_run_w1_rank_batch_v5.py": "dea36b78f492f86c8d43614f95961fe25b2b70be",
+    ".github/workflows/pon-original-large-state-cpu.yml": "b304444ad20e6341fae8f977fac8536da78c7eca",
+    "scripts/run_llm_cell_native_handoff.py": "a498861a8709cfa8bb300b59380c3cff0705b216",
+    "scripts/ci/test_llm_cell_acquisition.py": "49ac94d24e75f66080b6912f63a4d3fb303fec95"
+  },
+  "new_source_guard_methods": [
+    "CorpusGateTests.test_sqlite_requalification_reader_sources_cannot_omit_or_mutate",
+    "CorpusGateTests.test_current_cgroup_observation_sources_cannot_omit_or_mutate",
+    "CorpusGateTests.test_original_large_state_profile_workflow_cannot_omit_or_mutate",
+    "CorpusGateTests.test_cell_acquisition_api_cannot_omit_or_mutate"
+  ],
+  "changed_ci_control_methods": [],
+  "steps": [
+    {
+      "label": "preflight",
+      "exit": 0,
+      "seconds": 0.089,
+      "sha256": "2e0930e3e5b93d19ab63db0fe013c910ee3255283942eeab771e4db4aec002ec"
+    },
+    {
+      "label": "merge",
+      "exit": 1,
+      "seconds": 0.209,
+      "sha256": "087223236aeba640ba6d0d8debe5134f17e3d64ffd689c7624e331a96eb2216c"
+    },
+    {
+      "label": "stage-resolved",
+      "exit": 0,
+      "seconds": 0.048,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "sqlite-controls",
+      "exit": 0,
+      "seconds": 0.091,
+      "sha256": "aeeb3112288ef157a3cb7a46d440e01e56ed1b453c801a7cdc41a9ef70432807"
+    },
+    {
+      "label": "rank-observation-controls",
+      "exit": 0,
+      "seconds": 0.072,
+      "sha256": "1e4515408367d2a9bb9a53e68bf2f4202f88d3a83feb56b9129dc1f258f7b8a6"
+    },
+    {
+      "label": "acquisition-controls",
+      "exit": 0,
+      "seconds": 0.071,
+      "sha256": "4292934649cc1af2da6af20e38f49e0d1e11bb1ee0c4d5092447a05d487d76dc"
+    },
+    {
+      "label": "source-guards",
+      "exit": 0,
+      "seconds": 4.72,
+      "sha256": "a637f440a29e7bd53b9e35898d08400b70296ddea3505c183a022a7ffff3994e"
+    },
+    {
+      "label": "ci-contract",
+      "exit": 0,
+      "seconds": 0.084,
+      "sha256": "d1490790908dab724ab473f615ff7440375869323608112fd5364b2c9d58cd4d"
+    },
+    {
+      "label": "corpus",
+      "exit": 0,
+      "seconds": 0.71,
+      "sha256": "cb734c3e14ca3b254f78036894454cc31b0a9b0a9456b661a9b88e6656507c85"
+    },
+    {
+      "label": "shell",
+      "exit": 0,
+      "seconds": 0.018,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "diff",
+      "exit": 0,
+      "seconds": 0.05,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "precommit",
+      "exit": 0,
+      "seconds": 0.047,
+      "sha256": "2e0930e3e5b93d19ab63db0fe013c910ee3255283942eeab771e4db4aec002ec"
+    },
+    {
+      "label": "stage",
+      "exit": 0,
+      "seconds": 0.03,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "commit",
+      "exit": 0,
+      "seconds": 0.066,
+      "sha256": "35ea354fd56c4442aa57a474864e4f787178f39f8c21587fd4e34b9d67f3f1c9"
+    }
+  ],
+  "paths": [
+    ".github/workflows/pon-original-large-state-cpu.yml",
+    ".github/workflows/pon-pq-system-continuation.yml",
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "scripts/ci/check_ci_contract.py",
+    "scripts/ci/check_pq_research_integration.py",
+    "scripts/ci/check_sqlite_build_requalification.py",
+    "scripts/ci/ci_job.sh",
+    "scripts/ci/public_host_ci_observation.py",
+    "scripts/ci/run_w1_rank_batch_v5.py",
+    "scripts/ci/test_llm_cell_acquisition.py",
+    "scripts/ci/test_pq_research_integration.py",
+    "scripts/ci/test_run_w1_rank_batch_v5.py",
+    "scripts/ci/test_sqlite_build_requalification.py",
+    "scripts/run_llm_cell_native_handoff.py"
+  ],
+  "resolved_metadata": [
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "scripts/ci/check_ci_contract.py",
+    "scripts/ci/check_pq_research_integration.py",
+    "scripts/ci/ci_job.sh",
+    "scripts/ci/test_pq_research_integration.py"
+  ],
+  "qualification_promoted": false
+}

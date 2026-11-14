@@ -1,0 +1,120 @@
+{
+  "schema": "joint-component-observations-v1",
+  "scope": "Selected-file controls only; no complete checkout, native model, original service gate, or release qualification.",
+  "upstream_base": "7ae0d1b227853fc75e02334b497f69dd52d50235",
+  "preserved_parent": "c7dd1ec73a22f5643581a19dece46f418a230909",
+  "checks": {
+    "runtime_stop": 12,
+    "retained_rss_owner": 43,
+    "retained_reader_framing": 4,
+    "rejection_reader": 92,
+    "ci_wiring_existing_selected": 4
+  },
+  "gates": {
+    "fixed_joint_candidate": "HOLD",
+    "w1_and_public_liveness": "HOLD",
+    "pq_and_effect_authorization": "HOLD",
+    "recovery_and_unknown_effects": "HOLD",
+    "complete_model_adoption": "HOLD",
+    "learning_quality": "HOLD",
+    "long_term_storage_growth": "HOLD",
+    "independent_long_run": "HOLD"
+  },
+  "changed_sources": [
+    {
+      "path": "config/pon/module-maturity-v1.json",
+      "sha256": "86da7e012c3b25e6753b2a87104ab193bd4d915eb81a1e691824c5a7cb3e104f",
+      "git_blob": "06cc64fc6a3f7041d779e09fa73f5ef597ff528a",
+      "bytes": 215980
+    },
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "sha256": "063df6d6047e08addb40d92c01bf85c2ff1386788369bfd7ba1d22e0a421198b",
+      "git_blob": "3787d8321ee9f4eb5a0fe5794dcad3f997afecb1",
+      "bytes": 552675
+    },
+    {
+      "path": "docs/research/PON_WORK_REJECTION_COST_V2_PLAN.md",
+      "sha256": "35a5205260e4ade3c0c53be3b74d10e6e0f6d85d2878c83578092808d65fef66",
+      "git_blob": "1f33073855157a0383bf9fcdb32be458bcf23193",
+      "bytes": 6295
+    },
+    {
+      "path": "scripts/ci/check_ci_contract.py",
+      "sha256": "1795344336d28a66e5293a67cb5016dc37f9d28d74f4dd9ed2c1507a2ec72de8",
+      "git_blob": "695b876aca6a937bd8c7e4a6d6d9922e5fc4030d",
+      "bytes": 62943
+    },
+    {
+      "path": "scripts/ci/ci_job.sh",
+      "sha256": "b7f26a45230bd3433dd8571b22270f80c26630c22a72af62fa05faa601aa261f",
+      "git_blob": "ea0a8b72591613743b9ed5448c414f3c3bdfb604",
+      "bytes": 24796
+    },
+    {
+      "path": "scripts/ci/test_applicability.py",
+      "sha256": "8c5111a595225dd8919029ce124163b1c334f10de050da94bcc6ae3812b4b232",
+      "git_blob": "d823f1da8a93d748b93b7185989c43986ee8c6ba",
+      "bytes": 20526
+    },
+    {
+      "path": "scripts/ci/test_ci_contract.py",
+      "sha256": "61ae09359006ec3a4cf6970c8a76648fe737dc889628c1575573f671cf85f580",
+      "git_blob": "5b9255b47f17b824d5d1c87e8fb2933db59677f8",
+      "bytes": 88313
+    },
+    {
+      "path": "scripts/ci/test_work_rejection_report.py",
+      "sha256": "287c58c44a49e3126213e6d75ea4014a5ab775133ebb15c9fcda8557f2c9d5d8",
+      "git_blob": "55181a586cf6f09c2dca115960c625f0900841fa",
+      "bytes": 38030
+    },
+    {
+      "path": "scripts/llm_neural_read_worker.py",
+      "sha256": "8911819bc65304c6b8b981e6efaf103cbe8770ce4647871695e46110b79b6396",
+      "git_blob": "cae6a06a40a9bd9c7e55f0e5dee97038a7cd1ee8",
+      "bytes": 14822
+    },
+    {
+      "path": "scripts/llm_runtime_pilot.py",
+      "sha256": "d2854289ae810115bccd3b7714c3d40b03cc6ec216747d6fca653aeac9299bd7",
+      "git_blob": "61ff601bb77f286fa9486f75c7a7dbaec0bcca14",
+      "bytes": 125239
+    },
+    {
+      "path": "scripts/pon_work_rejection_report.py",
+      "sha256": "976ca2fd91873b699ed3b31c64c567608b38e31cfbace75f43caaf1edc318a15",
+      "git_blob": "23429d1d01307f61d4df56244e869a628787dda0",
+      "bytes": 50292
+    },
+    {
+      "path": "scripts/test_llm_runtime_stop.py",
+      "sha256": "648f73a4e967c17e690fcde50d6b6dd350e6500a7a34007ddb59df6cd51674e7",
+      "git_blob": "85ac215663c4da40e5f42002bd3d2e334882be9f",
+      "bytes": 18066
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_rejection_cost.rs",
+      "sha256": "68582c646c39079cd0b85ed8317feb82ee5a9639775b8359b5c9410577ee6ec0",
+      "git_blob": "fce5834c1d9780f058f8aaff4041771c8c173c14",
+      "bytes": 26180
+    }
+  ],
+  "logs": [
+    {
+      "path": "runtime-stop-original-red.json",
+      "bytes": 523,
+      "sha256": "68e4d0fe7a89135f98773771a882ff3910eb1ed32e323571369114ae86d1ca6e"
+    },
+    {
+      "path": "runtime-stop-green59.log",
+      "bytes": 10820,
+      "sha256": "cafeae2106fa8f66a65cd45e09eb5eea493419fd3cc6188a2b158fe850d18c9c"
+    },
+    {
+      "path": "rejection-reader92.log",
+      "bytes": 192,
+      "sha256": "a6a300d9b9703b40170203f9d24fe1005079314b72c87f42e5dd28ea50ab38de"
+    }
+  ]
+}

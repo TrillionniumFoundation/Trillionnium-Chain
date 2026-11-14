@@ -1,0 +1,33 @@
+{
+  "request": {
+    "host": "mac",
+    "executable": "/usr/bin/python3",
+    "args": [
+      "-c",
+      "from pathlib import Path\nimport subprocess,json,hashlib,zipfile,io,base64\nroot=Path('/Users/qianqi/work/chain-joint-runtime-shard-read-20261110-8e76');root.mkdir(mode=0o700,exist_ok=False)\nfor aid,sha in [(13756298276,'b81fa4fa3624ffd5135394e0536d763108bcc2bae5ea8c4f506f87b780db35b3'),(13756079838,'e8620d869c7610db38f03d6bdf692ce0de44981fcbc1aa262e31cc909132d3b5')]:\n r=subprocess.run(['/opt/homebrew/bin/gh','api','repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/'+str(aid)+'/zip'],capture_output=True,timeout=120)\n (root/(str(aid)+'.stderr')).write_bytes(r.stderr)\n assert r.returncode==0, r.stderr.decode()\n assert hashlib.sha256(r.stdout).hexdigest()==sha\n (root/(str(aid)+'.zip')).write_bytes(r.stdout)\n z=zipfile.ZipFile(io.BytesIO(r.stdout));members=[]\n for i in z.infolist():\n  assert i.file_size<65536\n  b=z.read(i);members.append({'path':i.filename,'sha256':hashlib.sha256(b).hexdigest(),'utf8':b.decode()})\n print(json.dumps({'artifact_id':aid,'sha256':sha,'bytes':len(r.stdout),'zip_base64':base64.b64encode(r.stdout).decode(),'members':members}),flush=True)\n"
+    ],
+    "idempotency_key": "joint-original-runtime-shard-read-20261110-8e76-v1",
+    "timeout_seconds": 300
+  },
+  "start": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\n  \"audit_recorded\": true,\n  \"job\": {\n    \"args\": [\n      \"-c\",\n      \"from pathlib import Path\\nimport subprocess,json,hashlib,zipfile,io,base64\\nroot=Path('/Users/qianqi/work/chain-joint-runtime-shard-read-20261110-8e76');root.mkdir(mode=0o700,exist_ok=False)\\nfor aid,sha in [(13756298276,'b81fa4fa3624ffd5135394e0536d763108bcc2bae5ea8c4f506f87b780db35b3'),(13756079838,'e8620d869c7610db38f03d6bdf692ce0de44981fcbc1aa262e31cc909132d3b5')]:\\n r=subprocess.run(['/opt/homebrew/bin/gh','api','repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/'+str(aid)+'/zip'],capture_output=True,timeout=120)\\n (root/(str(aid)+'.stderr')).write_bytes(r.stderr)\\n assert r.returncode==0, r.stderr.decode()\\n assert hashlib.sha256(r.stdout).hexdigest()==sha\\n (root/(str(aid)+'.zip')).write_bytes(r.stdout)\\n z=zipfile.ZipFile(io.BytesIO(r.stdout));members=[]\\n for i in z.infolist():\\n  assert i.file_size<65536\\n  b=z.read(i);members.append({'path':i.filename,'sha256':hashlib.sha256(b).hexdigest(),'utf8':b.decode()})\\n print(json.dumps({'artifact_id':aid,'sha256':sha,'bytes':len(r.stdout),'zip_base64':base64.b64encode(r.stdout).decode(),'members':members}),flush=True)\\n\"\n    ],\n    \"created_unix_ms\": 1794309612511,\n    \"cwd\": null,\n    \"env_keys\": [],\n    \"executable\": \"/usr/bin/python3\",\n    \"execution_mode\": \"operator\",\n    \"host\": \"mac\",\n    \"id\": \"1a1c52fe3df-cf39-64a\",\n    \"idempotency_key\": \"joint-original-runtime-shard-read-20261110-8e76-v1\",\n    \"launch_error\": null,\n    \"launch_state\": \"launched\",\n    \"remote_job_dir\": \"/Users/qianqi/.local/state/hepta-runtime-mac-worker/jobs/1a1c52fe3df-cf39-64a\",\n    \"request_digest\": \"7c166991df76b7ad0479aca53479f7f96b4f97fef6c3da49c7144602d1c986fb\",\n    \"request_fingerprint\": 8941450185430972333,\n    \"ssh_target\": \"hepta-mac-local\",\n    \"system_jobctl\": false,\n    \"unit\": \"hepta-runtime-job-1a1c52fe3df-cf39-64a\"\n  },\n  \"launch\": {\n    \"backend\": \"detached\",\n    \"launcher_pid\": 4452,\n    \"ok\": true,\n    \"systemd_error\": \"systemd user units unavailable on this platform\",\n    \"unit\": \"hepta-runtime-job-1a1c52fe3df-cf39-64a\"\n  },\n  \"local_record_pending\": false,\n  \"reused\": false\n}"
+      }
+    ],
+    "structuredContent": null,
+    "isError": false
+  },
+  "status": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\n  \"at_unix_ms\": 1794309634185,\n  \"audit_recorded\": true,\n  \"automatic_retry\": false,\n  \"cancelled\": false,\n  \"exit_code\": 0,\n  \"job_id\": \"1a1c52fe3df-cf39-64a\",\n  \"launch_nonce\": \"65dd64bd68b8eab2dd6babfd4dad8bc2\",\n  \"log_bytes\": {\n    \"stderr\": {\n      \"seen\": 0,\n      \"stored\": 0\n    },\n    \"stdout\": {\n      \"seen\": 23594,\n      \"stored\": 23594\n    }\n  },\n  \"log_errors\": {\n    \"stderr\": null,\n    \"stdout\": null\n  },\n  \"log_synced\": {\n    \"stderr\": true,\n    \"stdout\": true\n  },\n  \"log_truncated\": {\n    \"stderr\": false,\n    \"stdout\": false\n  },\n  \"output_complete\": true,\n  \"output_durable\": true,\n  \"state\": \"succeeded\",\n  \"terminal_publication_confirmed\": true,\n  \"terminal_publication_protocol\": 1,\n  \"timed_out\": false\n}"
+      }
+    ],
+    "structuredContent": null,
+    "isError": false
+  },
+  "scope": "read-only GitHub artifact retrieval; no native compilation or execution"
+}

@@ -1,0 +1,14 @@
+   Compiling trnm-pon-node v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node)
+    Finished `release` profile [optimized] target(s) in 1.88s
+     Running tests/daa_adversarial_schedule.rs (/home/runner/work/_temp/target-priority/release/deps/daa_adversarial_schedule-cdc9a754caa701ec)
+
+running 1 test
+test native_admissible_endpoint_schedule_changes_daa_without_changing_required_work_rules ... ok
+
+successes:
+
+successes:
+    native_admissible_endpoint_schedule_changes_daa_without_changing_required_work_rules
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.81s
+

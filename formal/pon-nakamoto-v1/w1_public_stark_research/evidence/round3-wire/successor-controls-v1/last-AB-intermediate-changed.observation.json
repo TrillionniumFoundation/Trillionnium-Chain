@@ -1,0 +1,50 @@
+{
+  "label": "last-AB-intermediate-changed",
+  "command": [
+    "/home/qian-qi/work/chain-w1-bounded-verifier-20261108-f16ac5/formal/pon-nakamoto-v1/w1_public_stark_research/target/release/w1-full-public-stark-research",
+    "verify",
+    "/home/qian-qi/work/w1-r3-evidence-f16ac5/successor-controls-v1/last-AB-intermediate-changed/statement.bin",
+    "/home/qian-qi/work/chain-w1-bounded-verifier-20261108-f16ac5/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.expected-header.bin",
+    "/home/qian-qi/work/chain-w1-bounded-verifier-20261108-f16ac5/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.artifacts.bin",
+    "/home/qian-qi/work/w1-r3-evidence-f16ac5/successor-controls-v1/last-AB-intermediate-changed"
+  ],
+  "exit_code": 1,
+  "outer_wall_seconds": 0.8977581721264869,
+  "expected_success": false,
+  "matched_exit_expectation": true,
+  "final": {
+    "error": "arithmetic proof rejected: InvalidOpeningArgument(InputError(MalformedPrunedProof(SiblingCountMismatch { expected: 770, got: 778 })))",
+    "process_wall_ms": 890.111673,
+    "qualification": "HOLD_NO_GO",
+    "schema": "trnm-w1-complete-public-stark-run-v1",
+    "status": "REJECTED_OR_FAILED"
+  },
+  "phase_events": [
+    {
+      "elapsed_ms": 16.320368,
+      "phase": "bounded_read_decode_and_proof_shape"
+    },
+    {
+      "elapsed_ms": 7.528972,
+      "phase": "canonical_plans_and_public_only_sha_air"
+    },
+    {
+      "elapsed_ms": 45.307961,
+      "phase": "sha_verifier_independent_preprocessing_setup"
+    },
+    {
+      "elapsed_ms": 255.09483999999998,
+      "phase": "sha_stark_verify"
+    },
+    {
+      "elapsed_ms": 562.379578,
+      "phase": "arith_verifier_independent_preprocessing_setup"
+    },
+    {
+      "elapsed_ms": 1.291028,
+      "phase": "arith_stark_verify"
+    }
+  ],
+  "resource_text": "Command exited with non-zero status 1\n\tCommand being timed: \"/home/qian-qi/work/chain-w1-bounded-verifier-20261108-f16ac5/formal/pon-nakamoto-v1/w1_public_stark_research/target/release/w1-full-public-stark-research verify /home/qian-qi/work/w1-r3-evidence-f16ac5/successor-controls-v1/last-AB-intermediate-changed/statement.bin /home/qian-qi/work/chain-w1-bounded-verifier-20261108-f16ac5/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.expected-header.bin /home/qian-qi/work/chain-w1-bounded-verifier-20261108-f16ac5/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.artifacts.bin /home/qian-qi/work/w1-r3-evidence-f16ac5/successor-controls-v1/last-AB-intermediate-changed\"\n\tUser time (seconds): 4.57\n\tSystem time (seconds): 0.14\n\tPercent of CPU this job got: 527%\n\tElapsed (wall clock) time (h:mm:ss or m:ss): 0:00.89\n\tAverage shared text size (kbytes): 0\n\tAverage unshared data size (kbytes): 0\n\tAverage stack size (kbytes): 0\n\tAverage total size (kbytes): 0\n\tMaximum resident set size (kbytes): 132136\n\tAverage resident set size (kbytes): 0\n\tMajor (requiring I/O) page faults: 0\n\tMinor (reclaiming a frame) page faults: 35066\n\tVoluntary context switches: 373\n\tInvoluntary context switches: 37\n\tSwaps: 0\n\tFile system inputs: 0\n\tFile system outputs: 0\n\tSocket messages sent: 0\n\tSocket messages received: 0\n\tSignals delivered: 0\n\tPage size (bytes): 4096\n\tExit status: 1\n",
+  "combined_log_sha256": "5f9551568a425103c1f9e618153ec927176217ed1eafa4f50b6381ba7807d634"
+}

@@ -1,0 +1,21 @@
+{
+  "command": [
+    "/home/qian-qi/.cargo/bin/cargo",
+    "+1.95.0",
+    "test",
+    "--offline",
+    "--locked",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--test",
+    "daa_joint_consensus",
+    "--",
+    "--nocapture"
+  ],
+  "exit_code": 0,
+  "wall_seconds": 55.81793382787146,
+  "base_commit": "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+  "source_sha256": "7b18ed2243d23c732bcac7be9f6085ee1339fc43453f7f243cb088d8f6be34ac"
+}

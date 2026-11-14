@@ -1,0 +1,69 @@
+{
+  "name": "terminated",
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/pon_w1_lifecycle_cost_v4.py",
+    "/workspace/scratch/23345083847a/pon-legal-cost-evidence/native-v4-historical-replay/extracted-originals/final-native/v4-observation/terminated.jsonl",
+    "--process-exit-code",
+    "-15"
+  ],
+  "cwd": "/workspace/scratch/23345083847a/Trillionnium-Chain",
+  "exit_code": 3,
+  "original_native_process_exit_code": -15,
+  "original_reader_exit_code": 3,
+  "reader_wall_elapsed_ns": 102162261,
+  "stdout_bytes": 1459,
+  "stdout_sha256": "a2b39be706216e9e1a5b6fdf7fde33250e2aefc1bef1b0b90780b4f19e0c543a",
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "matches_original_readback_object": true,
+  "matches_original_readback_bytes": true,
+  "readback": {
+    "all_legal_work_cost_lower_bound_proved": false,
+    "complete_records": 9,
+    "consensus_credit_added": 0,
+    "failure": null,
+    "full_relation_replayed_by_reader": false,
+    "generation_records_with_unknown_cpu": 0,
+    "last_phase": "attempt-finish",
+    "native_process_exit_code": -15,
+    "observed_counts": {
+      "attempts": 0,
+      "candidates": 0,
+      "cohorts": 1,
+      "searches": 0,
+      "verified_searches": 0,
+      "verifiers": 0
+    },
+    "observed_generation_cpu_subtotal_ns": 0,
+    "production_qualified": false,
+    "raw_sha256": "aa2bf4bddff47a234c36941091409a34013243555f2a254854695dea92430073",
+    "schema": "pon-w1-lifecycle-readback-v4",
+    "source_binary_resource_identity_authenticated_by_reader": false,
+    "status": "INCOMPLETE",
+    "trailing_partial_bytes": 0,
+    "unfinished_cohort": {
+      "arm": "scalar-original",
+      "class": "periodic-dense-fixture",
+      "invocation_order": 0,
+      "next_search": 0,
+      "sample": 0,
+      "supported": true,
+      "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "task": "56dac087e1241f23d72e47421fee9b439d9c8e4ad7eab89598ed46f8c6e61f34"
+    },
+    "unfinished_resource_cost": null,
+    "unfinished_search": {
+      "attempts": 0,
+      "index": 0,
+      "pending": [
+        0,
+        "080a26b73fd1600c716039822cfc8920c64874aeba931b59b4d96833d331b252"
+      ],
+      "trial_stream_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "verifiers": 0,
+      "winner": null
+    }
+  },
+  "native_executed_this_review": false
+}

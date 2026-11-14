@@ -1,0 +1,174 @@
+{
+  "files": {
+    "README.md": {
+      "bytes": 1433,
+      "sha256": "1a9dcb3ce530667aa113cb0e3794430f88a1d2efee9d79c4df53b29c6161567e"
+    },
+    "commit-b5c655ebe961/ancestor-1.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "commit-b5c655ebe961/ancestor-1.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "commit-b5c655ebe961/ancestor-2.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "commit-b5c655ebe961/ancestor-2.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "commit-b5c655ebe961/ancestor-3.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "commit-b5c655ebe961/ancestor-3.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "commit-b5c655ebe961/ancestry.json": {
+      "bytes": 528,
+      "sha256": "e81306ee93cdedf0cc74e2ac1c25c29636a14f904f82a91d4f0e3efb8740de03"
+    },
+    "commit-b5c655ebe961/commands.json": {
+      "bytes": 6011,
+      "sha256": "6a5a81cece92f85db5f331f1daf15626da8717418aea005f07791e757449a5bb"
+    },
+    "commit-b5c655ebe961/head-after.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "commit-b5c655ebe961/head-after.stdout": {
+      "bytes": 41,
+      "sha256": "57e20688f670e165e5ab6559ee3cc8cb46826ec9bfe5aa82347895f05540c886"
+    },
+    "commit-b5c655ebe961/head-before.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "commit-b5c655ebe961/head-before.stdout": {
+      "bytes": 41,
+      "sha256": "57e20688f670e165e5ab6559ee3cc8cb46826ec9bfe5aa82347895f05540c886"
+    },
+    "commit-b5c655ebe961/inputs.json": {
+      "bytes": 494,
+      "sha256": "33fc36871aaada9afe4943ee1a5d81fdd652cf2320547c08a4f9dcf4d8003bae"
+    },
+    "commit-b5c655ebe961/markdown-tree-check.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "commit-b5c655ebe961/markdown-tree-check.stdout": {
+      "bytes": 1399,
+      "sha256": "88436bbe3075ffe84a8a8af5d8af6af193ca02d988496a37143cb3d9d2d26758"
+    },
+    "commit-b5c655ebe961/non-evidence-differences.json": {
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    "commit-b5c655ebe961/non-evidence-publication.json": {
+      "bytes": 418856,
+      "sha256": "4b77f02aedb7f8b0088e49e3318f983cc49a96dfa71900efb507e5746f129881"
+    },
+    "commit-b5c655ebe961/non-evidence-tested.json": {
+      "bytes": 418856,
+      "sha256": "4b77f02aedb7f8b0088e49e3318f983cc49a96dfa71900efb507e5746f129881"
+    },
+    "commit-b5c655ebe961/prior-checker-tests-binding.json": {
+      "bytes": 422,
+      "sha256": "f542c286d3f8e059f240b28f2c1c21f444eef59afd1e4836004bfcecb4652408"
+    },
+    "commit-b5c655ebe961/publication-parents.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "commit-b5c655ebe961/publication-parents.stdout": {
+      "bytes": 41,
+      "sha256": "aba230904d75221ae0db7755f6a7ba7addef25f0cb2cb4902de5260592991b27"
+    },
+    "commit-b5c655ebe961/publication-tree-index.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "commit-b5c655ebe961/publication-tree-index.stdout": {
+      "bytes": 2500036,
+      "sha256": "5e115009e0ff18fbedc850158f6df976983b12db70789779bc4ec810a677d748"
+    },
+    "commit-b5c655ebe961/publication-tree.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "commit-b5c655ebe961/publication-tree.stdout": {
+      "bytes": 41,
+      "sha256": "52e4c9983b0a6a7ced6b9c40c23548895eb37f6f6d47a42b21b3b782ffcaadd8"
+    },
+    "commit-b5c655ebe961/result.json": {
+      "bytes": 3933,
+      "sha256": "a98eca3d7d83bd25a456457afc44c9201630c6c7e84a7e32920f558d4ab71d39"
+    },
+    "commit-b5c655ebe961/status-after.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "commit-b5c655ebe961/status-after.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "commit-b5c655ebe961/status-before.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "commit-b5c655ebe961/status-before.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "commit-b5c655ebe961/tested-tree-index.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "commit-b5c655ebe961/tested-tree-index.stdout": {
+      "bytes": 2413948,
+      "sha256": "2638b2e410d1be18eb389fada77b2f5d1c39fee4dc40fe0c73d669c737f78fcb"
+    },
+    "commit-b5c655ebe961/tree-links/canonical-check_repository.py": {
+      "bytes": 10839,
+      "sha256": "0d7040ac82a54a97a2db0a3d94db30822a047af5a8f4946ff4d4fc29ae9a190f"
+    },
+    "commit-b5c655ebe961/tree-links/link-errors.json": {
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    "commit-b5c655ebe961/tree-links/local-links.json": {
+      "bytes": 1161353,
+      "sha256": "896ad3c5c58baa3a445d75e27fbfdaccbb2d84f9275350c0844fca9a293b276a"
+    },
+    "commit-b5c655ebe961/tree-links/markdown-inputs.json": {
+      "bytes": 203562,
+      "sha256": "69c0f94c870705a58f3b6e4b758b4b9e05fe51ecb8c8819677d4a910411eb185"
+    },
+    "commit-b5c655ebe961/tree-links/markdown-inputs.tar.gz": {
+      "bytes": 2298201,
+      "sha256": "67270e89fb893e57d02e68c3306fd4456a0ca87f41eb4be6b86f83815a774cdc"
+    },
+    "commit-b5c655ebe961/tree-links/result.json": {
+      "bytes": 1453,
+      "sha256": "04cf24cfdec119045b9e3f7568b604d01a010fe2fe3cf8586d5a5f0915b0b8cb"
+    },
+    "commit-b5c655ebe961/tree-links/tree-index.z": {
+      "bytes": 2769266,
+      "sha256": "0b8c0bd5ff8a20c39bb9038d0fb908c2b3cca805cf503ba45140c7e919924843"
+    },
+    "commit-b5c655ebe961/tree_markdown_check.py": {
+      "bytes": 15190,
+      "sha256": "70d86546550555b3b3b17e6ed83798f493d7e3421ed6ea05f838bfca25d62eb3"
+    },
+    "result.json": {
+      "bytes": 3933,
+      "sha256": "a98eca3d7d83bd25a456457afc44c9201630c6c7e84a7e32920f558d4ab71d39"
+    }
+  },
+  "schema": "publication-gate-artifact-sha256-v1",
+  "self_manifest_excluded": true
+}

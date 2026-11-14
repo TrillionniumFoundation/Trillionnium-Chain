@@ -1,0 +1,12 @@
+refs/heads/fix/chain-local-business-final-20261107 9b70db69b5a7a7cdd0b73b273f189211d507dfe2
+refs/heads/fix/chain-local-business-followup-20261107 6193489c2fb2a1bdab1128ebed2296f19176401b
+refs/heads/fix/chain-local-ingress-canonical-20261107 205ae38ff01bbf968f3fc2ef0297bee986224684
+refs/heads/fix/chain-local-state-cell-20261107 5fdf7c236bd0f63a2f544ec006a427d786e6b235
+refs/heads/fix/chain-native-9ce-validation d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89
+refs/heads/fix/chain-w1-ingress-integrated-20261107 96e1eede091153199894532c91430bfc0f8e4572
+refs/heads/local/candidate-d26 d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89
+refs/heads/local/native-9ce 9ce78655b574a638c54a0ee9c88d58ffdec74df7
+refs/heads/local/throughput-closure-8b 8b028e49b0d91fd0835e29ffd67ebd5325ae47a3
+refs/heads/local/throughput-prepared 96e1eede091153199894532c91430bfc0f8e4572
+refs/remotes/origin/fix/chain-six-axis-performance-20261103 adebe0bd78e6e1bdb55a599179ffe2313997170e
+refs/remotes/origin/main dd6e1c3cbeacbdc532b0679297835b3a0aac78f0

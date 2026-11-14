@@ -1,0 +1,24 @@
+{
+  "actual_oid": "b3053d71cb75b0082c93664da2f5bbddd98799c7",
+  "bytes": 6069186,
+  "command": [
+    "/usr/bin/git",
+    "--no-replace-objects",
+    "cat-file",
+    "blob",
+    "b3053d71cb75b0082c93664da2f5bbddd98799c7"
+  ],
+  "entry_created": true,
+  "existing_path_replaced": false,
+  "exit_code": 0,
+  "expected_bytes": 6069186,
+  "expected_oid": "b3053d71cb75b0082c93664da2f5bbddd98799c7",
+  "finished_at": "2026-11-12T01:55:18.859036+00:00",
+  "path": "evidence/pon-runtime-fixture-closure-20261103/hosted-current/c5dd/original-three-campaign-selected-records.json.gz",
+  "path_base64": "ZXZpZGVuY2UvcG9uLXJ1bnRpbWUtZml4dHVyZS1jbG9zdXJlLTIwMjYxMTAzL2hvc3RlZC1jdXJyZW50L2M1ZGQvb3JpZ2luYWwtdGhyZWUtY2FtcGFpZ24tc2VsZWN0ZWQtcmVjb3Jkcy5qc29uLmd6",
+  "result": "RESTORED_EXACT_HEAD_BLOB",
+  "sha256": "009de88d176c549718e4d89bd67f0a2ff2fee358f5c4df8c28ceeb8c38e89182",
+  "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81",
+  "started_at": "2026-11-12T01:55:18.722637+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

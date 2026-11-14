@@ -1,0 +1,450 @@
+{
+  "schema": "source-bound-m09-m06-verified-summary-v2",
+  "verified_at_utc": "2026-11-05T02:36:41.344804+00:00",
+  "scope": "Five after385 M09/M06 correctness gates only; not Node, throughput, or latency acceptance.",
+  "qualification_status": "PASS_FOR_THE_FIVE_LISTED_GATES",
+  "source_binding": {
+    "frozen_index_tree": "6d6e7b1217b686dea074cd695981d4e7f778ba98",
+    "head_at_final_capture": "38cf428103f48879fcc6b7dc0fc523d5c58ff2e0",
+    "historical_capture_utc": "2026-11-05T01:50:49.876820+00:00",
+    "all_run_start_aggregates_sha256": [
+      "a1c5c81c26b78565b926388c8b13cf83e2b49343e0facc77f6acde929527c383"
+    ],
+    "post_run_aggregate_sha256": "a1c5c81c26b78565b926388c8b13cf83e2b49343e0facc77f6acde929527c383",
+    "aggregate_scope": "Sorted unique tracked and untracked files under trillionnium/ and scripts/; root config/ not covered.",
+    "aggregate_algorithm": "SHA256 of each relative UTF-8 path, one NUL byte, and binary SHA256(file), concatenated in sorted order.",
+    "tested_sources": [
+      {
+        "path": "trillionnium/crates/trnm-data-availability/src/cell/network/persistent.rs",
+        "tested_sha256": "82ed7c852d25b5bdf13f852edea1e039a9097d21d13cce927f3b0cbb9a69042f",
+        "tested_bytes": 17359,
+        "current_file_matches_tested_hash": true
+      },
+      {
+        "path": "trillionnium/crates/trnm-data-availability/src/cell/network/persistent/tests.rs",
+        "tested_sha256": "c146e3bff4d8a955c9d04ff53bf3ca0ef9ea3358a35cf8a28fc9aa8f4031cbc2",
+        "tested_bytes": 37235,
+        "current_file_matches_tested_hash": true
+      },
+      {
+        "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+        "tested_sha256": "7646f1d7d4b2b9b956c70d737ca32240a8013c2ad941fe0b13fb5d83be420c2c",
+        "tested_bytes": 149355,
+        "current_file_matches_tested_hash": true
+      },
+      {
+        "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/growth.rs",
+        "tested_sha256": "acbd79b01ce588859c648baae9ae96bc5ad18d1b87286b9fa9ecc0f7a5356757",
+        "tested_bytes": 10775,
+        "current_file_matches_tested_hash": true
+      }
+    ]
+  },
+  "build_context": {
+    "toolchain": "cargo +1.95.0",
+    "incremental": {
+      "mode": "Cargo default context",
+      "override_applied_by_these_invocations": false,
+      "inherited_CARGO_INCREMENTAL_separately_captured_by_raw_receipts": false,
+      "distinct_from_later_Node_CI_CARGO_INCREMENTAL_0_runs": true
+    },
+    "wrapper_path": "/workspace/scratch/fee7901564fd/validation-node/run_check.py",
+    "wrapper_sha256": "02a929b9ae2fddd1903d4e96ba928aafbbaf99eeecca08971252ba0b5ba21489",
+    "fixed_environment": {
+      "CARGO_HOME": "/workspace/scratch/fee7901564fd/cargo-cell",
+      "CARGO_TARGET_DIR": "/workspace/scratch/fee7901564fd/target-cell",
+      "CARGO_BUILD_JOBS": "1",
+      "OPENSSL_DIR": "/workspace/scratch/e537ad232c79/native-runtime-acceptance/provider/trnm-pq-provider-3.5.9.P6cfOXrY/install",
+      "OPENSSL_STATIC": "1",
+      "TRNM_PQ_OPENSSL": "/workspace/scratch/e537ad232c79/native-runtime-acceptance/provider/trnm-pq-provider-3.5.9.P6cfOXrY/install/bin/openssl",
+      "TRNM_PQ_OPENSSL_SHA256": "08e4988f44357113a30082b8b37b368c722dc6be82d07a8e3c3585b75e301955",
+      "TRNM_PQ_OPENSSL_VERSION": "3.5.9",
+      "OPENSSL_CONF": "/dev/null",
+      "OPENSSL_MODULES": "/workspace/scratch/e537ad232c79/native-runtime-acceptance/provider/trnm-pq-provider-3.5.9.P6cfOXrY/install/lib/ossl-modules"
+    },
+    "actual_provider_binary_sha256": "08e4988f44357113a30082b8b37b368c722dc6be82d07a8e3c3585b75e301955",
+    "native_deadlines_or_resource_limits_changed": false,
+    "profile_observation": {
+      "cargo_finish_summary_label": "[unoptimized + debuginfo]",
+      "label_is_not_per_package_optimization_level": true,
+      "manifest_path": "trillionnium/Cargo.toml",
+      "manifest_commit": "38cf428103f48879fcc6b7dc0fc523d5c58ff2e0",
+      "manifest_sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+      "manifest_identical_at": [
+        "8d523cda45691a9472f8c27e8710ab8e98e6e040",
+        "6d6e7b1217b686dea074cd695981d4e7f778ba98",
+        "38cf428103f48879fcc6b7dc0fc523d5c58ff2e0"
+      ],
+      "current_manifest_identical": true,
+      "declared_workspace_profile_tables": {
+        "test": {
+          "package": {
+            "curve25519-dalek": {
+              "opt-level": 3
+            },
+            "ed25519-dalek": {
+              "opt-level": 3
+            },
+            "sha2": {
+              "opt-level": 3,
+              "debug-assertions": true,
+              "overflow-checks": true
+            },
+            "trnm-protocol": {
+              "opt-level": 3,
+              "debug-assertions": true,
+              "overflow-checks": true
+            },
+            "trnm-mvcc-fee": {
+              "opt-level": 1,
+              "debug-assertions": true,
+              "overflow-checks": true
+            },
+            "trnm-crypto-primitives": {
+              "opt-level": 3,
+              "debug-assertions": true,
+              "overflow-checks": true
+            },
+            "trnm-pon-node": {
+              "opt-level": 3,
+              "debug-assertions": true,
+              "overflow-checks": true
+            }
+          }
+        }
+      },
+      "interpretation": "The exact Cargo log label is retained. Actual package configuration must also account for the declared test profile overrides. These tables are source settings, not a reconstruction of unrecorded rustc command lines. The workspace manifest has no dev profile override table.",
+      "full_rustc_argv_captured": false
+    }
+  },
+  "runs": [
+    {
+      "name": "merged385-m09-persistent-6d6e7b12-attempt1",
+      "status": "PASS",
+      "command_argv": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-data-availability",
+        "--lib",
+        "cell::network::persistent::tests::",
+        "--",
+        "--test-threads=1"
+      ],
+      "cwd": "/workspace/scratch/fee7901564fd/chain",
+      "started_utc": "2026-11-05T01:30:40.853865+00:00",
+      "parent_commit_at_start": "8d523cda45691a9472f8c27e8710ab8e98e6e040",
+      "source_aggregate_sha256": "a1c5c81c26b78565b926388c8b13cf83e2b49343e0facc77f6acde929527c383",
+      "exit": 0,
+      "timed_out": false,
+      "wall_seconds_including_build": 36.03789420400062,
+      "receipt": "/workspace/scratch/fee7901564fd/validation-node/merged385-m09-persistent-6d6e7b12-attempt1.json",
+      "receipt_sha256": "8e6db6935a2a7745dc26e77bd5a667daecf3a46846e3e2a51a322484a49dd863",
+      "log": "/workspace/scratch/fee7901564fd/validation-node/merged385-m09-persistent-6d6e7b12-attempt1.log",
+      "log_bytes": 2570,
+      "log_sha256": "c451e77629b8efc9cb5de187e94fbe2a11d5cc88f486bae85767e1a0671ae37b",
+      "counts": {
+        "passed": 17,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 285
+      },
+      "test_seconds": 0.35,
+      "binary": {
+        "path": "/workspace/scratch/fee7901564fd/target-cell/debug/deps/trnm_data_availability-860e4d3b2378d360",
+        "bytes": 74812296,
+        "sha256": "549bb30b010fdf74a7736b10c38c72d266aa4c8d3800d8e47a3893bd2c0d9298",
+        "reverified_now": true
+      },
+      "cargo_finish_line": "Finished `test` profile [unoptimized + debuginfo] target(s) in 35.17s",
+      "cargo_finish_profile_name": "test"
+    },
+    {
+      "name": "merged385-m09-library-6d6e7b12-attempt2",
+      "status": "PASS",
+      "command_argv": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-data-availability",
+        "--lib",
+        "--all-features",
+        "--",
+        "--test-threads=1"
+      ],
+      "cwd": "/workspace/scratch/fee7901564fd/chain",
+      "started_utc": "2026-11-05T01:34:15.061104+00:00",
+      "parent_commit_at_start": "38cf428103f48879fcc6b7dc0fc523d5c58ff2e0",
+      "source_aggregate_sha256": "a1c5c81c26b78565b926388c8b13cf83e2b49343e0facc77f6acde929527c383",
+      "exit": 0,
+      "timed_out": false,
+      "wall_seconds_including_build": 43.45940092799992,
+      "receipt": "/workspace/scratch/fee7901564fd/validation-node/merged385-m09-library-6d6e7b12-attempt2.json",
+      "receipt_sha256": "cfcb085a92320d0c81fb1ad81261478f7f62c1025d3ccd92d7fb9cee10460060",
+      "log": "/workspace/scratch/fee7901564fd/validation-node/merged385-m09-library-6d6e7b12-attempt2.log",
+      "log_bytes": 32563,
+      "log_sha256": "b74f7640da02d58d8c4dc886bf282c2b0212a281ba575bae6f0574aa8a452bfe",
+      "counts": {
+        "passed": 302,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      "test_seconds": 42.67,
+      "binary": {
+        "path": "/workspace/scratch/fee7901564fd/target-cell/debug/deps/trnm_data_availability-860e4d3b2378d360",
+        "bytes": 74812296,
+        "sha256": "549bb30b010fdf74a7736b10c38c72d266aa4c8d3800d8e47a3893bd2c0d9298",
+        "reverified_now": true
+      },
+      "cargo_finish_line": "Finished `test` profile [unoptimized + debuginfo] target(s) in 0.41s",
+      "cargo_finish_profile_name": "test"
+    },
+    {
+      "name": "merged385-m09-clippy-6d6e7b12-attempt1",
+      "status": "PASS",
+      "command_argv": [
+        "cargo",
+        "+1.95.0",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-data-availability",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/workspace/scratch/fee7901564fd/chain",
+      "started_utc": "2026-11-05T01:36:17.231956+00:00",
+      "parent_commit_at_start": "38cf428103f48879fcc6b7dc0fc523d5c58ff2e0",
+      "source_aggregate_sha256": "a1c5c81c26b78565b926388c8b13cf83e2b49343e0facc77f6acde929527c383",
+      "exit": 0,
+      "timed_out": false,
+      "wall_seconds_including_build": 19.484363802999724,
+      "receipt": "/workspace/scratch/fee7901564fd/validation-node/merged385-m09-clippy-6d6e7b12-attempt1.json",
+      "receipt_sha256": "2022ea44474dec36a246d91eb635c0074d6615075c84b082af10c9c63778dc1a",
+      "log": "/workspace/scratch/fee7901564fd/validation-node/merged385-m09-clippy-6d6e7b12-attempt1.log",
+      "log_bytes": 325,
+      "log_sha256": "d82a991c1e910e494da8ec4beb223f4f0f044a8945a05de9393e455d9f01d6f4",
+      "counts": null,
+      "binary": null,
+      "count_note": "Clippy success; no test execution or test-count claim.",
+      "cargo_finish_line": "Finished `dev` profile [unoptimized + debuginfo] target(s) in 19.07s",
+      "cargo_finish_profile_name": "dev"
+    },
+    {
+      "name": "merged385-m06-library-6d6e7b12-attempt1",
+      "status": "PASS",
+      "command_argv": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-mvcc-fee",
+        "--lib",
+        "--all-features",
+        "--",
+        "--test-threads=1"
+      ],
+      "cwd": "/workspace/scratch/fee7901564fd/chain",
+      "started_utc": "2026-11-05T01:37:48.288447+00:00",
+      "parent_commit_at_start": "38cf428103f48879fcc6b7dc0fc523d5c58ff2e0",
+      "source_aggregate_sha256": "a1c5c81c26b78565b926388c8b13cf83e2b49343e0facc77f6acde929527c383",
+      "exit": 0,
+      "timed_out": false,
+      "wall_seconds_including_build": 259.81850237100025,
+      "receipt": "/workspace/scratch/fee7901564fd/validation-node/merged385-m06-library-6d6e7b12-attempt1.json",
+      "receipt_sha256": "797f3795b431e1f20d8fb8fa0d5094342c90fff5d63c1921880470bda0188a57",
+      "log": "/workspace/scratch/fee7901564fd/validation-node/merged385-m06-library-6d6e7b12-attempt1.log",
+      "log_bytes": 17070,
+      "log_sha256": "d997efe75dcf81e9870715f1c7762970e4220fb917bdac54ee7dfff4973972dd",
+      "counts": {
+        "passed": 126,
+        "failed": 0,
+        "ignored": 7,
+        "measured": 0,
+        "filtered": 0
+      },
+      "test_seconds": 61.82,
+      "binary": {
+        "path": "/workspace/scratch/fee7901564fd/target-cell/debug/deps/trnm_mvcc_fee-d84608d7777c78ee",
+        "bytes": 77077400,
+        "sha256": "d253514807a8616b673c0a0e9d0bcfaa0fd4d5b7a442095815ee2b799b5a81b4",
+        "reverified_now": true
+      },
+      "original_ignored_tests_retained": [
+        "test pon_commitment::bounded_encoding_tests::actual_state_fallback_encoding_cost ... ignored, explicit whole-test process RSS comparison; no Node or throughput qualification",
+        "test pon_commitment::bounded_encoding_tests::canonical_buffer_reuse_component_timing ... ignored, explicit encoder allocation A/B; excludes SQLite, roots, execution and networking",
+        "test pon_commitment::checked_binding_tests::checked_binding_complete_cost_observation ... ignored, explicit same-operation binding cost; not Node or network throughput",
+        "test pon_commitment::tests::immutable_parent_preview_component_timing ... ignored, explicit component timing; excludes SQLite, M05 and Node lock wait",
+        "test pon_commitment::tests::warm_parent_binding_component_timing ... ignored, explicit binding A/B timing; excludes execution, SQLite and Node locks",
+        "test pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_full_binding_cost ... ignored, explicit paired component cost, including adversarial same-root hints; no throughput qualification",
+        "test pon_executor::streaming_root_tests::complete_root_encoding_cost ... ignored, explicit paired complete-root cost; synthetic values, not native ledger growth"
+      ],
+      "cargo_finish_line": "Finished `test` profile [unoptimized + debuginfo] target(s) in 3m 17s",
+      "cargo_finish_profile_name": "test"
+    },
+    {
+      "name": "merged385-m06-clippy-6d6e7b12-attempt1",
+      "status": "PASS",
+      "command_argv": [
+        "cargo",
+        "+1.95.0",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-mvcc-fee",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/workspace/scratch/fee7901564fd/chain",
+      "started_utc": "2026-11-05T01:44:05.443898+00:00",
+      "parent_commit_at_start": "38cf428103f48879fcc6b7dc0fc523d5c58ff2e0",
+      "source_aggregate_sha256": "a1c5c81c26b78565b926388c8b13cf83e2b49343e0facc77f6acde929527c383",
+      "exit": 0,
+      "timed_out": false,
+      "wall_seconds_including_build": 55.5580009790001,
+      "receipt": "/workspace/scratch/fee7901564fd/validation-node/merged385-m06-clippy-6d6e7b12-attempt1.json",
+      "receipt_sha256": "61880679ffe1dfbc23b0bda1926fa218f9827a092edc401f61be453bf378920e",
+      "log": "/workspace/scratch/fee7901564fd/validation-node/merged385-m06-clippy-6d6e7b12-attempt1.log",
+      "log_bytes": 1018,
+      "log_sha256": "e6ca7d0677e491f9b0a5b3bdd16f13b59f01425d554e8b216b55950f9888e83e",
+      "counts": null,
+      "binary": null,
+      "count_note": "Clippy success; no test execution or test-count claim.",
+      "cargo_finish_line": "Finished `dev` profile [unoptimized + debuginfo] target(s) in 54.34s",
+      "cargo_finish_profile_name": "dev"
+    }
+  ],
+  "historical_95_controls_separate": {
+    "scope": "Original a9b implementation with final synchronized tests and paired fixed implementation later preserved by checkpoint95; these source hashes precede incoming44/385. Do not combine their counts or historical ELF hashes with after385 qualification.",
+    "identity": "/workspace/scratch/fee7901564fd/validation-cell/identity-final-f8.json",
+    "identity_sha256": "e216088b499e87003cf9d8d6da3174c9e95c452a598fd503015d791e0378bd7d",
+    "baseline_parent": "a9b8602706b66adba82655c3c2ce90bde88620a2",
+    "implementation_checkpoint": "95d37c7c31c601fb6ee319bc965a5956c7250f68",
+    "baseline_production_sha256": "fc7b99c9bee90cda3a3abee0de2da1e41cd5976a5b5126591b66992cee159e6d",
+    "fixed_production_sha256": "2206f77c88a50d328af4f976a8b5acf15a75d80029948f38eff5a06f0e85bc7a",
+    "shared_test_source_sha256": "86e34e0c7f01d8095e8299e3bc3b3957f3a04e1606a440f46885f5b25421e706",
+    "runs": [
+      {
+        "arm": "baseline_result",
+        "command_argv": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--locked",
+          "--offline",
+          "-p",
+          "trnm-data-availability",
+          "--lib",
+          "cell::network::persistent::tests::",
+          "--",
+          "--test-threads=1"
+        ],
+        "exit": 101,
+        "passed": 10,
+        "failed": 5,
+        "ignored": 0,
+        "log": "/workspace/scratch/fee7901564fd/validation-cell/baseline-persistent.log",
+        "log_sha256": "1bb34fd97a278f454add54459c7cb6e42bccd440b14e107e5f5b470fd3a577b3",
+        "historical_executed_binary_sha256": "5c6f865aabccba43e22c93459866e9c795f5a54127cc2c0229b725e5e33d9252",
+        "historical_executed_binary_bytes": 74131632
+      },
+      {
+        "arm": "candidate_persistent_result",
+        "command_argv": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--locked",
+          "--offline",
+          "-p",
+          "trnm-data-availability",
+          "--lib",
+          "cell::network::persistent::tests::",
+          "--",
+          "--test-threads=1"
+        ],
+        "exit": 0,
+        "passed": 15,
+        "failed": 0,
+        "ignored": 0,
+        "log": "/workspace/scratch/fee7901564fd/validation-cell/candidate-persistent.log",
+        "log_sha256": "0ff54ff31b50e9079145fefdf49f428f4777e37850a345015dd4bb8cb9475dab",
+        "historical_executed_binary_sha256": "044399fe8f0272b8ccea082bcb068c0ab4eae9be2a7f64d1f3f4a8fb9015827c",
+        "historical_executed_binary_bytes": 74133352
+      }
+    ],
+    "historical_binary_path_reused_later": true,
+    "current_binary_must_not_be_attributed_to_historical_controls": true
+  },
+  "preserved_non_evidence_failures": {
+    "earlier_zero_byte_summary": {
+      "path": "/workspace/scratch/fee7901564fd/validation-node/merged385-m09-m06-summary-6d6e7b12.json",
+      "observed_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "cause": "ENOSPC while writing summary",
+      "valid_evidence": false
+    },
+    "first_m09_full_attempt": {
+      "failure_receipt": "/workspace/scratch/fee7901564fd/validation-node/merged385-m09-library-6d6e7b12-attempt1.failure.json",
+      "failure_receipt_sha256": "0128c7c0227d4b803721aee22eadc8f355d6d29813e05d017445e43a18b0eefd",
+      "event": {
+        "name": "merged385-m09-library-6d6e7b12-attempt1",
+        "wrapper_exit": 1,
+        "cargo_started": false,
+        "error": "OSError: [Errno 28] No space left on device",
+        "error_site": "run_check.py:31 receipt.write_text before subprocess.Popen",
+        "incomplete_receipt_bytes": 0,
+        "native_log_exists": false,
+        "scope": "wrapper launch failure, no native test result"
+      },
+      "incomplete_receipt_path": "/workspace/scratch/fee7901564fd/validation-node/merged385-m09-library-6d6e7b12-attempt1.json",
+      "incomplete_receipt_bytes": 0,
+      "native_log_exists": false,
+      "cargo_started": false,
+      "interpretation": "Wrapper launch/write failure before Cargo; no native test result. Successful native full M09 result is attempt2."
+    }
+  },
+  "cargo_reexecution_for_summary": false,
+  "profile_wording_revision": {
+    "revised_at_utc": "2026-11-05T02:39:00.357440+00:00",
+    "prior_summary": "/workspace/scratch/fee7901564fd/validation-node/merged385-m09-m06-verified-summary.json",
+    "prior_summary_bytes": 17092,
+    "prior_summary_sha256": "c40b0d8fe00ec53cdfb04b8346c4b3c30a8b71cc56238418121cc9cba1bf27ea",
+    "prior_summary_preserved": true,
+    "reason": "Separate Cargo finish summary labels from workspace package profile overrides. Test M06 opt-level=1; Node/protocol/crypto opt-level=3. No rustc argv was recorded. Gate results, source binding and ELF identities are unchanged.",
+    "cargo_rerun": false
+  }
+}

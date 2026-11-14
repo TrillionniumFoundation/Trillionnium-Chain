@@ -1,0 +1,8 @@
+tree 42261bc65d7725458d58b491b71b30a3fe27b755
+parent 6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d
+author Codex <codex@openai.com> 1794440423 -0500
+committer Codex <codex@openai.com> 1794440423 -0500
+
+feat(root): reconcile provider evidence through the live V5 witness
+
+Signed-off-by: Codex <codex@openai.com>

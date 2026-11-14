@@ -1,0 +1,27 @@
+{
+  "all_members_verified": true,
+  "archive": {
+    "bytes": 2377812,
+    "filename": "validation-evidence.tar.xz",
+    "git_blob_sha1": "bce9881329413825dfa5fc053de59c9665ab84e0",
+    "sha256": "82e3f7e88b83cde4bc3edff7db6b28f0cd81724978ca6929c51cb46192b43467"
+  },
+  "manifest": {
+    "bytes": 57252,
+    "filename": "validation-evidence.members.json",
+    "git_blob_sha1": "bda54d0b11dffe8db29d6c46088f90725527ccd4",
+    "sha256": "dc70a429647bab1ec096ef05bfbd972e1ae05f399bb5613a3287591c92b30342"
+  },
+  "member_count": 159,
+  "mode": "FROZEN_AFTER_ROOT_SOURCE_GUARDS",
+  "no_repository_files_modified": true,
+  "original_observation_statuses_unchanged": true,
+  "parts": [],
+  "reader_per_file_limit_bytes": 4194304,
+  "repository_publish_files": [
+    "validation-evidence.tar.xz",
+    "validation-evidence.members.json",
+    "validation-evidence.packaging.json"
+  ],
+  "schema": "trnm-local-validation-evidence-packaging-v1"
+}

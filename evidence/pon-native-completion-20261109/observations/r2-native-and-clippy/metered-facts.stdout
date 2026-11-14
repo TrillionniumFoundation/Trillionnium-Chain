@@ -1,0 +1,18 @@
+
+running 10 tests
+test ingress::public_v3::scalar_cpu::metered_fact_tests::a_foreign_cpu_domain_is_refused_before_m05_work_and_any_reservation ... METERED_NODE_BIND rejected_foreign=true foreign_cpu_reservations=0 valid_paid=true
+ok
+test ingress::public_v3::scalar_cpu::metered_fact_tests::cancellation_keeps_spent_cpu_and_retry_does_not_reset_domain ... ok
+test ingress::public_v3::scalar_cpu::metered_fact_tests::continuously_distinct_bad_products_exhaust_one_original_prepaid_domain ... DISTINCT_W1_REFUSALS attempts=78 actual_cpu_ns=302130820 hits=0 retained_state_unchanged=true exhausted_before_next_replay=true
+ok
+test ingress::public_v3::scalar_cpu::metered_fact_tests::exhausted_domain_refuses_before_cold_or_warm_math_and_state ... ok
+test ingress::public_v3::scalar_cpu::metered_fact_tests::failed_product_and_warm_retry_each_pay_exact_cpu_without_poisoning ... ok
+test ingress::public_v3::scalar_cpu::metered_fact_tests::paid_cached_native_execution_registers_all_real_m06_workers ... METERED_FACT_BOUNDARY worker accounting assertions complete
+ok
+test ingress::public_v3::scalar_cpu::metered_fact_tests::panic_fences_shared_budget_without_rewriting_native_history ... ok
+test ingress::public_v3::scalar_cpu::metered_fact_tests::read_request_cannot_consume_the_mutation_budget_via_this_entry ... ok
+test ingress::public_v3::scalar_cpu::metered_fact_tests::shared_listener_reconstruction_never_refills_debt_or_replaces_domain ... ok
+test ingress::public_v3::scalar_cpu::metered_fact_tests::two_reserved_real_owners_block_a_third_cache_entry_then_release_normally ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 1294 filtered out; finished in 1.13s
+

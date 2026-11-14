@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "/usr/bin/git",
+    "-C",
+    "/home/qian-qi/chain-pq-a418-final-cargo-home/advisory-dbs/advisory-db-3157b0e258782691",
+    "archive",
+    "--format=tar.gz",
+    "--output=/home/qian-qi/chain-pq-a418-final-ci-tools/preparation-evidence/continuation-1/advisories-28d73fc95e5972af3403225a217def57dcaba3c4.tar.gz",
+    "28d73fc95e5972af3403225a217def57dcaba3c4"
+  ],
+  "cargo_net_offline": "true",
+  "elapsed_seconds": 0.16566127305850387,
+  "id": "archive-official-advisory-db",
+  "returncode": 0,
+  "stderr": "/home/qian-qi/chain-pq-a418-final-ci-tools/preparation-evidence/continuation-1/archive-official-advisory-db.stderr",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout": "/home/qian-qi/chain-pq-a418-final-ci-tools/preparation-evidence/continuation-1/archive-official-advisory-db.stdout",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

@@ -1,0 +1,157 @@
+{
+  "schema": "TRNM-W1-QROM-FORMAL-BRIDGE-REVIEW1",
+  "date": "2026-11-07",
+  "candidate_head": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+  "status": "selected_january_statements_and_conditional_arithmetic_only",
+  "sources": {
+    "cdhz_metadata": {
+      "url": "https://eprint.iacr.org/2025/2166",
+      "latest_revision_date_observed": "2026-03-02",
+      "latest_full_text_accessed": false,
+      "ordinary_https_latest_pdf_status": 403,
+      "pdf_sha256": null
+    },
+    "cdhz_january_index": {
+      "url": "https://files01.core.ac.uk/download/690750245.pdf",
+      "title_page_date": "2026-01-01",
+      "access": "search_provider_indexed_text",
+      "ordinary_https_pdf_status_in_authorized_host_trial": 522,
+      "pdf_sha256": null,
+      "whole_manuscript_proof_audited": false,
+      "latest_revision_equivalence_verified": false
+    },
+    "cdhz_publisher": {
+      "url": "https://doi.org/10.1007/978-3-032-25336-1_14",
+      "published_date": "2026-05-09",
+      "access": "metadata_and_preview_notes_only"
+    },
+    "fri_security": {
+      "url": "https://eprint.iacr.org/2023/1071",
+      "indexed_pdf_url": "https://eprint.iacr.org/2023/1071.pdf",
+      "indexed_title_page_date": "2024-02-15",
+      "latest_metadata_date_observed": "2024-03-05",
+      "conference_deposit_url": "https://par.nsf.gov/servlets/purl/10510337",
+      "historical_risc_zero_full_rbr_statement_page": 18,
+      "historical_sentence_proves_no_later_result": false,
+      "matching_current_locked_full_rbr_proof_located_in_this_review": false
+    },
+    "specified_conjecture_counterexamples": [
+      "https://eprint.iacr.org/2025/2046",
+      "https://arxiv.org/abs/2604.09724"
+    ]
+  },
+  "reviewed_interfaces": {
+    "definition_10_3": {
+      "pages": [71, 72],
+      "quantifiers": "There exist a shared emulated oracle and quantum extractor; component guarantees quantify over security parameter, instance-size bound, query bounds, stateful quantum distinguishers and adaptive quantum provers.",
+      "requirements": [
+        "simulation_indistinguishability",
+        "classical_answer_and_residual_state_idempotency",
+        "perfect_ordinary_query_commutativity",
+        "squared_norm_ordinary_extraction_commutator_bound",
+        "straightline_extractability_for_strict_and_relaxed_relations"
+      ],
+      "implementation_instantiated": false
+    },
+    "theorem_10_6": {
+      "pages": [72, 73],
+      "same_Init_U1_U2_required": true,
+      "exact_middle_strict_and_relaxed_relations_required": true,
+      "nondecreasing_commutativity_envelopes_required": true,
+      "left_extraction_query_point": "t+qV1+qV2+qE2",
+      "right_extraction_query_point": "t+qV1",
+      "commutativity_query_point": "t+2*qV1+qV2+qE2+qRhat2+qRhat3",
+      "commutativity_coefficient": "2*qE2^2*(qV1^2+(qRhat2+qRhat3)^2)",
+      "component_weights": [2, 2],
+      "calculator": "scripts/w1_qrom_composition_budget.py",
+      "calculator_proves_component_hypotheses": false
+    },
+    "theorem_6_10": {
+      "page": 46,
+      "rrbr_coefficient": "80*(t+k+1)*(w+k)",
+      "finite_randomness_term": "(t+k+1)*k/2^r_min",
+      "rrbr_maximum": "max over rounds i and all (x,y) in the specified statement set Z",
+      "knowledge_extractor_required": true,
+      "fixed_project_rrbr_bound": null
+    },
+    "theorem_8_3_named_components": {
+      "page": 53,
+      "commutativity": "240*(t+1)/2^sigma",
+      "extraction_correctness": "8*n_VC*l_max/2^sigma",
+      "offline_extractability": "(160*w_VC*t^2+16*q_s*log2(l_max))/2^sigma",
+      "online_indistinguishability_as_displayed": "240*w_VC*t^2/2^sigma",
+      "fixed_project_random_oracle_sigma": null,
+      "actual_poseidon_commitment_instantiation_proved": false
+    },
+    "theorem_11_3": {
+      "pages": [78, 79],
+      "requires_monotone_target_relation": true,
+      "requires_pqsr_straightline_knowledge_extractor": true,
+      "requires_compatible_coherent_admissible_multi_extractor": true,
+      "component_weights": [4, 4, 8, 4],
+      "maximization_domain": "nonnegative query masses w_FS+w_VC+w_MultiExtract <= t_NRDX",
+      "masses_are_necessarily_integer_counters": false,
+      "vc_extraction_query_bound": "2*t_NRDX+1",
+      "vc_extraction_mass_argument": "w_MultiExtract+2*w_FS+1",
+      "offline_opening_bound": "q_y+q_Pi+l_max*n_y_prime",
+      "online_query_bound": "t_NRDX+1+q_V+k+q_CRhat+q_CRhat_prime",
+      "online_call_arguments_after_query_bound": [
+        "w_MultiExtract+1",
+        "w_VC+q_CRhat+q_CRhat_prime",
+        "w_FS+k",
+        "sigma"
+      ],
+      "additional_commutativity_term": "2*q_V^2*kappa_com(lambda,t_NRDX+1+k+q_V,l_max,k+n_y)",
+      "definition_7_3_online_signature": ["lambda", "t", "w_MultiExtract", "w_VC", "w_Record", "sigma"],
+      "theorem_8_3_displayed_online_signature": ["lambda", "t", "w_VC", "w_MultiExtract", "w_Record", "sigma"],
+      "january_online_signature_reconciled": false,
+      "march_revision_contains_same_discrepancy_asserted": false,
+      "numeric_substitution_performed": false,
+      "fixed_project_bound": null
+    }
+  },
+  "fixed_fri_interface": {
+    "implementation_evidence": "evidence/pon-w1-qrom-implementation-20261107/implementation-map.json",
+    "base_prime": "2013265921",
+    "extension_degree": 4,
+    "inverse_rate": 4,
+    "folding_factor": 16,
+    "query_count_with_replacement": 50,
+    "terminal_coefficient_limit": 256,
+    "literal_algorithm_1_mapping_proved": false,
+    "johnson_expression_observation": {
+      "premise": "Even if the binary-FRI mapping were granted, Theorem 4.1's regime requires delta<1-sqrt(rho)-eta with eta>0.",
+      "rho": {"numerator": "1", "denominator": "4"},
+      "query_term": "(1-delta)^50 > 2^-50",
+      "that_expression_can_supply_97_bit_rrbr_bound": false,
+      "is_lower_bound_on_actual_failure": false,
+      "is_w1_security_bit_estimate": false
+    }
+  },
+  "obligations": [
+    {"id": "cdhz.authoritative_version", "depends_on": [], "status": "unresolved", "deliverable": "Accessible authoritative full version, byte identity, and statement/interface correspondence."},
+    {"id": "relation.acceptance_family", "depends_on": [], "status": "unresolved", "deliverable": "Full accepted strict/relaxed relations for all named recursion programs, padding exclusion and reachable trace sizes."},
+    {"id": "relation.monotone_target", "depends_on": ["relation.acceptance_family"], "status": "unresolved", "deliverable": "Definition 11.1 proof under partial implicit-instance restriction."},
+    {"id": "fri.fixed_protocol", "depends_on": ["relation.acceptance_family"], "status": "unresolved", "deliverable": "Radix-16 folding, terminal polynomial, powers batching, field/domain and challenge-sampler theorem mapping."},
+    {"id": "fri.conjecture_dependencies", "depends_on": ["fri.fixed_protocol"], "status": "unresolved", "deliverable": "Exact conjecture versions, quantifiers, fixed parameters and any unaffected sufficient alternatives."},
+    {"id": "ior.full_rrbr_knowledge", "depends_on": ["fri.fixed_protocol", "fri.conjecture_dependencies"], "status": "unresolved", "deliverable": "Uniform per-round extractor and error for complete AIR/lookup/permutation/DEEP relation, including exceptional events."},
+    {"id": "oracle.joint_emulation", "depends_on": [], "status": "unresolved", "deliverable": "One compatible joint model covering FS, all commitment uses, image/control boundaries and extraction; no inferred independence from marginal laws."},
+    {"id": "vc.quantum_multi_extractability", "depends_on": ["oracle.joint_emulation"], "status": "unresolved", "deliverable": "Actual leaf/node/cap scheme with coherent admissible extraction and correctness/offline/online/commutator envelopes."},
+    {"id": "bcs.compilation_and_bindings", "depends_on": ["relation.monotone_target", "ior.full_rrbr_knowledge", "vc.quantum_multi_extractability"], "status": "unresolved", "deliverable": "Faithful formal compilation, guest/control/parameter bindings and both committed-relation deciders."},
+    {"id": "composition.compatible_algorithms", "depends_on": ["bcs.compilation_and_bindings"], "status": "unresolved", "deliverable": "Exact middle relations and the same Init/U1/U2 across actual recursive reductions, with intermediate-size coverage."},
+    {"id": "budget.lifetime_and_enlargements", "depends_on": ["oracle.joint_emulation", "composition.compatible_algorithms"], "status": "unresolved", "deliverable": "Lifetime adaptive quantum-query envelope and component domains covering all verifier/extractor/decider enlargements."},
+    {"id": "w1.complete_proof_bound", "depends_on": ["cdhz.authoritative_version", "bcs.compilation_and_bindings", "composition.compatible_algorithms", "budget.lifetime_and_enlargements"], "status": "unresolved", "deliverable": "A complete fixed-instance bound with every premise and quantified domain discharged."}
+  ],
+  "qualification": {
+    "unconditional_project_security_bits": null,
+    "quantum_security_bits": null,
+    "full_recursive_security_bits": null,
+    "qrom_theorem_instantiated": false,
+    "complete_w1_soundness_qualified": false,
+    "pq_signature_qualification_inferred": false,
+    "quantum_work_qualified": false,
+    "accepted_w1_proof_attack_demonstrated": false,
+    "production_qualified": false,
+    "consensus_admission": false
+  }
+}

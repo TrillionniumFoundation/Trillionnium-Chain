@@ -1,0 +1,131 @@
+{
+  "schema": "TRNM-W1-RUINT-SECURITY-FILES1",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 6488,
+      "sha256": "d66206a51c22aece65746b5034dd5b2cb10240bf42086361e60f65bf93a244ca"
+    },
+    {
+      "path": "attempt4-cancellation.json",
+      "bytes": 551,
+      "sha256": "e4f105abb1910cf2f9d137ee2eb63aa04c49befda52f5025cc8274151e0f9762"
+    },
+    {
+      "path": "cached-crates-index-versions.json",
+      "bytes": 2542,
+      "sha256": "98e3e49c768c288f9b8e85017275f5e26fdfc37cc62401d60c4a64e2f7badda2"
+    },
+    {
+      "path": "capacity-readback.json",
+      "bytes": 874,
+      "sha256": "dc925469ced1b8a618e6009199f8a8fa2323e07829c3099192bff453e6173f74"
+    },
+    {
+      "path": "feature-tree-receipt.json",
+      "bytes": 1190,
+      "sha256": "2de27a556587fd1bb09daadaaf468fd3400fd309d150315a09ed7307d085a9d9"
+    },
+    {
+      "path": "guest-ruint-feature-tree.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "guest-ruint-feature-tree.stdout",
+      "bytes": 1360,
+      "sha256": "18bd9027c52c30e043d0caa5ddad378f5f406be42eb57798985a2331a5089946"
+    },
+    {
+      "path": "official-metadata-reader.py",
+      "bytes": 3116,
+      "sha256": "562479649067a1ad3bdb23a514c9f19db023f6fe404ffd9ea235ab0162e822e2"
+    },
+    {
+      "path": "official-risc0-rust-releases/releases-selected.json",
+      "bytes": 9938,
+      "sha256": "20d47786f6db9b97bdfc7c17083c8dbf484e682a150c691bfdd01846cf7e1130"
+    },
+    {
+      "path": "official-risc0-rust-releases/response.json",
+      "bytes": 50774,
+      "sha256": "8d8a1e619892f1b813d2adf187e7e09b49ede22e374066e5fc3fb019637e89a8"
+    },
+    {
+      "path": "official-risc0-rust-releases/result.json",
+      "bytes": 736,
+      "sha256": "a8a45f841b81545bb1ee8c6de18f1ca2d20b0911feaf43ea9ba965a1dfbc3c03"
+    },
+    {
+      "path": "reclaim-own-restored-188/declaration.json",
+      "bytes": 54204,
+      "sha256": "13dfa3832e24db563d8a2a58bb4a88b40528c95d093f5f2f25ba23a71ae51f6f"
+    },
+    {
+      "path": "reclaim-own-restored-188/result.json",
+      "bytes": 776,
+      "sha256": "e3e287049a8b505fe3a1de1d2e8d4dcd5469c31d898cee64aab907fbd371d029"
+    },
+    {
+      "path": "restore-fixed-lock/commands.jsonl",
+      "bytes": 1707,
+      "sha256": "a59b139d2eae33864f0c744ff803d4d3fbec37ebc5b1cea9703aeeb57d707881"
+    },
+    {
+      "path": "restore-fixed-lock/enum-ordinalize-derive.stderr",
+      "bytes": 122,
+      "sha256": "f5b442f2f42f21adbe3e0939277474437414c5392063792a25e157e7268f9d93"
+    },
+    {
+      "path": "restore-fixed-lock/enum-ordinalize-derive.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "restore-fixed-lock/enum-ordinalize.stderr",
+      "bytes": 115,
+      "sha256": "4f82bc4629194a7678c23aeba7bf0b3798d1a1b2eb0ef2322ff1a3c7b419d5e3"
+    },
+    {
+      "path": "restore-fixed-lock/enum-ordinalize.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "restore-fixed-lock/rejected-guest-Cargo.lock",
+      "bytes": 37506,
+      "sha256": "6de3cb567deb89569bdabe5c224e44b6fd5232ae9a91d9074e55bd4f9b43a993"
+    },
+    {
+      "path": "restore-fixed-lock/restored-fixed-guest-Cargo.lock",
+      "bytes": 37525,
+      "sha256": "018423c898d09d0be7a7fbe207e4a1672c5b6f36202dda765a81da852c044d18"
+    },
+    {
+      "path": "restore-fixed-lock/result.json",
+      "bytes": 3277,
+      "sha256": "a611ab9ab6798386285f6f5dda2aff5f12f1a869515d0b17a680f8b17c2660af"
+    },
+    {
+      "path": "restore-fixed-lock/ruint.stderr",
+      "bytes": 38,
+      "sha256": "9c5e53cd5c5605cd6415c165fe34fd192b50295873edfbbd522a9da13729c158"
+    },
+    {
+      "path": "restore-fixed-lock/ruint.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "security-review.json",
+      "bytes": 12289,
+      "sha256": "16b1c402167f382df616ecab01a5e721339f4a97d92e3d97253eb28ca5081de1"
+    },
+    {
+      "path": "unexecuted-rejected-attempt4-predeclaration.json",
+      "bytes": 10323,
+      "sha256": "bac48f6fcfc358e9332dc3e3cab2d86aeaa9f04597d9c68b6100c28cb1afa30c"
+    }
+  ],
+  "manifest_excludes_self": true
+}

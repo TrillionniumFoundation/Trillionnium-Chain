@@ -1,0 +1,142 @@
+{
+  "schema": "chain-integrated-side-head-reachability-v1",
+  "main_original_head": "86c2e3a68d28d6b4e583555f16c649d7d3c24cd3",
+  "main_remote_head": "ecdaf1679e9c2e1ea725d4ebf355fd9bdaee82a9",
+  "main_current_tree": "9f57f975d74537af5032859a59f7fdb0e02a7b59",
+  "blocked_M06_original_head": "08d647017c38eb0213f8d60db938222df4f59195",
+  "blocked_M06_remote_head": "024f4806d3baf28cb48b876ea5e5f1a6cd302a5c",
+  "side_heads": [
+    {
+      "branch_label": "refs/heads/feature/chain-cell-model-20261027",
+      "original_head": "414efebbd8a2cd7d339a1dab1eb02ca2a3cf96ec",
+      "remote_head": "1a85bcc35bc08aec83f1fd33c8af73f2ee071f57",
+      "tree": "7d900eb63393e0ab67a7f47e22a859436c6cb505",
+      "already_reachable_from_main": false,
+      "additional_publication_merge_parent_needed": true,
+      "reason_already_content_integrated": "2 original side commits each have exact resulting file-delta matches in main ancestors; original side identities remain separate because integration replayed the changes.",
+      "integration_matches": [
+        {
+          "original_side_commit": "a3f82bb6ceff5cdcc1b8cc86d6da75143ead5c84",
+          "integrated_original_commit": "37203880dfaaf6f555a6c46ebdd2de667f262655",
+          "integrated_remote_commit": "9e3f787b59e2d534c0429a8e7d10b2f791c3076c",
+          "equal_changed_entries": 138,
+          "equivalence": "Exact changed path, mode, object type and resulting blob SHA set"
+        },
+        {
+          "original_side_commit": "414efebbd8a2cd7d339a1dab1eb02ca2a3cf96ec",
+          "integrated_original_commit": "7c697640084d77410439fe895de57d5daaf11ce3",
+          "integrated_remote_commit": "89891db115c320b6339169e0cbdf11d38f0dee6d",
+          "equal_changed_entries": 80,
+          "equivalence": "Exact changed path, mode, object type and resulting blob SHA set"
+        }
+      ],
+      "integrating_original_merge": null,
+      "integrating_remote_merge": null,
+      "M06_in_source_ancestry": false,
+      "M06_in_remote_ancestry": false
+    },
+    {
+      "branch_label": "refs/heads/feature/chain-quantum-daa-model-20261027",
+      "original_head": "bf1f4b1044a6fbcf47e0a51d6a72535996dbd928",
+      "remote_head": "bee267fe67c816a53126b3c313eef6c7f0757827",
+      "tree": "0d6bc43e3af6ec51821676a125540dc741f796e8",
+      "already_reachable_from_main": false,
+      "additional_publication_merge_parent_needed": true,
+      "reason_already_content_integrated": "5 original side commits each have exact resulting file-delta matches in main ancestors; original side identities remain separate because integration replayed the changes.",
+      "integration_matches": [
+        {
+          "original_side_commit": "c9bec058eed88708944b29e7b9332c9617849015",
+          "integrated_original_commit": "24d94c1b4015f4b6d50b1301ba73a88fdbbbb4f3",
+          "integrated_remote_commit": "f6afc9e9b71d7dd5c5c9d949117a8985e18d790e",
+          "equal_changed_entries": 5,
+          "equivalence": "Exact changed path, mode, object type and resulting blob SHA set"
+        },
+        {
+          "original_side_commit": "e92d3ac72663a3e77f1b45a76d991018d34583c4",
+          "integrated_original_commit": "fee9da23d95235a0e0552133bab815cc91dd7e5c",
+          "integrated_remote_commit": "d3d739f894c5ec18b4196ccad4c6d9131bc3aa4d",
+          "equal_changed_entries": 19,
+          "equivalence": "Exact changed path, mode, object type and resulting blob SHA set"
+        },
+        {
+          "original_side_commit": "f1829c8fa8550a1665bc2da34cbd8b6e6a8b2714",
+          "integrated_original_commit": "9419359c6e58a3f3313a15f4ad7db70421c21121",
+          "integrated_remote_commit": "d52dacd60de7a2d8861e6f1abb263526b0b8b5c5",
+          "equal_changed_entries": 3,
+          "equivalence": "Exact changed path, mode, object type and resulting blob SHA set"
+        },
+        {
+          "original_side_commit": "0915e5ab19f4489618b9c7cfa25fe65644bfa010",
+          "integrated_original_commit": "966d3bd06af3785c2af24ad59afa94dd673f97dd",
+          "integrated_remote_commit": "b70a20e7d836bf6dea344e5e431fdc464d24377c",
+          "equal_changed_entries": 2,
+          "equivalence": "Exact changed path, mode, object type and resulting blob SHA set"
+        },
+        {
+          "original_side_commit": "bf1f4b1044a6fbcf47e0a51d6a72535996dbd928",
+          "integrated_original_commit": "065414299a6605ea5c151ad6e0cadca4895d44c2",
+          "integrated_remote_commit": "756a1604f96a98ba01869e04e91b86ed5cf90990",
+          "equal_changed_entries": 10,
+          "equivalence": "Exact changed path, mode, object type and resulting blob SHA set"
+        }
+      ],
+      "integrating_original_merge": null,
+      "integrating_remote_merge": null,
+      "M06_in_source_ancestry": false,
+      "M06_in_remote_ancestry": false
+    },
+    {
+      "branch_label": "refs/heads/fix/chain-history-budget-killcuts-20261027",
+      "original_head": "375ea483fbf73044e9737fa13114fe050183bfc5",
+      "remote_head": "33f489f691b4f3be743aa7630c971ee088eb8d7b",
+      "tree": "5f891b3fc7a1b50ff4cbbc5c03492d3a7e8bd12c",
+      "already_reachable_from_main": false,
+      "additional_publication_merge_parent_needed": true,
+      "reason_already_content_integrated": "2 original side commits each have exact resulting file-delta matches in main ancestors; original side identities remain separate because integration replayed the changes.",
+      "integration_matches": [
+        {
+          "original_side_commit": "bb2d444a3f5fe24b0077c1f01ed1d0953c2b6ff1",
+          "integrated_original_commit": "83e90cb2b4b2c3ac17b000280b976ddbe607ebb1",
+          "integrated_remote_commit": "dc8d2370799d28f7e46a245b79eb8eb47f0db879",
+          "equal_changed_entries": 20,
+          "equivalence": "Exact changed path, mode, object type and resulting blob SHA set"
+        },
+        {
+          "original_side_commit": "375ea483fbf73044e9737fa13114fe050183bfc5",
+          "integrated_original_commit": "31fc8a0ecada2c04927daee998fd0ba106da872a",
+          "integrated_remote_commit": "bd6dfcdb72e11bdb4bbfc837f9b4458da15aaa43",
+          "equal_changed_entries": 4,
+          "equivalence": "Exact changed path, mode, object type and resulting blob SHA set"
+        }
+      ],
+      "integrating_original_merge": null,
+      "integrating_remote_merge": null,
+      "M06_in_source_ancestry": false,
+      "M06_in_remote_ancestry": false
+    },
+    {
+      "branch_label": "refs/heads/fix/chain-pq-cell-deadline-20261027",
+      "original_head": "4e0d71007ab6ed633a4f90ad237f15dbd8a2a5cc",
+      "remote_head": "3636bec60c3a4d4ba43b867842681f361bf96fbf",
+      "tree": "79496630489e2e75b42cfd74a0831be8e57be398",
+      "already_reachable_from_main": true,
+      "additional_publication_merge_parent_needed": false,
+      "reason_already_content_integrated": "Already a genuine ancestor through original merge d4a40b47374799b8e892f2fb7a378d4a6096509b; no extra parent is required for reachability.",
+      "integration_matches": [],
+      "integrating_original_merge": "d4a40b47374799b8e892f2fb7a378d4a6096509b",
+      "integrating_remote_merge": "7728ec63f0bcc942ad542c55a303ae744780be9d",
+      "M06_in_source_ancestry": false,
+      "M06_in_remote_ancestry": false
+    }
+  ],
+  "suggested_additional_publication_parent_shas": [
+    "1a85bcc35bc08aec83f1fd33c8af73f2ee071f57",
+    "bee267fe67c816a53126b3c313eef6c7f0757827",
+    "33f489f691b4f3be743aa7630c971ee088eb8d7b"
+  ],
+  "publication_merge_tree_must_equal_future_primary_metadata_parent_tree": true,
+  "mapped_original_commits_reachable_before": 29,
+  "mapped_original_commits_reachable_after_suggested_side_parents": 38,
+  "blocked_M06_excluded_before_and_after": true,
+  "remote_mutations_performed": false
+}

@@ -1,0 +1,16 @@
+{
+  "base": "9f04640877078204d367f753eba684d94e705a74",
+  "command": [
+    "/workspace/scratch/b5a148b09b11/next-validation/pinned-peer-old-fixture/old-fixture-test-elf",
+    "actual_paid_pinned_v3_follows_qualified_native_chain_and_reuses_only_durable_admission",
+    "--exact",
+    "--show-output",
+    "--test-threads=1"
+  ],
+  "selector": "actual_paid_pinned_v3_follows_qualified_native_chain_and_reuses_only_durable_admission",
+  "binary_sha256": "7fc4a59ebd95b56d6e57255fff13660a9c3030f9a80226c54966fc58ee732b96",
+  "old_fixture_sha256": "6c3782c047b334ff26ae948b75fd7dd9ce69ca6db82f61475b38db571081c1e7",
+  "exit_code": 101,
+  "wall_ns": 10118533660,
+  "log_sha256": "b18f4a0fefb149d8e461863f9bab612be4d9f103ece7e5ee6d6a65e9386e30cd"
+}

@@ -1,0 +1,266 @@
+{
+  "changed_source_files": [],
+  "completed_at_utc": "2026-11-10T10:10:46.109855+00:00",
+  "gates": [
+    {
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "completed_at_utc": "2026-11-10T10:01:12.552512+00:00",
+      "elapsed_seconds": 0.031649149022996426,
+      "exit_code": 0,
+      "failure": null,
+      "log_sha256": "ff54581654e0f832cc74bee0c819644e1663993a00ca5bb835ce58462675886c",
+      "name": "preflight",
+      "started_at_utc": "2026-11-10T10:01:12.520858+00:00"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "c57a384abe3edf88e79ca7ecbd0de645df4934c6"
+      ],
+      "completed_at_utc": "2026-11-10T10:01:14.196715+00:00",
+      "elapsed_seconds": 1.6158246039412916,
+      "exit_code": 0,
+      "failure": null,
+      "log_sha256": "e57b75be6d1a824dd3952d88fd3955432f597402dadbaaf739a98a2203ac9001",
+      "name": "exact-source",
+      "started_at_utc": "2026-11-10T10:01:12.580902+00:00"
+    },
+    {
+      "command": [
+        "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1",
+        "--features",
+        "trnm-pon-node/pq-native-openssl"
+      ],
+      "completed_at_utc": "2026-11-10T10:01:14.292268+00:00",
+      "elapsed_seconds": 0.0638624089770019,
+      "exit_code": 0,
+      "failure": null,
+      "log_sha256": "3529ade41a3920ae62862909ebf56dd9a1d451b28c3d64fc177907155af9a8cd",
+      "name": "cargo-graph",
+      "started_at_utc": "2026-11-10T10:01:14.228418+00:00"
+    },
+    {
+      "command": [
+        "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--jobs",
+        "2",
+        "-p",
+        "trnm-data-availability",
+        "--example",
+        "cell_sealed_research_next_use_v2",
+        "--",
+        "--test-threads=1"
+      ],
+      "completed_at_utc": "2026-11-10T10:01:25.006404+00:00",
+      "elapsed_seconds": 10.682282003108412,
+      "exit_code": 0,
+      "failure": null,
+      "log_sha256": "e1b0f683e66719a6775ee5860f391871070e87d5ba4274e42f85db6935df68d3",
+      "name": "old-copy-entry",
+      "started_at_utc": "2026-11-10T10:01:14.324125+00:00"
+    },
+    {
+      "command": [
+        "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--jobs",
+        "2",
+        "-p",
+        "trnm-data-availability",
+        "--example",
+        "cell_sealed_research_paged_next_use_v1",
+        "--",
+        "--test-threads=1"
+      ],
+      "completed_at_utc": "2026-11-10T10:01:35.616479+00:00",
+      "elapsed_seconds": 10.576791241997853,
+      "exit_code": 0,
+      "failure": null,
+      "log_sha256": "bcfc2d316580acb47e96f7d4fcbb5186870351900e035dd1fc5f3a59abc0a5d0",
+      "name": "new-paged-entry",
+      "started_at_utc": "2026-11-10T10:01:25.039690+00:00"
+    },
+    {
+      "command": [
+        "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--jobs",
+        "2",
+        "-p",
+        "trnm-data-availability",
+        "paged_consumer_restore",
+        "--",
+        "--test-threads=1"
+      ],
+      "completed_at_utc": "2026-11-10T10:02:16.811025+00:00",
+      "elapsed_seconds": 41.16453109285794,
+      "exit_code": 0,
+      "failure": null,
+      "log_sha256": "d08c114e70e5297f02edd58b92d089f8d0949c65b43ab2b7dad1a2759554865d",
+      "name": "new-restore-cases",
+      "started_at_utc": "2026-11-10T10:01:35.646504+00:00"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "completed_at_utc": "2026-11-10T10:02:18.765710+00:00",
+      "elapsed_seconds": 1.9228172739967704,
+      "exit_code": 0,
+      "failure": null,
+      "log_sha256": "0d38ed7fbba3ae19375a9892b1266b0bf53c07a9a48e8d8c33c4b6826f45fc40",
+      "name": "source-integrity-negatives",
+      "started_at_utc": "2026-11-10T10:02:16.842886+00:00"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "scripts/ci/check_repository.py"
+      ],
+      "completed_at_utc": "2026-11-10T10:02:26.924779+00:00",
+      "elapsed_seconds": 8.128803612897173,
+      "exit_code": 0,
+      "failure": null,
+      "log_sha256": "a1f20dc89d7571b2d27efe18b920395d7a14b227a1ca2aadae925f8883f9610e",
+      "name": "repository-and-links",
+      "started_at_utc": "2026-11-10T10:02:18.795988+00:00"
+    },
+    {
+      "command": [
+        "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--jobs",
+        "2",
+        "-p",
+        "trnm-data-availability",
+        "--",
+        "--test-threads=1"
+      ],
+      "completed_at_utc": "2026-11-10T10:04:55.315296+00:00",
+      "elapsed_seconds": 148.35670464206487,
+      "exit_code": 0,
+      "failure": null,
+      "log_sha256": "f45058018b355c735ff68779705598a7243743e906c1c701dbbbff06743b4bd3",
+      "name": "da-crate",
+      "started_at_utc": "2026-11-10T10:02:26.958596+00:00"
+    },
+    {
+      "command": [
+        "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--jobs",
+        "2",
+        "-p",
+        "trnm-pon-node",
+        "--features",
+        "pq-native-openssl",
+        "--lib",
+        "storage_service",
+        "--",
+        "--test-threads=1"
+      ],
+      "completed_at_utc": "2026-11-10T10:09:53.627441+00:00",
+      "elapsed_seconds": 298.2806949070655,
+      "exit_code": 0,
+      "failure": null,
+      "log_sha256": "aded61f479fa8df98163285b260d05938ce3283d785b0e5ecf311c4b688f39d0",
+      "name": "node-storage",
+      "started_at_utc": "2026-11-10T10:04:55.346767+00:00"
+    },
+    {
+      "command": [
+        "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--jobs",
+        "2",
+        "--all-targets",
+        "-p",
+        "trnm-data-availability",
+        "-p",
+        "trnm-pon-node",
+        "--features",
+        "trnm-pon-node/pq-native-openssl",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "completed_at_utc": "2026-11-10T10:10:34.742975+00:00",
+      "elapsed_seconds": 41.078401093836874,
+      "exit_code": 0,
+      "failure": null,
+      "log_sha256": "e8b132fa2259abbac24efc1793e5cc1cd4f6ea93e6619977bf71f8949f0b72e4",
+      "name": "strict-clippy",
+      "started_at_utc": "2026-11-10T10:09:53.664572+00:00"
+    },
+    {
+      "command": [
+        "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "completed_at_utc": "2026-11-10T10:10:41.545023+00:00",
+      "elapsed_seconds": 6.769002623157576,
+      "exit_code": 0,
+      "failure": null,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "fmt",
+      "started_at_utc": "2026-11-10T10:10:34.776027+00:00"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "c57a384abe3edf88e79ca7ecbd0de645df4934c6"
+      ],
+      "completed_at_utc": "2026-11-10T10:10:45.991478+00:00",
+      "elapsed_seconds": 4.416517287027091,
+      "exit_code": 0,
+      "failure": null,
+      "log_sha256": "e57b75be6d1a824dd3952d88fd3955432f597402dadbaaf739a98a2203ac9001",
+      "name": "exact-source-end",
+      "started_at_utc": "2026-11-10T10:10:41.574970+00:00"
+    }
+  ],
+  "identity": {
+    "commit": "c57a384abe3edf88e79ca7ecbd0de645df4934c6",
+    "status": "",
+    "tree": "a3e6a456d9dd6ae1c6242413611ea1648f66fe46"
+  },
+  "passed": true,
+  "phase": "cargo",
+  "source_end_manifest_sha256": "d80ab233980a891f05a7e7c19bd4f10132513115475461abb9721a7964fd7692",
+  "source_start_manifest_sha256": "d80ab233980a891f05a7e7c19bd4f10132513115475461abb9721a7964fd7692",
+  "sources_unchanged": true,
+  "started_at_utc": "2026-11-10T10:01:12.490233+00:00"
+}

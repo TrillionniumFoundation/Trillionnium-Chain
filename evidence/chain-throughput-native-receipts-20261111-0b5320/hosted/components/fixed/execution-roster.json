@@ -1,0 +1,233 @@
+{
+  "mode": "fixed",
+  "cases": [
+    {
+      "test": "ingress::history_import::tests::detached_budget_controls::shared_detached_history_continues_from_real_deficit_without_new_credit",
+      "group": "budget",
+      "expected": "pass",
+      "exit_code": 0,
+      "expected_outcome_observed": true,
+      "stdout_sha256": "0bd2eafd37b30271fb6b8d293b6f0c3a3c8ca1b8176c7fb6d51fe2d8ea6896e7",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "panic_headers": []
+    },
+    {
+      "test": "ingress::history_import::tests::detached_budget_controls::shared_detached_history_refill_keeps_original_resource_cancellation",
+      "group": "budget",
+      "expected": "pass",
+      "exit_code": 0,
+      "expected_outcome_observed": true,
+      "stdout_sha256": "45658258f98bce71655db8c7ec3afdf8f6f75afd6704d9dc25d34f6b550e477f",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "panic_headers": []
+    },
+    {
+      "test": "ingress::history_import::tests::detached_budget_controls::shared_detached_history_refill_cannot_renew_original_deadline",
+      "group": "budget",
+      "expected": "pass",
+      "exit_code": 0,
+      "expected_outcome_observed": true,
+      "stdout_sha256": "e3f7d2351c7c44827c1ce47acc854e9bebbf67aa8009b429e3a6844f795db85c",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "panic_headers": []
+    },
+    {
+      "test": "mining::prepare_control_tests::registered_prepare_pre_cancel_keeps_error_before_material_or_parent_io",
+      "group": "budget",
+      "expected": "pass",
+      "exit_code": 0,
+      "expected_outcome_observed": true,
+      "stdout_sha256": "74ff75763e30ebf4ebb0624f8ace3ba56063a80e26f3262cc2c52a0a5781a995",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "panic_headers": []
+    },
+    {
+      "test": "mining::prepare_control_tests::registered_prepare_cancels_inside_active_row_scan_before_execution",
+      "group": "budget",
+      "expected": "pass",
+      "exit_code": 0,
+      "expected_outcome_observed": true,
+      "stdout_sha256": "c0e94c99c5ded21d71d41ec0ea8294f7df441a151f1144a9bc9833129c6f8d8f",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "panic_headers": []
+    },
+    {
+      "test": "mining::prepare_control_tests::registered_prepare_cancels_during_inactive_ancestry_read_and_retries",
+      "group": "budget",
+      "expected": "pass",
+      "exit_code": 0,
+      "expected_outcome_observed": true,
+      "stdout_sha256": "d2a5a23b4263a626328d0c2e1ec97d52e2e0ffe3165a17940253408fd074bcaf",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "panic_headers": []
+    },
+    {
+      "test": "mining::prepare_control_tests::registered_prepare_control_preserves_packets_errors_and_cold_commit",
+      "group": "budget",
+      "expected": "pass",
+      "exit_code": 0,
+      "expected_outcome_observed": true,
+      "stdout_sha256": "13208ab5fc52802cef1f92d0ffb52436b6c91af343d5aa8dcde2156d22ba1641",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "panic_headers": []
+    },
+    {
+      "test": "mining::pool_run_control_tests::pool_run_stop_interrupts_batch_parent_scan",
+      "group": "pool",
+      "expected": "pass",
+      "exit_code": 0,
+      "expected_outcome_observed": true,
+      "stdout_sha256": "eb85985e9eaef89ee878b5354fcff05af1a6e657b1207be589fa1daf6f8af191",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "panic_headers": []
+    },
+    {
+      "test": "mining::pool_run_control_tests::pool_run_stop_interrupts_registered_and_legacy_prepare",
+      "group": "pool",
+      "expected": "pass",
+      "exit_code": 0,
+      "expected_outcome_observed": true,
+      "stdout_sha256": "6a2e03727b70b64b5657dbeaa499a852c9e49cc9031a95563038f3b3a9fe2814",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "panic_headers": []
+    },
+    {
+      "test": "mining::pool_run_control_tests::pool_run_stop_interrupts_post_search_revalidation",
+      "group": "pool",
+      "expected": "pass",
+      "exit_code": 0,
+      "expected_outcome_observed": true,
+      "stdout_sha256": "ca7c089db1f0e20958b08c900b1941e80c42109503bf9ce1ca54d84a0ee6cbc0",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "panic_headers": []
+    },
+    {
+      "test": "mining::pool_run_control_tests::pool_run_original_deadline_interrupts_parent_scan",
+      "group": "pool",
+      "expected": "pass",
+      "exit_code": 0,
+      "expected_outcome_observed": true,
+      "stdout_sha256": "5e4856be2d1918b9f17f3912d79b154eb9fb0d9be3e2c367e644d584dc649256",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "panic_headers": []
+    },
+    {
+      "test": "mining::pool_run_control_tests::pool_run_cancelled_preview_keeps_queue_without_completed_m06",
+      "group": "pool",
+      "expected": "pass",
+      "exit_code": 0,
+      "expected_outcome_observed": true,
+      "stdout_sha256": "b5004f90023c9fd4fb3b807bcafa729cb0ab9327e8d8435977031be0c287937a",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "panic_headers": []
+    },
+    {
+      "test": "mining::pool_run_control_tests::pool_run_native_and_sql_failures_survive_concurrent_stop",
+      "group": "pool",
+      "expected": "pass",
+      "exit_code": 0,
+      "expected_outcome_observed": true,
+      "stdout_sha256": "7745f258e3f667ee6761558eab95f1769a0b82cdd7c70171e037a9e306830c26",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "panic_headers": []
+    },
+    {
+      "test": "mining::pool_run_control_tests::pool_run_completed_packet_and_reconcile_failure_remain_durable",
+      "group": "pool",
+      "expected": "pass",
+      "exit_code": 0,
+      "expected_outcome_observed": true,
+      "stdout_sha256": "449946dffb1fdf13a4690c42b6c88395b5148009011570080477963ab327ab07",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "panic_headers": []
+    },
+    {
+      "test": "ingress::public_v3::scalar_cpu::history_handoff_tests::history_writer_handoff_waits_for_original_free_credit_and_preserves_other_reserve",
+      "group": "history-handoff",
+      "expected": "pass",
+      "exit_code": 0,
+      "expected_outcome_observed": true,
+      "stdout_sha256": "c18c79cdfd68f455bd5d0b8b0ed0ef9d6b4d6c5a698557b6a65df65f3472a06a",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "panic_headers": []
+    },
+    {
+      "test": "ingress::public_v3::scalar_cpu::history_handoff_tests::history_writer_handoff_preserves_original_resource_and_deadline",
+      "group": "history-handoff",
+      "expected": "pass",
+      "exit_code": 0,
+      "expected_outcome_observed": true,
+      "stdout_sha256": "28e36f99b674b500406f2adea0ebedd84568616b8864f3de9daa2ac1e593589b",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "panic_headers": []
+    },
+    {
+      "test": "ingress::public_v3::scalar_cpu::history_handoff_tests::history_writer_handoff_denies_wait_to_unqualified_and_replayed_work",
+      "group": "history-handoff",
+      "expected": "pass",
+      "exit_code": 0,
+      "expected_outcome_observed": true,
+      "stdout_sha256": "de96531efe0e449ad80df1c7c1afefe5d36bea559d6d4ffd3b9ea9f941d94836",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "panic_headers": []
+    },
+    {
+      "test": "ingress::public_v3::scalar_cpu::history_handoff_tests::history_writer_handoff_never_revives_refused_or_unknown_operation",
+      "group": "history-handoff",
+      "expected": "pass",
+      "exit_code": 0,
+      "expected_outcome_observed": true,
+      "stdout_sha256": "bf5ad5d4d5a2d67fe48e351815d143d7386c210680667149594306d3384b508a",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "panic_headers": []
+    },
+    {
+      "test": "ingress::public_v3::scalar_cpu::history_handoff_tests::history_writer_handoff_keeps_funded_unqualified_path_without_wait",
+      "group": "history-handoff",
+      "expected": "pass",
+      "exit_code": 0,
+      "expected_outcome_observed": true,
+      "stdout_sha256": "007244b147cf9f7292de5158fe6624a6ed73d0f8974c7ad7c0396eaa43921ea9",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "panic_headers": []
+    },
+    {
+      "test": "mining::pool_reconcile_control_tests::pool_run_stop_interrupts_reconciliation_pool_rows",
+      "group": "pool-scan",
+      "expected": "pass",
+      "exit_code": 0,
+      "expected_outcome_observed": true,
+      "stdout_sha256": "1d1c66478bf79bb405fb3748f70d0f2742e9a9fc21d2e33da2dc69258a48a670",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "panic_headers": []
+    },
+    {
+      "test": "mining::pool_reconcile_control_tests::pool_run_deadline_interrupts_reconciliation_pool_rows",
+      "group": "pool-scan",
+      "expected": "pass",
+      "exit_code": 0,
+      "expected_outcome_observed": true,
+      "stdout_sha256": "15568f7954ca0d7884551fa632b822572afe494c64f98278ceee62a7dddca75f",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "panic_headers": []
+    }
+  ],
+  "integration": {
+    "required_tests": [
+      "wall_clock_loop_executes_funding_dependencies_then_reopens_exact_queue_and_chain",
+      "reconciliation_failure_reports_the_already_activated_durable_block",
+      "next_block_uses_current_authenticated_statement_after_atomic_renewal",
+      "bounded_stop_runtime_and_invalid_material_do_not_mine_or_consume_pending_transactions",
+      "completed_sqlite_blocked_batch_observes_stop_before_revalidation_or_preparation",
+      "actual_cli_retains_signed_group_then_mines_with_wall_clock_and_refuses_logical_clock",
+      "failed_pool_batch_retains_elapsed_before_any_search_or_admission",
+      "failed_post_search_revalidation_retains_elapsed_without_admission",
+      "wall_clock_miner_extends_admissible_future_tip_without_advancing_its_clock",
+      "wall_clock_miner_waits_when_native_median_itself_is_still_in_the_future"
+    ],
+    "passed": 10,
+    "failed": 0,
+    "ignored": 0,
+    "exit_code": 0
+  }
+}

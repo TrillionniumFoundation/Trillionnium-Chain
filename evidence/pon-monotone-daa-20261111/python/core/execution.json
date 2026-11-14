@@ -1,0 +1,123 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_branch_time_daa_v1.py",
+        "-v"
+      ],
+      "cwd": "/workspace/scratch/7f73fe002713/chain-daa",
+      "elapsed_seconds": 5.592,
+      "exit_code": 0,
+      "logs": {
+        "reference.stderr.log": {
+          "bytes": 6062,
+          "sha256": "7da4a089c6527ad753df1e5dac44413c8f7745f1aa7cb02fa8f34f9be089d56f"
+        },
+        "reference.stdout.log": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "name": "reference"
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "cwd": "/workspace/scratch/7f73fe002713/chain-daa",
+      "elapsed_seconds": 1.373,
+      "exit_code": 0,
+      "logs": {
+        "inventory.stderr.log": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "inventory.stdout.log": {
+          "bytes": 35,
+          "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+        }
+      },
+      "name": "inventory"
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/check_repository.py"
+      ],
+      "cwd": "/workspace/scratch/7f73fe002713/chain-daa",
+      "elapsed_seconds": 310.943,
+      "exit_code": 0,
+      "logs": {
+        "repository.stderr.log": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "repository.stdout.log": {
+          "bytes": 307,
+          "sha256": "e5de789dbf924fdf6916e39fad30ce7d2520455941e8f958f1e5f5763cf2cc6f"
+        }
+      },
+      "name": "repository"
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "cwd": "/workspace/scratch/7f73fe002713/chain-daa",
+      "elapsed_seconds": 14.069,
+      "exit_code": 0,
+      "logs": {
+        "corpus.stderr.log": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "corpus.stdout.log": {
+          "bytes": 557,
+          "sha256": "75f23516231237f6a4d9a9ca9bfb9f666f2e0d9be02872bdd865a16e7d5d5ee1"
+        }
+      },
+      "name": "corpus"
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_ci_source_integrity.py",
+        "-v"
+      ],
+      "cwd": "/workspace/scratch/7f73fe002713/chain-daa",
+      "elapsed_seconds": 21.186,
+      "exit_code": 0,
+      "logs": {
+        "source-integrity.stderr.log": {
+          "bytes": 6415,
+          "sha256": "0200f25b6835b89c6394bdb28671f1790ede427265a36bd24abf5d153153062d"
+        },
+        "source-integrity.stdout.log": {
+          "bytes": 484,
+          "sha256": "99a8b1e21c72635004d5f2cea5297dd59da4cb232fc918848e2dca4828ed1ba2"
+        }
+      },
+      "name": "source-integrity"
+    }
+  ],
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "source_commit": "d23488c5f9b4a6696c3799b12f14b8af0a1b81fc",
+  "source_tree": "72b106b4458299c37da146b0218b8f5276195b6d"
+}

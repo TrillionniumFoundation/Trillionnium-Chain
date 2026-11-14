@@ -1,0 +1,35 @@
+{
+  "command": [
+    "python3",
+    "-B",
+    "scripts/ci/check_ci_contract.py"
+  ],
+  "elapsed_seconds": 0.2571757539999453,
+  "exit_code": 0,
+  "log": "/workspace/scratch/227dcdfdc6e4/validation/frozen-95a2a14771/static/check-ci-contract.log",
+  "log_sha256": "334cc2b26ed99ad5f867ee9b65f3047e23afcfae056d4ba9c852b0a201e2dbeb",
+  "name": "check-ci-contract",
+  "reported": {
+    "artifact_comparison_jobs": 1,
+    "head_jobs": 5,
+    "inline_source_pins": 26,
+    "merge_lanes": 5,
+    "native_cost_architectures": 2,
+    "pq_release_authority_controls": {
+      "complete_release": 55,
+      "groups": {
+        "cch1_content_binding": 3,
+        "initial_root_material": 6,
+        "original_release": 37,
+        "quorum_preflight": 9
+      },
+      "platform_scope": "unix",
+      "python_test_doubles": 18,
+      "tests_executed": false
+    },
+    "tests_executed": false,
+    "w1_actual_reuse_v3_cells": 4
+  },
+  "started_utc": "2026-11-11T01:28:20.967598+00:00",
+  "tests": null
+}

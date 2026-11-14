@@ -1,0 +1,1777 @@
+{
+  "scope": "derived read-only component measurements; no security qualification",
+  "source": {
+    "commit": "165d286b687e0a73d7fe68148d2179274fc0c0b8",
+    "source_state": "committed-clean",
+    "tracked_bytes": 2578833390,
+    "tracked_entries": 28330,
+    "tracked_worktree_verified": true,
+    "tree": "2eb4f5e888a7a02f573d72a2fdf4d5a7cfc352e0"
+  },
+  "manifest_bytes": 403864,
+  "manifest_sha256": "1972cd517095034d809b48f509b53dd0d51d24f1b5d37a71bdd0e7c91a5373f6",
+  "binary_sha256": "106475d07ddd75e0eced90b19ec84a7658732951a207bebd764c37f10a1aace1",
+  "host": {
+    "allowed_cpus": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47
+    ],
+    "cgroup": {
+      "cpu.max": {
+        "unavailable": "FileNotFoundError"
+      },
+      "cpuset.cpus.effective": "0-47",
+      "memory.max": {
+        "unavailable": "FileNotFoundError"
+      },
+      "memory.swap.max": {
+        "unavailable": "FileNotFoundError"
+      },
+      "pids.max": {
+        "unavailable": "FileNotFoundError"
+      }
+    },
+    "logical_cpus": 48,
+    "machine": "x86_64",
+    "system": "Linux",
+    "uname": [
+      "Linux",
+      "qian-qi",
+      "7.0.0-38-generic",
+      "#38~24.04.4-Ubuntu SMP PREEMPT_DYNAMIC Mon Sep 14 16:37:11 UTC 2",
+      "x86_64",
+      "x86_64"
+    ]
+  },
+  "cells": [
+    {
+      "target": 0,
+      "horizon": 1,
+      "counts": {
+        "attempts": 60,
+        "cohorts": 40,
+        "exhausted": 0,
+        "hits": 40,
+        "materialized": 52,
+        "misses": 20,
+        "searches": 40,
+        "setup_calls": 40,
+        "verification_calls": 160
+      },
+      "arms": [
+        {
+          "name": "full-limb-sparse-eager",
+          "wins": 8,
+          "attempts": 12,
+          "misses": 4,
+          "materialized": 12,
+          "exhausted": 0,
+          "producer": {
+            "cpu_ns": 16138334,
+            "wall_ns": 16183853
+          },
+          "setup": {
+            "cpu_ns": 311210,
+            "wall_ns": 318385
+          },
+          "samples_cpu_ns": [
+            1604220,
+            1506990,
+            1517983,
+            2557949,
+            1359468,
+            1187554,
+            1289567,
+            5114603
+          ],
+          "samples_wall_ns": [
+            1611129,
+            1512061,
+            1523191,
+            2564036,
+            1363742,
+            1191632,
+            1293717,
+            5124345
+          ],
+          "samples_winners": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "name": "full-limb-sparse-lazy",
+          "wins": 8,
+          "attempts": 12,
+          "misses": 4,
+          "materialized": 8,
+          "exhausted": 0,
+          "producer": {
+            "cpu_ns": 15784997,
+            "wall_ns": 15828146
+          },
+          "setup": {
+            "cpu_ns": 263535,
+            "wall_ns": 270534
+          },
+          "samples_cpu_ns": [
+            1544454,
+            1508009,
+            1498538,
+            2636380,
+            1265300,
+            1207943,
+            1201385,
+            4922988
+          ],
+          "samples_wall_ns": [
+            1549960,
+            1513044,
+            1503314,
+            2642707,
+            1269677,
+            1212073,
+            1205470,
+            4931901
+          ],
+          "samples_winners": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "name": "zero-paired-legacy",
+          "wins": 8,
+          "attempts": 12,
+          "misses": 4,
+          "materialized": 12,
+          "exhausted": 0,
+          "producer": {
+            "cpu_ns": 17316928,
+            "wall_ns": 17358325
+          },
+          "setup": {
+            "cpu_ns": 80439,
+            "wall_ns": 87051
+          },
+          "samples_cpu_ns": [
+            1631492,
+            1621715,
+            1621212,
+            2899042,
+            1421875,
+            1402388,
+            1467805,
+            5251399
+          ],
+          "samples_wall_ns": [
+            1636422,
+            1626622,
+            1626157,
+            2905081,
+            1425927,
+            1406179,
+            1471926,
+            5260011
+          ],
+          "samples_winners": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "name": "zero-paired-eager",
+          "wins": 8,
+          "attempts": 12,
+          "misses": 4,
+          "materialized": 12,
+          "exhausted": 0,
+          "producer": {
+            "cpu_ns": 17069505,
+            "wall_ns": 17118334
+          },
+          "setup": {
+            "cpu_ns": 89178,
+            "wall_ns": 95883
+          },
+          "samples_cpu_ns": [
+            1628008,
+            1625268,
+            1614506,
+            2857778,
+            1281941,
+            1327974,
+            1382904,
+            5351126
+          ],
+          "samples_wall_ns": [
+            1632855,
+            1637477,
+            1619361,
+            2863998,
+            1285675,
+            1331962,
+            1387084,
+            5359922
+          ],
+          "samples_winners": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "name": "zero-paired-lazy",
+          "wins": 8,
+          "attempts": 12,
+          "misses": 4,
+          "materialized": 8,
+          "exhausted": 0,
+          "producer": {
+            "cpu_ns": 17147009,
+            "wall_ns": 17189290
+          },
+          "setup": {
+            "cpu_ns": 83230,
+            "wall_ns": 90056
+          },
+          "samples_cpu_ns": [
+            1617759,
+            1614675,
+            1614171,
+            2865396,
+            1499810,
+            1276219,
+            1422002,
+            5236977
+          ],
+          "samples_wall_ns": [
+            1622924,
+            1619749,
+            1619018,
+            2871069,
+            1504749,
+            1280037,
+            1426057,
+            5245687
+          ],
+          "samples_winners": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "target": 0,
+      "horizon": 8,
+      "counts": {
+        "attempts": 600,
+        "cohorts": 40,
+        "exhausted": 0,
+        "hits": 320,
+        "materialized": 488,
+        "misses": 280,
+        "searches": 320,
+        "setup_calls": 40,
+        "verification_calls": 1280
+      },
+      "arms": [
+        {
+          "name": "full-limb-sparse-eager",
+          "wins": 64,
+          "attempts": 120,
+          "misses": 56,
+          "materialized": 120,
+          "exhausted": 0,
+          "producer": {
+            "cpu_ns": 157907573,
+            "wall_ns": 158305661
+          },
+          "setup": {
+            "cpu_ns": 351946,
+            "wall_ns": 359289
+          },
+          "samples_cpu_ns": [
+            32906730,
+            15653126,
+            16852123,
+            16661405,
+            20875089,
+            16224516,
+            14975723,
+            23758861
+          ],
+          "samples_wall_ns": [
+            32974831,
+            15762402,
+            16887080,
+            16701886,
+            20915206,
+            16257489,
+            15005999,
+            23800768
+          ],
+          "samples_winners": [
+            8,
+            8,
+            8,
+            8,
+            8,
+            8,
+            8,
+            8
+          ]
+        },
+        {
+          "name": "full-limb-sparse-lazy",
+          "wins": 64,
+          "attempts": 120,
+          "misses": 56,
+          "materialized": 64,
+          "exhausted": 0,
+          "producer": {
+            "cpu_ns": 154500900,
+            "wall_ns": 154852497
+          },
+          "setup": {
+            "cpu_ns": 271396,
+            "wall_ns": 278259
+          },
+          "samples_cpu_ns": [
+            29312147,
+            15082469,
+            16865081,
+            16594220,
+            20249201,
+            16777383,
+            15526959,
+            24093440
+          ],
+          "samples_wall_ns": [
+            29389062,
+            15112495,
+            16898664,
+            16627982,
+            20317419,
+            16812652,
+            15559442,
+            24134781
+          ],
+          "samples_winners": [
+            8,
+            8,
+            8,
+            8,
+            8,
+            8,
+            8,
+            8
+          ]
+        },
+        {
+          "name": "zero-paired-legacy",
+          "wins": 64,
+          "attempts": 120,
+          "misses": 56,
+          "materialized": 120,
+          "exhausted": 0,
+          "producer": {
+            "cpu_ns": 168805728,
+            "wall_ns": 169209674
+          },
+          "setup": {
+            "cpu_ns": 91255,
+            "wall_ns": 97690
+          },
+          "samples_cpu_ns": [
+            32163583,
+            16729276,
+            18545381,
+            18299532,
+            21607546,
+            18429670,
+            16911891,
+            26118849
+          ],
+          "samples_wall_ns": [
+            32224821,
+            16759887,
+            18661277,
+            18330893,
+            21645745,
+            18463409,
+            16942138,
+            26181504
+          ],
+          "samples_winners": [
+            8,
+            8,
+            8,
+            8,
+            8,
+            8,
+            8,
+            8
+          ]
+        },
+        {
+          "name": "zero-paired-eager",
+          "wins": 64,
+          "attempts": 120,
+          "misses": 56,
+          "materialized": 120,
+          "exhausted": 0,
+          "producer": {
+            "cpu_ns": 171132019,
+            "wall_ns": 171420726
+          },
+          "setup": {
+            "cpu_ns": 93497,
+            "wall_ns": 100062
+          },
+          "samples_cpu_ns": [
+            30094931,
+            16566566,
+            18545413,
+            18561216,
+            21288854,
+            22550448,
+            17013480,
+            26511111
+          ],
+          "samples_wall_ns": [
+            30140523,
+            16595502,
+            18579877,
+            18593739,
+            21325582,
+            22589251,
+            17043919,
+            26552333
+          ],
+          "samples_winners": [
+            8,
+            8,
+            8,
+            8,
+            8,
+            8,
+            8,
+            8
+          ]
+        },
+        {
+          "name": "zero-paired-lazy",
+          "wins": 64,
+          "attempts": 120,
+          "misses": 56,
+          "materialized": 64,
+          "exhausted": 0,
+          "producer": {
+            "cpu_ns": 169394059,
+            "wall_ns": 169701742
+          },
+          "setup": {
+            "cpu_ns": 106700,
+            "wall_ns": 113665
+          },
+          "samples_cpu_ns": [
+            30002284,
+            17314180,
+            19339957,
+            18454794,
+            22588393,
+            18325702,
+            16916870,
+            26451879
+          ],
+          "samples_wall_ns": [
+            30048889,
+            17345877,
+            19374906,
+            18487701,
+            22637368,
+            18358250,
+            16946548,
+            26502203
+          ],
+          "samples_winners": [
+            8,
+            8,
+            8,
+            8,
+            8,
+            8,
+            8,
+            8
+          ]
+        }
+      ]
+    },
+    {
+      "target": 1,
+      "horizon": 1,
+      "counts": {
+        "attempts": 1620,
+        "cohorts": 40,
+        "exhausted": 0,
+        "hits": 40,
+        "materialized": 988,
+        "misses": 1580,
+        "searches": 40,
+        "setup_calls": 40,
+        "verification_calls": 160
+      },
+      "arms": [
+        {
+          "name": "full-limb-sparse-eager",
+          "wins": 8,
+          "attempts": 324,
+          "misses": 316,
+          "materialized": 324,
+          "exhausted": 0,
+          "producer": {
+            "cpu_ns": 420578454,
+            "wall_ns": 421187628
+          },
+          "setup": {
+            "cpu_ns": 352740,
+            "wall_ns": 359856
+          },
+          "samples_cpu_ns": [
+            102737212,
+            34977833,
+            36033819,
+            32688330,
+            80557629,
+            27844447,
+            94414779,
+            11324405
+          ],
+          "samples_wall_ns": [
+            102885053,
+            35027958,
+            36095458,
+            32739867,
+            80667829,
+            27884035,
+            94545550,
+            11341878
+          ],
+          "samples_winners": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "name": "full-limb-sparse-lazy",
+          "wins": 8,
+          "attempts": 324,
+          "misses": 316,
+          "materialized": 8,
+          "exhausted": 0,
+          "producer": {
+            "cpu_ns": 411496621,
+            "wall_ns": 412101059
+          },
+          "setup": {
+            "cpu_ns": 242692,
+            "wall_ns": 249116
+          },
+          "samples_cpu_ns": [
+            98267962,
+            35845343,
+            35470027,
+            32628808,
+            78944486,
+            26711542,
+            92142898,
+            11485555
+          ],
+          "samples_wall_ns": [
+            98404210,
+            35894436,
+            35519784,
+            32674684,
+            79075424,
+            26762065,
+            92266360,
+            11504096
+          ],
+          "samples_winners": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "name": "zero-paired-legacy",
+          "wins": 8,
+          "attempts": 324,
+          "misses": 316,
+          "materialized": 324,
+          "exhausted": 0,
+          "producer": {
+            "cpu_ns": 452740055,
+            "wall_ns": 453383431
+          },
+          "setup": {
+            "cpu_ns": 95597,
+            "wall_ns": 101895
+          },
+          "samples_cpu_ns": [
+            100437325,
+            40437128,
+            40156127,
+            36889614,
+            88003115,
+            29962404,
+            103877728,
+            12976614
+          ],
+          "samples_wall_ns": [
+            100562742,
+            40499913,
+            40207938,
+            36938248,
+            88110173,
+            30001208,
+            104005182,
+            13058027
+          ],
+          "samples_winners": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "name": "zero-paired-eager",
+          "wins": 8,
+          "attempts": 324,
+          "misses": 316,
+          "materialized": 324,
+          "exhausted": 0,
+          "producer": {
+            "cpu_ns": 453272189,
+            "wall_ns": 453985538
+          },
+          "setup": {
+            "cpu_ns": 95047,
+            "wall_ns": 101369
+          },
+          "samples_cpu_ns": [
+            101593493,
+            39608775,
+            39359823,
+            36493428,
+            88059433,
+            30911372,
+            105031065,
+            12214800
+          ],
+          "samples_wall_ns": [
+            101763604,
+            39658957,
+            39410562,
+            36561187,
+            88234066,
+            30956418,
+            105168651,
+            12232093
+          ],
+          "samples_winners": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "name": "zero-paired-lazy",
+          "wins": 8,
+          "attempts": 324,
+          "misses": 316,
+          "materialized": 8,
+          "exhausted": 0,
+          "producer": {
+            "cpu_ns": 450615959,
+            "wall_ns": 451180180
+          },
+          "setup": {
+            "cpu_ns": 86499,
+            "wall_ns": 93023
+          },
+          "samples_cpu_ns": [
+            99688599,
+            39644048,
+            40536146,
+            36045168,
+            88379238,
+            30044871,
+            104251765,
+            12026124
+          ],
+          "samples_wall_ns": [
+            99811974,
+            39694104,
+            40585952,
+            36088774,
+            88487413,
+            30093466,
+            104375580,
+            12042917
+          ],
+          "samples_winners": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "target": 1,
+      "horizon": 8,
+      "counts": {
+        "attempts": 10400,
+        "cohorts": 40,
+        "exhausted": 0,
+        "hits": 320,
+        "materialized": 6368,
+        "misses": 10080,
+        "searches": 320,
+        "setup_calls": 40,
+        "verification_calls": 1280
+      },
+      "arms": [
+        {
+          "name": "full-limb-sparse-eager",
+          "wins": 64,
+          "attempts": 2080,
+          "misses": 2016,
+          "materialized": 2080,
+          "exhausted": 0,
+          "producer": {
+            "cpu_ns": 2597362841,
+            "wall_ns": 2601471561
+          },
+          "setup": {
+            "cpu_ns": 383629,
+            "wall_ns": 390546
+          },
+          "samples_cpu_ns": [
+            209058539,
+            377853942,
+            438115446,
+            189384926,
+            502243868,
+            188601121,
+            433623287,
+            258481712
+          ],
+          "samples_wall_ns": [
+            209403538,
+            378469904,
+            438776072,
+            189719779,
+            503015463,
+            188918780,
+            434263140,
+            258904885
+          ],
+          "samples_winners": [
+            8,
+            8,
+            8,
+            8,
+            8,
+            8,
+            8,
+            8
+          ]
+        },
+        {
+          "name": "full-limb-sparse-lazy",
+          "wins": 64,
+          "attempts": 2080,
+          "misses": 2016,
+          "materialized": 64,
+          "exhausted": 0,
+          "producer": {
+            "cpu_ns": 2560264619,
+            "wall_ns": 2564196520
+          },
+          "setup": {
+            "cpu_ns": 316293,
+            "wall_ns": 322729
+          },
+          "samples_cpu_ns": [
+            185058369,
+            360985401,
+            435668748,
+            189611147,
+            503565808,
+            187740542,
+            437172631,
+            260461973
+          ],
+          "samples_wall_ns": [
+            185327023,
+            361576831,
+            436352732,
+            189893320,
+            504315334,
+            188040996,
+            437847874,
+            260842410
+          ],
+          "samples_winners": [
+            8,
+            8,
+            8,
+            8,
+            8,
+            8,
+            8,
+            8
+          ]
+        },
+        {
+          "name": "zero-paired-legacy",
+          "wins": 64,
+          "attempts": 2080,
+          "misses": 2016,
+          "materialized": 2080,
+          "exhausted": 0,
+          "producer": {
+            "cpu_ns": 2877611145,
+            "wall_ns": 2881604706
+          },
+          "setup": {
+            "cpu_ns": 96719,
+            "wall_ns": 103053
+          },
+          "samples_cpu_ns": [
+            207328594,
+            402296332,
+            491038958,
+            210550355,
+            567852739,
+            212263812,
+            500684672,
+            285595683
+          ],
+          "samples_wall_ns": [
+            207602420,
+            402821113,
+            491769059,
+            210860164,
+            568629354,
+            212560935,
+            501397391,
+            285964270
+          ],
+          "samples_winners": [
+            8,
+            8,
+            8,
+            8,
+            8,
+            8,
+            8,
+            8
+          ]
+        },
+        {
+          "name": "zero-paired-eager",
+          "wins": 64,
+          "attempts": 2080,
+          "misses": 2016,
+          "materialized": 2080,
+          "exhausted": 0,
+          "producer": {
+            "cpu_ns": 2866885980,
+            "wall_ns": 2870938560
+          },
+          "setup": {
+            "cpu_ns": 114242,
+            "wall_ns": 120565
+          },
+          "samples_cpu_ns": [
+            212911816,
+            402879898,
+            487425384,
+            210048978,
+            571331797,
+            210088440,
+            484634578,
+            287565089
+          ],
+          "samples_wall_ns": [
+            213221083,
+            403445172,
+            488121530,
+            210328847,
+            572171787,
+            210377867,
+            485311087,
+            287961187
+          ],
+          "samples_winners": [
+            8,
+            8,
+            8,
+            8,
+            8,
+            8,
+            8,
+            8
+          ]
+        },
+        {
+          "name": "zero-paired-lazy",
+          "wins": 64,
+          "attempts": 2080,
+          "misses": 2016,
+          "materialized": 64,
+          "exhausted": 0,
+          "producer": {
+            "cpu_ns": 2860889545,
+            "wall_ns": 2864811758
+          },
+          "setup": {
+            "cpu_ns": 101950,
+            "wall_ns": 108198
+          },
+          "samples_cpu_ns": [
+            205922191,
+            412782783,
+            488861911,
+            208880598,
+            565444092,
+            211962393,
+            479869714,
+            287165863
+          ],
+          "samples_wall_ns": [
+            206210154,
+            413385709,
+            489507233,
+            209155888,
+            566219888,
+            212258145,
+            480523427,
+            287551314
+          ],
+          "samples_winners": [
+            8,
+            8,
+            8,
+            8,
+            8,
+            8,
+            8,
+            8
+          ]
+        }
+      ]
+    },
+    {
+      "target": 2,
+      "horizon": 1,
+      "counts": {
+        "attempts": 120,
+        "cohorts": 40,
+        "exhausted": 40,
+        "hits": 0,
+        "materialized": 72,
+        "misses": 120,
+        "searches": 40,
+        "setup_calls": 40,
+        "verification_calls": 240
+      },
+      "arms": [
+        {
+          "name": "full-limb-sparse-eager",
+          "wins": 0,
+          "attempts": 24,
+          "misses": 24,
+          "materialized": 24,
+          "exhausted": 8,
+          "producer": {
+            "cpu_ns": 32227224,
+            "wall_ns": 32311206
+          },
+          "setup": {
+            "cpu_ns": 328021,
+            "wall_ns": 335422
+          },
+          "samples_cpu_ns": [
+            4458196,
+            4311247,
+            4503471,
+            3919257,
+            4237170,
+            3796429,
+            3484844,
+            3516610
+          ],
+          "samples_wall_ns": [
+            4477049,
+            4320739,
+            4514203,
+            3927870,
+            4246873,
+            3804923,
+            3493017,
+            3526532
+          ],
+          "samples_winners": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "full-limb-sparse-lazy",
+          "wins": 0,
+          "attempts": 24,
+          "misses": 24,
+          "materialized": 0,
+          "exhausted": 8,
+          "producer": {
+            "cpu_ns": 32938176,
+            "wall_ns": 33012194
+          },
+          "setup": {
+            "cpu_ns": 356440,
+            "wall_ns": 364584
+          },
+          "samples_cpu_ns": [
+            4376396,
+            4299942,
+            4350761,
+            4405863,
+            3834048,
+            3734305,
+            3830497,
+            4106364
+          ],
+          "samples_wall_ns": [
+            4386317,
+            4309216,
+            4360129,
+            4415578,
+            3842116,
+            3744303,
+            3838758,
+            4115777
+          ],
+          "samples_winners": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "zero-paired-legacy",
+          "wins": 0,
+          "attempts": 24,
+          "misses": 24,
+          "materialized": 24,
+          "exhausted": 8,
+          "producer": {
+            "cpu_ns": 36501079,
+            "wall_ns": 36605962
+          },
+          "setup": {
+            "cpu_ns": 100910,
+            "wall_ns": 108089
+          },
+          "samples_cpu_ns": [
+            5448211,
+            5402821,
+            4773134,
+            4273020,
+            4090295,
+            4229834,
+            4189510,
+            4094254
+          ],
+          "samples_wall_ns": [
+            5490555,
+            5413480,
+            4782389,
+            4281322,
+            4099102,
+            4238253,
+            4197696,
+            4103165
+          ],
+          "samples_winners": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "zero-paired-eager",
+          "wins": 0,
+          "attempts": 24,
+          "misses": 24,
+          "materialized": 24,
+          "exhausted": 8,
+          "producer": {
+            "cpu_ns": 36606400,
+            "wall_ns": 36685665
+          },
+          "setup": {
+            "cpu_ns": 89787,
+            "wall_ns": 96397
+          },
+          "samples_cpu_ns": [
+            4731471,
+            4758735,
+            5342227,
+            4577779,
+            4523819,
+            4225284,
+            4191343,
+            4255742
+          ],
+          "samples_wall_ns": [
+            4740506,
+            4768126,
+            5358497,
+            4586452,
+            4534328,
+            4233218,
+            4200442,
+            4264096
+          ],
+          "samples_winners": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "zero-paired-lazy",
+          "wins": 0,
+          "attempts": 24,
+          "misses": 24,
+          "materialized": 0,
+          "exhausted": 8,
+          "producer": {
+            "cpu_ns": 34841229,
+            "wall_ns": 34908032
+          },
+          "setup": {
+            "cpu_ns": 91140,
+            "wall_ns": 97816
+          },
+          "samples_cpu_ns": [
+            4860416,
+            4714200,
+            4704694,
+            4203222,
+            4276546,
+            4046736,
+            4296253,
+            3739162
+          ],
+          "samples_wall_ns": [
+            4870277,
+            4723078,
+            4713369,
+            4211057,
+            4284500,
+            4055488,
+            4304048,
+            3746215
+          ],
+          "samples_winners": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "target": 3,
+      "horizon": 1,
+      "counts": {
+        "attempts": 40,
+        "cohorts": 40,
+        "exhausted": 0,
+        "hits": 40,
+        "materialized": 40,
+        "misses": 0,
+        "searches": 40,
+        "setup_calls": 40,
+        "verification_calls": 160
+      },
+      "arms": [
+        {
+          "name": "full-limb-sparse-eager",
+          "wins": 8,
+          "attempts": 8,
+          "misses": 0,
+          "materialized": 8,
+          "exhausted": 0,
+          "producer": {
+            "cpu_ns": 12355146,
+            "wall_ns": 12395581
+          },
+          "setup": {
+            "cpu_ns": 386103,
+            "wall_ns": 394152
+          },
+          "samples_cpu_ns": [
+            1972582,
+            1520000,
+            1543909,
+            1541582,
+            1364311,
+            1516427,
+            1510558,
+            1385777
+          ],
+          "samples_wall_ns": [
+            1979435,
+            1525184,
+            1548851,
+            1546253,
+            1368760,
+            1521489,
+            1515308,
+            1390301
+          ],
+          "samples_winners": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "name": "full-limb-sparse-lazy",
+          "wins": 8,
+          "attempts": 8,
+          "misses": 0,
+          "materialized": 8,
+          "exhausted": 0,
+          "producer": {
+            "cpu_ns": 12128334,
+            "wall_ns": 12171827
+          },
+          "setup": {
+            "cpu_ns": 331331,
+            "wall_ns": 339362
+          },
+          "samples_cpu_ns": [
+            1610714,
+            1627754,
+            1675984,
+            1386446,
+            1442357,
+            1506564,
+            1511086,
+            1367429
+          ],
+          "samples_wall_ns": [
+            1616583,
+            1634483,
+            1681615,
+            1391050,
+            1448406,
+            1511523,
+            1516161,
+            1372006
+          ],
+          "samples_winners": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "name": "zero-paired-legacy",
+          "wins": 8,
+          "attempts": 8,
+          "misses": 0,
+          "materialized": 8,
+          "exhausted": 0,
+          "producer": {
+            "cpu_ns": 13167962,
+            "wall_ns": 13209084
+          },
+          "setup": {
+            "cpu_ns": 100891,
+            "wall_ns": 108162
+          },
+          "samples_cpu_ns": [
+            1647621,
+            1880222,
+            1742707,
+            1466125,
+            1646301,
+            1683420,
+            1622344,
+            1479222
+          ],
+          "samples_wall_ns": [
+            1652834,
+            1885710,
+            1748524,
+            1470269,
+            1651420,
+            1689013,
+            1627429,
+            1483885
+          ],
+          "samples_winners": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "name": "zero-paired-eager",
+          "wins": 8,
+          "attempts": 8,
+          "misses": 0,
+          "materialized": 8,
+          "exhausted": 0,
+          "producer": {
+            "cpu_ns": 13262267,
+            "wall_ns": 13305453
+          },
+          "setup": {
+            "cpu_ns": 97006,
+            "wall_ns": 104424
+          },
+          "samples_cpu_ns": [
+            1750752,
+            1755681,
+            1638901,
+            1752748,
+            1621700,
+            1620192,
+            1618145,
+            1504148
+          ],
+          "samples_wall_ns": [
+            1757512,
+            1762016,
+            1643875,
+            1758360,
+            1626585,
+            1625305,
+            1623214,
+            1508586
+          ],
+          "samples_winners": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "name": "zero-paired-lazy",
+          "wins": 8,
+          "attempts": 8,
+          "misses": 0,
+          "materialized": 8,
+          "exhausted": 0,
+          "producer": {
+            "cpu_ns": 12821936,
+            "wall_ns": 12865064
+          },
+          "setup": {
+            "cpu_ns": 108804,
+            "wall_ns": 116792
+          },
+          "samples_cpu_ns": [
+            1658004,
+            1627047,
+            1636143,
+            1770626,
+            1411627,
+            1672898,
+            1617702,
+            1427889
+          ],
+          "samples_wall_ns": [
+            1665252,
+            1632019,
+            1641099,
+            1776631,
+            1416084,
+            1678865,
+            1622802,
+            1432312
+          ],
+          "samples_winners": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        }
+      ]
+    }
+  ],
+  "checks": {
+    "success": false,
+    "commands": [
+      {
+        "command": [
+          "/usr/bin/python3",
+          "-B",
+          "scripts/ci/verify_ci_source.py",
+          "--kind",
+          "head",
+          "--expected-head",
+          "165d286b687e0a73d7fe68148d2179274fc0c0b8",
+          "--output",
+          "/home/qian-qi/work/w1-baseline-9082-validation-165d/checks-source-before-identity.json"
+        ],
+        "exit_code": 0,
+        "timed_out": false
+      },
+      {
+        "command": [
+          "bash",
+          "scripts/project-preflight.sh",
+          "--dev"
+        ],
+        "exit_code": 0,
+        "timed_out": false
+      },
+      {
+        "command": [
+          "cargo",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-crypto-primitives",
+          "--lib"
+        ],
+        "exit_code": 0,
+        "timed_out": false
+      },
+      {
+        "command": [
+          "cargo",
+          "fmt",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "timed_out": false
+      },
+      {
+        "command": [
+          "/usr/bin/python3",
+          "-B",
+          "scripts/ci/test_pon_w1_zero_paired_lazy_v1.py"
+        ],
+        "exit_code": 0,
+        "timed_out": false
+      },
+      {
+        "command": [
+          "/usr/bin/python3",
+          "-B",
+          "scripts/ci/test_run_w1_rank_batch_v5.py"
+        ],
+        "exit_code": 0,
+        "timed_out": false
+      },
+      {
+        "command": [
+          "/usr/bin/python3",
+          "-B",
+          "scripts/ci/test_ci_source_integrity.py"
+        ],
+        "exit_code": 0,
+        "timed_out": false
+      },
+      {
+        "command": [
+          "/usr/bin/python3",
+          "-B",
+          "scripts/ci/w1_qrom_supplemental_controls.py",
+          "--suite",
+          "current",
+          "--repo-root",
+          "/home/qian-qi/work/chain-w1-baseline-20261111-9082",
+          "--output-dir",
+          "/home/qian-qi/work/w1-baseline-9082-validation-165d/qrom-current"
+        ],
+        "exit_code": 0,
+        "timed_out": false
+      },
+      {
+        "command": [
+          "/usr/bin/python3",
+          "-B",
+          "scripts/w1_qrom_current_implementation_audit.py",
+          "--repo-root",
+          "/home/qian-qi/work/chain-w1-baseline-20261111-9082",
+          "--output",
+          "/home/qian-qi/work/w1-baseline-9082-validation-165d/qrom-current/implementation-current.json"
+        ],
+        "exit_code": 0,
+        "timed_out": false
+      },
+      {
+        "command": [
+          "/usr/bin/python3",
+          "-B",
+          "scripts/ci/check_pq_research_integration.py"
+        ],
+        "exit_code": 0,
+        "timed_out": false
+      },
+      {
+        "command": [
+          "/usr/bin/python3",
+          "-B",
+          "scripts/ci/test_pq_research_integration.py"
+        ],
+        "exit_code": 0,
+        "timed_out": false
+      },
+      {
+        "command": [
+          "/usr/bin/python3",
+          "-B",
+          "scripts/ci/check_ci_contract.py"
+        ],
+        "exit_code": 0,
+        "timed_out": false
+      },
+      {
+        "command": [
+          "/usr/bin/python3",
+          "-B",
+          "scripts/refresh_distributed_source_inventory.py",
+          "--check"
+        ],
+        "exit_code": 0,
+        "timed_out": false
+      },
+      {
+        "command": [
+          "cargo",
+          "clippy",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-crypto-primitives",
+          "--all-targets",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "timed_out": false
+      },
+      {
+        "command": [
+          "cargo",
+          "clippy",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--workspace",
+          "--all-targets",
+          "--all-features",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 101,
+        "timed_out": false
+      },
+      {
+        "command": [
+          "/usr/bin/python3",
+          "-B",
+          "scripts/ci/verify_ci_source.py",
+          "--kind",
+          "head",
+          "--expected-head",
+          "165d286b687e0a73d7fe68148d2179274fc0c0b8",
+          "--output",
+          "/home/qian-qi/work/w1-baseline-9082-validation-165d/checks-source-after-identity.json"
+        ],
+        "exit_code": 0,
+        "timed_out": false
+      }
+    ],
+    "markdown_links_passed": true
+  }
+}

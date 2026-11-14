@@ -1,0 +1,197 @@
+[
+  {
+    "name": "preflight",
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.08879013499245048,
+    "stdout": {
+      "bytes": 172,
+      "sha256": "4c58882a4134d8adc21e7bcf4a095a3d15d31c83a068667459aa26e612434295"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "name": "apply-check",
+    "argv": [
+      "git",
+      "apply",
+      "--check",
+      "--whitespace=error",
+      "/data/chain-abg-70ae-20261108/inputs/r3-current-applicability-selector.patch"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.0032979610841721296,
+    "stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "name": "apply",
+    "argv": [
+      "git",
+      "apply",
+      "--whitespace=error",
+      "/data/chain-abg-70ae-20261108/inputs/r3-current-applicability-selector.patch"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.005913806846365333,
+    "stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "name": "diff-check",
+    "argv": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.023305641021579504,
+    "stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "name": "fmt",
+    "argv": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "fmt",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 20.734654142986983,
+    "stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "name": "repository-before-freeze",
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/check_repository.py"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 27.762368301860988,
+    "stdout": {
+      "bytes": 307,
+      "sha256": "239a0cd291b12409b9bb60e3b7591d92a410041c6cf57e5a55ea084f4f074918"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "name": "precommit-preflight",
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.09325666492804885,
+    "stdout": {
+      "bytes": 172,
+      "sha256": "4c58882a4134d8adc21e7bcf4a095a3d15d31c83a068667459aa26e612434295"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "name": "stage",
+    "argv": [
+      "git",
+      "add",
+      "--",
+      "config/pon/applicability-v1.json",
+      "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.05527169397100806,
+    "stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "name": "commit",
+    "argv": [
+      "git",
+      "commit",
+      "-F",
+      "/data/chain-abg-70ae-20261108/inputs/r3-source-commit-message.txt"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.09117942792363465,
+    "stdout": {
+      "bytes": 167,
+      "sha256": "56caa780d2b78702184b16f392226557b48333be5ab7bf325ee30d5d9c58cdca"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "name": "source-before",
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+      "--output",
+      "/data/chain-abg-70ae-20261108/evidence/r3-freeze/source-before.json"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 7.028471398167312,
+    "stdout": {
+      "bytes": 423,
+      "sha256": "982120301643534abec9b8fb3f051e8871ec5eb28e44a1dc293f47cccb538c35"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+]

@@ -1,0 +1,51 @@
+{
+  "argv": [
+    "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_cache_wal_cli-c447e0fb4604698c",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "child_reaped": true,
+  "cwd": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability",
+  "dispatch_object": {
+    "bytes": 3741584,
+    "device": 2050,
+    "inode": 52884521,
+    "sha256": "d6d3f484151f2e06e58da73d7e73f55366ad4ece3a1f5f3582627a5c464011c9"
+  },
+  "dispatch_object_after_sha256": "d6d3f484151f2e06e58da73d7e73f55366ad4ece3a1f5f3582627a5c464011c9",
+  "dispatch_object_stable": true,
+  "elapsed_ns": 536249188,
+  "exit_code": 0,
+  "label": "01-cell_cache_wal_cli-native",
+  "native_observation": {
+    "bytes": 3741584,
+    "device": 2050,
+    "exe_link": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_cache_wal_cli-c447e0fb4604698c",
+    "executable_opened_monotonic_ns": 1472173481916471,
+    "hash_finished_monotonic_ns": 1472173494796679,
+    "inode": 52884521,
+    "observation_started_monotonic_ns": 1472173481844278,
+    "process": {
+      "parent_pid": 68035,
+      "pid": 91356,
+      "start_ticks": 147217348
+    },
+    "process_binding_finished_monotonic_ns": 1472173481948023,
+    "sha256": "d6d3f484151f2e06e58da73d7e73f55366ad4ece3a1f5f3582627a5c464011c9",
+    "status": "OBSERVED"
+  },
+  "owned_pid": 91356,
+  "performance_measurement": false,
+  "started_unix_ns": 1794394507475452060,
+  "status": "command_succeeded",
+  "stderr": {
+    "bytes": 0,
+    "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/01-cell_cache_wal_cli-native.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 212,
+    "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/01-cell_cache_wal_cli-native.stdout.log",
+    "sha256": "9ac376c3b4a0d0a711274ea4a99718d969ef616fbff3dbce498c77b10e38deb4"
+  }
+}

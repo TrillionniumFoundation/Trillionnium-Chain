@@ -1,0 +1,2367 @@
+[
+  {
+    "name": "archive/chain-initial-root-borrow-ecb54-20261103",
+    "tip": "38fda50fa39f338fdbf30afc4ed2f003e41cd183",
+    "terminal": "38fda50fa39f338fdbf30afc4ed2f003e41cd183"
+  },
+  {
+    "name": "archive/chain-initial-root-cloud-evidence-20261104",
+    "tip": "3f0f21db859df0ead267ed52b1a4f9611e4773fc",
+    "terminal": "3f0f21db859df0ead267ed52b1a4f9611e4773fc"
+  },
+  {
+    "name": "archive/chain-initial-root-evidence-20261104",
+    "tip": "35f8e3419ae3c57d093f26870199806c347901d0",
+    "terminal": "3f0f21db859df0ead267ed52b1a4f9611e4773fc"
+  },
+  {
+    "name": "archive/chain-initial-root-source-0878-20261103",
+    "tip": "08a5728874e4c20cda21e8b9268b60bbc79c9131",
+    "terminal": "38fda50fa39f338fdbf30afc4ed2f003e41cd183"
+  },
+  {
+    "name": "archive/chain-pon-v2-source-recovery-20261105-gpt6",
+    "tip": "1df984d86ba45d6de5b46894a8ed95afeb9b39fa",
+    "terminal": "55033605dc738908304ae7ac7a6493452c37c4b5"
+  },
+  {
+    "name": "archive/chain-pon-v2-summarizer-20261105-gpt6",
+    "tip": "55033605dc738908304ae7ac7a6493452c37c4b5",
+    "terminal": "55033605dc738908304ae7ac7a6493452c37c4b5"
+  },
+  {
+    "name": "archive/chain-state-json-failed-d55daefd-20261103",
+    "tip": "28fb63124e535227563da9f23873b4cc56783c11",
+    "terminal": "28fb63124e535227563da9f23873b4cc56783c11"
+  },
+  {
+    "name": "archive/host-source-custody-20261103-desktop-v2",
+    "tip": "1ac0628e1bed5ecf097498d3e9c21cc8eb436b9f",
+    "terminal": "1ac0628e1bed5ecf097498d3e9c21cc8eb436b9f"
+  },
+  {
+    "name": "archive/library-bundle-source-20261103-gpt6",
+    "tip": "d48c8070f1dfe406a7405fd875909b68db0e6b9a",
+    "terminal": "d48c8070f1dfe406a7405fd875909b68db0e6b9a"
+  },
+  {
+    "name": "archive/library-chain-pql3-pcs1-source-20261104",
+    "tip": "c592cccdfb5c0c4004fcae25aadeaab1b11d4b1c",
+    "terminal": "c592cccdfb5c0c4004fcae25aadeaab1b11d4b1c"
+  },
+  {
+    "name": "audit/cell-swarm-605-on-p0-ci-610-rustfmt-20261030",
+    "tip": "a4ec19ec8c167bad2499ab2eee724405dd318832",
+    "terminal": "a4ec19ec8c167bad2499ab2eee724405dd318832"
+  },
+  {
+    "name": "audit/cell-swarm-cross-release-content-dedup-20261030",
+    "tip": "49a87e70ce514fae72f399950682dd5020608f32",
+    "terminal": "5dc4c933d298e955a16eb4a1b7ab9688a7a6862c"
+  },
+  {
+    "name": "audit/cell-swarm-owner-pinned-xor-repair-20261030",
+    "tip": "5dc4c933d298e955a16eb4a1b7ab9688a7a6862c",
+    "terminal": "5dc4c933d298e955a16eb4a1b7ab9688a7a6862c"
+  },
+  {
+    "name": "audit/cell-swarm-pinned-chunk-reassembly-20261030",
+    "tip": "0791541e18664feaa23929eef29e2b71cd155581",
+    "terminal": "5dc4c933d298e955a16eb4a1b7ab9688a7a6862c"
+  },
+  {
+    "name": "audit/chain-506-from-zero-five-tests-20261027",
+    "tip": "c2e0e70fed5ac1f7b49dad41dd82d4ca43fe7436",
+    "terminal": "c2e0e70fed5ac1f7b49dad41dd82d4ca43fe7436"
+  },
+  {
+    "name": "audit/chain-checkpoint-copied-lease-original-c63b705-20261111-hold",
+    "tip": "c63b705733e7ba49ef27906590c4c797a304d6cf",
+    "terminal": "c6bbbd9c2e9b1258f2785630188872c221ae58ec"
+  },
+  {
+    "name": "audit/chain-native-collector-bottleneck-original-2878e91-20261111-hold",
+    "tip": "2878e915d1180bbdbb7a7a65928ed3c30604d7a6",
+    "terminal": "2878e915d1180bbdbb7a7a65928ed3c30604d7a6"
+  },
+  {
+    "name": "audit/chain-pq-authority-surfaces-20261031",
+    "tip": "87056297a3d23b833015bf13ee2bf7f57d809e80",
+    "terminal": "87056297a3d23b833015bf13ee2bf7f57d809e80"
+  },
+  {
+    "name": "audit/daa-asert-c-extreme-differential-20261027",
+    "tip": "beca44084947a4d0d468171eca335fe6e5001457",
+    "terminal": "beca44084947a4d0d468171eca335fe6e5001457"
+  },
+  {
+    "name": "audit/p0-mainline-604-ci-reconciled-20261030",
+    "tip": "07afc7d64f5bd61d833b3501e8525091876f2a1c",
+    "terminal": "57ba2868544528e4f845482fe6aaa9d0f74987b2"
+  },
+  {
+    "name": "audit/p0-w1-608-on-610-reconciled-20261030",
+    "tip": "5473a45d99744159b0dd210677ce6d7bad3f5e10",
+    "terminal": "57ba2868544528e4f845482fe6aaa9d0f74987b2"
+  },
+  {
+    "name": "audit/p0-w1-frozen-evidence-runtime-isolation-20261031",
+    "tip": "57ba2868544528e4f845482fe6aaa9d0f74987b2",
+    "terminal": "57ba2868544528e4f845482fe6aaa9d0f74987b2"
+  },
+  {
+    "name": "audit/pon-w1-exact-source-cost-provenance-20261030",
+    "tip": "1e65080274f43cac7bc7f9f67ec791b6b68458f4",
+    "terminal": "729fa0d5c78d07d2ed71c1f68243f62a22afa7b7"
+  },
+  {
+    "name": "audit/pon-w1-legal-source-bound-reconcile-20261030",
+    "tip": "729fa0d5c78d07d2ed71c1f68243f62a22afa7b7",
+    "terminal": "729fa0d5c78d07d2ed71c1f68243f62a22afa7b7"
+  },
+  {
+    "name": "audit/pon-w1-structured-valid-invalid-cost-20261030",
+    "tip": "1b46f5861d422bb7c33231f4b249edf4cf0d83bb",
+    "terminal": "61a39cde4a9604f68140388caa8a92fd3d8e4585"
+  },
+  {
+    "name": "audit/pq-a17-sha256-source-freeze-20261030",
+    "tip": "9d83890975bdf29ab4818b248e0dea9f6d516e45",
+    "terminal": "9fcd3fefdc2f4fd277fa8d9176846b34c6d0c342"
+  },
+  {
+    "name": "audit/pq-chain-claim-failclosed-20261030",
+    "tip": "92d65cf198f99c35892e487bb5a62f3293687885",
+    "terminal": "5beee6b17be2ead2a3862ec2a870b5c55f810806"
+  },
+  {
+    "name": "audit/pq-claim-checkout-source-symlink-guard-20261030",
+    "tip": "258529617699869278b7ef38a8113f40cacb2d59",
+    "terminal": "9fcd3fefdc2f4fd277fa8d9176846b34c6d0c342"
+  },
+  {
+    "name": "audit/pq-claim-json-exponent-boundary-20261030",
+    "tip": "9fcd3fefdc2f4fd277fa8d9176846b34c6d0c342",
+    "terminal": "9fcd3fefdc2f4fd277fa8d9176846b34c6d0c342"
+  },
+  {
+    "name": "audit/pq-classical-auth-boundaries-20261030",
+    "tip": "fdfc38bb22bf309aa70f3e409bebfbbc121bfeef",
+    "terminal": "9fcd3fefdc2f4fd277fa8d9176846b34c6d0c342"
+  },
+  {
+    "name": "audit/pq-classical-boundary-drift-refusal-20261030",
+    "tip": "72bfef448b2e94d2c77e265850b123f4af045485",
+    "terminal": "9fcd3fefdc2f4fd277fa8d9176846b34c6d0c342"
+  },
+  {
+    "name": "audit/pq-consensus-unqualified-schema-and-null-provenance-20261030",
+    "tip": "f90106a3994fa68d6910a8d65a054dfcea04ef4e",
+    "terminal": "9fcd3fefdc2f4fd277fa8d9176846b34c6d0c342"
+  },
+  {
+    "name": "audit/pq-da-classical-auth-default-deny-20261030",
+    "tip": "ae477260746b49946bc25f3e5e12078783035dca",
+    "terminal": "9fcd3fefdc2f4fd277fa8d9176846b34c6d0c342"
+  },
+  {
+    "name": "audit/pq-governance-plan-delegated-authority-20261030",
+    "tip": "4f0ddea562040489b58ae4b42f597908fa11771e",
+    "terminal": "9fcd3fefdc2f4fd277fa8d9176846b34c6d0c342"
+  },
+  {
+    "name": "audit/pq-json-duplicate-member-refusal-20261030",
+    "tip": "21b3754ac25cb8dab5c1f07ea6e579c431d0194e",
+    "terminal": "225b70cd94f5720fa046a0e8446cf9448466e70e"
+  },
+  {
+    "name": "audit/pq-mainline-source-provenance-20261030",
+    "tip": "9f8103e0af5c919f0f3bc73150116c2d5deba254",
+    "terminal": "35cca89eb13c6246a7e8893070b880bfd977adce"
+  },
+  {
+    "name": "audit/pq-native-m06-research-state-authority-20261030",
+    "tip": "d729ad215ccf2295a56459ddf96a7e2a7ed35eea",
+    "terminal": "9fcd3fefdc2f4fd277fa8d9176846b34c6d0c342"
+  },
+  {
+    "name": "audit/pq-pcp2-verify-deadline-checkpoints-20261030",
+    "tip": "01fc23f0a48fdd4580b7ebca9c523f7ec67301c7",
+    "terminal": "8141887759527ccb9d033a88aa89fa59310101ec"
+  },
+  {
+    "name": "audit/pq-policy-json-finite-float-20261030",
+    "tip": "35cca89eb13c6246a7e8893070b880bfd977adce",
+    "terminal": "35cca89eb13c6246a7e8893070b880bfd977adce"
+  },
+  {
+    "name": "audit/pq-relay-callback-trust-root-20261030",
+    "tip": "4564c89eb5b3c5a97d7fa3db8796a7955fd9823b",
+    "terminal": "9baae3670011cc719249ed46fe33b0b50e75a31a"
+  },
+  {
+    "name": "audit/pq-release-migration-identity-roots-20261030",
+    "tip": "298f09505bebbf1b7befcd725a1b90e04c15548b",
+    "terminal": "9fcd3fefdc2f4fd277fa8d9176846b34c6d0c342"
+  },
+  {
+    "name": "audit/pq-root-common-restore-contrast-20261110-1200",
+    "tip": "391a92248f0268aa5238eb1e2763fc6849ce4016",
+    "terminal": "83fe531fb3520bddb83940c8c94838fe3324be77"
+  },
+  {
+    "name": "audit/pq-root-original-campaign-artifact-20261109-cc4576",
+    "tip": "c36d9568ef4441e26401b2440f83cc29a5ce4afc",
+    "terminal": "c36d9568ef4441e26401b2440f83cc29a5ce4afc"
+  },
+  {
+    "name": "audit/pq-root-triage-result-member-bound-20261110",
+    "tip": "2963f598e7e9d95dc8e1a0f16b27e32fb2186e3e",
+    "terminal": "2963f598e7e9d95dc8e1a0f16b27e32fb2186e3e"
+  },
+  {
+    "name": "audit/pq-w1-closed-manifest-schema-20261030",
+    "tip": "588e7202fe30b7f645143c54265255c22d61f6d9",
+    "terminal": "9fcd3fefdc2f4fd277fa8d9176846b34c6d0c342"
+  },
+  {
+    "name": "audit/pq-w1-guest-source-ci-coverage-20261030",
+    "tip": "3115e6d852803aa314fb08838b5b9b57b55501e8",
+    "terminal": "9fcd3fefdc2f4fd277fa8d9176846b34c6d0c342"
+  },
+  {
+    "name": "audit/pq-w1-pinned-research-parameters-20261030",
+    "tip": "c5041df193e38bc9fdbd8bbdf0876fac31d09505",
+    "terminal": "9fcd3fefdc2f4fd277fa8d9176846b34c6d0c342"
+  },
+  {
+    "name": "audit/pq-w1-proof-profile-failclosed-20261030",
+    "tip": "b097118b6e8ff618eb7d043c92499c7bda1a4a34",
+    "terminal": "ec8b909352582158ba52018ac2202a85e92790a6"
+  },
+  {
+    "name": "audit/pq-w1-provenance-strict-json-20261030",
+    "tip": "32a748f269b9a90579705703f62e7553f865986e",
+    "terminal": "9fcd3fefdc2f4fd277fa8d9176846b34c6d0c342"
+  },
+  {
+    "name": "audit/pq-witness-common-rollback-20261110",
+    "tip": "83fe531fb3520bddb83940c8c94838fe3324be77",
+    "terminal": "83fe531fb3520bddb83940c8c94838fe3324be77"
+  },
+  {
+    "name": "audit/q4-observation-generation-coherence-20261027",
+    "tip": "fc70817bdfd5a2f5a94714b5c8c74792ea7bc46e",
+    "terminal": "fc70817bdfd5a2f5a94714b5c8c74792ea7bc46e"
+  },
+  {
+    "name": "automation/chain506-five-native-tests-20261027-1117",
+    "tip": "5328d7528350df4c910ae25e60f9e97b988ee054",
+    "terminal": "5328d7528350df4c910ae25e60f9e97b988ee054"
+  },
+  {
+    "name": "chore/chain-development-overhead-20261002",
+    "tip": "a6e78fd090e018e0c07f825ee6751d877259d9e0",
+    "terminal": "a6e78fd090e018e0c07f825ee6751d877259d9e0"
+  },
+  {
+    "name": "chore/chain-library-small-source-20261103-gpt6",
+    "tip": "98447abce355a50810bd3b658ce53c659ceb3411",
+    "terminal": "98447abce355a50810bd3b658ce53c659ceb3411"
+  },
+  {
+    "name": "chore/chain-pure-pon-model-inputs-20261027",
+    "tip": "174643f61a7f0de22318e5a48160fcf01d6367e4",
+    "terminal": "07f22452e4bab3f42c38ff522fab55c07ab0c5a2"
+  },
+  {
+    "name": "chore/chain-rust-199-20261004",
+    "tip": "2d20365dd5bfa6df086786fbfdd4854450ee4b5f",
+    "terminal": "2d20365dd5bfa6df086786fbfdd4854450ee4b5f"
+  },
+  {
+    "name": "chore/chain-work-collector-stage-20261011",
+    "tip": "8ed17cf06bec65a098b1f5d6befd82e79cc38929",
+    "terminal": "8ed17cf06bec65a098b1f5d6befd82e79cc38929"
+  },
+  {
+    "name": "ci/pon-architecture-source-check-20261008",
+    "tip": "a77d94db1525f5cfeec0433b27d9c0ceadde1e1d",
+    "terminal": "a77d94db1525f5cfeec0433b27d9c0ceadde1e1d"
+  },
+  {
+    "name": "ci/pon-baseline-source-repair-20261012",
+    "tip": "6a09d7ac50f317f5ade592fbc57a5a7c03396ebd",
+    "terminal": "6a09d7ac50f317f5ade592fbc57a5a7c03396ebd"
+  },
+  {
+    "name": "ci/pon-chain316-main-target-merge-20261015",
+    "tip": "086a5b67d07278c95972ce9b4587d3eab6125a52",
+    "terminal": "086a5b67d07278c95972ce9b4587d3eab6125a52"
+  },
+  {
+    "name": "ci/pon-five-track-native-export-20261011",
+    "tip": "bccf7063f33d35d5be48640f68f6bbbf3a22c243",
+    "terminal": "bccf7063f33d35d5be48640f68f6bbbf3a22c243"
+  },
+  {
+    "name": "ci/pon-five-track-source-repair-20261012-r2",
+    "tip": "b9b981ffc3aafb210f43395a9fe576f1fb691693",
+    "terminal": "b9b981ffc3aafb210f43395a9fe576f1fb691693"
+  },
+  {
+    "name": "ci/pon-fixed-blob-bounds-stage-20261010",
+    "tip": "1c27fda2001a242a7285f305bd13760971e47519",
+    "terminal": "1c27fda2001a242a7285f305bd13760971e47519"
+  },
+  {
+    "name": "ci/pon-fixed-blob-inventory-stage-20261010",
+    "tip": "1938bbc5706ebdd880302ca99dd2875ebc7b483f",
+    "terminal": "1938bbc5706ebdd880302ca99dd2875ebc7b483f"
+  },
+  {
+    "name": "ci/pon-local-toolchain-export-20261011",
+    "tip": "9cd31d3a088bb73d5ebbe6737a440d2e64bff5b9",
+    "terminal": "9cd31d3a088bb73d5ebbe6737a440d2e64bff5b9"
+  },
+  {
+    "name": "ci/pon-native-snapshot-qualification-20261009",
+    "tip": "128d9d6ddf92841618328b1399e52565bfc01395",
+    "terminal": "128d9d6ddf92841618328b1399e52565bfc01395"
+  },
+  {
+    "name": "ci/pon-native-workbench-20261012-r1",
+    "tip": "f4a60bb6bc0cb8eff1de14a0f3fe49a742120b87",
+    "terminal": "f4a60bb6bc0cb8eff1de14a0f3fe49a742120b87"
+  },
+  {
+    "name": "ci/pon-packed-branch-qualification-20261009",
+    "tip": "8805ce62ff28e76ca4636a0ca1e4465b61fe7911",
+    "terminal": "8805ce62ff28e76ca4636a0ca1e4465b61fe7911"
+  },
+  {
+    "name": "ci/pon-pressure-window-source-20261010",
+    "tip": "e4fbaee63d0d01edf8c7aefedff45083f1ee473f",
+    "terminal": "e4fbaee63d0d01edf8c7aefedff45083f1ee473f"
+  },
+  {
+    "name": "ci/pon-source-bundle-20261011",
+    "tip": "32f8355f904a5e70ababaf74e70386a6d9f033ac",
+    "terminal": "32f8355f904a5e70ababaf74e70386a6d9f033ac"
+  },
+  {
+    "name": "codex/freeze-pon-experimental-20261014",
+    "tip": "eb94f835ade72eaa7b0eaf82d6989b783186a913",
+    "terminal": "eb94f835ade72eaa7b0eaf82d6989b783186a913"
+  },
+  {
+    "name": "codex/native-node-hardening-20261014",
+    "tip": "b32849189637cc853267ff48dcbe002a79dabddb",
+    "terminal": "b32849189637cc853267ff48dcbe002a79dabddb"
+  },
+  {
+    "name": "codex/pon-safety-20261014",
+    "tip": "f2c52886208fb52ea68788aa35e0e8be85dbd2df",
+    "terminal": "f2c52886208fb52ea68788aa35e0e8be85dbd2df"
+  },
+  {
+    "name": "dependabot/cargo/trillionnium/rusqlite-0.40.2",
+    "tip": "5862e4427e918f10f50c10844e411f0ed3f70d66",
+    "terminal": "5862e4427e918f10f50c10844e411f0ed3f70d66"
+  },
+  {
+    "name": "dev/chain-directed-delivery-20261006",
+    "tip": "7be021f745fa7b3cd9c9f5063304026f3b1a52f2",
+    "terminal": "7be021f745fa7b3cd9c9f5063304026f3b1a52f2"
+  },
+  {
+    "name": "dev/chain-exact-source-20261005",
+    "tip": "4eca52d447624c54156357ba54baa2cec7601a7b",
+    "terminal": "4eca52d447624c54156357ba54baa2cec7601a7b"
+  },
+  {
+    "name": "dev/chain-native-delivery-20261005",
+    "tip": "6363c8399589b84c6837cd14610bc67c11a82aaf",
+    "terminal": "6363c8399589b84c6837cd14610bc67c11a82aaf"
+  },
+  {
+    "name": "dev/chain-observation-delivery-20261007",
+    "tip": "cecee753c785b1a1ceb511c75ba85b1996b8bd13",
+    "terminal": "cecee753c785b1a1ceb511c75ba85b1996b8bd13"
+  },
+  {
+    "name": "dev/chain-readonly-build-export-20261006",
+    "tip": "8ef3d0664cd9202f9f415ca1cb89ee30f4d533db",
+    "terminal": "1311db987f4d22eefc696587126ba30f151eed20"
+  },
+  {
+    "name": "dev/pon-five-axis-native-work-20261010",
+    "tip": "b72e8cb7c6fdb096ec859d04c7ad30b47115eb33",
+    "terminal": "06aa0bef38c73491cc6726a326ea6f157acc6cfe"
+  },
+  {
+    "name": "dev/pon-five-axis-offline-export-20261010",
+    "tip": "1311db987f4d22eefc696587126ba30f151eed20",
+    "terminal": "1311db987f4d22eefc696587126ba30f151eed20"
+  },
+  {
+    "name": "dev/pon-five-axis-source-export-20261011",
+    "tip": "291be2c8fef2ffacd5cd3550f9381d0332250775",
+    "terminal": "291be2c8fef2ffacd5cd3550f9381d0332250775"
+  },
+  {
+    "name": "dev/pon-snapshot-verified-delivery-20261010",
+    "tip": "06aa0bef38c73491cc6726a326ea6f157acc6cfe",
+    "terminal": "06aa0bef38c73491cc6726a326ea6f157acc6cfe"
+  },
+  {
+    "name": "diagnostic/chain-da-sequence-1bac-20261104-gpt6",
+    "tip": "c8c095bb2eee9272dcc77421f055897e6806da12",
+    "terminal": "c8c095bb2eee9272dcc77421f055897e6806da12"
+  },
+  {
+    "name": "diagnostic/chain-fuzz-asm-lock-20261104-gpt6",
+    "tip": "2c5349cb785d83e007b06c7af4ab1262277ad870",
+    "terminal": "2c5349cb785d83e007b06c7af4ab1262277ad870"
+  },
+  {
+    "name": "diagnostic/pon-five-native-lab-20261009",
+    "tip": "b74508f1db7e804436605a428773da41815f7c54",
+    "terminal": "b74508f1db7e804436605a428773da41815f7c54"
+  },
+  {
+    "name": "docs/chain-audit-remediation-20261022",
+    "tip": "b68c9523a1abc699883154849d657db764feffbe",
+    "terminal": "b68c9523a1abc699883154849d657db764feffbe"
+  },
+  {
+    "name": "docs/chain-quantum-daa-evidence-20261111-a0cf721c",
+    "tip": "9fc0ff44d7406a042c15befe2eb874c430143d96",
+    "terminal": "9fc0ff44d7406a042c15befe2eb874c430143d96"
+  },
+  {
+    "name": "docs/chain-sp2027",
+    "tip": "5b591754b426c6f88bea6d399fafcd77e31255d8",
+    "terminal": "b6f26452d060bf167cd10aa2343844f4e5712bb6"
+  },
+  {
+    "name": "docs/chain-sp27-06-confirmed-goodput-20261111",
+    "tip": "8ebcdb01016946a131f9067ebe1ace39b9c4f260",
+    "terminal": "8da34affb9fe77fbb14da75d331746a17fdd6816"
+  },
+  {
+    "name": "docs/chain-w1-history-outcomes-20261107-a66f",
+    "tip": "92df9eff019883476f9604e64cb8fedf4328bc1e",
+    "terminal": "92df9eff019883476f9604e64cb8fedf4328bc1e"
+  },
+  {
+    "name": "docs/chain-w1-ingress-r17-evidence-20261107",
+    "tip": "7f59213669a5226caf58ddd808127721706bf7ed",
+    "terminal": "7f59213669a5226caf58ddd808127721706bf7ed"
+  },
+  {
+    "name": "dot/p0-p6-admission-integrated-20261026",
+    "tip": "6bc67d79e7bcc6a5a161e40e728377ae80265806",
+    "terminal": "a9514266dc8b5e971a9dc8d1bf2ce0d1ae438227"
+  },
+  {
+    "name": "dot/p0-p6-chain-security-integration-20261026",
+    "tip": "26dd988a1eb3b464cf9a53b8a0c32df390523776",
+    "terminal": "26dd988a1eb3b464cf9a53b8a0c32df390523776"
+  },
+  {
+    "name": "dot/p0-p6-security-integration-20261026",
+    "tip": "a5f5aaa0a808d119f79654c0a762af7810608dcc",
+    "terminal": "a5f5aaa0a808d119f79654c0a762af7810608dcc"
+  },
+  {
+    "name": "dot/p1-consolidated-host-origin-20261026",
+    "tip": "a4f7fd5bdace75612928be0917f550f7dea864fc",
+    "terminal": "a4f7fd5bdace75612928be0917f550f7dea864fc"
+  },
+  {
+    "name": "dot/p1-history-page-shared-cpu-20261026",
+    "tip": "41a06024c772441f22c78877089352fd3e3a9edb",
+    "terminal": "30951e0b6976b58005d9d9cb05f45d65f7365f9f"
+  },
+  {
+    "name": "dot/p1-history-public-proxy-metered-20261026",
+    "tip": "30951e0b6976b58005d9d9cb05f45d65f7365f9f",
+    "terminal": "30951e0b6976b58005d9d9cb05f45d65f7365f9f"
+  },
+  {
+    "name": "dot/p1-history-replay-cpu-20261026",
+    "tip": "b0392c08a9ecb65e89709be0835d76de43ddfe8d",
+    "terminal": "b0392c08a9ecb65e89709be0835d76de43ddfe8d"
+  },
+  {
+    "name": "dot/p1-integrated-private-history-guard-20261026",
+    "tip": "b50018a58aef05a6f890e104bbb8d1f19642e05e",
+    "terminal": "b50018a58aef05a6f890e104bbb8d1f19642e05e"
+  },
+  {
+    "name": "dot/p1-integrated-w1-resource-20261026",
+    "tip": "a6a095103dd96d93b8305528dc6e42003f241dd1",
+    "terminal": "d55024a9fd5142b3dc156663c4112c4e1e64b496"
+  },
+  {
+    "name": "dot/p1-metered-history-import-20261025",
+    "tip": "80a1c8e94a6025d6297ce1b1169c9ff107f1340d",
+    "terminal": "5746a0f929d9132c0ab3b0e718a76632383eb0ba"
+  },
+  {
+    "name": "dot/p1-metered-history-import-20261026",
+    "tip": "d55024a9fd5142b3dc156663c4112c4e1e64b496",
+    "terminal": "d55024a9fd5142b3dc156663c4112c4e1e64b496"
+  },
+  {
+    "name": "dot/p1-p5-integrated-shadow-20261025",
+    "tip": "dcd6860f9037d8f4e14cbaf5e14e4c59dea2f192",
+    "terminal": "c6e43bea3340f3f33f3414cd036a4c988681ef9a"
+  },
+  {
+    "name": "dot/p1-unified-cost-owner-20261025",
+    "tip": "5746a0f929d9132c0ab3b0e718a76632383eb0ba",
+    "terminal": "5746a0f929d9132c0ab3b0e718a76632383eb0ba"
+  },
+  {
+    "name": "dot/p1-unified-host-and-peer-meter-20261026",
+    "tip": "ee19e040bc513efd774245628529c57b581390d7",
+    "terminal": "b50018a58aef05a6f890e104bbb8d1f19642e05e"
+  },
+  {
+    "name": "dot/p1-w1-negative-singleflight-20261027",
+    "tip": "d719d2a595222f5f258645d37c6e946f08c5e3a7",
+    "terminal": "d719d2a595222f5f258645d37c6e946f08c5e3a7"
+  },
+  {
+    "name": "dot/p2-admission-cost-verdict-20261026",
+    "tip": "7573e3ae83fd6090a1005a29fe716b0402b090ff",
+    "terminal": "7573e3ae83fd6090a1005a29fe716b0402b090ff"
+  },
+  {
+    "name": "dot/p2-false-work-cost-envelope-20261026",
+    "tip": "34a0f509145607746a1e6b156709bd5680213227",
+    "terminal": "34a0f509145607746a1e6b156709bd5680213227"
+  },
+  {
+    "name": "dot/p2-native-v3-cookie-cpu-20261025",
+    "tip": "55e4a75f91c783e7bdd8c9f698f8699df7080c02",
+    "terminal": "55e4a75f91c783e7bdd8c9f698f8699df7080c02"
+  },
+  {
+    "name": "dot/p2-v3-economic-feasibility-20261026",
+    "tip": "83ecbbd361c15fb11df26d2abbc544bbf530bef7",
+    "terminal": "83ecbbd361c15fb11df26d2abbc544bbf530bef7"
+  },
+  {
+    "name": "dot/p2-w1-v3-go-cost-20261025",
+    "tip": "14c8ac9192748584d668e197e083d1c30ac28611",
+    "terminal": "14c8ac9192748584d668e197e083d1c30ac28611"
+  },
+  {
+    "name": "dot/p3-w2c-durable-epoch-owner-20261026",
+    "tip": "db379fe21097ac4501f17f0362fec421d687d412",
+    "terminal": "db379fe21097ac4501f17f0362fec421d687d412"
+  },
+  {
+    "name": "dot/p5-single-host-epoch-exclusivity-20261026",
+    "tip": "c953a86c9338bc46509ed527e53bd836d66ffce2",
+    "terminal": "c953a86c9338bc46509ed527e53bd836d66ffce2"
+  },
+  {
+    "name": "dot/pon-next-p1-p3-w2c-20261025",
+    "tip": "658b61cacc539f0c4faf1216f7ff10a77a0bd4d7",
+    "terminal": "658b61cacc539f0c4faf1216f7ff10a77a0bd4d7"
+  },
+  {
+    "name": "dot/pon-p0-p6-evidence-failclosed-20261026",
+    "tip": "428d084bceee9699504cfef19617a62fed1c2af8",
+    "terminal": "428d084bceee9699504cfef19617a62fed1c2af8"
+  },
+  {
+    "name": "dot/pon-p0-p6-integrated-research-20261026",
+    "tip": "52ea0574dc6eba8577595f61686b25f593c66c61",
+    "terminal": "a4f7fd5bdace75612928be0917f550f7dea864fc"
+  },
+  {
+    "name": "dot/pon-p1-p2-integrated-20261025",
+    "tip": "296c361e633edbf5a180a4824ac3e82feff96540",
+    "terminal": "296c361e633edbf5a180a4824ac3e82feff96540"
+  },
+  {
+    "name": "dot/pon-p1-p5-integrated-20261025",
+    "tip": "17e8e4b48bfb5a9f1e5ac7122eb519faa2e87478",
+    "terminal": "9386ba1462138b0e235b22050afc9225d90c3cb0"
+  },
+  {
+    "name": "dot/pon-p1-p5-integration-20261026",
+    "tip": "dc8df72d82059915bd0c69c81eee298243bcbd68",
+    "terminal": "d575524c95b198d49c1459f58184a65b4f999722"
+  },
+  {
+    "name": "dot/pon-p1-unified-host-cpu-20261027",
+    "tip": "a9514266dc8b5e971a9dc8d1bf2ce0d1ae438227",
+    "terminal": "a9514266dc8b5e971a9dc8d1bf2ce0d1ae438227"
+  },
+  {
+    "name": "dot/pon-p1-w2c-integration-20261025",
+    "tip": "72511ded49b7c7c8014413571228a2c6b9c3d153",
+    "terminal": "72511ded49b7c7c8014413571228a2c6b9c3d153"
+  },
+  {
+    "name": "dot/pon-p1-w2c-integration-preview-20261025",
+    "tip": "750b435b10de4244da02c10d0a5765cde95cfdc7",
+    "terminal": "750b435b10de4244da02c10d0a5765cde95cfdc7"
+  },
+  {
+    "name": "dot/pon-p1-w2c-integration-preview-20261026",
+    "tip": "30d3e782f43f3b5404f056b05a372a36cd33c5fe",
+    "terminal": "30d3e782f43f3b5404f056b05a372a36cd33c5fe"
+  },
+  {
+    "name": "dot/pon-p2-economics-integrated-20261026",
+    "tip": "d575524c95b198d49c1459f58184a65b4f999722",
+    "terminal": "d575524c95b198d49c1459f58184a65b4f999722"
+  },
+  {
+    "name": "dot/pon-w1-p1-w2c-integration-20261026",
+    "tip": "6296c1e45d8e9998aca51134db930d75fdb561f6",
+    "terminal": "6296c1e45d8e9998aca51134db930d75fdb561f6"
+  },
+  {
+    "name": "dot/pq-fix-branch-native-count-20261105",
+    "tip": "685e734590cf9fa2effa0ee12e851120e8737a9e",
+    "terminal": "685e734590cf9fa2effa0ee12e851120e8737a9e"
+  },
+  {
+    "name": "dot/pq-fix-exact-inventory-link-20261105",
+    "tip": "318a49975900ae9cd375f76857a5631f783e2f07",
+    "terminal": "318a49975900ae9cd375f76857a5631f783e2f07"
+  },
+  {
+    "name": "dot/w1-p1-integrated-preview-20261027",
+    "tip": "10429dab61b195e8b9bd7e1950081acb4bfd83e0",
+    "terminal": "10429dab61b195e8b9bd7e1950081acb4bfd83e0"
+  },
+  {
+    "name": "dot/w2c-durable-consume-20261026",
+    "tip": "e19245dd880a989b5310cda126ff2f27a6da67d4",
+    "terminal": "e19245dd880a989b5310cda126ff2f27a6da67d4"
+  },
+  {
+    "name": "dot/w2c-durable-epoch-fence-20261026",
+    "tip": "ca2e9d14d58e0882c3be58a3711428e055ff2eb6",
+    "terminal": "ca2e9d14d58e0882c3be58a3711428e055ff2eb6"
+  },
+  {
+    "name": "dot/w2c-durable-negative-tests-repair-20261027-0758",
+    "tip": "fa704e45c1fea9e99dd35a77142d9b27a09fe7e0",
+    "terminal": "fa704e45c1fea9e99dd35a77142d9b27a09fe7e0"
+  },
+  {
+    "name": "dot/w2c-durable-paid-claims-20261027",
+    "tip": "9934e70dba5aabf5f02b85bc92ec87544fdf51e8",
+    "terminal": "9934e70dba5aabf5f02b85bc92ec87544fdf51e8"
+  },
+  {
+    "name": "dot/w2c-durable-paid-replay-20261026",
+    "tip": "b517d6f9e1e763742853c0d65f512d53203ec768",
+    "terminal": "b517d6f9e1e763742853c0d65f512d53203ec768"
+  },
+  {
+    "name": "dot/w2c-durable-paid-spend-20261026",
+    "tip": "cab37b3f9ea4cc2565e2902c38c5a36f095ab171",
+    "terminal": "cab37b3f9ea4cc2565e2902c38c5a36f095ab171"
+  },
+  {
+    "name": "dot/w2c-durable-paid-spend-20261027",
+    "tip": "b1422953c9ef77d9c1ebc5416a4b70abf898088c",
+    "terminal": "fa704e45c1fea9e99dd35a77142d9b27a09fe7e0"
+  },
+  {
+    "name": "dot/w2c-durable-spend-20261026",
+    "tip": "093ec49ae58da21d79c1fc1df0e3569f4d9e357b",
+    "terminal": "093ec49ae58da21d79c1fc1df0e3569f4d9e357b"
+  },
+  {
+    "name": "dot/w2c-durable-spend-owner-20261026",
+    "tip": "4bf21e2a1e92e07955129c98d2c4f9102d3a1742",
+    "terminal": "4bf21e2a1e92e07955129c98d2c4f9102d3a1742"
+  },
+  {
+    "name": "dot/w2c-fixed-cost-policy-20261026",
+    "tip": "54b3b103f211cfd9205335e18e9850abbf22abc0",
+    "terminal": "a0d2b172bbdd9e57f6c72fd02df1764aeaf54a66"
+  },
+  {
+    "name": "dot/w2c-issuer-epoch-quota-20261025",
+    "tip": "7aa1a1dad78e530329ba03d81f7e7da01296f27d",
+    "terminal": "7aa1a1dad78e530329ba03d81f7e7da01296f27d"
+  },
+  {
+    "name": "dot/w2c-server-price-floor-20261026",
+    "tip": "3d89f80f3c84123d37b0d81cdc5305a4f1572371",
+    "terminal": "093ec49ae58da21d79c1fc1df0e3569f4d9e357b"
+  },
+  {
+    "name": "dot/w2c-stateless-issuance-20261026",
+    "tip": "a0d2b172bbdd9e57f6c72fd02df1764aeaf54a66",
+    "terminal": "a0d2b172bbdd9e57f6c72fd02df1764aeaf54a66"
+  },
+  {
+    "name": "dot/w2c-stateless-paid-offers-20261025",
+    "tip": "e489fa33fe80cae84dcc9bb0de2dad8b50efc69a",
+    "terminal": "e489fa33fe80cae84dcc9bb0de2dad8b50efc69a"
+  },
+  {
+    "name": "dot/w2c-stateless-receiver-20261025",
+    "tip": "fffc600e20386d797039763f5b1b081449342d1a",
+    "terminal": "fffc600e20386d797039763f5b1b081449342d1a"
+  },
+  {
+    "name": "dot/w2d-freivalds-cost-research-20261026",
+    "tip": "51423e17989d837405c9455a012bc654a21a5e0c",
+    "terminal": "51423e17989d837405c9455a012bc654a21a5e0c"
+  },
+  {
+    "name": "dot/w2d-fs-prefix-full-tape-20261025",
+    "tip": "9386ba1462138b0e235b22050afc9225d90c3cb0",
+    "terminal": "9386ba1462138b0e235b22050afc9225d90c3cb0"
+  },
+  {
+    "name": "dot/w2d-full-tile-freivalds-20261026",
+    "tip": "9955b2b144ee38729f60a2f28c5be04725c53c38",
+    "terminal": "4f367f106f97c92e95cca6a85c59fbc9d01d4a92"
+  },
+  {
+    "name": "dot/w2e-global-polynomial-research-20261026",
+    "tip": "4f367f106f97c92e95cca6a85c59fbc9d01d4a92",
+    "terminal": "4f367f106f97c92e95cca6a85c59fbc9d01d4a92"
+  },
+  {
+    "name": "draft/dot-peer-owner-candidate-20261103",
+    "tip": "c6e43bea3340f3f33f3414cd036a4c988681ef9a",
+    "terminal": "c6e43bea3340f3f33f3414cd036a4c988681ef9a"
+  },
+  {
+    "name": "evidence/chain-completed-w1-and-ticket-costs-20261028",
+    "tip": "d3b9abedeb05909173305bf773714ca380950600",
+    "terminal": "d3b9abedeb05909173305bf773714ca380950600"
+  },
+  {
+    "name": "evidence/chain-sixline-native-20261007",
+    "tip": "78d0237083ea753ce714a3184d2a8b49a0934a90",
+    "terminal": "78d0237083ea753ce714a3184d2a8b49a0934a90"
+  },
+  {
+    "name": "evidence/pon-root-supplement-c61e211-20261022",
+    "tip": "c61e2112de67f9295258246b42d3c3ebf652d445",
+    "terminal": "c61e2112de67f9295258246b42d3c3ebf652d445"
+  },
+  {
+    "name": "feat/chain-growth-storage-reservation-20261008",
+    "tip": "f1baefda82c4303771ecc2a693f41fa23dc8b39e",
+    "terminal": "f1baefda82c4303771ecc2a693f41fa23dc8b39e"
+  },
+  {
+    "name": "feat/chain-signed-consumer-benefit-20261008",
+    "tip": "d0b6e6e7c69ca8b2585dee2a1a4cf54d6a72f2b9",
+    "terminal": "d0b6e6e7c69ca8b2585dee2a1a4cf54d6a72f2b9"
+  },
+  {
+    "name": "feature/chain-m02-branch-core",
+    "tip": "cca911b47731c9c6f6b61e39758ca3ad17a33555",
+    "terminal": "3a74d0c45b18535cf2f7f880da8411ff88b8a9af"
+  },
+  {
+    "name": "feature/chain-pure-pon-evidence-20261027",
+    "tip": "2258f65efafba161987fa3900b4d50d0a03f4d56",
+    "terminal": "2258f65efafba161987fa3900b4d50d0a03f4d56"
+  },
+  {
+    "name": "feature/chain-pure-pon-integration-20261027",
+    "tip": "9e05ad5d237660fb0ea8b40dd5c29af4225551d3",
+    "terminal": "2258f65efafba161987fa3900b4d50d0a03f4d56"
+  },
+  {
+    "name": "feature/chain-pure-pon-measured-source-20261027",
+    "tip": "b1ff52da07618b8bb3506c653fa8c4855c0580c8",
+    "terminal": "b1ff52da07618b8bb3506c653fa8c4855c0580c8"
+  },
+  {
+    "name": "feature/chain-pure-pon-w1-observed-source-20261027",
+    "tip": "5c8cd8bd59cd9d8197617239664e66dd8b086baa",
+    "terminal": "5c8cd8bd59cd9d8197617239664e66dd8b086baa"
+  },
+  {
+    "name": "feature/chain-real-iteration-20261108-8b4f",
+    "tip": "c247d623704b1cce2307fa31b21cab045063e0f6",
+    "terminal": "0cdc6ca1878854dd794aad25adfb072bc5fa4422"
+  },
+  {
+    "name": "feature/chain-w1-cell-proof-20261106",
+    "tip": "675bb90a6bd78fa08895128de8353b92a7f93dd8",
+    "terminal": "ed452e9a67419900b7d30b2c5561ebbfbdd3c1ff"
+  },
+  {
+    "name": "feature/chain-w1-cost-research-20261025",
+    "tip": "9516d4a2bc0bfe8b5366c9cb45b23a3c2effb46f",
+    "terminal": "9516d4a2bc0bfe8b5366c9cb45b23a3c2effb46f"
+  },
+  {
+    "name": "fix/cell-accept-readiness-channel-order-20261107",
+    "tip": "4062d1c839a9f1863b28bc0b7ed714f1f8ac24f5",
+    "terminal": "1e1cc50a0367fd29f48d00db20f35134900c656e"
+  },
+  {
+    "name": "fix/chain-answer-eos-research-v3-20261027",
+    "tip": "9035171271e9f437b7224b53532f41a2b2894be7",
+    "terminal": "07f22452e4bab3f42c38ff522fab55c07ab0c5a2"
+  },
+  {
+    "name": "fix/chain-architecture-native-host-20261104",
+    "tip": "d0bf48059d4a5fab35401fc49370de8d204f3ef4",
+    "terminal": "86054a6b6d329ac7c6d89d708bb036e1a98e2d77"
+  },
+  {
+    "name": "fix/chain-binary-answer-observed-v2-20261029",
+    "tip": "b0a1f4f22820a6241c1c3bd0001d79a960179720",
+    "terminal": "002cd506c81e1dfac4a656bfcd03b5b233dbc923"
+  },
+  {
+    "name": "fix/chain-capacity-work-continuation-20261005",
+    "tip": "69875e996e309bdeff146d96b1f09ec1705bc3e9",
+    "terminal": "69875e996e309bdeff146d96b1f09ec1705bc3e9"
+  },
+  {
+    "name": "fix/chain-cargo-loader-optional-toolchain-lib-20261107-gpt6",
+    "tip": "dd86502783374a7db10669f096ea393113f96f8f",
+    "terminal": "24648a6fdcac29c31c4676a4ef341ceb755ba9e1"
+  },
+  {
+    "name": "fix/chain-cell-native-shard-674c72-20261110",
+    "tip": "a67d83a05d6ff4c2fdc4a5fd5c23fc38d38b563d",
+    "terminal": "a67d83a05d6ff4c2fdc4a5fd5c23fc38d38b563d"
+  },
+  {
+    "name": "fix/chain-cell-rendezvous-accept-loop-readiness-20261107",
+    "tip": "c44536c92ccd75a1cec57e300476400f449a4c19",
+    "terminal": "1e1cc50a0367fd29f48d00db20f35134900c656e"
+  },
+  {
+    "name": "fix/chain-cell-rendezvous-readiness-20261103-gpt6",
+    "tip": "e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29",
+    "terminal": "e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29"
+  },
+  {
+    "name": "fix/chain-cell-storage-network-v3-20261108",
+    "tip": "43e10d4dded2404f2b6ae8851a68173d9d792be6",
+    "terminal": "43e10d4dded2404f2b6ae8851a68173d9d792be6"
+  },
+  {
+    "name": "fix/chain-cell-storage-validation-349a",
+    "tip": "21c218cf552c6a10d1abca5d79844a02baab7123",
+    "terminal": "21c218cf552c6a10d1abca5d79844a02baab7123"
+  },
+  {
+    "name": "fix/chain-ci-canonical-checkout-origin-20261030",
+    "tip": "d5c7d1dec5969e8715fe5d59999c72f5243da9ec",
+    "terminal": "57ba2868544528e4f845482fe6aaa9d0f74987b2"
+  },
+  {
+    "name": "fix/chain-ci-empty-readme-contract-20261030",
+    "tip": "7ced65c6ad6cf586ffcf18632987f972ee49fdd9",
+    "terminal": "57ba2868544528e4f845482fe6aaa9d0f74987b2"
+  },
+  {
+    "name": "fix/chain-ci-hardening-20261015",
+    "tip": "871ade83cd0bf43adbbefc397a88b187bf7bbd5d",
+    "terminal": "871ade83cd0bf43adbbefc397a88b187bf7bbd5d"
+  },
+  {
+    "name": "fix/chain-ci-identities-20261104",
+    "tip": "89b6ca8b7300dd7f026a073b2ddc79d04df8091a",
+    "terminal": "433948bd39792ba578f9de3c3d4793ac58411780"
+  },
+  {
+    "name": "fix/chain-cleanup-snapshot-stop-order-20261029",
+    "tip": "b2a57e0f98fad412b71c982c10d94795ca7850a4",
+    "terminal": "b2a57e0f98fad412b71c982c10d94795ca7850a4"
+  },
+  {
+    "name": "fix/chain-codeql-local-sarif-no-upload-20261107",
+    "tip": "4906dbad8e97c2a252a395b7b581ebbe21a59204",
+    "terminal": "4906dbad8e97c2a252a395b7b581ebbe21a59204"
+  },
+  {
+    "name": "fix/chain-control-domain-evidence-20261106",
+    "tip": "058a729a274b431ed1617efee2725cad8471d966",
+    "terminal": "058a729a274b431ed1617efee2725cad8471d966"
+  },
+  {
+    "name": "fix/chain-control-domain-join-20261108",
+    "tip": "316035f761f74e912b800559600c94faed7576fd",
+    "terminal": "316035f761f74e912b800559600c94faed7576fd"
+  },
+  {
+    "name": "fix/chain-cross-repo-gates-20261106-5edd",
+    "tip": "4be50aa40ed537b8a06475984a8da4141e44cf77",
+    "terminal": "4be50aa40ed537b8a06475984a8da4141e44cf77"
+  },
+  {
+    "name": "fix/chain-crossrepo-evidence-e0c10",
+    "tip": "e6c622a16c6770073435f49cf02a6808b56312b0",
+    "terminal": "e6c622a16c6770073435f49cf02a6808b56312b0"
+  },
+  {
+    "name": "fix/chain-crossrepo-p0-e0c10",
+    "tip": "ea909124cc460f364bd17b009073306014133f48",
+    "terminal": "e6c622a16c6770073435f49cf02a6808b56312b0"
+  },
+  {
+    "name": "fix/chain-diverse-inventory-20261029",
+    "tip": "c5728d02a7b64909302252f4986e33b56b91faa2",
+    "terminal": "002cd506c81e1dfac4a656bfcd03b5b233dbc923"
+  },
+  {
+    "name": "fix/chain-diverse60-neural-profile-20261029",
+    "tip": "0bd7019a06e34c69fcbc84f23dda8510689b9a8d",
+    "terminal": "002cd506c81e1dfac4a656bfcd03b5b233dbc923"
+  },
+  {
+    "name": "fix/chain-durable-schema-parser-mode-20261107",
+    "tip": "728297c907821a92724e189430d1a0ba5c0e61c9",
+    "terminal": "728297c907821a92724e189430d1a0ba5c0e61c9"
+  },
+  {
+    "name": "fix/chain-evaluation-native-host-20261104",
+    "tip": "45ebc8234f6275b2a8308c79ded73868bc25aa69",
+    "terminal": "86054a6b6d329ac7c6d89d708bb036e1a98e2d77"
+  },
+  {
+    "name": "fix/chain-evaluation-phase-observer-20261104",
+    "tip": "86054a6b6d329ac7c6d89d708bb036e1a98e2d77",
+    "terminal": "86054a6b6d329ac7c6d89d708bb036e1a98e2d77"
+  },
+  {
+    "name": "fix/chain-exit-worker-count-boundary-20261029",
+    "tip": "ad490ed4b1132a333159fd76702809fd248a4462",
+    "terminal": "ad490ed4b1132a333159fd76702809fd248a4462"
+  },
+  {
+    "name": "fix/chain-experimental-activation-20261014",
+    "tip": "cc219ed1320f86604d30a46b1e32ad170802b511",
+    "terminal": "a598d586239b9c019d4a1cd4df01d70c1d39f387"
+  },
+  {
+    "name": "fix/chain-finality-profile-20261014",
+    "tip": "a598d586239b9c019d4a1cd4df01d70c1d39f387",
+    "terminal": "a598d586239b9c019d4a1cd4df01d70c1d39f387"
+  },
+  {
+    "name": "fix/chain-finite-rate-boundary-20261028",
+    "tip": "0682274361e529cd6a8e13285324c3c9ee0744b8",
+    "terminal": "162000f1d81631ac257e1eccf3f31cd976d6d977"
+  },
+  {
+    "name": "fix/chain-fuzz-locked-graph-20261103-gpt6",
+    "tip": "6ee97ee8f2955d2d0cd4a451268a906c5aa07584",
+    "terminal": "5aa7ece5b2ffabd5a44c28687172fb278da1d72f"
+  },
+  {
+    "name": "fix/chain-hepta-fixed-pressure-20261103",
+    "tip": "78d13ecb327a95609429082b05b42c19751cd2c2",
+    "terminal": "433948bd39792ba578f9de3c3d4793ac58411780"
+  },
+  {
+    "name": "fix/chain-hepta-task-bound-objective-20261027",
+    "tip": "07f22452e4bab3f42c38ff522fab55c07ab0c5a2",
+    "terminal": "07f22452e4bab3f42c38ff522fab55c07ab0c5a2"
+  },
+  {
+    "name": "fix/chain-hex-decode-20261104",
+    "tip": "9bd3d43edf6e0f22183d71f52210ec4e0b32dd2e",
+    "terminal": "9bd3d43edf6e0f22183d71f52210ec4e0b32dd2e"
+  },
+  {
+    "name": "fix/chain-history-first-startup-20261028",
+    "tip": "c571049715d232924af102246dc05281386edd83",
+    "terminal": "a1edc667930da4011032021a4011b5b4f6b9acf0"
+  },
+  {
+    "name": "fix/chain-history-host-20261104",
+    "tip": "85fdf7233510d6913956a36fa98a9e0a1f2194d3",
+    "terminal": "433948bd39792ba578f9de3c3d4793ac58411780"
+  },
+  {
+    "name": "fix/chain-history-journal-operation-20261027",
+    "tip": "1116ae390e4ed408ab0899e13aec5d1f90f2192c",
+    "terminal": "e4880ba589c8a2a4cf65355acd4d1c1651824137"
+  },
+  {
+    "name": "fix/chain-history-m06-detach-20261027",
+    "tip": "eb36361d4d412a369ff7909f91407a1fa2103ef8",
+    "terminal": "eb36361d4d412a369ff7909f91407a1fa2103ef8"
+  },
+  {
+    "name": "fix/chain-history-publication-native-20261028",
+    "tip": "afc8d6dcb11168fa5d9799222c99dba2424dd520",
+    "terminal": "a1edc667930da4011032021a4011b5b4f6b9acf0"
+  },
+  {
+    "name": "fix/chain-history-startup-seal-20261028",
+    "tip": "59e10da3f501970fff0a87ff398f8a08aa7fb59e",
+    "terminal": "a1edc667930da4011032021a4011b5b4f6b9acf0"
+  },
+  {
+    "name": "fix/chain-learning-query-exit-20261109-70ae",
+    "tip": "0cdc6ca1878854dd794aad25adfb072bc5fa4422",
+    "terminal": "0cdc6ca1878854dd794aad25adfb072bc5fa4422"
+  },
+  {
+    "name": "fix/chain-legacy-reorg-cost-20261104",
+    "tip": "1b25374bc7cd0af01882eb85b4d4b9398d0e8116",
+    "terminal": "1b25374bc7cd0af01882eb85b4d4b9398d0e8116"
+  },
+  {
+    "name": "fix/chain-model-owner-hosted-once-20261105",
+    "tip": "6bdaf9598d72c118798eb51a03db2e1c0e7c8507",
+    "terminal": "6bdaf9598d72c118798eb51a03db2e1c0e7c8507"
+  },
+  {
+    "name": "fix/chain-model-runtime-diagnostic-20261027",
+    "tip": "c172433c74fa8a845b84461fbbcbadb378234769",
+    "terminal": "07f22452e4bab3f42c38ff522fab55c07ab0c5a2"
+  },
+  {
+    "name": "fix/chain-native-codeql-source-scan-20261106-gpt6",
+    "tip": "919e7383739b2577836c25c5d39c3bfc1698e46c",
+    "terminal": "919e7383739b2577836c25c5d39c3bfc1698e46c"
+  },
+  {
+    "name": "fix/chain-native-convergence-20261029",
+    "tip": "002cd506c81e1dfac4a656bfcd03b5b233dbc923",
+    "terminal": "002cd506c81e1dfac4a656bfcd03b5b233dbc923"
+  },
+  {
+    "name": "fix/chain-native-history-fixed-host-20261103-gpt6",
+    "tip": "4204c4b0b1300cbb5d5325d9915a161173983491",
+    "terminal": "a43951695bb808b3952d1e9ee99d8f9b603a4fc1"
+  },
+  {
+    "name": "fix/chain-native-sql-reuse-qualified-20261104",
+    "tip": "7a6669e4365eca68a9f6874ea1bab4dfb7c3d784",
+    "terminal": "c09e681b043cad8141a659ca40a9b19a2eca9d5e"
+  },
+  {
+    "name": "fix/chain-observed-neural-live-release-20261028",
+    "tip": "003ae1b94ddde054dcf2af28b2fbd2d058be9af3",
+    "terminal": "ad490ed4b1132a333159fd76702809fd248a4462"
+  },
+  {
+    "name": "fix/chain-owner-hotpath-20261006",
+    "tip": "522b3d9ace75faa21b1a5ab88f88f8d9eb84238c",
+    "terminal": "522b3d9ace75faa21b1a5ab88f88f8d9eb84238c"
+  },
+  {
+    "name": "fix/chain-owner-hotpath-delivery-20261006",
+    "tip": "f0c69ed85d1b044d8b38112ed1ff10a5beed592c",
+    "terminal": "f0c69ed85d1b044d8b38112ed1ff10a5beed592c"
+  },
+  {
+    "name": "fix/chain-pn-blocker-continuation-20261101",
+    "tip": "75600213d6b0e92af33043669063f6e0f08cf12e",
+    "terminal": "75600213d6b0e92af33043669063f6e0f08cf12e"
+  },
+  {
+    "name": "fix/chain-pn-convergence-20261101",
+    "tip": "41742ba49ed25add9a136cff25b03d5fb4cea869",
+    "terminal": "75600213d6b0e92af33043669063f6e0f08cf12e"
+  },
+  {
+    "name": "fix/chain-pon-false-trace-source-inventory-20261101",
+    "tip": "8a1182de7f51e89cfcf1b91d5748f0ca77928e64",
+    "terminal": "6be62efdf8e23643657d593980353f96aa22df1c"
+  },
+  {
+    "name": "fix/chain-pon-followthrough-20261110-685a",
+    "tip": "a4aebf12ffb73c0f5ae8912048153bdd0cae9c4b",
+    "terminal": "a4aebf12ffb73c0f5ae8912048153bdd0cae9c4b"
+  },
+  {
+    "name": "fix/chain-pon-history-correct-product-evidence-20261101",
+    "tip": "af7739dda81f305c2b3ad488b5a8f073f8f4e3e2",
+    "terminal": "af7739dda81f305c2b3ad488b5a8f073f8f4e3e2"
+  },
+  {
+    "name": "fix/chain-pon-verification-cost-20261028",
+    "tip": "ead1000360d24247f3c6159d50b2c8663ff4af4f",
+    "terminal": "ead1000360d24247f3c6159d50b2c8663ff4af4f"
+  },
+  {
+    "name": "fix/chain-pon-work-security-20261101",
+    "tip": "dddad3988a665814fd2e331597f605d6ffa608f2",
+    "terminal": "dddad3988a665814fd2e331597f605d6ffa608f2"
+  },
+  {
+    "name": "fix/chain-pq-account-transport-20261106-47df",
+    "tip": "6f8b147eb5741a7206655618218965544e8c8029",
+    "terminal": "bbdb1af203674fec3923c522a49b3dcc6bbca6bc"
+  },
+  {
+    "name": "fix/chain-pq-cell-readiness-rustfmt-20261107",
+    "tip": "65b79a80db157a139523aa3467b32d90c8c6edf3",
+    "terminal": "1e1cc50a0367fd29f48d00db20f35134900c656e"
+  },
+  {
+    "name": "fix/chain-pq-cell-readiness-rustfmt-source-pin-20261107",
+    "tip": "1e1cc50a0367fd29f48d00db20f35134900c656e",
+    "terminal": "1e1cc50a0367fd29f48d00db20f35134900c656e"
+  },
+  {
+    "name": "fix/chain-pq-cell-readiness-source-pins-20261107",
+    "tip": "a86c234a32d3851e82e8231e30de0d16219bd2b1",
+    "terminal": "1e1cc50a0367fd29f48d00db20f35134900c656e"
+  },
+  {
+    "name": "fix/chain-pq-cell-rendezvous-readiness-on-768-20261107",
+    "tip": "65a6d38926f0696270bdbe74bf2983b62196ae3a",
+    "terminal": "1e1cc50a0367fd29f48d00db20f35134900c656e"
+  },
+  {
+    "name": "fix/chain-pq-claimed-nonce-20261029",
+    "tip": "6cd321a6e5f36dabec60e5e234294c4167330476",
+    "terminal": "002cd506c81e1dfac4a656bfcd03b5b233dbc923"
+  },
+  {
+    "name": "fix/chain-pq-durable-outbound-20261106",
+    "tip": "b4c720405f1fb7ca6c811d412cc1b534845c85c8",
+    "terminal": "bbdb1af203674fec3923c522a49b3dcc6bbca6bc"
+  },
+  {
+    "name": "fix/chain-pq-hepta-handoff-v2-20261031",
+    "tip": "3dfdb1e08f3cb64471c5b7e0748ac337e2a02010",
+    "terminal": "3dfdb1e08f3cb64471c5b7e0748ac337e2a02010"
+  },
+  {
+    "name": "fix/chain-pq-quota-closure-20261028",
+    "tip": "29e1f194742e436b44b4c8758777341e62fe2bd8",
+    "terminal": "002cd506c81e1dfac4a656bfcd03b5b233dbc923"
+  },
+  {
+    "name": "fix/chain-pq-retain-dag-failure-receipt-20261102",
+    "tip": "4c46eca89a006616e9240d983c66919071f79b41",
+    "terminal": "01404de030c0d560e32a4b86620cea027878d2df"
+  },
+  {
+    "name": "fix/chain-pq-roster-52-current-head-20261106-gpt6",
+    "tip": "5c148d4cd2bfd493164f614f4029fe67337aff29",
+    "terminal": "5c148d4cd2bfd493164f614f4029fe67337aff29"
+  },
+  {
+    "name": "fix/chain-pq-roster-harness-20261107-6f8b",
+    "tip": "bbdb1af203674fec3923c522a49b3dcc6bbca6bc",
+    "terminal": "bbdb1af203674fec3923c522a49b3dcc6bbca6bc"
+  },
+  {
+    "name": "fix/chain-pq-rust-gates-exec-request-clock-20261031",
+    "tip": "8db16f8f5d03ca8c192556a815fd2a74704edd3c",
+    "terminal": "8db16f8f5d03ca8c192556a815fd2a74704edd3c"
+  },
+  {
+    "name": "fix/chain-pq-signature-20261109",
+    "tip": "cc4576a5911138d724ab0f397642ea03f6b5943f",
+    "terminal": "c36d9568ef4441e26401b2440f83cc29a5ce4afc"
+  },
+  {
+    "name": "fix/chain-pq-source-pin-sqlite-requalification-20261107",
+    "tip": "0c084aba1fcbe56ea1661231df24d9a069bda921",
+    "terminal": "1e1cc50a0367fd29f48d00db20f35134900c656e"
+  },
+  {
+    "name": "fix/chain-pq-system-roster-52-20261106-gpt6",
+    "tip": "83735d9600a93c6fafe16442df72421a8239ec4e",
+    "terminal": "83735d9600a93c6fafe16442df72421a8239ec4e"
+  },
+  {
+    "name": "fix/chain-pq-transport-custody-gates-20261106-a864cf",
+    "tip": "e42f85ed5b1d0b4c9ebcfd8d5bd3247becb74959",
+    "terminal": "e42f85ed5b1d0b4c9ebcfd8d5bd3247becb74959"
+  },
+  {
+    "name": "fix/chain-problem-one-20261108-6050776",
+    "tip": "3388a6810b5ae8f41f238f878d56bcc5669bc8b9",
+    "terminal": "3388a6810b5ae8f41f238f878d56bcc5669bc8b9"
+  },
+  {
+    "name": "fix/chain-pure-history-lifeline-binding-20261029",
+    "tip": "a1edc667930da4011032021a4011b5b4f6b9acf0",
+    "terminal": "a1edc667930da4011032021a4011b5b4f6b9acf0"
+  },
+  {
+    "name": "fix/chain-pure-history-source-pin-20261029",
+    "tip": "98873ccfbb4a416218c49df39082f0b3a842b5c8",
+    "terminal": "a1edc667930da4011032021a4011b5b4f6b9acf0"
+  },
+  {
+    "name": "fix/chain-pure-pon-admission-daa-20261028",
+    "tip": "0f04de8ee26b1871ef95653dda51df220660bd4a",
+    "terminal": "007b80cc99ba52fe7afcd6d0e0dea52628f5a026"
+  },
+  {
+    "name": "fix/chain-pure-pon-history-20261027",
+    "tip": "081c04e893850a42b539d98d6ccfa659496e99ee",
+    "terminal": "e4880ba589c8a2a4cf65355acd4d1c1651824137"
+  },
+  {
+    "name": "fix/chain-pure-pon-pq-hardening-20261027",
+    "tip": "829c5d28ec9a0fc13de2bd098b477cbacacdb4b7",
+    "terminal": "95e54937f55b22782c5a2e5830d0769638137e86"
+  },
+  {
+    "name": "fix/chain-quantum-closure-api-20261107-c9b4",
+    "tip": "bef17d632d1e40014167dba2a1089b85366b67b8",
+    "terminal": "360556e9664fcb563877c05e74fd83974a5d9dba"
+  },
+  {
+    "name": "fix/chain-quantum-competing-review-20261107-c9b4",
+    "tip": "360556e9664fcb563877c05e74fd83974a5d9dba",
+    "terminal": "360556e9664fcb563877c05e74fd83974a5d9dba"
+  },
+  {
+    "name": "fix/chain-quantum-cost-closure-20261106-c201",
+    "tip": "7a98f27f99abccc28da2f1f3cc60bdaa2eca4890",
+    "terminal": "360556e9664fcb563877c05e74fd83974a5d9dba"
+  },
+  {
+    "name": "fix/chain-quantum-daa-20261111-qdaa",
+    "tip": "a0cf721c0a3fd5bc034e010119d2b09d148de8ec",
+    "terminal": "9fc0ff44d7406a042c15befe2eb874c430143d96"
+  },
+  {
+    "name": "fix/chain-quantum-daa-followthrough-20261106-47c9",
+    "tip": "2d4ff4b6c0af18f324e056b4e0d5343c97850b85",
+    "terminal": "360556e9664fcb563877c05e74fd83974a5d9dba"
+  },
+  {
+    "name": "fix/chain-quantum-tail-preservation-20261029",
+    "tip": "162000f1d81631ac257e1eccf3f31cd976d6d977",
+    "terminal": "162000f1d81631ac257e1eccf3f31cd976d6d977"
+  },
+  {
+    "name": "fix/chain-recent-batch-exact-source-pin-20261107-22ff7a",
+    "tip": "c0b47130b201f959811918f7e7d10fbb18e1af58",
+    "terminal": "c0b47130b201f959811918f7e7d10fbb18e1af58"
+  },
+  {
+    "name": "fix/chain-recent-store-pin-20261104-gpt6",
+    "tip": "c09e681b043cad8141a659ca40a9b19a2eca9d5e",
+    "terminal": "c09e681b043cad8141a659ca40a9b19a2eca9d5e"
+  },
+  {
+    "name": "fix/chain-rejection-cost-v2-20261104",
+    "tip": "433948bd39792ba578f9de3c3d4793ac58411780",
+    "terminal": "433948bd39792ba578f9de3c3d4793ac58411780"
+  },
+  {
+    "name": "fix/chain-rejection-resource-owner-20261108-956149",
+    "tip": "bb3f13ed78edd367381275a3ae4752f1f4da4c22",
+    "terminal": "bb3f13ed78edd367381275a3ae4752f1f4da4c22"
+  },
+  {
+    "name": "fix/chain-retained-failure-readback-20261104",
+    "tip": "53f65ff33eb8b47646b8a95cc5a7923dd50acd20",
+    "terminal": "53f65ff33eb8b47646b8a95cc5a7923dd50acd20"
+  },
+  {
+    "name": "fix/chain-retained-meter-refill-20261007",
+    "tip": "b2a63e55e433802f446b6c0bd7e2bb62427539f0",
+    "terminal": "b2a63e55e433802f446b6c0bd7e2bb62427539f0"
+  },
+  {
+    "name": "fix/chain-root-journal-cleanup-ab60-20261109",
+    "tip": "9e8076abf401696d875b2bee1bed0e89417002d7",
+    "terminal": "9e8076abf401696d875b2bee1bed0e89417002d7"
+  },
+  {
+    "name": "fix/chain-rss-mm-detached-v5-20261027",
+    "tip": "e34a60bf63236b10f104873ac9ee3190c38f7ec3",
+    "terminal": "e34a60bf63236b10f104873ac9ee3190c38f7ec3"
+  },
+  {
+    "name": "fix/chain-runtime-marker-metadata-compat-20261106",
+    "tip": "b6c5ca46517710d703e0e059bc3c681c73c22901",
+    "terminal": "b6c5ca46517710d703e0e059bc3c681c73c22901"
+  },
+  {
+    "name": "fix/chain-rustsec-inputs-20261104",
+    "tip": "8cda240c205908fb2079b93a86649626eab1306f",
+    "terminal": "9bd3d43edf6e0f22183d71f52210ec4e0b32dd2e"
+  },
+  {
+    "name": "fix/chain-security-ci-source-lock-20261110",
+    "tip": "35b4e135949fb069d6d0082a5a7b8c2ce4e38376",
+    "terminal": "35b4e135949fb069d6d0082a5a7b8c2ce4e38376"
+  },
+  {
+    "name": "fix/chain-seven-gates-followup-20261108-3a20",
+    "tip": "a9c2ef6971eb3783d4259d6594c2904ea274501f",
+    "terminal": "a9c2ef6971eb3783d4259d6594c2904ea274501f"
+  },
+  {
+    "name": "fix/chain-six-experiments-20261105",
+    "tip": "3e78206a33c134d9ba5ade143b900e325f6ec37b",
+    "terminal": "55033605dc738908304ae7ac7a6493452c37c4b5"
+  },
+  {
+    "name": "fix/chain-six-runtime-5176-20261108",
+    "tip": "dd987de1ddb268dae0aa46975ff1c5e92b77e01c",
+    "terminal": "dd987de1ddb268dae0aa46975ff1c5e92b77e01c"
+  },
+  {
+    "name": "fix/chain-sqlite-loader-observed-cargo-paths-20261107",
+    "tip": "8cda18ccaf12d64b7a2b77d0127235b2acd570d0",
+    "terminal": "8cda18ccaf12d64b7a2b77d0127235b2acd570d0"
+  },
+  {
+    "name": "fix/chain-state-difference-from-zero-20261006",
+    "tip": "73bf973aa527672d86940a087405da947cea1e65",
+    "terminal": "73bf973aa527672d86940a087405da947cea1e65"
+  },
+  {
+    "name": "fix/chain-system-safety-20261030",
+    "tip": "c16507147b65285ea94dead22d3b93c5db7295af",
+    "terminal": "21cac401bcb53fcb375717166800c011bfb14d12"
+  },
+  {
+    "name": "fix/chain-system-security-20261111-4aa779",
+    "tip": "32d33bf78ef41136f9e806c8fdc3118c9df53db3",
+    "terminal": "32d33bf78ef41136f9e806c8fdc3118c9df53db3"
+  },
+  {
+    "name": "fix/chain-system-security-ab60-20261109",
+    "tip": "b8672afb702e4b0bfff8e2bef2b6144d355442dd",
+    "terminal": "b8672afb702e4b0bfff8e2bef2b6144d355442dd"
+  },
+  {
+    "name": "fix/chain-throughput-architecture-20261108-d947",
+    "tip": "042e3d4a22a444c028074ddd21561a6153205370",
+    "terminal": "042e3d4a22a444c028074ddd21561a6153205370"
+  },
+  {
+    "name": "fix/chain-throughput-publish-20261106-1eed",
+    "tip": "a68328221e7a64e351e9023ea4e0a1f60d53f3bb",
+    "terminal": "a68328221e7a64e351e9023ea4e0a1f60d53f3bb"
+  },
+  {
+    "name": "fix/chain-throughput-six-axis-20261106-bf693",
+    "tip": "d2c503987c8c7f604714a8842c257793306ecb16",
+    "terminal": "d2c503987c8c7f604714a8842c257793306ecb16"
+  },
+  {
+    "name": "fix/chain-tls-endpoint-20261106-47615",
+    "tip": "4d31a55d2e8b2e81347d5367f16222ac8042766a",
+    "terminal": "e42f85ed5b1d0b4c9ebcfd8d5bd3247becb74959"
+  },
+  {
+    "name": "fix/chain-tls-validation-20261106-47615",
+    "tip": "a4b2de3c35e4e688db3e93c73a46eb957632c0b5",
+    "terminal": "e42f85ed5b1d0b4c9ebcfd8d5bd3247becb74959"
+  },
+  {
+    "name": "fix/chain-tx-adapter-timeout-20261018",
+    "tip": "1c9d0c258fcf8b322c168a0ebd301d1ddc1d24bf",
+    "terminal": "1c9d0c258fcf8b322c168a0ebd301d1ddc1d24bf"
+  },
+  {
+    "name": "fix/chain-w1-debt-native-recovery-20261017",
+    "tip": "774f9ba065dea04e59c64e53b4e4bbf986e0cec9",
+    "terminal": "774f9ba065dea04e59c64e53b4e4bbf986e0cec9"
+  },
+  {
+    "name": "fix/chain-w1-exact-release-env-scope-20261101",
+    "tip": "6be62efdf8e23643657d593980353f96aa22df1c",
+    "terminal": "6be62efdf8e23643657d593980353f96aa22df1c"
+  },
+  {
+    "name": "fix/chain-w1-frozen-inventory-20261028",
+    "tip": "303afe7a4581e67117bff135eed5892232aabb70",
+    "terminal": "bc053e24a590a4d07ad79e2ea065d190223d4426"
+  },
+  {
+    "name": "fix/chain-w1-frozen-witness-integration-20261028",
+    "tip": "febf622c7e4e919ad2ee4e0864230ab572f5d5b4",
+    "terminal": "bc053e24a590a4d07ad79e2ea065d190223d4426"
+  },
+  {
+    "name": "fix/chain-w1-history-confirmation-20261106-a66f",
+    "tip": "d87357de197db5ff750d08c96d52432e5d22a0b4",
+    "terminal": "92df9eff019883476f9604e64cb8fedf4328bc1e"
+  },
+  {
+    "name": "fix/chain-w1-ingress-integrated-20261107",
+    "tip": "40194538c7d74d860f9f0460d9f5f886df13281c",
+    "terminal": "7f59213669a5226caf58ddd808127721706bf7ed"
+  },
+  {
+    "name": "fix/chain-w1-invalid-product-tcp-20261017",
+    "tip": "44b9517c03cdddf225fd35ea338117d85c4274d7",
+    "terminal": "44b9517c03cdddf225fd35ea338117d85c4274d7"
+  },
+  {
+    "name": "fix/chain-w1-native-control-inputs-20261103-gpt6",
+    "tip": "a43951695bb808b3952d1e9ee99d8f9b603a4fc1",
+    "terminal": "a43951695bb808b3952d1e9ee99d8f9b603a4fc1"
+  },
+  {
+    "name": "fix/chain-w1-native-failure-classification-20261106",
+    "tip": "e49b191d01d57ecc12b53d058f172aea7a871e6b",
+    "terminal": "e6c622a16c6770073435f49cf02a6808b56312b0"
+  },
+  {
+    "name": "fix/chain-w1-preprocess-diag-20261110-1017-035f",
+    "tip": "641de99cb7c4fefe97ffdb9ca4375c4c4390a9bb",
+    "terminal": "c41c4d8dd6b0c4206e1857b5a860a2f5c3e8270a"
+  },
+  {
+    "name": "fix/chain-w1-proof-validation-20261106",
+    "tip": "ed452e9a67419900b7d30b2c5561ebbfbdd3c1ff",
+    "terminal": "ed452e9a67419900b7d30b2c5561ebbfbdd3c1ff"
+  },
+  {
+    "name": "fix/chain-w1-receiver-cost-20261109",
+    "tip": "9133a2218890cfca837df34e7d6b892cec780868",
+    "terminal": "c41c4d8dd6b0c4206e1857b5a860a2f5c3e8270a"
+  },
+  {
+    "name": "fix/chain-w1-receiver-dft-20261110-035f-ai395",
+    "tip": "f2ad7e1389588a9913e308df8633277ae7c22f4d",
+    "terminal": "c41c4d8dd6b0c4206e1857b5a860a2f5c3e8270a"
+  },
+  {
+    "name": "fix/chain-w1-receiver-layout-bound-20261031",
+    "tip": "21cac401bcb53fcb375717166800c011bfb14d12",
+    "terminal": "21cac401bcb53fcb375717166800c011bfb14d12"
+  },
+  {
+    "name": "fix/chain-w1-refusal-cost-20261106-6677",
+    "tip": "55c6f15fbc799730586582c141b372742a027b8a",
+    "terminal": "55c6f15fbc799730586582c141b372742a027b8a"
+  },
+  {
+    "name": "fix/chain-w1-rejection-admission-20261106-47e98",
+    "tip": "22ff7a72549e691b2571a33cc61785bfa67104e5",
+    "terminal": "c0b47130b201f959811918f7e7d10fbb18e1af58"
+  },
+  {
+    "name": "fix/chain-w1-stage-diag-20261110-1138-035f",
+    "tip": "c41c4d8dd6b0c4206e1857b5a860a2f5c3e8270a",
+    "terminal": "c41c4d8dd6b0c4206e1857b5a860a2f5c3e8270a"
+  },
+  {
+    "name": "fix/chain-work-knowledge-boundary-20261106-51e4",
+    "tip": "3e44c471187fc6c883693c836cdae6adae4bdafb",
+    "terminal": "3e44c471187fc6c883693c836cdae6adae4bdafb"
+  },
+  {
+    "name": "fix/chain-work-value-20261105",
+    "tip": "6dd21c7b35fa085f84b8280495b2583c67023fad",
+    "terminal": "3e44c471187fc6c883693c836cdae6adae4bdafb"
+  },
+  {
+    "name": "fix/checkpoint-live-socket-lease-guard-20261111-pqroot",
+    "tip": "e5254dc4c72b498f0f9862d46adb349d91aa9452",
+    "terminal": "c6bbbd9c2e9b1258f2785630188872c221ae58ec"
+  },
+  {
+    "name": "fix/ci-owner-cleared-readme-origin-20261103-gpt6",
+    "tip": "1bb63dabe64029cb51c1e064bcd7489981d2d25c",
+    "terminal": "1bb63dabe64029cb51c1e064bcd7489981d2d25c"
+  },
+  {
+    "name": "fix/pcp2-combined-fetch-server-expiry-20261030",
+    "tip": "28192fc4c9c78bf93d05d1aa3bbd2488ec5a1b1a",
+    "terminal": "28192fc4c9c78bf93d05d1aa3bbd2488ec5a1b1a"
+  },
+  {
+    "name": "fix/pcp2-consolidated-expiry-581-20261030",
+    "tip": "aa527e571fc9e24bb08cb92a058bad07bf708108",
+    "terminal": "aa527e571fc9e24bb08cb92a058bad07bf708108"
+  },
+  {
+    "name": "fix/pcp2-fetch-expiry-anchor-571-20261030",
+    "tip": "fdc2c3643d214ac17ed6415d0a185336e4142407",
+    "terminal": "fdc2c3643d214ac17ed6415d0a185336e4142407"
+  },
+  {
+    "name": "fix/pcp2-server-expiry-latch-574-20261030",
+    "tip": "e9f9228ed92c01977e4c94d1d142d3606701c14c",
+    "terminal": "e9f9228ed92c01977e4c94d1d142d3606701c14c"
+  },
+  {
+    "name": "fix/pcp2-shared-fetch-expiry-count-577-20261030",
+    "tip": "dcb30e0d08ea8a0f1877ffc20adecf5b731a7084",
+    "terminal": "28192fc4c9c78bf93d05d1aa3bbd2488ec5a1b1a"
+  },
+  {
+    "name": "fix/pon-daa-equal-work-heal-20261025",
+    "tip": "7b1bd1fb64afa74ecbc022d9f365a060ac899df8",
+    "terminal": "7b1bd1fb64afa74ecbc022d9f365a060ac899df8"
+  },
+  {
+    "name": "fix/pon-lease-daa-research-schema-fence-20261026",
+    "tip": "05ad6ab36caf762a43d15eb6981e1df111b9afbe",
+    "terminal": "05ad6ab36caf762a43d15eb6981e1df111b9afbe"
+  },
+  {
+    "name": "fix/pon-pressure-window-native-20261010",
+    "tip": "d29a0795aeb0f4615608b5c3357595e0dfb7cd71",
+    "terminal": "d29a0795aeb0f4615608b5c3357595e0dfb7cd71"
+  },
+  {
+    "name": "fix/pon-q4-outbox-semantic-cold-audit-20261026",
+    "tip": "b52aa3267aa6fe331c0d3494e1a47b2f5b7a8afe",
+    "terminal": "b52aa3267aa6fe331c0d3494e1a47b2f5b7a8afe"
+  },
+  {
+    "name": "fix/pon-q4-outbox-snapshot-status-20261026",
+    "tip": "319f9b38185d857f81a4d5be0aae940c933e9b39",
+    "terminal": "319f9b38185d857f81a4d5be0aae940c933e9b39"
+  },
+  {
+    "name": "fix/pon-unified-m10-history-source-20261015",
+    "tip": "717b0d6797c75d49d0f713cf06c0eb0c424a85bf",
+    "terminal": "086a5b67d07278c95972ce9b4587d3eab6125a52"
+  },
+  {
+    "name": "fix/pon-w1-from-zero-cost-20261005",
+    "tip": "3e3f6171780b1df41b71aaad850c86da9cc313c1",
+    "terminal": "4eca52d447624c54156357ba54baa2cec7601a7b"
+  },
+  {
+    "name": "fix/pq-cell-provider-framed-probe-20261030",
+    "tip": "63ac039037fb27e99c3268aa40bc9feabd8b31cc",
+    "terminal": "e9f9228ed92c01977e4c94d1d142d3606701c14c"
+  },
+  {
+    "name": "fix/pq-cell-provider-pinned-v2-20261030",
+    "tip": "a6e231cce07aec408e957b0875b094bfd1d21b84",
+    "terminal": "a6e231cce07aec408e957b0875b094bfd1d21b84"
+  },
+  {
+    "name": "fix/pq-cell-provider-readonly-rendezvous-20261030",
+    "tip": "641a9224b81efa2775d6207dbbdc328216aec845",
+    "terminal": "e9f9228ed92c01977e4c94d1d142d3606701c14c"
+  },
+  {
+    "name": "fix/pq-cell-provider-reply-pcp2-20261030",
+    "tip": "b23e465cae259948201f7a216c2c23cf7332cdb8",
+    "terminal": "b23e465cae259948201f7a216c2c23cf7332cdb8"
+  },
+  {
+    "name": "fix/pq-cell-provider-v2-pinned-20261030",
+    "tip": "dee048ec43d0a314da0f6f711918f7c5019644cb",
+    "terminal": "e71c4131842d6af16929cab40d1c9938a00163c1"
+  },
+  {
+    "name": "fix/pq-claim-exact-bools-560-20261030",
+    "tip": "5beee6b17be2ead2a3862ec2a870b5c55f810806",
+    "terminal": "5beee6b17be2ead2a3862ec2a870b5c55f810806"
+  },
+  {
+    "name": "fix/pq-claim-required-ci-contract-20261030",
+    "tip": "752000cdcf5faa437ecc8e0050ca5ed132a65e60",
+    "terminal": "9fcd3fefdc2f4fd277fa8d9176846b34c6d0c342"
+  },
+  {
+    "name": "fix/pq-consensus-scope-freeze-20261030",
+    "tip": "6ec0bc9274cce37a83642686350e4a945daf23f8",
+    "terminal": "9fcd3fefdc2f4fd277fa8d9176846b34c6d0c342"
+  },
+  {
+    "name": "fix/pq-external-rollback-witness-v1-20261030",
+    "tip": "14a06d040d0b124f1193ddfb1b22a23f158bc806",
+    "terminal": "a6e231cce07aec408e957b0875b094bfd1d21b84"
+  },
+  {
+    "name": "fix/pq-hepta-context-postverify-20261030",
+    "tip": "95939e1380f21dcf3209acaee70e29fcf0141d6c",
+    "terminal": "95939e1380f21dcf3209acaee70e29fcf0141d6c"
+  },
+  {
+    "name": "fix/pq-hepta-handoff-mldsa-v2-20261030",
+    "tip": "1c5899a663037689d26bf7c31472a70d26971a8b",
+    "terminal": "95939e1380f21dcf3209acaee70e29fcf0141d6c"
+  },
+  {
+    "name": "fix/pq-m09-offpolicy-preflight-20261030",
+    "tip": "e71c4131842d6af16929cab40d1c9938a00163c1",
+    "terminal": "e71c4131842d6af16929cab40d1c9938a00163c1"
+  },
+  {
+    "name": "fix/pq-m09-pcp2-authenticated-fetch-20261030",
+    "tip": "0aa03a9946da61f75f6cda5e3cd55f269344e326",
+    "terminal": "fdc2c3643d214ac17ed6415d0a185336e4142407"
+  },
+  {
+    "name": "fix/pq-m09-pcp2-preflight-authenticated-fetch-20261030",
+    "tip": "6e838b6329f7b6e7556675eb71759489c04db422",
+    "terminal": "fdc2c3643d214ac17ed6415d0a185336e4142407"
+  },
+  {
+    "name": "fix/pq-m09-pcp2-verified-boundary-20261030",
+    "tip": "41e8ef84dabd87cd05787d89d83c0fff41f67350",
+    "terminal": "fdc2c3643d214ac17ed6415d0a185336e4142407"
+  },
+  {
+    "name": "fix/pq-mainline-consensus-research-only-20261030",
+    "tip": "738410d83db024a83043396d2a907dfe53fcec3c",
+    "terminal": "35cca89eb13c6246a7e8893070b880bfd977adce"
+  },
+  {
+    "name": "fix/pq-pcp2-batch-cheap-replay-expiry-preflight-20261030",
+    "tip": "63b83e59ae3ef6398130aa2f8faa823982cce7a3",
+    "terminal": "e9f9228ed92c01977e4c94d1d142d3606701c14c"
+  },
+  {
+    "name": "fix/pq-pcp2-one-budget-discovery-fetch-20261030",
+    "tip": "5f4a4265f9b1ed6373fa2ebc0f29720509327ac0",
+    "terminal": "28192fc4c9c78bf93d05d1aa3bbd2488ec5a1b1a"
+  },
+  {
+    "name": "fix/pq-pcp2-pinned-roster-integrity-before-tcp-20261030",
+    "tip": "e95c91badbc4b5479bf1c7012da29febd5b8a8cc",
+    "terminal": "aa527e571fc9e24bb08cb92a058bad07bf708108"
+  },
+  {
+    "name": "fix/pq-pcp2-postverify-lease-freshness-20261030",
+    "tip": "8141887759527ccb9d033a88aa89fa59310101ec",
+    "terminal": "8141887759527ccb9d033a88aa89fa59310101ec"
+  },
+  {
+    "name": "fix/pq-pcp2-publish-deadline-result-20261030",
+    "tip": "bbbaabf744d32fd2a17554a9d1758b9a8aabbfb5",
+    "terminal": "aa527e571fc9e24bb08cb92a058bad07bf708108"
+  },
+  {
+    "name": "fix/pq-pcp2-roster-preflight-verified-cost-20261030",
+    "tip": "2428d16f91f152a907a6fae7f128e67c1547e6ad",
+    "terminal": "aa527e571fc9e24bb08cb92a058bad07bf708108"
+  },
+  {
+    "name": "fix/pq-production-claim-guard-20261030",
+    "tip": "bb4417ea79216ff30d3146b073900f64ffbe8760",
+    "terminal": "ec8b909352582158ba52018ac2202a85e92790a6"
+  },
+  {
+    "name": "fix/pq-recovery-postverify-trusted-clock-20261030",
+    "tip": "722eadfaaa4f489fd0058e3dbc7f1e3cf72465c1",
+    "terminal": "722eadfaaa4f489fd0058e3dbc7f1e3cf72465c1"
+  },
+  {
+    "name": "fix/pq-recovery-quorum-batch-preflight-20261030",
+    "tip": "da4469729976d2bf77e0abd9ca5e89e182ce424c",
+    "terminal": "722eadfaaa4f489fd0058e3dbc7f1e3cf72465c1"
+  },
+  {
+    "name": "fix/pq-recovery-quorum-failclosed-20261030",
+    "tip": "e9c3ce71fa86effa08814afae040da1da751475c",
+    "terminal": "722eadfaaa4f489fd0058e3dbc7f1e3cf72465c1"
+  },
+  {
+    "name": "fix/pq-recovery-witness-expiry-exclusive-20261030",
+    "tip": "a39ff809a1088abc7a6373a1a46fbf020562ca7a",
+    "terminal": "722eadfaaa4f489fd0058e3dbc7f1e3cf72465c1"
+  },
+  {
+    "name": "fix/pq-relay-cheap-replay-preflight-20261030",
+    "tip": "4a786915b3d004c4399202ad7ab3b82bd35dc4cc",
+    "terminal": "9baae3670011cc719249ed46fe33b0b50e75a31a"
+  },
+  {
+    "name": "fix/pq-relay-mldsa65-wire-preflight-20261030",
+    "tip": "8f8ce34f27dd8fbffcfafdeccfbaa987daed1b05",
+    "terminal": "9baae3670011cc719249ed46fe33b0b50e75a31a"
+  },
+  {
+    "name": "fix/pq-relay-postverify-clock-freshness-20261030",
+    "tip": "ddb5d45fb14150907b8a5640bea3ddab9f856ee2",
+    "terminal": "9baae3670011cc719249ed46fe33b0b50e75a31a"
+  },
+  {
+    "name": "fix/pq-relay-replay-before-payload-digest-20261030",
+    "tip": "9baae3670011cc719249ed46fe33b0b50e75a31a",
+    "terminal": "9baae3670011cc719249ed46fe33b0b50e75a31a"
+  },
+  {
+    "name": "fix/pq-required-controls-52-20261106-gpt6",
+    "tip": "cab60041feb52ee58fe79a4a4b51f710e651a08e",
+    "terminal": "cab60041feb52ee58fe79a4a4b51f710e651a08e"
+  },
+  {
+    "name": "fix/pq-root-878-recovery-source-pin-20261110",
+    "tip": "c298b8194d3a5c3a3b6c30e6877fbf65172bb69d",
+    "terminal": "83fe531fb3520bddb83940c8c94838fe3324be77"
+  },
+  {
+    "name": "fix/pq-root-908-native-inventory-20261111-gpt6-1415",
+    "tip": "44c1000be98dad839b58df4af4609e2267177052",
+    "terminal": "c51c553d196d7ed3e3e8cac9caf4db1a8c478526"
+  },
+  {
+    "name": "fix/pq-root-930-pq-system-source-pin-20261112-r11",
+    "tip": "c6bbbd9c2e9b1258f2785630188872c221ae58ec",
+    "terminal": "c6bbbd9c2e9b1258f2785630188872c221ae58ec"
+  },
+  {
+    "name": "fix/pq-root-copied-lease-probe-nonconsuming-20261112-r11",
+    "tip": "2bfe40f44c593d13346e916eed06bbf94cf4a894",
+    "terminal": "c6bbbd9c2e9b1258f2785630188872c221ae58ec"
+  },
+  {
+    "name": "fix/pq-root-copied-lease-required-ci-20261112-r11",
+    "tip": "dc5b73ce087217060cdcbc828ce01ff4ebf5d74d",
+    "terminal": "c6bbbd9c2e9b1258f2785630188872c221ae58ec"
+  },
+  {
+    "name": "fix/pq-root-hash-use-reviewed-source-20261111-r11",
+    "tip": "c51c553d196d7ed3e3e8cac9caf4db1a8c478526",
+    "terminal": "c51c553d196d7ed3e3e8cac9caf4db1a8c478526"
+  },
+  {
+    "name": "fix/pq-root-register-repin-881-20261110",
+    "tip": "a8825e9f5b1bf8e3dd6cab8bb1d7f6d7179bbdf2",
+    "terminal": "83fe531fb3520bddb83940c8c94838fe3324be77"
+  },
+  {
+    "name": "fix/pq-root-reviewed-source-snapshot-20261111-r11",
+    "tip": "6a5f751f5434afe7e18eb3651776ad4f0a0fb49f",
+    "terminal": "c51c553d196d7ed3e3e8cac9caf4db1a8c478526"
+  },
+  {
+    "name": "fix/pq-root-v4-floor-nine-test-roster-20261110",
+    "tip": "cc26a451737c1474aa46b81fb276c86cb119319a",
+    "terminal": "83fe531fb3520bddb83940c8c94838fe3324be77"
+  },
+  {
+    "name": "fix/pq-source-pin-sqlite-loader-20261107",
+    "tip": "24648a6fdcac29c31c4676a4ef341ceb755ba9e1",
+    "terminal": "24648a6fdcac29c31c4676a4ef341ceb755ba9e1"
+  },
+  {
+    "name": "fix/pq-system-ci-job-source-pin-20261104",
+    "tip": "96d6977ee3ffd9aedcc897cc6d6211334df5e107",
+    "terminal": "96d6977ee3ffd9aedcc897cc6d6211334df5e107"
+  },
+  {
+    "name": "fix/pqroot-proof-descriptor-bind-20261111-r13",
+    "tip": "f3f1851a81b4af4e3cb741071c52f3ef9248125e",
+    "terminal": "c51c553d196d7ed3e3e8cac9caf4db1a8c478526"
+  },
+  {
+    "name": "fix/w1-staged-observer-budget-test-20261107",
+    "tip": "f006f0d971b25802dda4b6d12ce0f770b1fb993f",
+    "terminal": "f006f0d971b25802dda4b6d12ce0f770b1fb993f"
+  },
+  {
+    "name": "maintenance/actions-storage-reclaim-20261022",
+    "tip": "17ff05b5a2dc93c901dcd76906e9831341d02781",
+    "terminal": "17ff05b5a2dc93c901dcd76906e9831341d02781"
+  },
+  {
+    "name": "ops/github-storage-audit-20261022",
+    "tip": "64771d99de08d917631a8c3e1bc8c8a62e4db9da",
+    "terminal": "64771d99de08d917631a8c3e1bc8c8a62e4db9da"
+  },
+  {
+    "name": "ops/recover-qian-qi-20260925",
+    "tip": "b1a787f0848c464a99b1f9854b6c133f933c5c47",
+    "terminal": "b1a787f0848c464a99b1f9854b6c133f933c5c47"
+  },
+  {
+    "name": "perf/pon-branch-encoding-stage-20261009",
+    "tip": "b879ab7f4bd1500c2f49e1580a1aa560524b880e",
+    "terminal": "b879ab7f4bd1500c2f49e1580a1aa560524b880e"
+  },
+  {
+    "name": "recovery/git-bundle-source-20261103",
+    "tip": "8382638c3c0a882e1efe19e074cc6e82dc09bcda",
+    "terminal": "8382638c3c0a882e1efe19e074cc6e82dc09bcda"
+  },
+  {
+    "name": "recovery/library-pon-standalone-code-20261103",
+    "tip": "4817e238baafdb08c0e1e842f51be90ff6fdde84",
+    "terminal": "4817e238baafdb08c0e1e842f51be90ff6fdde84"
+  },
+  {
+    "name": "recovery/library-pqn4-w1-native-20261103-gpt6",
+    "tip": "fb57ce7dcfa9b5e6740e9e387f4e8200f1120587",
+    "terminal": "fb57ce7dcfa9b5e6740e9e387f4e8200f1120587"
+  },
+  {
+    "name": "recovery/library-w1-daa-20261103",
+    "tip": "a28be12663246f06a8859df7e6b4fbf8aebf6a58",
+    "terminal": "a28be12663246f06a8859df7e6b4fbf8aebf6a58"
+  },
+  {
+    "name": "repair/pon-history-cost-20261009",
+    "tip": "ffbdf1b1b0626af25c64095a889118ff7c5305f5",
+    "terminal": "ffbdf1b1b0626af25c64095a889118ff7c5305f5"
+  },
+  {
+    "name": "research/cell-three-domain-rs46-evidence-20261110",
+    "tip": "a7f08aab5183e914230b56324760cb43609e436d",
+    "terminal": "a7f08aab5183e914230b56324760cb43609e436d"
+  },
+  {
+    "name": "research/chain-binary-answer-observed-v2-20261028",
+    "tip": "615dee22e2e2309ad25e89dc9b6f94c7db258109",
+    "terminal": "002cd506c81e1dfac4a656bfcd03b5b233dbc923"
+  },
+  {
+    "name": "research/chain-da-sequence-readback-20261104-gpt6",
+    "tip": "2c7c262724158833d7d00a7782f6318dad7e3e3f",
+    "terminal": "2c7c262724158833d7d00a7782f6318dad7e3e3f"
+  },
+  {
+    "name": "research/chain-native-pq-renewal-v5-20261028",
+    "tip": "42ab57f1c5065d50f981cc337c417ef0ab7dc096",
+    "terminal": "002cd506c81e1dfac4a656bfcd03b5b233dbc923"
+  },
+  {
+    "name": "research/chain-native-pq-tasks-v4-20261028",
+    "tip": "1d4778507e1e99ab54cca72b7c26b6ec2ff33344",
+    "terminal": "002cd506c81e1dfac4a656bfcd03b5b233dbc923"
+  },
+  {
+    "name": "research/chain-original-cpu-readback-20261103-gpt6",
+    "tip": "3a862b0d4b6423885e48e839ad8208b037771239",
+    "terminal": "3a862b0d4b6423885e48e839ad8208b037771239"
+  },
+  {
+    "name": "research/chain-quantum-daa-sensitivity-20261031",
+    "tip": "3fc10c1519bf41c4b03ccdd8477b97f0caa44c77",
+    "terminal": "3fc10c1519bf41c4b03ccdd8477b97f0caa44c77"
+  },
+  {
+    "name": "research/chain-w1-full-cost-profile-20261029",
+    "tip": "007b80cc99ba52fe7afcd6d0e0dea52628f5a026",
+    "terminal": "007b80cc99ba52fe7afcd6d0e0dea52628f5a026"
+  },
+  {
+    "name": "research/chain-w1-preflight-boundaries-20261029",
+    "tip": "31a8f1775f6940c303004fd97407ef13dc14d29b",
+    "terminal": "31a8f1775f6940c303004fd97407ef13dc14d29b"
+  },
+  {
+    "name": "research/chain-w1-receipt-loopback-20261029",
+    "tip": "d08ff108d90324f103a0eff39b213a156d4d0cfc",
+    "terminal": "d08ff108d90324f103a0eff39b213a156d4d0cfc"
+  },
+  {
+    "name": "research/chain-w1-transparent-succinct-20261028",
+    "tip": "bc053e24a590a4d07ad79e2ea065d190223d4426",
+    "terminal": "bc053e24a590a4d07ad79e2ea065d190223d4426"
+  },
+  {
+    "name": "research/pon-asert-c-reference-20261026",
+    "tip": "3cd83e3f8c6b6d9291a6be2ff6cb7bc78734deef",
+    "terminal": "3cd83e3f8c6b6d9291a6be2ff6cb7bc78734deef"
+  },
+  {
+    "name": "research/pon-asert-cpp-oracle-20261026",
+    "tip": "e49af5c5f0d06a4d60894560d767bb16d802a1c6",
+    "terminal": "e49af5c5f0d06a4d60894560d767bb16d802a1c6"
+  },
+  {
+    "name": "research/pon-asert-indexed-anchor-20261026",
+    "tip": "8a624a4797e9c61e9d8af10a0a4e6255fb193010",
+    "terminal": "8a624a4797e9c61e9d8af10a0a4e6255fb193010"
+  },
+  {
+    "name": "research/pon-confirmation-risk-bound-20261026",
+    "tip": "de0c6f5367d75498168e6d4008d13244e170ea96",
+    "terminal": "de0c6f5367d75498168e6d4008d13244e170ea96"
+  },
+  {
+    "name": "research/pon-daa-bounded-summary-20261025",
+    "tip": "0f06260763a105c3149c870f9ad7e0dc9775e040",
+    "terminal": "0f06260763a105c3149c870f9ad7e0dc9775e040"
+  },
+  {
+    "name": "research/pon-daa-c-oracle-20261026",
+    "tip": "51b1fbb854a6ffc6ecf3fbd5ca4ae7c4481a93f1",
+    "terminal": "51b1fbb854a6ffc6ecf3fbd5ca4ae7c4481a93f1"
+  },
+  {
+    "name": "research/pon-daa-confirmation-dual-gate-20261026",
+    "tip": "12d2b89e66cdd07674eadeaacda91109bae4b5d6",
+    "terminal": "12d2b89e66cdd07674eadeaacda91109bae4b5d6"
+  },
+  {
+    "name": "research/pon-daa-go-error-parity-20261026",
+    "tip": "10c16943c8d70d23b75a54373d502f99feb6bc57",
+    "terminal": "10c16943c8d70d23b75a54373d502f99feb6bc57"
+  },
+  {
+    "name": "research/pon-daa-go-independent-20261026",
+    "tip": "375d61cac084a84cd974e8616211db0a6ab3e4b3",
+    "terminal": "375d61cac084a84cd974e8616211db0a6ab3e4b3"
+  },
+  {
+    "name": "research/pon-daa-indexed-ancestry-20261025",
+    "tip": "3d562c8a7f46a9f083712094654bd77d22e1ecf5",
+    "terminal": "3d562c8a7f46a9f083712094654bd77d22e1ecf5"
+  },
+  {
+    "name": "research/pon-daa-indexed-shadow-20261025",
+    "tip": "462306a2d5225068c369070f134e040626b9c777",
+    "terminal": "462306a2d5225068c369070f134e040626b9c777"
+  },
+  {
+    "name": "research/pon-daa-timewarp-go-differential-20261026",
+    "tip": "5b08f8cd4b7ac4dc48e5c6489850590c76a7920c",
+    "terminal": "5b08f8cd4b7ac4dc48e5c6489850590c76a7920c"
+  },
+  {
+    "name": "research/pon-durable-fault-fences-20261026",
+    "tip": "71ccb15e819f80bed800450a1dd922f4d4345328",
+    "terminal": "71ccb15e819f80bed800450a1dd922f4d4345328"
+  },
+  {
+    "name": "research/pon-equal-work-fork-heal-20261026",
+    "tip": "c13c9f6b46f8d9564a37f61935a5eccd2a5514e2",
+    "terminal": "c13c9f6b46f8d9564a37f61935a5eccd2a5514e2"
+  },
+  {
+    "name": "research/pon-fast-retention-reentry-20261026",
+    "tip": "d6e078edb0b05d85a36766f79f81e786fd580e35",
+    "terminal": "d6e078edb0b05d85a36766f79f81e786fd580e35"
+  },
+  {
+    "name": "research/pon-fork-local-asert-w1-20261026",
+    "tip": "9f0a39a5f3f5bf27b06e510806efe87a07071f5f",
+    "terminal": "9f0a39a5f3f5bf27b06e510806efe87a07071f5f"
+  },
+  {
+    "name": "research/pon-lease-daa-adversarial-20261027",
+    "tip": "fd8ac6553c45af71d749135ba7495684e0d0f279",
+    "terminal": "fd8ac6553c45af71d749135ba7495684e0d0f279"
+  },
+  {
+    "name": "research/pon-lease-daa-asert-20261025",
+    "tip": "7621af958bf0e2ed9f0ae0f1761f0723536dbaee",
+    "terminal": "7621af958bf0e2ed9f0ae0f1761f0723536dbaee"
+  },
+  {
+    "name": "research/pon-lease-daa-integrated-hardening-20261026",
+    "tip": "980d47dcf0764e1fe7ec7364783795e2f0ec37e6",
+    "terminal": "980d47dcf0764e1fe7ec7364783795e2f0ec37e6"
+  },
+  {
+    "name": "research/pon-lease-daa-network-campaign-20261026",
+    "tip": "889fbec835e0435248b0852ab80a40a166bd2c83",
+    "terminal": "889fbec835e0435248b0852ab80a40a166bd2c83"
+  },
+  {
+    "name": "research/pon-lease-daa-outbox-fence-20261026",
+    "tip": "b64affa1a25b1b35a5c0cbd1e2938eb30ca99e20",
+    "terminal": "b64affa1a25b1b35a5c0cbd1e2938eb30ca99e20"
+  },
+  {
+    "name": "research/pon-lease-edge-q4-immutability-20261026",
+    "tip": "3052c9e702f254e64312ea20a1137eb2742dded9",
+    "terminal": "3052c9e702f254e64312ea20a1137eb2742dded9"
+  },
+  {
+    "name": "research/pon-native-retention-signed-reentry-20261026",
+    "tip": "36fc4781c6a6ebce90c87f7b078b76c2f5f5a50f",
+    "terminal": "36fc4781c6a6ebce90c87f7b078b76c2f5f5a50f"
+  },
+  {
+    "name": "research/pon-q4-daa-durable-read-bounds-20261027",
+    "tip": "84a0c697a3178eaee31ff9f60851a42c479b73f9",
+    "terminal": "84a0c697a3178eaee31ff9f60851a42c479b73f9"
+  },
+  {
+    "name": "research/pon-q4-dualsig-packet-recovery-20261026",
+    "tip": "26a4096865e692e0e7f8a00810ae7f346af25447",
+    "terminal": "26a4096865e692e0e7f8a00810ae7f346af25447"
+  },
+  {
+    "name": "research/pon-q4-full-slot-registration-20261026",
+    "tip": "181b32cbe522a5549443b424d4950eb182f8763f",
+    "terminal": "181b32cbe522a5549443b424d4950eb182f8763f"
+  },
+  {
+    "name": "research/pon-q4-observation-generation-fence-20261026",
+    "tip": "936b169e2577eb1c859f0aa77b3dfc5be6175802",
+    "terminal": "936b169e2577eb1c859f0aa77b3dfc5be6175802"
+  },
+  {
+    "name": "research/pon-q4-outbox-cold-audit-20261026",
+    "tip": "20da835b54c7fad65c55e7c9d639c8d5bd62a827",
+    "terminal": "20da835b54c7fad65c55e7c9d639c8d5bd62a827"
+  },
+  {
+    "name": "research/pon-q4-postwrite-fence-20261026",
+    "tip": "d63867167851ff574bc2a2ea99f2059916b6b8d6",
+    "terminal": "d63867167851ff574bc2a2ea99f2059916b6b8d6"
+  },
+  {
+    "name": "research/pon-q4-schema-receiver-followup-20261026",
+    "tip": "a8ebc2faeb5cf194e93e63dbaa3e0a1ed4f91141",
+    "terminal": "a8ebc2faeb5cf194e93e63dbaa3e0a1ed4f91141"
+  },
+  {
+    "name": "research/pon-q4-signed-wire-20261026",
+    "tip": "be9b7a66989c78af2b71db4e8f59ededfc9ca89e",
+    "terminal": "be9b7a66989c78af2b71db4e8f59ededfc9ca89e"
+  },
+  {
+    "name": "research/pon-real-w1-fork-replay-20261026",
+    "tip": "4e233cbd87286598d9bf9af4758d63d83cba4e15",
+    "terminal": "4e233cbd87286598d9bf9af4758d63d83cba4e15"
+  },
+  {
+    "name": "research/pon-real-w1-lease-daa-20261026",
+    "tip": "523d7e86c132ef3be1685a095951cfffc1a8481b",
+    "terminal": "523d7e86c132ef3be1685a095951cfffc1a8481b"
+  },
+  {
+    "name": "research/pon-w1-algebraic-valid-cost-20261030",
+    "tip": "61a39cde4a9604f68140388caa8a92fd3d8e4585",
+    "terminal": "61a39cde4a9604f68140388caa8a92fd3d8e4585"
+  },
+  {
+    "name": "research/pon-w1-go-scalar-audit-20261026",
+    "tip": "fa7924fc9283b716f09966bc91789d2620c2a7b3",
+    "terminal": "fa7924fc9283b716f09966bc91789d2620c2a7b3"
+  },
+  {
+    "name": "research/pon-w1-numpy-exact-valid-cost-20261030",
+    "tip": "c1ad6e0033ebe8441ee7ecf783954f87f3f72e6c",
+    "terminal": "c1ad6e0033ebe8441ee7ecf783954f87f3f72e6c"
+  },
+  {
+    "name": "research/pon-w1-prepared-cost-20261025",
+    "tip": "bf659750ceb9492aaed7c74b1fc17a1c9576efe5",
+    "terminal": "bf659750ceb9492aaed7c74b1fc17a1c9576efe5"
+  },
+  {
+    "name": "research/pon-w1-third-verifier-20261026",
+    "tip": "c0f3595dcc471eb77387910b8712bbc73040e741",
+    "terminal": "c0f3595dcc471eb77387910b8712bbc73040e741"
+  },
+  {
+    "name": "research/pon-work-security-ideal-risk-20261026",
+    "tip": "a7a8287f697b3be06065e3ad9f9557a0567644cc",
+    "terminal": "a7a8287f697b3be06065e3ad9f9557a0567644cc"
+  },
+  {
+    "name": "research/pq-cell-atomic-bundle-20261027",
+    "tip": "f408fc65f99c2b5445c75e0595e9208c887f7015",
+    "terminal": "c014bbbd604dad68f0a5d87a8f35a5d4fe5ce181"
+  },
+  {
+    "name": "research/pq-cell-journal-postopen-guard-20261027",
+    "tip": "ba33e276be15bbb2f29e83fe5d54c60c7948a22e",
+    "terminal": "c014bbbd604dad68f0a5d87a8f35a5d4fe5ce181"
+  },
+  {
+    "name": "research/pq-cell-swarmed-retrieval-20261026",
+    "tip": "ac6f996d5cc18d60ea91b02cc911c35547d8fe0d",
+    "terminal": "c014bbbd604dad68f0a5d87a8f35a5d4fe5ce181"
+  },
+  {
+    "name": "research/pq-cell-temp-schema-ack-fence-20261027",
+    "tip": "c014bbbd604dad68f0a5d87a8f35a5d4fe5ce181",
+    "terminal": "c014bbbd604dad68f0a5d87a8f35a5d4fe5ce181"
+  },
+  {
+    "name": "research/pq-migration-strict-journal-20261027",
+    "tip": "6c9838a0b8813327936bd4509d81760c971d5bdd",
+    "terminal": "6c9838a0b8813327936bd4509d81760c971d5bdd"
+  },
+  {
+    "name": "research/pq-pql5-temp-schema-ack-fence-20261027",
+    "tip": "f7b044f654b8865b41433dedeb2788f771aea572",
+    "terminal": "f7b044f654b8865b41433dedeb2788f771aea572"
+  },
+  {
+    "name": "research/pq-pql9-native-tpq1-crypto-20261027",
+    "tip": "e67d26f5ab91f526206fe11ae56a46e210ed6c34",
+    "terminal": "e67d26f5ab91f526206fe11ae56a46e210ed6c34"
+  },
+  {
+    "name": "research/pq-preserved-liability-native-import-20261026",
+    "tip": "e5e92ff2b055b198c087631eb48b4b9ad28e0ad0",
+    "terminal": "e5e92ff2b055b198c087631eb48b4b9ad28e0ad0"
+  },
+  {
+    "name": "research/pq-root-original-campaign-triage-20261110",
+    "tip": "41ce1f436ad929134c8d3b5c12089b58f05c3724",
+    "terminal": "2963f598e7e9d95dc8e1a0f16b27e32fb2186e3e"
+  },
+  {
+    "name": "research/q4-outbox-canonical-observation-20261026",
+    "tip": "00e87d2712c44252500510cbf1207b4313d137f6",
+    "terminal": "00e87d2712c44252500510cbf1207b4313d137f6"
+  },
+  {
+    "name": "research/q4-signed-wire-go-parity-20261026",
+    "tip": "b44b94e049d141748e1b7922012b9def64ce1a51",
+    "terminal": "b44b94e049d141748e1b7922012b9def64ce1a51"
+  },
+  {
+    "name": "research/work-value-separation-20261105",
+    "tip": "5ce402bfca2a7c35a16a13a53bd7dab58c96d6d1",
+    "terminal": "3e44c471187fc6c883693c836cdae6adae4bdafb"
+  },
+  {
+    "name": "staging/pon-sql-reuse-20261009",
+    "tip": "4e2b0f7c2b074731dd94237b4610476a34bc39d9",
+    "terminal": "4e2b0f7c2b074731dd94237b4610476a34bc39d9"
+  },
+  {
+    "name": "test/chain-cache-recovery-20261104",
+    "tip": "3a74d0c45b18535cf2f7f880da8411ff88b8a9af",
+    "terminal": "3a74d0c45b18535cf2f7f880da8411ff88b8a9af"
+  },
+  {
+    "name": "test/chain-cached-owner-stage-20261009",
+    "tip": "0774bb04ca90333737898c79bb7ee9c70feabfc4",
+    "terminal": "0774bb04ca90333737898c79bb7ee9c70feabfc4"
+  },
+  {
+    "name": "test/chain-canonical-ascii-probes-20261103-gpt6",
+    "tip": "5aa7ece5b2ffabd5a44c28687172fb278da1d72f",
+    "terminal": "5aa7ece5b2ffabd5a44c28687172fb278da1d72f"
+  },
+  {
+    "name": "test/chain-evidence-integrity-20261104",
+    "tip": "c08530709df6295c3403fa451db12c5ac8939976",
+    "terminal": "3a74d0c45b18535cf2f7f880da8411ff88b8a9af"
+  },
+  {
+    "name": "test/chain-finite-nonce-stopping-ci-20261027",
+    "tip": "95e54937f55b22782c5a2e5830d0769638137e86",
+    "terminal": "95e54937f55b22782c5a2e5830d0769638137e86"
+  },
+  {
+    "name": "test/chain-frozen-replay-20261103",
+    "tip": "f8724b69e1569b45ddaa2a042fa320df0bc0e888",
+    "terminal": "3a74d0c45b18535cf2f7f880da8411ff88b8a9af"
+  },
+  {
+    "name": "test/chain-full-w1-quantum-oracle-20261027",
+    "tip": "5d16aafee014fe7a06a0ed76b9aaa06b6058c5d0",
+    "terminal": "95e54937f55b22782c5a2e5830d0769638137e86"
+  },
+  {
+    "name": "test/chain-history-effect-v6-source-20261027",
+    "tip": "44601b92f786613194a6098158abe663296d4f3e",
+    "terminal": "e4880ba589c8a2a4cf65355acd4d1c1651824137"
+  },
+  {
+    "name": "test/chain-history-initial-root-merge-20261103",
+    "tip": "e0f831d0af21cc9eea69b5ec84788ef66e0b025c",
+    "terminal": "e0f831d0af21cc9eea69b5ec84788ef66e0b025c"
+  },
+  {
+    "name": "test/chain-history-initial-root-normal-20261103",
+    "tip": "01404de030c0d560e32a4b86620cea027878d2df",
+    "terminal": "01404de030c0d560e32a4b86620cea027878d2df"
+  },
+  {
+    "name": "test/chain-history-known-epoch-ci-20261028",
+    "tip": "e4880ba589c8a2a4cf65355acd4d1c1651824137",
+    "terminal": "e4880ba589c8a2a4cf65355acd4d1c1651824137"
+  },
+  {
+    "name": "test/chain-history-pair-interruption-20261029",
+    "tip": "96f5e502d677fa37d53e0241208ce228a913d907",
+    "terminal": "a1edc667930da4011032021a4011b5b4f6b9acf0"
+  },
+  {
+    "name": "test/chain-history-publication-ci-20261028",
+    "tip": "65d59bb3ca2186810abce6a9be6535e2a5080b50",
+    "terminal": "e4880ba589c8a2a4cf65355acd4d1c1651824137"
+  },
+  {
+    "name": "test/chain-legal-producer-horizons-v5-20261028",
+    "tip": "0d02a946c9126c5dbdad41edd770c81eda07a96e",
+    "terminal": "007b80cc99ba52fe7afcd6d0e0dea52628f5a026"
+  },
+  {
+    "name": "test/chain-legal-ticket-batch-v4-ci-20261028",
+    "tip": "7e3543f8817d019975ae578b56b4997eb92bc422",
+    "terminal": "007b80cc99ba52fe7afcd6d0e0dea52628f5a026"
+  },
+  {
+    "name": "test/chain-legal-ticket-cost-v3-20261027",
+    "tip": "9e73f62c5e5f026fff979840891301d9a8c56d52",
+    "terminal": "007b80cc99ba52fe7afcd6d0e0dea52628f5a026"
+  },
+  {
+    "name": "test/chain-native-pq-quota-v3-ci-20261028",
+    "tip": "9a96067817d20b69d19e4e222bc207242a9c89d4",
+    "terminal": "9a96067817d20b69d19e4e222bc207242a9c89d4"
+  },
+  {
+    "name": "test/chain-native-pq-source-20261027",
+    "tip": "33945bc5cdf91977792faefefed0981f6b88222c",
+    "terminal": "9a96067817d20b69d19e4e222bc207242a9c89d4"
+  },
+  {
+    "name": "test/chain-parent-observed-execution-v1-20261028",
+    "tip": "923de0b137bab71170a43910eddb25047a5b3266",
+    "terminal": "ad490ed4b1132a333159fd76702809fd248a4462"
+  },
+  {
+    "name": "test/chain-pq-normal-source-20261103",
+    "tip": "fe9cd0ba3ca85901adfa8e444465eb6d486e5f5c",
+    "terminal": "fe9cd0ba3ca85901adfa8e444465eb6d486e5f5c"
+  },
+  {
+    "name": "test/chain-pq-normal-source-merge-20261103",
+    "tip": "013bd4bab7a336b12e64ec90909f317f6f223e27",
+    "terminal": "013bd4bab7a336b12e64ec90909f317f6f223e27"
+  },
+  {
+    "name": "test/chain-pure-history-raw-20261029",
+    "tip": "f8b79050282fe0561b9cae1a8253e735d7fb0f6c",
+    "terminal": "a1edc667930da4011032021a4011b5b4f6b9acf0"
+  },
+  {
+    "name": "test/chain-pure-pon-arm64-evidence-20261027",
+    "tip": "c59b5ddc4c37a56a0b7f814eabb5805afbab4a5b",
+    "terminal": "007b80cc99ba52fe7afcd6d0e0dea52628f5a026"
+  },
+  {
+    "name": "test/chain-pure-pon-arm64-v2-20261027",
+    "tip": "2b070fafcdd253c142da90fd7306d211057d3418",
+    "terminal": "007b80cc99ba52fe7afcd6d0e0dea52628f5a026"
+  },
+  {
+    "name": "test/chain-pure-pon-work-costs-20261027",
+    "tip": "1bbc292107fccdfbfe37fcc3183cf190654fd61e",
+    "terminal": "007b80cc99ba52fe7afcd6d0e0dea52628f5a026"
+  },
+  {
+    "name": "test/chain-quantization-dev-20261103",
+    "tip": "5d33b92e72aa5a173565c7b3f24fb59319de3386",
+    "terminal": "3a74d0c45b18535cf2f7f880da8411ff88b8a9af"
+  },
+  {
+    "name": "test/chain-seed-final-quantization-20261103",
+    "tip": "3256b2306cf0dee82774f1dda5c8f0ef23ea7c01",
+    "terminal": "3a74d0c45b18535cf2f7f880da8411ff88b8a9af"
+  },
+  {
+    "name": "test/chain-source-development-freeze-20261103",
+    "tip": "834e30353f1610b9727cc19f0cd51e6fdda4ac58",
+    "terminal": "3a74d0c45b18535cf2f7f880da8411ff88b8a9af"
+  },
+  {
+    "name": "test/chain-sp27-01-node-credit-20261111-0be2",
+    "tip": "6e31f818d9635720d7f588ecdc434f0c69c97085",
+    "terminal": "6e31f818d9635720d7f588ecdc434f0c69c97085"
+  },
+  {
+    "name": "test/chain-sp27-02-native-mechanism-20261111-e815",
+    "tip": "8da34affb9fe77fbb14da75d331746a17fdd6816",
+    "terminal": "8da34affb9fe77fbb14da75d331746a17fdd6816"
+  },
+  {
+    "name": "test/chain-sp27-03-recovery-effects-20261111-297a",
+    "tip": "b6f26452d060bf167cd10aa2343844f4e5712bb6",
+    "terminal": "b6f26452d060bf167cd10aa2343844f4e5712bb6"
+  },
+  {
+    "name": "test/chain-training-corpus-audit-20261103",
+    "tip": "1bc57e99dfd386eeadf59edcc933a83b30f1a9c0",
+    "terminal": "3a74d0c45b18535cf2f7f880da8411ff88b8a9af"
+  },
+  {
+    "name": "test/chain-w1-continuation-ci-20261027",
+    "tip": "a54dc7355f58f40784b5a71fe7e73c4062a14951",
+    "terminal": "bc053e24a590a4d07ad79e2ea065d190223d4426"
+  },
+  {
+    "name": "test/chain-w1-segmented-run-20261027",
+    "tip": "5d957878ea82b09b555c713976f5157fde1089a0",
+    "terminal": "bc053e24a590a4d07ad79e2ea065d190223d4426"
+  },
+  {
+    "name": "test/pon-chain-hepta-observation-convergence-seven-20261008",
+    "tip": "f962da4c5e671ecb6def07d3ac028b5a40e9b0c9",
+    "terminal": "f962da4c5e671ecb6def07d3ac028b5a40e9b0c9"
+  },
+  {
+    "name": "test/pq-claim-cli-isolation-578-20261030",
+    "tip": "ec8b909352582158ba52018ac2202a85e92790a6",
+    "terminal": "ec8b909352582158ba52018ac2202a85e92790a6"
+  },
+  {
+    "name": "test/pq-claim-isolation-with-duplicates-582-20261030",
+    "tip": "225b70cd94f5720fa046a0e8446cf9448466e70e",
+    "terminal": "225b70cd94f5720fa046a0e8446cf9448466e70e"
+  },
+  {
+    "name": "tooling/pon-canonical-kernel-stage-20261011",
+    "tip": "753f683db8e1f5f0a11926f5c7f9459e99589156",
+    "terminal": "753f683db8e1f5f0a11926f5c7f9459e99589156"
+  },
+  {
+    "name": "tooling/pon-cpu-conservation-publication-20261011",
+    "tip": "9e471e2369d99623e0320412a237454ed90ecd1b",
+    "terminal": "9e471e2369d99623e0320412a237454ed90ecd1b"
+  },
+  {
+    "name": "tooling/pon-fixed-native-source-stage-20261011",
+    "tip": "60a0cb3826d5622bebb26d98f83a4904484bc82a",
+    "terminal": "60a0cb3826d5622bebb26d98f83a4904484bc82a"
+  },
+  {
+    "name": "tooling/pon-offline-native-kit-20261011",
+    "tip": "5600b8ddd70a5d1394b9a024d26f5cd1a43f5748",
+    "terminal": "5600b8ddd70a5d1394b9a024d26f5cd1a43f5748"
+  },
+  {
+    "name": "tools/pon-audit-source-transport-20261011",
+    "tip": "887a6f7e1ad66dafba67aec4f7a478b12fc00849",
+    "terminal": "887a6f7e1ad66dafba67aec4f7a478b12fc00849"
+  },
+  {
+    "name": "tools/pon-exact-bundles-20261011",
+    "tip": "89d38b5937b3c9822a2cc7037042294f39a76df7",
+    "terminal": "89d38b5937b3c9822a2cc7037042294f39a76df7"
+  },
+  {
+    "name": "tools/pon-source-export-20261011",
+    "tip": "67c057b48e1ef72bf2b42b6189c1f86b26fa6843",
+    "terminal": "67c057b48e1ef72bf2b42b6189c1f86b26fa6843"
+  },
+  {
+    "name": "work/chain-offline-build-transfer-20261006",
+    "tip": "ce86ecd2019fc2344482db7e75a11f23b44e9a09",
+    "terminal": "ce86ecd2019fc2344482db7e75a11f23b44e9a09"
+  },
+  {
+    "name": "work/pon-batched-confirmation-source-20261011",
+    "tip": "f2b98437f9a3f37d587a2708bf1908a332faaf14",
+    "terminal": "f2b98437f9a3f37d587a2708bf1908a332faaf14"
+  },
+  {
+    "name": "work/pon-cpu-conservation-runtime-20261011",
+    "tip": "634fd8efb8ecc39a386383baef882d6c48d08d80",
+    "terminal": "634fd8efb8ecc39a386383baef882d6c48d08d80"
+  },
+  {
+    "name": "work/pon-nullable-blob-staging-20261010",
+    "tip": "e594e4c20e8dab293f6e3a5a980e294a9ae0f719",
+    "terminal": "e594e4c20e8dab293f6e3a5a980e294a9ae0f719"
+  }
+]

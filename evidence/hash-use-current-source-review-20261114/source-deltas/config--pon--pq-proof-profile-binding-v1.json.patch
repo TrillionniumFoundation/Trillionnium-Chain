@@ -1,0 +1,15 @@
+diff --git a/304e81508897d7d865ea79d2cb4b25235ccb9d2f b/7714b037c3a752bdf11c7baf55723d27d90c8e8e
+index 304e81508..7714b037c 100644
+--- a/304e81508897d7d865ea79d2cb4b25235ccb9d2f
++++ b/7714b037c3a752bdf11c7baf55723d27d90c8e8e
+@@ -4,8 +4,8 @@
+   "selected_profile_id": "trnm-w1-risc0-3.0.6-poseidon2-join-v2",
+   "mapping_contract": {
+     "path": "config/pon/w1-qrom-implementation-current-v2.json",
+-    "bytes": 46786,
+-    "sha256": "27cabbd49a12d1f0381fe5c89351888b26d8cc83b95e44dcd1dddb9b97ae7934"
++    "bytes": 50313,
++    "sha256": "77f3901f137119ce245bf361990990b51ecb9affdc87f273404c4330a2870ee5"
+   },
+   "system_lifetime_register": {
+     "path": "config/pon/pq128-lifetime-budget-v1.json",

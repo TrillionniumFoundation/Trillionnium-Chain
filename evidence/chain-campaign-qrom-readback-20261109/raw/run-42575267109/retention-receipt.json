@@ -1,0 +1,27 @@
+{
+  "existing_subset_reader_verified_original_bytes": 150386799,
+  "existing_subset_reader_verified_original_files": 52,
+  "generated_archive_member_count": 57,
+  "native_tests_executed_during_retention": false,
+  "omitted_original_bytes": 430943674,
+  "omitted_original_file_count": 1713,
+  "original_archive": {
+    "bytes": 75991850,
+    "sha256": "2ebd97384564cf6d491f1f09ba3f11d0b1aba79f6feb19b327c3b06d8ae0cc9f"
+  },
+  "qualification_granted": false,
+  "raw_archive_member_bytes_verified": true,
+  "retained_archive": {
+    "bytes": 10669796,
+    "path": "retained-original-members.tar.gz",
+    "sha256": "1c7fb03b50aed4eb106918ee210fe0e00de642a93347b79d7e448ac247ce67ca"
+  },
+  "retained_original_member_count_including_manifest": 53,
+  "revalidation_requires_full_original_archive": true,
+  "schema": "pon-original-native-campaign-retention-receipt-v1",
+  "source": {
+    "head": "e2a02f9271b49f146e70806c8a66e161b5973971",
+    "tree": "86d2014b560659106b3af6e6c19e1f82a290a60e"
+  },
+  "workflow_run_id": 42575267109
+}

@@ -1,0 +1,14 @@
+    Checking trnm-data-availability v0.1.0 (/home/qq/work/chain-cell-storage-convergence-f2568-20261109/trillionnium/crates/trnm-data-availability)
+    Checking trnm-pon-node v0.1.0 (/home/qq/work/chain-cell-storage-convergence-f2568-20261109/trillionnium/crates/trnm-pon-node)
+error: very complex type used. Consider factoring parts into `type` definitions
+   --> crates/trnm-pon-node/src/store/storage_service/version_shard_recovery_tests.rs:329:25
+    |
+329 |     fn ledger(&self) -> Vec<Vec<(Vec<u8>, u8, u64, u64)>> {
+    |                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.95.0/index.html#type_complexity
+    = note: `-D clippy::type-complexity` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::type_complexity)]`
+
+error: could not compile `trnm-pon-node` (lib test) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...

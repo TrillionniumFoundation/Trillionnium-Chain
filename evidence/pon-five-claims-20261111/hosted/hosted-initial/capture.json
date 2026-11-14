@@ -1,0 +1,70 @@
+{
+  "captured_utc": "2026-11-11T11:07:18.466831+00:00",
+  "subject": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+  "records": [
+    {
+      "label": "runs-all-pages",
+      "argv": [
+        "gh",
+        "api",
+        "--paginate",
+        "--slurp",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs?head_sha=297bb40798ca1b4e4a987ef00582067282cda4e9&per_page=100"
+      ],
+      "exit_code": 1,
+      "file": "runs-all-pages.json",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "job-130478398417",
+      "argv": [
+        "gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/130478398417/logs"
+      ],
+      "exit_code": 0,
+      "file": "job-130478398417.log",
+      "bytes": 221551,
+      "sha256": "7299e1a2cf1d07305277c229a7d88013041bf9b998d21a42456896bd1d25a269"
+    },
+    {
+      "label": "job-130478398317",
+      "argv": [
+        "gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/130478398317/logs"
+      ],
+      "exit_code": 0,
+      "file": "job-130478398317.log",
+      "bytes": 194994,
+      "sha256": "ea2b49f67069dc469cab04f525f3295bfa8423d1d1d569007f23d2cf7da21a3c"
+    },
+    {
+      "label": "job-130478398272",
+      "argv": [
+        "gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/130478398272/logs"
+      ],
+      "exit_code": 0,
+      "file": "job-130478398272.log",
+      "bytes": 308778,
+      "sha256": "2af5ea5e7c4d10898f0684abccff4f22fd8f9df0ca0015c83c4c31fcaaada441"
+    },
+    {
+      "label": "job-130478397221",
+      "argv": [
+        "gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/130478397221/logs"
+      ],
+      "exit_code": 0,
+      "file": "job-130478397221.log",
+      "bytes": 217672,
+      "sha256": "b3de77c23845190708d8d0d9f8ec4cba6fe68db15d12bd254bf959b856db04e3"
+    }
+  ],
+  "snapshot_only": true,
+  "running_or_queued_is_not_success": true
+}

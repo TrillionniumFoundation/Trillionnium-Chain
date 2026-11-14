@@ -1,0 +1,4064 @@
+{
+  "actual_W1_marked_set_simulated_in_event_model": false,
+  "adversarial_validation": {
+    "additional_resource_source_check": {
+      "head_unchanged": true,
+      "matches_checkpoint": true,
+      "source_after_sha256": "5759301bf529c54e78ea8de02248b728bcc560b78b1b82c44c0445ecff398aca",
+      "source_before_sha256": "5759301bf529c54e78ea8de02248b728bcc560b78b1b82c44c0445ecff398aca",
+      "source_unchanged": true
+    },
+    "all_required_gates_passed": true,
+    "campaigns": {
+      "adversarial": {
+        "horizons": 45,
+        "manifest_sha256": "0c256930c9c668846e7ed8e9c0cc67242edfe8a17b6d34e5b7096c383134e984",
+        "report_sha256": "0a26fa62bf6999e7cf5fe788b3ea7fc13ae6eafae3d87f4ff74281f3e1b80616",
+        "runs": 45,
+        "source_committed": true,
+        "source_head": "ba9cf57c1ff615a854cf93accf4e153614de3548",
+        "trace_rows": 139936
+      },
+      "legacy-network": {
+        "horizons": 30,
+        "manifest_sha256": "09d4c97cbd6762f2a525fd78ccff37eb8f6336c38d7777945b929a7ac7b8ecb4",
+        "report_sha256": "a043b8cfa606659b639129d5c95554120c1860d2061781afd5c101ebc075ac82",
+        "runs": 30,
+        "source_committed": true,
+        "source_head": "ba9cf57c1ff615a854cf93accf4e153614de3548",
+        "trace_rows": 77847
+      }
+    },
+    "checkpoint": "ba9cf57c1ff615a854cf93accf4e153614de3548",
+    "commands": [
+      {
+        "argv": [
+          "bash",
+          "scripts/project-preflight.sh"
+        ],
+        "exit_code": 0,
+        "label": "preflight",
+        "log": "/dev/shm/quantum-7b44c0ccd9a5/committed-ba9/adversarial-gates/preflight.log",
+        "log_sha256": "f4596f7a46726a8fe6b0b4a0e55488d1b12203c29e5470c6de30f61efc109069",
+        "wall_seconds": 0.08402018200285966
+      },
+      {
+        "argv": [
+          "python3",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "formal/pon-nakamoto-v1",
+          "-p",
+          "test_quantum_resource_clock.py",
+          "-v"
+        ],
+        "exit_code": 0,
+        "label": "resource-tests",
+        "log": "/dev/shm/quantum-7b44c0ccd9a5/committed-ba9/adversarial-gates/resource-tests.log",
+        "log_sha256": "55a52b3f1957cc6bc0e9d483368d18ca28232267c4213df84cfa0df58fba5877",
+        "test_runner_seconds": 2.099,
+        "tests_run": 18,
+        "wall_seconds": 2.224071853001078
+      },
+      {
+        "argv": [
+          "python3",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "formal/pon-nakamoto-v1",
+          "-p",
+          "test_quantum_network_sim.py",
+          "-v"
+        ],
+        "exit_code": 0,
+        "label": "network-tests",
+        "log": "/dev/shm/quantum-7b44c0ccd9a5/committed-ba9/adversarial-gates/network-tests.log",
+        "log_sha256": "e5ccf431990b5cbc009588e79dd9c1e6403ab03646893c8a7869347aa8712bdd",
+        "test_runner_seconds": 3.286,
+        "tests_run": 35,
+        "wall_seconds": 3.371868178001023
+      },
+      {
+        "argv": [
+          "python3",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "formal/pon-nakamoto-v1",
+          "-p",
+          "test_quantum_adversarial_search.py",
+          "-v"
+        ],
+        "exit_code": 0,
+        "label": "adversarial-tests",
+        "log": "/dev/shm/quantum-7b44c0ccd9a5/committed-ba9/adversarial-gates/adversarial-tests.log",
+        "log_sha256": "877b54f270f7807cba071c90d611b49e79b29670237540b5783cc71fbe52598f",
+        "test_runner_seconds": 0.736,
+        "tests_run": 12,
+        "wall_seconds": 0.8245452650007792
+      },
+      {
+        "argv": [
+          "python3",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "formal/pon-nakamoto-v1",
+          "-p",
+          "test_quantum_daa_model.py",
+          "-v"
+        ],
+        "exit_code": 0,
+        "label": "daa-model-tests",
+        "log": "/dev/shm/quantum-7b44c0ccd9a5/committed-ba9/adversarial-gates/daa-model-tests.log",
+        "log_sha256": "439da4b3f21661d7061e39d3f56e6a2de6349b709ebda6a649c6256b353f4afc",
+        "test_runner_seconds": 10.064,
+        "tests_run": 18,
+        "wall_seconds": 10.259502195003734
+      },
+      {
+        "argv": [
+          "python3",
+          "scripts/ci/test_pq_quantum_daa_scenarios.py",
+          "-v"
+        ],
+        "exit_code": 0,
+        "label": "daa-scenario-controls",
+        "log": "/dev/shm/quantum-7b44c0ccd9a5/committed-ba9/adversarial-gates/daa-scenario-controls.log",
+        "log_sha256": "fc6092d7e21f93e35f4e2e7718e57c571a586287fb554303bc010ecb6eadb550",
+        "test_runner_seconds": 0.004,
+        "tests_run": 6,
+        "wall_seconds": 0.07611753699893598
+      },
+      {
+        "argv": [
+          "python3",
+          "formal/pon-nakamoto-v1/experiments/quantum_adversarial_campaign.py",
+          "--out",
+          "/dev/shm/quantum-7b44c0ccd9a5/committed-ba9/adversarial",
+          "--seeds",
+          "5101",
+          "5102",
+          "5103"
+        ],
+        "exit_code": 0,
+        "label": "adversarial-campaign",
+        "log": "/dev/shm/quantum-7b44c0ccd9a5/committed-ba9/adversarial-gates/adversarial-campaign.log",
+        "log_sha256": "a0948a4ae6ce2470d59f2954d970f7e733506a32121baa5234d897cb46cff991",
+        "wall_seconds": 7.161469758000749
+      },
+      {
+        "argv": [
+          "python3",
+          "formal/pon-nakamoto-v1/experiments/quantum_adversarial_campaign.py",
+          "--verify",
+          "/dev/shm/quantum-7b44c0ccd9a5/committed-ba9/adversarial"
+        ],
+        "exit_code": 0,
+        "label": "adversarial-readback",
+        "log": "/dev/shm/quantum-7b44c0ccd9a5/committed-ba9/adversarial-gates/adversarial-readback.log",
+        "log_sha256": "0bf23563859a0f88a6ecdbefa92a2b17b596ad083f1b82d7b8c22edb9e311e0c",
+        "wall_seconds": 6.526924690995656
+      },
+      {
+        "argv": [
+          "python3",
+          "formal/pon-nakamoto-v1/experiments/quantum_network_campaign.py",
+          "--out",
+          "/dev/shm/quantum-7b44c0ccd9a5/committed-ba9/legacy-network",
+          "--seeds",
+          "4101",
+          "4102",
+          "4103"
+        ],
+        "exit_code": 0,
+        "label": "legacy-campaign",
+        "log": "/dev/shm/quantum-7b44c0ccd9a5/committed-ba9/adversarial-gates/legacy-campaign.log",
+        "log_sha256": "0fd1eda81dc73ce0eec1dfc6318b39d83036423b46e87c921c8fed7c3e0c19ff",
+        "wall_seconds": 5.220244619995356
+      },
+      {
+        "argv": [
+          "python3",
+          "formal/pon-nakamoto-v1/experiments/quantum_network_campaign.py",
+          "--verify",
+          "/dev/shm/quantum-7b44c0ccd9a5/committed-ba9/legacy-network"
+        ],
+        "exit_code": 0,
+        "label": "legacy-readback",
+        "log": "/dev/shm/quantum-7b44c0ccd9a5/committed-ba9/adversarial-gates/legacy-readback.log",
+        "log_sha256": "8106d659abf119b1c878ef61a5ce5d153130d1e261b1fcf2e50245ce3237599a",
+        "wall_seconds": 4.821411992001231
+      },
+      {
+        "argv": [
+          "python3",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "formal/pon-nakamoto-v1",
+          "-p",
+          "test_quantum_oracle_resources.py",
+          "-v"
+        ],
+        "exit_code": 0,
+        "label": "oracle-resource-tests",
+        "log": "/dev/shm/quantum-7b44c0ccd9a5/committed-ba9/adversarial-gates/oracle-resource-tests.log",
+        "log_sha256": "1a9c0c39d474654a50885cc925f608e4b5b7e9d36a3387c13958fb179496ce66",
+        "test_runner_seconds": 0.071,
+        "tests_run": 22,
+        "wall_seconds": 0.14897020200442057
+      }
+    ],
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "TMPDIR": "/dev/shm/quantum-7b44c0ccd9a5"
+    },
+    "head_unchanged": true,
+    "native_executed": false,
+    "release_ready": false,
+    "schema": "trnm-quantum-adversarial-committed-gates-v1",
+    "security_theorem": false,
+    "source_after_sha256": "677d9c144038e4d0919ecf9f3c44331fe6ba8db718ff2e547f034a686c1a1ff4",
+    "source_before_sha256": "677d9c144038e4d0919ecf9f3c44331fe6ba8db718ff2e547f034a686c1a1ff4",
+    "source_matches_checkpoint": true,
+    "source_unchanged": true,
+    "total_tests_passed": 111,
+    "tree": "d2d470407ee6e9e49b0c6aa72008943608ee1021"
+  },
+  "ci_contract_complete_retry": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "TMPDIR": "/dev/shm/quantum-7b44c0ccd9a5",
+    "argv": [
+      "python3",
+      "scripts/ci/test_ci_contract.py",
+      "-v"
+    ],
+    "exit_code": 0,
+    "free_bytes_before": 201080832,
+    "log": "/dev/shm/quantum-7b44c0ccd9a5/committed-ba9/adversarial-gates/ci-contract-retry.log",
+    "log_bytes": 16317,
+    "log_sha256": "591ed882a9476952841208df432c566f140552843062162c94d8ea751f0bd81b",
+    "minimum_before_copy_bytes": 104857600,
+    "monkeypatch_or_copy_shortcut_applied": false,
+    "original_suite_unmodified": true,
+    "schema": "trnm-original-ci-contract-retry-v1",
+    "scope": "original CI contract suite on ba9 test source plus explicitly recorded working-tree docs/corpus inline pin update; no native execution",
+    "source_after": {
+      "head": "ba9cf57c1ff615a854cf93accf4e153614de3548",
+      "source_sha256": {
+        "scripts/ci/check_ci_contract.py": "aa69333b609303a10dbf68565243abfac419067d82db14e10baead53eda57b92",
+        "scripts/ci/ci_job.sh": "a8465a151745478cb96ec0b392d9465547cb5dfbd4b0f8bb0eca4b4ad193cf48",
+        "scripts/ci/test_ci_contract.py": "5d70549b38750be9952b7b8787c92f66e1d849589da267a7dfad67141901949d"
+      },
+      "workflow_sha256": {
+        ".github/workflows/codeql-analysis-export.yml": "b49236cd3dc667ea70598a4410b283186265403b6daf303242cfc6bee1e13136",
+        ".github/workflows/pon-baseline-diagnostic-readback.yml": "b4df34292121c03dad051571ad14d09f2e4e7ad6d2b54d45ca905d2c4a7c0bdf",
+        ".github/workflows/pon-branch-encoding-acceptance.yml": "168e0d6a4cae5ee35cf6fc372d52044d3257ef99b5bcc119fdc8f8ff3199ece5",
+        ".github/workflows/pon-cloud-build-inputs.yml": "71f7770ee8433aca8ac00f809a978d5813601e42ce128357377d9b58d6b9fc23",
+        ".github/workflows/pon-fixed-host-root-f0.yml": "89e5058056006cee4d24dcfe1afa52e991bd40959bfa19463878b0a7ad168093",
+        ".github/workflows/pon-legacy-reorg-cost-20261104.yml": "0bc8164028072eb1328965466de6a21302c228c40500f121282488e0b1ac588a",
+        ".github/workflows/pon-model-parent-acceptance.yml": "a2fb71f718810d4365df5c877fd84432553d2788f50f32762a90a08c571f6fea",
+        ".github/workflows/pon-native-campaign-qualification.yml": "1b1b2ab8331b8bb53874a6e9a4845facfa9d9717473a7c3732fb068a8d96b14a",
+        ".github/workflows/pon-original-large-state-cpu.yml": "dd24e5da7d165420e00806721486c80291d290e43ff98e7f38748d08a446ca08",
+        ".github/workflows/pon-original-workspace-large-state-cpu.yml": "28bdbe712b26e6e6f12ba67b5dc5d1fe43e5fbdf8a81b3d8a3d86c8a937642c9",
+        ".github/workflows/pon-owned-process-cleanup.yml": "bdfd78e107273525aa743ffb998510c0602c28366f091bd66f07accb4b2682b5",
+        ".github/workflows/pon-pq-system-continuation.yml": "bc083f658deb6c228723fb001b3ee2691b5ec2e6a186d8bef7343c5c61729bc2",
+        ".github/workflows/pon-priority-acceptance.yml": "609e7a909977354c22d7503b4031225fb7b51cfb02b853fb9d147a355b9e3053",
+        ".github/workflows/pon-recent-batch-acceptance.yml": "aa6aa048c63cd5b6191ae9dbec364ff50ca765efffcdf8f71893131a0e5337c2",
+        ".github/workflows/pon-w1-transparent-profile.yml": "f8c204ebc79daf8db4a9b97cbba7d1c0c193a2f9ec6aeca9fa9bbb08faebfa80",
+        ".github/workflows/pon-w1-work-security.yml": "fa217ee369629c19431de4f5b9406d1b72f314cc4208864c428247d280d32633",
+        ".github/workflows/release-finality-reference.yml": "a833e4554eb61c9c3de5704d1af87fbc467a81106da0c5ea76c0d8f013d2c0b8",
+        ".github/workflows/trnm-required-baseline.yml": "8df781f1d5416aaa1426864aac2bd9f196b87b1283d81f630928872d763c479a"
+      },
+      "working_tree_status": " M config/pon/pq-cross-branch-corpus-v1.json\n M formal/pon-nakamoto-v1/QUANTUM_DAA_RESEARCH.md\n?? evidence/pon-quantum-construction-20261104/\n"
+    },
+    "source_and_workflow_unchanged": true,
+    "source_before": {
+      "head": "ba9cf57c1ff615a854cf93accf4e153614de3548",
+      "source_sha256": {
+        "scripts/ci/check_ci_contract.py": "aa69333b609303a10dbf68565243abfac419067d82db14e10baead53eda57b92",
+        "scripts/ci/ci_job.sh": "a8465a151745478cb96ec0b392d9465547cb5dfbd4b0f8bb0eca4b4ad193cf48",
+        "scripts/ci/test_ci_contract.py": "5d70549b38750be9952b7b8787c92f66e1d849589da267a7dfad67141901949d"
+      },
+      "workflow_sha256": {
+        ".github/workflows/codeql-analysis-export.yml": "b49236cd3dc667ea70598a4410b283186265403b6daf303242cfc6bee1e13136",
+        ".github/workflows/pon-baseline-diagnostic-readback.yml": "b4df34292121c03dad051571ad14d09f2e4e7ad6d2b54d45ca905d2c4a7c0bdf",
+        ".github/workflows/pon-branch-encoding-acceptance.yml": "168e0d6a4cae5ee35cf6fc372d52044d3257ef99b5bcc119fdc8f8ff3199ece5",
+        ".github/workflows/pon-cloud-build-inputs.yml": "71f7770ee8433aca8ac00f809a978d5813601e42ce128357377d9b58d6b9fc23",
+        ".github/workflows/pon-fixed-host-root-f0.yml": "89e5058056006cee4d24dcfe1afa52e991bd40959bfa19463878b0a7ad168093",
+        ".github/workflows/pon-legacy-reorg-cost-20261104.yml": "0bc8164028072eb1328965466de6a21302c228c40500f121282488e0b1ac588a",
+        ".github/workflows/pon-model-parent-acceptance.yml": "a2fb71f718810d4365df5c877fd84432553d2788f50f32762a90a08c571f6fea",
+        ".github/workflows/pon-native-campaign-qualification.yml": "1b1b2ab8331b8bb53874a6e9a4845facfa9d9717473a7c3732fb068a8d96b14a",
+        ".github/workflows/pon-original-large-state-cpu.yml": "dd24e5da7d165420e00806721486c80291d290e43ff98e7f38748d08a446ca08",
+        ".github/workflows/pon-original-workspace-large-state-cpu.yml": "28bdbe712b26e6e6f12ba67b5dc5d1fe43e5fbdf8a81b3d8a3d86c8a937642c9",
+        ".github/workflows/pon-owned-process-cleanup.yml": "bdfd78e107273525aa743ffb998510c0602c28366f091bd66f07accb4b2682b5",
+        ".github/workflows/pon-pq-system-continuation.yml": "bc083f658deb6c228723fb001b3ee2691b5ec2e6a186d8bef7343c5c61729bc2",
+        ".github/workflows/pon-priority-acceptance.yml": "609e7a909977354c22d7503b4031225fb7b51cfb02b853fb9d147a355b9e3053",
+        ".github/workflows/pon-recent-batch-acceptance.yml": "aa6aa048c63cd5b6191ae9dbec364ff50ca765efffcdf8f71893131a0e5337c2",
+        ".github/workflows/pon-w1-transparent-profile.yml": "f8c204ebc79daf8db4a9b97cbba7d1c0c193a2f9ec6aeca9fa9bbb08faebfa80",
+        ".github/workflows/pon-w1-work-security.yml": "fa217ee369629c19431de4f5b9406d1b72f314cc4208864c428247d280d32633",
+        ".github/workflows/release-finality-reference.yml": "a833e4554eb61c9c3de5704d1af87fbc467a81106da0c5ea76c0d8f013d2c0b8",
+        ".github/workflows/trnm-required-baseline.yml": "8df781f1d5416aaa1426864aac2bd9f196b87b1283d81f630928872d763c479a"
+      },
+      "working_tree_status": " M config/pon/pq-cross-branch-corpus-v1.json\n M formal/pon-nakamoto-v1/QUANTUM_DAA_RESEARCH.md\n?? evidence/pon-quantum-construction-20261104/\n"
+    },
+    "test_runner_seconds": 6.544,
+    "tests_run": 98,
+    "wall_seconds": 6.64265936800075
+  },
+  "delivered_resource_recipe_validation": {
+    "capacity_refusals": 2,
+    "command": "PYTHONDONTWRITEBYTECODE=1 python3 evidence/pon-quantum-construction-20261104/reproduce_resource_matrix.py --out <fresh-output-directory>",
+    "core_experimental_results_match_original": true,
+    "event_runs": 15,
+    "exit_code": 0,
+    "points": 7,
+    "recipe_sha256": "577e4a7c9e3c618d8a62e0e87883e1cfb57a7dc581e2d81517369ccc3d786e22",
+    "replayed_points": [
+      {
+        "differing_json_paths": [
+          "/source/git_head"
+        ],
+        "name": "PNH1-p1-0.0001",
+        "only_source_metadata_differs": true,
+        "original_sha256": "945bcea692ed1098d592851e8cc353a52ba1340d1bb1b3b0b9da25d5f89b734e",
+        "sha256": "fcc74d240ef4834ede632f34001fdd1a79699d90eab09ce28c9e60b5e65361a1"
+      },
+      {
+        "differing_json_paths": [
+          "/source/git_head"
+        ],
+        "name": "PNH1-p1-0.001",
+        "only_source_metadata_differs": true,
+        "original_sha256": "38f2a8a8d65c9c15b3b383735c9dce6a73fbee619c225a2247ad5a8664e39c49",
+        "sha256": "83385e4377666d3a11e77d1c9fabaec07af2d55c3741f2fb15fd1aaa99180129"
+      },
+      {
+        "differing_json_paths": [
+          "/source/git_head"
+        ],
+        "name": "PNH1-p3-0.0001",
+        "only_source_metadata_differs": true,
+        "original_sha256": "4c7a4aff2ba55eb9b5429e5eeefceb555275293135029434a23722d79847c710",
+        "sha256": "f68bb5f3ae2285e98101a81cec268eb7ebd8c30f40abf8ae6443b42c0299aeee"
+      },
+      {
+        "differing_json_paths": [
+          "/source/git_head"
+        ],
+        "name": "PNH1-p3-0.001",
+        "only_source_metadata_differs": true,
+        "original_sha256": "fec5780a26d6ad7d059d0d8ec4dc5e90f26c43fa2a5a1e8b5a48fe95bcce3a17",
+        "sha256": "82fd534fe4611811e7c65a9f2d73c9ed93466653e1167641d862b4256e3bc4a4"
+      },
+      {
+        "differing_json_paths": [
+          "/source/git_head"
+        ],
+        "name": "PGH2-p1-0.001",
+        "only_source_metadata_differs": true,
+        "original_sha256": "046c1e620e9e1e9adcb38d830c941e434ea28a3d585e3b2ffc87642f92176371",
+        "sha256": "12f3535bd11b594fecb32de80c6d71dfc1ae63012b3723b68065808c7a10622f"
+      }
+    ],
+    "schema": "trnm-resource-recipe-validation-v1",
+    "source_commit": "1c885019fdf1cc2f33af8da0780da603fff1c353",
+    "source_dependencies_equal_ba9": true,
+    "summary_sha256": "ee1c38b66f230d0c282ed35b12ae61fc1bfb85b41ba8aeab606dd61abb234e09"
+  },
+  "end_to_end_machine_failure_bound": false,
+  "evidence_integration_parent": {
+    "ci_script_pin_already_preserved_by_integration_parent": "28387126d05de6e1e23a863bc152ead491519a77",
+    "commit": "1c885019fdf1cc2f33af8da0780da603fff1c353",
+    "concurrent_native_changes_preserved": true,
+    "research_checks_do_not_qualify_changed_native_implementation": true,
+    "selected_research_inputs_identical_to_source_commit": true,
+    "tree": "b4fb72877853fe68f717a7e7cdd9a90b39f6e684"
+  },
+  "fast_daa_fulltext_followup": {
+    "additional_scoped_domains": [
+      "research.ed.ac.uk",
+      "kiayias.com",
+      "crypto.iacr.org/2026"
+    ],
+    "author_publications": "https://jagaray.com/publications/",
+    "date": "2026-11-04",
+    "full_construction_read": false,
+    "proceedings": "https://link.springer.com/book/10.1007/978-3-032-35428-0",
+    "protocol_fidelity_closed": false,
+    "result": "Publication and pages 100\u2013132 confirmed by primary metadata; author list points back to existing ePrint and proceedings expose subscription preview. No new readable full construction found."
+  },
+  "final_integration_source_gates": {
+    "all_six_source_gates_passed": true,
+    "ci_contract_98_copy_suite_rerun": false,
+    "dirty_scope_unchanged": true,
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "TMPDIR": "/dev/shm/quantum-7b44c0ccd9a5"
+    },
+    "gate_sources_unchanged": true,
+    "head_unchanged": true,
+    "initial_metadata_failure": {
+      "argv": [
+        "git",
+        "show",
+        "-s",
+        "--format=%T",
+        "HEAD"
+      ],
+      "exit_code": 128,
+      "interpretation": "partial historical Git object materialization; raw commit header and index/worktree metadata used below",
+      "operation": "initial metadata capture before running gates",
+      "source_gates_executed_in_initial_attempt": false,
+      "stderr": "fatal: unable to read tree (c9a4aed6be2a516427702b5df848543f260eeeaa)"
+    },
+    "native_build_rerun": false,
+    "native_tests_rerun": false,
+    "production_activation": false,
+    "remote_mutated": false,
+    "research_validation_anchor": "ba9cf57c1ff615a854cf93accf4e153614de3548",
+    "results": [
+      {
+        "argv": [
+          "bash",
+          "scripts/project-preflight.sh",
+          "--audit"
+        ],
+        "exit_code": 0,
+        "name": "preflight",
+        "reported_result": {
+          "branch": "fix/chain-six-axis-performance-20261103",
+          "mode": "--audit",
+          "packages": 26,
+          "project": "trillionnium-chain",
+          "remote_policy_mutated": false,
+          "result": "PASS"
+        },
+        "seconds": 0.0701302189991111,
+        "stderr": {
+          "bytes": 0,
+          "path": "/dev/shm/quantum-7b44c0ccd9a5/final-integration-source-gates-logs/preflight.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 172,
+          "path": "/dev/shm/quantum-7b44c0ccd9a5/final-integration-source-gates-logs/preflight.stdout.log",
+          "sha256": "1ebea773352bf1c27a0c6ab4609543680786419acc36a350810bef316946ab3a"
+        }
+      },
+      {
+        "argv": [
+          "python",
+          "-B",
+          "scripts/ci/check_pq_research_integration.py"
+        ],
+        "exit_code": 0,
+        "name": "pq-integration-guard",
+        "reported_result": {
+          "canonical_default_provider_contract_checked": true,
+          "canonical_pnq2_contract_checked": true,
+          "continuous_npq6_combination_accepted": false,
+          "cryptographic_acceptance": false,
+          "exact_source_blobs": 450,
+          "legacy_qtx1_optional_adapter_contract_checked": true,
+          "native_transfer_account_contract_checked": true,
+          "native_transport_contract_checked": true,
+          "node_activated": false,
+          "production_confidentiality_accepted": false,
+          "schema": "trnm-pq-cross-branch-check-v1",
+          "status": "HOLD_NO_GO",
+          "upstream_heads": 6,
+          "whole_native_authorization_migrated": false
+        },
+        "seconds": 0.15370117100246716,
+        "stderr": {
+          "bytes": 0,
+          "path": "/dev/shm/quantum-7b44c0ccd9a5/final-integration-source-gates-logs/pq-integration-guard.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 557,
+          "path": "/dev/shm/quantum-7b44c0ccd9a5/final-integration-source-gates-logs/pq-integration-guard.stdout.log",
+          "sha256": "1934edca2b621062b58b531f3e32d894de94452d1d9cd665743a6b4a209e11dc"
+        }
+      },
+      {
+        "argv": [
+          "python",
+          "-B",
+          "scripts/ci/pq_chain_claim_guard.py"
+        ],
+        "exit_code": 0,
+        "name": "pq-claim-guard",
+        "reported_result": {
+          "gates": {
+            "authorization": {
+              "source_paths": [
+                "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs",
+                "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+                "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs",
+                "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/live_admission_tests.rs",
+                "trillionnium/crates/trnm-pon-node/src/ingress/public_v2.rs",
+                "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+                "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+                "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs",
+                "trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs",
+                "trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs",
+                "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs",
+                "trillionnium/crates/trnm-data-availability/src/cell/closure.rs",
+                "trillionnium/crates/trnm-data-availability/src/cell/release.rs",
+                "trillionnium/crates/trnm-pon-node/src/store/funding.rs",
+                "trillionnium/crates/trnm-pon-node/src/store/funding/payment.rs",
+                "scripts/ci/pq_authority_surface_scan.py",
+                "scripts/ci/test_pq_authority_surface_scan.py",
+                "docs/security/PQ_AUTHORITY_SURFACE_AUDIT_20261031.md"
+              ],
+              "status": "UNQUALIFIED"
+            },
+            "capacity_and_invalid_input": {
+              "source_paths": [
+                "trillionnium/crates/trnm-protocol/src/pq_frame.rs",
+                "config/pon/post-quantum-transition-v1.json"
+              ],
+              "status": "UNQUALIFIED"
+            },
+            "independent_end_to_end": {
+              "source_paths": [
+                "docs/security/PQ_APPLICATION_AUTHORIZATION_V6.md",
+                "config/pon/pq-cross-branch-corpus-v1.json"
+              ],
+              "status": "UNQUALIFIED"
+            },
+            "migration_and_rollback": {
+              "source_paths": [
+                "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration.rs",
+                "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/directory.rs",
+                "trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs",
+                "trillionnium/crates/trnm-pon-node/src/store/storage_service.rs",
+                "trillionnium/crates/trnm-service-settlement/src/native_budget.rs",
+                "trillionnium/crates/trnm-data-availability/src/cell/retention.rs",
+                "scripts/ci/pq_external_rollback_oracle.py",
+                "scripts/ci/test_pq_external_rollback_oracle.py",
+                "docs/security/PQ_EXTERNAL_ROLLBACK_WITNESS_REFERENCE_20261031.md",
+                "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs",
+                "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/tests.rs",
+                "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness.rs",
+                "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/tests.rs",
+                "docs/security/PQ_NETWORK_DURABLE_WITNESS_V1.md"
+              ],
+              "status": "UNQUALIFIED"
+            },
+            "proof_pq128": {
+              "source_paths": [
+                "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+                "docs/security/POST_QUANTUM_TRANSITION_V1.md"
+              ],
+              "status": "UNQUALIFIED"
+            },
+            "quantum_mining_fork_choice": {
+              "source_paths": [
+                "config/pon/devnet-v1.json",
+                "docs/protocol/pon-nakamoto-v1/details/WORK_COST_DAA_BOUNDARIES.md",
+                "scripts/ci/pq_quantum_daa_scenarios.py",
+                "scripts/ci/test_pq_quantum_daa_scenarios.py",
+                "docs/security/PQ_QUANTUM_DAA_SENSITIVITY_20261031.md"
+              ],
+              "status": "UNQUALIFIED"
+            }
+          },
+          "note": "Source/flag refusal only; no independent crypto, quantum cost, WAN, rollback or production evidence.",
+          "pq_128_qualified": false,
+          "production_activation": false,
+          "schema": "trnm-whole-chain-pq-claim-guard-v1",
+          "status": "HOLD",
+          "whole_chain_pq_qualified": false
+        },
+        "seconds": 0.0407318090001354,
+        "stderr": {
+          "bytes": 0,
+          "path": "/dev/shm/quantum-7b44c0ccd9a5/final-integration-source-gates-logs/pq-claim-guard.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 3333,
+          "path": "/dev/shm/quantum-7b44c0ccd9a5/final-integration-source-gates-logs/pq-claim-guard.stdout.log",
+          "sha256": "6235b839d36b92351665414a731c9433441f007e727860d0c3bd138e7d731690"
+        }
+      },
+      {
+        "argv": [
+          "python",
+          "-B",
+          "scripts/ci/check_ci_contract.py"
+        ],
+        "exit_code": 0,
+        "name": "direct-ci-contract",
+        "reported_result": {
+          "artifact_comparison_jobs": 1,
+          "head_jobs": 5,
+          "inline_source_pins": 22,
+          "merge_lanes": 5,
+          "native_cost_architectures": 2,
+          "tests_executed": false,
+          "w1_actual_reuse_v3_cells": 4
+        },
+        "seconds": 0.08736408400000073,
+        "stderr": {
+          "bytes": 0,
+          "path": "/dev/shm/quantum-7b44c0ccd9a5/final-integration-source-gates-logs/direct-ci-contract.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 180,
+          "path": "/dev/shm/quantum-7b44c0ccd9a5/final-integration-source-gates-logs/direct-ci-contract.stdout.log",
+          "sha256": "9e1991fcbac915b303bd1a6b9db2ce04a4094fa15bb6f05e83d57504313bf975"
+        }
+      },
+      {
+        "argv": [
+          "python",
+          "-B",
+          "scripts/refresh_distributed_source_inventory.py",
+          "--check"
+        ],
+        "exit_code": 0,
+        "name": "distributed-source-inventory",
+        "seconds": 0.069457367004361,
+        "stderr": {
+          "bytes": 0,
+          "path": "/dev/shm/quantum-7b44c0ccd9a5/final-integration-source-gates-logs/distributed-source-inventory.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 35,
+          "path": "/dev/shm/quantum-7b44c0ccd9a5/final-integration-source-gates-logs/distributed-source-inventory.stdout.log",
+          "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+        },
+        "stdout_summary": "distributed source inventory: PASS"
+      },
+      {
+        "argv": [
+          "bash",
+          "-n",
+          "scripts/ci/ci_job.sh"
+        ],
+        "exit_code": 0,
+        "name": "ci-shell-syntax",
+        "seconds": 0.003949955003918149,
+        "stderr": {
+          "bytes": 0,
+          "path": "/dev/shm/quantum-7b44c0ccd9a5/final-integration-source-gates-logs/ci-shell-syntax.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 0,
+          "path": "/dev/shm/quantum-7b44c0ccd9a5/final-integration-source-gates-logs/ci-shell-syntax.stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout_summary": ""
+      }
+    ],
+    "schema": "trnm-final-integration-source-gates-v1",
+    "scope": "Six source-only integration gates on preserved concurrent native HEAD plus recorded pending documentation/evidence bytes. Not a clean-checkout or fresh native-execution qualification.",
+    "source_after": {
+      "dirty_file_sha256": {
+        "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": "96c2b5cbb075f83b4bb635210ea6a9e46605b2f2cd2a7d104812b6985f425ef3",
+        "evidence/pon-quantum-construction-20261104/README.md": "fc48aa6ef93af7afe6b1a86d8ace3b584db8775b9ff2c216294243ab3a3192c6",
+        "evidence/pon-quantum-construction-20261104/reproduce_resource_matrix.py": "577e4a7c9e3c618d8a62e0e87883e1cfb57a7dc581e2d81517369ccc3d786e22",
+        "evidence/pon-quantum-construction-20261104/reproduction.json": "fd4c07415d1d47e922f9b42133fb0a1a8317421cc8c1ec3d9387a5f1bfef250e",
+        "formal/pon-nakamoto-v1/QUANTUM_DAA_RESEARCH.md": "494170dfc1539e7e3a26f4f163659de7b84763ae3048fc0efac87ba9ff733bae"
+      },
+      "dirty_scope_basis": "index-to-working-tree diff plus untracked inventory; HEAD/index completeness is not inferred from missing tree objects",
+      "gate_source_sha256": {
+        "scripts/ci/check_ci_contract.py": "aa69333b609303a10dbf68565243abfac419067d82db14e10baead53eda57b92",
+        "scripts/ci/check_pq_research_integration.py": "9579adc1c9548068c90e1d1041b20de1236ab4bd2fa16d5a0429541d63eb7981",
+        "scripts/ci/ci_job.sh": "a8465a151745478cb96ec0b392d9465547cb5dfbd4b0f8bb0eca4b4ad193cf48",
+        "scripts/ci/pq_chain_claim_guard.py": "cb4ea84da88dc3b7d3f9df15971a0ec5fb88a8d357d077486787a6e89631ea3e",
+        "scripts/project-preflight.sh": "08645a9c6c8ab5cd9a92aa24e1c19fb71e7330d28e379b805d8e3f81ce8ede1f",
+        "scripts/refresh_distributed_source_inventory.py": "c83d9c0b84c21beec6917a86b2a3207c5f3bf6fd26cf432f2ef0990750e16a33"
+      },
+      "head": "1c885019fdf1cc2f33af8da0780da603fff1c353",
+      "index_diff": {
+        "argv": [
+          "git",
+          "diff",
+          "--name-only"
+        ],
+        "exit_code": 0,
+        "stderr": "",
+        "stdout": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md\nformal/pon-nakamoto-v1/QUANTUM_DAA_RESEARCH.md\n"
+      },
+      "raw_commit_header_available": true,
+      "tree_from_raw_commit_header": "b4fb72877853fe68f717a7e7cdd9a90b39f6e684",
+      "untracked_inventory": {
+        "argv": [
+          "git",
+          "ls-files",
+          "--others",
+          "--exclude-standard"
+        ],
+        "exit_code": 0,
+        "stderr": "",
+        "stdout": "evidence/pon-quantum-construction-20261104/README.md\nevidence/pon-quantum-construction-20261104/reproduce_resource_matrix.py\nevidence/pon-quantum-construction-20261104/reproduction.json\n"
+      },
+      "working_directory": "/dev/shm/quantum-7b44c0ccd9a5/chain",
+      "working_tree_status": {
+        "argv": [
+          "git",
+          "status",
+          "--short",
+          "--untracked-files=all"
+        ],
+        "exit_code": 0,
+        "stderr": "",
+        "stdout": " M docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md\n M formal/pon-nakamoto-v1/QUANTUM_DAA_RESEARCH.md\n?? evidence/pon-quantum-construction-20261104/README.md\n?? evidence/pon-quantum-construction-20261104/reproduce_resource_matrix.py\n?? evidence/pon-quantum-construction-20261104/reproduction.json\n"
+      }
+    },
+    "source_before": {
+      "dirty_file_sha256": {
+        "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": "96c2b5cbb075f83b4bb635210ea6a9e46605b2f2cd2a7d104812b6985f425ef3",
+        "evidence/pon-quantum-construction-20261104/README.md": "fc48aa6ef93af7afe6b1a86d8ace3b584db8775b9ff2c216294243ab3a3192c6",
+        "evidence/pon-quantum-construction-20261104/reproduce_resource_matrix.py": "577e4a7c9e3c618d8a62e0e87883e1cfb57a7dc581e2d81517369ccc3d786e22",
+        "evidence/pon-quantum-construction-20261104/reproduction.json": "fd4c07415d1d47e922f9b42133fb0a1a8317421cc8c1ec3d9387a5f1bfef250e",
+        "formal/pon-nakamoto-v1/QUANTUM_DAA_RESEARCH.md": "494170dfc1539e7e3a26f4f163659de7b84763ae3048fc0efac87ba9ff733bae"
+      },
+      "dirty_scope_basis": "index-to-working-tree diff plus untracked inventory; HEAD/index completeness is not inferred from missing tree objects",
+      "gate_source_sha256": {
+        "scripts/ci/check_ci_contract.py": "aa69333b609303a10dbf68565243abfac419067d82db14e10baead53eda57b92",
+        "scripts/ci/check_pq_research_integration.py": "9579adc1c9548068c90e1d1041b20de1236ab4bd2fa16d5a0429541d63eb7981",
+        "scripts/ci/ci_job.sh": "a8465a151745478cb96ec0b392d9465547cb5dfbd4b0f8bb0eca4b4ad193cf48",
+        "scripts/ci/pq_chain_claim_guard.py": "cb4ea84da88dc3b7d3f9df15971a0ec5fb88a8d357d077486787a6e89631ea3e",
+        "scripts/project-preflight.sh": "08645a9c6c8ab5cd9a92aa24e1c19fb71e7330d28e379b805d8e3f81ce8ede1f",
+        "scripts/refresh_distributed_source_inventory.py": "c83d9c0b84c21beec6917a86b2a3207c5f3bf6fd26cf432f2ef0990750e16a33"
+      },
+      "head": "1c885019fdf1cc2f33af8da0780da603fff1c353",
+      "index_diff": {
+        "argv": [
+          "git",
+          "diff",
+          "--name-only"
+        ],
+        "exit_code": 0,
+        "stderr": "",
+        "stdout": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md\nformal/pon-nakamoto-v1/QUANTUM_DAA_RESEARCH.md\n"
+      },
+      "raw_commit_header_available": true,
+      "tree_from_raw_commit_header": "b4fb72877853fe68f717a7e7cdd9a90b39f6e684",
+      "untracked_inventory": {
+        "argv": [
+          "git",
+          "ls-files",
+          "--others",
+          "--exclude-standard"
+        ],
+        "exit_code": 0,
+        "stderr": "",
+        "stdout": "evidence/pon-quantum-construction-20261104/README.md\nevidence/pon-quantum-construction-20261104/reproduce_resource_matrix.py\nevidence/pon-quantum-construction-20261104/reproduction.json\n"
+      },
+      "working_directory": "/dev/shm/quantum-7b44c0ccd9a5/chain",
+      "working_tree_status": {
+        "argv": [
+          "git",
+          "status",
+          "--short",
+          "--untracked-files=all"
+        ],
+        "exit_code": 0,
+        "stderr": "",
+        "stdout": " M docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md\n M formal/pon-nakamoto-v1/QUANTUM_DAA_RESEARCH.md\n?? evidence/pon-quantum-construction-20261104/README.md\n?? evidence/pon-quantum-construction-20261104/reproduce_resource_matrix.py\n?? evidence/pon-quantum-construction-20261104/reproduction.json\n"
+      }
+    },
+    "source_head": "1c885019fdf1cc2f33af8da0780da603fff1c353",
+    "source_modified_by_agent": false,
+    "strict_clippy_rerun": false
+  },
+  "final_integration_source_gates_scope": "These six checks ran at integration parent 1c885019 with the five declared draft evidence/document files unchanged during the run. This manifest then embeds their receipt; its pre-embedding hash in that receipt is intentionally historical. Core research and guard inputs are unchanged.",
+  "git_metadata_resolution": {
+    "additional_tree_objects_from_primary_GitHub_metadata": 10,
+    "history_fabricated": false,
+    "initial_metadata_failure_preserved": true,
+    "restored_exact_commit": "c9a4aed6be2a516427702b5df848543f260eeeaa",
+    "restored_exact_root_tree": "99c35eb37fec57b8a2e58f0052f24739974a04dc",
+    "retry_command": [
+      "git",
+      "show",
+      "-s",
+      "--format=%T",
+      "HEAD"
+    ],
+    "retry_exit_code": 0,
+    "retry_tree": "b4fb72877853fe68f717a7e7cdd9a90b39f6e684",
+    "working_sources_changed": false
+  },
+  "integration_pr": 688,
+  "native_gate_scope": {
+    "current_combined_native_tests_executed": false,
+    "current_combined_strict_clippy_executed": false,
+    "current_locked_cargo_metadata": {
+      "packages": 175,
+      "workspace_members": 26
+    },
+    "current_rust_fmt_exit_code": 0,
+    "historical_native_commit": "bd2777f9cc74df10ba07ae8202584ed0fb90a519",
+    "historical_native_receipt_sha256": "b1857845f6c49e19caa373c8b881ebdbfa5e524526757bb4c782d807e41fdf0d",
+    "historical_packets_preserve_original_scope": true
+  },
+  "ohie_validation": {
+    "actual_python_process": {
+      "cpu_seconds": 55.664252090000005,
+      "platform": "Linux-6.18.57-x86_64-with-glibc2.39",
+      "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+      "scope": "Python research model and serialization only",
+      "wall_seconds": 55.679369598998164
+    },
+    "artifact_bytes": 1356941,
+    "campaign": {
+      "exit_code": 0,
+      "horizon_completed_runs": 18,
+      "path": "/dev/shm/quantum-7b44c0ccd9a5/committed-ba9/ohie",
+      "runs": 18,
+      "trace_rows": 21762
+    },
+    "commit": "ba9cf57c1ff615a854cf93accf4e153614de3548",
+    "fast_daa_2026_implemented": false,
+    "manifest_sha256": "96e20057585ec7d4bb3bd8e01058763dcff2cc5a7b9633f0eeb8ef1dad2097a7",
+    "native_w1_verified": false,
+    "optional_testing_stopped": true,
+    "preflight": "PASS",
+    "readback_and_seeded_replay": {
+      "exit_code": 0,
+      "result": "OHIE_MODEL_READBACK_AND_SEEDED_REPLAY_PASS",
+      "runs": 18
+    },
+    "release_ready": false,
+    "report_sha256": "620a00030d994864dbbdb801febff439ecd34a57380e3618159f8a00dfd6d707",
+    "schema": "trnm-ohie-committed-gate-v1",
+    "security_theorem": false,
+    "source_after_sha256": {
+      "formal/pon-nakamoto-v1/experiments/parallel_variable_ohie_campaign.py": "c26cbc28ef617f8a1531447e8f1fc5961e81a91733794945a5c54c0265e1502a",
+      "formal/pon-nakamoto-v1/parallel_variable_ohie.py": "9ae2a58663f44d63d43ef639d0093021a15fa9507fe83cbfa811d369cd6a1155",
+      "formal/pon-nakamoto-v1/test_parallel_variable_ohie.py": "563191033d4e2be366acfcaf7d786cd0e975dc6da6fe2cd272269de7e558ed0e"
+    },
+    "source_before_sha256": {
+      "formal/pon-nakamoto-v1/experiments/parallel_variable_ohie_campaign.py": "c26cbc28ef617f8a1531447e8f1fc5961e81a91733794945a5c54c0265e1502a",
+      "formal/pon-nakamoto-v1/parallel_variable_ohie.py": "9ae2a58663f44d63d43ef639d0093021a15fa9507fe83cbfa811d369cd6a1155",
+      "formal/pon-nakamoto-v1/test_parallel_variable_ohie.py": "563191033d4e2be366acfcaf7d786cd0e975dc6da6fe2cd272269de7e558ed0e"
+    },
+    "source_bytes_unchanged": true,
+    "source_committed": true,
+    "tree": "d2d470407ee6e9e49b0c6aa72008943608ee1021",
+    "unit_tests": {
+      "exit_code": 0,
+      "reported_seconds": 39.321,
+      "status": "PASS",
+      "tests": 28
+    }
+  },
+  "open_scientific_gates": [
+    "attacker-minimal W1 cost or suitable lower bound",
+    "physical fault-tolerant execution/data-access/routing/reliability calibration",
+    "actual legal W1 marked-domain probability/correlation/reuse/freshness",
+    "complete Fast DAA source-to-protocol reproduction",
+    "OHIE source discrepancy reconciliation and theorem-parameter mapping",
+    "mixed classical/quantum common-prefix/growth/quality/transaction-liveness proof for concrete deployed profile"
+  ],
+  "oracle_case_results": {
+    "assertions": {
+      "constructive_upper_bound_for_declared_fixed_context_only": true,
+      "mining_security_qualified": false,
+      "native_node_executed_by_campaign": false,
+      "native_sized_run_is_macro_semantics_not_leaf_gate_execution": true,
+      "physical_hardware_calibrated": false,
+      "production_activation": false,
+      "quantum_cost_lower_bound_or_optimality_proved": false,
+      "quantum_hardware_executed": false,
+      "reduced_gate_controls_are_not_native_parameter_runs": true
+    },
+    "historical_input_locations": {
+      "raw_dir": "/workspace/scratch/7b44c0ccd9a5/validation/native-bd2777f/fresh-proof-v1",
+      "receipt": "/workspace/scratch/7b44c0ccd9a5/validation/native-bd2777f/native-receipt-bd2777f.json"
+    },
+    "historical_native_control": {
+      "block_id": "13479567872b7843c76df33fe4a383933668acf18ea8dae84b4d303543bdcfeb",
+      "current_native_execution": false,
+      "current_python_full_relation_rechecked": true,
+      "historical_native_admission_observed": true,
+      "historical_native_source_commit": "bd2777f9cc74df10ba07ae8202584ed0fb90a519",
+      "nonce": 6,
+      "original_85_observation_campaign_rerun": false,
+      "packet_sha256": "0d2907dcf3973d0f99782ee2a204bed45ffa3d1ce338ea7de3ec1d02fb4836b4",
+      "proof_sha256": "e3b98ec5e270128ddb44dc95223a477aeeeff1bcab0bfa9ae1a72c062a3aeff8",
+      "receipt_sha256": "b1857845f6c49e19caa373c8b881ebdbfa5e524526757bb4c782d807e41fdf0d",
+      "report_sha256": "c08f5c11419656408ee179ea49f41701c2edcb25178dc9b963b995a460cb62db",
+      "row_index": 0,
+      "ticket": "219292f954684ee5a2ae0bdcf116af8518d76e3e96e8633df927bdc90a87024e",
+      "trace": "843b7feeee0374474e26d054508017a2c8e08c19efa451ee7b753eb9c0abf241"
+    },
+    "records": [
+      {
+        "classical_build_and_check_wall_seconds": 33.70775872900413,
+        "execution_mode": "macro",
+        "name": "retained-pnh1",
+        "nonce": 42,
+        "observation": {
+          "accepted_word_counts": [
+            1024,
+            1024,
+            1024,
+            1024
+          ],
+          "challenge": "0bd7f24bd02166370261030d660c77dfb83ede815b2ed303fefb21ee31a2aeb8",
+          "clean_ancillas": true,
+          "inverse_executed": true,
+          "leaf_gates_executed": null,
+          "macro_calls_executed": 5543956,
+          "mode": "macro",
+          "native_shape": true,
+          "noise_complete": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "nonce": 42,
+          "nonce_preserved": true,
+          "outer_X_Z_gates_executed": null,
+          "phase": 1,
+          "phase_sign_observed_by_classical_basis_interpreter": true,
+          "quantum_hardware_executed": false,
+          "ticket": "8e894dbb4a7e3692341d82b56ada1ed676814bfdf5f8ea7dfea6641ef624667b",
+          "trace": "f76eee881ea86e95d5d9a4c4068ad7a14c02719a8e9713e510be62ed74269aa8",
+          "winner": false
+        },
+        "resources": {
+          "T_count_if_exact_Toffoli_uses_7_T": 37098209400,
+          "T_decomposition_is_conditional_not_transpiled": true,
+          "classical_preprocessing": {
+            "AB_and_full_PNW1_materialization": "optional per-task/per-winner classical work outside this predicate",
+            "fixed_header_sha_compressions": 5,
+            "fixed_matrices_and_task_commitment": true
+          },
+          "construction_sha256": "6560523d9e89c0082e2c86e229a02a319789833163042b694a5f6ffc493e515d",
+          "constructive_upper_bound_not_best_algorithm": true,
+          "data_access": "static wire addresses, exhaustive oblivious accepted-word selection; no QRAM or dynamic memory oracle",
+          "diffusion": {
+            "H": 128,
+            "Toffoli": 126,
+            "X": 128,
+            "Z": 1,
+            "depth_upper_bound": 131,
+            "gate_count": 383,
+            "scratch_qubits": 63,
+            "standard_diffusion_up_to_global_phase": true
+          },
+          "forward_depth_upper_bound": 984917575,
+          "forward_gate_count": 8859008357,
+          "forward_gate_counts": {
+            "CNOT": 6150867656,
+            "Toffoli": 2649872100,
+            "X": 58268601
+          },
+          "forward_toffoli_depth_upper_bound": 349093582,
+          "hash_framing": {
+            "challenge_bytes": 343,
+            "coherent_challenge_compressions": 1,
+            "noise_bytes_each": 66,
+            "noise_hashes_all_bounded_branches": 512,
+            "ticket_bytes": 90,
+            "trace_bytes": 131120,
+            "trace_compressions": 2049
+          },
+          "leaves": {
+            "accepted:32:11": {
+              "clean_xor_output_for_arbitrary_output_seed": true,
+              "input_load_unload_cnots": 64,
+              "input_widths": [
+                32
+              ],
+              "key": "accepted:32:11",
+              "leaf_qubits": 99,
+              "netlist_bytes": 1943,
+              "netlist_sha256": "5f2930bc9725731d53720e9c827828490d6afbb962525ffcc85449a21f77ef2b",
+              "output_width": 1,
+              "wrapped_depth_upper_bound": 197,
+              "wrapped_gate_counts": {
+                "CNOT": 199,
+                "Toffoli": 62,
+                "X": 6
+              },
+              "wrapped_gates": 267,
+              "wrapped_toffoli_depth_upper_bound": 62
+            },
+            "add:32:11": {
+              "clean_xor_output_for_arbitrary_output_seed": true,
+              "input_load_unload_cnots": 128,
+              "input_widths": [
+                32,
+                32
+              ],
+              "key": "add:32:11",
+              "leaf_qubits": 589,
+              "netlist_bytes": 13488,
+              "netlist_sha256": "254bbf482f4fbe80a0c0591fc15fee0b2e69f76832db93b44c20c0a67fc39c3a",
+              "output_width": 32,
+              "wrapped_depth_upper_bound": 538,
+              "wrapped_gate_counts": {
+                "CNOT": 1348,
+                "Toffoli": 386,
+                "X": 12
+              },
+              "wrapped_gates": 1746,
+              "wrapped_toffoli_depth_upper_bound": 200
+            },
+            "and:5:11": {
+              "clean_xor_output_for_arbitrary_output_seed": true,
+              "input_load_unload_cnots": 10,
+              "input_widths": [
+                5
+              ],
+              "key": "and:5:11",
+              "leaf_qubits": 10,
+              "netlist_bytes": 310,
+              "netlist_sha256": "de206fffb32470e3c103d77e879d7e1844fe1d4334fc74c34d08bb0110a3c9e4",
+              "output_width": 1,
+              "wrapped_depth_upper_bound": 19,
+              "wrapped_gate_counts": {
+                "CNOT": 11,
+                "Toffoli": 8,
+                "X": 0
+              },
+              "wrapped_gates": 19,
+              "wrapped_toffoli_depth_upper_bound": 8
+            },
+            "increment:32:11": {
+              "clean_xor_output_for_arbitrary_output_seed": true,
+              "input_load_unload_cnots": 24,
+              "input_widths": [
+                11,
+                1
+              ],
+              "key": "increment:32:11",
+              "leaf_qubits": 44,
+              "netlist_bytes": 889,
+              "netlist_sha256": "e96fbfcbc3631199b6dd800d8acea73193923ff713b838add29f65212747f94a",
+              "output_width": 11,
+              "wrapped_depth_upper_bound": 69,
+              "wrapped_gate_counts": {
+                "CNOT": 79,
+                "Toffoli": 20,
+                "X": 0
+              },
+              "wrapped_gates": 99,
+              "wrapped_toffoli_depth_upper_bound": 20
+            },
+            "leq:11:11": {
+              "clean_xor_output_for_arbitrary_output_seed": true,
+              "input_load_unload_cnots": 44,
+              "input_widths": [
+                11,
+                11
+              ],
+              "key": "leq:11:11",
+              "leaf_qubits": 98,
+              "netlist_bytes": 2203,
+              "netlist_sha256": "3bedf21f259de5b9c5b912c44c12257c405c5962beec4070092f7f75b6fb9ea6",
+              "output_width": 1,
+              "wrapped_depth_upper_bound": 99,
+              "wrapped_gate_counts": {
+                "CNOT": 177,
+                "Toffoli": 62,
+                "X": 44
+              },
+              "wrapped_gates": 283,
+              "wrapped_toffoli_depth_upper_bound": 42
+            },
+            "leq:256:11": {
+              "clean_xor_output_for_arbitrary_output_seed": true,
+              "input_load_unload_cnots": 1024,
+              "input_widths": [
+                256,
+                256
+              ],
+              "key": "leq:256:11",
+              "leaf_qubits": 2303,
+              "netlist_bytes": 47211,
+              "netlist_sha256": "56a4a1f7aa10fb9db53048c65cb63033f8ff76ca4360943d8d9d9494b493288f",
+              "output_width": 1,
+              "wrapped_depth_upper_bound": 2059,
+              "wrapped_gate_counts": {
+                "CNOT": 4097,
+                "Toffoli": 1532,
+                "X": 1024
+              },
+              "wrapped_gates": 6653,
+              "wrapped_toffoli_depth_upper_bound": 1022
+            },
+            "multiply:32:11": {
+              "clean_xor_output_for_arbitrary_output_seed": true,
+              "input_load_unload_cnots": 128,
+              "input_widths": [
+                32,
+                32
+              ],
+              "key": "multiply:32:11",
+              "leaf_qubits": 6550,
+              "netlist_bytes": 156051,
+              "netlist_sha256": "dcec9df253b72e10150a1ddbcd6e2e626e9887d28152c4e0dfba74f2e555a7f1",
+              "output_width": 32,
+              "wrapped_depth_upper_bound": 1012,
+              "wrapped_gate_counts": {
+                "CNOT": 13142,
+                "Toffoli": 6414,
+                "X": 6
+              },
+              "wrapped_gates": 19562,
+              "wrapped_toffoli_depth_upper_bound": 274
+            },
+            "select:32:11": {
+              "clean_xor_output_for_arbitrary_output_seed": true,
+              "input_load_unload_cnots": 110,
+              "input_widths": [
+                11,
+                11,
+                1,
+                32
+              ],
+              "key": "select:32:11",
+              "leaf_qubits": 152,
+              "netlist_bytes": 2167,
+              "netlist_sha256": "e7d16a2cba74a0ccc14c99713d1ab826e2a299b1c3b07d3c0d44569130fcbaaa",
+              "output_width": 32,
+              "wrapped_depth_upper_bound": 203,
+              "wrapped_gate_counts": {
+                "CNOT": 208,
+                "Toffoli": 86,
+                "X": 22
+              },
+              "wrapped_gates": 316,
+              "wrapped_toffoli_depth_upper_bound": 86
+            },
+            "sha:32:11": {
+              "clean_xor_output_for_arbitrary_output_seed": true,
+              "input_load_unload_cnots": 1536,
+              "input_widths": [
+                512,
+                256
+              ],
+              "key": "sha:32:11",
+              "leaf_qubits": 117293,
+              "netlist_bytes": 3109204,
+              "netlist_sha256": "54ed564637f829fe7bc43fa5ea6a734d435e078bd6a62b5ca2e17b2102c17fd0",
+              "output_width": 256,
+              "wrapped_depth_upper_bound": 14887,
+              "wrapped_gate_counts": {
+                "CNOT": 310270,
+                "Toffoli": 77306,
+                "X": 1986
+              },
+              "wrapped_gates": 389562,
+              "wrapped_toffoli_depth_upper_bound": 3720
+            }
+          },
+          "lifetime": "all SSA outputs retained through phase; clean leaf input/scratch workspace reused; global reverse clears every output",
+          "logical_qubits": 22253173,
+          "native_eligibility_is_checked_classical_precondition": true,
+          "native_node_admission_verified": false,
+          "nonce_bits": 64,
+          "persistent_register_count": 676877,
+          "persistent_register_qubits": 22135880,
+          "phase_oracle_depth_upper_bound": 1969835151,
+          "phase_oracle_gate_count": 17718016715,
+          "phase_oracle_gate_counts": {
+            "CNOT": 12301735312,
+            "Toffoli": 5299744200,
+            "X": 116537202,
+            "Z": 1
+          },
+          "phase_oracle_toffoli_depth_upper_bound": 698187164,
+          "physical_calibration": null,
+          "prepare": {
+            "H": 64,
+            "depth_upper_bound": 1,
+            "gate_count": 64
+          },
+          "production_activation": false,
+          "profile": "PNH1",
+          "quantum_hardware_executed": false,
+          "quantum_mining_security_qualified": false,
+          "quantum_work_lower_bound_proved": false,
+          "reused_workspace_qubits": 117293,
+          "schema": "trnm-w1-constructive-phase-oracle-v1",
+          "scope": "NATIVE_W1_FIXED_TEMPLATE_CONSTRUCTION",
+          "shape": {
+            "field_bits": 32,
+            "n": 64,
+            "noise_counters": 128,
+            "r": 8
+          },
+          "source_sha256": {
+            "formal/pon-nakamoto-v1/reversible_components.py": "f518669b0b4ac41a442986ff779da618227b375ef69bdb17db0eacc505908fe0",
+            "formal/pon-nakamoto-v1/w1_quantum_oracle.py": "135167ab536a663cf053417e99d1aeb9d2790ea690ea56a1bce4eca1b8d5a96c",
+            "formal/pon-nakamoto-v1/w1_quantum_primitives.py": "1d1f0a800e24e1d82aab1794ec0cf207ed845e7a7080bacd41b0d0c575f98ac1",
+            "formal/pon-nakamoto-v1/work_oracle.py": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18",
+            "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": "e6eb2c0dddc4a59add47cb295c8c66397956cd94bff729a7472d52653a427b5f",
+            "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs": "95944c121362223f43f5d1cea61972ce65330a65ae36903255d8b3fdead58727",
+            "trillionnium/crates/trnm-protocol/src/pon_growth.rs": "37b8c818e6dd7341b25cd3c1e66a8b5fe0aecca2c60201272a9a2551db147d5f",
+            "trillionnium/crates/trnm-protocol/src/pon_wire.rs": "be816ee5b209098fa790d6e190d1d9c659634ac22d58b95c83dc8b49899c70cd"
+          },
+          "stages": {
+            "challenge": {
+              "calls": {
+                "sha:32:11": 1
+              },
+              "depth_upper_bound": 14887,
+              "gate_count": 389562,
+              "gate_counts": {
+                "CNOT": 310270,
+                "Toffoli": 77306,
+                "X": 1986
+              },
+              "toffoli_depth_upper_bound": 3720
+            },
+            "low_rank": {
+              "calls": {
+                "add:32:11": 65536,
+                "multiply:32:11": 65536
+              },
+              "depth_upper_bound": 101580800,
+              "gate_count": 1396441088,
+              "gate_counts": {
+                "CNOT": 949616640,
+                "Toffoli": 445644800,
+                "X": 1179648
+              },
+              "toffoli_depth_upper_bound": 31064064
+            },
+            "noise_compaction": {
+              "calls": {
+                "accepted:32:11": 4096,
+                "increment:32:11": 4096,
+                "leq:11:11": 4,
+                "select:32:11": 2097152
+              },
+              "depth_upper_bound": 426811788,
+              "gate_count": 664200300,
+              "gate_counts": {
+                "CNOT": 437347012,
+                "Toffoli": 180691192,
+                "X": 46162096
+              },
+              "toffoli_depth_upper_bound": 180691112
+            },
+            "noise_hashes": {
+              "calls": {
+                "sha:32:11": 1024
+              },
+              "depth_upper_bound": 15244288,
+              "gate_count": 398911488,
+              "gate_counts": {
+                "CNOT": 317716480,
+                "Toffoli": 79161344,
+                "X": 2033664
+              },
+              "toffoli_depth_upper_bound": 3809280
+            },
+            "offset_matrices": {
+              "calls": {
+                "add:32:11": 8192
+              },
+              "depth_upper_bound": 4407296,
+              "gate_count": 14303232,
+              "gate_counts": {
+                "CNOT": 11042816,
+                "Toffoli": 3162112,
+                "X": 98304
+              },
+              "toffoli_depth_upper_bound": 1638400
+            },
+            "predicate": {
+              "calls": {
+                "and:5:11": 1,
+                "leq:256:11": 1
+              },
+              "depth_upper_bound": 2078,
+              "gate_count": 6672,
+              "gate_counts": {
+                "CNOT": 4108,
+                "Toffoli": 1540,
+                "X": 1024
+              },
+              "toffoli_depth_upper_bound": 1030
+            },
+            "ticket_hash": {
+              "calls": {
+                "sha:32:11": 2
+              },
+              "depth_upper_bound": 29774,
+              "gate_count": 779124,
+              "gate_counts": {
+                "CNOT": 620540,
+                "Toffoli": 154612,
+                "X": 3972
+              },
+              "toffoli_depth_upper_bound": 7440
+            },
+            "trace_hash": {
+              "calls": {
+                "sha:32:11": 2049
+              },
+              "depth_upper_bound": 30503463,
+              "gate_count": 798212538,
+              "gate_counts": {
+                "CNOT": 635743230,
+                "Toffoli": 158399994,
+                "X": 4069314
+              },
+              "toffoli_depth_upper_bound": 7622280
+            },
+            "transcript_arithmetic": {
+              "calls": {
+                "add:32:11": 262144,
+                "multiply:32:11": 262144
+              },
+              "depth_upper_bound": 406323200,
+              "gate_count": 5585764352,
+              "gate_counts": {
+                "CNOT": 3798466560,
+                "Toffoli": 1782579200,
+                "X": 4718592
+              },
+              "toffoli_depth_upper_bound": 124256256
+            }
+          }
+        }
+      },
+      {
+        "classical_build_and_check_wall_seconds": 29.88640680199751,
+        "execution_mode": "macro",
+        "name": "pgh2-witness-bound",
+        "nonce": 42,
+        "observation": {
+          "accepted_word_counts": [
+            1024,
+            1024,
+            1024,
+            1024
+          ],
+          "challenge": "345eb24dfefd875ee8069b71e84aeaeea424075a5ea9beca53585b4172c1d731",
+          "clean_ancillas": true,
+          "inverse_executed": true,
+          "leaf_gates_executed": null,
+          "macro_calls_executed": 5543958,
+          "mode": "macro",
+          "native_shape": true,
+          "noise_complete": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "nonce": 42,
+          "nonce_preserved": true,
+          "outer_X_Z_gates_executed": null,
+          "phase": 1,
+          "phase_sign_observed_by_classical_basis_interpreter": true,
+          "quantum_hardware_executed": false,
+          "ticket": "8d1e72cef5ed892c98749c78436e2fc281d6383ec83624216e3ed4cf783c9d11",
+          "trace": "61cb99ae41af346bfaa164d1478314941842d8f09c791b4213c0d7cebbb459f4",
+          "winner": false
+        },
+        "resources": {
+          "T_count_if_exact_Toffoli_uses_7_T": 37099291684,
+          "T_decomposition_is_conditional_not_transpiled": true,
+          "classical_preprocessing": {
+            "AB_and_full_PNW1_materialization": "optional per-task/per-winner classical work outside this predicate",
+            "fixed_header_sha_compressions": 5,
+            "fixed_matrices_and_task_commitment": true
+          },
+          "construction_sha256": "ea730b517bc5116cdde80a36e947b772f60576ad52b0e77329d0f57219d27195",
+          "constructive_upper_bound_not_best_algorithm": true,
+          "data_access": "static wire addresses, exhaustive oblivious accepted-word selection; no QRAM or dynamic memory oracle",
+          "diffusion": {
+            "H": 128,
+            "Toffoli": 126,
+            "X": 128,
+            "Z": 1,
+            "depth_upper_bound": 131,
+            "gate_count": 383,
+            "scratch_qubits": 63,
+            "standard_diffusion_up_to_global_phase": true
+          },
+          "forward_depth_upper_bound": 984932462,
+          "forward_gate_count": 8859397919,
+          "forward_gate_counts": {
+            "CNOT": 6151177926,
+            "Toffoli": 2649949406,
+            "X": 58270587
+          },
+          "forward_toffoli_depth_upper_bound": 349097302,
+          "hash_framing": {
+            "challenge_bytes": 407,
+            "coherent_challenge_compressions": 2,
+            "noise_bytes_each": 66,
+            "noise_hashes_all_bounded_branches": 512,
+            "ticket_bytes": 90,
+            "trace_bytes": 131120,
+            "trace_compressions": 2049
+          },
+          "leaves": {
+            "accepted:32:11": {
+              "clean_xor_output_for_arbitrary_output_seed": true,
+              "input_load_unload_cnots": 64,
+              "input_widths": [
+                32
+              ],
+              "key": "accepted:32:11",
+              "leaf_qubits": 99,
+              "netlist_bytes": 1943,
+              "netlist_sha256": "5f2930bc9725731d53720e9c827828490d6afbb962525ffcc85449a21f77ef2b",
+              "output_width": 1,
+              "wrapped_depth_upper_bound": 197,
+              "wrapped_gate_counts": {
+                "CNOT": 199,
+                "Toffoli": 62,
+                "X": 6
+              },
+              "wrapped_gates": 267,
+              "wrapped_toffoli_depth_upper_bound": 62
+            },
+            "add:32:11": {
+              "clean_xor_output_for_arbitrary_output_seed": true,
+              "input_load_unload_cnots": 128,
+              "input_widths": [
+                32,
+                32
+              ],
+              "key": "add:32:11",
+              "leaf_qubits": 589,
+              "netlist_bytes": 13488,
+              "netlist_sha256": "254bbf482f4fbe80a0c0591fc15fee0b2e69f76832db93b44c20c0a67fc39c3a",
+              "output_width": 32,
+              "wrapped_depth_upper_bound": 538,
+              "wrapped_gate_counts": {
+                "CNOT": 1348,
+                "Toffoli": 386,
+                "X": 12
+              },
+              "wrapped_gates": 1746,
+              "wrapped_toffoli_depth_upper_bound": 200
+            },
+            "and:5:11": {
+              "clean_xor_output_for_arbitrary_output_seed": true,
+              "input_load_unload_cnots": 10,
+              "input_widths": [
+                5
+              ],
+              "key": "and:5:11",
+              "leaf_qubits": 10,
+              "netlist_bytes": 310,
+              "netlist_sha256": "de206fffb32470e3c103d77e879d7e1844fe1d4334fc74c34d08bb0110a3c9e4",
+              "output_width": 1,
+              "wrapped_depth_upper_bound": 19,
+              "wrapped_gate_counts": {
+                "CNOT": 11,
+                "Toffoli": 8,
+                "X": 0
+              },
+              "wrapped_gates": 19,
+              "wrapped_toffoli_depth_upper_bound": 8
+            },
+            "increment:32:11": {
+              "clean_xor_output_for_arbitrary_output_seed": true,
+              "input_load_unload_cnots": 24,
+              "input_widths": [
+                11,
+                1
+              ],
+              "key": "increment:32:11",
+              "leaf_qubits": 44,
+              "netlist_bytes": 889,
+              "netlist_sha256": "e96fbfcbc3631199b6dd800d8acea73193923ff713b838add29f65212747f94a",
+              "output_width": 11,
+              "wrapped_depth_upper_bound": 69,
+              "wrapped_gate_counts": {
+                "CNOT": 79,
+                "Toffoli": 20,
+                "X": 0
+              },
+              "wrapped_gates": 99,
+              "wrapped_toffoli_depth_upper_bound": 20
+            },
+            "leq:11:11": {
+              "clean_xor_output_for_arbitrary_output_seed": true,
+              "input_load_unload_cnots": 44,
+              "input_widths": [
+                11,
+                11
+              ],
+              "key": "leq:11:11",
+              "leaf_qubits": 98,
+              "netlist_bytes": 2203,
+              "netlist_sha256": "3bedf21f259de5b9c5b912c44c12257c405c5962beec4070092f7f75b6fb9ea6",
+              "output_width": 1,
+              "wrapped_depth_upper_bound": 99,
+              "wrapped_gate_counts": {
+                "CNOT": 177,
+                "Toffoli": 62,
+                "X": 44
+              },
+              "wrapped_gates": 283,
+              "wrapped_toffoli_depth_upper_bound": 42
+            },
+            "leq:256:11": {
+              "clean_xor_output_for_arbitrary_output_seed": true,
+              "input_load_unload_cnots": 1024,
+              "input_widths": [
+                256,
+                256
+              ],
+              "key": "leq:256:11",
+              "leaf_qubits": 2303,
+              "netlist_bytes": 47211,
+              "netlist_sha256": "56a4a1f7aa10fb9db53048c65cb63033f8ff76ca4360943d8d9d9494b493288f",
+              "output_width": 1,
+              "wrapped_depth_upper_bound": 2059,
+              "wrapped_gate_counts": {
+                "CNOT": 4097,
+                "Toffoli": 1532,
+                "X": 1024
+              },
+              "wrapped_gates": 6653,
+              "wrapped_toffoli_depth_upper_bound": 1022
+            },
+            "multiply:32:11": {
+              "clean_xor_output_for_arbitrary_output_seed": true,
+              "input_load_unload_cnots": 128,
+              "input_widths": [
+                32,
+                32
+              ],
+              "key": "multiply:32:11",
+              "leaf_qubits": 6550,
+              "netlist_bytes": 156051,
+              "netlist_sha256": "dcec9df253b72e10150a1ddbcd6e2e626e9887d28152c4e0dfba74f2e555a7f1",
+              "output_width": 32,
+              "wrapped_depth_upper_bound": 1012,
+              "wrapped_gate_counts": {
+                "CNOT": 13142,
+                "Toffoli": 6414,
+                "X": 6
+              },
+              "wrapped_gates": 19562,
+              "wrapped_toffoli_depth_upper_bound": 274
+            },
+            "select:32:11": {
+              "clean_xor_output_for_arbitrary_output_seed": true,
+              "input_load_unload_cnots": 110,
+              "input_widths": [
+                11,
+                11,
+                1,
+                32
+              ],
+              "key": "select:32:11",
+              "leaf_qubits": 152,
+              "netlist_bytes": 2167,
+              "netlist_sha256": "e7d16a2cba74a0ccc14c99713d1ab826e2a299b1c3b07d3c0d44569130fcbaaa",
+              "output_width": 32,
+              "wrapped_depth_upper_bound": 203,
+              "wrapped_gate_counts": {
+                "CNOT": 208,
+                "Toffoli": 86,
+                "X": 22
+              },
+              "wrapped_gates": 316,
+              "wrapped_toffoli_depth_upper_bound": 86
+            },
+            "sha:32:11": {
+              "clean_xor_output_for_arbitrary_output_seed": true,
+              "input_load_unload_cnots": 1536,
+              "input_widths": [
+                512,
+                256
+              ],
+              "key": "sha:32:11",
+              "leaf_qubits": 117293,
+              "netlist_bytes": 3109204,
+              "netlist_sha256": "54ed564637f829fe7bc43fa5ea6a734d435e078bd6a62b5ca2e17b2102c17fd0",
+              "output_width": 256,
+              "wrapped_depth_upper_bound": 14887,
+              "wrapped_gate_counts": {
+                "CNOT": 310270,
+                "Toffoli": 77306,
+                "X": 1986
+              },
+              "wrapped_gates": 389562,
+              "wrapped_toffoli_depth_upper_bound": 3720
+            }
+          },
+          "lifetime": "all SSA outputs retained through phase; clean leaf input/scratch workspace reused; global reverse clears every output",
+          "logical_qubits": 22253429,
+          "native_eligibility_is_checked_classical_precondition": true,
+          "native_node_admission_verified": false,
+          "nonce_bits": 64,
+          "persistent_register_count": 676878,
+          "persistent_register_qubits": 22136136,
+          "phase_oracle_depth_upper_bound": 1969864925,
+          "phase_oracle_gate_count": 17718795839,
+          "phase_oracle_gate_counts": {
+            "CNOT": 12302355852,
+            "Toffoli": 5299898812,
+            "X": 116541174,
+            "Z": 1
+          },
+          "phase_oracle_toffoli_depth_upper_bound": 698194604,
+          "physical_calibration": null,
+          "prepare": {
+            "H": 64,
+            "depth_upper_bound": 1,
+            "gate_count": 64
+          },
+          "production_activation": false,
+          "profile": "PGH2",
+          "quantum_hardware_executed": false,
+          "quantum_mining_security_qualified": false,
+          "quantum_work_lower_bound_proved": false,
+          "reused_workspace_qubits": 117293,
+          "schema": "trnm-w1-constructive-phase-oracle-v1",
+          "scope": "NATIVE_W1_FIXED_TEMPLATE_CONSTRUCTION",
+          "shape": {
+            "field_bits": 32,
+            "n": 64,
+            "noise_counters": 128,
+            "r": 8
+          },
+          "source_sha256": {
+            "formal/pon-nakamoto-v1/reversible_components.py": "f518669b0b4ac41a442986ff779da618227b375ef69bdb17db0eacc505908fe0",
+            "formal/pon-nakamoto-v1/w1_quantum_oracle.py": "135167ab536a663cf053417e99d1aeb9d2790ea690ea56a1bce4eca1b8d5a96c",
+            "formal/pon-nakamoto-v1/w1_quantum_primitives.py": "1d1f0a800e24e1d82aab1794ec0cf207ed845e7a7080bacd41b0d0c575f98ac1",
+            "formal/pon-nakamoto-v1/work_oracle.py": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18",
+            "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": "e6eb2c0dddc4a59add47cb295c8c66397956cd94bff729a7472d52653a427b5f",
+            "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs": "95944c121362223f43f5d1cea61972ce65330a65ae36903255d8b3fdead58727",
+            "trillionnium/crates/trnm-protocol/src/pon_growth.rs": "37b8c818e6dd7341b25cd3c1e66a8b5fe0aecca2c60201272a9a2551db147d5f",
+            "trillionnium/crates/trnm-protocol/src/pon_wire.rs": "be816ee5b209098fa790d6e190d1d9c659634ac22d58b95c83dc8b49899c70cd"
+          },
+          "stages": {
+            "challenge": {
+              "calls": {
+                "sha:32:11": 2
+              },
+              "depth_upper_bound": 29774,
+              "gate_count": 779124,
+              "gate_counts": {
+                "CNOT": 620540,
+                "Toffoli": 154612,
+                "X": 3972
+              },
+              "toffoli_depth_upper_bound": 7440
+            },
+            "low_rank": {
+              "calls": {
+                "add:32:11": 65536,
+                "multiply:32:11": 65536
+              },
+              "depth_upper_bound": 101580800,
+              "gate_count": 1396441088,
+              "gate_counts": {
+                "CNOT": 949616640,
+                "Toffoli": 445644800,
+                "X": 1179648
+              },
+              "toffoli_depth_upper_bound": 31064064
+            },
+            "noise_compaction": {
+              "calls": {
+                "accepted:32:11": 4096,
+                "increment:32:11": 4096,
+                "leq:11:11": 4,
+                "select:32:11": 2097152
+              },
+              "depth_upper_bound": 426811788,
+              "gate_count": 664200300,
+              "gate_counts": {
+                "CNOT": 437347012,
+                "Toffoli": 180691192,
+                "X": 46162096
+              },
+              "toffoli_depth_upper_bound": 180691112
+            },
+            "noise_hashes": {
+              "calls": {
+                "sha:32:11": 1024
+              },
+              "depth_upper_bound": 15244288,
+              "gate_count": 398911488,
+              "gate_counts": {
+                "CNOT": 317716480,
+                "Toffoli": 79161344,
+                "X": 2033664
+              },
+              "toffoli_depth_upper_bound": 3809280
+            },
+            "offset_matrices": {
+              "calls": {
+                "add:32:11": 8192
+              },
+              "depth_upper_bound": 4407296,
+              "gate_count": 14303232,
+              "gate_counts": {
+                "CNOT": 11042816,
+                "Toffoli": 3162112,
+                "X": 98304
+              },
+              "toffoli_depth_upper_bound": 1638400
+            },
+            "predicate": {
+              "calls": {
+                "and:5:11": 1,
+                "leq:256:11": 1
+              },
+              "depth_upper_bound": 2078,
+              "gate_count": 6672,
+              "gate_counts": {
+                "CNOT": 4108,
+                "Toffoli": 1540,
+                "X": 1024
+              },
+              "toffoli_depth_upper_bound": 1030
+            },
+            "ticket_hash": {
+              "calls": {
+                "sha:32:11": 2
+              },
+              "depth_upper_bound": 29774,
+              "gate_count": 779124,
+              "gate_counts": {
+                "CNOT": 620540,
+                "Toffoli": 154612,
+                "X": 3972
+              },
+              "toffoli_depth_upper_bound": 7440
+            },
+            "trace_hash": {
+              "calls": {
+                "sha:32:11": 2049
+              },
+              "depth_upper_bound": 30503463,
+              "gate_count": 798212538,
+              "gate_counts": {
+                "CNOT": 635743230,
+                "Toffoli": 158399994,
+                "X": 4069314
+              },
+              "toffoli_depth_upper_bound": 7622280
+            },
+            "transcript_arithmetic": {
+              "calls": {
+                "add:32:11": 262144,
+                "multiply:32:11": 262144
+              },
+              "depth_upper_bound": 406323200,
+              "gate_count": 5585764352,
+              "gate_counts": {
+                "CNOT": 3798466560,
+                "Toffoli": 1782579200,
+                "X": 4718592
+              },
+              "toffoli_depth_upper_bound": 124256256
+            }
+          }
+        }
+      },
+      {
+        "classical_build_and_check_wall_seconds": 4.612716379000631,
+        "execution_mode": "gates",
+        "name": "reduced-gate-success",
+        "nonce": 0,
+        "observation": {
+          "accepted_word_counts": [
+            6,
+            5,
+            6,
+            6
+          ],
+          "challenge": "34ea794d4da0a8a01072263c88daba0e23d88eaba0505b44e4ad81d7a9e98451",
+          "clean_ancillas": true,
+          "inverse_executed": true,
+          "leaf_gates_executed": 9380772,
+          "macro_calls_executed": 244,
+          "mode": "gates",
+          "native_shape": false,
+          "noise_complete": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "nonce": 0,
+          "nonce_preserved": true,
+          "outer_X_Z_gates_executed": 3,
+          "phase": -1,
+          "phase_sign_observed_by_classical_basis_interpreter": true,
+          "quantum_hardware_executed": false,
+          "ticket": "639ba5c0c65e99e48c37f6d749b4111f0340ff2123d44e2de771a8aa0cf6f2e1",
+          "trace": "5de543cbb320bd3121371d9fb99a96eb1863b0579702c976e0b48a655f298c73",
+          "winner": true
+        },
+        "resources": {
+          "T_count_if_exact_Toffoli_uses_7_T": 13034028,
+          "T_decomposition_is_conditional_not_transpiled": true,
+          "classical_preprocessing": {
+            "AB_and_full_PNW1_materialization": "optional per-task/per-winner classical work outside this predicate",
+            "fixed_header_sha_compressions": 5,
+            "fixed_matrices_and_task_commitment": true
+          },
+          "construction_sha256": "42d10a3c2b7abb99d9c48109185fa39bd9712a7e0ded03a5aa306430e0e09126",
+          "constructive_upper_bound_not_best_algorithm": true,
+          "data_access": "static wire addresses, exhaustive oblivious accepted-word selection; no QRAM or dynamic memory oracle",
+          "diffusion": {
+            "H": 32,
+            "Toffoli": 30,
+            "X": 32,
+            "Z": 1,
+            "depth_upper_bound": 35,
+            "gate_count": 95,
+            "scratch_qubits": 15,
+            "standard_diffusion_up_to_global_phase": true
+          },
+          "forward_depth_upper_bound": 185437,
+          "forward_gate_count": 4690387,
+          "forward_gate_counts": {
+            "CNOT": 3733884,
+            "Toffoli": 931002,
+            "X": 25501
+          },
+          "forward_toffoli_depth_upper_bound": 47028,
+          "hash_framing": {
+            "challenge_bytes": 343,
+            "coherent_challenge_compressions": 1,
+            "noise_bytes_each": 66,
+            "noise_hashes_all_bounded_branches": 4,
+            "ticket_bytes": 90,
+            "trace_bytes": 52,
+            "trace_compressions": 1
+          },
+          "leaves": {
+            "accepted:4:11": {
+              "clean_xor_output_for_arbitrary_output_seed": true,
+              "input_load_unload_cnots": 8,
+              "input_widths": [
+                4
+              ],
+              "key": "accepted:4:11",
+              "leaf_qubits": 15,
+              "netlist_bytes": 519,
+              "netlist_sha256": "1adbcd0b2a4cd5425465eb7f46d1b98d2747721e7a48848101b6a40537bc1dfd",
+              "output_width": 1,
+              "wrapped_depth_upper_bound": 29,
+              "wrapped_gate_counts": {
+                "CNOT": 31,
+                "Toffoli": 6,
+                "X": 6
+              },
+              "wrapped_gates": 43,
+              "wrapped_toffoli_depth_upper_bound": 6
+            },
+            "add:4:11": {
+              "clean_xor_output_for_arbitrary_output_seed": true,
+              "input_load_unload_cnots": 16,
+              "input_widths": [
+                4,
+                4
+              ],
+              "key": "add:4:11",
+              "leaf_qubits": 85,
+              "netlist_bytes": 2228,
+              "netlist_sha256": "378a2693a580e2a1d30eed349f112232c109b5e4b0987ba50ab79cddf0989e1f",
+              "output_width": 4,
+              "wrapped_depth_upper_bound": 90,
+              "wrapped_gate_counts": {
+                "CNOT": 200,
+                "Toffoli": 50,
+                "X": 12
+              },
+              "wrapped_gates": 262,
+              "wrapped_toffoli_depth_upper_bound": 32
+            },
+            "and:5:11": {
+              "clean_xor_output_for_arbitrary_output_seed": true,
+              "input_load_unload_cnots": 10,
+              "input_widths": [
+                5
+              ],
+              "key": "and:5:11",
+              "leaf_qubits": 10,
+              "netlist_bytes": 310,
+              "netlist_sha256": "de206fffb32470e3c103d77e879d7e1844fe1d4334fc74c34d08bb0110a3c9e4",
+              "output_width": 1,
+              "wrapped_depth_upper_bound": 19,
+              "wrapped_gate_counts": {
+                "CNOT": 11,
+                "Toffoli": 8,
+                "X": 0
+              },
+              "wrapped_gates": 19,
+              "wrapped_toffoli_depth_upper_bound": 8
+            },
+            "increment:4:4": {
+              "clean_xor_output_for_arbitrary_output_seed": true,
+              "input_load_unload_cnots": 10,
+              "input_widths": [
+                4,
+                1
+              ],
+              "key": "increment:4:4",
+              "leaf_qubits": 16,
+              "netlist_bytes": 460,
+              "netlist_sha256": "8b8d151f39a826fdc5a2960c77911a31772445e61aa03780a00980a0c23954d7",
+              "output_width": 4,
+              "wrapped_depth_upper_bound": 27,
+              "wrapped_gate_counts": {
+                "CNOT": 30,
+                "Toffoli": 6,
+                "X": 0
+              },
+              "wrapped_gates": 36,
+              "wrapped_toffoli_depth_upper_bound": 6
+            },
+            "leq:256:11": {
+              "clean_xor_output_for_arbitrary_output_seed": true,
+              "input_load_unload_cnots": 1024,
+              "input_widths": [
+                256,
+                256
+              ],
+              "key": "leq:256:11",
+              "leaf_qubits": 2303,
+              "netlist_bytes": 47211,
+              "netlist_sha256": "56a4a1f7aa10fb9db53048c65cb63033f8ff76ca4360943d8d9d9494b493288f",
+              "output_width": 1,
+              "wrapped_depth_upper_bound": 2059,
+              "wrapped_gate_counts": {
+                "CNOT": 4097,
+                "Toffoli": 1532,
+                "X": 1024
+              },
+              "wrapped_gates": 6653,
+              "wrapped_toffoli_depth_upper_bound": 1022
+            },
+            "leq:4:11": {
+              "clean_xor_output_for_arbitrary_output_seed": true,
+              "input_load_unload_cnots": 16,
+              "input_widths": [
+                4,
+                4
+              ],
+              "key": "leq:4:11",
+              "leaf_qubits": 35,
+              "netlist_bytes": 929,
+              "netlist_sha256": "f5db9aac38c4a705cb0609d34faad4853a9c0638f1baa5263ddd33398d95669c",
+              "output_width": 1,
+              "wrapped_depth_upper_bound": 43,
+              "wrapped_gate_counts": {
+                "CNOT": 65,
+                "Toffoli": 20,
+                "X": 16
+              },
+              "wrapped_gates": 101,
+              "wrapped_toffoli_depth_upper_bound": 14
+            },
+            "multiply:4:11": {
+              "clean_xor_output_for_arbitrary_output_seed": true,
+              "input_load_unload_cnots": 16,
+              "input_widths": [
+                4,
+                4
+              ],
+              "key": "multiply:4:11",
+              "leaf_qubits": 240,
+              "netlist_bytes": 6089,
+              "netlist_sha256": "e07c2d173fa9a18617716606beb8884a8b7b66cd5f6d28f7f7470a020d8a9d10",
+              "output_width": 4,
+              "wrapped_depth_upper_bound": 244,
+              "wrapped_gate_counts": {
+                "CNOT": 532,
+                "Toffoli": 188,
+                "X": 24
+              },
+              "wrapped_gates": 744,
+              "wrapped_toffoli_depth_upper_bound": 82
+            },
+            "select:4:4": {
+              "clean_xor_output_for_arbitrary_output_seed": true,
+              "input_load_unload_cnots": 26,
+              "input_widths": [
+                4,
+                4,
+                1,
+                4
+              ],
+              "key": "select:4:4",
+              "leaf_qubits": 33,
+              "netlist_bytes": 691,
+              "netlist_sha256": "0c5f7699a406c6054757dbf466663b7f2812fb7647ea27e71617c7d39ce4b8dd",
+              "output_width": 4,
+              "wrapped_depth_upper_bound": 49,
+              "wrapped_gate_counts": {
+                "CNOT": 54,
+                "Toffoli": 16,
+                "X": 8
+              },
+              "wrapped_gates": 78,
+              "wrapped_toffoli_depth_upper_bound": 16
+            },
+            "sha:32:11": {
+              "clean_xor_output_for_arbitrary_output_seed": true,
+              "input_load_unload_cnots": 1536,
+              "input_widths": [
+                512,
+                256
+              ],
+              "key": "sha:32:11",
+              "leaf_qubits": 117293,
+              "netlist_bytes": 3109204,
+              "netlist_sha256": "54ed564637f829fe7bc43fa5ea6a734d435e078bd6a62b5ca2e17b2102c17fd0",
+              "output_width": 256,
+              "wrapped_depth_upper_bound": 14887,
+              "wrapped_gate_counts": {
+                "CNOT": 310270,
+                "Toffoli": 77306,
+                "X": 1986
+              },
+              "wrapped_gates": 389562,
+              "wrapped_toffoli_depth_upper_bound": 3720
+            }
+          },
+          "lifetime": "all SSA outputs retained through phase; clean leaf input/scratch workspace reused; global reverse clears every output",
+          "logical_qubits": 120597,
+          "native_eligibility_is_checked_classical_precondition": true,
+          "native_node_admission_verified": false,
+          "nonce_bits": 16,
+          "persistent_register_count": 97,
+          "persistent_register_qubits": 3304,
+          "phase_oracle_depth_upper_bound": 370875,
+          "phase_oracle_gate_count": 9380775,
+          "phase_oracle_gate_counts": {
+            "CNOT": 7467768,
+            "Toffoli": 1862004,
+            "X": 51002,
+            "Z": 1
+          },
+          "phase_oracle_toffoli_depth_upper_bound": 94056,
+          "physical_calibration": null,
+          "prepare": {
+            "H": 16,
+            "depth_upper_bound": 1,
+            "gate_count": 16
+          },
+          "production_activation": false,
+          "profile": "PNH1",
+          "quantum_hardware_executed": false,
+          "quantum_mining_security_qualified": false,
+          "quantum_work_lower_bound_proved": false,
+          "reused_workspace_qubits": 117293,
+          "schema": "trnm-w1-constructive-phase-oracle-v1",
+          "scope": "REDUCED_SHAPE_CIRCUIT_CONTROL",
+          "shape": {
+            "field_bits": 4,
+            "n": 1,
+            "noise_counters": 1,
+            "r": 1
+          },
+          "source_sha256": {
+            "formal/pon-nakamoto-v1/reversible_components.py": "f518669b0b4ac41a442986ff779da618227b375ef69bdb17db0eacc505908fe0",
+            "formal/pon-nakamoto-v1/w1_quantum_oracle.py": "135167ab536a663cf053417e99d1aeb9d2790ea690ea56a1bce4eca1b8d5a96c",
+            "formal/pon-nakamoto-v1/w1_quantum_primitives.py": "1d1f0a800e24e1d82aab1794ec0cf207ed845e7a7080bacd41b0d0c575f98ac1",
+            "formal/pon-nakamoto-v1/work_oracle.py": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18",
+            "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": "e6eb2c0dddc4a59add47cb295c8c66397956cd94bff729a7472d52653a427b5f",
+            "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs": "95944c121362223f43f5d1cea61972ce65330a65ae36903255d8b3fdead58727",
+            "trillionnium/crates/trnm-protocol/src/pon_growth.rs": "37b8c818e6dd7341b25cd3c1e66a8b5fe0aecca2c60201272a9a2551db147d5f",
+            "trillionnium/crates/trnm-protocol/src/pon_wire.rs": "be816ee5b209098fa790d6e190d1d9c659634ac22d58b95c83dc8b49899c70cd"
+          },
+          "stages": {
+            "challenge": {
+              "calls": {
+                "sha:32:11": 1
+              },
+              "depth_upper_bound": 14887,
+              "gate_count": 389562,
+              "gate_counts": {
+                "CNOT": 310270,
+                "Toffoli": 77306,
+                "X": 1986
+              },
+              "toffoli_depth_upper_bound": 3720
+            },
+            "low_rank": {
+              "calls": {
+                "add:4:11": 2,
+                "multiply:4:11": 2
+              },
+              "depth_upper_bound": 668,
+              "gate_count": 2012,
+              "gate_counts": {
+                "CNOT": 1464,
+                "Toffoli": 476,
+                "X": 72
+              },
+              "toffoli_depth_upper_bound": 228
+            },
+            "noise_compaction": {
+              "calls": {
+                "accepted:4:11": 32,
+                "increment:4:4": 32,
+                "leq:4:11": 4,
+                "select:4:4": 32
+              },
+              "depth_upper_bound": 3532,
+              "gate_count": 5428,
+              "gate_counts": {
+                "CNOT": 3940,
+                "Toffoli": 976,
+                "X": 512
+              },
+              "toffoli_depth_upper_bound": 952
+            },
+            "noise_hashes": {
+              "calls": {
+                "sha:32:11": 8
+              },
+              "depth_upper_bound": 119096,
+              "gate_count": 3116496,
+              "gate_counts": {
+                "CNOT": 2482160,
+                "Toffoli": 618448,
+                "X": 15888
+              },
+              "toffoli_depth_upper_bound": 29760
+            },
+            "offset_matrices": {
+              "calls": {
+                "add:4:11": 2
+              },
+              "depth_upper_bound": 180,
+              "gate_count": 524,
+              "gate_counts": {
+                "CNOT": 400,
+                "Toffoli": 100,
+                "X": 24
+              },
+              "toffoli_depth_upper_bound": 64
+            },
+            "predicate": {
+              "calls": {
+                "and:5:11": 1,
+                "leq:256:11": 1
+              },
+              "depth_upper_bound": 2078,
+              "gate_count": 6672,
+              "gate_counts": {
+                "CNOT": 4108,
+                "Toffoli": 1540,
+                "X": 1024
+              },
+              "toffoli_depth_upper_bound": 1030
+            },
+            "ticket_hash": {
+              "calls": {
+                "sha:32:11": 2
+              },
+              "depth_upper_bound": 29774,
+              "gate_count": 779124,
+              "gate_counts": {
+                "CNOT": 620540,
+                "Toffoli": 154612,
+                "X": 3972
+              },
+              "toffoli_depth_upper_bound": 7440
+            },
+            "trace_hash": {
+              "calls": {
+                "sha:32:11": 1
+              },
+              "depth_upper_bound": 14887,
+              "gate_count": 389562,
+              "gate_counts": {
+                "CNOT": 310270,
+                "Toffoli": 77306,
+                "X": 1986
+              },
+              "toffoli_depth_upper_bound": 3720
+            },
+            "transcript_arithmetic": {
+              "calls": {
+                "add:4:11": 1,
+                "multiply:4:11": 1
+              },
+              "depth_upper_bound": 334,
+              "gate_count": 1006,
+              "gate_counts": {
+                "CNOT": 732,
+                "Toffoli": 238,
+                "X": 36
+              },
+              "toffoli_depth_upper_bound": 114
+            }
+          }
+        }
+      },
+      {
+        "classical_build_and_check_wall_seconds": 3.7519668280001497,
+        "execution_mode": "gates",
+        "name": "reduced-gate-noise-exhaustion",
+        "nonce": 78,
+        "observation": {
+          "accepted_word_counts": [
+            0,
+            6,
+            4,
+            7
+          ],
+          "challenge": "269db8869e5e77abf1106c0cb1d4911e16b9aab3de5d0845707fb9ed24ae452e",
+          "clean_ancillas": true,
+          "inverse_executed": true,
+          "leaf_gates_executed": 9380772,
+          "macro_calls_executed": 244,
+          "mode": "gates",
+          "native_shape": false,
+          "noise_complete": [
+            false,
+            true,
+            true,
+            true
+          ],
+          "nonce": 78,
+          "nonce_preserved": true,
+          "outer_X_Z_gates_executed": 3,
+          "phase": 1,
+          "phase_sign_observed_by_classical_basis_interpreter": true,
+          "quantum_hardware_executed": false,
+          "ticket": "4e92226037a18de6b75d32b8b1957fd241bec039cd4dd248c6343d2c8170e240",
+          "trace": "a8e90bcdc3769566ba962fb44f8db27e2ba2a377e1ab8d6fc68f4a479913e29c",
+          "winner": false
+        },
+        "resources": {
+          "T_count_if_exact_Toffoli_uses_7_T": 13034028,
+          "T_decomposition_is_conditional_not_transpiled": true,
+          "classical_preprocessing": {
+            "AB_and_full_PNW1_materialization": "optional per-task/per-winner classical work outside this predicate",
+            "fixed_header_sha_compressions": 5,
+            "fixed_matrices_and_task_commitment": true
+          },
+          "construction_sha256": "42d10a3c2b7abb99d9c48109185fa39bd9712a7e0ded03a5aa306430e0e09126",
+          "constructive_upper_bound_not_best_algorithm": true,
+          "data_access": "static wire addresses, exhaustive oblivious accepted-word selection; no QRAM or dynamic memory oracle",
+          "diffusion": {
+            "H": 32,
+            "Toffoli": 30,
+            "X": 32,
+            "Z": 1,
+            "depth_upper_bound": 35,
+            "gate_count": 95,
+            "scratch_qubits": 15,
+            "standard_diffusion_up_to_global_phase": true
+          },
+          "forward_depth_upper_bound": 185437,
+          "forward_gate_count": 4690387,
+          "forward_gate_counts": {
+            "CNOT": 3733884,
+            "Toffoli": 931002,
+            "X": 25501
+          },
+          "forward_toffoli_depth_upper_bound": 47028,
+          "hash_framing": {
+            "challenge_bytes": 343,
+            "coherent_challenge_compressions": 1,
+            "noise_bytes_each": 66,
+            "noise_hashes_all_bounded_branches": 4,
+            "ticket_bytes": 90,
+            "trace_bytes": 52,
+            "trace_compressions": 1
+          },
+          "leaves": {
+            "accepted:4:11": {
+              "clean_xor_output_for_arbitrary_output_seed": true,
+              "input_load_unload_cnots": 8,
+              "input_widths": [
+                4
+              ],
+              "key": "accepted:4:11",
+              "leaf_qubits": 15,
+              "netlist_bytes": 519,
+              "netlist_sha256": "1adbcd0b2a4cd5425465eb7f46d1b98d2747721e7a48848101b6a40537bc1dfd",
+              "output_width": 1,
+              "wrapped_depth_upper_bound": 29,
+              "wrapped_gate_counts": {
+                "CNOT": 31,
+                "Toffoli": 6,
+                "X": 6
+              },
+              "wrapped_gates": 43,
+              "wrapped_toffoli_depth_upper_bound": 6
+            },
+            "add:4:11": {
+              "clean_xor_output_for_arbitrary_output_seed": true,
+              "input_load_unload_cnots": 16,
+              "input_widths": [
+                4,
+                4
+              ],
+              "key": "add:4:11",
+              "leaf_qubits": 85,
+              "netlist_bytes": 2228,
+              "netlist_sha256": "378a2693a580e2a1d30eed349f112232c109b5e4b0987ba50ab79cddf0989e1f",
+              "output_width": 4,
+              "wrapped_depth_upper_bound": 90,
+              "wrapped_gate_counts": {
+                "CNOT": 200,
+                "Toffoli": 50,
+                "X": 12
+              },
+              "wrapped_gates": 262,
+              "wrapped_toffoli_depth_upper_bound": 32
+            },
+            "and:5:11": {
+              "clean_xor_output_for_arbitrary_output_seed": true,
+              "input_load_unload_cnots": 10,
+              "input_widths": [
+                5
+              ],
+              "key": "and:5:11",
+              "leaf_qubits": 10,
+              "netlist_bytes": 310,
+              "netlist_sha256": "de206fffb32470e3c103d77e879d7e1844fe1d4334fc74c34d08bb0110a3c9e4",
+              "output_width": 1,
+              "wrapped_depth_upper_bound": 19,
+              "wrapped_gate_counts": {
+                "CNOT": 11,
+                "Toffoli": 8,
+                "X": 0
+              },
+              "wrapped_gates": 19,
+              "wrapped_toffoli_depth_upper_bound": 8
+            },
+            "increment:4:4": {
+              "clean_xor_output_for_arbitrary_output_seed": true,
+              "input_load_unload_cnots": 10,
+              "input_widths": [
+                4,
+                1
+              ],
+              "key": "increment:4:4",
+              "leaf_qubits": 16,
+              "netlist_bytes": 460,
+              "netlist_sha256": "8b8d151f39a826fdc5a2960c77911a31772445e61aa03780a00980a0c23954d7",
+              "output_width": 4,
+              "wrapped_depth_upper_bound": 27,
+              "wrapped_gate_counts": {
+                "CNOT": 30,
+                "Toffoli": 6,
+                "X": 0
+              },
+              "wrapped_gates": 36,
+              "wrapped_toffoli_depth_upper_bound": 6
+            },
+            "leq:256:11": {
+              "clean_xor_output_for_arbitrary_output_seed": true,
+              "input_load_unload_cnots": 1024,
+              "input_widths": [
+                256,
+                256
+              ],
+              "key": "leq:256:11",
+              "leaf_qubits": 2303,
+              "netlist_bytes": 47211,
+              "netlist_sha256": "56a4a1f7aa10fb9db53048c65cb63033f8ff76ca4360943d8d9d9494b493288f",
+              "output_width": 1,
+              "wrapped_depth_upper_bound": 2059,
+              "wrapped_gate_counts": {
+                "CNOT": 4097,
+                "Toffoli": 1532,
+                "X": 1024
+              },
+              "wrapped_gates": 6653,
+              "wrapped_toffoli_depth_upper_bound": 1022
+            },
+            "leq:4:11": {
+              "clean_xor_output_for_arbitrary_output_seed": true,
+              "input_load_unload_cnots": 16,
+              "input_widths": [
+                4,
+                4
+              ],
+              "key": "leq:4:11",
+              "leaf_qubits": 35,
+              "netlist_bytes": 929,
+              "netlist_sha256": "f5db9aac38c4a705cb0609d34faad4853a9c0638f1baa5263ddd33398d95669c",
+              "output_width": 1,
+              "wrapped_depth_upper_bound": 43,
+              "wrapped_gate_counts": {
+                "CNOT": 65,
+                "Toffoli": 20,
+                "X": 16
+              },
+              "wrapped_gates": 101,
+              "wrapped_toffoli_depth_upper_bound": 14
+            },
+            "multiply:4:11": {
+              "clean_xor_output_for_arbitrary_output_seed": true,
+              "input_load_unload_cnots": 16,
+              "input_widths": [
+                4,
+                4
+              ],
+              "key": "multiply:4:11",
+              "leaf_qubits": 240,
+              "netlist_bytes": 6089,
+              "netlist_sha256": "e07c2d173fa9a18617716606beb8884a8b7b66cd5f6d28f7f7470a020d8a9d10",
+              "output_width": 4,
+              "wrapped_depth_upper_bound": 244,
+              "wrapped_gate_counts": {
+                "CNOT": 532,
+                "Toffoli": 188,
+                "X": 24
+              },
+              "wrapped_gates": 744,
+              "wrapped_toffoli_depth_upper_bound": 82
+            },
+            "select:4:4": {
+              "clean_xor_output_for_arbitrary_output_seed": true,
+              "input_load_unload_cnots": 26,
+              "input_widths": [
+                4,
+                4,
+                1,
+                4
+              ],
+              "key": "select:4:4",
+              "leaf_qubits": 33,
+              "netlist_bytes": 691,
+              "netlist_sha256": "0c5f7699a406c6054757dbf466663b7f2812fb7647ea27e71617c7d39ce4b8dd",
+              "output_width": 4,
+              "wrapped_depth_upper_bound": 49,
+              "wrapped_gate_counts": {
+                "CNOT": 54,
+                "Toffoli": 16,
+                "X": 8
+              },
+              "wrapped_gates": 78,
+              "wrapped_toffoli_depth_upper_bound": 16
+            },
+            "sha:32:11": {
+              "clean_xor_output_for_arbitrary_output_seed": true,
+              "input_load_unload_cnots": 1536,
+              "input_widths": [
+                512,
+                256
+              ],
+              "key": "sha:32:11",
+              "leaf_qubits": 117293,
+              "netlist_bytes": 3109204,
+              "netlist_sha256": "54ed564637f829fe7bc43fa5ea6a734d435e078bd6a62b5ca2e17b2102c17fd0",
+              "output_width": 256,
+              "wrapped_depth_upper_bound": 14887,
+              "wrapped_gate_counts": {
+                "CNOT": 310270,
+                "Toffoli": 77306,
+                "X": 1986
+              },
+              "wrapped_gates": 389562,
+              "wrapped_toffoli_depth_upper_bound": 3720
+            }
+          },
+          "lifetime": "all SSA outputs retained through phase; clean leaf input/scratch workspace reused; global reverse clears every output",
+          "logical_qubits": 120597,
+          "native_eligibility_is_checked_classical_precondition": true,
+          "native_node_admission_verified": false,
+          "nonce_bits": 16,
+          "persistent_register_count": 97,
+          "persistent_register_qubits": 3304,
+          "phase_oracle_depth_upper_bound": 370875,
+          "phase_oracle_gate_count": 9380775,
+          "phase_oracle_gate_counts": {
+            "CNOT": 7467768,
+            "Toffoli": 1862004,
+            "X": 51002,
+            "Z": 1
+          },
+          "phase_oracle_toffoli_depth_upper_bound": 94056,
+          "physical_calibration": null,
+          "prepare": {
+            "H": 16,
+            "depth_upper_bound": 1,
+            "gate_count": 16
+          },
+          "production_activation": false,
+          "profile": "PNH1",
+          "quantum_hardware_executed": false,
+          "quantum_mining_security_qualified": false,
+          "quantum_work_lower_bound_proved": false,
+          "reused_workspace_qubits": 117293,
+          "schema": "trnm-w1-constructive-phase-oracle-v1",
+          "scope": "REDUCED_SHAPE_CIRCUIT_CONTROL",
+          "shape": {
+            "field_bits": 4,
+            "n": 1,
+            "noise_counters": 1,
+            "r": 1
+          },
+          "source_sha256": {
+            "formal/pon-nakamoto-v1/reversible_components.py": "f518669b0b4ac41a442986ff779da618227b375ef69bdb17db0eacc505908fe0",
+            "formal/pon-nakamoto-v1/w1_quantum_oracle.py": "135167ab536a663cf053417e99d1aeb9d2790ea690ea56a1bce4eca1b8d5a96c",
+            "formal/pon-nakamoto-v1/w1_quantum_primitives.py": "1d1f0a800e24e1d82aab1794ec0cf207ed845e7a7080bacd41b0d0c575f98ac1",
+            "formal/pon-nakamoto-v1/work_oracle.py": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18",
+            "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": "e6eb2c0dddc4a59add47cb295c8c66397956cd94bff729a7472d52653a427b5f",
+            "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs": "95944c121362223f43f5d1cea61972ce65330a65ae36903255d8b3fdead58727",
+            "trillionnium/crates/trnm-protocol/src/pon_growth.rs": "37b8c818e6dd7341b25cd3c1e66a8b5fe0aecca2c60201272a9a2551db147d5f",
+            "trillionnium/crates/trnm-protocol/src/pon_wire.rs": "be816ee5b209098fa790d6e190d1d9c659634ac22d58b95c83dc8b49899c70cd"
+          },
+          "stages": {
+            "challenge": {
+              "calls": {
+                "sha:32:11": 1
+              },
+              "depth_upper_bound": 14887,
+              "gate_count": 389562,
+              "gate_counts": {
+                "CNOT": 310270,
+                "Toffoli": 77306,
+                "X": 1986
+              },
+              "toffoli_depth_upper_bound": 3720
+            },
+            "low_rank": {
+              "calls": {
+                "add:4:11": 2,
+                "multiply:4:11": 2
+              },
+              "depth_upper_bound": 668,
+              "gate_count": 2012,
+              "gate_counts": {
+                "CNOT": 1464,
+                "Toffoli": 476,
+                "X": 72
+              },
+              "toffoli_depth_upper_bound": 228
+            },
+            "noise_compaction": {
+              "calls": {
+                "accepted:4:11": 32,
+                "increment:4:4": 32,
+                "leq:4:11": 4,
+                "select:4:4": 32
+              },
+              "depth_upper_bound": 3532,
+              "gate_count": 5428,
+              "gate_counts": {
+                "CNOT": 3940,
+                "Toffoli": 976,
+                "X": 512
+              },
+              "toffoli_depth_upper_bound": 952
+            },
+            "noise_hashes": {
+              "calls": {
+                "sha:32:11": 8
+              },
+              "depth_upper_bound": 119096,
+              "gate_count": 3116496,
+              "gate_counts": {
+                "CNOT": 2482160,
+                "Toffoli": 618448,
+                "X": 15888
+              },
+              "toffoli_depth_upper_bound": 29760
+            },
+            "offset_matrices": {
+              "calls": {
+                "add:4:11": 2
+              },
+              "depth_upper_bound": 180,
+              "gate_count": 524,
+              "gate_counts": {
+                "CNOT": 400,
+                "Toffoli": 100,
+                "X": 24
+              },
+              "toffoli_depth_upper_bound": 64
+            },
+            "predicate": {
+              "calls": {
+                "and:5:11": 1,
+                "leq:256:11": 1
+              },
+              "depth_upper_bound": 2078,
+              "gate_count": 6672,
+              "gate_counts": {
+                "CNOT": 4108,
+                "Toffoli": 1540,
+                "X": 1024
+              },
+              "toffoli_depth_upper_bound": 1030
+            },
+            "ticket_hash": {
+              "calls": {
+                "sha:32:11": 2
+              },
+              "depth_upper_bound": 29774,
+              "gate_count": 779124,
+              "gate_counts": {
+                "CNOT": 620540,
+                "Toffoli": 154612,
+                "X": 3972
+              },
+              "toffoli_depth_upper_bound": 7440
+            },
+            "trace_hash": {
+              "calls": {
+                "sha:32:11": 1
+              },
+              "depth_upper_bound": 14887,
+              "gate_count": 389562,
+              "gate_counts": {
+                "CNOT": 310270,
+                "Toffoli": 77306,
+                "X": 1986
+              },
+              "toffoli_depth_upper_bound": 3720
+            },
+            "transcript_arithmetic": {
+              "calls": {
+                "add:4:11": 1,
+                "multiply:4:11": 1
+              },
+              "depth_upper_bound": 334,
+              "gate_count": 1006,
+              "gate_counts": {
+                "CNOT": 732,
+                "Toffoli": 238,
+                "X": 36
+              },
+              "toffoli_depth_upper_bound": 114
+            }
+          }
+        }
+      },
+      {
+        "classical_build_and_check_wall_seconds": 27.231659422999655,
+        "execution_mode": "macro",
+        "name": "historically-admitted-pnh1",
+        "nonce": 6,
+        "observation": {
+          "accepted_word_counts": [
+            1024,
+            1024,
+            1024,
+            1024
+          ],
+          "challenge": "dd2cbb03cbaf4c1f1fe5cdbf6cbeb143f73ecbf0467ba00a49dd06159763d500",
+          "clean_ancillas": true,
+          "inverse_executed": true,
+          "leaf_gates_executed": null,
+          "macro_calls_executed": 5543956,
+          "mode": "macro",
+          "native_shape": true,
+          "noise_complete": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "nonce": 6,
+          "nonce_preserved": true,
+          "outer_X_Z_gates_executed": null,
+          "phase": -1,
+          "phase_sign_observed_by_classical_basis_interpreter": true,
+          "quantum_hardware_executed": false,
+          "ticket": "219292f954684ee5a2ae0bdcf116af8518d76e3e96e8633df927bdc90a87024e",
+          "trace": "843b7feeee0374474e26d054508017a2c8e08c19efa451ee7b753eb9c0abf241",
+          "winner": true
+        },
+        "resources": {
+          "T_count_if_exact_Toffoli_uses_7_T": 37098209400,
+          "T_decomposition_is_conditional_not_transpiled": true,
+          "classical_preprocessing": {
+            "AB_and_full_PNW1_materialization": "optional per-task/per-winner classical work outside this predicate",
+            "fixed_header_sha_compressions": 5,
+            "fixed_matrices_and_task_commitment": true
+          },
+          "construction_sha256": "cb70794e1ddc882889e10752f1187a062724787c4641a58ef2410f441024c49a",
+          "constructive_upper_bound_not_best_algorithm": true,
+          "data_access": "static wire addresses, exhaustive oblivious accepted-word selection; no QRAM or dynamic memory oracle",
+          "diffusion": {
+            "H": 128,
+            "Toffoli": 126,
+            "X": 128,
+            "Z": 1,
+            "depth_upper_bound": 131,
+            "gate_count": 383,
+            "scratch_qubits": 63,
+            "standard_diffusion_up_to_global_phase": true
+          },
+          "forward_depth_upper_bound": 984917575,
+          "forward_gate_count": 8859008357,
+          "forward_gate_counts": {
+            "CNOT": 6150867656,
+            "Toffoli": 2649872100,
+            "X": 58268601
+          },
+          "forward_toffoli_depth_upper_bound": 349093582,
+          "hash_framing": {
+            "challenge_bytes": 343,
+            "coherent_challenge_compressions": 1,
+            "noise_bytes_each": 66,
+            "noise_hashes_all_bounded_branches": 512,
+            "ticket_bytes": 90,
+            "trace_bytes": 131120,
+            "trace_compressions": 2049
+          },
+          "leaves": {
+            "accepted:32:11": {
+              "clean_xor_output_for_arbitrary_output_seed": true,
+              "input_load_unload_cnots": 64,
+              "input_widths": [
+                32
+              ],
+              "key": "accepted:32:11",
+              "leaf_qubits": 99,
+              "netlist_bytes": 1943,
+              "netlist_sha256": "5f2930bc9725731d53720e9c827828490d6afbb962525ffcc85449a21f77ef2b",
+              "output_width": 1,
+              "wrapped_depth_upper_bound": 197,
+              "wrapped_gate_counts": {
+                "CNOT": 199,
+                "Toffoli": 62,
+                "X": 6
+              },
+              "wrapped_gates": 267,
+              "wrapped_toffoli_depth_upper_bound": 62
+            },
+            "add:32:11": {
+              "clean_xor_output_for_arbitrary_output_seed": true,
+              "input_load_unload_cnots": 128,
+              "input_widths": [
+                32,
+                32
+              ],
+              "key": "add:32:11",
+              "leaf_qubits": 589,
+              "netlist_bytes": 13488,
+              "netlist_sha256": "254bbf482f4fbe80a0c0591fc15fee0b2e69f76832db93b44c20c0a67fc39c3a",
+              "output_width": 32,
+              "wrapped_depth_upper_bound": 538,
+              "wrapped_gate_counts": {
+                "CNOT": 1348,
+                "Toffoli": 386,
+                "X": 12
+              },
+              "wrapped_gates": 1746,
+              "wrapped_toffoli_depth_upper_bound": 200
+            },
+            "and:5:11": {
+              "clean_xor_output_for_arbitrary_output_seed": true,
+              "input_load_unload_cnots": 10,
+              "input_widths": [
+                5
+              ],
+              "key": "and:5:11",
+              "leaf_qubits": 10,
+              "netlist_bytes": 310,
+              "netlist_sha256": "de206fffb32470e3c103d77e879d7e1844fe1d4334fc74c34d08bb0110a3c9e4",
+              "output_width": 1,
+              "wrapped_depth_upper_bound": 19,
+              "wrapped_gate_counts": {
+                "CNOT": 11,
+                "Toffoli": 8,
+                "X": 0
+              },
+              "wrapped_gates": 19,
+              "wrapped_toffoli_depth_upper_bound": 8
+            },
+            "increment:32:11": {
+              "clean_xor_output_for_arbitrary_output_seed": true,
+              "input_load_unload_cnots": 24,
+              "input_widths": [
+                11,
+                1
+              ],
+              "key": "increment:32:11",
+              "leaf_qubits": 44,
+              "netlist_bytes": 889,
+              "netlist_sha256": "e96fbfcbc3631199b6dd800d8acea73193923ff713b838add29f65212747f94a",
+              "output_width": 11,
+              "wrapped_depth_upper_bound": 69,
+              "wrapped_gate_counts": {
+                "CNOT": 79,
+                "Toffoli": 20,
+                "X": 0
+              },
+              "wrapped_gates": 99,
+              "wrapped_toffoli_depth_upper_bound": 20
+            },
+            "leq:11:11": {
+              "clean_xor_output_for_arbitrary_output_seed": true,
+              "input_load_unload_cnots": 44,
+              "input_widths": [
+                11,
+                11
+              ],
+              "key": "leq:11:11",
+              "leaf_qubits": 98,
+              "netlist_bytes": 2203,
+              "netlist_sha256": "3bedf21f259de5b9c5b912c44c12257c405c5962beec4070092f7f75b6fb9ea6",
+              "output_width": 1,
+              "wrapped_depth_upper_bound": 99,
+              "wrapped_gate_counts": {
+                "CNOT": 177,
+                "Toffoli": 62,
+                "X": 44
+              },
+              "wrapped_gates": 283,
+              "wrapped_toffoli_depth_upper_bound": 42
+            },
+            "leq:256:11": {
+              "clean_xor_output_for_arbitrary_output_seed": true,
+              "input_load_unload_cnots": 1024,
+              "input_widths": [
+                256,
+                256
+              ],
+              "key": "leq:256:11",
+              "leaf_qubits": 2303,
+              "netlist_bytes": 47211,
+              "netlist_sha256": "56a4a1f7aa10fb9db53048c65cb63033f8ff76ca4360943d8d9d9494b493288f",
+              "output_width": 1,
+              "wrapped_depth_upper_bound": 2059,
+              "wrapped_gate_counts": {
+                "CNOT": 4097,
+                "Toffoli": 1532,
+                "X": 1024
+              },
+              "wrapped_gates": 6653,
+              "wrapped_toffoli_depth_upper_bound": 1022
+            },
+            "multiply:32:11": {
+              "clean_xor_output_for_arbitrary_output_seed": true,
+              "input_load_unload_cnots": 128,
+              "input_widths": [
+                32,
+                32
+              ],
+              "key": "multiply:32:11",
+              "leaf_qubits": 6550,
+              "netlist_bytes": 156051,
+              "netlist_sha256": "dcec9df253b72e10150a1ddbcd6e2e626e9887d28152c4e0dfba74f2e555a7f1",
+              "output_width": 32,
+              "wrapped_depth_upper_bound": 1012,
+              "wrapped_gate_counts": {
+                "CNOT": 13142,
+                "Toffoli": 6414,
+                "X": 6
+              },
+              "wrapped_gates": 19562,
+              "wrapped_toffoli_depth_upper_bound": 274
+            },
+            "select:32:11": {
+              "clean_xor_output_for_arbitrary_output_seed": true,
+              "input_load_unload_cnots": 110,
+              "input_widths": [
+                11,
+                11,
+                1,
+                32
+              ],
+              "key": "select:32:11",
+              "leaf_qubits": 152,
+              "netlist_bytes": 2167,
+              "netlist_sha256": "e7d16a2cba74a0ccc14c99713d1ab826e2a299b1c3b07d3c0d44569130fcbaaa",
+              "output_width": 32,
+              "wrapped_depth_upper_bound": 203,
+              "wrapped_gate_counts": {
+                "CNOT": 208,
+                "Toffoli": 86,
+                "X": 22
+              },
+              "wrapped_gates": 316,
+              "wrapped_toffoli_depth_upper_bound": 86
+            },
+            "sha:32:11": {
+              "clean_xor_output_for_arbitrary_output_seed": true,
+              "input_load_unload_cnots": 1536,
+              "input_widths": [
+                512,
+                256
+              ],
+              "key": "sha:32:11",
+              "leaf_qubits": 117293,
+              "netlist_bytes": 3109204,
+              "netlist_sha256": "54ed564637f829fe7bc43fa5ea6a734d435e078bd6a62b5ca2e17b2102c17fd0",
+              "output_width": 256,
+              "wrapped_depth_upper_bound": 14887,
+              "wrapped_gate_counts": {
+                "CNOT": 310270,
+                "Toffoli": 77306,
+                "X": 1986
+              },
+              "wrapped_gates": 389562,
+              "wrapped_toffoli_depth_upper_bound": 3720
+            }
+          },
+          "lifetime": "all SSA outputs retained through phase; clean leaf input/scratch workspace reused; global reverse clears every output",
+          "logical_qubits": 22253173,
+          "native_eligibility_is_checked_classical_precondition": true,
+          "native_node_admission_verified": false,
+          "nonce_bits": 64,
+          "persistent_register_count": 676877,
+          "persistent_register_qubits": 22135880,
+          "phase_oracle_depth_upper_bound": 1969835151,
+          "phase_oracle_gate_count": 17718016715,
+          "phase_oracle_gate_counts": {
+            "CNOT": 12301735312,
+            "Toffoli": 5299744200,
+            "X": 116537202,
+            "Z": 1
+          },
+          "phase_oracle_toffoli_depth_upper_bound": 698187164,
+          "physical_calibration": null,
+          "prepare": {
+            "H": 64,
+            "depth_upper_bound": 1,
+            "gate_count": 64
+          },
+          "production_activation": false,
+          "profile": "PNH1",
+          "quantum_hardware_executed": false,
+          "quantum_mining_security_qualified": false,
+          "quantum_work_lower_bound_proved": false,
+          "reused_workspace_qubits": 117293,
+          "schema": "trnm-w1-constructive-phase-oracle-v1",
+          "scope": "NATIVE_W1_FIXED_TEMPLATE_CONSTRUCTION",
+          "shape": {
+            "field_bits": 32,
+            "n": 64,
+            "noise_counters": 128,
+            "r": 8
+          },
+          "source_sha256": {
+            "formal/pon-nakamoto-v1/reversible_components.py": "f518669b0b4ac41a442986ff779da618227b375ef69bdb17db0eacc505908fe0",
+            "formal/pon-nakamoto-v1/w1_quantum_oracle.py": "135167ab536a663cf053417e99d1aeb9d2790ea690ea56a1bce4eca1b8d5a96c",
+            "formal/pon-nakamoto-v1/w1_quantum_primitives.py": "1d1f0a800e24e1d82aab1794ec0cf207ed845e7a7080bacd41b0d0c575f98ac1",
+            "formal/pon-nakamoto-v1/work_oracle.py": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18",
+            "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": "e6eb2c0dddc4a59add47cb295c8c66397956cd94bff729a7472d52653a427b5f",
+            "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs": "95944c121362223f43f5d1cea61972ce65330a65ae36903255d8b3fdead58727",
+            "trillionnium/crates/trnm-protocol/src/pon_growth.rs": "37b8c818e6dd7341b25cd3c1e66a8b5fe0aecca2c60201272a9a2551db147d5f",
+            "trillionnium/crates/trnm-protocol/src/pon_wire.rs": "be816ee5b209098fa790d6e190d1d9c659634ac22d58b95c83dc8b49899c70cd"
+          },
+          "stages": {
+            "challenge": {
+              "calls": {
+                "sha:32:11": 1
+              },
+              "depth_upper_bound": 14887,
+              "gate_count": 389562,
+              "gate_counts": {
+                "CNOT": 310270,
+                "Toffoli": 77306,
+                "X": 1986
+              },
+              "toffoli_depth_upper_bound": 3720
+            },
+            "low_rank": {
+              "calls": {
+                "add:32:11": 65536,
+                "multiply:32:11": 65536
+              },
+              "depth_upper_bound": 101580800,
+              "gate_count": 1396441088,
+              "gate_counts": {
+                "CNOT": 949616640,
+                "Toffoli": 445644800,
+                "X": 1179648
+              },
+              "toffoli_depth_upper_bound": 31064064
+            },
+            "noise_compaction": {
+              "calls": {
+                "accepted:32:11": 4096,
+                "increment:32:11": 4096,
+                "leq:11:11": 4,
+                "select:32:11": 2097152
+              },
+              "depth_upper_bound": 426811788,
+              "gate_count": 664200300,
+              "gate_counts": {
+                "CNOT": 437347012,
+                "Toffoli": 180691192,
+                "X": 46162096
+              },
+              "toffoli_depth_upper_bound": 180691112
+            },
+            "noise_hashes": {
+              "calls": {
+                "sha:32:11": 1024
+              },
+              "depth_upper_bound": 15244288,
+              "gate_count": 398911488,
+              "gate_counts": {
+                "CNOT": 317716480,
+                "Toffoli": 79161344,
+                "X": 2033664
+              },
+              "toffoli_depth_upper_bound": 3809280
+            },
+            "offset_matrices": {
+              "calls": {
+                "add:32:11": 8192
+              },
+              "depth_upper_bound": 4407296,
+              "gate_count": 14303232,
+              "gate_counts": {
+                "CNOT": 11042816,
+                "Toffoli": 3162112,
+                "X": 98304
+              },
+              "toffoli_depth_upper_bound": 1638400
+            },
+            "predicate": {
+              "calls": {
+                "and:5:11": 1,
+                "leq:256:11": 1
+              },
+              "depth_upper_bound": 2078,
+              "gate_count": 6672,
+              "gate_counts": {
+                "CNOT": 4108,
+                "Toffoli": 1540,
+                "X": 1024
+              },
+              "toffoli_depth_upper_bound": 1030
+            },
+            "ticket_hash": {
+              "calls": {
+                "sha:32:11": 2
+              },
+              "depth_upper_bound": 29774,
+              "gate_count": 779124,
+              "gate_counts": {
+                "CNOT": 620540,
+                "Toffoli": 154612,
+                "X": 3972
+              },
+              "toffoli_depth_upper_bound": 7440
+            },
+            "trace_hash": {
+              "calls": {
+                "sha:32:11": 2049
+              },
+              "depth_upper_bound": 30503463,
+              "gate_count": 798212538,
+              "gate_counts": {
+                "CNOT": 635743230,
+                "Toffoli": 158399994,
+                "X": 4069314
+              },
+              "toffoli_depth_upper_bound": 7622280
+            },
+            "transcript_arithmetic": {
+              "calls": {
+                "add:32:11": 262144,
+                "multiply:32:11": 262144
+              },
+              "depth_upper_bound": 406323200,
+              "gate_count": 5585764352,
+              "gate_counts": {
+                "CNOT": 3798466560,
+                "Toffoli": 1782579200,
+                "X": 4718592
+              },
+              "toffoli_depth_upper_bound": 124256256
+            }
+          }
+        }
+      }
+    ],
+    "schema": "trnm-w1-constructive-oracle-campaign-v1",
+    "source": {
+      "all_sources_committed_at_head": true,
+      "git_head": "ba9cf57c1ff615a854cf93accf4e153614de3548",
+      "source_sha256": {
+        "formal/pon-nakamoto-v1/contract_wire.py": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6",
+        "formal/pon-nakamoto-v1/experiments/w1_quantum_oracle_campaign.py": "b3a0cd0916a1e17cff3a011c6942acae7b05aa053aefbc2a882bfe4f63012d0a",
+        "formal/pon-nakamoto-v1/quantum_oracle_resources.py": "b188820f229ff0b094018747648443f48b1fe52e96fff9d91d6a9d1cfb106a4e",
+        "formal/pon-nakamoto-v1/reference.py": "5c5e7cba07709ff6fd390eb7eea3e9db1e9d588809a9ad6a06a9884b8856aa71",
+        "formal/pon-nakamoto-v1/reversible_components.py": "f518669b0b4ac41a442986ff779da618227b375ef69bdb17db0eacc505908fe0",
+        "formal/pon-nakamoto-v1/test_w1_quantum_oracle.py": "3e1ed86090092e59da120916f69e923dd2a88c6caedf740ea0585c3f06085c78",
+        "formal/pon-nakamoto-v1/vectors/header.bin": "af1eb43700a2ac269c7360e21acd6be5f21f9d7e0400b4a62e07f4ee6b12e71b",
+        "formal/pon-nakamoto-v1/vectors/work.bin": "35de8899201fd8a30f32f440d2e9145b4fef867d0d331efc271de1f1be822fc0",
+        "formal/pon-nakamoto-v1/w1_quantum_oracle.py": "135167ab536a663cf053417e99d1aeb9d2790ea690ea56a1bce4eca1b8d5a96c",
+        "formal/pon-nakamoto-v1/w1_quantum_primitives.py": "1d1f0a800e24e1d82aab1794ec0cf207ed845e7a7080bacd41b0d0c575f98ac1",
+        "formal/pon-nakamoto-v1/work_oracle.py": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18",
+        "scripts/pon_daa_schedule_reader.py": "8a3d3f81dfc9a5393294595bf4ae14a8e716a56c624106b461697e3c097b526d",
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": "e6eb2c0dddc4a59add47cb295c8c66397956cd94bff729a7472d52653a427b5f",
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs": "95944c121362223f43f5d1cea61972ce65330a65ae36903255d8b3fdead58727",
+        "trillionnium/crates/trnm-protocol/src/pon_growth.rs": "37b8c818e6dd7341b25cd3c1e66a8b5fe0aecca2c60201272a9a2551db147d5f",
+        "trillionnium/crates/trnm-protocol/src/pon_wire.rs": "be816ee5b209098fa790d6e190d1d9c659634ac22d58b95c83dc8b49899c70cd"
+      },
+      "uncommitted_source_files": []
+    },
+    "storage_scope": "compact JSON and hashes; leaf netlists reconstructed in memory; no expanded native-sized gate list"
+  },
+  "oracle_validation": {
+    "campaign_cases": 5,
+    "campaign_directory": "/dev/shm/quantum-7b44c0ccd9a5/committed-ba9/oracle",
+    "campaign_report_bytes": 51073,
+    "campaign_report_sha256": "a255b74ca9b577cdad7407ea0d75d8af8800b1fa7fe63e229455f38a99ee564c",
+    "commands": [
+      {
+        "command": [
+          "python3",
+          "-B",
+          "formal/pon-nakamoto-v1/experiments/w1_quantum_oracle_campaign.py",
+          "--out",
+          "/dev/shm/quantum-7b44c0ccd9a5/committed-ba9/oracle",
+          "--native-receipt",
+          "/workspace/scratch/7b44c0ccd9a5/validation/native-bd2777f/native-receipt-bd2777f.json",
+          "--native-raw-dir",
+          "/workspace/scratch/7b44c0ccd9a5/validation/native-bd2777f/fresh-proof-v1"
+        ],
+        "elapsed_seconds": 99.4805326459973,
+        "exit_code": 0,
+        "label": "campaign",
+        "log_bytes": 254,
+        "log_path": "/dev/shm/quantum-7b44c0ccd9a5/committed-ba9/oracle-validation/campaign.log",
+        "log_sha256": "4955446330d076e0219917965b476a587ed6074dfb8acd43b2fb8ca53c8e4733",
+        "test_count": null
+      },
+      {
+        "command": [
+          "bash",
+          "scripts/project-preflight.sh"
+        ],
+        "elapsed_seconds": 0.05750680599885527,
+        "exit_code": 0,
+        "label": "preflight",
+        "log_bytes": 170,
+        "log_path": "/dev/shm/quantum-7b44c0ccd9a5/committed-ba9/oracle-validation/preflight.log",
+        "log_sha256": "f4596f7a46726a8fe6b0b4a0e55488d1b12203c29e5470c6de30f61efc109069",
+        "test_count": null
+      },
+      {
+        "command": [
+          "python3",
+          "-B",
+          "formal/pon-nakamoto-v1/experiments/w1_quantum_oracle_campaign.py",
+          "--verify",
+          "/dev/shm/quantum-7b44c0ccd9a5/committed-ba9/oracle"
+        ],
+        "elapsed_seconds": 85.16733836300409,
+        "exit_code": 0,
+        "label": "replay",
+        "log_bytes": 164,
+        "log_path": "/dev/shm/quantum-7b44c0ccd9a5/committed-ba9/oracle-validation/replay.log",
+        "log_sha256": "577193ab22e547aeeba2f286ecfca9046fe6d884ebf99a3bce26c3c09e6c362d",
+        "test_count": null
+      },
+      {
+        "command": [
+          "python3",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "formal/pon-nakamoto-v1",
+          "-p",
+          "test_reversible_components.py",
+          "-v"
+        ],
+        "elapsed_seconds": 1.5058547200023895,
+        "exit_code": 0,
+        "label": "reversible-controls",
+        "log_bytes": 2841,
+        "log_path": "/dev/shm/quantum-7b44c0ccd9a5/committed-ba9/oracle-validation/reversible-controls.log",
+        "log_sha256": "5800ef3aca2cb138b2d5afb09ab115066505f1722b5bcd03af08667005797ef4",
+        "test_count": 17
+      },
+      {
+        "command": [
+          "python3",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "formal/pon-nakamoto-v1",
+          "-p",
+          "test_w1_quantum_oracle.py",
+          "-v"
+        ],
+        "elapsed_seconds": 43.70096909700078,
+        "exit_code": 0,
+        "label": "w1-controls",
+        "log_bytes": 3114,
+        "log_path": "/dev/shm/quantum-7b44c0ccd9a5/committed-ba9/oracle-validation/w1-controls.log",
+        "log_sha256": "6ee283016f3a6dedfd7859a13f99d425bb376c54b02382594caeaacb2de32342",
+        "test_count": 17
+      }
+    ],
+    "current_native_execution": false,
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "TMPDIR": "/dev/shm/quantum-7b44c0ccd9a5"
+    },
+    "historical_native_source_commit": "bd2777f9cc74df10ba07ae8202584ed0fb90a519",
+    "macro_cases": 3,
+    "quantum_hardware_executed": false,
+    "reduced_gate_cases": 2,
+    "result": "PASS",
+    "security_qualified": false,
+    "source_after_sha256": "a33f68cff66ca1f62d8d6055bb0dcfa34241bbc01dd309e9cd5041f68294b6e0",
+    "source_before_sha256": "a33f68cff66ca1f62d8d6055bb0dcfa34241bbc01dd309e9cd5041f68294b6e0",
+    "source_changed": false,
+    "source_commit": "ba9cf57c1ff615a854cf93accf4e153614de3548",
+    "source_committed": true,
+    "source_files_checked": 19,
+    "source_tree": "d2d470407ee6e9e49b0c6aa72008943608ee1021",
+    "tests_passed": 34
+  },
+  "primary_sources": {
+    "fast_DAA_complete_protocol_obtained": false,
+    "fast_DAA_metadata": "https://eprint.iacr.org/2026/1116",
+    "fast_DAA_official_slides": "https://iacr.org/submit/files/slides/2026/crypto/crypto2026/704/704_slides.pdf",
+    "parallel_variable_OHIE": "https://arxiv.org/html/2105.02927v2",
+    "quantum_DAA_attack": "https://arxiv.org/html/2403.08023v2"
+  },
+  "production_activation": false,
+  "quantum_hardware_executed": false,
+  "quantum_work_lower_bound_proved": false,
+  "raw_record_locations": {
+    "historical_native_control": "Requires its original bd2777f9 receipt and PNW1 packet; no regenerated successful substitute is accepted.",
+    "meaning": "Absolute paths and per-point relative filenames retain the original observation locations, not permanent download URLs or files bundled in this compact evidence directory. Recreate raw outputs using pinned source entry points and the delivered resource-matrix recipe."
+  },
+  "release_ready": false,
+  "report_inventory": {
+    "adversarial": {
+      "bytes": 447851,
+      "sha256": "0a26fa62bf6999e7cf5fe788b3ea7fc13ae6eafae3d87f4ff74281f3e1b80616"
+    },
+    "ohie": {
+      "bytes": 686494,
+      "sha256": "620a00030d994864dbbdb801febff439ecd34a57380e3618159f8a00dfd6d707"
+    },
+    "oracle": {
+      "bytes": 51073,
+      "sha256": "a255b74ca9b577cdad7407ea0d75d8af8800b1fa7fe63e229455f38a99ee564c"
+    },
+    "retained_network": {
+      "bytes": 166776,
+      "sha256": "a043b8cfa606659b639129d5c95554120c1860d2061781afd5c101ebc075ac82"
+    }
+  },
+  "resource_clock_matrix": {
+    "actual_W1_marked_set_simulated": false,
+    "all_source_committed": true,
+    "classical_costs": {
+      "per_completed_trial_candidate_check_ns": 100000000,
+      "per_search_setup_ns": 1000000,
+      "per_trial_reset_readout_ns": 1000000,
+      "per_winner_proof_ns": 1000000000,
+      "per_winner_propagation_ns": 500000000,
+      "task_preprocessing_ns": 10000000
+    },
+    "commands": [
+      {
+        "exit_code": 0,
+        "name": "resource-clock-tests",
+        "scope": "completed initial invocation; logs retained",
+        "tests": 18
+      }
+    ],
+    "end_to_end_machine_failure_bound": false,
+    "matrix": [
+      {
+        "case_results": [
+          {
+            "code_distance": 29,
+            "iteration_seconds_exact": {
+              "denominator": 25000,
+              "numerator": 283243330339
+            },
+            "name": "resource_honest_restart",
+            "physical_qubits": 37430005186,
+            "q_blocks": 0,
+            "q_trials_started": 89,
+            "termination": "horizon",
+            "trace_rows": 1488
+          },
+          {
+            "code_distance": 29,
+            "iteration_seconds_exact": {
+              "denominator": 25000,
+              "numerator": 283243330339
+            },
+            "name": "resource_private_mtp",
+            "physical_qubits": 37430005186,
+            "q_blocks": 0,
+            "q_trials_started": 2,
+            "termination": "horizon",
+            "trace_rows": 1315
+          },
+          {
+            "code_distance": 31,
+            "iteration_seconds_exact": {
+              "denominator": 25000,
+              "numerator": 302777353121
+            },
+            "name": "resource_bounded_throughput",
+            "physical_qubits": 42770790706,
+            "q_blocks": 0,
+            "q_trials_started": 7168,
+            "termination": "horizon",
+            "trace_rows": 22814
+          }
+        ],
+        "elapsed_seconds": 0.0012454986572265625,
+        "file": "PNH1-p1-0.0001.json",
+        "name": "PNH1-p1-0.0001",
+        "physical_error": "0.0001",
+        "processors": 1,
+        "profile": "PNH1",
+        "replayed_cases": 3,
+        "sha256": "945bcea692ed1098d592851e8cc353a52ba1340d1bb1b3b0b9da25d5f89b734e"
+      },
+      {
+        "case_results": [
+          {
+            "code_distance": 61,
+            "iteration_seconds_exact": {
+              "denominator": 25000,
+              "numerator": 595787694851
+            },
+            "name": "resource_honest_restart",
+            "physical_qubits": 165608857666,
+            "q_blocks": 0,
+            "q_trials_started": 89,
+            "termination": "horizon",
+            "trace_rows": 1488
+          },
+          {
+            "code_distance": 61,
+            "iteration_seconds_exact": {
+              "denominator": 25000,
+              "numerator": 595787694851
+            },
+            "name": "resource_private_mtp",
+            "physical_qubits": 165608857666,
+            "q_blocks": 0,
+            "q_trials_started": 2,
+            "termination": "horizon",
+            "trace_rows": 1315
+          },
+          {
+            "code_distance": 61,
+            "iteration_seconds_exact": {
+              "denominator": 25000,
+              "numerator": 595787694851
+            },
+            "name": "resource_bounded_throughput",
+            "physical_qubits": 165608857666,
+            "q_blocks": 0,
+            "q_trials_started": 7150,
+            "termination": "horizon",
+            "trace_rows": 22760
+          }
+        ],
+        "elapsed_seconds": 0.0010349750518798828,
+        "file": "PNH1-p1-0.001.json",
+        "name": "PNH1-p1-0.001",
+        "physical_error": "0.001",
+        "processors": 1,
+        "profile": "PNH1",
+        "replayed_cases": 3,
+        "sha256": "38f2a8a8d65c9c15b3b383735c9dce6a73fbee619c225a2247ad5a8664e39c49"
+      },
+      {
+        "case_results": [],
+        "maximum_distance": 101,
+        "name": "PNH1-p1-0.003",
+        "physical_error": "0.003",
+        "processors": 1,
+        "profile": "PNH1",
+        "reason": "NO_DISTANCE_FOR_CAMPAIGN_ENVELOPE",
+        "replayed_cases": 0,
+        "status": "CONDITIONAL_CAPACITY_REFUSED"
+      },
+      {
+        "case_results": [
+          {
+            "code_distance": 31,
+            "iteration_seconds_exact": {
+              "denominator": 25000,
+              "numerator": 302777353121
+            },
+            "name": "resource_honest_restart",
+            "physical_qubits": 128312372118,
+            "q_blocks": 0,
+            "q_trials_started": 89,
+            "termination": "horizon",
+            "trace_rows": 1488
+          },
+          {
+            "code_distance": 31,
+            "iteration_seconds_exact": {
+              "denominator": 25000,
+              "numerator": 302777353121
+            },
+            "name": "resource_private_mtp",
+            "physical_qubits": 128312372118,
+            "q_blocks": 0,
+            "q_trials_started": 2,
+            "termination": "horizon",
+            "trace_rows": 1315
+          },
+          {
+            "code_distance": 31,
+            "iteration_seconds_exact": {
+              "denominator": 25000,
+              "numerator": 302777353121
+            },
+            "name": "resource_bounded_throughput",
+            "physical_qubits": 128312372118,
+            "q_blocks": 0,
+            "q_trials_started": 7168,
+            "termination": "horizon",
+            "trace_rows": 22814
+          }
+        ],
+        "elapsed_seconds": 2.1791861057281494,
+        "file": "PNH1-p3-0.0001.json",
+        "name": "PNH1-p3-0.0001",
+        "physical_error": "0.0001",
+        "processors": 3,
+        "profile": "PNH1",
+        "replayed_cases": 3,
+        "sha256": "4c7a4aff2ba55eb9b5429e5eeefceb555275293135029434a23722d79847c710"
+      },
+      {
+        "case_results": [
+          {
+            "code_distance": 61,
+            "iteration_seconds_exact": {
+              "denominator": 25000,
+              "numerator": 595787694851
+            },
+            "name": "resource_honest_restart",
+            "physical_qubits": 496826572998,
+            "q_blocks": 0,
+            "q_trials_started": 89,
+            "termination": "horizon",
+            "trace_rows": 1488
+          },
+          {
+            "code_distance": 61,
+            "iteration_seconds_exact": {
+              "denominator": 25000,
+              "numerator": 595787694851
+            },
+            "name": "resource_private_mtp",
+            "physical_qubits": 496826572998,
+            "q_blocks": 0,
+            "q_trials_started": 2,
+            "termination": "horizon",
+            "trace_rows": 1315
+          },
+          {
+            "code_distance": 63,
+            "iteration_seconds_exact": {
+              "denominator": 25000,
+              "numerator": 615321717633
+            },
+            "name": "resource_bounded_throughput",
+            "physical_qubits": 529939443222,
+            "q_blocks": 0,
+            "q_trials_started": 7149,
+            "termination": "horizon",
+            "trace_rows": 22757
+          }
+        ],
+        "elapsed_seconds": 2.1505916118621826,
+        "file": "PNH1-p3-0.001.json",
+        "name": "PNH1-p3-0.001",
+        "physical_error": "0.001",
+        "processors": 3,
+        "profile": "PNH1",
+        "replayed_cases": 3,
+        "sha256": "fec5780a26d6ad7d059d0d8ec4dc5e90f26c43fa2a5a1e8b5a48fe95bcce3a17"
+      },
+      {
+        "case_results": [],
+        "maximum_distance": 101,
+        "name": "PNH1-p3-0.003",
+        "physical_error": "0.003",
+        "processors": 3,
+        "profile": "PNH1",
+        "reason": "NO_DISTANCE_FOR_CAMPAIGN_ENVELOPE",
+        "replayed_cases": 0,
+        "status": "CONDITIONAL_CAPACITY_REFUSED"
+      },
+      {
+        "case_results": [
+          {
+            "code_distance": 61,
+            "iteration_seconds_exact": {
+              "denominator": 50000,
+              "numerator": 1191609307471
+            },
+            "name": "resource_honest_restart",
+            "physical_qubits": 165610762818,
+            "q_blocks": 0,
+            "q_trials_started": 89,
+            "termination": "horizon",
+            "trace_rows": 1488
+          },
+          {
+            "code_distance": 61,
+            "iteration_seconds_exact": {
+              "denominator": 50000,
+              "numerator": 1191609307471
+            },
+            "name": "resource_private_mtp",
+            "physical_qubits": 165610762818,
+            "q_blocks": 0,
+            "q_trials_started": 2,
+            "termination": "horizon",
+            "trace_rows": 1315
+          },
+          {
+            "code_distance": 61,
+            "iteration_seconds_exact": {
+              "denominator": 50000,
+              "numerator": 1191609307471
+            },
+            "name": "resource_bounded_throughput",
+            "physical_qubits": 165610762818,
+            "q_blocks": 0,
+            "q_trials_started": 7150,
+            "termination": "horizon",
+            "trace_rows": 22760
+          }
+        ],
+        "elapsed_seconds": 2.0822155475616455,
+        "file": "PGH2-p1-0.001.json",
+        "name": "PGH2-p1-0.001",
+        "physical_error": "0.001",
+        "processors": 1,
+        "profile": "PGH2",
+        "replayed_cases": 3,
+        "sha256": "046c1e620e9e1e9adcb38d830c941e434ea28a3d585e3b2ffc87642f92176371"
+      }
+    ],
+    "physical_model_class": "explicit illustrative inputs, not calibration",
+    "physical_models": [
+      {
+        "cycle_ns": "1000",
+        "data_physical_qubits_per_d2": 2,
+        "factories_per_instance": 2,
+        "factory_physical_qubits_per_d2": 100,
+        "factory_t_cycles_per_distance": 10,
+        "logical_error_prefactor": "0.1",
+        "logical_gate_cycles_per_distance": 1,
+        "magic_state_error": "1e-60",
+        "maximum_distance": 101,
+        "name": "illustrative-p-0.0001",
+        "physical_error": "0.0001",
+        "t_depth_per_toffoli": 3,
+        "t_per_toffoli": 7,
+        "threshold": "0.01",
+        "toffoli_decomposition_depth": 10,
+        "total_failure_budget": "0.01"
+      },
+      {
+        "cycle_ns": "1000",
+        "data_physical_qubits_per_d2": 2,
+        "factories_per_instance": 2,
+        "factory_physical_qubits_per_d2": 100,
+        "factory_t_cycles_per_distance": 10,
+        "logical_error_prefactor": "0.1",
+        "logical_gate_cycles_per_distance": 1,
+        "magic_state_error": "1e-60",
+        "maximum_distance": 101,
+        "name": "illustrative-p-0.001",
+        "physical_error": "0.001",
+        "t_depth_per_toffoli": 3,
+        "t_per_toffoli": 7,
+        "threshold": "0.01",
+        "toffoli_decomposition_depth": 10,
+        "total_failure_budget": "0.01"
+      },
+      {
+        "cycle_ns": "1000",
+        "data_physical_qubits_per_d2": 2,
+        "factories_per_instance": 2,
+        "factory_physical_qubits_per_d2": 100,
+        "factory_t_cycles_per_distance": 10,
+        "logical_error_prefactor": "0.1",
+        "logical_gate_cycles_per_distance": 1,
+        "magic_state_error": "1e-60",
+        "maximum_distance": 101,
+        "name": "illustrative-p-0.003",
+        "physical_error": "0.003",
+        "t_depth_per_toffoli": 3,
+        "t_per_toffoli": 7,
+        "threshold": "0.01",
+        "toffoli_decomposition_depth": 10,
+        "total_failure_budget": "0.01"
+      }
+    ],
+    "physical_qubit_budget": 1000000000000000,
+    "production_activation": false,
+    "security_theorem": false,
+    "source_head": "ba9cf57c1ff615a854cf93accf4e153614de3548",
+    "source_tree": "d2d470407ee6e9e49b0c6aa72008943608ee1021"
+  },
+  "retained_failures": {
+    "evidence_install_storage_retry": {
+      "evidence_or_acceptance_deleted": false,
+      "initial_result": "ENOSPC while creating an atomic temporary Git tree object; HEAD remained ba9cf57c and no incoming working files were installed",
+      "resolution": "590 prior local validation files (45186599 bytes) copied to tmpfs, verified by individual SHA256, and original path retained by symlink; exact incoming installation then succeeded"
+    },
+    "evidence_worktree_storage_retry": {
+      "initial_result": "Atomic README installation succeeded; reproduction JSON temporary write failed with ENOSPC. No truncated destination was promoted.",
+      "research_implementation_modified": false,
+      "resolution": {
+        "bytes": 46692361,
+        "content_and_modes_preserved": true,
+        "files": 5727,
+        "inventory_digest": "e00b9fcde7b5d88c31fb13ee184a9ea2aac2ae919848bad1d2ad2c1ba963a48a",
+        "source": "/workspace/scratch/7b44c0ccd9a5/chain",
+        "source_unchanged_during_copy": true,
+        "target": "/dev/shm/quantum-7b44c0ccd9a5/chain"
+      }
+    },
+    "network_source_write": {
+      "action": "apply_patch upward-clock source edit",
+      "corrupted_source_executed_for_successful_observation": false,
+      "native_build_or_source_affected": false,
+      "partial_bytes": 57344,
+      "partial_file": "formal/pon-nakamoto-v1/quantum_network_sim.py",
+      "recovered_bytes": 59027,
+      "recovered_sha256": "3aba236791b94b7493b1f12ffcde286fb23131b6f146e4623ba9a791a47240a4",
+      "recovery": "core new source retained; exact legacy standard_network_scenarios tail recovered from HEAD Git blob; restored AST parsed and byte-compared against temporary recovery copy",
+      "result": "write failed with zero available overlay blocks",
+      "tests_patch_was_not_attempted_by_failed_patch": true,
+      "truncated_at": "def standard_network_scenarios() ->"
+    },
+    "oracle_intermediate_expectation": {
+      "correct_tag_bytes": 37,
+      "implementation_returned_PGH2_framed_bytes": 407,
+      "resolution": "corrected expectation; native known-digest vectors already matched; final committed17tests pass",
+      "stale_test_expectation": 405
+    },
+    "resource_initial_refusal": {
+      "classification": "required refusal under declared conditional physical range; no input range silently enlarged",
+      "first_invocation_exit_code": 1,
+      "maximum_distance": 101,
+      "physical_error": "0.003",
+      "preceding_campaigns_passed": [
+        "PNH1-p1-0.0001",
+        "PNH1-p1-0.001"
+      ],
+      "reason": "NO_DISTANCE_FOR_CAMPAIGN_ENVELOPE",
+      "source_head": "ba9cf57c1ff615a854cf93accf4e153614de3548"
+    },
+    "temporary_output_failures": "Shared ENOSPC before OHIE final outputs and first CI copy setup; original tests/parameters were retained and later retried successfully."
+  },
+  "schema": "trnm-quantum-construction-reproduction-v1",
+  "security_theorem": false,
+  "selected_source_inputs": [
+    {
+      "bytes": 1964,
+      "git_blob_sha1": "a60f403b2f0e7343aed61170ca2aef875a787790",
+      "path": "config/pon/devnet-v1.json",
+      "sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4"
+    },
+    {
+      "bytes": 8924,
+      "git_blob_sha1": "37f62b2f0913e372bc1c75fed2cd3a3e1267870b",
+      "path": "formal/pon-nakamoto-v1/contract_wire.py",
+      "sha256": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6"
+    },
+    {
+      "bytes": 15187,
+      "git_blob_sha1": "9173eef5470760ffbb23d3c4141cdb3b9cfc8445",
+      "path": "formal/pon-nakamoto-v1/experiments/parallel_variable_ohie_campaign.py",
+      "sha256": "c26cbc28ef617f8a1531447e8f1fc5961e81a91733794945a5c54c0265e1502a"
+    },
+    {
+      "bytes": 16641,
+      "git_blob_sha1": "c8ab59bf8bd9158acb7cfa8b737f3479f7fea310",
+      "path": "formal/pon-nakamoto-v1/experiments/quantum_adversarial_campaign.py",
+      "sha256": "84c05396744e67b37547d36ae7bbd017a4ad011b5cc726142c63fd080176b5df"
+    },
+    {
+      "bytes": 12517,
+      "git_blob_sha1": "a7b51838a80c39cb521550cd512f0023b9325f23",
+      "path": "formal/pon-nakamoto-v1/experiments/quantum_network_campaign.py",
+      "sha256": "72abd0bed908e1a5e0f714cd3e6ff4dc85f252fe8ad67f0e081a5cfbac9ce645"
+    },
+    {
+      "bytes": 10806,
+      "git_blob_sha1": "3508cac9d629a4d357735d1d35d8ea780626b8dd",
+      "path": "formal/pon-nakamoto-v1/experiments/quantum_resource_clock_campaign.py",
+      "sha256": "d8db66393f665edc40a2dbba899223c4546ca6e878417fe4a5add359d04de4f1"
+    },
+    {
+      "bytes": 16753,
+      "git_blob_sha1": "c514b206cce772b5e0880819a46722b88e5e86cb",
+      "path": "formal/pon-nakamoto-v1/experiments/w1_quantum_oracle_campaign.py",
+      "sha256": "b3a0cd0916a1e17cff3a011c6942acae7b05aa053aefbc2a882bfe4f63012d0a"
+    },
+    {
+      "bytes": 47371,
+      "git_blob_sha1": "f6a861917022e72f486d6c1f9ea50bbdd3ed30ea",
+      "path": "formal/pon-nakamoto-v1/parallel_variable_ohie.py",
+      "sha256": "9ae2a58663f44d63d43ef639d0093021a15fa9507fe83cbfa811d369cd6a1155"
+    },
+    {
+      "bytes": 11210,
+      "git_blob_sha1": "ec1cfc9178e8fc8d37cce43cf6f8dfa95089fb8c",
+      "path": "formal/pon-nakamoto-v1/quantum_adversarial_search.py",
+      "sha256": "1d6833b0cc52abc549e6169d8da70c774a3f779d7ce0d7f6381590d37e096387"
+    },
+    {
+      "bytes": 16888,
+      "git_blob_sha1": "df3a050b6f8ae84991a614ee7fd9deb7ff358825",
+      "path": "formal/pon-nakamoto-v1/quantum_daa_model.py",
+      "sha256": "4dd08a40f9719b6a8e310c65b63fc3af44b6d4fb6a6db83af296600334da747b"
+    },
+    {
+      "bytes": 59027,
+      "git_blob_sha1": "82e235aed43c18c325c7c5051355abb7e23a1ee0",
+      "path": "formal/pon-nakamoto-v1/quantum_network_sim.py",
+      "sha256": "3aba236791b94b7493b1f12ffcde286fb23131b6f146e4623ba9a791a47240a4"
+    },
+    {
+      "bytes": 26839,
+      "git_blob_sha1": "c923cd5e5d2b3bf5aa704fec8dec7f9409297568",
+      "path": "formal/pon-nakamoto-v1/quantum_oracle_resources.py",
+      "sha256": "b188820f229ff0b094018747648443f48b1fe52e96fff9d91d6a9d1cfb106a4e"
+    },
+    {
+      "bytes": 15682,
+      "git_blob_sha1": "50cc314bd4e15232889d752fb70b59289f1418d2",
+      "path": "formal/pon-nakamoto-v1/quantum_resource_clock.py",
+      "sha256": "8d7257c315da4590e463b6bdb49434d284c0239681d6d8e50759dafda42c456a"
+    },
+    {
+      "bytes": 4753,
+      "git_blob_sha1": "76f61ae20aa924ce2df2ebfa0029d8b9b3cce04c",
+      "path": "formal/pon-nakamoto-v1/reference.py",
+      "sha256": "5c5e7cba07709ff6fd390eb7eea3e9db1e9d588809a9ad6a06a9884b8856aa71"
+    },
+    {
+      "bytes": 23039,
+      "git_blob_sha1": "721f7efbbf9a7626b7f2971bcd3e8985da79a31c",
+      "path": "formal/pon-nakamoto-v1/reversible_components.py",
+      "sha256": "f518669b0b4ac41a442986ff779da618227b375ef69bdb17db0eacc505908fe0"
+    },
+    {
+      "bytes": 24889,
+      "git_blob_sha1": "3f5f510024df697910520460879b60b8f4bc8122",
+      "path": "formal/pon-nakamoto-v1/test_parallel_variable_ohie.py",
+      "sha256": "563191033d4e2be366acfcaf7d786cd0e975dc6da6fe2cd272269de7e558ed0e"
+    },
+    {
+      "bytes": 13988,
+      "git_blob_sha1": "b88dfbda888766d6a7f63c2596d2b561d227d79d",
+      "path": "formal/pon-nakamoto-v1/test_quantum_adversarial_search.py",
+      "sha256": "d6f5e0b77909aa0c898fb073fae4b70c88e27f370811c8008e2766d7f252984a"
+    },
+    {
+      "bytes": 14353,
+      "git_blob_sha1": "7eb237821dade4be41ef6872624a539ea716255f",
+      "path": "formal/pon-nakamoto-v1/test_quantum_daa_model.py",
+      "sha256": "9c171c57cdf3260a5bcd2c1faf488f655e9bafe0114cb7dc387bf8c1436e4949"
+    },
+    {
+      "bytes": 32357,
+      "git_blob_sha1": "0714a7499fa94773b20efeab1f583475eed52ee6",
+      "path": "formal/pon-nakamoto-v1/test_quantum_network_sim.py",
+      "sha256": "93a30a259b0bc0e4730419f948d3c90ffcefda9524d468e2d8d2697755628241"
+    },
+    {
+      "bytes": 13822,
+      "git_blob_sha1": "4880a5f3d04f620559a7f2fa90cde73f1a47e4ed",
+      "path": "formal/pon-nakamoto-v1/test_quantum_oracle_resources.py",
+      "sha256": "7952ce8d9ff3aa8b81140ac8f316bb98de83eff646879ca25cbe3951c689c078"
+    },
+    {
+      "bytes": 14323,
+      "git_blob_sha1": "8fbb0bdd76f7dff92f1e335ded4e60c0106101e2",
+      "path": "formal/pon-nakamoto-v1/test_quantum_resource_clock.py",
+      "sha256": "e9046a27c18bcd8ae720f0942640388ec0578c009ae69909ff835a67234cc40e"
+    },
+    {
+      "bytes": 8862,
+      "git_blob_sha1": "4c6803d96db2eef9751e707aba044ae2f619c96b",
+      "path": "formal/pon-nakamoto-v1/test_reversible_components.py",
+      "sha256": "9e16585a34932212305b78f8719013672f7c3eba781d2adb227612e87cb210ea"
+    },
+    {
+      "bytes": 16978,
+      "git_blob_sha1": "b19052928e1a0fcf2a9fd45719355926e0d3e10c",
+      "path": "formal/pon-nakamoto-v1/test_w1_quantum_oracle.py",
+      "sha256": "3e1ed86090092e59da120916f69e923dd2a88c6caedf740ea0585c3f06085c78"
+    },
+    {
+      "bytes": 37514,
+      "git_blob_sha1": "d6e749358074c5246adcfec81842df1e43947805",
+      "path": "formal/pon-nakamoto-v1/w1_quantum_oracle.py",
+      "sha256": "135167ab536a663cf053417e99d1aeb9d2790ea690ea56a1bce4eca1b8d5a96c"
+    },
+    {
+      "bytes": 7191,
+      "git_blob_sha1": "2326123599c31f55e9b957967591bc4caf3a4fa6",
+      "path": "formal/pon-nakamoto-v1/w1_quantum_primitives.py",
+      "sha256": "1d1f0a800e24e1d82aab1794ec0cf207ed845e7a7080bacd41b0d0c575f98ac1"
+    },
+    {
+      "bytes": 2944,
+      "git_blob_sha1": "9cbfccd2d50af48fc43522b967ffdfb1f45ec098",
+      "path": "formal/pon-nakamoto-v1/work_oracle.py",
+      "sha256": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18"
+    },
+    {
+      "bytes": 22979,
+      "git_blob_sha1": "28387126d05de6e1e23a863bc152ead491519a77",
+      "path": "scripts/ci/ci_job.sh",
+      "sha256": "a8465a151745478cb96ec0b392d9465547cb5dfbd4b0f8bb0eca4b4ad193cf48"
+    },
+    {
+      "bytes": 4684,
+      "git_blob_sha1": "d86317801876961ed68e22c1134305c3749a615e",
+      "path": "scripts/ci/test_pq_quantum_daa_scenarios.py",
+      "sha256": "a72bb7d11a3aa9937c9752f59c2736f9343a44015f7f77ec8a13a25b4d256aa8"
+    },
+    {
+      "bytes": 104102,
+      "git_blob_sha1": "7e6fa33cbaa50d76f1a8fd0146a44ca3623345b3",
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "sha256": "e6eb2c0dddc4a59add47cb295c8c66397956cd94bff729a7472d52653a427b5f"
+    },
+    {
+      "bytes": 13531,
+      "git_blob_sha1": "89165df40fea479fc73a5b5ce8d2fc0262ccd1f6",
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs",
+      "sha256": "95944c121362223f43f5d1cea61972ce65330a65ae36903255d8b3fdead58727"
+    },
+    {
+      "bytes": 3760,
+      "git_blob_sha1": "6b556163921abcea93513759125022c28e3689fc",
+      "path": "trillionnium/crates/trnm-protocol/src/pon_growth.rs",
+      "sha256": "37b8c818e6dd7341b25cd3c1e66a8b5fe0aecca2c60201272a9a2551db147d5f"
+    },
+    {
+      "bytes": 32354,
+      "git_blob_sha1": "9333ce92c6ba130dd182538bfd8f69ec289acc83",
+      "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+      "sha256": "be816ee5b209098fa790d6e190d1d9c659634ac22d58b95c83dc8b49899c70cd"
+    }
+  ],
+  "source_commit": "ba9cf57c1ff615a854cf93accf4e153614de3548",
+  "source_gate_initial_observations": {
+    "full_historical_evidence_materialized": false,
+    "missing_archived_blob_files": 6745,
+    "native_gate_reason": "research-only change; fresh native compilation unavailable under active shared-disk exhaustion; historical native receipts retain their original scope",
+    "native_tests_current_native_tree_rerun": false,
+    "production_activation": false,
+    "results": [
+      {
+        "command": [
+          "bash",
+          "scripts/project-preflight.sh",
+          "--audit"
+        ],
+        "elapsed_seconds": 0.057741403579711914,
+        "exit_code": 0,
+        "name": "preflight",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "1ebea773352bf1c27a0c6ab4609543680786419acc36a350810bef316946ab3a"
+      },
+      {
+        "command": [
+          "python",
+          "-B",
+          "scripts/ci/test_project_boundary.py"
+        ],
+        "elapsed_seconds": 3.9710958003997803,
+        "exit_code": 0,
+        "name": "boundary",
+        "stderr_sha256": "7e255f7a1f8015cf7c3018e04782e169ceaf09ad5eab03934c94a2406cf94fb2",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "command": [
+          "python",
+          "-B",
+          "scripts/ci/test_pq_chain_claim_guard.py"
+        ],
+        "elapsed_seconds": 0.15342330932617188,
+        "exit_code": 0,
+        "name": "pq-claim-controls",
+        "stderr_sha256": "60beb7c818f4b92600e0f8f915012c81c6a777c7ae263b8e8b603fa4a8275ea1",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "command": [
+          "python",
+          "-B",
+          "scripts/ci/test_pq_research_integration.py"
+        ],
+        "elapsed_seconds": 24.39239239692688,
+        "exit_code": 0,
+        "name": "pq-integration-controls",
+        "stderr_sha256": "3fea3eea3da9616ffe7ab2db8a0b7655ddd79d3af05c0161eca0b8945895e76b",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "command": [
+          "python",
+          "-B",
+          "scripts/ci/pq_chain_claim_guard.py"
+        ],
+        "elapsed_seconds": 0.05132746696472168,
+        "exit_code": 0,
+        "name": "pq-claim-guard",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "6235b839d36b92351665414a731c9433441f007e727860d0c3bd138e7d731690"
+      },
+      {
+        "command": [
+          "python",
+          "-B",
+          "scripts/ci/check_pq_research_integration.py"
+        ],
+        "elapsed_seconds": 0.06832170486450195,
+        "exit_code": 1,
+        "name": "pq-integration-guard",
+        "stderr_sha256": "e8fcdebd462321ee1f9b6b174b892083fb66c187f97b037de8736e6550756ba2",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "command": [
+          "python",
+          "-B",
+          "scripts/refresh_distributed_source_inventory.py",
+          "--check"
+        ],
+        "elapsed_seconds": 0.07259607315063477,
+        "exit_code": 0,
+        "name": "distributed-inventory",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+      },
+      {
+        "command": [
+          "python",
+          "-B",
+          "scripts/ci/test_ci_contract.py"
+        ],
+        "elapsed_seconds": 0.2329862117767334,
+        "exit_code": 1,
+        "name": "ci-contract",
+        "stderr_sha256": "ce467ddc60170938804bdbe47c3a4359a0358cec787e72d64f41d7d3335d47e3",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "command": [
+          "cargo",
+          "metadata",
+          "--locked",
+          "--offline",
+          "--format-version",
+          "1",
+          "--manifest-path",
+          "trillionnium/Cargo.toml"
+        ],
+        "elapsed_seconds": 0.1952834129333496,
+        "exit_code": 0,
+        "name": "cargo-metadata",
+        "packages": 175,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "c9072e6ba99838ae65e209e6ad14d43fb4658543d093d8642b4f3dc9900020e1",
+        "workspace_members": 26
+      },
+      {
+        "command": [
+          "cargo",
+          "fmt",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "elapsed_seconds": 14.964904546737671,
+        "exit_code": 0,
+        "name": "cargo-fmt",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "source_head": "ba9cf57c1ff615a854cf93accf4e153614de3548",
+    "strict_clippy_current_native_tree_rerun": false
+  },
+  "source_gate_resolution": {
+    "ci_source_pin_update": {
+      "all_acceptance_assertions_remain_false": true,
+      "new_blob": "28387126d05de6e1e23a863bc152ead491519a77",
+      "old_blob": "6399f8c644395d273689ededa2c1ed99e4ae1364",
+      "only_added_four_already_executed_research_test_invocations": true,
+      "path": "scripts/ci/ci_job.sh"
+    },
+    "direct_ci_contract": {
+      "exit_code": 0,
+      "head_jobs": 5,
+      "inline_source_pins": 22,
+      "merge_lanes": 5,
+      "tests_executed": false
+    },
+    "pq_integration_guard": {
+      "cryptographic_acceptance": false,
+      "exact_source_blobs": 450,
+      "exit_code": 0,
+      "node_activated": false,
+      "status": "HOLD_NO_GO"
+    },
+    "remaining_unmaterialized_archive_files": 6726,
+    "restoration_matches_original_git_blobs": true,
+    "restored_original_small_artifacts": 19
+  },
+  "source_parent": "33a170e863a413279d6611457d907913a54e9e5a",
+  "source_tree": "d2d470407ee6e9e49b0c6aa72008943608ee1021",
+  "status": "ENUMERATED_RESEARCH_ENGINEERING_GATES_PASS_SCIENTIFIC_GATES_OPEN",
+  "unique_research_tests": 173,
+  "unique_test_suites": {
+    "scripts/ci/test_pq_quantum_daa_scenarios.py": 6,
+    "test_parallel_variable_ohie.py": 28,
+    "test_quantum_adversarial_search.py": 12,
+    "test_quantum_daa_model.py": 18,
+    "test_quantum_network_sim.py": 35,
+    "test_quantum_oracle_resources.py": 22,
+    "test_quantum_resource_clock.py": 18,
+    "test_reversible_components.py": 17,
+    "test_w1_quantum_oracle.py": 17
+  }
+}

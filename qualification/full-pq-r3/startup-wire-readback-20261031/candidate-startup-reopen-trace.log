@@ -1,0 +1,28 @@
+    Finished `release` profile [optimized] target(s) in 0.06s
+     Running unittests src/lib.rs (/tmp/chain-pq-startup-repair-target/release/deps/trnm_pon_node-a8515e07877dcc8f)
+
+running 1 test
+test operator_pq_startup::tests::pq_continuous_real_bootstrap_receiver_and_cold_reopen_keep_state_fees_work_and_local_revocation ... FAILED
+
+failures:
+
+---- operator_pq_startup::tests::pq_continuous_real_bootstrap_receiver_and_cold_reopen_keep_state_fees_work_and_local_revocation stdout ----
+
+thread 'operator_pq_startup::tests::pq_continuous_real_bootstrap_receiver_and_cold_reopen_keep_state_fees_work_and_local_revocation' (1112488) panicked at crates/trnm-pon-node/src/operator_pq_startup_tests.rs:621:6:
+called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Unclassified, message: "OWNER_CONTINUOUS:ExternalContext", source: None, request_history_budget: false }
+stack backtrace:
+   0: __rustc::rust_begin_unwind
+   1: core::panicking::panic_fmt
+   2: core::result::unwrap_failed
+   3: trnm_pon_node::operator_pq_startup::tests::open
+   4: trnm_pon_node::operator_pq_startup::tests::pq_continuous_real_bootstrap_receiver_and_cold_reopen_keep_state_fees_work_and_local_revocation
+   5: core::ops::function::FnOnce::call_once
+note: Some details are omitted, run with `RUST_BACKTRACE=full` for a verbose backtrace.
+
+
+failures:
+    operator_pq_startup::tests::pq_continuous_real_bootstrap_receiver_and_cold_reopen_keep_state_fees_work_and_local_revocation
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 809 filtered out; finished in 0.20s
+
+error: test failed, to rerun pass `-p trnm-pon-node --lib`

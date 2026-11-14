@@ -1,0 +1,101 @@
+{
+  "scope": "raw logs preserved byte-for-byte inside gzip; original source logs remain in execution workspace",
+  "files": [
+    {
+      "archived": "pn1/baseline-cost-build.log.gz",
+      "original": "pn1/baseline-cost-build.log",
+      "raw_bytes": 630,
+      "raw_sha256": "8e1b5ada086b3ba132faeed99478525a77f8abca692729e80bab40fce9f92001"
+    },
+    {
+      "archived": "pn1/invalid-shared-target-cost-attempt/baseline-cost-build.log.gz",
+      "original": "pn1/invalid-shared-target-cost-attempt/baseline-cost-build.log",
+      "raw_bytes": 630,
+      "raw_sha256": "021cb442927ffe039ea0caa2d86c3ec95dcb4ac42c4997c0476948867e8329d9"
+    },
+    {
+      "archived": "pn1/invalid-shared-target-cost-attempt/patched-cost-build.log.gz",
+      "original": "pn1/invalid-shared-target-cost-attempt/patched-cost-build.log",
+      "raw_bytes": 226,
+      "raw_sha256": "2bcd2910c0b97b00bd69033ceb0f97534df02d554f0f297fe3a65519f8cc70de"
+    },
+    {
+      "archived": "pn1/locked-package-attempt.log.gz",
+      "original": "pn1/locked-package-attempt.log",
+      "raw_bytes": 567,
+      "raw_sha256": "19fae33325d7ce19c8c1a2df2356ac0f65c18a22ac6b42f91927f8e423113732"
+    },
+    {
+      "archived": "pn1/patched-cost-build.log.gz",
+      "original": "pn1/patched-cost-build.log",
+      "raw_bytes": 622,
+      "raw_sha256": "c42f03eeca7e17774e9b8e6852e521168c53577af1e82e5a88992a603965c25d"
+    },
+    {
+      "archived": "pn1/w1-harness-clippy.log.gz",
+      "original": "pn1/w1-harness-clippy.log",
+      "raw_bytes": 597,
+      "raw_sha256": "54424360764758492cda31521ccb9772a08a7cf465136e12aab16f30881f385a"
+    },
+    {
+      "archived": "pn1/w1-harness-test.log.gz",
+      "original": "pn1/w1-harness-test.log",
+      "raw_bytes": 11026,
+      "raw_sha256": "14ebb1d0b416adea695e5e9dcf00a8d5debdc323cdafac63f19be2c7a2013203"
+    },
+    {
+      "archived": "pn2/check-0.stderr.log.gz",
+      "original": "pn2/check-0.stderr.log",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archived": "pn2/check-0.stdout.log.gz",
+      "original": "pn2/check-0.stdout.log",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archived": "pn2/check-1.stderr.log.gz",
+      "original": "pn2/check-1.stderr.log",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archived": "pn2/check-1.stdout.log.gz",
+      "original": "pn2/check-1.stdout.log",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archived": "source-controls/ci-source-contract.log.gz",
+      "original": "source-controls/ci-source-contract.log",
+      "raw_bytes": 34950,
+      "raw_sha256": "07d7be11b1484d38c8f8b857ec170ab0895af8759e8f5188c6d7ada7cf55cd7d"
+    },
+    {
+      "archived": "source-controls/pq-source-negatives.log.gz",
+      "original": "source-controls/pq-source-negatives.log",
+      "raw_bytes": 5528,
+      "raw_sha256": "4caabe308afb7d8742e26c2d07daa7d0455b5e796ad35aed60416efb11c676af"
+    },
+    {
+      "archived": "source-controls/workspace-format.log.gz",
+      "original": "source-controls/workspace-format.log",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archived": "wan-reader/reader.stderr.log.gz",
+      "original": "wan-reader/reader.stderr.log",
+      "raw_bytes": 4515,
+      "raw_sha256": "0de73e6bfbbaf1427552aae9afa1bb7429498b8fc2fd235b9925535c43288cfd"
+    },
+    {
+      "archived": "wan-reader/reader.stdout.log.gz",
+      "original": "wan-reader/reader.stdout.log",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}

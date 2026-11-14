@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/home/qian-qi/work/chain-cell-four-gates-2bfb-final-index-v1.py", line 43, in <module>
+    rows=[r for r in cm['files'] if r['sha256']==digest];assert len(rows)==1,(kind,len(rows))
+                                                                ^^^^^^^^^^^^
+AssertionError: ('candidate', 2)

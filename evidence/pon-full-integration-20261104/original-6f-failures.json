@@ -1,0 +1,424 @@
+{
+  "artifacts": {
+    "campaign": {
+      "artifact_id": 13295139319,
+      "run_id": 41771598274,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41771598274/artifacts/13295139319",
+      "zip_bytes": 56882314,
+      "zip_sha256": "ac3f2a7bcbe21c6b9943e7c136959df4d09ed485f5ae9bb116294d0df99ac488"
+    },
+    "f0": {
+      "artifact_id": 13295252045,
+      "run_id": 41771598282,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41771598282/artifacts/13295252045",
+      "zip_bytes": 17423749,
+      "zip_sha256": "b0d584b01e51bda9d5481aeb8c2a430dcf785c7f5eb2357939642291a4dfceca"
+    }
+  },
+  "campaign": {
+    "failure": "ORIGINAL_THREE_RUN_CAMPAIGN_FAILED",
+    "observed_confirmed": 3,
+    "observed_unconfirmed": 9,
+    "original_outer_timeout_seconds": 600,
+    "phases": [
+      {
+        "mode": "baseline",
+        "rounds": [
+          {
+            "confirmed": true,
+            "elapsed_from_actual_start_ns": 27197345085,
+            "ended_ns": 28197720370,
+            "observed": true,
+            "round": 0,
+            "started_ns": 1000375285
+          },
+          {
+            "confirmed": false,
+            "elapsed_from_actual_start_ns": 1804292818,
+            "ended_ns": 30002065406,
+            "observed": true,
+            "round": 1,
+            "started_ns": 28197772588
+          },
+          {
+            "confirmed": false,
+            "elapsed_from_actual_start_ns": null,
+            "ended_ns": null,
+            "observed": false,
+            "round": 2,
+            "started_ns": null
+          }
+        ],
+        "run": 1,
+        "state_backend": "authenticated-v1",
+        "verifier_errors": []
+      },
+      {
+        "mode": "from-zero",
+        "rounds": [
+          {
+            "confirmed": false,
+            "elapsed_from_actual_start_ns": 29001254215,
+            "ended_ns": 30051305547,
+            "observed": true,
+            "round": 0,
+            "started_ns": 1050051332
+          },
+          {
+            "confirmed": false,
+            "elapsed_from_actual_start_ns": null,
+            "ended_ns": null,
+            "observed": false,
+            "round": 1,
+            "started_ns": null
+          },
+          {
+            "confirmed": false,
+            "elapsed_from_actual_start_ns": null,
+            "ended_ns": null,
+            "observed": false,
+            "round": 2,
+            "started_ns": null
+          }
+        ],
+        "run": 1,
+        "state_backend": "authenticated-v1",
+        "verifier_errors": [
+          "PUBLIC_REQUEST_DEADLINE"
+        ]
+      },
+      {
+        "mode": "late-product",
+        "rounds": [
+          {
+            "confirmed": false,
+            "elapsed_from_actual_start_ns": 29001259615,
+            "ended_ns": 30084097196,
+            "observed": true,
+            "round": 0,
+            "started_ns": 1082837581
+          },
+          {
+            "confirmed": false,
+            "elapsed_from_actual_start_ns": null,
+            "ended_ns": null,
+            "observed": false,
+            "round": 1,
+            "started_ns": null
+          },
+          {
+            "confirmed": false,
+            "elapsed_from_actual_start_ns": null,
+            "ended_ns": null,
+            "observed": false,
+            "round": 2,
+            "started_ns": null
+          }
+        ],
+        "run": 1,
+        "state_backend": "authenticated-v1",
+        "verifier_errors": [
+          "PUBLIC_REQUEST_DEADLINE"
+        ]
+      },
+      {
+        "mode": "baseline",
+        "rounds": [
+          {
+            "confirmed": true,
+            "elapsed_from_actual_start_ns": 27093166088,
+            "ended_ns": 28093259029,
+            "observed": true,
+            "round": 0,
+            "started_ns": 1000092941
+          },
+          {
+            "confirmed": false,
+            "elapsed_from_actual_start_ns": 1915489535,
+            "ended_ns": 30008797416,
+            "observed": true,
+            "round": 1,
+            "started_ns": 28093307881
+          },
+          {
+            "confirmed": false,
+            "elapsed_from_actual_start_ns": null,
+            "ended_ns": null,
+            "observed": false,
+            "round": 2,
+            "started_ns": null
+          }
+        ],
+        "run": 2,
+        "state_backend": "authenticated-v1",
+        "verifier_errors": []
+      },
+      {
+        "mode": "from-zero",
+        "rounds": [
+          {
+            "confirmed": false,
+            "elapsed_from_actual_start_ns": 28998210604,
+            "ended_ns": 30000260522,
+            "observed": true,
+            "round": 0,
+            "started_ns": 1002049918
+          },
+          {
+            "confirmed": false,
+            "elapsed_from_actual_start_ns": null,
+            "ended_ns": null,
+            "observed": false,
+            "round": 1,
+            "started_ns": null
+          },
+          {
+            "confirmed": false,
+            "elapsed_from_actual_start_ns": null,
+            "ended_ns": null,
+            "observed": false,
+            "round": 2,
+            "started_ns": null
+          }
+        ],
+        "run": 2,
+        "state_backend": "authenticated-v1",
+        "verifier_errors": []
+      },
+      {
+        "mode": "late-product",
+        "rounds": [
+          {
+            "confirmed": false,
+            "elapsed_from_actual_start_ns": 29002552986,
+            "ended_ns": 30083054904,
+            "observed": true,
+            "round": 0,
+            "started_ns": 1080501918
+          },
+          {
+            "confirmed": false,
+            "elapsed_from_actual_start_ns": null,
+            "ended_ns": null,
+            "observed": false,
+            "round": 1,
+            "started_ns": null
+          },
+          {
+            "confirmed": false,
+            "elapsed_from_actual_start_ns": null,
+            "ended_ns": null,
+            "observed": false,
+            "round": 2,
+            "started_ns": null
+          }
+        ],
+        "run": 2,
+        "state_backend": "authenticated-v1",
+        "verifier_errors": [
+          "PUBLIC_REQUEST_DEADLINE"
+        ]
+      },
+      {
+        "mode": "baseline",
+        "rounds": [
+          {
+            "confirmed": true,
+            "elapsed_from_actual_start_ns": 27499755612,
+            "ended_ns": 28500100569,
+            "observed": true,
+            "round": 0,
+            "started_ns": 1000344957
+          },
+          {
+            "confirmed": false,
+            "elapsed_from_actual_start_ns": 1500256853,
+            "ended_ns": 30000410932,
+            "observed": true,
+            "round": 1,
+            "started_ns": 28500154079
+          },
+          {
+            "confirmed": false,
+            "elapsed_from_actual_start_ns": null,
+            "ended_ns": null,
+            "observed": false,
+            "round": 2,
+            "started_ns": null
+          }
+        ],
+        "run": 3,
+        "state_backend": "authenticated-v1",
+        "verifier_errors": []
+      },
+      {
+        "mode": "from-zero",
+        "rounds": [
+          {
+            "confirmed": false,
+            "elapsed_from_actual_start_ns": 29069392707,
+            "ended_ns": 30070739573,
+            "observed": true,
+            "round": 0,
+            "started_ns": 1001346866
+          },
+          {
+            "confirmed": false,
+            "elapsed_from_actual_start_ns": null,
+            "ended_ns": null,
+            "observed": false,
+            "round": 1,
+            "started_ns": null
+          },
+          {
+            "confirmed": false,
+            "elapsed_from_actual_start_ns": null,
+            "ended_ns": null,
+            "observed": false,
+            "round": 2,
+            "started_ns": null
+          }
+        ],
+        "run": 3,
+        "state_backend": "authenticated-v1",
+        "verifier_errors": [
+          "PUBLIC_REQUEST_DEADLINE"
+        ]
+      },
+      {
+        "mode": "late-product",
+        "rounds": [
+          {
+            "confirmed": false,
+            "elapsed_from_actual_start_ns": 29001802545,
+            "ended_ns": 30052297146,
+            "observed": true,
+            "round": 0,
+            "started_ns": 1050494601
+          },
+          {
+            "confirmed": false,
+            "elapsed_from_actual_start_ns": null,
+            "ended_ns": null,
+            "observed": false,
+            "round": 1,
+            "started_ns": null
+          },
+          {
+            "confirmed": false,
+            "elapsed_from_actual_start_ns": null,
+            "ended_ns": null,
+            "observed": false,
+            "round": 2,
+            "started_ns": null
+          }
+        ],
+        "run": 3,
+        "state_backend": "authenticated-v1",
+        "verifier_errors": [
+          "PUBLIC_REQUEST_DEADLINE"
+        ]
+      }
+    ],
+    "planned_complete_runs": 3,
+    "planned_confirmations": 27,
+    "unobserved": 15
+  },
+  "f0": {
+    "all_services_known_empty": true,
+    "controller_resources_complete": true,
+    "failure": "NATIVE_F0_FAILED",
+    "four_second_slo_successes": 0,
+    "planned_confirmations": 6,
+    "rounds": [
+      {
+        "actual_ended_ns": 20795611488,
+        "actual_started_ns": 1000259297,
+        "confirmed_inside_original_window": true,
+        "elapsed_from_scheduled_ns": 19795611488,
+        "end_lateness_from_four_second_deadline_ns": 15795611488,
+        "four_second_slo_met": false,
+        "observed_exactly_once": true,
+        "old_root_code_already_enforced_four_second_slo": false,
+        "phase": "baseline",
+        "round": 0,
+        "scheduled_offset_ns": 1000000000,
+        "start_lateness_from_schedule_ns": 259297
+      },
+      {
+        "actual_ended_ns": 30000154692,
+        "actual_started_ns": 20795624798,
+        "confirmed_inside_original_window": false,
+        "elapsed_from_scheduled_ns": 25000154692,
+        "end_lateness_from_four_second_deadline_ns": 21000154692,
+        "four_second_slo_met": false,
+        "observed_exactly_once": true,
+        "old_root_code_already_enforced_four_second_slo": false,
+        "phase": "baseline",
+        "round": 1,
+        "scheduled_offset_ns": 5000000000,
+        "start_lateness_from_schedule_ns": 15795624798
+      },
+      {
+        "actual_ended_ns": null,
+        "actual_started_ns": null,
+        "confirmed_inside_original_window": false,
+        "elapsed_from_scheduled_ns": null,
+        "end_lateness_from_four_second_deadline_ns": null,
+        "four_second_slo_met": false,
+        "observed_exactly_once": false,
+        "old_root_code_already_enforced_four_second_slo": false,
+        "phase": "baseline",
+        "round": 2,
+        "scheduled_offset_ns": 9000000000,
+        "start_lateness_from_schedule_ns": null
+      },
+      {
+        "actual_ended_ns": 30072043798,
+        "actual_started_ns": 1000561009,
+        "confirmed_inside_original_window": false,
+        "elapsed_from_scheduled_ns": 29072043798,
+        "end_lateness_from_four_second_deadline_ns": 25072043798,
+        "four_second_slo_met": false,
+        "observed_exactly_once": true,
+        "old_root_code_already_enforced_four_second_slo": false,
+        "phase": "valid-work-root",
+        "round": 0,
+        "scheduled_offset_ns": 1000000000,
+        "start_lateness_from_schedule_ns": 561009
+      },
+      {
+        "actual_ended_ns": null,
+        "actual_started_ns": null,
+        "confirmed_inside_original_window": false,
+        "elapsed_from_scheduled_ns": null,
+        "end_lateness_from_four_second_deadline_ns": null,
+        "four_second_slo_met": false,
+        "observed_exactly_once": false,
+        "old_root_code_already_enforced_four_second_slo": false,
+        "phase": "valid-work-root",
+        "round": 1,
+        "scheduled_offset_ns": 5000000000,
+        "start_lateness_from_schedule_ns": null
+      },
+      {
+        "actual_ended_ns": null,
+        "actual_started_ns": null,
+        "confirmed_inside_original_window": false,
+        "elapsed_from_scheduled_ns": null,
+        "end_lateness_from_four_second_deadline_ns": null,
+        "four_second_slo_met": false,
+        "observed_exactly_once": false,
+        "old_root_code_already_enforced_four_second_slo": false,
+        "phase": "valid-work-root",
+        "round": 2,
+        "scheduled_offset_ns": 9000000000,
+        "start_lateness_from_schedule_ns": null
+      }
+    ]
+  },
+  "head": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+  "qualification_changed": false,
+  "schema": "trnm-original-6f-failure-projection-v1",
+  "tree": "76d3b416eccc6a810634062e036f646f22bffc76"
+}

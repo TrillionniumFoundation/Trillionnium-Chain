@@ -1,0 +1,66 @@
+[
+  {
+    "commit": "c2297ad53fef1d9b552e657cfd205d583c91980d",
+    "repository_path": "evidence/pon-joint-resource-contract-20261109/README.md",
+    "git_blob": "9a3489ff2d243ef342c174bf09845e6db90b2802",
+    "bytes": 17927,
+    "sha256": "71a87a96edec717bce34f9dcb4ac83abdd4596e45bdec2dd0fbecf564a028fef",
+    "local_path": "/workspace/scratch/23345083847a/pon-legal-cost-evidence/native-v4-historical-replay/published-originals/README.md"
+  },
+  {
+    "commit": "c2297ad53fef1d9b552e657cfd205d583c91980d",
+    "repository_path": "evidence/pon-joint-resource-contract-20261109/cost-native-summary.json",
+    "git_blob": "8c8ccf70d3389c76b8485f18968187def078687a",
+    "bytes": 2748,
+    "sha256": "805db20414980cb1e02145790e5f7bd2780ad368f1e56fe20ba41b36ae5dabfb",
+    "local_path": "/workspace/scratch/23345083847a/pon-legal-cost-evidence/native-v4-historical-replay/published-originals/cost-native-summary.json"
+  },
+  {
+    "commit": "c2297ad53fef1d9b552e657cfd205d583c91980d",
+    "repository_path": "evidence/pon-joint-resource-contract-20261109/v4-semantic-preservation.json",
+    "git_blob": "41170828b5644d0e97c7446910e849e8ec9425b2",
+    "bytes": 793,
+    "sha256": "fb73ba4162d5adf254b5a32d27eb37549df58aceb69171985850bb85a12979bc",
+    "local_path": "/workspace/scratch/23345083847a/pon-legal-cost-evidence/native-v4-historical-replay/published-originals/v4-semantic-preservation.json"
+  },
+  {
+    "commit": "c2297ad53fef1d9b552e657cfd205d583c91980d",
+    "repository_path": "evidence/pon-joint-resource-contract-20261109/inventories/117-local-validation-archive.json",
+    "git_blob": "4c13337cc3947c50eb174be9b48ffbe486315e12",
+    "bytes": 198,
+    "sha256": "bb28a3a1f3c5cb5e252d52d40d3f990bb6de6685409c08397aaccc72d73b2b7f",
+    "local_path": "/workspace/scratch/23345083847a/pon-legal-cost-evidence/native-v4-historical-replay/published-originals/inventories/117-local-validation-archive.json"
+  },
+  {
+    "commit": "c2297ad53fef1d9b552e657cfd205d583c91980d",
+    "repository_path": "evidence/pon-joint-resource-contract-20261109/inventories/117-local-validation-files.json",
+    "git_blob": "998cfc79cd9e94e25b308e6a8cd1af46d8ed66b3",
+    "bytes": 18499,
+    "sha256": "9afb019fb9f901a3e3952ef135d026aac627b0e6d8efbec69e5edaa14c5b0cba",
+    "local_path": "/workspace/scratch/23345083847a/pon-legal-cost-evidence/native-v4-historical-replay/published-originals/inventories/117-local-validation-files.json"
+  },
+  {
+    "commit": "c2297ad53fef1d9b552e657cfd205d583c91980d",
+    "repository_path": "evidence/pon-joint-resource-contract-20261109/integrity/117-local-validation-observed-files.json",
+    "git_blob": "0aaff63f14e7d828c407746d906c9008ff71c598",
+    "bytes": 18477,
+    "sha256": "f76c41290df8b08c3ca20a5d57f353c7394196eb0403e6dd6f68855620c7a274",
+    "local_path": "/workspace/scratch/23345083847a/pon-legal-cost-evidence/native-v4-historical-replay/published-originals/integrity/117-local-validation-observed-files.json"
+  },
+  {
+    "commit": "c2297ad53fef1d9b552e657cfd205d583c91980d",
+    "repository_path": "evidence/pon-joint-resource-contract-20261109/artifacts.json",
+    "git_blob": "01aefde2827dff053e4bc0a267ece2312b159253",
+    "bytes": 7803,
+    "sha256": "1fa1303c8392358a12d381e4c5c5ef6205fdafc1a8654bfb43fae79ac99411c5",
+    "local_path": "/workspace/scratch/23345083847a/pon-legal-cost-evidence/native-v4-historical-replay/published-originals/artifacts.json"
+  },
+  {
+    "commit": "c2297ad53fef1d9b552e657cfd205d583c91980d",
+    "repository_path": "evidence/pon-joint-resource-contract-20261109/SHA256SUMS",
+    "git_blob": "088cd3c4f54d43fb0b5ad98c89565bd27606a980",
+    "bytes": 8041,
+    "sha256": "880d0c123f67fde4f6c370b659b89bf02e07fdb211f590724b2a87ca89765baa",
+    "local_path": "/workspace/scratch/23345083847a/pon-legal-cost-evidence/native-v4-historical-replay/published-originals/SHA256SUMS"
+  }
+]

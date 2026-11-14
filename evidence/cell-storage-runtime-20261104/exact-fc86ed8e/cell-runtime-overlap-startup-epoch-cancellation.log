@@ -1,0 +1,8 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.11s
+     Running unittests src/lib.rs (/workspace/scratch/0c2d131ac5a9/target/debug/deps/trnm_pon_node-2aaee31106a4dfcc)
+
+running 1 test
+test ingress::public_v3::intake_domain_tests::public_epoch_start_keeps_original_deadline_and_stop_while_owner_is_busy ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1074 filtered out; finished in 0.03s
+

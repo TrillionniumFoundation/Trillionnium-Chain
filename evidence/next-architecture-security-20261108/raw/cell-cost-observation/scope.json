@@ -1,0 +1,21 @@
+{
+  "failed_run_resource_usage": "observed counters retained, but CPU/RSS completeness is false for every unsuccessful or invalid observation; a killed timeout supervisor may not reap the example",
+  "not_measured": [
+    "model loading",
+    "WAN",
+    "DHT",
+    "GPU",
+    "independent custody",
+    "rewards",
+    "cost-benefit"
+  ],
+  "performance_or_economics_qualified": false,
+  "phase_scope": "example-reported monotonic wall nanoseconds only; no phase CPU or RSS attribution",
+  "production_qualified": false,
+  "qualification": "HOLD_NO_GO",
+  "raw_output_retention": "only bytes already emitted are retained; examples print after their loops, so unprinted intermediate Rust rows cannot be recovered after panic/kill/timeout",
+  "repeat_policy": "one invocation per example; three internal repeats; no automatic retry",
+  "statistics": "min/median/max of three complete repeat totals; no p95/p99",
+  "whole_run_scope": "example plus timeout/optional GNU time overhead; includes generation, file IO, cache open/write/read, validation and cleanup",
+  "workload": "deterministic synthetic bytes, not models or tensors"
+}

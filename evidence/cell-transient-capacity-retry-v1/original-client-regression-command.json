@@ -1,0 +1,21 @@
+{
+  "argv": [
+    "/workspace/scratch/56818e4fba76/toolchains/rust-1.95.0/bin/cargo",
+    "test",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "--offline",
+    "-p",
+    "trnm-data-availability",
+    "--lib",
+    "transient_",
+    "--",
+    "--test-threads=1"
+  ],
+  "returncode": 101,
+  "expected_returncode": 101,
+  "elapsed_seconds": 0.1461908039991613,
+  "native_source_commit": "4b6b8a91b6dfe41fbd7f40f40b359d535c2c4251",
+  "test_source_sha256": "08da732e120d662e56f11a359a80fcdc710a0aebef1df649d486dda493d03504"
+}

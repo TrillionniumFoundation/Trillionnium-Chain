@@ -1,0 +1,37 @@
+{
+  "schema": "model-owner-reproducible-local-material-cleanup-v1",
+  "reason": "Shared filesystem exhausted during evidence preparation; hosted pilot downloads the same pinned public materials. Only this task's local weight copy and incomplete download files removed.",
+  "removed": [
+    {
+      "path": "/workspace/scratch/f4976366a32a/smollm2-pinned-materials/model.safetensors",
+      "bytes": 269060552,
+      "sha256": "5af571cbf074e6d21a03528d2330792e532ca608f24ac70a143f6b369968ab8c"
+    },
+    {
+      "path": "/workspace/scratch/f4976366a32a/smollm2-pinned-materials/.model.safetensors.part.TAo4VS",
+      "bytes": 66322432,
+      "sha256": "4e29749f6e2fc5f3c01a14accae8bcbceeb07c7376cfc53b42edefe5d2102e3a"
+    },
+    {
+      "path": "/workspace/scratch/f4976366a32a/smollm2-pinned-materials/.model.safetensors.part.TAo4VS.qJ7bNS",
+      "bytes": 33816576,
+      "sha256": "d511bdc0bc264c90f073957fee1be86eb50244d398701faddafbecdb99a73faf"
+    },
+    {
+      "path": "/workspace/scratch/f4976366a32a/smollm2-pinned-materials/.model.safetensors.pdKTJE.u81Vdg",
+      "bytes": 27787264,
+      "sha256": "aed53ce221145487a2d9d8e7d8ac1fa1d7e9c833895528541992b23d19ed0bab"
+    },
+    {
+      "path": "/workspace/scratch/f4976366a32a/smollm2-pinned-materials/.model.safetensors.pdKTJE",
+      "bytes": 94633984,
+      "sha256": "9214001819a37610b442323291ba0fa6c9dad3f6cbbf274e2b3f140455028e8d"
+    }
+  ],
+  "before_physical_free": 16830464,
+  "after_physical_free": 508440576,
+  "manifest_preserved": "/workspace/scratch/f4976366a32a/smollm2-pinned-materials/material-manifest.json",
+  "original_authority_preserved": "/workspace/scratch/f4976366a32a/hosted-original-authority/pilot.sqlite3",
+  "model_trial_started": false,
+  "intent_published": false
+}

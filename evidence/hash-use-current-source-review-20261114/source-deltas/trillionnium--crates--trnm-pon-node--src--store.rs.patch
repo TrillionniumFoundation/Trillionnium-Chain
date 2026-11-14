@@ -1,0 +1,223 @@
+diff --git a/6ef5f01142a33eace66256dd6ecc81d34681d194 b/d596dc6bab16698cd18bcc15bcbbe1fafedf603e
+index 6ef5f0114..d596dc6ba 100644
+--- a/6ef5f01142a33eace66256dd6ecc81d34681d194
++++ b/d596dc6bab16698cd18bcc15bcbbe1fafedf603e
+@@ -11,6 +11,8 @@ pub(crate) mod authenticated_state;
+ #[cfg(test)]
+ mod canonical_row_reuse_tests;
+ pub mod capacity_observation;
++#[cfg(test)]
++mod confirmation_chainwork_tests;
+ pub mod demand_evidence;
+ pub mod evaluation_observation;
+ pub mod evaluation_round_observation;
+@@ -1844,6 +1846,13 @@ impl Node {
+                 ),
+             "PQ_EXISTING_OWNER_BACKEND",
+         )?;
++        if let Some(policy) = owners.pq_network.as_deref() {
++            ensure(
++                !crate::ingress::pq_network::policy_record_requires_endpoint_witness(policy)?
++                    || (state_backend == StateBackend::PqWitnessV4 && owners.pq_witness.is_some()),
++                "PQ_TLS_ENDPOINT_WITNESS_REQUIRED",
++            )?;
++        }
+         ensure(
+             !authenticated_migration_pending(path)?,
+             "NATIVE_STATE_MIGRATION_PENDING",
+@@ -2389,27 +2398,18 @@ impl Node {
+         }
+         progress(NativeAccountProofProgress::BeforeRead)?;
+         self.namespace()?;
+-        let tx = self.db.unchecked_transaction()?;
+-        let read_changes = tx.total_changes();
+-        self.storage_context()?;
+-        let (checkpoint, _) = self.checked_account_query_checkpoint(&tx, block, progress)?;
+-        let (proof, observation) =
+-            multiproof::from_native_database(&tx, &checkpoint, owners, &|point| {
+-                progress(NativeAccountProofProgress::Proof(point))
+-                    .map_err(NativeAccountProofFailure::Control)
+-            })
+-            .map_err(NativeAccountProofFailure::into_error)?;
+-        progress(NativeAccountProofProgress::BeforeOutput)?;
+-        // A completed read has no write authority. Count same-connection row
+-        // writes, including a write that a callback subsequently restores.
+-        // This is a local ownership fence, not an external-writer attestation.
+-        if tx.total_changes() != read_changes {
+-            self.invalidate_commitment();
+-            return Err(Error::from("NATIVE_ACCOUNT_PROOF_WRITE").local_integrity());
+-        }
+-        // Never commit a query transaction (including uncounted schema changes).
+-        tx.rollback()?;
+-        Ok((checkpoint, proof, observation))
++        self.with_account_query_snapshot(|db| {
++            self.storage_context()?;
++            let (checkpoint, _) = self.checked_account_query_checkpoint(db, block, progress)?;
++            let (proof, observation) =
++                multiproof::from_native_database(db, &checkpoint, owners, &|point| {
++                    progress(NativeAccountProofProgress::Proof(point))
++                        .map_err(NativeAccountProofFailure::Control)
++                })
++                .map_err(NativeAccountProofFailure::into_error)?;
++            progress(NativeAccountProofProgress::BeforeOutput)?;
++            Ok((checkpoint, proof, observation))
++        })
+     }
+     fn decode_replay_row(row: ReplayRow) -> Result<PeerReplayStateV0> {
+         let chain = IoDigest32V0::new(bytes32(row.0)?)
+@@ -3994,7 +3994,7 @@ impl Node {
+         if tip == self.active()?.0 {
+             return Ok(self.read_active_with_readback(progress, readback)?.2);
+         }
+-        let mut path = reverse_path::ReversePath::new(tempfile::tempfile()?);
++        let mut path = reverse_path::ReversePath::new_lazy();
+         let mut count = 0u64;
+         let mut prefer_replay_prefix = false;
+         let mut cur = tip;
+@@ -4049,13 +4049,12 @@ impl Node {
+                 }
+                 break (state, commitment);
+             }
+-            path.push(cur)?;
++            path.push_with(cur, tempfile::tempfile)?;
+             count = count.checked_add(1).ok_or("ANCESTRY_LIMIT")?;
+             cur = self.parent(cur)?;
+         };
+         for replay_index in 0..count {
+-            progress()?;
+-            let id = path.pop()?.ok_or("ANCESTRY_LIMIT")?;
++            let id = path.pop_with_progress(progress)?.ok_or("ANCESTRY_LIMIT")?;
+             for (index, (key, before, after)) in self
+                 .delta_rows_with_progress(id, progress)?
+                 .into_iter()
+@@ -5461,6 +5460,45 @@ impl Node {
+     pub fn parent_height(&self, parent: Hash) -> Result<u64> {
+         Ok(self.record(parent)?.height)
+     }
++    /// Active-branch read-only Q4 forecast. Unlike the generic time-only
++    /// advisor this reads and checks the ACTUAL current parent, authenticated
++    /// lifecycle/source statement and its verified state root first.
++    /// There is no signing, dispatch, slot reservation, inclusion guarantee,
++    /// permission to retry Unknown effects, or mining-mode substitution.
++    /// Reorganization or a changed local generation invalidates the advice.
++    pub fn forecast_q4_renewal_from_active(
++        &self,
++        task: Hash,
++        proposed_lease: &trnm_protocol::qualified_work_task::lifecycle_v2::DemandLeaseV2,
++        assumed_queue_lag_blocks: u64,
++        assumed_safety_margin_blocks: u64,
++    ) -> Result<(Hash, u64, crate::Q4RenewalForecast)> {
++        ensure(
++            matches!(
++                self.settings.task_profile(),
++                OVERLAP_TASK_PROFILE | CONTINUITY_TASK_PROFILE
++            ),
++            "Q4_FORECAST_PROFILE",
++        )?;
++        let (tip, generation, state) = self.read_active()?;
++        let next_height = self.record(tip)?.height.checked_add(1).ok_or("HEIGHT")?;
++        let actual_lease =
++            qualified_task_lifecycle::eligible_task(&state, task, next_height, &self.settings.app)?;
++        let forecast = crate::forecast_q4_renewal_window(
++            actual_lease.lease(),
++            proposed_lease,
++            next_height,
++            assumed_queue_lag_blocks,
++            assumed_safety_margin_blocks,
++        )
++        .map_err(|_| Error::from("Q4_FORECAST_REFUSED"))?;
++        ensure(
++            self.active()? == (tip, generation),
++            "ACTIVE_GENERATION_CONFLICT",
++        )?;
++        Ok((tip, generation, forecast))
++    }
++
+     pub fn lifecycle_task_lease(
+         &self,
+         parent: Hash,
+@@ -6821,6 +6859,11 @@ impl Node {
+             self.state_backend != StateBackend::PermanentAccountGrowthV2,
+             "GROWTH_USE_CONFIRMATION_PROGRESS",
+         )?;
++        // A successful observation must use one unchanged local storage epoch.
++        // The owner excludes cooperating writers; these counters additionally
++        // detect callback writes and commits by independent SQLite connections.
++        // They do not authenticate arbitrary out-of-band filesystem mutation.
++        let epoch = self.admission_state_epoch()?;
+         self.ready()?;
+         let (tip, generation, _) = self.read_active_with_progress(&mut || progress(0))?;
+         let mut included = BTreeMap::new();
+@@ -6844,6 +6887,8 @@ impl Node {
+         }
+         let observed = self.record(tip)?;
+         let mut current = tip;
++        let mut expected_height = observed.height;
++        let mut expected_work = observed.work;
+         let mut found = BTreeSet::new();
+         let mut checked = 0u64;
+         let bound = observed_now as u128 + self.settings.limit("future_skew_seconds")? as u128;
+@@ -6851,14 +6896,49 @@ impl Node {
+             // The prior query has ended before cancellation or caller code runs.
+             progress(checked)?;
+             let (parent, count) = self.visit_header_batch(current, &mut |id, link| {
+-                if included.contains_key(&id) {
++                let required =
++                    consensus::required_work(link.header.target).map_err(Error::local_integrity)?;
++                let cumulative = link
++                    .parent_work
++                    .checked_add(required)
++                    .map_err(Error::local_integrity)?;
++                ensure(
++                    link.record.height == expected_height
++                        && link.record.work == expected_work
++                        && link.record.work == cumulative,
++                    "STORAGE_PACKET",
++                )
++                .map_err(Error::local_integrity)?;
++                if let Some((row, _, _)) = included.get(&id) {
++                    ensure(
++                        row.height == link.record.height && row.work == link.record.work,
++                        "STORAGE_PACKET",
++                    )
++                    .map_err(Error::local_integrity)?;
+                     found.insert(id);
+                 }
+-                ensure(link.header.timestamp as u128 <= bound, "TIME_DEFERRED")
++                ensure(link.header.timestamp as u128 <= bound, "TIME_DEFERRED")?;
++                expected_height = link
++                    .record
++                    .height
++                    .checked_sub(1)
++                    .ok_or_else(|| Error::from("ANCESTRY_HEIGHT").local_integrity())?;
++                expected_work = link.parent_work;
++                Ok(())
+             })?;
+             current = parent;
+             checked = checked.checked_add(count).ok_or("ANCESTRY_LIMIT")?;
+         }
++        let genesis = self.record(current).map_err(Error::local_integrity)?;
++        ensure(
++            genesis.parent.is_none()
++                && genesis.height == 0
++                && genesis.work == Work::default()
++                && expected_height == 0
++                && expected_work == genesis.work,
++            "STORAGE_PACKET",
++        )
++        .map_err(Error::local_integrity)?;
+         let depth_required = self.settings.limit("confirmation_depth")?;
+         let multiplier = self.settings.limit("confirmation_work_multiplier")?;
+         let mut observations = Vec::with_capacity(queries.len());
+@@ -6895,7 +6975,10 @@ impl Node {
+             });
+         }
+         progress(checked)?;
+-        ensure(self.active()? == (tip, generation), "STALE_VIEW")?;
++        ensure(
++            self.active()? == (tip, generation) && self.admission_state_epoch()? == epoch,
++            "STALE_VIEW",
++        )?;
+         Ok(ConfirmationBatch {
+             observations,
+             ancestry_checked: checked,

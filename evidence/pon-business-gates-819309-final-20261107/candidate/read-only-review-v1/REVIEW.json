@@ -1,0 +1,529 @@
+{
+  "abba_compatibility": {
+    "binding": "fixed e70 baseline and candidate exact-commit observer/store whole-file SHA and compiled binary receipts; helper rename changes candidate store SHA naturally",
+    "driver_has_helper_name_or_oracle_source_rewrite": false,
+    "entire_current_source_exact_name_matches_excluding_evidence": 13,
+    "python_suite_change_required_for_rename": false,
+    "roster_must_be_rechecked_on_future_exact_source": true,
+    "runner": {
+      "path": "scripts/ci/run_legacy_reorg_root_abba.py",
+      "sha256": "a613e8537e9c65c32f0fdd4a6954ff55f1f9692921c30988a820dfcee959e01c"
+    },
+    "source_control_expected_roster": 666,
+    "tests": {
+      "path": "scripts/ci/test_run_legacy_reorg_root_abba.py",
+      "sha256": "5ce3686cbf1906ba36f403d5ef7397d5fdc1c23904f90da54d338a4397c65733",
+      "static_test_count": 3
+    }
+  },
+  "candidate": {
+    "arithmetic_boundary": "one bounded 2 MiB input-material entry; complete key/value observation, exact eligible String/key comparisons and exact partition leaf inputs; try_lock failure or arithmetic refusal uses original full root; no cached State/authority/Host verdict",
+    "ordinary_admission_call": "store.rs:5156; check_active_before_commit_with_readback at2894 remains unchanged; candidate selects existing FullRootArithmetic only at this ordinary persistence fence",
+    "performance_unknowns": [
+      "Legacy authenticated_arithmetic telemetry does not observe commitment_root_arithmetic",
+      "old failed dispatch does not identify the checkpoint at which CPU refusal occurred",
+      "single-entry parent/child/active churn may reduce reuse",
+      "no measured isolated final-fence CPU saving",
+      "the final Work-deadline packet never enters admission/final root"
+    ],
+    "preserved": [
+      "complete actual SQL State row scan",
+      "canonical grammar then count then per-row bounds",
+      "fresh stored block/continuity/root-claim comparison",
+      "active/slot/ancestry and original callback order",
+      "postwrite schema/no-write/transaction-identity fences",
+      "original atomic COMMIT and rollback",
+      "every original Host checkpoint and live-file/identity check",
+      "original failure and cancellation precedence"
+    ],
+    "production_patch": {
+      "bytes": 8181,
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/proposal/production-v1.patch",
+      "sha256": "8e93c923fd0379e37cd79fe430fb2e686cafcf9fc6d461697e211cc165ecb9a8"
+    },
+    "regression_patch": {
+      "bytes": 11057,
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/proposal/regression-v1.patch",
+      "sha256": "416a86230434742de34406220342a2eb56efbe9160262d39c5e9c02abc290a32"
+    },
+    "renamed_helper": {
+      "new": "legacy_persisted_root_arithmetic",
+      "old": "legacy_reorg_root_arithmetic",
+      "old_occurrences": 13,
+      "old_test_helper_calls": 7,
+      "production_file_occurrences_including_definition": 6
+    },
+    "selector": "Legacy && !pq_accounts_v2.enabled && !growth_profile_v2.enabled; Authenticated/PQ/Growth retain original validation"
+  },
+  "external_integration_review": {
+    "corpus_static_check": {
+      "new_test_absent": true,
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "pinned_blobs_sorted": true,
+      "pinned_count": 575,
+      "required_paths_count": 483,
+      "required_paths_sorted": true,
+      "required_paths_unique": true,
+      "roundtrip_indent2_default_ascii": true,
+      "sha256": "11979739c90bb3d2bea3ffeb3102b6db6cd70414c968d8ad48689b041dd89eb5"
+    },
+    "minimal_bindings": "refresh actual scripts/refresh_distributed_source_inventory.py; update four exact source Git blobs in corpus,add only new test required_path,and replace one existing store blob literal in pon-recent-batch-acceptance.yml",
+    "v1": {
+      "bytes": 7117,
+      "executed": false,
+      "finding": "subprocess exceptions before normal return omitted attempted command record and partial stdout/stderr",
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/integration/run-reviewed-source-v1.py",
+      "sha256": "f3e428c5e518da9286057013f1b20fe9a3351c265f27bbe4f456eef32e57c960"
+    },
+    "v2": {
+      "bytes": 7979,
+      "executed": false,
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/integration/run-reviewed-source-v2.py",
+      "review": "attempt saved before launch; exclusive raw stdout/stderr retained on failure; timeout/launch/interrupted unknown has null exit; rethrow retained; configuration prefix and full operation tail byte-identical to v1",
+      "sha256": "414df1fd34bd9e4dd9d0bfb73d05cc860ba426dc42ba35525fb17a8444435304"
+    }
+  },
+  "host_and_scheduling": {
+    "accounting": "start reservation is principal,not a second CPU debit; settlement charges outer owner plus scoped workers less already-live CPU once. Queue/grant wall sums overlap and are not CPU.",
+    "completion_priority": "only an actually completed unique W1 promotes its current paid operation;4096-entry monotone exact identity table avoids repeated promotion; no future-page,caller,other-Node or general distinct-valid-work entitlement",
+    "cpu_max": "25000 100000",
+    "existing_duplicate_removal": "history_import.rs:264-271 and303-307 already removed adjacent duplicate Host reads while retaining each original native boundary; refill waits preserve fresh resource checks",
+    "fifo": "proof/read queues 2 each;2 mutation/1 read workers. Proof dequeue lock preserves order during CPU start acquisition and is released before native dispatch; separate read queue remains independent.",
+    "fixed_kernel_parent": "/sys/fs/cgroup/trnmponpublic.slice",
+    "host_fd_change": "REJECTED; retained directory fd changes original absolute-path semantics for rename/replacement,ancestor search permissions and mount view; safe API availability does not establish interchangeability",
+    "independent_verifier_account": "separate Node; first remote import binds cold zero-credit epoch;100 ms start reserve/250 ms CPU per second refill; same Node reuses it across pages",
+    "membership_interpretation": "executed harness source places receiver,16 attacker client threads,Head reader and independent ledger verifier in one native process under the fixed systemd parent; independent refers to ledger validation, not separate Host. This is source/launch ownership, not a per-actor kernel scheduling profile.",
+    "memory_max_bytes": 2147483648,
+    "memory_swap_max": 0,
+    "new_transparent_large_optimization_identified": false,
+    "receiver_account": "PublicServer::new uses original 2 s initial scalar credit; binds receiver Node once",
+    "source_locations": [
+      "scripts/ci/run_from_zero_host.py:95-106",
+      "scripts/ci/public_host_ci_observation.py:14-21",
+      "config/systemd/trnmponpublic.slice",
+      "tests/public_v3_from_zero.rs:1285-1379",
+      "src/store/operator_continuous_owner.rs:532-563",
+      "src/ingress/public_v3.rs:2222-2320",
+      "src/ingress/public_v3/scalar_cpu.rs:294-315,549-640,685-810,964-978"
+    ],
+    "tasks_max": 256
+  },
+  "observed_service_costs": {
+    "fresh_construction": {
+      "constructed": 214,
+      "contract_requires_no_exact_negative_cache_hit": true,
+      "joined_attacker_cpu_ns": 342947460,
+      "nested_construction_cpu_ns": 102849120,
+      "separate_shared_setup_cpu_ns": 49492,
+      "submitted": 214,
+      "unique_challenges": 214
+    },
+    "key_observation": "receiver scalar refusals0 in both observed pressure phases; independent replay Host CPU dominates its own calling-thread CPU; last service packet fails during Work before admission",
+    "native_import_aggregates": [
+      {
+        "accepted": 7,
+        "admission_cpu_ns": 57194996,
+        "caller_cpu_ns": 534997037,
+        "checkpoint_host_cpu_ns": 474142861,
+        "commit_nested_cpu_ns": 36736624,
+        "m06_root_nested_cpu_ns": 1203437,
+        "mode": "baseline",
+        "packet_work_cpu_ns": 432661929,
+        "replays": 7,
+        "report": "fresh-H-fresh"
+      },
+      {
+        "accepted": 1,
+        "admission_cpu_ns": 6023900,
+        "caller_cpu_ns": 85559084,
+        "checkpoint_host_cpu_ns": 78222604,
+        "commit_nested_cpu_ns": 3811870,
+        "m06_root_nested_cpu_ns": 277990,
+        "mode": "pressure",
+        "packet_work_cpu_ns": 75300652,
+        "replays": 1,
+        "report": "fresh-H-fresh"
+      },
+      {
+        "accepted": 7,
+        "admission_cpu_ns": 45077209,
+        "caller_cpu_ns": 413636870,
+        "checkpoint_host_cpu_ns": 368123867,
+        "commit_nested_cpu_ns": 29926809,
+        "m06_root_nested_cpu_ns": 856879,
+        "mode": "baseline",
+        "packet_work_cpu_ns": 333344715,
+        "replays": 7,
+        "report": "service-x64-M"
+      },
+      {
+        "accepted": 5,
+        "admission_cpu_ns": 27153673,
+        "caller_cpu_ns": 326423472,
+        "checkpoint_host_cpu_ns": 297271034,
+        "commit_nested_cpu_ns": 17733225,
+        "deadline": 1,
+        "m06_root_nested_cpu_ns": 596781,
+        "mode": "pressure",
+        "packet_work_cpu_ns": 279826748,
+        "replays": 6,
+        "report": "service-x64-M"
+      }
+    ],
+    "native_import_scopes": "Host is nested across W1/admission/CPU waits; commit and M06 root stages are also nested. caller CPU excludes any scoped workers; M06 root telemetry is not all persisted/historical root work.",
+    "reports": [
+      {
+        "path": "/home/qian-qi/throughput-final-ci-observation-20261107/20261107T185302Z-819309fd3122-28c8f400/fresh-artifact-read-v1/13586581750/fresh-service/fresh/report.json",
+        "phases": [
+          {
+            "attacker_joined_threads_cpu_ns": 0,
+            "finite_business_target_met": true,
+            "head_reader_thread_cpu_ns": 28312174,
+            "independent_replay_and_confirmation_outer_caller_cpu_ns": 542515822,
+            "mode": "attack-free-baseline",
+            "pending_grant_wait_wall_sum_ns": 216660394,
+            "queue_wait_wall_sum_ns": 118605585,
+            "receiver_cpu": {
+              "body_decode_ns_nested_in_dispatch": 1230269,
+              "dispatch_excluding_work_ns": 30174804,
+              "final_credit_ns": 1993884299,
+              "initial_credit_ns": 2000000000,
+              "paid_ns": 40396717,
+              "refusals": 0,
+              "reservations": 7,
+              "response_ns_nested_in_dispatch": 301192,
+              "work_failed": 0,
+              "work_finished": 7,
+              "work_ns": 10221913,
+              "work_started": 7
+            },
+            "window_ns": 4000000000
+          },
+          {
+            "attacker_joined_threads_cpu_ns": 342947460,
+            "finite_business_target_met": false,
+            "head_reader_thread_cpu_ns": 11856786,
+            "independent_replay_and_confirmation_outer_caller_cpu_ns": 86904177,
+            "mode": "from-zero-pressure",
+            "pending_grant_wait_wall_sum_ns": 18286181783,
+            "queue_wait_wall_sum_ns": 4182491936,
+            "receiver_cpu": {
+              "body_decode_ns_nested_in_dispatch": 41974971,
+              "dispatch_excluding_work_ns": 142034808,
+              "final_credit_ns": 1998472035,
+              "initial_credit_ns": 2000000000,
+              "paid_ns": 430357290,
+              "refusals": 0,
+              "reservations": 207,
+              "response_ns_nested_in_dispatch": 10022005,
+              "work_failed": 199,
+              "work_finished": 206,
+              "work_ns": 288322482,
+              "work_started": 206
+            },
+            "window_ns": 4000000000
+          }
+        ],
+        "sha256": "242c09c6196980e5e0552be822e93c00797486f17e18d70bedef1b060c7daa80"
+      },
+      {
+        "path": "/home/qian-qi/throughput-final-ci-observation-20261107/20261107T185919Z-819309fd3122-f4da8b5c/service-artifact-read-v1/13586194181/from-zero-native/confirmation/report.json",
+        "phases": [
+          {
+            "attacker_joined_threads_cpu_ns": 0,
+            "finite_business_target_met": true,
+            "head_reader_thread_cpu_ns": 29457421,
+            "independent_replay_and_confirmation_outer_caller_cpu_ns": 420058575,
+            "mode": "attack-free-baseline",
+            "pending_grant_wait_wall_sum_ns": 87589175,
+            "queue_wait_wall_sum_ns": 86268073,
+            "receiver_cpu": {
+              "body_decode_ns_nested_in_dispatch": 771652,
+              "dispatch_excluding_work_ns": 20074516,
+              "final_credit_ns": 1997020975,
+              "initial_credit_ns": 2000000000,
+              "paid_ns": 27058658,
+              "refusals": 0,
+              "reservations": 7,
+              "response_ns_nested_in_dispatch": 211916,
+              "work_failed": 0,
+              "work_finished": 7,
+              "work_ns": 6984142,
+              "work_started": 7
+            },
+            "window_ns": 4000000000
+          },
+          {
+            "attacker_joined_threads_cpu_ns": 263787975,
+            "finite_business_target_met": false,
+            "head_reader_thread_cpu_ns": 13665912,
+            "independent_replay_and_confirmation_outer_caller_cpu_ns": 329496167,
+            "mode": "from-zero-pressure",
+            "pending_grant_wait_wall_sum_ns": 9166911132,
+            "queue_wait_wall_sum_ns": 2980596279,
+            "receiver_cpu": {
+              "body_decode_ns_nested_in_dispatch": 50891079,
+              "dispatch_excluding_work_ns": 153002171,
+              "final_credit_ns": 1999883395,
+              "initial_credit_ns": 2000000000,
+              "paid_ns": 226496228,
+              "refusals": 0,
+              "reservations": 451,
+              "response_ns_nested_in_dispatch": 11213043,
+              "work_failed": 443,
+              "work_finished": 450,
+              "work_ns": 73494057,
+              "work_started": 450
+            },
+            "window_ns": 4000000000
+          }
+        ],
+        "sha256": "44afacbb1d64f50053926a483feee888e49b322be8d9d8dd0dadc3f8c35a2379"
+      }
+    ],
+    "scope": "each number retains its own original phase/actor interval; no total across actor intervals is asserted; joined client and settled receiver observations may include late completion/cleanup beyond4s; CPU is not wall"
+  },
+  "original_large_parent": {
+    "active_state_unchanged_on_refusal": true,
+    "actual_cpu_flow_after": {
+      "balance_identity_verified": true,
+      "booked_reservation_ns": 0,
+      "credited_refill_ns": 809635077,
+      "discarded_refill_ns": 12650118,
+      "initial_credit_ns": 2000000000,
+      "live_debited_cpu_ns": 3241568151,
+      "live_owners": 0,
+      "paid_cpu_debit_ns": 3241575336,
+      "remaining_paid_credit_ns": -431940259,
+      "schema": "public-v3-local-actual-cpu-flow-v1",
+      "settled_full_cpu_ns": 3241575336,
+      "settlement_discard_ns": 0,
+      "settlement_residual_cpu_ns": 7185,
+      "stored_credit_ns": -431940259,
+      "unsettled_known_live_cpu_ns": 0
+    },
+    "actual_payload_bytes": 8625548,
+    "dispatch_elapsed_ns": 3288895536,
+    "genesis_fixture": "2100 explicitly seeded 4080-byte string cells; original native validator and one signed admitted seed block; not default-genesis historical growth",
+    "host_qualified": false,
+    "interpretation": "outer dispatch Ok is a returned response, not native success; CPU balance is2e9+809635077-3241575336=-431940259. Faster work also earns less time-based refill, so the old debt is not a fixed sufficient saving threshold. Auth supplementary does not replace the failed Legacy arm.",
+    "original_cpu_receipt": {
+      "accounting_unavailable": false,
+      "finished_workers": 2,
+      "known_workers": 2,
+      "live_paid_cpu_ns": 3241568151,
+      "live_refused": true,
+      "owner_cpu_ns": 3240364739,
+      "residual_cpu_ns": 7185,
+      "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+      "scoped_worker_cpu_ns": 1210597,
+      "spawned_workers": 2,
+      "started_workers": 2,
+      "total_cpu_ns": 3241575336
+    },
+    "original_dispatch_result": {
+      "Ok": "ok"
+    },
+    "original_native_result": {
+      "Err": "PUBLIC_MUTATION_CPU_BUDGET"
+    },
+    "refusal_readback_error": null,
+    "retained_log": {
+      "bytes": 34546,
+      "original_lines": [
+        959,
+        965
+      ],
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/diagnostics/819309-full-large-parent-v1/large-parent-original.log",
+      "sha256": "d03574f97eb45f800cbf964bc110248c8dc5568c3d318cc3a06bbcb428e47464"
+    },
+    "retained_manifest": {
+      "bytes": 14873,
+      "full_package_pending_at_capture": true,
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/diagnostics/819309-full-large-parent-v1/manifest.json",
+      "sha256": "47ad1096236f99d1bc3802d6dfdecf1a5376fca4e61d0771ecbc7482c5d66c0a"
+    }
+  },
+  "qualification": {
+    "benchmarks_executed": false,
+    "full_819_native_result_claimed": false,
+    "original_four_second_pressure_pass": false,
+    "original_history_4105_pass": false,
+    "production_patch_applied": false,
+    "source_index_or_ref_writes": false,
+    "tests_executed_in_this_review": false,
+    "throughput_claim": false
+  },
+  "reviewed_source": {
+    "commit": "819309fd312298e099642e1253b1d4ba07113e98",
+    "per_file_sha256": "SOURCE_SHA256.json",
+    "this_is_not_a_new_whole_tree_verifier": true,
+    "tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267",
+    "worktree": "/home/qian-qi/chain-throughput-local-admin-20261107/work-final-business-20261107"
+  },
+  "schema": "trnm-readonly-admission-fence-and-host-review-v1",
+  "targeted_validation": {
+    "effect_metrics": [
+      "exact-14 original native_result and original strict success/readback assertions",
+      "actual_cpu_flow paid/refill/credit balance and closure",
+      "owner+scoped-worker settlement, known/started/finished parity, live refusal",
+      "original dispatch wall and complete CPU; not isolated root timings",
+      "exact-01 and existing negative tests preserve trigger/root/current-row/profile/cancellation/transaction/cold-reopen semantics"
+    ],
+    "plan": {
+      "bytes": 10750,
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/targeted-validation-plan-v1.json",
+      "sha256": "de2a9acb3cf711c53d0bad85c958b2a0e844aefa906aed1f0ec16827a3c93054"
+    },
+    "selectors": [
+      {
+        "attempts": 1,
+        "expected_ignored": 0,
+        "expected_outer_tests": 1,
+        "expected_passed": 1,
+        "label": "exact-01",
+        "ordinal": 1,
+        "selector": "store::legacy_admission_root_tests::ordinary_admission_final_root_rechecks_warm_active_state_and_claim"
+      },
+      {
+        "attempts": 1,
+        "expected_ignored": 0,
+        "expected_outer_tests": 1,
+        "expected_passed": 1,
+        "label": "exact-02",
+        "ordinal": 2,
+        "selector": "store::legacy_reorg_root_tests::legacy_reorg_root_keeps_signed_history_cursor_and_cold_publication"
+      },
+      {
+        "attempts": 1,
+        "expected_ignored": 0,
+        "expected_outer_tests": 1,
+        "expected_passed": 1,
+        "label": "exact-03",
+        "ordinal": 3,
+        "selector": "store::legacy_reorg_root_tests::legacy_reorg_root_rechecks_untouched_rows_root_claims_and_original_errors"
+      },
+      {
+        "attempts": 1,
+        "expected_ignored": 0,
+        "expected_outer_tests": 1,
+        "expected_passed": 1,
+        "label": "exact-04",
+        "ordinal": 4,
+        "selector": "store::legacy_reorg_root_tests::legacy_reorg_root_keeps_all_tail_cancellation_boundaries_and_rollback"
+      },
+      {
+        "attempts": 1,
+        "expected_ignored": 0,
+        "expected_outer_tests": 1,
+        "expected_passed": 1,
+        "label": "exact-05",
+        "ordinal": 5,
+        "selector": "store::legacy_reorg_root_tests::legacy_reorg_root_never_selects_the_growth_or_authenticated_relation"
+      },
+      {
+        "attempts": 1,
+        "expected_ignored": 0,
+        "expected_outer_tests": 1,
+        "expected_passed": 1,
+        "label": "exact-06",
+        "ordinal": 6,
+        "selector": "store::legacy_reorg_root_tests::legacy_reorg_root_preserves_pq_v2_and_v6_state_validation"
+      },
+      {
+        "attempts": 1,
+        "expected_ignored": 0,
+        "expected_outer_tests": 1,
+        "expected_passed": 1,
+        "label": "exact-07",
+        "ordinal": 7,
+        "selector": "store::legacy_admission_readback::tests::legacy_pair_matches_full_replays_snapshot_cadence_and_cold_publication"
+      },
+      {
+        "attempts": 1,
+        "expected_ignored": 0,
+        "expected_outer_tests": 1,
+        "expected_passed": 1,
+        "label": "exact-08",
+        "ordinal": 8,
+        "selector": "store::legacy_admission_readback::tests::legacy_pair_rereads_snapshot_and_every_intermediate_delta_after_warm_use"
+      },
+      {
+        "attempts": 1,
+        "expected_ignored": 0,
+        "expected_outer_tests": 1,
+        "expected_passed": 1,
+        "label": "exact-09",
+        "ordinal": 9,
+        "selector": "store::legacy_admission_readback::tests::legacy_pair_child_snapshot_and_active_parent_keep_distinct_sql_sources"
+      },
+      {
+        "attempts": 1,
+        "expected_ignored": 0,
+        "expected_outer_tests": 1,
+        "expected_passed": 1,
+        "label": "exact-10",
+        "ordinal": 10,
+        "selector": "store::legacy_admission_readback::tests::legacy_pair_ineligible_schema_keeps_original_reads_and_refuses_bad_delta_writes"
+      },
+      {
+        "attempts": 1,
+        "expected_ignored": 0,
+        "expected_outer_tests": 1,
+        "expected_passed": 1,
+        "label": "exact-11",
+        "ordinal": 11,
+        "selector": "store::legacy_admission_readback::tests::legacy_pair_selection_excludes_authenticated_and_growth_state_relations"
+      },
+      {
+        "attempts": 1,
+        "expected_ignored": 0,
+        "expected_outer_tests": 1,
+        "expected_passed": 1,
+        "label": "exact-12",
+        "ordinal": 12,
+        "selector": "store::legacy_admission_readback::tests::legacy_pair_cancellation_at_every_commit_callback_rolls_back_all_rows"
+      },
+      {
+        "attempts": 1,
+        "expected_ignored": 0,
+        "expected_outer_tests": 1,
+        "expected_passed": 1,
+        "label": "exact-13",
+        "ordinal": 13,
+        "selector": "store::legacy_admission_readback::tests::legacy_pair_rejects_writes_ddl_and_transaction_aba_through_last_callback"
+      },
+      {
+        "attempts": 1,
+        "expected_ignored": 0,
+        "expected_outer_tests": 1,
+        "expected_passed": 1,
+        "label": "exact-14",
+        "ordinal": 14,
+        "selector": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner"
+      },
+      {
+        "attempts": 1,
+        "expected_ignored": 0,
+        "expected_outer_tests": 1,
+        "expected_passed": 1,
+        "label": "exact-15",
+        "ordinal": 15,
+        "selector": "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator"
+      },
+      {
+        "attempts": 1,
+        "expected_ignored": 0,
+        "expected_outer_tests": 1,
+        "expected_passed": 1,
+        "label": "exact-16",
+        "ordinal": 16,
+        "selector": "store::detached_admission::tests::large_parent_root_arithmetic_keeps_current_sql_and_original_read_checkpoints"
+      }
+    ],
+    "sixteen_passes_do_not_certify_full_package_or_business_gates": true,
+    "state": "PREPARATION_ONLY; exact future H/tree, original full 819 terminal and matching full source-after required before execution",
+    "supplemental_auth_does_not_repair_original_denominator": true
+  },
+  "written_utc": "2026-11-07T20:35:21.324576+00:00"
+}

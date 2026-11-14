@@ -1,0 +1,324 @@
+{
+  "actual_exit_zero_and_no_cancellation_sidecar_required": true,
+  "canceled_signal": null,
+  "cancellation_event": null,
+  "complete_proof_claim_is_not_operation_success": true,
+  "cpu_ns_for_timed_path_plus_cleanup": 1853858000,
+  "deadline_exhausted_at_reporting_snapshot": true,
+  "declaration_sha256": "8767392f9f24bce1a2b8e8c1904ea4645ef79bd18a01ae5cc94084de42d63e46",
+  "eligible_complete_postwin_observed": false,
+  "error": {
+    "message": "actual stage did not complete: postwin-proof",
+    "type": "ValueError"
+  },
+  "funding_status": "UNFUNDED",
+  "limits": {
+    "complete_resource_accounting_established": false,
+    "m12_cold_recovery_exercised": false,
+    "native_task_funding_exercised": false,
+    "population_tail_established": false,
+    "production_qualified": false,
+    "six_confirmation_matrix_qualified": false,
+    "sixteen_hostile_matrix_qualified": false,
+    "wan_qualified": false
+  },
+  "memory_note": "cumulative Hepta job peak includes setup; not aggregate instantaneous proof RSS",
+  "native_observation": {
+    "raw_record_hashes": {
+      "intent.json": "1147b546dee83fc486d8a38aedcdd36f2094f1a876331b57dbedc67f7d7f6ff4",
+      "result.json": "6b4343f1765dd296318c8607a4b130c3b412bb840578f219676e273bc67b55b0"
+    },
+    "value": {
+      "attempts": 1,
+      "challenge": "75d855619e387368c74253c9afb0265fa85b51f6df9abd410b4c25b982cf6461",
+      "complete_zkvm_proof": false,
+      "expected_artifacts_sha256": "802adcdd951cfb4cd7271df22c3bca6af66fee9f40454c74f8b5ff2c98a1b683",
+      "header_sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "input_bytes": 49506,
+      "input_sha256": "67b74fa2f417c0240d974e5ecea410d2b68d97d6dde667603aeb4d7ce59036cb",
+      "native_replay_verified": true,
+      "native_ticket_before_deadline": true,
+      "native_winner_monotonic_ns": 1158258326338580,
+      "node_admission": false,
+      "nonce": 0,
+      "original_deadline_boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+      "original_deadline_monotonic_ns": 1158262311627416,
+      "parent_eligibility_checked": false,
+      "production_qualified": false,
+      "schema": "TRNM-W1-NATIVE-WINNER2",
+      "search_started_monotonic_ns": 1158258321681853,
+      "task_id": "ec934f3a9f196a9d5d4555a6361d8d200ea4e95145db4bf19db1eca84f15ff6a",
+      "ticket": "4485548e58901d8a710ad5f434d1f3ca150905b68bab186de5af3053a3abbedf",
+      "winner_observed": true,
+      "winner_saved_before_deadline": true,
+      "winner_saved_monotonic_ns": 1158258337033543
+    }
+  },
+  "origin_monotonic_ns": 1158258311627416,
+  "original_deadline_boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+  "original_deadline_monotonic_ns": 1158262311627416,
+  "outcome": "DEADLINE_EXHAUSTED",
+  "owned_scope_closed_observed": true,
+  "planned_rows": [
+    {
+      "actual_stage_complete": true,
+      "dispatched": true,
+      "error": null,
+      "label": "native-winner",
+      "reason": "COMPLETE",
+      "stage_result": {
+        "bytes": 4040,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/measure-native-winner/result.json",
+        "sha256": "bcc10e18da21dae46ca61bc43d07e3ed18c4387571d84088fbe1c2e4484550e1"
+      }
+    },
+    {
+      "actual_stage_complete": false,
+      "dispatched": true,
+      "error": null,
+      "label": "postwin-proof",
+      "reason": "DISPATCHED_INCOMPLETE",
+      "stage_result": {
+        "bytes": 6158,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/measure-postwin-proof/result.json",
+        "sha256": "857160a43175833bc88f517c507856d9e57d7f8e35640d63f6cfe043d9f7fa11"
+      }
+    }
+  ],
+  "postrun_audit_scope": "source/hash readback and report persistence after timed endpoint; never changes native deadline or earlier endpoint",
+  "postwin_observation": null,
+  "raw_terminal_observations": {
+    "complete_controller_receipt_claim": null,
+    "early_receiver_fact": {
+      "qualifies_outer_operation": false,
+      "scope": "A controller's same-host monotonic receiver completion fact; subsequent diagnostics and cancellation remain separate",
+      "state": "UNOBSERVED"
+    },
+    "files": {
+      "controller_cancellation": {
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/postwin/controller/cancellation.json",
+        "state": "UNOBSERVED"
+      },
+      "controller_result": {
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/postwin/controller/result.json",
+        "state": "UNOBSERVED"
+      },
+      "native_intent": {
+        "bytes": 858,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/winner/intent.json",
+        "sha256": "1147b546dee83fc486d8a38aedcdd36f2094f1a876331b57dbedc67f7d7f6ff4",
+        "state": "SAVED"
+      },
+      "native_result": {
+        "bytes": 1067,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/winner/result.json",
+        "sha256": "6b4343f1765dd296318c8607a4b130c3b412bb840578f219676e273bc67b55b0",
+        "state": "SAVED"
+      },
+      "native_statement_recheck": {
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/postwin/native-statement-recheck/stdout.log",
+        "state": "UNOBSERVED"
+      },
+      "postwin_cancellation": {
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/postwin/operation-cancellation.json",
+        "state": "UNOBSERVED"
+      },
+      "postwin_result": {
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/postwin/result.json",
+        "state": "UNOBSERVED"
+      },
+      "receiver_ack": {
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/postwin/receiver/ack.json",
+        "state": "UNOBSERVED"
+      },
+      "receiver_cancellation": {
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/postwin/receiver/operation-cancellation.json",
+        "state": "UNOBSERVED"
+      }
+    },
+    "new_cryptographic_verification_performed_by_this_reader": false
+  },
+  "reporting_errors": [],
+  "resource_accounting_note": "one cgroup delta only; includes outer supervision/cleanup, excludes later audit; do not add nested wait4 or RSS",
+  "result_is_pre_handoff_snapshot": true,
+  "schema": "TRNM-W1-UNFUNDED-ORIGINAL-BUDGET-PROBE1",
+  "scope_after_timed_path_and_cleanup": {
+    "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+    "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b788ea2a-12894-b45.service",
+    "cpu_max": "25000 100000",
+    "cpu_usage_ns": 5880609000,
+    "members": [
+      {
+        "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+        "parent": 2069,
+        "pid": 1529465,
+        "start_ticks": 115824215
+      },
+      {
+        "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+        "parent": 1529465,
+        "pid": 1529472,
+        "start_ticks": 115824244
+      }
+    ],
+    "memory_max": "2147483648",
+    "memory_peak_upper_bound_bytes": 40669184,
+    "monotonic_ns": 1158265715291599
+  },
+  "scope_at_setup_validation": {
+    "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+    "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b788ea2a-12894-b45.service",
+    "cpu_max": "25000 100000",
+    "cpu_usage_ns": 4021998000,
+    "members": [
+      {
+        "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+        "parent": 2069,
+        "pid": 1529465,
+        "start_ticks": 115824215
+      },
+      {
+        "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+        "parent": 1529465,
+        "pid": 1529472,
+        "start_ticks": 115824244
+      }
+    ],
+    "memory_max": "2147483648",
+    "memory_peak_upper_bound_bytes": 40669184,
+    "monotonic_ns": 1158258229171565
+  },
+  "scope_before_native": {
+    "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+    "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b788ea2a-12894-b45.service",
+    "cpu_max": "25000 100000",
+    "cpu_usage_ns": 4026751000,
+    "members": [
+      {
+        "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+        "parent": 2069,
+        "pid": 1529465,
+        "start_ticks": 115824215
+      },
+      {
+        "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+        "parent": 1529465,
+        "pid": 1529472,
+        "start_ticks": 115824244
+      }
+    ],
+    "memory_max": "2147483648",
+    "memory_peak_upper_bound_bytes": 40669184,
+    "monotonic_ns": 1158258247342415
+  },
+  "setup": {
+    "commands": [
+      {
+        "argv": [
+          "/usr/bin/bash",
+          "scripts/project-preflight.sh",
+          "--dev"
+        ],
+        "error": null,
+        "exit": 0,
+        "finished_monotonic_ns": 1158243262232933,
+        "label": "preflight",
+        "started_monotonic_ns": 1158242870043531,
+        "stderr": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/audit/preflight.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 177,
+          "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/audit/preflight.stdout",
+          "sha256": "a26394e63148ca29966ef3c4a4c28c5b86285d39ac6948d20087e0005c94b47f"
+        }
+      }
+    ],
+    "finished_monotonic_ns": 1158258233288126,
+    "qualification": {
+      "bytes": 68434,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-build-qualification-01/qualification.json",
+      "sha256": "cc52956605ae4d4abc75084c04ba312c7baab316b4ac3d0ad18097ed3ab71b57"
+    },
+    "started_monotonic_ns": 1158242818568371,
+    "wall_ns": 15414719755
+  },
+  "source": {
+    "commit": "d3037ca5dfb6f301757c159b7888dca9b0317be0",
+    "repo": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/repo",
+    "tree": "d4a8f84cdc896b9454ce0d03a164f8916e6afdf9"
+  },
+  "source_after": {
+    "command": {
+      "argv": [
+        "/usr/bin/python3",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/repo/scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "d3037ca5dfb6f301757c159b7888dca9b0317be0",
+        "--output",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/audit/source-after.json"
+      ],
+      "error": null,
+      "exit": 0,
+      "finished_monotonic_ns": 1158280261619046,
+      "label": "source-after-command",
+      "started_monotonic_ns": 1158268319445956,
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/audit/source-after-command.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 423,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/audit/source-after-command.stdout",
+        "sha256": "e2e1d88b8bb08d6da57361287d3f76df9f78299fb5a44b45d3bdb0ea61c08556"
+      }
+    },
+    "report": {
+      "bytes": 423,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/audit/source-after.json",
+      "sha256": "e2e1d88b8bb08d6da57361287d3f76df9f78299fb5a44b45d3bdb0ea61c08556"
+    }
+  },
+  "source_before": {
+    "command": {
+      "argv": [
+        "/usr/bin/python3",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/repo/scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "d3037ca5dfb6f301757c159b7888dca9b0317be0",
+        "--output",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/audit/source-before.json"
+      ],
+      "error": null,
+      "exit": 0,
+      "finished_monotonic_ns": 1158254161927956,
+      "label": "source-before-command",
+      "started_monotonic_ns": 1158243278429145,
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/audit/source-before-command.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 423,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/audit/source-before-command.stdout",
+        "sha256": "e2e1d88b8bb08d6da57361287d3f76df9f78299fb5a44b45d3bdb0ea61c08556"
+      }
+    },
+    "report": {
+      "bytes": 423,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/unfunded-original-budget-A-01/audit/source-before.json",
+      "sha256": "e2e1d88b8bb08d6da57361287d3f76df9f78299fb5a44b45d3bdb0ea61c08556"
+    }
+  },
+  "timed_endpoint_observed_monotonic_ns": 1158265713915703,
+  "timed_endpoint_scope": "parent observation of actual postwin exit, bound raw result/ACK and empty owned scope",
+  "timed_scope_ns": 7402288287
+}

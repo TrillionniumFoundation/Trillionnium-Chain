@@ -1,0 +1,60 @@
+{
+  "schema": "incentive-unfinished-observations-v1",
+  "result": "UNKNOWN_NO_TERMINAL_RECEIPT",
+  "cloud_environment_restored": true,
+  "raw_completed_observations_restored": true,
+  "native_reexecution_started_by_recovery": false,
+  "commands": [
+    {
+      "session": 36637,
+      "intended_scope": "full retained Node public_evaluation and model_composition_v4, with fresh V4 vector export",
+      "argv": [
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "public_evaluation",
+        "--test",
+        "model_composition_v4",
+        "-j",
+        "2",
+        "--",
+        "--nocapture"
+      ],
+      "stdout_bytes": 0,
+      "stderr_bytes": 0,
+      "terminal_receipt_present": false,
+      "vector_directory_files": 0
+    },
+    {
+      "session": 15455,
+      "intended_scope": "repeat 43 CI source-integrity negative controls on 819",
+      "terminal_receipt_present": false
+    },
+    {
+      "session": 79478,
+      "intended_scope": "cargo metadata, distributed source inventory, and full cargo fmt on 819",
+      "cargo_metadata_bytes": 0,
+      "inventory_outputs_present": false,
+      "formatting_outputs_present": false,
+      "terminal_receipt_present": false
+    }
+  ],
+  "resumption_observation": "The original session reads returned exec-server transport disconnected / recovery timed out after 45s. This does not establish success or protocol failure; no native retry was started in the restored cloud.",
+  "not_started": [
+    "strict Clippy",
+    "retained native M06 evaluation quorum suite",
+    "retained native M06 model evolution V5 suite",
+    "native M06 V4 arithmetic observation collector",
+    "thirteen-file native V4 differential comparison"
+  ],
+  "production_activation": false,
+  "economic_security_qualified": false,
+  "captured_utc": "2026-11-12T00:50:53.343586+00:00",
+  "source_commit": "8197606d844e9d4c79c068a07746fabf2506fed4"
+}

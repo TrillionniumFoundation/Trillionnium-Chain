@@ -1,0 +1,53 @@
+{
+  "group": "crypto",
+  "model_benefit_qualified": false,
+  "native_suites": [
+    {
+      "binary": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/trnm_crypto_primitives-ec09512dfb6081aa",
+      "counts": {
+        "failed": 0,
+        "filtered_out": 61,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 135
+      },
+      "kernel_executable_observed": true,
+      "listed": 196,
+      "native_receipt": "00-trnm_crypto_primitives-native.json",
+      "selected": 135
+    }
+  ],
+  "package": "trnm-crypto-primitives",
+  "production_activation": false,
+  "source": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+  "source_after": {
+    "base": null,
+    "candidate": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+    "tested_tree": "129267332b2ef87d3d66d014fddeb894faa9379f",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2615077043,
+    "tracked_entries": 28807,
+    "tracked_worktree_verified": true
+  },
+  "source_before": {
+    "base": null,
+    "candidate": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+    "tested_tree": "129267332b2ef87d3d66d014fddeb894faa9379f",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2615077043,
+    "tracked_entries": 28807,
+    "tracked_worktree_verified": true
+  },
+  "source_stable": true,
+  "status": "component_tests_passed",
+  "tests_passed": true,
+  "whole_chain_security_qualified": false
+}

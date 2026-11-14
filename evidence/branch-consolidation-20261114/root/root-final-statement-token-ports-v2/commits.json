@@ -1,0 +1,36 @@
+[
+  {
+    "label": "statement-boundary",
+    "head": "51b95f5784deb22bcf2c7f60c127df16acf1f05e",
+    "tree": "417cff1e7b57f762562add5911e7f2361bba6ee7",
+    "paths": [
+      "config/pon/pq-cross-branch-corpus-v1.json",
+      "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "scripts/ci/check_pq_research_integration.py",
+      "scripts/ci/test_pq_research_integration.py",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work/statement_boundaries.rs",
+      "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs"
+    ],
+    "patch_sha256": "1c2f33ce4de848c9d4c3a2dc0c4528875a80b2cecdddaadb9d402479a5c1fc07",
+    "patch_bytes": 19110
+  },
+  {
+    "label": "Rust-token-reader",
+    "head": "e82419698aa3fd527c6f828da11cc8749dcb007b",
+    "tree": "ada07bbe2235257052fafcbca840667259cb527c",
+    "paths": [
+      "config/pon/pq-cross-branch-corpus-v1.json",
+      "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "scripts/ci/check_ci_contract.py",
+      "scripts/ci/check_pq_research_integration.py",
+      "scripts/ci/ci_job.sh",
+      "scripts/ci/rust_source_tokens.py",
+      "scripts/ci/test_ci_contract.py",
+      "scripts/ci/test_pq_research_integration.py",
+      "scripts/ci/test_rust_source_tokens.py"
+    ],
+    "patch_sha256": "87b64ba5d9163b22d5c559ed91f2fbdccd9fce247dd07b3179243d951e9ba4cc",
+    "patch_bytes": 21548
+  }
+]

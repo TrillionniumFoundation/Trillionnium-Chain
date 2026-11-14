@@ -1,0 +1,21 @@
+{
+  "all": [
+    "hash_correct_container_with_wrong_dtype_never_publishes_tensor_completion",
+    "invalid_persistent_tensor_transport_combinations_refuse_before_cache_creation",
+    "persistent_rarest_tensor_cli_verifies_complete_model_and_then_works_cache_only",
+    "persistent_tensor_cli_keeps_verified_prefix_on_request_exhaustion_and_explicit_retry_resumes",
+    "persistent_tensor_cli_shares_one_connection_and_four_requests_across_manifest_and_chunks",
+    "real_tcp_tensor_model_publishes_exact_manifest_then_revalidates_without_origin",
+    "wrong_tensor_manifest_pin_is_rejected_before_cache_creation"
+  ],
+  "filter": null,
+  "selected": [
+    "hash_correct_container_with_wrong_dtype_never_publishes_tensor_completion",
+    "invalid_persistent_tensor_transport_combinations_refuse_before_cache_creation",
+    "persistent_rarest_tensor_cli_verifies_complete_model_and_then_works_cache_only",
+    "persistent_tensor_cli_keeps_verified_prefix_on_request_exhaustion_and_explicit_retry_resumes",
+    "persistent_tensor_cli_shares_one_connection_and_four_requests_across_manifest_and_chunks",
+    "real_tcp_tensor_model_publishes_exact_manifest_then_revalidates_without_origin",
+    "wrong_tensor_manifest_pin_is_rejected_before_cache_creation"
+  ]
+}

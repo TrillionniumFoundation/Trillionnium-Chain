@@ -1,0 +1,20 @@
+{
+  "label": "final-13-pnh1-authenticated-controls",
+  "argv": [
+    "python3",
+    "scripts/ci/test_pon_branch_work_schedule_reader.py",
+    "--raw-dir",
+    "/home/qian-qi/pon-fixed-probability-contract-20261108-63b38-evidence/native-final/pnh1-authenticated",
+    "--report-sha256",
+    "e3fd4c236991529124ab5a493c31c0559694403aa57ec570267f8ac7ad0fec6d",
+    "-v"
+  ],
+  "exit": 0,
+  "duration_seconds": 2.5445353579707444,
+  "source_head_before": "103cdf67108a667d8570388f9dd402210c160157",
+  "source_head_after": "103cdf67108a667d8570388f9dd402210c160157",
+  "native_passed_counts": [],
+  "unittest_counts": [
+    "9"
+  ]
+}

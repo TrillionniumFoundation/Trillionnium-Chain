@@ -1,0 +1,84 @@
+{
+  "aggregate_budget_qualified": null,
+  "all_archived_bytes_verified": true,
+  "all_selected_commands_passed": true,
+  "archive": "/data/chain-pq-closure-20261111-d4d2-validation-0e554f36ffdd-01.tar.xz",
+  "bytes": 1545892,
+  "complete": true,
+  "failed_commands": [],
+  "failed_target_partial_ok": {},
+  "kind": "c2",
+  "manifest": {
+    "bytes": 11218,
+    "mode": 384,
+    "sha256": "8f11a7e0c13d8cdd4c0b2c2d7cea013a25617c7604c821d98f7e47fc0168ca9b"
+  },
+  "members": 51,
+  "mode": 384,
+  "native_tests_observed": 8,
+  "original_group_failed": null,
+  "production_activation": false,
+  "provider_unchanged": true,
+  "references": {
+    "original_archive": {
+      "bytes": 1557288,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-pq-closure-20261111-d4d2-validation-c09dbbe9921d-01.tar.xz",
+      "sha256": "6d22e3ca7dcd98a75da46f6717f122f2293fa0d870a5aa2807e7f8252aee6acd"
+    },
+    "original_export_receipt": {
+      "bytes": 812,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-pq-closure-20261111-d4d2-validation-c09dbbe9921d-01-export-receipt.json",
+      "sha256": "099c28ac5aec848003d4c6256d9b1df0e1c6d50ba94abd0f4ddec5fd7d5165f9"
+    },
+    "original_summary": {
+      "bytes": 118687,
+      "member": "native/summary.json",
+      "mode": 384,
+      "sha256": "94a6489e8bff3fc303e5d6835cd39d46dcc2f9cdcfe5d601b9fbb08fa8b7082c"
+    },
+    "readback_subset_archive": {
+      "bytes": 1485388,
+      "mode": 384,
+      "path": "/data/chain-pq-closure-20261111-d4d2-readback-subset-c09dbbe9921d-01.tar.xz",
+      "sha256": "878e1c55747030ef3629edea182a39ae508cdf4362cdce89078251199e57844f"
+    },
+    "readback_subset_export_receipt": {
+      "bytes": 2384,
+      "mode": 384,
+      "path": "/data/chain-pq-closure-20261111-d4d2-readback-subset-c09dbbe9921d-01-export-receipt.json",
+      "sha256": "d1e111ccf2ec1ee448466ce22d670bb6cdb9024231bc4f23458c259b33871d45"
+    },
+    "readback_subset_summary": {
+      "bytes": 16726,
+      "member": "subset/summary.json",
+      "mode": 384,
+      "sha256": "105af92aa65512216a1e2daf8a59f33e601a662d6c28826de65bf4d28683c2f8"
+    },
+    "witness_v5_subset_archive": {
+      "bytes": 1485528,
+      "mode": 384,
+      "path": "/data/chain-pq-closure-20261111-d4d2-witness-v5-subset-c09dbbe9921d-01.tar.xz",
+      "sha256": "6c43489d81a1d809a4a85d04bd1cc7381466509606468930049fb83124328d12"
+    },
+    "witness_v5_subset_export_receipt": {
+      "bytes": 2364,
+      "mode": 384,
+      "path": "/data/chain-pq-closure-20261111-d4d2-witness-v5-subset-c09dbbe9921d-01-export-receipt.json",
+      "sha256": "97408372679b4c57df4ce821ca9441d72de8b1e850445d9a7712dd7fca02751f"
+    },
+    "witness_v5_subset_summary": {
+      "bytes": 17454,
+      "member": "subset/summary.json",
+      "mode": 384,
+      "sha256": "375e499f2a5a5fdd69ba37c637112326df9bbfe390b0a35c3f2889a52adb918c"
+    }
+  },
+  "remaining_subset_complete": null,
+  "schema": "trnm-observation-archive-receipt-v1",
+  "sha256": "5883dad77151ce4632caac4e442e6be1d959bf8fb442a9c41a7fa09dfd0ad804",
+  "source": "0e554f36ffdde3053a5eb1756eb5e526b1935032",
+  "source_unchanged": true,
+  "whole_chain_quantum_security_qualified": false
+}

@@ -1,0 +1,5 @@
+{"elapsed_ms":18.956319999999998,"phase":"bounded_read_decode_and_proof_shape"}
+{"elapsed_ms":20.432038,"phase":"canonical_plans_and_public_only_sha_air"}
+{"elapsed_ms":35.294237,"phase":"sha_verifier_independent_preprocessing_setup"}
+{"elapsed_ms":48.039408,"phase":"sha_stark_verify"}
+{"error":"sha proof rejected: InvalidOpeningArgument(InputError(MalformedPrunedProof(SiblingCountMismatch { expected: 492, got: 513 })))","process_wall_ms":124.26368000000001,"qualification":"HOLD_NO_GO","schema":"trnm-w1-complete-public-tagged-sha3-stark-run-v1","status":"REJECTED_OR_FAILED"}

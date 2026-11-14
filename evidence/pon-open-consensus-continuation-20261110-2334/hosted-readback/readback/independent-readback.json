@@ -1,0 +1,340 @@
+{
+  "archives": [
+    {
+      "archive_bytes": 5578450,
+      "archive_sha256": "563b273106cd6d123ee42d2a6ba1f6ff41972e41622daf459372b7d50386750a",
+      "artifact_id": 13742695023,
+      "expanded_bytes": 62600697,
+      "members": 40,
+      "metadata_sha256": "d2685510434c94deed938f5a93ed59324c60b1af9d5893e08333ca190edee0fc",
+      "name": "x64"
+    },
+    {
+      "archive_bytes": 5557454,
+      "archive_sha256": "57025dd4c0516cfb7d090d140e6bc9b20193773fa639faac9b15254dec12060a",
+      "artifact_id": 13741569215,
+      "expanded_bytes": 62605900,
+      "members": 40,
+      "metadata_sha256": "07d22596a83a9fd17e7d8207848d3e407646866b4577e7e17a175923e5c3feec",
+      "name": "arm64"
+    },
+    {
+      "archive_bytes": 5823146,
+      "archive_sha256": "50d19f5690bbac21e5a7a6c8e9d6578f26acb57437e77dfde9ba64a231e966de",
+      "artifact_id": 13741424505,
+      "expanded_bytes": 33026871,
+      "members": 57,
+      "metadata_sha256": "177991ad32de516eafb55149b10a9654e9e499b10ac8c9c035927dc4d6016bab",
+      "name": "fresh-service-head"
+    }
+  ],
+  "attempt": 1,
+  "business_qualification": "HOLD",
+  "cost_campaigns": [
+    {
+      "aggregate_production_receiver_over_full_attacker_cpu": 22.903471934190517,
+      "architecture": "x64",
+      "attacker_cpu_ns": 4976304,
+      "binary_sha256": "867c1906c9d2e85bae04dd0009431e7cba86d63f7f84287fc445688e7202f6ac",
+      "candidate_identity_sha256": "b312edfcb0d783eb3b5c779a2819640e522f6185dedfc2aa48c97ebb96e05405",
+      "class_production_ratio": {
+        "continuity-maintenance-v1": 19.08826652209629,
+        "full-rank-field": 30.141750237668067,
+        "identity": 30.665864281885742,
+        "one-zero-left-rank-one": 18.71282720118502,
+        "one-zero-right-rank-one": 19.323031897714245,
+        "periodic-dense-fixture": 20.51327796127194,
+        "rank-one": 27.871484291644578,
+        "sparse-diagonal": 19.72787566478998,
+        "zero": 29.209922302478258
+      },
+      "manifest_files_verified": 12,
+      "manifest_sha256": "d1b0e6ed15120006585a48eb3df4301cb066eb2bd8ca4981ed09475648ae9920",
+      "mode": "w1-false-trace-reuse-v1",
+      "production_rejection_cpu_ns": 113974639,
+      "qualifications_preserved_false": {
+        "hardness_accepted": false,
+        "independent_hardware_qualified": false,
+        "production_activation": false,
+        "public_network_ready": false,
+        "public_service_measured": false,
+        "resource_fairness_qualified": false,
+        "valid_proof_acquisition_used": false,
+        "work_profile_qualified": false
+      },
+      "raw_campaign_bytes": 30021519,
+      "raw_campaign_sha256": "e60bd5f75fbda582ec5c76243e214f0125dd2e90a5f986dfd1fe00dcc8132860",
+      "reader_matches_original": true,
+      "record_counts": {
+        "campaign": 1,
+        "candidate": 288,
+        "cohort": 72,
+        "end": 1,
+        "material": 9,
+        "search": 288,
+        "verifier": 1152
+      },
+      "source": {
+        "commit": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+        "source_state": "committed-clean",
+        "tracked_bytes": 2527867778,
+        "tracked_entries": 27660,
+        "tracked_worktree_verified": true,
+        "tree": "00479a98dabc6b1fd91a0ceef82ffbdbffb78067"
+      },
+      "trial_attempts": 573
+    },
+    {
+      "aggregate_production_receiver_over_full_attacker_cpu": 19.640541558364074,
+      "architecture": "x64",
+      "attacker_cpu_ns": 5799338,
+      "binary_sha256": "867c1906c9d2e85bae04dd0009431e7cba86d63f7f84287fc445688e7202f6ac",
+      "candidate_identity_sha256": "b312edfcb0d783eb3b5c779a2819640e522f6185dedfc2aa48c97ebb96e05405",
+      "class_production_ratio": {
+        "continuity-maintenance-v1": 18.70865063341952,
+        "full-rank-field": 25.66953826066153,
+        "identity": 19.21112401226101,
+        "one-zero-left-rank-one": 18.844544739335927,
+        "one-zero-right-rank-one": 19.31140344883609,
+        "periodic-dense-fixture": 20.238295334399652,
+        "rank-one": 18.48260485108277,
+        "sparse-diagonal": 19.479701839273215,
+        "zero": 18.485614427431088
+      },
+      "manifest_files_verified": 12,
+      "manifest_sha256": "59406ade0b76b8be578432b03b32353edff9c708ab77c2ac818cb2df25217092",
+      "mode": "w1-full-limb-reuse-v1",
+      "production_rejection_cpu_ns": 113902139,
+      "qualifications_preserved_false": {
+        "hardness_accepted": false,
+        "independent_hardware_qualified": false,
+        "production_activation": false,
+        "public_network_ready": false,
+        "public_service_measured": false,
+        "resource_fairness_qualified": false,
+        "valid_proof_acquisition_used": false,
+        "work_profile_qualified": false
+      },
+      "raw_campaign_bytes": 30174254,
+      "raw_campaign_sha256": "3a443c35f95b313dd0326b7dd7883c6c5a883186bb658c219a5d21180b8441cc",
+      "reader_matches_original": true,
+      "record_counts": {
+        "campaign": 1,
+        "candidate": 288,
+        "cohort": 72,
+        "end": 1,
+        "material": 9,
+        "search": 288,
+        "verifier": 1440
+      },
+      "source": {
+        "commit": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+        "source_state": "committed-clean",
+        "tracked_bytes": 2527867778,
+        "tracked_entries": 27660,
+        "tracked_worktree_verified": true,
+        "tree": "00479a98dabc6b1fd91a0ceef82ffbdbffb78067"
+      },
+      "trial_attempts": 573
+    },
+    {
+      "aggregate_production_receiver_over_full_attacker_cpu": 24.55021349582679,
+      "architecture": "arm64",
+      "attacker_cpu_ns": 3764008,
+      "binary_sha256": "6e518ff51458c1039ea4bc7b6553d99ab231a4236cde8891f8e31570c13a38cc",
+      "candidate_identity_sha256": "b312edfcb0d783eb3b5c779a2819640e522f6185dedfc2aa48c97ebb96e05405",
+      "class_production_ratio": {
+        "continuity-maintenance-v1": 21.079258785103484,
+        "full-rank-field": 29.227290262554746,
+        "identity": 29.82330363581381,
+        "one-zero-left-rank-one": 21.154154567053855,
+        "one-zero-right-rank-one": 21.805184656677877,
+        "periodic-dense-fixture": 22.727621981446074,
+        "rank-one": 27.619035275311603,
+        "sparse-diagonal": 22.70448683978096,
+        "zero": 29.39414068763314
+      },
+      "manifest_files_verified": 12,
+      "manifest_sha256": "0d11e9b7857e9655f30e6468a8d16860c350ef8939ffa24b5516617d1d3e5b55",
+      "mode": "w1-false-trace-reuse-v1",
+      "production_rejection_cpu_ns": 92407200,
+      "qualifications_preserved_false": {
+        "hardness_accepted": false,
+        "independent_hardware_qualified": false,
+        "production_activation": false,
+        "public_network_ready": false,
+        "public_service_measured": false,
+        "resource_fairness_qualified": false,
+        "valid_proof_acquisition_used": false,
+        "work_profile_qualified": false
+      },
+      "raw_campaign_bytes": 30021473,
+      "raw_campaign_sha256": "cd3b73863a4e9e0880ee5c66d07b0efc1c7c8278784d8069b98980ec07da882a",
+      "reader_matches_original": true,
+      "record_counts": {
+        "campaign": 1,
+        "candidate": 288,
+        "cohort": 72,
+        "end": 1,
+        "material": 9,
+        "search": 288,
+        "verifier": 1152
+      },
+      "source": {
+        "commit": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+        "source_state": "committed-clean",
+        "tracked_bytes": 2527867778,
+        "tracked_entries": 27660,
+        "tracked_worktree_verified": true,
+        "tree": "00479a98dabc6b1fd91a0ceef82ffbdbffb78067"
+      },
+      "trial_attempts": 573
+    },
+    {
+      "aggregate_production_receiver_over_full_attacker_cpu": 19.877042546135037,
+      "architecture": "arm64",
+      "attacker_cpu_ns": 4655464,
+      "binary_sha256": "6e518ff51458c1039ea4bc7b6553d99ab231a4236cde8891f8e31570c13a38cc",
+      "candidate_identity_sha256": "b312edfcb0d783eb3b5c779a2819640e522f6185dedfc2aa48c97ebb96e05405",
+      "class_production_ratio": {
+        "continuity-maintenance-v1": 20.32998399289982,
+        "full-rank-field": 25.620834494565432,
+        "identity": 20.621266466150903,
+        "one-zero-left-rank-one": 16.749227660822523,
+        "one-zero-right-rank-one": 16.924562374775913,
+        "periodic-dense-fixture": 21.653981264637004,
+        "rank-one": 19.77243323167914,
+        "sparse-diagonal": 20.039405100034333,
+        "zero": 19.734362032397872
+      },
+      "manifest_files_verified": 12,
+      "manifest_sha256": "b038a157b4932fa4223e8c015459f4f0b9cdab5f17ae318936fe63616a2f5a0d",
+      "mode": "w1-full-limb-reuse-v1",
+      "production_rejection_cpu_ns": 92536856,
+      "qualifications_preserved_false": {
+        "hardness_accepted": false,
+        "independent_hardware_qualified": false,
+        "production_activation": false,
+        "public_network_ready": false,
+        "public_service_measured": false,
+        "resource_fairness_qualified": false,
+        "valid_proof_acquisition_used": false,
+        "work_profile_qualified": false
+      },
+      "raw_campaign_bytes": 30174226,
+      "raw_campaign_sha256": "f7766590f01f58f44738b329978405bba5767d9082bd8dd7f0972077fe2d7a11",
+      "reader_matches_original": true,
+      "record_counts": {
+        "campaign": 1,
+        "candidate": 288,
+        "cohort": 72,
+        "end": 1,
+        "material": 9,
+        "search": 288,
+        "verifier": 1440
+      },
+      "source": {
+        "commit": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+        "source_state": "committed-clean",
+        "tracked_bytes": 2527867778,
+        "tracked_entries": 27660,
+        "tracked_worktree_verified": true,
+        "tree": "00479a98dabc6b1fd91a0ceef82ffbdbffb78067"
+      },
+      "trial_attempts": 573
+    }
+  ],
+  "fastest_adversary_lower_bound_proved": false,
+  "new_native_campaign_run": false,
+  "production_activation": false,
+  "public_attack_amplification_measured": false,
+  "readback_status": "PASS",
+  "reader_source_sha256": {
+    "config/pon/devnet-v1.json": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4",
+    "config/pon/evaluation-round-v1.json": "f65de29ae87bbcdb1cfb3a54bba22323e68d7decfd2976395468c1ba559f5d33",
+    "config/pon/ledger-v1.json": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a",
+    "config/pon/model-family-v1.json": "30b250db074e7fbb5776c1474371258a6110cc1742e0e9970232a799ab790ca1",
+    "config/pon/work-profile-v1.json": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880",
+    "config/pon/work-security-acceptance-v1.json": "4ca674c305112d51672efcab6c0f886e477a5397191addb806d209a08266165f",
+    "formal/pon-nakamoto-v1/bounded_process.py": "16fa98206e75db5e925a31508e889df9d1968c32f518554f52c2a0711047b356",
+    "formal/pon-nakamoto-v1/contract_wire.py": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6",
+    "scripts/ci/check_required_native_test.py": "6f211d1a23521e9960df94ebd6de63c6c9733489d795eb7d2d4eaac1b790db28",
+    "scripts/ci/ci_observation.py": "389154c792fd3c734621278fb4188e9863ff599efb0c9b863316f540a94eab4a",
+    "scripts/ci/replay_pinned_native.py": "d14d2f61ab98bb30b5932530437064dce5d3a330c05a9530988fe776cefea44a",
+    "scripts/ci/run_from_zero_native.py": "baa7cba8096a3908c9b7ebe0705949b95061191ec78846006527fd80e6a5a0c8",
+    "scripts/ci/run_w1_fresh_service_v1.py": "143b0f26f914798fc6650afc08d2f73379bcf82b7fd84cc318ca2fb83299d324",
+    "scripts/ci/verify_ci_source.py": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946",
+    "scripts/pon_public_v3_phase_read.py": "0b1352d91ddb3258ea6537e53abf9cfdc3069c4b563819a15a535e7ce72c89ee",
+    "scripts/pon_public_v3_policy_read.py": "c7e4bc5450ac1c721cdc9dc5975d2c102bcf4ab5c58fe3b2dc52bcd65b4e6a7b",
+    "scripts/pon_w1_cost_matrix_reader.py": "6a967274b93394494a2606c08173d4c755f255742bdca6cecd9665ce9f3686fa",
+    "scripts/pon_w1_false_trace_reuse_reader_v1.py": "7455227a2acfec76505c480e4513acbbb9764b59cc1e6a3d8bdaf70d2f9f409c"
+  },
+  "repeated_candidate_grid": {
+    "campaign_count": 4,
+    "candidate_count": 288,
+    "candidate_identity_sha256": "b312edfcb0d783eb3b5c779a2819640e522f6185dedfc2aa48c97ebb96e05405",
+    "independent_fresh_candidate_samples": false
+  },
+  "retained_binary_executed": false,
+  "schema": "pon-da1374a-hosted-original-independent-readback-v2",
+  "service": {
+    "binary_sha256": "77f18cec6c8eb7ee5c399d61853772afb73a729d0cf976cc36b45e2fefc80147",
+    "business_qualification": "HOLD",
+    "manifest_files_verified": 26,
+    "retained_failures_reproduced": [
+      {
+        "diagnostic": {
+          "acceptance_authority": false,
+          "finite_target_met": false,
+          "last_history_replay": {
+            "history_call_index": 2,
+            "phase": "from-zero-pressure",
+            "replay_accepted": false,
+            "replay_error": "PUBLIC_REQUEST_DEADLINE"
+          },
+          "native_returncode": 0,
+          "schema": "trnm-w1-fresh-failure-diagnostic-v1"
+        },
+        "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+        "reproduced_reader_failure": "CONFIRMATION_TARGET"
+      },
+      {
+        "diagnostic": {
+          "acceptance_authority": false,
+          "finite_target_met": false,
+          "last_history_replay": {
+            "history_call_index": 0,
+            "phase": "from-zero-pressure",
+            "replay_accepted": false,
+            "replay_error": "PUBLIC_REQUEST_DEADLINE"
+          },
+          "native_returncode": 101,
+          "schema": "trnm-w1-fresh-failure-diagnostic-v1"
+        },
+        "name": "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+        "reproduced_reader_failure": "FRESH_NATIVE_PROCESS_REQUIRED"
+      }
+    ],
+    "source": {
+      "commit": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+      "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+      "tracked_source_identity": {
+        "base": null,
+        "candidate": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+        "tested_tree": "00479a98dabc6b1fd91a0ceef82ffbdbffb78067",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2527867778,
+        "tracked_entries": 27660,
+        "tracked_worktree_verified": true
+      },
+      "tree": "00479a98dabc6b1fd91a0ceef82ffbdbffb78067"
+    }
+  },
+  "source_commit": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+  "source_tree": "00479a98dabc6b1fd91a0ceef82ffbdbffb78067",
+  "workflow_run": 42771007925
+}

@@ -1,0 +1,1457 @@
+{
+  "binaries": {
+    "native_winner": {
+      "bytes": 752472,
+      "cargo_artifact": {
+        "executable": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/target-native/release/examples/pon_w1_native_winner_v2",
+        "features": [
+          "default"
+        ],
+        "filenames": [
+          "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/target-native/release/examples/pon_w1_native_winner_v2"
+        ],
+        "fresh": true,
+        "manifest_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/repo/trillionnium/crates/trnm-crypto-primitives/Cargo.toml",
+        "package_id": "path+file:///home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/repo/trillionnium/crates/trnm-crypto-primitives#0.1.0",
+        "profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "3",
+          "overflow_checks": false,
+          "test": false
+        },
+        "reason": "compiler-artifact",
+        "target": {
+          "crate_types": [
+            "bin"
+          ],
+          "doc": false,
+          "doctest": false,
+          "edition": "2021",
+          "kind": [
+            "example"
+          ],
+          "name": "pon_w1_native_winner_v2",
+          "src_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/repo/trillionnium/crates/trnm-crypto-primitives/examples/pon_w1_native_winner_v2.rs",
+          "test": false
+        }
+      },
+      "cargo_fresh": true,
+      "kind": "repository_build",
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/target-native/release/examples/pon_w1_native_winner_v2",
+      "sha256": "87118afd349dc5645e38216802fa6e70e965e6ae59d60737fe1221de6ad3b4a3"
+    },
+    "owner_test": {
+      "build_command_label": "owner-no-run-json",
+      "bytes": 462448560,
+      "cargo_compiler_artifact_fresh": true,
+      "cargo_message_line": 134,
+      "cargo_message_line_sha256": "fd7d25ee4778af75fe9db49032cf201f1544cde34ad1e3a9de4bd1b326b7cf49",
+      "cargo_message_stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-build-qualification-01/owner-node-m12-01/owner-no-run-json.stdout",
+      "cargo_message_stdout_sha256": "6fb1e368f6dd6e4b34f4a71231e7306b7e1ecb7d20ad0b5ecec84cee860d5f3a",
+      "fresh_cargo_target": false,
+      "independent_reproducible_build_established": false,
+      "kind": "repository_build",
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/target-native/debug/deps/trnm_pon_node-fc27c767cf2f262e",
+      "sha256": "0e00e0c1eb3639ae08e7aa3ecd5348b2dddcdd1c8d564cb1753afc906ebf9f6e",
+      "source_commit": "d3037ca5dfb6f301757c159b7888dca9b0317be0",
+      "source_tree": "d4a8f84cdc896b9454ce0d03a164f8916e6afdf9"
+    },
+    "r0vm": {
+      "bytes": 108764424,
+      "kind": "fixed_upstream_release",
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/fixed-backend-01/r0vm",
+      "release_receipt": {
+        "bytes": 4696,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/fixed-backend-01/verification-02/receipt.json",
+        "sha256": "fb6a6fc7f1ecbb637322a284f9b0b18244a6667c733ed3762a56d09b9f931aab"
+      },
+      "sha256": "2acdf550f9aca4d05b74072463e4ed307c3824309c754a5cb5f93aa84f3390e6"
+    },
+    "runner": {
+      "binary_format": "ELF64-little-endian-x86_64",
+      "build_manifest": {
+        "bytes": 162707,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/backend-validation/exact-A-d3037ca5-01/manifest.json",
+        "sha256": "e53f69e5247d83e6ab1b3288207ec05e2586d4ea0c2a13ef48f2b88b4b06642b"
+      },
+      "bytes": 47811400,
+      "cargo_fresh": true,
+      "kind": "repository_build",
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/target-w1-host-v2/release/w1-staged-prover-v2",
+      "sha256": "7392a2ca67ade788ed9f2f8a92dfc4ad6e2de02f4ba795a19fbb8bffd73261bf"
+    },
+    "verifier": {
+      "bytes": 19337648,
+      "cargo_artifact": {
+        "executable": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/target-native/release/w1-verify-v2",
+        "features": [],
+        "filenames": [
+          "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/target-native/release/w1-verify-v2"
+        ],
+        "fresh": true,
+        "manifest_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/repo/formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml",
+        "package_id": "path+file:///home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/repo/formal/pon-nakamoto-v1/w1_v2_verifier#trnm-w1-v2-verifier@0.1.0",
+        "profile": {
+          "debug_assertions": false,
+          "debuginfo": 1,
+          "opt_level": "3",
+          "overflow_checks": false,
+          "test": false
+        },
+        "reason": "compiler-artifact",
+        "target": {
+          "crate_types": [
+            "bin"
+          ],
+          "doc": true,
+          "doctest": false,
+          "edition": "2021",
+          "kind": [
+            "bin"
+          ],
+          "name": "w1-verify-v2",
+          "src_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/repo/formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs",
+          "test": true
+        }
+      },
+      "cargo_fresh": true,
+      "kind": "repository_build",
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/target-native/release/w1-verify-v2",
+      "sha256": "582b53d8607cca6ec228c18de8047e1d6564f0fd9cd3cdeafa06c66f460ad3d5"
+    }
+  },
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit": 0,
+      "label": "head",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-build-qualification-01/head.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-build-qualification-01/head.stdout",
+      "stdout_sha256": "304fea7f67adae4e5b2823d69255c6eead0c9b232f5ac6df9f7e54c721366aff"
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD^{tree}"
+      ],
+      "exit": 0,
+      "label": "tree",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-build-qualification-01/tree.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-build-qualification-01/tree.stdout",
+      "stdout_sha256": "bdfa25a55f0472cfea2c5a60b6533525f861381c9fedd4acca127b92a27aab28"
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "exit": 0,
+      "label": "status",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-build-qualification-01/status.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-build-qualification-01/status.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/usr/bin/bash",
+        "scripts/project-preflight.sh",
+        "--dev"
+      ],
+      "exit": 0,
+      "label": "preflight",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-build-qualification-01/preflight.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-build-qualification-01/preflight.stdout",
+      "stdout_sha256": "a26394e63148ca29966ef3c4a4c28c5b86285d39ac6948d20087e0005c94b47f"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "d3037ca5dfb6f301757c159b7888dca9b0317be0",
+        "--output",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-build-qualification-01/source-before.json"
+      ],
+      "exit": 0,
+      "label": "source-before",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-build-qualification-01/source-before.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-build-qualification-01/source-before.stdout",
+      "stdout_sha256": "e2e1d88b8bb08d6da57361287d3f76df9f78299fb5a44b45d3bdb0ea61c08556"
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit": 0,
+      "group": "native_verifier",
+      "label": "00-head",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-native-verifier-01/00-head.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-native-verifier-01/00-head.stdout",
+      "stdout_sha256": "304fea7f67adae4e5b2823d69255c6eead0c9b232f5ac6df9f7e54c721366aff"
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD^{tree}"
+      ],
+      "exit": 0,
+      "group": "native_verifier",
+      "label": "01-tree",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-native-verifier-01/01-tree.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-native-verifier-01/01-tree.stdout",
+      "stdout_sha256": "bdfa25a55f0472cfea2c5a60b6533525f861381c9fedd4acca127b92a27aab28"
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "exit": 0,
+      "group": "native_verifier",
+      "label": "02-clean",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-native-verifier-01/02-clean.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-native-verifier-01/02-clean.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/usr/bin/bash",
+        "scripts/project-preflight.sh",
+        "--dev"
+      ],
+      "exit": 0,
+      "group": "native_verifier",
+      "label": "03-preflight",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-native-verifier-01/03-preflight.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-native-verifier-01/03-preflight.stdout",
+      "stdout_sha256": "a26394e63148ca29966ef3c4a4c28c5b86285d39ac6948d20087e0005c94b47f"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "d3037ca5dfb6f301757c159b7888dca9b0317be0",
+        "--output",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-native-verifier-01/source-before.json"
+      ],
+      "exit": 0,
+      "group": "native_verifier",
+      "label": "04-source-before",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-native-verifier-01/04-source-before.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-native-verifier-01/04-source-before.stdout",
+      "stdout_sha256": "e2e1d88b8bb08d6da57361287d3f76df9f78299fb5a44b45d3bdb0ea61c08556"
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+        "--version",
+        "--verbose"
+      ],
+      "exit": 0,
+      "group": "native_verifier",
+      "label": "05-rustc-version",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-native-verifier-01/05-rustc-version.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-native-verifier-01/05-rustc-version.stdout",
+      "stdout_sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "--version",
+        "--verbose"
+      ],
+      "exit": 0,
+      "group": "native_verifier",
+      "label": "06-cargo-version",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-native-verifier-01/06-cargo-version.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-native-verifier-01/06-cargo-version.stdout",
+      "stdout_sha256": "bfd735e736b354adabe72cea24bc1b393488223889b6ab95e974fd8fb963552e"
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--format-version",
+        "1"
+      ],
+      "exit": 0,
+      "group": "native_verifier",
+      "label": "07-native-graph-default",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-native-verifier-01/07-native-graph-default.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-native-verifier-01/07-native-graph-default.stdout",
+      "stdout_sha256": "e7fa446848581dc1953e1d4c534a071f42c479074425ce62a952a27737998763"
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--format-version",
+        "1",
+        "--all-features"
+      ],
+      "exit": 0,
+      "group": "native_verifier",
+      "label": "07-native-graph-all",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-native-verifier-01/07-native-graph-all.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-native-verifier-01/07-native-graph-all.stdout",
+      "stdout_sha256": "f4c40bb247c46fbb191abd5f070b2603e9523d04eb1c134f961c336f004c0ba1"
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml",
+        "--format-version",
+        "1"
+      ],
+      "exit": 0,
+      "group": "native_verifier",
+      "label": "07-verifier-graph-default",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-native-verifier-01/07-verifier-graph-default.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-native-verifier-01/07-verifier-graph-default.stdout",
+      "stdout_sha256": "b49877068e68d18eed8023fb590bca455ed29c0ded06147ef470a73a42e02ffa"
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml",
+        "--format-version",
+        "1",
+        "--all-features"
+      ],
+      "exit": 0,
+      "group": "native_verifier",
+      "label": "07-verifier-graph-all",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-native-verifier-01/07-verifier-graph-all.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-native-verifier-01/07-verifier-graph-all.stdout",
+      "stdout_sha256": "b49877068e68d18eed8023fb590bca455ed29c0ded06147ef470a73a42e02ffa"
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustfmt",
+        "--check",
+        "--edition",
+        "2021",
+        "--config",
+        "skip_children=true",
+        "trillionnium/crates/trnm-crypto-primitives/examples/pon_w1_native_winner_v2.rs",
+        "formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs"
+      ],
+      "exit": 0,
+      "group": "native_verifier",
+      "label": "08-owned-fmt",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-native-verifier-01/08-owned-fmt.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-native-verifier-01/08-owned-fmt.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-crypto-primitives",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "group": "native_verifier",
+      "label": "09-native-clippy",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-native-verifier-01/09-native-clippy.stderr",
+      "stderr_sha256": "732186322402325172940531d8d6d7cfac85dc902585b2bef6715ad6839dacfd",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-native-verifier-01/09-native-clippy.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-crypto-primitives",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "--test-threads=1"
+      ],
+      "exit": 0,
+      "group": "native_verifier",
+      "label": "10-native-tests",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-native-verifier-01/10-native-tests.stderr",
+      "stderr_sha256": "07f802d249e8ce293c5a6a0bfed868ebfcb5e623b0b8a587682ff9c86a073717",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-native-verifier-01/10-native-tests.stdout",
+      "stdout_sha256": "07ae09774ee893e6acaa221aa11e5ff8bf0c985c923508b045f11c5626bf365a"
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "group": "native_verifier",
+      "label": "11-verifier-clippy",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-native-verifier-01/11-verifier-clippy.stderr",
+      "stderr_sha256": "0b53209db424367e80c52cd8cde8b75e37af110438a0efde777104a1463956de",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-native-verifier-01/11-verifier-clippy.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "--test-threads=1"
+      ],
+      "exit": 0,
+      "group": "native_verifier",
+      "label": "12-verifier-tests",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-native-verifier-01/12-verifier-tests.stderr",
+      "stderr_sha256": "ab256c7ede7eb85e604a8d04cead9a7484dc6da1922268398c4fc74ff43b253a",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-native-verifier-01/12-verifier-tests.stdout",
+      "stdout_sha256": "04ab5efc799363f6a43f4a647fc54568557d66c63f6725fc2d5fbb272c59a31f"
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "build",
+        "--release",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-crypto-primitives",
+        "--example",
+        "pon_w1_native_winner_v2",
+        "--message-format=json"
+      ],
+      "exit": 0,
+      "group": "native_verifier",
+      "label": "13-native-winner-build",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-native-verifier-01/13-native-winner-build.stderr",
+      "stderr_sha256": "c663462ee6e8bd687c13f4f43386d516f3f0bb8fc1cb3522d98b83bf3664d8fd",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-native-verifier-01/13-native-winner-build.stdout",
+      "stdout_sha256": "3d52df42d5830304222e47c63a231ffa7c986cd5ed7cb963a304fbbe307f14af"
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "build",
+        "--release",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml",
+        "--message-format=json"
+      ],
+      "exit": 0,
+      "group": "native_verifier",
+      "label": "14-verifier-build",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-native-verifier-01/14-verifier-build.stderr",
+      "stderr_sha256": "09e0a5f0cc4093707d37804c17f8fd01ab9904df3876032dde8dbb52930ab7b5",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-native-verifier-01/14-verifier-build.stdout",
+      "stdout_sha256": "9c9edacec3a3cd2b3f4f3ae3890146cc2b706cec1f23b1d9ce724a7bd68c6c56"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/test_w1_receiver_real.py",
+        "--verifier",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/target-native/release/w1-verify-v2",
+        "--verifier-sha256",
+        "582b53d8607cca6ec228c18de8047e1d6564f0fd9cd3cdeafa06c66f460ad3d5",
+        "--receipt",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/repo/evidence/pon-w1-full-v2-20261105/succinct.bin",
+        "--input",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/repo/evidence/pon-w1-full-v2-20261105/input.bin",
+        "--header",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/repo/evidence/pon-w1-full-v2-20261105/header.bin",
+        "--expected-artifacts",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/repo/evidence/pon-w1-full-v2-20261105/expected-artifacts.bin",
+        "--out",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-native-verifier-01/real-receiver-controls"
+      ],
+      "exit": 0,
+      "group": "native_verifier",
+      "label": "15-real-receiver-controls",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-native-verifier-01/15-real-receiver-controls.stderr",
+      "stderr_sha256": "3397e13a3f9ffc7167dcf62efb85b9c12b9839a3442828581a2123c78b3111e4",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-native-verifier-01/15-real-receiver-controls.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "d3037ca5dfb6f301757c159b7888dca9b0317be0",
+        "--output",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-native-verifier-01/source-after.json"
+      ],
+      "exit": 0,
+      "group": "native_verifier",
+      "label": "16-source-after",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-native-verifier-01/16-source-after.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-native-verifier-01/16-source-after.stdout",
+      "stdout_sha256": "e2e1d88b8bb08d6da57361287d3f76df9f78299fb5a44b45d3bdb0ea61c08556"
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "exit": 0,
+      "group": "native_verifier",
+      "label": "17-final-clean",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-native-verifier-01/17-final-clean.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-native-verifier-01/17-final-clean.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/repo/scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "d3037ca5dfb6f301757c159b7888dca9b0317be0",
+        "--output",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-build-qualification-01/owner-node-m12-01/source-before.json"
+      ],
+      "exit": 0,
+      "group": "owner_node_m12",
+      "label": "source-before",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-build-qualification-01/owner-node-m12-01/source-before.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-build-qualification-01/owner-node-m12-01/source-before.stdout",
+      "stdout_sha256": "e2e1d88b8bb08d6da57361287d3f76df9f78299fb5a44b45d3bdb0ea61c08556"
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "--version",
+        "--verbose"
+      ],
+      "exit": 0,
+      "group": "owner_node_m12",
+      "label": "cargo-version",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-build-qualification-01/owner-node-m12-01/cargo-version.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-build-qualification-01/owner-node-m12-01/cargo-version.stdout",
+      "stdout_sha256": "bfd735e736b354adabe72cea24bc1b393488223889b6ab95e974fd8fb963552e"
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/rustc",
+        "-vV"
+      ],
+      "exit": 0,
+      "group": "owner_node_m12",
+      "label": "rustc-version",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-build-qualification-01/owner-node-m12-01/rustc-version.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-build-qualification-01/owner-node-m12-01/rustc-version.stdout",
+      "stdout_sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/rustfmt",
+        "--check",
+        "--edition",
+        "2021",
+        "--config",
+        "skip_children=true",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/repo/trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2.rs",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/repo/trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/task_owner.rs",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/repo/trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests.rs",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/repo/trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests/heavy.rs",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/repo/trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2.rs",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/repo/trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2/tests.rs"
+      ],
+      "exit": 0,
+      "group": "owner_node_m12",
+      "label": "owned-fmt",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-build-qualification-01/owner-node-m12-01/owned-fmt.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-build-qualification-01/owner-node-m12-01/owned-fmt.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-service-settlement",
+        "--lib",
+        "--tests",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "group": "owner_node_m12",
+      "label": "m12-strict-clippy",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-build-qualification-01/owner-node-m12-01/m12-strict-clippy.stderr",
+      "stderr_sha256": "732186322402325172940531d8d6d7cfac85dc902585b2bef6715ad6839dacfd",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-build-qualification-01/owner-node-m12-01/m12-strict-clippy.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--tests",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "group": "owner_node_m12",
+      "label": "node-strict-clippy",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-build-qualification-01/owner-node-m12-01/node-strict-clippy.stderr",
+      "stderr_sha256": "d454b4e91cba957935bb0b5b374f69a106a43ce1ccce8da9460bb0061c6dc213",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-build-qualification-01/owner-node-m12-01/node-strict-clippy.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-service-settlement",
+        "native_generation_budget_v2",
+        "--lib",
+        "--",
+        "--test-threads=1"
+      ],
+      "exit": 0,
+      "group": "owner_node_m12",
+      "label": "m12-tests",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-build-qualification-01/owner-node-m12-01/m12-tests.stderr",
+      "stderr_sha256": "03eb42f20f50256573b673d3c3e62642f723cbb3aa331aba5470b2d6a5b00495",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-build-qualification-01/owner-node-m12-01/m12-tests.stdout",
+      "stdout_sha256": "410294262a83e4d2e0b165cbacc838d435e85b722b1fcf1b8788710fb7e7550a"
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-pon-node",
+        "async_w1_generation_v2",
+        "--lib",
+        "--",
+        "--test-threads=1"
+      ],
+      "exit": 0,
+      "group": "owner_node_m12",
+      "label": "node-short-tests",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-build-qualification-01/owner-node-m12-01/node-short-tests.stderr",
+      "stderr_sha256": "90ecb8d22d466af8102266ca1b8290ba8e2c6393407e6ce4f94a71a64c5a96a7",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-build-qualification-01/owner-node-m12-01/node-short-tests.stdout",
+      "stdout_sha256": "37d82d4ecab3eff8d1d683a8b619d9f05d736a4aa84e0460a843b13a80393549"
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--no-run",
+        "--message-format=json"
+      ],
+      "exit": 0,
+      "group": "owner_node_m12",
+      "label": "owner-no-run-json",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-build-qualification-01/owner-node-m12-01/owner-no-run-json.stderr",
+      "stderr_sha256": "99042cf5e7b4cee4afcff3f41854b35318c1399135a3531d1f6f511446369ce3",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-build-qualification-01/owner-node-m12-01/owner-no-run-json.stdout",
+      "stdout_sha256": "6fb1e368f6dd6e4b34f4a71231e7306b7e1ecb7d20ad0b5ecec84cee860d5f3a"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/repo/scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "d3037ca5dfb6f301757c159b7888dca9b0317be0",
+        "--output",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-build-qualification-01/owner-node-m12-01/source-after.json"
+      ],
+      "exit": 0,
+      "group": "owner_node_m12",
+      "label": "source-after",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-build-qualification-01/owner-node-m12-01/source-after.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-build-qualification-01/owner-node-m12-01/source-after.stdout",
+      "stdout_sha256": "e2e1d88b8bb08d6da57361287d3f76df9f78299fb5a44b45d3bdb0ea61c08556"
+    },
+    {
+      "argv": [
+        "/usr/bin/bash",
+        "scripts/project-preflight.sh",
+        "--dev"
+      ],
+      "exit": 0,
+      "group": "backend",
+      "label": "00-preflight",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/backend-validation/exact-A-d3037ca5-01/commands/00-preflight/stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/backend-validation/exact-A-d3037ca5-01/commands/00-preflight/stdout.log",
+      "stdout_sha256": "a26394e63148ca29966ef3c4a4c28c5b86285d39ac6948d20087e0005c94b47f"
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+        "-vV"
+      ],
+      "exit": 0,
+      "group": "backend",
+      "label": "01-rustc-version",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/backend-validation/exact-A-d3037ca5-01/commands/01-rustc-version/stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/backend-validation/exact-A-d3037ca5-01/commands/01-rustc-version/stdout.log",
+      "stdout_sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "--version",
+        "--verbose"
+      ],
+      "exit": 0,
+      "group": "backend",
+      "label": "02-cargo-version",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/backend-validation/exact-A-d3037ca5-01/commands/02-cargo-version/stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/backend-validation/exact-A-d3037ca5-01/commands/02-cargo-version/stdout.log",
+      "stdout_sha256": "bfd735e736b354adabe72cea24bc1b393488223889b6ab95e974fd8fb963552e"
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustfmt",
+        "--version"
+      ],
+      "exit": 0,
+      "group": "backend",
+      "label": "03-rustfmt-version",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/backend-validation/exact-A-d3037ca5-01/commands/03-rustfmt-version/stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/backend-validation/exact-A-d3037ca5-01/commands/03-rustfmt-version/stdout.log",
+      "stdout_sha256": "21e923568a260155c34a6f780f9513d3962c088aa3bbe8c91ab5385f470547d1"
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/clippy-driver",
+        "--version"
+      ],
+      "exit": 0,
+      "group": "backend",
+      "label": "04-clippy-version",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/backend-validation/exact-A-d3037ca5-01/commands/04-clippy-version/stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/backend-validation/exact-A-d3037ca5-01/commands/04-clippy-version/stdout.log",
+      "stdout_sha256": "35a36a02149eb682cc65a0f29c482942cab20c49fe19f75208155febbcbb78e8"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "d3037ca5dfb6f301757c159b7888dca9b0317be0",
+        "--output",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/backend-validation/exact-A-d3037ca5-01/source-before.json"
+      ],
+      "exit": 0,
+      "group": "backend",
+      "label": "05-source-before",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/backend-validation/exact-A-d3037ca5-01/commands/05-source-before/stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/backend-validation/exact-A-d3037ca5-01/commands/05-source-before/stdout.log",
+      "stdout_sha256": "e2e1d88b8bb08d6da57361287d3f76df9f78299fb5a44b45d3bdb0ea61c08556"
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "metadata",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_zkvm/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1"
+      ],
+      "exit": 0,
+      "group": "backend",
+      "label": "06-metadata-default",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/backend-validation/exact-A-d3037ca5-01/commands/06-metadata-default/stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/backend-validation/exact-A-d3037ca5-01/commands/06-metadata-default/stdout.log",
+      "stdout_sha256": "2e4c5496e1aa3709fb478dc3b11fc573769de3ebe21db0ca75e1a823635ddd29"
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "metadata",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_zkvm/Cargo.toml",
+        "--all-features",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1"
+      ],
+      "exit": 0,
+      "group": "backend",
+      "label": "07-metadata-all-features",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/backend-validation/exact-A-d3037ca5-01/commands/07-metadata-all-features/stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/backend-validation/exact-A-d3037ca5-01/commands/07-metadata-all-features/stdout.log",
+      "stdout_sha256": "1c43e730eed5b6c846f960e2a1f37c90e3a4fd2a30e8d78855df8a1fd6f20ddb"
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "fmt",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_zkvm/Cargo.toml",
+        "--all",
+        "--check"
+      ],
+      "exit": 0,
+      "group": "backend",
+      "label": "08-fmt-all",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/backend-validation/exact-A-d3037ca5-01/commands/08-fmt-all/stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/backend-validation/exact-A-d3037ca5-01/commands/08-fmt-all/stdout.log",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "clippy",
+        "--release",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_zkvm/Cargo.toml",
+        "-p",
+        "trnm-w1-zk-host-v2",
+        "--all-targets",
+        "--all-features",
+        "--locked",
+        "--offline",
+        "--message-format=json-render-diagnostics",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "group": "backend",
+      "label": "09-clippy",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/backend-validation/exact-A-d3037ca5-01/commands/09-clippy/stderr.log",
+      "stderr_sha256": "8a17a68a4e8974d049bd90de430c307d7eaff3de7b10cbc57efa9c213ee5b42d",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/backend-validation/exact-A-d3037ca5-01/commands/09-clippy/stdout.log",
+      "stdout_sha256": "2209f801a3bf055cce88a07d27b3f3f58545339c0375727a3d744bb7206b6abf"
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "test",
+        "--release",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_zkvm/Cargo.toml",
+        "-p",
+        "trnm-w1-zk-host-v2",
+        "--bin",
+        "w1-staged-prover-v2",
+        "--all-features",
+        "--locked",
+        "--offline",
+        "--message-format=json-render-diagnostics",
+        "--",
+        "--nocapture",
+        "--test-threads=2"
+      ],
+      "exit": 0,
+      "group": "backend",
+      "label": "10-test-retained",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/backend-validation/exact-A-d3037ca5-01/commands/10-test-retained/stderr.log",
+      "stderr_sha256": "7827b8a91ae6e1467c97164543fcc5293cb382e44c1b38879825792552bdeff5",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/backend-validation/exact-A-d3037ca5-01/commands/10-test-retained/stdout.log",
+      "stdout_sha256": "a1f9f75390920ab91e7d998915fe0d81c35693b3d42163870b72bd08986f1179"
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "build",
+        "--release",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_zkvm/Cargo.toml",
+        "-p",
+        "trnm-w1-zk-host-v2",
+        "--bin",
+        "w1-staged-prover-v2",
+        "--features",
+        "retained-v2-guest",
+        "--locked",
+        "--offline",
+        "--message-format=json-render-diagnostics"
+      ],
+      "exit": 0,
+      "group": "backend",
+      "label": "11-release-build",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/backend-validation/exact-A-d3037ca5-01/commands/11-release-build/stderr.log",
+      "stderr_sha256": "918abb2a39b7e9aa3290cd390df99b045bab96bce02cf5442985e7686366f29f",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/backend-validation/exact-A-d3037ca5-01/commands/11-release-build/stdout.log",
+      "stdout_sha256": "36a848dd120238a3e9da49e3f865a1ca485da276ad7892875881d87dcfdf0160"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "d3037ca5dfb6f301757c159b7888dca9b0317be0",
+        "--output",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/backend-validation/exact-A-d3037ca5-01/source-after.json"
+      ],
+      "exit": 0,
+      "group": "backend",
+      "label": "12-source-after",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/backend-validation/exact-A-d3037ca5-01/commands/12-source-after/stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/backend-validation/exact-A-d3037ca5-01/commands/12-source-after/stdout.log",
+      "stdout_sha256": "e2e1d88b8bb08d6da57361287d3f76df9f78299fb5a44b45d3bdb0ea61c08556"
+    },
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--dev"
+      ],
+      "exit": 0,
+      "group": "ci",
+      "label": "preflight",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/ci-pin-validation-001/exact-a-001/preflight.stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/ci-pin-validation-001/exact-a-001/preflight.stdout.log",
+      "stdout_sha256": "a26394e63148ca29966ef3c4a4c28c5b86285d39ac6948d20087e0005c94b47f"
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "d3037ca5dfb6f301757c159b7888dca9b0317be0",
+        "--output",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/ci-pin-validation-001/exact-a-001/source-before.json"
+      ],
+      "exit": 0,
+      "group": "ci",
+      "label": "source-before",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/ci-pin-validation-001/exact-a-001/source-before.stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/ci-pin-validation-001/exact-a-001/source-before.stdout.log",
+      "stdout_sha256": "e2e1d88b8bb08d6da57361287d3f76df9f78299fb5a44b45d3bdb0ea61c08556"
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "exit": 0,
+      "group": "ci",
+      "label": "ci-contract",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/ci-pin-validation-001/exact-a-001/ci-contract.stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/ci-pin-validation-001/exact-a-001/ci-contract.stdout.log",
+      "stdout_sha256": "1811739ab56176be2d74cfd1b12a86ba05919a96769d5479faca6db12f37dd54"
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "exit": 0,
+      "group": "ci",
+      "label": "pq-integration",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/ci-pin-validation-001/exact-a-001/pq-integration.stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/ci-pin-validation-001/exact-a-001/pq-integration.stdout.log",
+      "stdout_sha256": "5cf374ea80fc88ab5be31eb95dce006e5e59e7f15c76a39993142cc0ef9aa9c9"
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "exit": 0,
+      "group": "ci",
+      "label": "distributed-inventory",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/ci-pin-validation-001/exact-a-001/distributed-inventory.stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/ci-pin-validation-001/exact-a-001/distributed-inventory.stdout.log",
+      "stdout_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/report_current_implementation.py",
+        "--check"
+      ],
+      "exit": 0,
+      "group": "ci",
+      "label": "current-implementation",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/ci-pin-validation-001/exact-a-001/current-implementation.stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/ci-pin-validation-001/exact-a-001/current-implementation.stdout.log",
+      "stdout_sha256": "431e373353829a7aa76abab6c3a606519c90290e2dc0909202c9a9f4cab92be3"
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/check_repository.py"
+      ],
+      "exit": 0,
+      "group": "ci",
+      "label": "repository-and-markdown-links",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/ci-pin-validation-001/exact-a-001/repository-and-markdown-links.stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/ci-pin-validation-001/exact-a-001/repository-and-markdown-links.stdout.log",
+      "stdout_sha256": "71e01025c1dfedb30f63f1df3422fea7206fe5613c21947e8db721cd4f978adc"
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_ci_contract.py",
+        "-v"
+      ],
+      "exit": 0,
+      "group": "ci",
+      "label": "ci-contract-tests",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/ci-pin-validation-001/exact-a-001/ci-contract-tests.stderr.log",
+      "stderr_sha256": "93cbf029aa01db122f85cd496e0cc358ac7a85be659210ebe852ec6c890f2f64",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/ci-pin-validation-001/exact-a-001/ci-contract-tests.stdout.log",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_pq_research_integration.py",
+        "-v"
+      ],
+      "exit": 0,
+      "group": "ci",
+      "label": "pq-source-negative-tests",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/ci-pin-validation-001/exact-a-001/pq-source-negative-tests.stderr.log",
+      "stderr_sha256": "d630e74506de5e32a7a02891a4fa4efd3dcb0fef025a6bc70caac0ece1e17cca",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/ci-pin-validation-001/exact-a-001/pq-source-negative-tests.stdout.log",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_ci_execution.py"
+      ],
+      "exit": 0,
+      "group": "ci",
+      "label": "ci-execution-source-integrity-tests",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/ci-pin-validation-001/exact-a-001/ci-execution-source-integrity-tests.stderr.log",
+      "stderr_sha256": "1261c25fa60c0cf46fa47507065aa9904a32cba440cc4e218034312bb193ce32",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/ci-pin-validation-001/exact-a-001/ci-execution-source-integrity-tests.stdout.log",
+      "stdout_sha256": "4a83f0275c89b9f9c947a75135f48744bc1f1be6b87471e69560b854b72155b4"
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_project_boundary.py"
+      ],
+      "exit": 0,
+      "group": "ci",
+      "label": "project-boundary-tests",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/ci-pin-validation-001/exact-a-001/project-boundary-tests.stderr.log",
+      "stderr_sha256": "cd8df2ed445b0c7fca3be6fcb6b8aa92e1859565009142ab80e2c7775d62de7a",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/ci-pin-validation-001/exact-a-001/project-boundary-tests.stdout.log",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "bash",
+        "-euo",
+        "pipefail",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/ci-pin-validation-001/exact-a-001/w1-current-command-block.sh"
+      ],
+      "exit": 0,
+      "group": "ci",
+      "label": "w1-current-command-block",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/ci-pin-validation-001/exact-a-001/w1-current-command-block.stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/ci-pin-validation-001/exact-a-001/w1-current-command-block.stdout.log",
+      "stdout_sha256": "e656d280b7a0937e5037eaa70715abb77ec093d7cb0d5a0a9f4cef215a6a4b85"
+    },
+    {
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_w1_staged_observer.py",
+        "-v"
+      ],
+      "exit": 0,
+      "group": "ci",
+      "label": "w1-retained-staged-tests",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/ci-pin-validation-001/exact-a-001/w1-retained-staged-tests.stderr.log",
+      "stderr_sha256": "92ea1de591bd185bd3e28607d32087cea35007ed20c1b3753ec805268453dad1",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/ci-pin-validation-001/exact-a-001/w1-retained-staged-tests.stdout.log",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_w1_proof_latency_readback.py",
+        "-v"
+      ],
+      "exit": 0,
+      "group": "ci",
+      "label": "w1-historical-readback-tests",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/ci-pin-validation-001/exact-a-001/w1-historical-readback-tests.stderr.log",
+      "stderr_sha256": "1dc306e96f0c4e26c71b1fdd01f871c76858fe4168cece8f04df6fce7f279e77",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/ci-pin-validation-001/exact-a-001/w1-historical-readback-tests.stdout.log",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_w1_full_v2_disposition.py",
+        "-v"
+      ],
+      "exit": 0,
+      "group": "ci",
+      "label": "w1-full-v2-disposition-tests",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/ci-pin-validation-001/exact-a-001/w1-full-v2-disposition-tests.stderr.log",
+      "stderr_sha256": "bdde3c060bc56f31207e538e24e7ccf4c22f8e6ee4a2f303778075e0ce913114",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/ci-pin-validation-001/exact-a-001/w1-full-v2-disposition-tests.stdout.log",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_repository.py",
+        "-v"
+      ],
+      "exit": 0,
+      "group": "ci",
+      "label": "repository-negatives",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/ci-pin-validation-001/exact-a-001/repository-negatives.stderr.log",
+      "stderr_sha256": "8cef9ec8d9bde7b9441e7c0c2817f4f5f204585b27fe424b3736fda91197a039",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/ci-pin-validation-001/exact-a-001/repository-negatives.stdout.log",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "d3037ca5dfb6f301757c159b7888dca9b0317be0",
+        "--output",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/ci-pin-validation-001/exact-a-001/source-after.json"
+      ],
+      "exit": 0,
+      "group": "ci",
+      "label": "source-after",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/ci-pin-validation-001/exact-a-001/source-after.stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/ci-pin-validation-001/exact-a-001/source-after.stdout.log",
+      "stdout_sha256": "e2e1d88b8bb08d6da57361287d3f76df9f78299fb5a44b45d3bdb0ea61c08556"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "d3037ca5dfb6f301757c159b7888dca9b0317be0",
+        "--output",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-build-qualification-01/source-after.json"
+      ],
+      "exit": 0,
+      "group": "central",
+      "label": "source-after",
+      "stderr_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-build-qualification-01/source-after.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-build-qualification-01/source-after.stdout",
+      "stdout_sha256": "e2e1d88b8bb08d6da57361287d3f76df9f78299fb5a44b45d3bdb0ea61c08556"
+    }
+  ],
+  "fresh_cargo_target": false,
+  "fresh_proof_generations": 0,
+  "gate_jobs": {
+    "bytes": 3235,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-build-qualification-01/gate-job-statuses.json",
+    "sha256": "1049851bf48f5a59ae1e8881ed15300d708211bf135dfa7f5a661b60305eb776"
+  },
+  "gate_manifests": {
+    "backend": {
+      "bytes": 162707,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/backend-validation/exact-A-d3037ca5-01/manifest.json",
+      "sha256": "e53f69e5247d83e6ab1b3288207ec05e2586d4ea0c2a13ef48f2b88b4b06642b"
+    },
+    "ci": {
+      "bytes": 35019,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/ci-pin-validation-001/exact-a-001/qualification-manifest.json",
+      "sha256": "4ac6dfb1f72a826d186632fcba6780babcc417bfa3fad8666aeefa020f6b6d01"
+    },
+    "native_verifier": {
+      "bytes": 24950,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-native-verifier-01/manifest.json",
+      "sha256": "2c0c45cc9f126f377e8dabad7350330d9be55beb9b58cbfb422fc03b7d692eff"
+    },
+    "owner_node_m12": {
+      "bytes": 14191,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-build-qualification-01/owner-node-m12-01/manifest.json",
+      "sha256": "28505440e3bee7eef14eb3028164c21c835628a72cc75fc95ab05c0b9ae22bc4"
+    }
+  },
+  "guest": {
+    "build_provenance": [
+      {
+        "cargo_build_script_event": {
+          "cfgs": [],
+          "env": [],
+          "linked_libs": [],
+          "linked_paths": [],
+          "out_dir": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/target-w1-host-v2/release/build/trnm-w1-zk-methods-v2-af8f3778ab56933c/out",
+          "package_id": "path+file:///home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/repo/formal/pon-nakamoto-v1/w1_zkvm/methods-v2#trnm-w1-zk-methods-v2@0.1.0",
+          "reason": "build-script-executed"
+        },
+        "generated_methods": {
+          "bytes": 635,
+          "ctime_ns": 1794072033748144040,
+          "inode": 54664858,
+          "mode": 384,
+          "mtime_ns": 1794072033748144040,
+          "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/target-w1-host-v2/release/build/trnm-w1-zk-methods-v2-af8f3778ab56933c/out/methods.rs",
+          "sha256": "4443a0c721861a2feab895e2294bd81a6c638738157fcb73f3567535b07c57da"
+        },
+        "original": {
+          "bytes": 416,
+          "ctime_ns": 1794072033749144006,
+          "inode": 54664867,
+          "mode": 384,
+          "mtime_ns": 1794072033749144006,
+          "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/target-w1-host-v2/release/build/trnm-w1-zk-methods-v2-af8f3778ab56933c/out/guest-build-provenance.json",
+          "sha256": "21664dd0ea0e0a247824063c7a2d5a12f4256fc4b918917ef731768ed56cfac5"
+        },
+        "raw_copy": {
+          "bytes": 416,
+          "ctime_ns": 1794077115476361168,
+          "inode": 54148467,
+          "mode": 384,
+          "mtime_ns": 1794077115476361168,
+          "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/backend-validation/exact-A-d3037ca5-01/guest-provenance/00-guest-build-provenance.json",
+          "sha256": "21664dd0ea0e0a247824063c7a2d5a12f4256fc4b918917ef731768ed56cfac5"
+        },
+        "retained_guest": {
+          "bytes": 375928,
+          "ctime_ns": 1794072033742144240,
+          "inode": 54664841,
+          "mode": 384,
+          "mtime_ns": 1794072033742144240,
+          "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/target-w1-host-v2/release/build/trnm-w1-zk-methods-v2-af8f3778ab56933c/out/retained-v2-guest.bin",
+          "sha256": "25718312ec3c6f5219d832e3516adfb5f82983156f669c5e7daa15bd22d1798f"
+        },
+        "value": {
+          "bytes": 375928,
+          "guest_compilation_performed": false,
+          "guest_format": "R0BF ProgramBinary",
+          "image_id": [
+            1958252411,
+            3287394615,
+            1805488136,
+            1516578702,
+            78549041,
+            790278610,
+            301018785,
+            4279049364
+          ],
+          "mode": "retained-v2-guest",
+          "schema": "TRNM-W1-GUEST-BUILD1",
+          "sdk_image_checked": true,
+          "sha256": "25718312ec3c6f5219d832e3516adfb5f82983156f669c5e7daa15bd22d1798f",
+          "source_artifact": "evidence/pon-w1-full-v2-20261105/guest.bin"
+        }
+      }
+    ],
+    "bytes": 375928,
+    "guest_compilation_performed": false,
+    "image_id": [
+      1958252411,
+      3287394615,
+      1805488136,
+      1516578702,
+      78549041,
+      790278610,
+      301018785,
+      4279049364
+    ],
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/repo/evidence/pon-w1-full-v2-20261105/guest.bin",
+    "sha256": "25718312ec3c6f5219d832e3516adfb5f82983156f669c5e7daa15bd22d1798f"
+  },
+  "independent_reproducible_build_established": false,
+  "locks": {
+    "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock": {
+      "bytes": 46474,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/repo/formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock",
+      "sha256": "5b037e71d807d90d25fb6247a348cca30a63765411e08c1f9c370f4162704be9"
+    },
+    "formal/pon-nakamoto-v1/w1_zkvm/Cargo.lock": {
+      "bytes": 74364,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/repo/formal/pon-nakamoto-v1/w1_zkvm/Cargo.lock",
+      "sha256": "173776355b019994c22b355aa22f8130b63b3a3c7ab7fba3d1e70af0a15d6a3f"
+    },
+    "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/Cargo.lock": {
+      "bytes": 45363,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/repo/formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/Cargo.lock",
+      "sha256": "9eb533e5746b597225d6dd91131efd1dec481464dc3d776ba4aa1bfc927bcabe"
+    },
+    "formal/pon-nakamoto-v1/w1_zkvm/methods/guest/Cargo.lock": {
+      "bytes": 40801,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/repo/formal/pon-nakamoto-v1/w1_zkvm/methods/guest/Cargo.lock",
+      "sha256": "517632d9380db3b9b034efa475063cd2c081ba1af14de580dd09f8648e472f76"
+    },
+    "trillionnium/Cargo.lock": {
+      "bytes": 40044,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/repo/trillionnium/Cargo.lock",
+      "sha256": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be"
+    }
+  },
+  "original_business_budget_qualified": false,
+  "qualification_complete": true,
+  "repo_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/repo",
+  "schema": "TRNM-W1-CLEAN-BUILD-QUALIFICATION1",
+  "scope": "exact-source build identity and retained development gates; no deployment, resource, payment or cryptographic security qualification",
+  "security_qualified": false,
+  "source_after": {
+    "report_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-build-qualification-01/source-after.json",
+    "sha256": "e2e1d88b8bb08d6da57361287d3f76df9f78299fb5a44b45d3bdb0ea61c08556",
+    "tested_commit": "d3037ca5dfb6f301757c159b7888dca9b0317be0",
+    "tested_tree": "d4a8f84cdc896b9454ce0d03a164f8916e6afdf9"
+  },
+  "source_before": {
+    "report_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-A-build-qualification-01/source-before.json",
+    "sha256": "e2e1d88b8bb08d6da57361287d3f76df9f78299fb5a44b45d3bdb0ea61c08556",
+    "tested_commit": "d3037ca5dfb6f301757c159b7888dca9b0317be0",
+    "tested_tree": "d4a8f84cdc896b9454ce0d03a164f8916e6afdf9"
+  },
+  "source_clean_after": true,
+  "source_clean_before": true,
+  "source_commit": "d3037ca5dfb6f301757c159b7888dca9b0317be0",
+  "source_tree": "d4a8f84cdc896b9454ce0d03a164f8916e6afdf9"
+}

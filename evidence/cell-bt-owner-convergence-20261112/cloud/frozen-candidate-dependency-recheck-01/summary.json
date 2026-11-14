@@ -1,0 +1,101 @@
+{
+  "all_commands_passed": true,
+  "commands": [
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "elapsed_ns": 117080379,
+      "exit_code": 0,
+      "name": "preflight",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 177,
+      "stdout_sha256": "5dd7bd6b3ece115afdc4220006fed84a5520177cd662d725ac96ca585765d252"
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "031d442dd0acb693afcfaf42f9cc4db446ba52cb"
+      ],
+      "elapsed_ns": 22458318675,
+      "exit_code": 0,
+      "name": "source-before",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 423,
+      "stdout_sha256": "418dec7ab64a0ef795f7e360ce9e6f311ae7ce6d34dafc0df73bee59ebbe0902"
+    },
+    {
+      "argv": [
+        "/workspace/scratch/4a0b199bc6c0/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--format-version",
+        "1"
+      ],
+      "elapsed_ns": 316770461,
+      "exit_code": 0,
+      "name": "locked-graph",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 858656,
+      "stdout_sha256": "3e1fd6a6a6563df3923347ff0dbb9a7047d9a39aed695a74ff02f08afffe596a"
+    },
+    {
+      "argv": [
+        "/workspace/scratch/4a0b199bc6c0/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all-features",
+        "--format-version",
+        "1"
+      ],
+      "elapsed_ns": 165163170,
+      "exit_code": 0,
+      "name": "locked-all-feature-graph",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 873806,
+      "stdout_sha256": "3ba34e4be53cd37ae0f3a94dd9931658d9867b5634b5e39dce9200630df6f48a"
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "031d442dd0acb693afcfaf42f9cc4db446ba52cb"
+      ],
+      "elapsed_ns": 30619281841,
+      "exit_code": 0,
+      "name": "source-after",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 423,
+      "stdout_sha256": "418dec7ab64a0ef795f7e360ce9e6f311ae7ce6d34dafc0df73bee59ebbe0902"
+    }
+  ],
+  "completed": true,
+  "original_attempt": "frozen-candidate-01",
+  "original_failures_preserved": true,
+  "reason": "original offline metadata lacked Cargo.lock pinned clap 4.6.0; cargo fetch --locked completed without source changes",
+  "schema": "cell-bt-exact-graph-dependency-recheck-v1",
+  "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+  "source_unchanged": true
+}

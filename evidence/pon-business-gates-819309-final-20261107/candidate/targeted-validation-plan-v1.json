@@ -1,0 +1,314 @@
+{
+  "schema": "trnm-admission-final-root-targeted-validation-plan-v1",
+  "state": "NOT_STARTED",
+  "baseline_commit": "819309fd312298e099642e1253b1d4ba07113e98",
+  "baseline_tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267",
+  "candidate_commit": null,
+  "candidate_tree": null,
+  "scope": "Only reviewed production-v1.patch and regression-v1.patch plus their required inventory/corpus/docs bindings; no Host implementation or other proposed optimization.",
+  "patch_sha256": {
+    "production-v1.patch": "8e93c923fd0379e37cd79fe430fb2e686cafcf9fc6d461697e211cc165ecb9a8",
+    "regression-v1.patch": "416a86230434742de34406220342a2eb56efbe9160262d39c5e9c02abc290a32"
+  },
+  "preconditions": [
+    "Existing819309 full-node job1a1b755c976-12894-a3a has authoritative terminal status; all its results preserved, including failures.",
+    "Existing819309 full source-after is complete and compared with5759d06c351357aa4d7b24e1b56c03607da60870788f30139a8e10460744c6b6.",
+    "Root supplies candidate SHA/tree and complete clean isolated worktree; no execution against unknown HEAD.",
+    "Root approves start after original full-node run; no reuse of active source or final-target."
+  ],
+  "target_directory": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/admission-fence-target",
+  "cargo_home": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/cargo",
+  "provider_exports": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/provider.exports",
+  "environment": {
+    "CARGO_BUILD_JOBS": "8",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_PROFILE_TEST_DEBUG": "0",
+    "RUST_TEST_THREADS": "1",
+    "CARGO_TERM_COLOR": "never",
+    "GIT_OPTIONAL_LOCKS": "0"
+  },
+  "provider_rule": "Parse the plain assignments directly into subprocess env as frozen native v2 does; verify actual OpenSSL3.5.9 executable SHA79bd5e815ce341387d8299e66419fb8a56ba952892df8e3edc967cab60e83437. No shell source without export, CI spoof, opt flags, profile/budget/deadline changes.",
+  "prepush_commands": [
+    [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    [
+      "python3",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "<H>",
+      "--output",
+      "<RUN>/source-before.json"
+    ],
+    [
+      "cargo",
+      "+1.95.0",
+      "metadata",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all-features",
+      "--format-version",
+      "1"
+    ],
+    [
+      "cargo",
+      "+1.95.0",
+      "fmt",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all",
+      "--",
+      "--check"
+    ],
+    [
+      "cargo",
+      "+1.95.0",
+      "clippy",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--workspace",
+      "--all-targets",
+      "--all-features",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    [
+      "cargo",
+      "+1.95.0",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--all-features",
+      "--no-run",
+      "--message-format=json"
+    ]
+  ],
+  "inventory_rule": "Use actual Cargo compiler-artifact executables. Only profile.test=true harnesses receive --list --format terse and --list --format terse --ignored; ordinary CLI is only identified/hashed. Exact inventory mismatch stops before test bodies.",
+  "expected_if_only_declared_delta": {
+    "library_tests": 1205,
+    "library_ignored": 33,
+    "native_targets": 67,
+    "integration_targets": 65,
+    "native_tests": 1574,
+    "native_ignored": 57,
+    "native_default_bodies": 1517,
+    "cell_native_tests": 12,
+    "targeted_exact_invocations": 16
+  },
+  "recorder_prefix": [
+    "python3",
+    "scripts/ci/record_pq_native_command.py",
+    "--kind",
+    "head",
+    "--candidate",
+    "<H>",
+    "--tested",
+    "<H>",
+    "--output",
+    "<RUN>/records",
+    "--label",
+    "<UNIQUE_LABEL>",
+    "--"
+  ],
+  "exact_command": [
+    "cargo",
+    "+1.95.0",
+    "test",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--all-features",
+    "--lib",
+    "<SELECTOR>",
+    "--",
+    "--exact",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "required_reader_command": [
+    "python3",
+    "scripts/ci/check_required_native_test.py",
+    "<RUN>/records/<UNIQUE_LABEL>.log",
+    "--test",
+    "<SELECTOR>"
+  ],
+  "required_reader_baseline_sha256": "6f211d1a23521e9960df94ebd6de63c6c9733489d795eb7d2d4eaac1b790db28",
+  "selectors": [
+    {
+      "ordinal": 1,
+      "label": "exact-01",
+      "selector": "store::legacy_admission_root_tests::ordinary_admission_final_root_rechecks_warm_active_state_and_claim",
+      "expected_outer_tests": 1,
+      "expected_passed": 1,
+      "expected_ignored": 0,
+      "attempts": 1
+    },
+    {
+      "ordinal": 2,
+      "label": "exact-02",
+      "selector": "store::legacy_reorg_root_tests::legacy_reorg_root_keeps_signed_history_cursor_and_cold_publication",
+      "expected_outer_tests": 1,
+      "expected_passed": 1,
+      "expected_ignored": 0,
+      "attempts": 1
+    },
+    {
+      "ordinal": 3,
+      "label": "exact-03",
+      "selector": "store::legacy_reorg_root_tests::legacy_reorg_root_rechecks_untouched_rows_root_claims_and_original_errors",
+      "expected_outer_tests": 1,
+      "expected_passed": 1,
+      "expected_ignored": 0,
+      "attempts": 1
+    },
+    {
+      "ordinal": 4,
+      "label": "exact-04",
+      "selector": "store::legacy_reorg_root_tests::legacy_reorg_root_keeps_all_tail_cancellation_boundaries_and_rollback",
+      "expected_outer_tests": 1,
+      "expected_passed": 1,
+      "expected_ignored": 0,
+      "attempts": 1
+    },
+    {
+      "ordinal": 5,
+      "label": "exact-05",
+      "selector": "store::legacy_reorg_root_tests::legacy_reorg_root_never_selects_the_growth_or_authenticated_relation",
+      "expected_outer_tests": 1,
+      "expected_passed": 1,
+      "expected_ignored": 0,
+      "attempts": 1
+    },
+    {
+      "ordinal": 6,
+      "label": "exact-06",
+      "selector": "store::legacy_reorg_root_tests::legacy_reorg_root_preserves_pq_v2_and_v6_state_validation",
+      "expected_outer_tests": 1,
+      "expected_passed": 1,
+      "expected_ignored": 0,
+      "attempts": 1
+    },
+    {
+      "ordinal": 7,
+      "label": "exact-07",
+      "selector": "store::legacy_admission_readback::tests::legacy_pair_matches_full_replays_snapshot_cadence_and_cold_publication",
+      "expected_outer_tests": 1,
+      "expected_passed": 1,
+      "expected_ignored": 0,
+      "attempts": 1
+    },
+    {
+      "ordinal": 8,
+      "label": "exact-08",
+      "selector": "store::legacy_admission_readback::tests::legacy_pair_rereads_snapshot_and_every_intermediate_delta_after_warm_use",
+      "expected_outer_tests": 1,
+      "expected_passed": 1,
+      "expected_ignored": 0,
+      "attempts": 1
+    },
+    {
+      "ordinal": 9,
+      "label": "exact-09",
+      "selector": "store::legacy_admission_readback::tests::legacy_pair_child_snapshot_and_active_parent_keep_distinct_sql_sources",
+      "expected_outer_tests": 1,
+      "expected_passed": 1,
+      "expected_ignored": 0,
+      "attempts": 1
+    },
+    {
+      "ordinal": 10,
+      "label": "exact-10",
+      "selector": "store::legacy_admission_readback::tests::legacy_pair_ineligible_schema_keeps_original_reads_and_refuses_bad_delta_writes",
+      "expected_outer_tests": 1,
+      "expected_passed": 1,
+      "expected_ignored": 0,
+      "attempts": 1
+    },
+    {
+      "ordinal": 11,
+      "label": "exact-11",
+      "selector": "store::legacy_admission_readback::tests::legacy_pair_selection_excludes_authenticated_and_growth_state_relations",
+      "expected_outer_tests": 1,
+      "expected_passed": 1,
+      "expected_ignored": 0,
+      "attempts": 1
+    },
+    {
+      "ordinal": 12,
+      "label": "exact-12",
+      "selector": "store::legacy_admission_readback::tests::legacy_pair_cancellation_at_every_commit_callback_rolls_back_all_rows",
+      "expected_outer_tests": 1,
+      "expected_passed": 1,
+      "expected_ignored": 0,
+      "attempts": 1
+    },
+    {
+      "ordinal": 13,
+      "label": "exact-13",
+      "selector": "store::legacy_admission_readback::tests::legacy_pair_rejects_writes_ddl_and_transaction_aba_through_last_callback",
+      "expected_outer_tests": 1,
+      "expected_passed": 1,
+      "expected_ignored": 0,
+      "attempts": 1
+    },
+    {
+      "ordinal": 14,
+      "label": "exact-14",
+      "selector": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+      "expected_outer_tests": 1,
+      "expected_passed": 1,
+      "expected_ignored": 0,
+      "attempts": 1
+    },
+    {
+      "ordinal": 15,
+      "label": "exact-15",
+      "selector": "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+      "expected_outer_tests": 1,
+      "expected_passed": 1,
+      "expected_ignored": 0,
+      "attempts": 1
+    },
+    {
+      "ordinal": 16,
+      "label": "exact-16",
+      "selector": "store::detached_admission::tests::large_parent_root_arithmetic_keeps_current_sql_and_original_read_checkpoints",
+      "expected_outer_tests": 1,
+      "expected_passed": 1,
+      "expected_ignored": 0,
+      "attempts": 1
+    }
+  ],
+  "outcome_rules": [
+    "No test body before prepush compilation/inventory succeeds; a compile failure stops, retaining the first failure instead of repeating it for every selector.",
+    "Run each declared selector exactly once. Preserve native and required-reader failures; no retry-until-green and no new favorable rerun.",
+    "Original >8MiB selector keeps its original [false,true] Legacy-then-Authenticated loop and assertions. If it stops on Legacy, supplementary Auth is a separately named outer invocation, never counted as the original arm passing.",
+    "No --ignored, --include-ignored, benchmark body, lowered denominator, changed internal timeout/budget, or replacement acceptance criterion.",
+    "Bind unique actual Cargo Running executable to the no-run artifact, and retain binary paths/bytes/SHA before/after.",
+    "Run original complete source verification after all actual commands, including failure paths; compare with candidate source-before. Never rewrite819309 or5fdf failures.",
+    "This is targeted component/native verification only, not a replacement full-package result or original business gate pass."
+  ],
+  "qualification": {
+    "executed": false,
+    "native_pass": false,
+    "history_4105": false,
+    "four_second_pressure": false,
+    "whole_chain_tps": false
+  }
+}

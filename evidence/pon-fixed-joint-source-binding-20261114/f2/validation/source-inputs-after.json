@@ -1,0 +1,142 @@
+{
+  "PROJECT_BOUNDARY.json": {
+    "bytes": 2002,
+    "sha256": "3ba7894e49ab212718bcf4876affc0db931fa33a0d38d8ba0529c6b164a26ae9"
+  },
+  "config/consensus-mainline.json": {
+    "bytes": 806,
+    "sha256": "a3a703bd9fc1244f0c0190fee52b9cfae68c2a2c0008bbdf704bf0c0b03416f3"
+  },
+  "config/pon-nakamoto-v1.json": {
+    "bytes": 11035,
+    "sha256": "906a85681c7da5108bdbd7f8187c53aa4ab797ac3a72bfb154d46c91e621b085"
+  },
+  "config/pon/devnet-v1.json": {
+    "bytes": 1964,
+    "sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4"
+  },
+  "config/pon/joint-consensus-qualification-v1.json": {
+    "bytes": 10339,
+    "sha256": "ad4bcaf823f6c2fa2f262b821a93e4aa16c5d308e99bf52f9b6e19c5d721eda6"
+  },
+  "config/pon/work-profile-v1.json": {
+    "bytes": 1596,
+    "sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880"
+  },
+  "docs/protocol/pon-nakamoto-v1/details/DYNAMIC_PARTICIPATION_V1.md": {
+    "bytes": 16050,
+    "sha256": "f0ff1503c7ce5a9b19cb265f3f327862de50a879ea51642179845b7cb85c74c1"
+  },
+  "docs/protocol/pon-nakamoto-v1/details/FIXED_PROBABILITY_COST_CONTRACT_V1.md": {
+    "bytes": 14281,
+    "sha256": "04d2bf96cebde01ee983a0d92ab466b71c6f8d1574745a52d442ec2e84ad7829"
+  },
+  "docs/protocol/pon-nakamoto-v1/details/JOINT_CONSENSUS_DAA_AUDIT_20261108.md": {
+    "bytes": 21734,
+    "sha256": "e8f0ce993256717b67e12033667aa03069d3ef66889c670ad99a2486713df3f2"
+  },
+  "formal/pon-nakamoto-v1/CREDIT_ENVELOPE_CONTRACT_V1.md": {
+    "bytes": 31611,
+    "sha256": "e6644ec5d759a15a825487dd8fe50ffb02a8daf1dd521030e62c7857b6063af9"
+  },
+  "formal/pon-nakamoto-v1/NATIVE_FORK_MAPPING_V1.md": {
+    "bytes": 32066,
+    "sha256": "aeaf1d009f123d5525d502cb079b4efd806569b3639501ab0da5f240b2d3e6f9"
+  },
+  "formal/pon-nakamoto-v1/NATIVE_RISK_LEDGER_V1.md": {
+    "bytes": 16582,
+    "sha256": "58a72603cbdfa134288bad49b16b4316d01818d30b0eae580b532f244fe79766"
+  },
+  "formal/pon-nakamoto-v1/STATEFUL_RESOURCE_TAIL_V1.md": {
+    "bytes": 11309,
+    "sha256": "b3457f80f58ac1651b028bc80213756ebf2ba68b1c504b30ced96f9c78098d6d"
+  },
+  "formal/pon-nakamoto-v1/WORK_SCALE_SECURITY_CONTRACT_V1.md": {
+    "bytes": 27428,
+    "sha256": "29c128cf14ea9b85da419f3885f505f8c417a6a3ca34b058ee061fd620439201"
+  },
+  "formal/pon-nakamoto-v1/contract_wire.py": {
+    "bytes": 8924,
+    "sha256": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6"
+  },
+  "formal/pon-nakamoto-v1/fixed_probability_contract.py": {
+    "bytes": 11399,
+    "sha256": "5d797bfe7b82f11613162636d2ae30778b4e17070e6570705041e86e9fbd75bc"
+  },
+  "formal/pon-nakamoto-v1/fixed_probability_contract_v1.json": {
+    "bytes": 5102,
+    "sha256": "916cbdcf0f163844d269a7152305de952022f92065d0f70f77a752baa6cba092"
+  },
+  "formal/pon-nakamoto-v1/joint_consensus_qualification.py": {
+    "bytes": 19966,
+    "sha256": "b27f471ef89f7fd197e4135b50c6c7d40e2b41509e4cdc13e5e5969286224eae"
+  },
+  "formal/pon-nakamoto-v1/mandatory_units_relation.py": {
+    "bytes": 14587,
+    "sha256": "329e330e74fba915a2b1458aa71cb983e67b10d14db3bdea4e78539b5c940834"
+  },
+  "formal/pon-nakamoto-v1/test_joint_consensus_qualification.py": {
+    "bytes": 15652,
+    "sha256": "b91c318b3a5edf49a0db8392eb71b50b9740791148b043027796cb168c3e82e0"
+  },
+  "formal/pon-nakamoto-v1/work_oracle.py": {
+    "bytes": 2944,
+    "sha256": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18"
+  },
+  "scripts/ci/pq_source_reader.py": {
+    "bytes": 5569,
+    "sha256": "b3eb3f23b42c012dc1a5a07daa479db5e2982b2a20006f047552c9f13e1a65cb"
+  },
+  "trillionnium/Cargo.lock": {
+    "bytes": 42127,
+    "sha256": "86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e"
+  },
+  "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": {
+    "bytes": 106066,
+    "sha256": "7af17da8488782bf403275b5fd401ad469dd460fd0ecda38a0edb4e714c5494e"
+  },
+  "trillionnium/crates/trnm-pon-node/Cargo.toml": {
+    "bytes": 2357,
+    "sha256": "9477254f6848188433666c4475abde000bc3654539243a94d3fe7d8cdf1c3012"
+  },
+  "trillionnium/crates/trnm-pon-node/src/consensus.rs": {
+    "bytes": 20510,
+    "sha256": "dbbd44790428ae0aff32d7305e062a6fc09ca0add0e3c4c077deefd8bfec760d"
+  },
+  "trillionnium/crates/trnm-pon-node/src/lib.rs": {
+    "bytes": 37947,
+    "sha256": "baafb16f125fda88b09d2342a0b6badb253497742c9a106921e8416e930f108d"
+  },
+  "trillionnium/crates/trnm-pon-node/src/store.rs": {
+    "bytes": 391470,
+    "sha256": "5918270368c61b420d26910dc5934714e1423f71c686b2d01f8d2e3ccceb990c"
+  },
+  "trillionnium/crates/trnm-pon-node/src/store/growth.rs": {
+    "bytes": 34979,
+    "sha256": "79d4048bf04061cb839bb3c23f19ef1c63b0bdabb77aa68dc981abc152131ea2"
+  },
+  "trillionnium/crates/trnm-pon-node/src/store/growth/confirmation.rs": {
+    "bytes": 10187,
+    "sha256": "b80069fdbe8c508b560838db8220ce2de3a519f4875de666bf8031248674d431"
+  },
+  "trillionnium/crates/trnm-pon-node/src/store/growth/profile.rs": {
+    "bytes": 5033,
+    "sha256": "20cd8d967d0ac817d7b7c4b1f353d3c56dde642ef2175a70feeaed5b5c0fc73a"
+  },
+  "trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs": {
+    "bytes": 34389,
+    "sha256": "5ba2704b48e02dc1aa8a33eb3226b9e21f0e6c127fc976d4c7ae2bfd538863b1"
+  },
+  "trillionnium/crates/trnm-pon-node/src/store/growth/work_checked.rs": {
+    "bytes": 2014,
+    "sha256": "6e961948607155c6846c947a9c767e8727028bc98d3445b015a8ceefb2096842"
+  },
+  "trillionnium/crates/trnm-protocol/src/pon_growth.rs": {
+    "bytes": 3760,
+    "sha256": "37b8c818e6dd7341b25cd3c1e66a8b5fe0aecca2c60201272a9a2551db147d5f"
+  },
+  "trillionnium/crates/trnm-protocol/src/pon_wire.rs": {
+    "bytes": 32654,
+    "sha256": "ee443e739da946fc023f119e7f3b882f373b3787820295b29b182ef0ee3ef83b"
+  }
+}

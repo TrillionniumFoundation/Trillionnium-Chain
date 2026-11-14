@@ -1,0 +1,35 @@
+test_cli_requires_paired_root_inputs_and_emits_only_closed_schema (__main__.TrainingNoUpdateInteropTests.test_cli_requires_paired_root_inputs_and_emits_only_closed_schema) ... ok
+test_explicit_synthetic_full_join_has_five_receipts_and_no_fabricated_evaluation (__main__.TrainingNoUpdateInteropTests.test_explicit_synthetic_full_join_has_five_receipts_and_no_fabricated_evaluation) ... ok
+test_missing_selection_next_use_or_original_readback_does_not_complete (__main__.TrainingNoUpdateInteropTests.test_missing_selection_next_use_or_original_readback_does_not_complete) ... ok
+test_native_scope_checks_no_candidate_without_claiming_equal_tensors (__main__.TrainingNoUpdateInteropTests.test_native_scope_checks_no_candidate_without_claiming_equal_tensors) ... ok
+test_next_use_requires_retained_bundle_distinct_run_and_committed_receipt (__main__.TrainingNoUpdateInteropTests.test_next_use_requires_retained_bundle_distinct_run_and_committed_receipt) ... ok
+test_original_dataset_baseline_budget_and_generator_are_required (__main__.TrainingNoUpdateInteropTests.test_original_dataset_baseline_budget_and_generator_are_required) ... ok
+test_original_heplcp02_six_and_seven_receipt_reports_remain_byte_equivalent (__main__.TrainingNoUpdateInteropTests.test_original_heplcp02_six_and_seven_receipt_reports_remain_byte_equivalent) ... ERROR
+test_original_rust_cuts_and_every_signing_payload_match (__main__.TrainingNoUpdateInteropTests.test_original_rust_cuts_and_every_signing_payload_match) ... ok
+test_original_scope_rule_must_match_even_after_all_receipts_are_rehashed (__main__.TrainingNoUpdateInteropTests.test_original_scope_rule_must_match_even_after_all_receipts_are_rehashed) ... ok
+test_original_tag_six_and_seven_rust_known_vectors_remain_exact (__main__.TrainingNoUpdateInteropTests.test_original_tag_six_and_seven_rust_known_vectors_remain_exact) ... ok
+test_pending_or_failed_task_cannot_become_completed_no_update (__main__.TrainingNoUpdateInteropTests.test_pending_or_failed_task_cannot_become_completed_no_update) ... ok
+test_rehashed_extra_evaluation_or_duplicate_training_cannot_change_path (__main__.TrainingNoUpdateInteropTests.test_rehashed_extra_evaluation_or_duplicate_training_cannot_change_path) ... ok
+test_unknown_training_tags_and_reason_codes_never_mean_no_update (__main__.TrainingNoUpdateInteropTests.test_unknown_training_tags_and_reason_codes_never_mean_no_update) ... ok
+test_use_join_requires_original_root_scope_before_reading_use (__main__.TrainingNoUpdateInteropTests.test_use_join_requires_original_root_scope_before_reading_use) ... ok
+test_version_requires_explicit_outcome_and_never_upgrades_legacy_bytes (__main__.TrainingNoUpdateInteropTests.test_version_requires_explicit_outcome_and_never_upgrades_legacy_bytes) ... ok
+
+======================================================================
+ERROR: test_original_heplcp02_six_and_seven_receipt_reports_remain_byte_equivalent (__main__.TrainingNoUpdateInteropTests.test_original_heplcp02_six_and_seven_receipt_reports_remain_byte_equivalent)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/b4d6d3702e3a/chain-nextuse-work/scripts/test_cell_learning_training_no_update_join.py", line 309, in test_original_heplcp02_six_and_seven_receipt_reports_remain_byte_equivalent
+    historical = json.loads((ORIGINAL / name / "review.json").read_bytes())
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/b4d6d3702e3a/chain-nextuse-work/evidence/hepta-real-native-adoption-20261108/chain-reader/adopt-v1/review.json'
+
+----------------------------------------------------------------------
+Ran 15 tests in 0.783s
+
+FAILED (errors=1)

@@ -1,0 +1,38 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "formal/pon-nakamoto-v1",
+    "-p",
+    "test_pq_root_quorum_research.py",
+    "-v"
+  ],
+  "cwd": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/repo",
+  "elapsed_seconds": 0.26589397387579083,
+  "exit_code": 0,
+  "finished_unix_seconds": 1794124069.3095338,
+  "label": "pq-root-quorum-research",
+  "logs": {
+    "pq-root-quorum-research.stderr.log": {
+      "bytes": 3347,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/integrated-source-01/pq-root-quorum-research.stderr.log",
+      "sha256": "2303c55bad3d871fced9ae83e3f5f77b63148b65b9c1dbe600fb460f5c5312a8"
+    },
+    "pq-root-quorum-research.stdout.log": {
+      "bytes": 0,
+      "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/integrated-source-01/pq-root-quorum-research.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "passed": true,
+  "readback": {
+    "reported_test_counts": [
+      18
+    ]
+  },
+  "started_unix_seconds": 1794124069.04364
+}

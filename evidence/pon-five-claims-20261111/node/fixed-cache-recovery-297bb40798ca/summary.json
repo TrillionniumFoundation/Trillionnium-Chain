@@ -1,0 +1,35 @@
+{
+  "schema": "trnm-node-local-cache-recovery-v1",
+  "subject": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+  "source_before": {
+    "head": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+    "tree": "129267332b2ef87d3d66d014fddeb894faa9379f",
+    "tracked_entries_verified": 28807,
+    "tracked_bytes_verified": 2615077043,
+    "full_git_blob_equality": true
+  },
+  "source_after": {
+    "head": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+    "tree": "129267332b2ef87d3d66d014fddeb894faa9379f",
+    "tracked_entries_verified": 28807,
+    "tracked_bytes_verified": 2615077043,
+    "full_git_blob_equality": true
+  },
+  "target_dir": "/home/qian-qi/work/chain-pon-submit-target-d6cb",
+  "local_package_count": 26,
+  "all_requested_packages_local": true,
+  "third_party_packages_requested": false,
+  "observed_stale_local_outputs_removed": true,
+  "remaining_prior_local_artifacts": [],
+  "before_binary": {
+    "scope": "qualified-before",
+    "source_head": "e63427560885b65c57db6bdc478df023111b4733",
+    "original_path": "/home/qian-qi/work/chain-pon-submit-target-d6cb/release/deps/trnm_pon_node-b9510f5893fe9b62",
+    "retained_path": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/native-binaries/before-e63427560885-f9f39f1e2b76.elf",
+    "bytes": 102426520,
+    "sha256": "f9f39f1e2b76c624810ff6e1c863541049db82f9442675865e635bb5cb584f56",
+    "live_proc_image_observation": false,
+    "include_elf_in_git": false
+  },
+  "source_changed": false
+}

@@ -1,0 +1,46 @@
+{
+  "integration_head_supplied_by_parent": "cc836dfc13ef0006eb0878abd8cb5eca9a76bec0",
+  "source_snapshots": [
+    {
+      "path": "/workspace/scratch/f16ac5871196/security_increment/hash_role_audit.py",
+      "sha256": "f3d3e145bb4583c822b94242ef54b372a3e7b4b9b14332defb67fd1f8a7b0f3e",
+      "bytes": 10449
+    },
+    {
+      "path": "/workspace/scratch/f16ac5871196/security_increment/source_inputs/manifest.json",
+      "sha256": "d24b8998c893d20a19511d86dbefeea29d7b9281c3a8d9d9f0076f26efc013f6",
+      "bytes": 6594
+    },
+    {
+      "path": "/workspace/scratch/f16ac5871196/security_increment/vendor_primary/p3-symmetric-0.8.0/src/compression.rs",
+      "sha256": "fb4ddd15d6808ed240efdfb838607de2fda18cb7825749fd96f025ba410ee84b",
+      "bytes": 11409
+    },
+    {
+      "path": "/workspace/scratch/f16ac5871196/security_increment/vendor_primary/p3-symmetric-0.8.0/src/sponge.rs",
+      "sha256": "2f74ff9049e96a23d3d26aa1c0dc6cffb471b5b271bfe37af8dc34ff75d6ac97",
+      "bytes": 37205
+    },
+    {
+      "path": "/workspace/scratch/f16ac5871196/security_lifecycle_r4/THEOREM.md",
+      "sha256": "0109dae0fa7831c27b7ee8c585cf5ccbca73d17d26fa24c1377ac6826f8cbb62",
+      "bytes": 9575
+    },
+    {
+      "path": "/workspace/scratch/f16ac5871196/security_lifecycle_r4/primary/p3-challenger-0.8.0/src/duplex_challenger.rs",
+      "sha256": "82d7f006d285015d358e70e3c08378cc907ebb5416a1d1ad2d03d374c56f62e9",
+      "bytes": 36476
+    },
+    {
+      "path": "/workspace/scratch/f16ac5871196/backend_gain_r4/w1_public_stark_research/src/proof_config.rs",
+      "sha256": "98876ea9e223f90079f69bd6f1f75f6a17b9988ed9412fdda8a16bc40367aebf",
+      "bytes": 13329
+    },
+    {
+      "path": "/workspace/scratch/89f4ddbb3fd2/round2_runtime/p3_merkle_mmcs_batch.rs.txt",
+      "sha256": "db31c197257f94c3d146f2db12ede195ae0da16b9b768f6410959bc772d71510",
+      "bytes": 51065
+    }
+  ],
+  "scope": "read-only snapshot evidence; compare to integration head before importing"
+}

@@ -1,0 +1,3 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 17.58s
+     Running unittests src/lib.rs (/home/qian-qi/work/chain-cell-storage-discovery-f2568-target/debug/deps/trnm_data_availability-2640c265b42f8e43)
+error: test failed, to rerun pass `-p trnm-data-availability --lib`

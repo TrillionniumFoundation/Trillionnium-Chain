@@ -1,0 +1,119 @@
+{
+  "schema": "b-context-identity-read-only-review-v1",
+  "date_utc": "2026-11-09",
+  "status": "NO_CONTEXT_BINDING_REGRESSION_FOUND_IN_REVIEWED_CHAIN",
+  "source": {
+    "repository": "TrillionniumFoundation/Trillionnium-Chain",
+    "base_commit": "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+    "candidate": "R1 29ac, as identified by parent; candidate control flow reviewed in frozen b-work/overlay",
+    "local_base": "/workspace/scratch/70ae3f2c90d7/b-work/base",
+    "local_candidate": "/workspace/scratch/70ae3f2c90d7/b-work/overlay",
+    "remote_current_pq_file": "/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs",
+    "remote_current_pq_sha256": "f8c65d541eeff28625f1028ab1ba1e9c8fa6dadc71cca39a1a7368da850b52cc",
+    "remote_current_pq_bytes": 7976,
+    "frozen_main_patch_sha256": "99fae1e27590c0e23c715850a815239b8e958f7dc264136082016bc4228006a8",
+    "note": "Read-only review. No source mutation, new tests, Cargo run, or candidate commit verification was performed by this reviewer. The reported full R1 commit identity/Clippy run remains parent's evidence."
+  },
+  "findings": [
+    {
+      "id": "encoding_equality",
+      "conclusion_zh": "合法完成包的新旧调度 key 同值；没有因删除旧 helper 的生产调用而遗漏 network/parameters 或 PQ profile。",
+      "proof_zh": "设 S 为原 Node Settings，P 为包，E(P,S)=encode_packet_for_config(P,&S.app)，D(S) 为原 legacy/PQ 调度 domain。PacketCodecContext::encode 和 Packet::encode_for_settings 都直接调用 E。原 helper 先比较 header.network/parameters 与 context，后返回 H(D,E)。新 native 门已经比较 header.network/parameters 与 S，bytes=E，并在原事务中回读再编码比较；token 返回 H(D,bytes)。因此到达 token 的同一 P,S 上两 key 相等。",
+      "paths": [
+        "trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs::PacketCodecContext::{network,parameters,encode}",
+        "trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs::Packet::encode_for_settings",
+        "trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs::encode_packet_for_config",
+        "trillionnium/crates/trnm-pon-node/src/store.rs::WorkCheckedPacket::completion_identity_for_context",
+        "trillionnium/crates/trnm-pon-node/src/store.rs::Node::check_admission_header_context",
+        "trillionnium/crates/trnm-pon-node/src/store.rs::Node::persist_admission_execution",
+        "trillionnium/crates/trnm-pon-node/src/store.rs::NativeAdmissionCompletion::identity"
+      ]
+    },
+    {
+      "id": "direct_header_and_profile_binding",
+      "conclusion_zh": "network、parameters 在完整 Header 编码中；PQ 各 profile 有独立 packet prefix，由原 Settings 选择且验证 Config，不能由输入协商。",
+      "facts": [
+        "pon_wire::Header::encode serializes PNH1/version, network, parameters, parent, height, timestamp, target, miner, transactions, state, receipts, work_task, nonce.",
+        "Packet::encode serializes that full header plus transaction counts/lengths, transaction bytes and proof bytes.",
+        "encode_packet_for_profile writes profile.packet_prefix() before packet.header.encode() and exact length-delimited transactions/proof.",
+        "AccountProfile::{AccountsV2,QuotaV3,TasksV4,TasksV5,ApplicationV6} use distinct PQP2/PQP3/PQP4/PQP5/PQP6 prefixes.",
+        "pq_accounts_v2::account_profile calls policy(cfg), which verifies selected profile, configured network/parameters and config_digest before returning the wire profile.",
+        "Legacy and PQ use separate hash domains; Growth has a third separate hash domain. pon_wire::hash length-prefixes the domain and each data part."
+      ],
+      "paths": [
+        "trillionnium/crates/trnm-protocol/src/pon_wire.rs::{Header::encode,hash}",
+        "trillionnium/crates/trnm-pon-node/src/lib.rs::Packet::encode",
+        "trillionnium/crates/trnm-protocol/src/pq_native_accounts_v2.rs::AccountProfile::packet_prefix",
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs::{policy,account_profile}"
+      ]
+    },
+    {
+      "id": "all_native_producers",
+      "conclusion_zh": "所阅 token 构造点为普通 persist_admission_execution 和 Growth 原事务；held/prepared-held、detached、共享/独占 History 收敛到这些原 owner。",
+      "chains": [
+        {
+          "route": "ordinary held / prepared-held",
+          "chain": "admit_work_checked_with_completion (prepared-held: admit_held_prepared) -> admit_work_checked_with_parent -> check_admission_header_context -> check_admission_parent/M06/task-output -> bytes=encode_for_settings -> persist_admission_execution -> original packet/delta/State/active readback + same_write_snapshot -> NativeAdmissionCompletion -> original tx.commit",
+          "context": "Full header network/parameters checks precede token. Prepared-held requires same owner Arc and original namespace/storage context; no different owner may replace the prepared packet."
+        },
+        {
+          "route": "detached",
+          "chain": "prepare_shared_admission retains original app clone and Pin -> PreparedExecution::execute selects account_profile(app) and encodes exact packet -> commit_shared_admission validates original owner/directory/database/backend/network/parameters/genesis and current parent -> BEGIN IMMEDIATE CommitFence validates current header again -> original persist readback encodes with current settings and compares bytes -> token",
+          "context": "Even same network/parameters with an altered selected PQ profile would have to pass fixed owner checks, native Config validation and exact current-settings readback; the prefix/bytes equality is checked before token."
+        },
+        {
+          "route": "History shared/exclusive",
+          "chain": "receive_observed validates Page against Node settings, takes codec only for decode -> original node remote_history_cpu_domain + operation.bind_history_request -> admit_packet prechecks current owner and does W1 -> shared admit_shared_checked or exclusive admit_work_checked_with_completion -> same native producer",
+          "context": "Old History contextual W1-only promotion is removed from production. Current owner's final relation supplies priority; no input-supplied context/token constructor."
+        },
+        {
+          "route": "Growth",
+          "chain": "admit_growth_work_checked_with_completion -> precheck_growth_admission_with_progress -> BEGIN IMMEDIATE -> growth_guard + check_growth_header_with_progress -> execute/readback/current active check -> growth_guard -> token -> tx.commit",
+          "context": "check_growth_header verifies header.ledger network/parameters against settings; token uses the exact already encoded packet and original public-growth-complete-work-identity-v1 domain, matching GrowthWorkCheckedPacket::completion_identity."
+        }
+      ]
+    },
+    {
+      "id": "cpu_domain_scope",
+      "conclusion_zh": "本结论不依赖 CPU owner 必然固定一条链。不能把这种固定性从类型名推断出来。",
+      "facts": [
+        "ServiceMutationCpuDomain is an Arc<Mutex<PaidMutationCpuBudget>> wrapper; PublicServer::new receives identity/policy, not Settings.",
+        "Trusted embeddings can share a domain through mutation_cpu_domain/with_continuous_domain.",
+        "The hash key itself commits the packet's network/parameters and PQ profile prefix; original native checks establish that the packet matches its actual owner.",
+        "The completion set only grants/withholds a local scheduling benefit. A repeated key or full set returns without promotion; it does not authorize admission, State, task, payment or global consensus credit.",
+        "Neither old nor new key independently serializes every Settings field, a separate genesis field, State backend, or durable cross-process identity. No such expanded guarantee is claimed by this review."
+      ],
+      "paths": [
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::PublicServer::{new,mutation_cpu_domain,with_continuous_domain}",
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs::{ServiceMutationCpuDomain,LiveRequestCpu::promote_verified_identity}"
+      ]
+    }
+  ],
+  "minimal_fix": {
+    "recommendation_zh": "仅对 PacketCodecContext::{network,parameters,encode} 三个已无生产调用者、仍服务旧 helper 测试的方法加 #[cfg(test)]。保留 is_pq、decode、Packet::encode_for_settings、encode_packet_for_config 及原生 context/事务检查。沿用原 CI pin 机制更新受影响源身份并运行已有严格 Clippy/检查。",
+    "reason_zh": "这是条件编译清理；不会改变生产编码或新 token 的安全依据。无需新 gate、新构造器、额外 token context 字段、重新编码 packet 或用 allow(dead_code) 隐去真实未使用路径。",
+    "qualification_zh": "已有严谨 static chain 证据支持该最小修复；不声称 reviewer 执行过 R2 的 Clippy 或原生测试，不升级持久总预算、冷启动诚实业务和跨版本联合资格。"
+  },
+  "primary_sources": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs",
+      "git_blob": "ef2494869bfe78083d890e400ec6be7642bef033"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/lib.rs",
+      "git_blob": "e1f51ca4555e6aca5168e75c83b8bd0d6d124c14"
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+      "git_blob": "a92d02b7e1edd316aba52cb1b2ff8b546e65c03d"
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/pq_native_accounts_v2.rs",
+      "git_blob": "0b9109e5b1028dbcba96b44bd61b4f711a940542"
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs",
+      "git_blob": "61e8ff02976ebc79e2dc9f5a71ae531884cba5dc"
+    }
+  ]
+}

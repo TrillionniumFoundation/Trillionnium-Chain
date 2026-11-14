@@ -1,0 +1,396 @@
+{
+  "determined": "All 18 bounded original failure rows report PUBLIC_HOST_KERNEL_PARENT. cold_reopen_equal is true in every row. The failing all-samples predicate requires both cold reopen equality and an empty errors array; the recorded non-empty error arrays violate it.",
+  "finite_business_predicate": {
+    "end_line": 698,
+    "input": "architecture_source",
+    "start_line": 671,
+    "text": "    let latency = elapsed(start);\n    let confirmed = confirmations.len() == 32\n        && confirmations.iter().all(|row| {\n            row.confirmed && row.depth == Some(6) && !row.finalized && !row.execution_authority\n        });\n    let metrics = service.finish();\n    let receiver = Arc::try_unwrap(owner).ok().unwrap().into_inner().unwrap();\n    let before = receiver.read_active().unwrap();\n    let client = verifier.read_active().unwrap();\n    let state_equal = before.0 == client.0 && before.2 == client.2;\n    drop(receiver);\n    let reopened = Node::open(&path.join(\"receiver\"), settings.clone(), 1).unwrap();\n    let restart_equal = before == reopened.read_active().unwrap();\n    let full_cpu = cpu\n        .zip(process_cpu())\n        .and_then(|(before, after)| after.checked_sub(before));\n    json!({\"mode\": MODES[mode], \"signed_transaction_count\": 32, \"application_payload_bytes\": packets[0].transactions.iter().map(Vec::len).sum::<usize>(),\n        \"cold_proof_acquisition_wall_ns\": acquisition_wall_ns, \"cold_proof_acquisition_process_cpu_ns\": acquisition_process_cpu_ns,\n        \"work_attempts_including_target_misses\": acquired_attempts,\n        \"dissemination\": dissemination_report, \"pool_calls\": pool_calls, \"block_submissions\": submit_calls,\n        \"history_calls\": history_calls, \"independent_confirmations\": confirmations, \"confirmed_transactions\": if confirmed { 32 } else { 0 },\n        \"full_business_latency_ns\": latency, \"whole_trial_wall_ns_including_cold_reopen\": elapsed(start), \"whole_trial_process_cpu_ns\": full_cpu,\n        \"cpu_scope\": \"trial process interval including proposer threads, relay, native pool, full W1, writer, independent client and cold reopen; excludes final report construction/serialization and separately measured source-workload preparation; no per-actor allocation\",\n        \"service\": metrics, \"errors\": errors, \"native_state_equal\": state_equal, \"cold_reopen_equal\": restart_equal,\n        \"finite_business_target_met\": confirmed && pool_admitted && admitted && state_equal && restart_equal && errors.is_empty(),\n        \"consensus_profile\": \"unchanged-pon-nakamoto-v1\", \"dag_consensus_implemented\": false, \"committee_bft_implemented\": false,\n        \"ghast_implemented\": false, \"quorum_data_availability_qualified\": false, \"wan_tested\": false,\n        \"independent_operators\": false, \"work_profile_qualified\": false, \"production_activation\": false})"
+  },
+  "not_determined": [
+    "No architecture winner, protocol switch, WAN qualification, independent operator acceptance or production activation is established.",
+    "The complete temporary report advertised in stdout is not reconstructed here; this extract preserves actual retained stdout observations.",
+    "The separate later host-prerequisite probe is not a per-sample cgroup trace."
+  ],
+  "original_log": {
+    "bytes": 268168,
+    "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/complete-node-690f710c-v1/complete-node.log",
+    "sha256": "a71fb8ad30a5b0d796e78ec5fe87671e957586fa9cb0bd89b31fe840207af1f1"
+  },
+  "original_target_summary": {
+    "line": 1504,
+    "raw_line_including_newline_sha256": "2e036503f3778cc7a2cf921099c077d2e3f1a4dc086c6a956da3696fc6c698f2",
+    "text": "test result: FAILED. 12 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 37.00s"
+  },
+  "panic": [
+    {
+      "line": 1496,
+      "raw_line_including_newline_sha256": "a5250abad122c2819258f69106c675afccf79377a5f876829e13bccf64de6b97",
+      "text": "thread 'signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract' (569248) panicked at crates/trnm-pon-node/tests/architecture_delivery_compare.rs:834:5:"
+    },
+    {
+      "line": 1497,
+      "raw_line_including_newline_sha256": "f8913041e08ea92d67aef7e926c743922570138b61a41119fa6843008affeb86",
+      "text": "retained native delivery/replay invariants failed"
+    }
+  ],
+  "predicate": {
+    "end_line": 839,
+    "input": "architecture_source",
+    "start_line": 834,
+    "text": "    assert!(\n        samples\n            .iter()\n            .all(|sample| sample[\"cold_reopen_equal\"] == true && sample[\"errors\"] == json!([])),\n        \"retained native delivery/replay invariants failed\"\n    );"
+  },
+  "public_client_receive_path": {
+    "end_line": 655,
+    "input": "architecture_source",
+    "start_line": 621,
+    "text": "    if admitted {\n        for _ in 0..16 {\n            let row = call(\n                address,\n                settings,\n                91,\n                Request::History {\n                    tip: hex::encode(tip),\n                    after: hex::encode(after),\n                },\n            );\n            if row[\"ok\"] == true {\n                let result = serde_json::from_value::<ingress::Page>(row[\"reply\"][\"value\"].clone())\n                    .map_err(|error| error.to_string())\n                    .and_then(|page| {\n                        ingress::receive_public_page_from(\n                            &mut verifier,\n                            address,\n                            page,\n                            tip,\n                            after,\n                            ingress::now().unwrap(),\n                        )\n                        .map_err(|error| error.to_string())\n                    });\n                match result {\n                    Ok(next) => after = next,\n                    Err(error) => errors.push(error),\n                }\n            }\n            history_calls.push(row);\n            if after == tip || !errors.is_empty() {\n                break;\n            }\n        }"
+  },
+  "sample_summary": {
+    "all_finite_business_targets_met": false,
+    "report_path": "/tmp/.tmp5K6thJ/architecture-comparison/report.json",
+    "samples": 18,
+    "schema": "native-signed-dag-delivery-comparison-v1"
+  },
+  "samples": [
+    {
+      "log_line": 1477,
+      "observation": {
+        "cold_reopen_equal": true,
+        "error_count": 1,
+        "error_limit": 4,
+        "error_text_limit_chars": 96,
+        "errors": [
+          "PUBLIC_HOST_KERNEL_PARENT"
+        ],
+        "mode": "serial-signed-batches",
+        "native_state_equal": false,
+        "position": 0,
+        "sample": 0,
+        "scenario": "disjoint-recipients",
+        "schema": "native-signed-dag-delivery-failure-v1"
+      }
+    },
+    {
+      "log_line": 1478,
+      "observation": {
+        "cold_reopen_equal": true,
+        "error_count": 1,
+        "error_limit": 4,
+        "error_text_limit_chars": 96,
+        "errors": [
+          "PUBLIC_HOST_KERNEL_PARENT"
+        ],
+        "mode": "concurrent-proposer-batches",
+        "native_state_equal": false,
+        "position": 1,
+        "sample": 0,
+        "scenario": "disjoint-recipients",
+        "schema": "native-signed-dag-delivery-failure-v1"
+      }
+    },
+    {
+      "log_line": 1479,
+      "observation": {
+        "cold_reopen_equal": true,
+        "error_count": 1,
+        "error_limit": 4,
+        "error_text_limit_chars": 96,
+        "errors": [
+          "PUBLIC_HOST_KERNEL_PARENT"
+        ],
+        "mode": "signed-reference-dag",
+        "native_state_equal": false,
+        "position": 2,
+        "sample": 0,
+        "scenario": "disjoint-recipients",
+        "schema": "native-signed-dag-delivery-failure-v1"
+      }
+    },
+    {
+      "log_line": 1480,
+      "observation": {
+        "cold_reopen_equal": true,
+        "error_count": 1,
+        "error_limit": 4,
+        "error_text_limit_chars": 96,
+        "errors": [
+          "PUBLIC_HOST_KERNEL_PARENT"
+        ],
+        "mode": "concurrent-proposer-batches",
+        "native_state_equal": false,
+        "position": 0,
+        "sample": 1,
+        "scenario": "disjoint-recipients",
+        "schema": "native-signed-dag-delivery-failure-v1"
+      }
+    },
+    {
+      "log_line": 1481,
+      "observation": {
+        "cold_reopen_equal": true,
+        "error_count": 1,
+        "error_limit": 4,
+        "error_text_limit_chars": 96,
+        "errors": [
+          "PUBLIC_HOST_KERNEL_PARENT"
+        ],
+        "mode": "signed-reference-dag",
+        "native_state_equal": false,
+        "position": 1,
+        "sample": 1,
+        "scenario": "disjoint-recipients",
+        "schema": "native-signed-dag-delivery-failure-v1"
+      }
+    },
+    {
+      "log_line": 1482,
+      "observation": {
+        "cold_reopen_equal": true,
+        "error_count": 1,
+        "error_limit": 4,
+        "error_text_limit_chars": 96,
+        "errors": [
+          "PUBLIC_HOST_KERNEL_PARENT"
+        ],
+        "mode": "serial-signed-batches",
+        "native_state_equal": false,
+        "position": 2,
+        "sample": 1,
+        "scenario": "disjoint-recipients",
+        "schema": "native-signed-dag-delivery-failure-v1"
+      }
+    },
+    {
+      "log_line": 1483,
+      "observation": {
+        "cold_reopen_equal": true,
+        "error_count": 1,
+        "error_limit": 4,
+        "error_text_limit_chars": 96,
+        "errors": [
+          "PUBLIC_HOST_KERNEL_PARENT"
+        ],
+        "mode": "signed-reference-dag",
+        "native_state_equal": false,
+        "position": 0,
+        "sample": 2,
+        "scenario": "disjoint-recipients",
+        "schema": "native-signed-dag-delivery-failure-v1"
+      }
+    },
+    {
+      "log_line": 1484,
+      "observation": {
+        "cold_reopen_equal": true,
+        "error_count": 1,
+        "error_limit": 4,
+        "error_text_limit_chars": 96,
+        "errors": [
+          "PUBLIC_HOST_KERNEL_PARENT"
+        ],
+        "mode": "serial-signed-batches",
+        "native_state_equal": false,
+        "position": 1,
+        "sample": 2,
+        "scenario": "disjoint-recipients",
+        "schema": "native-signed-dag-delivery-failure-v1"
+      }
+    },
+    {
+      "log_line": 1485,
+      "observation": {
+        "cold_reopen_equal": true,
+        "error_count": 1,
+        "error_limit": 4,
+        "error_text_limit_chars": 96,
+        "errors": [
+          "PUBLIC_HOST_KERNEL_PARENT"
+        ],
+        "mode": "concurrent-proposer-batches",
+        "native_state_equal": false,
+        "position": 2,
+        "sample": 2,
+        "scenario": "disjoint-recipients",
+        "schema": "native-signed-dag-delivery-failure-v1"
+      }
+    },
+    {
+      "log_line": 1486,
+      "observation": {
+        "cold_reopen_equal": true,
+        "error_count": 1,
+        "error_limit": 4,
+        "error_text_limit_chars": 96,
+        "errors": [
+          "PUBLIC_HOST_KERNEL_PARENT"
+        ],
+        "mode": "serial-signed-batches",
+        "native_state_equal": false,
+        "position": 0,
+        "sample": 0,
+        "scenario": "hot-recipient",
+        "schema": "native-signed-dag-delivery-failure-v1"
+      }
+    },
+    {
+      "log_line": 1487,
+      "observation": {
+        "cold_reopen_equal": true,
+        "error_count": 1,
+        "error_limit": 4,
+        "error_text_limit_chars": 96,
+        "errors": [
+          "PUBLIC_HOST_KERNEL_PARENT"
+        ],
+        "mode": "concurrent-proposer-batches",
+        "native_state_equal": false,
+        "position": 1,
+        "sample": 0,
+        "scenario": "hot-recipient",
+        "schema": "native-signed-dag-delivery-failure-v1"
+      }
+    },
+    {
+      "log_line": 1488,
+      "observation": {
+        "cold_reopen_equal": true,
+        "error_count": 1,
+        "error_limit": 4,
+        "error_text_limit_chars": 96,
+        "errors": [
+          "PUBLIC_HOST_KERNEL_PARENT"
+        ],
+        "mode": "signed-reference-dag",
+        "native_state_equal": false,
+        "position": 2,
+        "sample": 0,
+        "scenario": "hot-recipient",
+        "schema": "native-signed-dag-delivery-failure-v1"
+      }
+    },
+    {
+      "log_line": 1489,
+      "observation": {
+        "cold_reopen_equal": true,
+        "error_count": 1,
+        "error_limit": 4,
+        "error_text_limit_chars": 96,
+        "errors": [
+          "PUBLIC_HOST_KERNEL_PARENT"
+        ],
+        "mode": "concurrent-proposer-batches",
+        "native_state_equal": false,
+        "position": 0,
+        "sample": 1,
+        "scenario": "hot-recipient",
+        "schema": "native-signed-dag-delivery-failure-v1"
+      }
+    },
+    {
+      "log_line": 1490,
+      "observation": {
+        "cold_reopen_equal": true,
+        "error_count": 1,
+        "error_limit": 4,
+        "error_text_limit_chars": 96,
+        "errors": [
+          "PUBLIC_HOST_KERNEL_PARENT"
+        ],
+        "mode": "signed-reference-dag",
+        "native_state_equal": false,
+        "position": 1,
+        "sample": 1,
+        "scenario": "hot-recipient",
+        "schema": "native-signed-dag-delivery-failure-v1"
+      }
+    },
+    {
+      "log_line": 1491,
+      "observation": {
+        "cold_reopen_equal": true,
+        "error_count": 1,
+        "error_limit": 4,
+        "error_text_limit_chars": 96,
+        "errors": [
+          "PUBLIC_HOST_KERNEL_PARENT"
+        ],
+        "mode": "serial-signed-batches",
+        "native_state_equal": false,
+        "position": 2,
+        "sample": 1,
+        "scenario": "hot-recipient",
+        "schema": "native-signed-dag-delivery-failure-v1"
+      }
+    },
+    {
+      "log_line": 1492,
+      "observation": {
+        "cold_reopen_equal": true,
+        "error_count": 1,
+        "error_limit": 4,
+        "error_text_limit_chars": 96,
+        "errors": [
+          "PUBLIC_HOST_KERNEL_PARENT"
+        ],
+        "mode": "signed-reference-dag",
+        "native_state_equal": false,
+        "position": 0,
+        "sample": 2,
+        "scenario": "hot-recipient",
+        "schema": "native-signed-dag-delivery-failure-v1"
+      }
+    },
+    {
+      "log_line": 1493,
+      "observation": {
+        "cold_reopen_equal": true,
+        "error_count": 1,
+        "error_limit": 4,
+        "error_text_limit_chars": 96,
+        "errors": [
+          "PUBLIC_HOST_KERNEL_PARENT"
+        ],
+        "mode": "serial-signed-batches",
+        "native_state_equal": false,
+        "position": 1,
+        "sample": 2,
+        "scenario": "hot-recipient",
+        "schema": "native-signed-dag-delivery-failure-v1"
+      }
+    },
+    {
+      "log_line": 1494,
+      "observation": {
+        "cold_reopen_equal": true,
+        "error_count": 1,
+        "error_limit": 4,
+        "error_text_limit_chars": 96,
+        "errors": [
+          "PUBLIC_HOST_KERNEL_PARENT"
+        ],
+        "mode": "concurrent-proposer-batches",
+        "native_state_equal": false,
+        "position": 2,
+        "sample": 2,
+        "scenario": "hot-recipient",
+        "schema": "native-signed-dag-delivery-failure-v1"
+      }
+    }
+  ],
+  "schema": "pon-architecture-original-failure-extract-v1",
+  "source": {
+    "bytes": 36607,
+    "github_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/690f710c1b6808787996e86aa4c36bd53e1f3939/trillionnium/crates/trnm-pon-node/tests/architecture_delivery_compare.rs",
+    "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/chain-source-bounded/trillionnium/crates/trnm-pon-node/tests/architecture_delivery_compare.rs",
+    "sha256": "a247c14aa7213a93275fc6a6089f37ebb7841da70d0ed08f4a62deb2d34de661"
+  },
+  "source_commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+  "source_tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899",
+  "test_contract": {
+    "end_line": 779,
+    "input": "architecture_source",
+    "start_line": 701,
+    "text": "#[test]\nfn signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract() {\n    if current_elf_host::execute_in_fixed_host(\n        \"architecture_delivery_compare\",\n        \"signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract\",\n        None,\n    ) {\n        return;\n    }\n    let temporary = tempfile::tempdir().unwrap();\n    let output = std::env::var_os(\"TRNM_ARCHITECTURE_COMPARE_DIR\")\n        .map(std::path::PathBuf::from)\n        .unwrap_or_else(|| temporary.path().join(\"architecture-comparison\"));\n    fs::create_dir(&output).unwrap();\n    let settings = Settings::development(Some(1_750_000_000)).unwrap();\n    let mut samples = Vec::new();\n    let mut workloads = Vec::new();\n    for hotspot in [false, true] {\n        let label = if hotspot {\n            \"hot-recipient\"\n        } else {\n            \"disjoint-recipients\"\n        };\n        let source = cells(&settings, hotspot);\n        let ordered = ordered_complete(&source, &settings).unwrap();\n        let transactions = ordered\n            .iter()\n            .flat_map(|cell| cell.transactions.as_ref().unwrap().iter())\n            .map(|raw| hex::decode(raw).unwrap())\n            .collect::<Vec<_>>();\n        let producer_path = output.join(format!(\"producer-{label}\"));\n        let mut producer = Node::open(&producer_path, settings.clone(), 1).unwrap();\n        let generation = Instant::now();\n        let generation_cpu = process_cpu();\n        let mut packets = Vec::new();\n        for height in 1..=7 {\n            packets.push(\n                producer\n                    .mine(\n                        if height == 1 {\n                            transactions.clone()\n                        } else {\n                            vec![]\n                        },\n                        settings.genesis_time() + height * 10,\n                        ingress::now().unwrap(),\n                    )\n                    .unwrap(),\n            );\n        }\n        let acquisition_cpu = generation_cpu\n            .zip(process_cpu())\n            .and_then(|(before, after)| after.checked_sub(before));\n        workloads.push(json!({\"scenario\": label, \"cells\": source, \"signed_packets\": packets.iter().map(|packet| hex::encode(packet.encode().unwrap())).collect::<Vec<_>>(),\n            \"native_acquisition_wall_ns\": elapsed(generation), \"native_acquisition_process_cpu_ns\": acquisition_cpu,\n            \"work_attempts_including_target_misses\": packets.iter().map(|packet| packet.header.nonce+1).sum::<u64>()}));\n        for sample in 0..3 {\n            for position in 0..3 {\n                let mode = (sample + position) % 3;\n                let path = output.join(format!(\n                    \"{label}-sample{sample}-position{position}-mode{mode}\"\n                ));\n                let mut report = trial(&path, &settings, &source, &packets, mode);\n                report[\"scenario\"] = json!(label);\n                report[\"sample\"] = json!(sample);\n                report[\"position\"] = json!(position);\n                samples.push(report);\n            }\n        }\n    }\n    let all_business = samples\n        .iter()\n        .all(|sample| sample[\"finite_business_target_met\"] == true);\n    let report = json!({\"schema\": \"native-signed-dag-delivery-comparison-v1\", \"network\": hex::encode(settings.network()),\n        \"parameters\": hex::encode(settings.parameters()), \"genesis\": hex::encode(settings.genesis()), \"workloads\": workloads, \"samples\": samples,\n        \"same_signed_packets_across_modes_and_repetitions\": true, \"samples_per_workload_and_mode\": 3, \"balanced_cyclic_mode_order\": true,\n        \"confirmation_contract\": \"client full native replay, depth6 AND required-work6; probabilistic unqualified-risk profile; never BFT finality\",\n        \"all_finite_business_targets_met\": all_business, \"architecture_winner_declared\": false,\n        \"protocol_switch_qualified\": false, \"independent_accepted\": false, \"wan_tested\": false, \"production_activation\": false});"
+  },
+  "test_name": "signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract"
+}

@@ -1,0 +1,892 @@
+//! Explicit native PNQ2 three-table rollback witness; not whole-node finality.
+//! The Node binary, writer credential, pinned binding and independent service
+//! must remain trusted outside a Node-database rollback. Current is not a lease.
+//! Client/owner lifetime checks do not replace independent witness persistence
+//! across process restart, and do not cover reorganization State or Hepta owners.
+//! This reconstructed source has a new identity; lost-source tests do not apply.
+
+use crate::{ensure, Error, Result};
+use fs2::FileExt;
+use rusqlite::{params, Connection, OpenFlags, TransactionBehavior};
+use rustix::net::{RecvFlags, SendFlags};
+use sha2::{Digest, Sha512};
+#[cfg(test)]
+use std::io::Write;
+use std::{
+    fs::{self, File, OpenOptions},
+    io::Read,
+    os::unix::{
+        fs::{MetadataExt, OpenOptionsExt},
+        net::UnixStream,
+    },
+    path::{Path, PathBuf},
+    time::{Duration, Instant},
+};
+use trnm_crypto_primitives::pq_auth::{PqNativeSigningKey, PqNativeVerifier};
+use trnm_protocol::pq_frame::{ml_dsa_65_key_id_from_spki, ML_DSA_65_SIGNATURE_BYTES};
+
+// These wrappers compile to the original expressions outside libtests. Test
+// scopes are explicit; an absent scope never reads a clock, allocates or emits data.
+#[cfg(test)]
+macro_rules! observe_phase {
+    ($operation:expr, $phase:ident, $action:expr) => {{
+        #[cfg(test)]
+        let guard = $operation.as_ref().map(|operation| {
+            operation.phase($crate::pq_rollback_witness::test_observation::Phase::$phase)
+        });
+        let result = $action;
+        #[cfg(test)]
+        if let Some(guard) = guard {
+            guard.finish(&result);
+        }
+        result
+    }};
+}
+#[cfg(not(test))]
+macro_rules! observe_phase {
+    ($operation:expr, $phase:ident, $action:expr) => {
+        $action
+    };
+}
+#[cfg(test)]
+macro_rules! observe_operation {
+    ($operation:ident, $kind:expr, $action:block) => {
+        $crate::pq_rollback_witness::test_observation::with_operation($kind, |$operation| $action)
+    };
+}
+#[cfg(not(test))]
+macro_rules! observe_operation {
+    ($operation:ident, $kind:expr, $action:block) => {
+        $action
+    };
+}
+pub(crate) use {observe_operation, observe_phase};
+#[cfg(test)]
+pub(crate) mod test_observation;
+
+const REQUEST_DOMAIN: &[u8] = b"TRNM/PNQ2/external-owner-witness/request/v1\0";
+const REPLY_DOMAIN: &[u8] = b"TRNM/PNQ2/external-owner-witness/reply/v1\0";
+const BINDING_DOMAIN: &[u8] = b"TRNM/PNQ2/external-owner-witness/binding/v1\0";
+const GENERATION_BINDING_DOMAIN: &[u8] = b"TRNM/M12/full-generation-effect-witness/binding/v3\0";
+const REQUEST_BODY: usize = 245;
+const REPLY_BODY: usize = 172;
+const REQUEST_BYTES: usize = REQUEST_BODY + ML_DSA_65_SIGNATURE_BYTES;
+const REPLY_BYTES: usize = REPLY_BODY + ML_DSA_65_SIGNATURE_BYTES;
+const DDL: &str = "CREATE TABLE witness_v1(singleton INTEGER PRIMARY KEY CHECK(singleton=1),binding BLOB NOT NULL,sequence INTEGER NOT NULL CHECK(sequence>0),root BLOB NOT NULL CHECK(length(root)=64),previous_sequence INTEGER NOT NULL CHECK(previous_sequence>=0),previous_root BLOB NOT NULL CHECK(length(previous_root)=64));";
+pub const MAX_EXCHANGE: Duration = Duration::from_millis(250);
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct Checkpoint {
+    pub sequence: u64,
+    pub root: [u8; 64],
+}
+impl Checkpoint {
+    pub fn new(sequence: u64, root: [u8; 64]) -> Result<Self> {
+        ensure(
+            (1..=i64::MAX as u64).contains(&sequence) && root != [0; 64],
+            "PQ_WITNESS_CHECKPOINT",
+        )?;
+        Ok(Self { sequence, root })
+    }
+    fn bytes(self) -> [u8; 72] {
+        let mut out = [0; 72];
+        out[..8].copy_from_slice(&self.sequence.to_be_bytes());
+        out[8..].copy_from_slice(&self.root);
+        out
+    }
+    fn decode(raw: &[u8]) -> Result<Self> {
+        ensure(raw.len() == 72, "PQ_WITNESS_CHECKPOINT")?;
+        Self::new(
+            u64::from_be_bytes(raw[..8].try_into().map_err(|_| "PQ_WITNESS_CHECKPOINT")?),
+            raw[8..].try_into().map_err(|_| "PQ_WITNESS_CHECKPOINT")?,
+        )
+    }
+}
+
+/// Full policy bytes and both canonical identities are pinned out of database.
+pub struct WitnessBinding {
+    canonical: Vec<u8>,
+    policy_length: usize,
+    id: [u8; 64],
+    witness: PqNativeVerifier,
+    writer: PqNativeVerifier,
+}
+impl WitnessBinding {
+    /// New M12 namespace over the existing authenticated CAS register protocol.
+    /// It never matches a PNQ2 network policy. The context commits the entire
+    /// generation configuration and random journal identity, not a caller's
+    /// operation label. The returned ID must be pinned outside the backup domain.
+    pub fn generation_v3(
+        context: [u8; 64],
+        generation: u64,
+        witness_spki: &[u8],
+        writer_spki: &[u8],
+    ) -> Result<Self> {
+        ensure(
+            context != [0; 64] && (1..=i64::MAX as u64).contains(&generation),
+            "GENERATION_WITNESS_CONTEXT",
+        )?;
+        let witness_id = ml_dsa_65_key_id_from_spki(witness_spki).map_err(crypto)?;
+        let writer_id = ml_dsa_65_key_id_from_spki(writer_spki).map_err(crypto)?;
+        ensure(witness_id != writer_id, "PQ_WITNESS_IDENTITY_SEPARATION")?;
+        let mut canonical = GENERATION_BINDING_DOMAIN.to_vec();
+        canonical.extend(generation.to_be_bytes());
+        canonical.extend(context);
+        canonical.extend(witness_spki);
+        canonical.extend(writer_spki);
+        Ok(Self {
+            id: Sha512::digest(&canonical).into(),
+            canonical,
+            policy_length: 0,
+            witness: PqNativeVerifier::from_pinned_spki(witness_spki, witness_id)
+                .map_err(crypto)?,
+            writer: PqNativeVerifier::from_pinned_spki(writer_spki, writer_id).map_err(crypto)?,
+        })
+    }
+    pub(crate) fn matches_generation_v3(&self, context: [u8; 64], generation: u64) -> bool {
+        let mut expected = GENERATION_BINDING_DOMAIN.to_vec();
+        expected.extend(generation.to_be_bytes());
+        expected.extend(context);
+        self.policy_length == 0 && self.canonical.starts_with(&expected)
+    }
+    pub fn new(
+        policy: &crate::ingress::pq_network::PqNetworkPolicy,
+        generation: u64,
+        witness_spki: &[u8],
+        writer_spki: &[u8],
+    ) -> Result<Self> {
+        ensure(
+            (1..=i64::MAX as u64).contains(&generation),
+            "PQ_WITNESS_GENERATION",
+        )?;
+        let witness_id = ml_dsa_65_key_id_from_spki(witness_spki).map_err(crypto)?;
+        let writer_id = ml_dsa_65_key_id_from_spki(writer_spki).map_err(crypto)?;
+        ensure(witness_id != writer_id, "PQ_WITNESS_IDENTITY_SEPARATION")?;
+        let mut canonical = BINDING_DOMAIN.to_vec();
+        canonical.extend(generation.to_be_bytes());
+        canonical.extend((policy.canonical().len() as u64).to_be_bytes());
+        canonical.extend(policy.canonical());
+        canonical.extend(witness_spki);
+        canonical.extend(writer_spki);
+        Ok(Self {
+            id: Sha512::digest(&canonical).into(),
+            canonical,
+            policy_length: policy.canonical().len(),
+            witness: PqNativeVerifier::from_pinned_spki(witness_spki, witness_id)
+                .map_err(crypto)?,
+            writer: PqNativeVerifier::from_pinned_spki(writer_spki, writer_id).map_err(crypto)?,
+        })
+    }
+    pub fn id(&self) -> [u8; 64] {
+        self.id
+    }
+    pub(crate) fn canonical(&self) -> &[u8] {
+        &self.canonical
+    }
+    pub(crate) fn policy_length(&self) -> usize {
+        self.policy_length
+    }
+    pub(crate) fn matches_policy(&self, policy: &[u8]) -> bool {
+        let start = BINDING_DOMAIN.len() + 16;
+        self.canonical.starts_with(BINDING_DOMAIN)
+            && policy.len() == self.policy_length
+            && self.canonical.get(start..start + policy.len()) == Some(policy)
+    }
+}
+pub fn initial_network_checkpoint(
+    policy: &crate::ingress::pq_network::PqNetworkPolicy,
+    binding: &WitnessBinding,
+) -> Result<Checkpoint> {
+    crate::store::pq_rollback_witness::initial_checkpoint(policy, binding)
+}
+fn crypto(e: impl std::fmt::Debug) -> Error {
+    Error::from(format!("PQ_WITNESS_CRYPTO:{e:?}"))
+}
+fn deadline(until: Instant) -> Result<Duration> {
+    let left = until.saturating_duration_since(Instant::now());
+    ensure(!left.is_zero(), "PQ_WITNESS_DEADLINE")?;
+    Ok(left)
+}
+fn message(domain: &[u8], body: &[u8]) -> Vec<u8> {
+    [domain, body].concat()
+}
+fn read_until(stream: &mut UnixStream, mut output: &mut [u8], until: Instant) -> Result<()> {
+    while !output.is_empty() {
+        deadline(until)?;
+        // Per-call nonblocking I/O does not change O_NONBLOCK on this stream
+        // or any try_clone alias. A socket timeout alone is not an absolute
+        // limit for a syscall that continues making partial progress.
+        match rustix::net::recv(&*stream, &mut *output, RecvFlags::DONTWAIT)
+            .map_err(std::io::Error::from)
+        {
+            Ok((0, _)) => return Err("PQ_WITNESS_EOF".into()),
+            Ok((n, _)) => output = &mut output[n..],
+            Err(e) if e.kind() == std::io::ErrorKind::Interrupted => {}
+            Err(e) if e.kind() == std::io::ErrorKind::WouldBlock => {
+                std::thread::sleep(deadline(until)?.min(Duration::from_millis(1)));
+            }
+            Err(e) => return Err(e.into()),
+        }
+        // Preserve a complete receipt for authenticated late-CAS reconciliation.
+        if !output.is_empty() {
+            deadline(until)?;
+        }
+    }
+    Ok(())
+}
+fn write_until(stream: &mut UnixStream, mut input: &[u8], until: Instant) -> Result<()> {
+    let flags = SendFlags::DONTWAIT;
+    #[cfg(not(any(target_vendor = "apple", target_os = "redox", target_os = "vita")))]
+    let flags = flags | SendFlags::NOSIGNAL;
+    while !input.is_empty() {
+        deadline(until)?;
+        match rustix::net::send(&*stream, input, flags).map_err(std::io::Error::from) {
+            Ok(0) => return Err("PQ_WITNESS_WRITE_ZERO".into()),
+            Ok(n) => input = &input[n..],
+            Err(e) if e.kind() == std::io::ErrorKind::Interrupted => {}
+            Err(e) if e.kind() == std::io::ErrorKind::WouldBlock => {
+                std::thread::sleep(deadline(until)?.min(Duration::from_millis(1)));
+            }
+            Err(e) => return Err(e.into()),
+        }
+        deadline(until)?;
+    }
+    Ok(())
+}
+/// Transport supplies bytes, not trusted observations. Its implementation and
+/// connection setup owner must enforce their declared absolute I/O bounds.
+pub trait WitnessTransport: Send {
+    fn exchange(&mut self, request: &[u8], until: Instant) -> Result<Vec<u8>>;
+}
+pub struct ConnectedWitnessTransport {
+    stream: UnixStream,
+}
+impl ConnectedWitnessTransport {
+    pub fn new(stream: UnixStream) -> Self {
+        Self { stream }
+    }
+}
+impl WitnessTransport for ConnectedWitnessTransport {
+    fn exchange(&mut self, request: &[u8], until: Instant) -> Result<Vec<u8>> {
+        ensure(request.len() == REQUEST_BYTES, "PQ_WITNESS_REQUEST_SIZE")?;
+        write_until(&mut self.stream, request, until)?;
+        let mut reply = vec![0; REPLY_BYTES];
+        read_until(&mut self.stream, &mut reply, until)?;
+        Ok(reply)
+    }
+}
+pub struct WitnessClient {
+    binding: WitnessBinding,
+    writer: PqNativeSigningKey,
+    transport: Box<dyn WitnessTransport>,
+    unavailable: bool,
+    last_verified: Option<Checkpoint>,
+    #[cfg(test)]
+    before_send: Option<Box<dyn FnMut(Instant) + Send>>,
+}
+impl WitnessClient {
+    pub fn new(
+        binding: WitnessBinding,
+        writer: PqNativeSigningKey,
+        transport: Box<dyn WitnessTransport>,
+    ) -> Result<Self> {
+        ensure(
+            binding.writer.public_key_id() == writer.public_key_id(),
+            "PQ_WITNESS_WRITER_PIN",
+        )?;
+        Ok(Self {
+            binding,
+            writer,
+            transport,
+            unavailable: false,
+            last_verified: None,
+            #[cfg(test)]
+            before_send: None,
+        })
+    }
+    pub(crate) fn binding(&self) -> &WitnessBinding {
+        &self.binding
+    }
+    pub(crate) fn available(&self) -> Result<()> {
+        ensure(!self.unavailable, "PQ_WITNESS_UNAVAILABLE")
+    }
+    pub(crate) fn fail_closed(&mut self) {
+        self.unavailable = true;
+    }
+    fn request(
+        &mut self,
+        previous: Option<Checkpoint>,
+        next: Option<Checkpoint>,
+        original: Option<Instant>,
+    ) -> Result<Checkpoint> {
+        observe_operation!(
+            observation,
+            if previous.is_some() {
+                test_observation::Kind::ClientCas
+            } else {
+                test_observation::Kind::ClientCurrent
+            },
+            {
+                let until = observe_phase!(
+                    observation,
+                    ClientEntry,
+                    (|| {
+                        self.available()?;
+                        let cap = Instant::now() + MAX_EXCHANGE;
+                        let until = original.map_or(cap, |v| v.min(cap));
+                        #[cfg(test)]
+                        if let Some(observation) = observation.as_ref() {
+                            observation.deadlines(original, until);
+                        }
+                        deadline(until)?;
+                        Ok::<_, Error>(until)
+                    })()
+                )?;
+                // Until transport entry no remote mutation or unread response exists.
+                // A local preparation failure or cancellation must leave this client
+                // usable; latching here would turn a short request into a service outage.
+                let (challenge, mut body) = observe_phase!(
+                    observation,
+                    ChallengeAndBody,
+                    (|| {
+                        let mut challenge = [0; 32];
+                        File::open("/dev/urandom")?.read_exact(&mut challenge)?;
+                        ensure(challenge != [0; 32], "PQ_WITNESS_CHALLENGE")?;
+                        let mut body = b"PWR1".to_vec();
+                        body.push(if previous.is_some() { 2 } else { 1 });
+                        body.extend(self.binding.id);
+                        body.extend(previous.map_or([0; 72], Checkpoint::bytes));
+                        body.extend(next.map_or([0; 72], Checkpoint::bytes));
+                        body.extend(challenge);
+                        Ok::<_, Error>((challenge, body))
+                    })()
+                )?;
+                body.extend(
+                    observe_phase!(
+                        observation,
+                        RequestSignIncludingSelfVerify,
+                        self.writer
+                            .sign_exact_message(&message(REQUEST_DOMAIN, &body))
+                    )
+                    .map_err(crypto)?,
+                );
+                #[cfg(test)]
+                if let Some(before_send) = self.before_send.as_mut() {
+                    observe_phase!(observation, BeforeSendHook, {
+                        before_send(until);
+                        Ok::<_, Error>(())
+                    })?;
+                }
+                observe_phase!(observation, BeforeTransport, deadline(until))?;
+                let result: Result<Checkpoint> = (|| {
+                    #[cfg(test)]
+                    if let Some(observation) = observation.as_ref() {
+                        observation.mark(test_observation::Mark::TransportEntered);
+                    }
+                    let reply = observe_phase!(
+                        observation,
+                        Transport,
+                        self.transport.exchange(&body, until)
+                    )?;
+                    observe_phase!(
+                        observation,
+                        ReplyContext,
+                        ensure(
+                            reply.len() == REPLY_BYTES
+                                && &reply[..4] == b"PWS1"
+                                && reply[4..68] == self.binding.id
+                                && reply[140..172] == challenge,
+                            "PQ_WITNESS_REPLY_CONTEXT",
+                        )
+                    )?;
+                    observe_phase!(
+                        observation,
+                        ClientReplyVerify,
+                        self.binding
+                            .witness
+                            .verify_exact_message(
+                                &message(REPLY_DOMAIN, &reply[..REPLY_BODY]),
+                                &reply[REPLY_BODY..],
+                            )
+                            .map(|_| ())
+                    )
+                    .map_err(crypto)?;
+                    observe_phase!(
+                        observation,
+                        ClientFinal,
+                        (|| {
+                            let observed = Checkpoint::decode(&reply[68..140])?;
+                            // A fresh challenge authenticates this response, but does not by
+                            // itself establish that the independent service never rewound.
+                            // Other legitimate clients may advance it by several generations.
+                            ensure(
+                                self.last_verified.is_none_or(|previous| {
+                                    observed.sequence > previous.sequence || observed == previous
+                                }),
+                                "PQ_WITNESS_OBSERVATION_ROLLBACK",
+                            )?;
+                            // Authenticated matching CAS success must be persisted locally even
+                            // if its verification completed after the live-use deadline.
+                            if next != Some(observed) {
+                                deadline(until)?;
+                            }
+                            #[cfg(test)]
+                            if next == Some(observed) {
+                                if let Some(observation) = observation.as_ref() {
+                                    observation.mark(test_observation::Mark::MatchingCasReceipt);
+                                }
+                            }
+                            self.last_verified = Some(observed);
+                            Ok::<_, Error>(observed)
+                        })()
+                    )
+                })();
+                // Once exchange begins an error can leave an unread response or an
+                // uncertain external CAS. This transport instance cannot be reused.
+                if result.is_err() {
+                    self.fail_closed();
+                }
+                result
+            }
+        )
+    }
+    pub fn current(&mut self) -> Result<Checkpoint> {
+        self.current_until(None)
+    }
+    pub(crate) fn current_until(&mut self, until: Option<Instant>) -> Result<Checkpoint> {
+        self.request(None, None, until)
+    }
+    pub fn advance(&mut self, previous: Checkpoint, next: Checkpoint) -> Result<()> {
+        self.advance_until(previous, next, None)
+    }
+    pub(crate) fn advance_until(
+        &mut self,
+        previous: Checkpoint,
+        next: Checkpoint,
+        until: Option<Instant>,
+    ) -> Result<()> {
+        observe_operation!(observation, test_observation::Kind::ClientAdvance, {
+            // Checkpoint fields are public. Refuse malformed local arguments
+            // before signing or entering transport, without poisoning the client.
+            observe_phase!(
+                observation,
+                ClientEntry,
+                (|| {
+                    Checkpoint::new(previous.sequence, previous.root)?;
+                    Checkpoint::new(next.sequence, next.root)?;
+                    ensure(
+                        previous.sequence.checked_add(1) == Some(next.sequence),
+                        "PQ_WITNESS_SEQUENCE",
+                    )?;
+                    if let Some(known) = self.last_verified {
+                        // Refuse a locally contradictory CAS before signing or sending.
+                        // Exact retry of the known head remains valid; the owner still
+                        // verifies its predecessor. Other writers may have advanced
+                        // beyond the last head observed by this client.
+                        ensure(
+                            next.sequence > known.sequence || next == known,
+                            "PQ_WITNESS_OBSERVATION_ROLLBACK",
+                        )?;
+                        ensure(
+                            previous.sequence != known.sequence || previous == known,
+                            "PQ_WITNESS_OBSERVATION_ROLLBACK",
+                        )?;
+                    }
+                    Ok::<_, Error>(())
+                })()
+            )?;
+            if self.request(Some(previous), Some(next), until)? != next {
+                self.fail_closed();
+                return Err("PQ_WITNESS_CAS".into());
+            }
+            Ok(())
+        })
+    }
+}
+
+/// Standalone native owner, not a public deployment or an independent-operator
+/// qualification. The service key is not stored in this SQLite database.
+pub struct DurableWitness {
+    db: Connection,
+    lock: File,
+    path: PathBuf,
+    identity: (u64, u64),
+    parent_identity: (u64, u64),
+    binding: WitnessBinding,
+    signer: PqNativeSigningKey,
+    known_head: Option<Checkpoint>,
+    // Only this live owner can authenticate the predecessor of an exact retry.
+    // A retained current-head pin does not authenticate restored predecessor bytes.
+    retry_from: Option<Checkpoint>,
+    commit_uncertain: bool,
+}
+impl DurableWitness {
+    pub fn register_new(
+        path: &Path,
+        binding: WitnessBinding,
+        initial: Checkpoint,
+        signer: PqNativeSigningKey,
+    ) -> Result<Self> {
+        Checkpoint::new(initial.sequence, initial.root)?;
+        ensure(initial.sequence == 1, "PQ_WITNESS_REGISTRATION_SEQUENCE")?;
+        ensure(
+            signer.public_key_id() == binding.witness.public_key_id(),
+            "PQ_WITNESS_SERVICE_PIN",
+        )?;
+        let path = storage_path(path)?;
+        let lock = OpenOptions::new()
+            .read(true)
+            .write(true)
+            .create_new(true)
+            .mode(0o600)
+            .custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC)
+            .open(&path)?;
+        lock.try_lock_exclusive().map_err(|_| "PQ_WITNESS_BUSY")?;
+        let identity = file_identity(&lock.metadata()?);
+        let parent_identity =
+            file_identity(&fs::metadata(path.parent().ok_or("PQ_WITNESS_PATH")?)?);
+        let mut db = Self::connection(&path)?;
+        ensure(
+            file_identity(&fs::symlink_metadata(&path)?) == identity,
+            "PQ_WITNESS_STORAGE_IDENTITY",
+        )?;
+        let tx = db.transaction_with_behavior(TransactionBehavior::Immediate)?;
+        tx.execute_batch(DDL)?;
+        tx.execute(
+            "INSERT INTO witness_v1 VALUES(1,?,?,?,0,?)",
+            params![
+                binding.canonical(),
+                initial.sequence,
+                initial.root.as_slice(),
+                [0_u8; 64].as_slice()
+            ],
+        )?;
+        tx.commit()?;
+        lock.sync_all()?;
+        File::open(path.parent().ok_or("PQ_WITNESS_PATH")?)?.sync_all()?;
+        let owner = Self {
+            db,
+            lock,
+            path,
+            identity,
+            parent_identity,
+            binding,
+            signer,
+            known_head: Some(initial),
+            retry_from: None,
+            commit_uncertain: false,
+        };
+        owner.check_storage()?;
+        Ok(owner)
+    }
+    /// Recover only the exact checkpoint independently retained by the caller.
+    /// The expected value must come from an authenticated pre-stop receipt or
+    /// an independently durable monotonic authority, never from this SQLite
+    /// database or a sibling file restored with it. A newer or older on-disk
+    /// checkpoint requires explicit external reconciliation, not auto-adoption.
+    /// Cold recovery authenticates Current and a fresh successor CAS, never a
+    /// historical CAS retry from unauthenticated database predecessor metadata.
+    pub fn open_existing(
+        path: &Path,
+        binding: WitnessBinding,
+        expected: Checkpoint,
+        signer: PqNativeSigningKey,
+    ) -> Result<Self> {
+        Checkpoint::new(expected.sequence, expected.root)?;
+        ensure(
+            signer.public_key_id() == binding.witness.public_key_id(),
+            "PQ_WITNESS_SERVICE_PIN",
+        )?;
+        let path = storage_path(path)?;
+        let meta = fs::symlink_metadata(&path)?;
+        ensure(
+            meta.is_file() && !meta.file_type().is_symlink(),
+            "PQ_WITNESS_PATH",
+        )?;
+        let lock = OpenOptions::new()
+            .read(true)
+            .write(true)
+            .custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC)
+            .open(&path)?;
+        lock.try_lock_exclusive().map_err(|_| "PQ_WITNESS_BUSY")?;
+        let identity = file_identity(&lock.metadata()?);
+        ensure(
+            file_identity(&meta) == identity,
+            "PQ_WITNESS_STORAGE_IDENTITY",
+        )?;
+        let parent_identity =
+            file_identity(&fs::metadata(path.parent().ok_or("PQ_WITNESS_PATH")?)?);
+        let db = Self::connection(&path)?;
+        let owner = Self {
+            db,
+            lock,
+            path,
+            identity,
+            parent_identity,
+            binding,
+            signer,
+            known_head: Some(expected),
+            retry_from: None,
+            commit_uncertain: false,
+        };
+        owner.read_head()?;
+        Ok(owner)
+    }
+    fn connection(path: &Path) -> Result<Connection> {
+        let db = Connection::open_with_flags(
+            path,
+            OpenFlags::SQLITE_OPEN_READ_WRITE
+                | OpenFlags::SQLITE_OPEN_NO_MUTEX
+                | OpenFlags::SQLITE_OPEN_NOFOLLOW,
+        )?;
+        db.busy_timeout(Duration::ZERO)?;
+        db.execute_batch(
+            "PRAGMA trusted_schema=OFF; PRAGMA journal_mode=DELETE; PRAGMA synchronous=FULL;",
+        )?;
+        Ok(db)
+    }
+    fn read_head(&self) -> Result<Checkpoint> {
+        self.check_storage()?;
+        let (binding, seq, root): (Vec<u8>, u64, Vec<u8>) = self.db.query_row(
+            "SELECT binding,sequence,root FROM witness_v1 WHERE singleton=1",
+            [],
+            |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)),
+        )?;
+        ensure(binding == self.binding.canonical(), "PQ_WITNESS_BINDING")?;
+        let head = Checkpoint::new(seq, root.try_into().map_err(|_| "PQ_WITNESS_STATE")?)?;
+        self.check_known_head(head)?;
+        Ok(head)
+    }
+    pub fn handle(&mut self, request: &[u8], until: Instant) -> Result<Vec<u8>> {
+        observe_operation!(
+            observation,
+            match request.get(4) {
+                Some(1) => test_observation::Kind::ServiceCurrent,
+                Some(2) => test_observation::Kind::ServiceCas,
+                _ => test_observation::Kind::ServiceUnknown,
+            },
+            {
+                #[cfg(test)]
+                if let Some(observation) = observation.as_ref() {
+                    observation.deadlines(Some(until), until);
+                }
+                observe_phase!(
+                    observation,
+                    ServiceEntryAndStorage,
+                    (|| {
+                        deadline(until)?;
+                        self.check_storage()
+                    })()
+                )?;
+                observe_phase!(
+                    observation,
+                    ServiceRequestContext,
+                    (|| {
+                        ensure(
+                            request.len() == REQUEST_BYTES
+                                && &request[..4] == b"PWR1"
+                                && request[5..69] == self.binding.id
+                                && request[213..245] != [0; 32],
+                            "PQ_WITNESS_REQUEST_CONTEXT",
+                        )?;
+                        ensure(matches!(request[4], 1 | 2), "PQ_WITNESS_OPERATION")?;
+                        if request[4] == 1 {
+                            ensure(request[69..213] == [0; 144], "PQ_WITNESS_CURRENT_FIELDS")?;
+                        }
+                        Ok::<_, Error>(())
+                    })()
+                )?;
+                observe_phase!(
+                    observation,
+                    ServiceRequestVerify,
+                    self.binding
+                        .writer
+                        .verify_exact_message(
+                            &message(REQUEST_DOMAIN, &request[..REQUEST_BODY]),
+                            &request[REQUEST_BODY..],
+                        )
+                        .map(|_| ())
+                )
+                .map_err(crypto)?;
+                observe_phase!(observation, ServiceRequestContext, deadline(until))?;
+                let head = if request[4] == 2 {
+                    observe_phase!(
+                        observation,
+                        ServiceCas,
+                        (|| {
+                            let previous = Checkpoint::decode(&request[69..141])?;
+                            let next = Checkpoint::decode(&request[141..213])?;
+                            ensure(
+                                previous.sequence.checked_add(1) == Some(next.sequence),
+                                "PQ_WITNESS_SEQUENCE",
+                            )?;
+                            let tx = self
+                                .db
+                                .transaction_with_behavior(TransactionBehavior::Immediate)?;
+                            validate_row(&tx, self.binding.canonical().len())?;
+                            let (binding,seq,root,old_seq,old_root):(Vec<u8>,u64,Vec<u8>,u64,Vec<u8>)=tx.query_row("SELECT binding,sequence,root,previous_sequence,previous_root FROM witness_v1 WHERE singleton=1",[],|r|Ok((r.get(0)?,r.get(1)?,r.get(2)?,r.get(3)?,r.get(4)?)))?;
+                            ensure(binding == self.binding.canonical(), "PQ_WITNESS_BINDING")?;
+                            let current = Checkpoint::new(
+                                seq,
+                                root.try_into().map_err(|_| "PQ_WITNESS_STATE")?,
+                            )?;
+                            ensure(
+                                self.known_head == Some(current),
+                                "PQ_WITNESS_STORAGE_ROLLBACK",
+                            )?;
+                            if current == next {
+                                ensure(
+                                    self.retry_from == Some(previous)
+                                        && old_seq == previous.sequence
+                                        && old_root == previous.root,
+                                    "PQ_WITNESS_RETRY_CONFLICT",
+                                )?;
+                            } else {
+                                ensure(current == previous, "PQ_WITNESS_CAS")?;
+                                ensure(tx.execute("UPDATE witness_v1 SET sequence=?,root=?,previous_sequence=?,previous_root=? WHERE singleton=1 AND sequence=? AND root=?",params![next.sequence,next.root.as_slice(),previous.sequence,previous.root.as_slice(),previous.sequence,previous.root.as_slice()])?==1,"PQ_WITNESS_CAS")?;
+                            }
+                            deadline(until)?;
+                            // All legitimate writers use this exclusive owner's handle. If a
+                            // local COMMIT has an unknown result, refuse later requests until
+                            // explicit reopen; a disk read must not silently resolve it.
+                            self.commit_uncertain = true;
+                            #[cfg(test)]
+                            if let Some(observation) = observation.as_ref() {
+                                observation.mark(test_observation::Mark::CasCommitAttempted);
+                            }
+                            observe_phase!(observation, ServiceCommit, tx.commit())?;
+                            #[cfg(test)]
+                            if let Some(observation) = observation.as_ref() {
+                                observation.mark(test_observation::Mark::CasCommitted);
+                            }
+                            self.known_head = Some(next);
+                            if current != next {
+                                self.retry_from = Some(previous);
+                            }
+                            self.commit_uncertain = false;
+                            Ok::<_, Error>(next)
+                        })()
+                    )?
+                } else {
+                    observe_phase!(observation, ServiceRead, self.read_head())?
+                };
+                observe_phase!(observation, ServiceFinalStorage, self.check_storage())?;
+                let mut reply = b"PWS1".to_vec();
+                reply.extend(self.binding.id);
+                reply.extend(head.bytes());
+                reply.extend(&request[213..245]);
+                reply.extend(
+                    observe_phase!(
+                        observation,
+                        ReplySignIncludingSelfVerify,
+                        self.signer
+                            .sign_exact_message(&message(REPLY_DOMAIN, &reply))
+                    )
+                    .map_err(crypto)?,
+                );
+                // A successful CAS has already committed its exact successor.
+                // Keep the completed, signed receipt for the client's existing
+                // reconciliation path even when COMMIT/signing crossed `until`.
+                // The client still authenticates the complete reply and aligns
+                // its local commit before refusing late live use. Current has
+                // no such committed outcome; serve_one also retains the same
+                // absolute write deadline for every reply.
+                observe_phase!(
+                    observation,
+                    ServiceFinal,
+                    if request[4] == 2 {
+                        Ok(())
+                    } else {
+                        deadline(until).map(|_| ())
+                    }
+                )?;
+                Ok(reply)
+            }
+        )
+    }
+    pub fn serve_one(&mut self, stream: &mut UnixStream, until: Instant) -> Result<()> {
+        observe_operation!(observation, test_observation::Kind::WitnessConnection, {
+            #[cfg(test)]
+            if let Some(observation) = observation.as_ref() {
+                observation.deadlines(Some(until), until);
+            }
+            let mut request = vec![0; REQUEST_BYTES];
+            observe_phase!(
+                observation,
+                WitnessRead,
+                read_until(stream, &mut request, until)
+            )?;
+            let reply = observe_phase!(observation, WitnessHandle, self.handle(&request, until))?;
+            observe_phase!(
+                observation,
+                WitnessWrite,
+                write_until(stream, &reply, until)
+            )
+        })
+    }
+    pub fn storage_path(&self) -> &Path {
+        &self.path
+    }
+    fn check_known_head(&self, head: Checkpoint) -> Result<()> {
+        ensure(
+            self.known_head.is_none_or(|expected| expected == head),
+            "PQ_WITNESS_STORAGE_ROLLBACK",
+        )
+    }
+    fn check_storage(&self) -> Result<()> {
+        ensure(!self.commit_uncertain, "PQ_WITNESS_COMMIT_UNCERTAIN")?;
+        let parent = self.path.parent().ok_or("PQ_WITNESS_PATH")?;
+        let meta = fs::symlink_metadata(&self.path)?;
+        let parent_meta = fs::symlink_metadata(parent)?;
+        let uid = rustix::process::geteuid().as_raw();
+        ensure(
+            meta.is_file()
+                && !meta.file_type().is_symlink()
+                && meta.nlink() == 1
+                && meta.uid() == uid
+                && meta.mode() & 0o077 == 0
+                && file_identity(&meta) == self.identity
+                && file_identity(&self.lock.metadata()?) == self.identity
+                && parent_meta.is_dir()
+                && !parent_meta.file_type().is_symlink()
+                && parent_meta.uid() == uid
+                && parent_meta.mode() & 0o022 == 0
+                && file_identity(&parent_meta) == self.parent_identity,
+            "PQ_WITNESS_STORAGE_IDENTITY",
+        )?;
+        // This exact schema needs no implicit index or SQLite auxiliary table.
+        // Check cardinality and byte widths in SQL, then compare scalars. Never
+        // collect attacker-restored names or SQL text into unbounded Strings.
+        let count: u64 = self
+            .db
+            .query_row("SELECT COUNT(*) FROM sqlite_master", [], |r| r.get(0))?;
+        ensure(count == 1, "PQ_WITNESS_SCHEMA")?;
+        let expected = DDL.trim_end_matches(';');
+        let valid:bool=self.db.query_row("SELECT COALESCE(typeof(type)='text' AND length(CAST(type AS BLOB))=5 AND type='table' AND typeof(name)='text' AND length(CAST(name AS BLOB))=10 AND name='witness_v1' AND typeof(tbl_name)='text' AND length(CAST(tbl_name AS BLOB))=10 AND tbl_name='witness_v1' AND typeof(sql)='text' AND length(CAST(sql AS BLOB))=? AND sql=?,0) FROM sqlite_master",params![expected.len(),expected],|r|r.get(0))?;
+        ensure(valid, "PQ_WITNESS_SCHEMA")?;
+        validate_row(&self.db, self.binding.canonical().len())
+    }
+}
+fn validate_row(db: &Connection, binding_length: usize) -> Result<()> {
+    let count: u64 = db.query_row("SELECT COUNT(*) FROM witness_v1", [], |r| r.get(0))?;
+    ensure(count == 1, "PQ_WITNESS_STATE")?;
+    let valid:bool=db.query_row("SELECT typeof(singleton)='integer' AND singleton=1 AND typeof(binding)='blob' AND length(binding)=? AND typeof(sequence)='integer' AND sequence>0 AND typeof(root)='blob' AND length(root)=64 AND typeof(previous_sequence)='integer' AND previous_sequence>=0 AND typeof(previous_root)='blob' AND length(previous_root)=64 AND ((sequence=1 AND previous_sequence=0 AND previous_root=zeroblob(64)) OR (sequence>1 AND previous_sequence=sequence-1 AND previous_root<>zeroblob(64))) FROM witness_v1",[binding_length],|r|r.get(0))?;
+    ensure(valid, "PQ_WITNESS_STATE_WIDTH")
+}
+fn file_identity(meta: &fs::Metadata) -> (u64, u64) {
+    (meta.dev(), meta.ino())
+}
+fn storage_path(path: &Path) -> Result<PathBuf> {
+    let parent = path.parent().ok_or("PQ_WITNESS_PATH")?.canonicalize()?;
+    let meta = fs::metadata(&parent)?;
+    ensure(
+        meta.is_dir()
+            && meta.mode() & 0o022 == 0
+            && meta.uid() == rustix::process::geteuid().as_raw(),
+        "PQ_WITNESS_PARENT",
+    )?;
+    Ok(parent.join(path.file_name().ok_or("PQ_WITNESS_PATH")?))
+}
+
+#[cfg(test)]
+mod tests;

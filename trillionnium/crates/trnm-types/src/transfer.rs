@@ -1,4 +1,4 @@
-use ed25519_dalek::{Signature, Signer, SigningKey, Verifier, VerifyingKey};
+use ed25519_dalek::{Signature, Signer, SigningKey, VerifyingKey};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 
@@ -56,6 +56,11 @@ impl TransferTx {
         &self,
         private_key_hex: &str,
     ) -> Result<String, TransferTxValidationError> {
+        // Reject attacker-controlled oversized strings before `hex::decode`
+        // allocates a temporary buffer. A signing key is exactly 32 bytes.
+        if private_key_hex.len() != 64 {
+            return Err(TransferTxValidationError::InvalidSignature);
+        }
         let secret = hex::decode(private_key_hex)
             .map_err(|_| TransferTxValidationError::InvalidSignature)?;
         let secret_bytes: [u8; 32] = secret
@@ -104,6 +109,11 @@ impl TransferTx {
             return Err(TransferTxValidationError::InvalidSignature);
         }
 
+        // Both fields have fixed wire widths; validate the textual widths
+        // before decoding to avoid allocating for unbounded JSON input.
+        if pubkey_hex.len() != 64 || sig_hex.len() != 128 {
+            return Err(TransferTxValidationError::InvalidSignature);
+        }
         let pubkey =
             hex::decode(pubkey_hex).map_err(|_| TransferTxValidationError::InvalidSignature)?;
         let pubkey_bytes: [u8; 32] = pubkey
@@ -125,8 +135,12 @@ impl TransferTx {
         let verifying_key = VerifyingKey::from_bytes(&pubkey_bytes)
             .map_err(|_| TransferTxValidationError::InvalidSignature)?;
         let sig = Signature::from_bytes(&sig_bytes);
+        // Use strict Ed25519 verification.  The permissive verifier accepts
+        // non-canonical/small-order encodings which can produce alternate
+        // valid signatures for the same transaction and undermine signature
+        // digest/idempotency checks in downstream consumers.
         verifying_key
-            .verify(&self.signing_message(), &sig)
+            .verify_strict(&self.signing_message(), &sig)
             .map_err(|_| TransferTxValidationError::InvalidSignature)?;
 
         Ok(())
@@ -182,9 +196,60 @@ mod tests {
     }
 
     #[test]
+    fn oversized_hex_fields_fail_before_decode_allocation() {
+        let tx = valid_tx();
+        let mut oversized_pubkey = tx.clone();
+        oversized_pubkey.signature = format!("ed25519:{}:{}", "0".repeat(65), "0".repeat(128));
+        assert_eq!(
+            oversized_pubkey.validate_basic().unwrap_err(),
+            TransferTxValidationError::InvalidSignature
+        );
+
+        let mut oversized_signature = tx;
+        oversized_signature.signature = format!("ed25519:{}:{}", "0".repeat(64), "0".repeat(129));
+        assert_eq!(
+            oversized_signature.validate_basic().unwrap_err(),
+            TransferTxValidationError::InvalidSignature
+        );
+
+        assert_eq!(
+            oversized_signature
+                .sign_with_private_key_hex(&"0".repeat(65))
+                .unwrap_err(),
+            TransferTxValidationError::InvalidSignature
+        );
+    }
+
+    #[test]
     fn transfer_tx_reject_address_mismatch() {
         let mut tx = valid_tx();
         tx.from = "trnm1aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa".into();
+        assert_eq!(
+            tx.validate_basic().unwrap_err(),
+            TransferTxValidationError::InvalidSignature
+        );
+    }
+
+    #[test]
+    fn transfer_tx_rejects_weak_public_key() {
+        // The identity encoding is a valid 32-byte Ed25519 encoding but a
+        // small-order point.  The permissive verifier accepts weak keys in
+        // some configurations; transfer validation must fail closed.
+        let mut weak_key = [0u8; 32];
+        weak_key[0] = 1;
+        let signature = [0u8; 64];
+        let tx = TransferTx {
+            from: TransferTx::derive_address_from_ed25519_pubkey(&weak_key),
+            to: "trnm1bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb".into(),
+            amount: 1,
+            fee: 0,
+            nonce: 1,
+            signature: format!(
+                "ed25519:{}:{}",
+                hex::encode(weak_key),
+                hex::encode(signature)
+            ),
+        };
         assert_eq!(
             tx.validate_basic().unwrap_err(),
             TransferTxValidationError::InvalidSignature

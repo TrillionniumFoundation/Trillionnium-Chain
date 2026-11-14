@@ -1,0 +1,107 @@
+{
+  "common_steps": "Pinned checkout, before/after source observations, project preflight audit and git diff check.",
+  "lanes": [
+    "head",
+    "prospective-merge"
+  ],
+  "matrix_job_count": 6,
+  "observed_head": "f48840dead56de84fbae9d3b202b6c9ddd4a8291",
+  "qualification": {
+    "independent_wan_acceptance_closed": false,
+    "original_campaign_passed": false,
+    "original_host_service_passed": false,
+    "production_activation": false
+  },
+  "remote_ci_status_checked_by_this_review": false,
+  "reviewed_inputs": [
+    {
+      "bytes": 3195,
+      "matches_observed_head": true,
+      "path": ".github/workflows/chain-hepta-closure-candidate.yml",
+      "sha256": "09394b3aaab541795b825322633feceee5bbdcc15ef48370de1b79308a292e43"
+    },
+    {
+      "bytes": 7849,
+      "matches_observed_head": true,
+      "path": "scripts/cell_learning_scope_join.py",
+      "sha256": "b1bb0873ac3f49676b6ae00e5cdb35f2a25002986d8477be751dc746ce4c040e"
+    },
+    {
+      "bytes": 15334,
+      "matches_observed_head": true,
+      "path": "scripts/test_cell_learning_scope_join.py",
+      "sha256": "eba419f120fff858492fc964a5f35a222e86d50f2a863cac99b6773c47477302",
+      "statically_declared_test_methods": 11
+    },
+    {
+      "bytes": 19474,
+      "matches_observed_head": true,
+      "path": "scripts/ci/pq_proof_profile_binding.py",
+      "sha256": "9d2adebbf3043d7e8cfe664444e19b767142300bf8718899fe486c33e329d041"
+    },
+    {
+      "bytes": 13874,
+      "matches_observed_head": true,
+      "path": "scripts/ci/test_pq_proof_profile_binding.py",
+      "sha256": "c9189a5c5e56f3b6a6684190554579e4dfa23256a64a371cb7ada9261557e867",
+      "statically_declared_test_methods": 26
+    },
+    {
+      "bytes": 2378,
+      "matches_observed_head": true,
+      "path": "config/pon/pq-proof-profile-binding-v1.json",
+      "sha256": "9154595097a2abe460f23e53ab96b3de5712702b156ada71fc5d2d65c337e424"
+    },
+    {
+      "bytes": 34527,
+      "matches_observed_head": true,
+      "path": "scripts/ci/audit_native_campaign_outcomes.py",
+      "sha256": "1fc55e57ed086d7179004d82bf64507f82fa33a7b3cc6e26c5fd7a6d2135c692"
+    },
+    {
+      "bytes": 15541,
+      "matches_observed_head": true,
+      "path": "scripts/ci/test_audit_native_campaign_outcomes.py",
+      "sha256": "718cdba63553cfab56295cbc7feb4bae613cbeb03097ca991ce057611545b94b",
+      "statically_declared_test_methods": 23
+    }
+  ],
+  "schema": "closure-workflow-static-evidence-scope-review-v1",
+  "static_conclusion": "Reader and source-binding gates only. No original Host/campaign acceptance, daemon loop, PQ theorem or independent-WAN completion is asserted by these commands.",
+  "suite_count": 3,
+  "suites": [
+    {
+      "commands": [
+        "python3 scripts/test_cell_learning_scope_join.py -v"
+      ],
+      "final_use_or_production_authority_granted": false,
+      "id": "scope",
+      "ordinary_daemon_learning_executed": false,
+      "root_origin_authenticated": false,
+      "scope": "Scoped reader controls over retained older native records and synthetic Root profiles; fixed 7173834 schema."
+    },
+    {
+      "commands": [
+        "python3 scripts/ci/test_pq_proof_profile_binding.py -v",
+        "python3 scripts/ci/pq_proof_profile_binding.py --expected-profile-descriptor-sha256 da0c97f1c549e10ecfc066f6b0a9721147dc3d430eab6f53d502cbc7b91dd48c"
+      ],
+      "complete_dependency_closure_verified": false,
+      "declared_success_status": "PROFILE_BOUND_SECURITY_HOLD",
+      "id": "proof-profile",
+      "native_proof_verification_performed": false,
+      "scope": "Reader controls plus selected source/profile descriptor binding; a static binding gate, not proof verification.",
+      "whole_chain_pq_qualified": false
+    },
+    {
+      "commands": [
+        "python3 scripts/ci/test_audit_native_campaign_outcomes.py -v"
+      ],
+      "host_four_second_acceptance_closed": false,
+      "id": "campaign-reader",
+      "original_campaign_executed": false,
+      "original_service_executed": false,
+      "scope": "Synthetic parser/measurement/denominator controls; this suite does not read the retained 0746 ZIP or run its native campaign."
+    }
+  ],
+  "workflow_executed_by_this_review": false
+}

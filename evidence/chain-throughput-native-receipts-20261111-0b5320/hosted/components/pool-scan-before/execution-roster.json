@@ -1,0 +1,30 @@
+{
+  "mode": "pool-scan-before",
+  "cases": [
+    {
+      "test": "mining::pool_reconcile_control_tests::pool_run_stop_interrupts_reconciliation_pool_rows",
+      "group": "pool-scan",
+      "expected": "fail",
+      "exit_code": 101,
+      "expected_outcome_observed": true,
+      "stdout_sha256": "0dd171434bdc1b35a776c22b8d8c28d7c8f1380327f5758673190a79bc239e84",
+      "stderr_sha256": "a8e59652eb6c1aae926bdd68498e9939af91323663f626be48424fd2b3b667dd",
+      "panic_headers": [
+        "thread 'mining::pool_reconcile_control_tests::pool_run_stop_interrupts_reconciliation_pool_rows' (5025) panicked at crates/trnm-pon-node/src/pool_reconcile_control_tests.rs:181:5:"
+      ]
+    },
+    {
+      "test": "mining::pool_reconcile_control_tests::pool_run_deadline_interrupts_reconciliation_pool_rows",
+      "group": "pool-scan",
+      "expected": "fail",
+      "exit_code": 101,
+      "expected_outcome_observed": true,
+      "stdout_sha256": "4766371db05622a8d89321cecf87f27a18c0e6856e0d901019f7671a3614c7d0",
+      "stderr_sha256": "a453f8b2c1a27e5624fbe477317153f3604c0dbc5dc7efe735aeb5296bbce847",
+      "panic_headers": [
+        "thread 'mining::pool_reconcile_control_tests::pool_run_deadline_interrupts_reconciliation_pool_rows' (5027) panicked at crates/trnm-pon-node/src/pool_reconcile_control_tests.rs:181:5:"
+      ]
+    }
+  ],
+  "integration": null
+}

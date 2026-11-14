@@ -1,0 +1,47 @@
+{
+  "both_jobs_original_result": "76 tests / 46 failures / 23 errors",
+  "head_sha": "dc42ce4df5cff79cc61c5addbaf01074b56b06ca",
+  "members": [
+    {
+      "bytes": 15157,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-C0-required-ci-observation-20261114-v2/run.stdout"
+      },
+      "path": "run.json",
+      "sha256": "d1f8310dc9b3e86a4389fb850552b0dae070983bea6cff404e897f807f8e01e5"
+    },
+    {
+      "bytes": 63939,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-C0-required-ci-observation-20261114-v2/jobs-page-001.stdout"
+      },
+      "path": "jobs.json",
+      "sha256": "f7b43d486b64e24f5e56483b8521f3f7a74bbca44c982565787b9617f1c33537"
+    },
+    {
+      "bytes": 315971,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-C0-required-failed-job-originals-20261114-v1/132376957428.stdout"
+      },
+      "path": "132376957428.log",
+      "sha256": "dcbb8547f7ac6f770d53a6577a9b13a32afa2ce2b5fff34999ffe6f6b40d7bb2"
+    },
+    {
+      "bytes": 317661,
+      "origin": {
+        "host": "mac",
+        "path": "/private/tmp/chain-architecture-C0-required-failed-job-originals-20261114-v1/132376957323.stdout"
+      },
+      "path": "132376957323.log",
+      "sha256": "6dc43b05a5235b43dbc4d68490995b6150872e906bcb8c12324d3436ca6c2bc3"
+    }
+  ],
+  "original_failures_preserved": true,
+  "run_id": 43567821538,
+  "schema": "C0-external-evidence-originals-zip-index-v1",
+  "zip_bytes": 95475,
+  "zip_sha256": "ad411162d29943f7cef4a3320792997e1942d7ad34ff36e9130e59b7a5615dea"
+}

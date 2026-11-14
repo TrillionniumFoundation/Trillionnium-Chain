@@ -1,0 +1,490 @@
+{"acceptance_granted": false, "branch_refs_changed": false, "fetched": [], "verified_object_trees": {"242906bae4f281c738c60adbd2c053d2ded1eae5": "160cc493ab4cfb7f3f8c26b2d1621691a0c49502", "30b85c34d1be404dcccd9f415286bb43b00f64ea": "4ee1a9d265f09871b0f167d2a5be77ca4b9839c0", "50e158640d8278ca94dbecb6539dab96c6a9fb84": "d61a69d3433db127019924d269bf25ded3aecf60", "5d59b9540268914794a62e8fa237caf999499314": "30ee65c0752693f4eecc90f924972279f00c0c73", "dbb1c989342639c4c04366a0d12bc3ecb4760e04": "a38495fe234c4ae71aeae3c570d5d91acf847fee", "ed4d95c3e558ad28b5f3132152704bdf77df5f49": "a19ecaa4745236753d89b7e6be8de4a9f2156954", "fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb": "31b4df1df65ef70d92936091271d21e1d90c1142"}}
+test_client_receipt_cannot_rebind_source_or_fetch_a_branch (__main__.EvidenceSourceTests.test_client_receipt_cannot_rebind_source_or_fetch_a_branch) ... ok
+test_client_receipt_retains_exact_source_after_squash (__main__.EvidenceSourceTests.test_client_receipt_retains_exact_source_after_squash) ... ok
+test_existing_objects_do_not_fetch (__main__.EvidenceSourceTests.test_existing_objects_do_not_fetch) ... ok
+test_failed_fetch_does_not_succeed (__main__.EvidenceSourceTests.test_failed_fetch_does_not_succeed) ... ok
+test_invalid_declared_identity_rejects_before_any_command (__main__.EvidenceSourceTests.test_invalid_declared_identity_rejects_before_any_command) ... ok
+test_missing_sources_fetch_only_exact_repo_and_commit (__main__.EvidenceSourceTests.test_missing_sources_fetch_only_exact_repo_and_commit) ... ok
+test_new_cost_package_cannot_rebind_existing_source_tree (__main__.EvidenceSourceTests.test_new_cost_package_cannot_rebind_existing_source_tree) ... ok
+test_new_cost_package_rejects_branch_as_measurement (__main__.EvidenceSourceTests.test_new_cost_package_rejects_branch_as_measurement) ... ok
+test_new_cost_package_retains_exact_original_source (__main__.EvidenceSourceTests.test_new_cost_package_retains_exact_original_source) ... ok
+test_non_sha_cannot_be_a_fetch_argument (__main__.EvidenceSourceTests.test_non_sha_cannot_be_a_fetch_argument) ... ok
+test_tree_mismatch_is_not_evidence (__main__.EvidenceSourceTests.test_tree_mismatch_is_not_evidence) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.031s
+
+OK
+{"activation": false, "head": "fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb", "local_links": 343, "normal_dependency_edges": 10, "result": "PASS", "runtime_implemented": false, "rust_files": 611, "source_state": "dirty-candidate", "tree": "31b4df1df65ef70d92936091271d21e1d90c1142", "workspace_packages": 24}
+test_current_claims_are_unactivated (__main__.EvidenceBoundaryTests.test_current_claims_are_unactivated) ... ok
+test_duplicate_json_claims (__main__.EvidenceBoundaryTests.test_duplicate_json_claims) ... ok
+test_explicit_missing_native_core (__main__.EvidenceBoundaryTests.test_explicit_missing_native_core) ... ok
+test_false_is_not_integer_zero (__main__.EvidenceBoundaryTests.test_false_is_not_integer_zero) ... ok
+test_no_release_from_nested_report (__main__.EvidenceBoundaryTests.test_no_release_from_nested_report) ... ok
+test_no_runtime_claim (__main__.EvidenceBoundaryTests.test_no_runtime_claim) ... ok
+test_no_work_qualification_from_reference (__main__.EvidenceBoundaryTests.test_no_work_qualification_from_reference) ... ok
+test_old_protocol_is_not_supported (__main__.EvidenceBoundaryTests.test_old_protocol_is_not_supported) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.001s
+
+OK
+{"archive_commit": "5d59b9540268914794a62e8fa237caf999499314", "consistency": "verified-historical", "evidence_files": 43, "implementation_commit": "8b87fee77ddee6a9778e8bebe880ba2627b05d5d", "independent_accepted": false, "matches_current_source": false, "production_activation": false, "source_bindings": 704, "tracked_artifacts_verified": true}
+test_best_expert_control_cannot_be_hidden (__main__.EvidenceRejectionTests.test_best_expert_control_cannot_be_hidden) ... ok
+test_current_local_evidence (__main__.EvidenceRejectionTests.test_current_local_evidence) ... ok
+test_evidence_path_cannot_escape (__main__.EvidenceRejectionTests.test_evidence_path_cannot_escape) ... ok
+test_failed_experiment_cannot_be_omitted (__main__.EvidenceRejectionTests.test_failed_experiment_cannot_be_omitted) ... ok
+test_future_window_claim_rejected_even_after_rehash (__main__.EvidenceRejectionTests.test_future_window_claim_rejected_even_after_rehash) ... ok
+test_independent_acceptance_cannot_be_fabricated (__main__.EvidenceRejectionTests.test_independent_acceptance_cannot_be_fabricated) ... ok
+test_raw_artifact_cannot_be_swapped (__main__.EvidenceRejectionTests.test_raw_artifact_cannot_be_swapped) ... ok
+test_skipped_campaign_cannot_be_a_pass (__main__.EvidenceRejectionTests.test_skipped_campaign_cannot_be_a_pass) ... ok
+test_source_digest_cannot_be_stale (__main__.EvidenceRejectionTests.test_source_digest_cannot_be_stale) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 11.724s
+
+OK
+{"artifact_files": 76, "executed_invariant_selectors": 61, "implementation_commit": "242906bae4f281c738c60adbd2c053d2ded1eae5", "independent_accepted": false, "native_tests": 1801, "physical_hosts": 3, "production_activation": false, "python_suites": 17, "runtime_matches_measured_source": false}
+test_busy_and_recomputed_counts_must_conserve (__main__.InvariantEvidenceTests.test_busy_and_recomputed_counts_must_conserve) ... ok
+test_dirty_source_is_not_exact_head (__main__.InvariantEvidenceTests.test_dirty_source_is_not_exact_head) ... ok
+test_executor_sample_cannot_be_chain_tps (__main__.InvariantEvidenceTests.test_executor_sample_cannot_be_chain_tps) ... ok
+test_failed_learning_cannot_be_paid (__main__.InvariantEvidenceTests.test_failed_learning_cannot_be_paid) ... ok
+test_fixture_history_cannot_be_real_work (__main__.InvariantEvidenceTests.test_fixture_history_cannot_be_real_work) ... ok
+test_initial_harness_failure_cannot_be_hidden (__main__.InvariantEvidenceTests.test_initial_harness_failure_cannot_be_hidden) ... ok
+test_multihost_is_not_independent_operation (__main__.InvariantEvidenceTests.test_multihost_is_not_independent_operation) ... ok
+test_native_count_cannot_be_inflated (__main__.InvariantEvidenceTests.test_native_count_cannot_be_inflated) ... ok
+test_no_cost_theorem_from_timing (__main__.InvariantEvidenceTests.test_no_cost_theorem_from_timing) ... ok
+test_no_implicit_public_fairness (__main__.InvariantEvidenceTests.test_no_implicit_public_fairness) ... ok
+test_page_limit_is_not_a_physical_disk_outage (__main__.InvariantEvidenceTests.test_page_limit_is_not_a_physical_disk_outage) ... ok
+test_parallel_different_roots_reject (__main__.InvariantEvidenceTests.test_parallel_different_roots_reject) ... ok
+test_prior_execution_cannot_be_promoted_to_current_runtime (__main__.InvariantEvidenceTests.test_prior_execution_cannot_be_promoted_to_current_runtime) ... ok
+test_process_crash_is_not_power_loss (__main__.InvariantEvidenceTests.test_process_crash_is_not_power_loss) ... ok
+test_public_owner_path_cannot_be_fabricated (__main__.InvariantEvidenceTests.test_public_owner_path_cannot_be_fabricated) ... ok
+test_raw_log_tampering_is_rejected (__main__.InvariantEvidenceTests.test_raw_log_tampering_is_rejected) ... ok
+test_recorded_source_and_results (__main__.InvariantEvidenceTests.test_recorded_source_and_results) ... ok
+test_runtime_failure_is_not_success (__main__.InvariantEvidenceTests.test_runtime_failure_is_not_success) ... ok
+test_training_attempts_cannot_be_improving_generations (__main__.InvariantEvidenceTests.test_training_attempts_cannot_be_improving_generations) ... ok
+test_wrong_source_commit_is_rejected (__main__.InvariantEvidenceTests.test_wrong_source_commit_is_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 6.178s
+
+OK
+{"comparison_samples": 216, "executed_invariant_selectors": 66, "historical_only": true, "independent_accepted": false, "measured_commit": "30b85c34d1be404dcccd9f415286bb43b00f64ea", "native_tests": 1801, "ordinary_hepta_entry": false, "physical_hosts": 3, "production_activation": false, "runtime_matches": null}
+test_bad_exit_is_not_a_pass (__main__.CompletionEvidenceTests.test_bad_exit_is_not_a_pass) ... ok
+test_changed_root_rejects_even_after_rehash (__main__.CompletionEvidenceTests.test_changed_root_rejects_even_after_rehash) ... ok
+test_different_host_binary_is_not_qualified (__main__.CompletionEvidenceTests.test_different_host_binary_is_not_qualified) ... ok
+test_different_inputs_not_comparable (__main__.CompletionEvidenceTests.test_different_inputs_not_comparable) ... ok
+test_dirty_execution_not_qualified (__main__.CompletionEvidenceTests.test_dirty_execution_not_qualified) ... ok
+test_failed_temporary_cleanup_is_not_hidden (__main__.CompletionEvidenceTests.test_failed_temporary_cleanup_is_not_hidden) ... ok
+test_hepta_owner_cannot_be_invented (__main__.CompletionEvidenceTests.test_hepta_owner_cannot_be_invented) ... ok
+test_historical_receipt_does_not_claim_current_runtime (__main__.CompletionEvidenceTests.test_historical_receipt_does_not_claim_current_runtime) ... ok
+test_host_result_cannot_be_independent_consensus (__main__.CompletionEvidenceTests.test_host_result_cannot_be_independent_consensus) ... ok
+test_host_wrong_root_rejects (__main__.CompletionEvidenceTests.test_host_wrong_root_rejects) ... ok
+test_included_count_cannot_be_inferred (__main__.CompletionEvidenceTests.test_included_count_cannot_be_inferred) ... ok
+test_missing_binary_samples_reject (__main__.CompletionEvidenceTests.test_missing_binary_samples_reject) ... ok
+test_model_generations_cannot_be_invented (__main__.CompletionEvidenceTests.test_model_generations_cannot_be_invented) ... ok
+test_no_independent_operator_from_same_owner (__main__.CompletionEvidenceTests.test_no_independent_operator_from_same_owner) ... ok
+test_old_campaign_cannot_be_promoted (__main__.CompletionEvidenceTests.test_old_campaign_cannot_be_promoted) ... ok
+test_old_receipt_refuses_current_runtime_without_explicit_historical_scope (__main__.CompletionEvidenceTests.test_old_receipt_refuses_current_runtime_without_explicit_historical_scope) ... ok
+test_omitted_host_case_rejects (__main__.CompletionEvidenceTests.test_omitted_host_case_rejects) ... ok
+test_raw_log_cannot_be_replaced (__main__.CompletionEvidenceTests.test_raw_log_cannot_be_replaced) ... ok
+test_signature_count_does_not_disappear (__main__.CompletionEvidenceTests.test_signature_count_does_not_disappear) ... ok
+test_summary_cannot_claim_future_learning (__main__.CompletionEvidenceTests.test_summary_cannot_claim_future_learning) ... ok
+test_summary_cannot_hide_regression (__main__.CompletionEvidenceTests.test_summary_cannot_hide_regression) ... ok
+test_summary_cannot_inflate_test_results (__main__.CompletionEvidenceTests.test_summary_cannot_inflate_test_results) ... ok
+test_summary_cannot_relabel_old_history_as_current (__main__.CompletionEvidenceTests.test_summary_cannot_relabel_old_history_as_current) ... ok
+test_worker_creation_bound_is_real (__main__.CompletionEvidenceTests.test_worker_creation_bound_is_real) ... ok
+
+----------------------------------------------------------------------
+Ran 24 tests in 6.756s
+
+OK
+{"current_source_qualified_by_this_check": false, "historical_semantics_verified": true, "independent_accepted": false, "measured_commit": "50e158640d8278ca94dbecb6539dab96c6a9fb84", "production_activation": false, "runtime_matches": false, "tests_reexecuted": false, "verification_checkout": "original-measured-tree"}
+{"current_source_qualified_by_this_check": false, "historical_semantics_verified": true, "independent_accepted": false, "measured_commit": "ed4d95c3e558ad28b5f3132152704bdf77df5f49", "production_activation": false, "runtime_matches": false, "tests_reexecuted": false, "verification_checkout": "original-measured-tree"}
+{"backends": ["reference", "explicit-native-work-and-eight-worker-execution", "explicit-native-work-and-eight-worker-session"], "client_selectors_per_backend": 40, "controlled_policy_confirmations_replayed": 96, "controlled_work_blocks_replayed": 44, "independent_accepted": false, "measured_commit": "fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb", "model_experiments_rerun": false, "native_full_node": false, "native_session_qualified_as": "disposable-compute-cache", "native_tests": 1809, "paired_samples": 96, "physical_power_loss": false, "production_activation": false, "public_confirmed_tps": null, "runtime_matches": true}
+test_cached_repeat_cannot_be_counted_as_execution_sample (__main__.NativeSessionEvidenceTests.test_cached_repeat_cannot_be_counted_as_execution_sample) ... ok
+test_current_changed_runtime_has_its_own_complete_receipt (__main__.NativeSessionEvidenceTests.test_current_changed_runtime_has_its_own_complete_receipt) ... ok
+test_duplicate_named_run_is_not_more_evidence (__main__.NativeSessionEvidenceTests.test_duplicate_named_run_is_not_more_evidence) ... ok
+test_duplicate_samples_cannot_inflate_throughput (__main__.NativeSessionEvidenceTests.test_duplicate_samples_cannot_inflate_throughput) ... ok
+test_executor_samples_cannot_be_called_confirmed (__main__.NativeSessionEvidenceTests.test_executor_samples_cannot_be_called_confirmed) ... ok
+test_fabricated_confirmation_is_rejected_by_real_replay (__main__.NativeSessionEvidenceTests.test_fabricated_confirmation_is_rejected_by_real_replay) ... ok
+test_failed_session_configuration_cannot_be_counted (__main__.NativeSessionEvidenceTests.test_failed_session_configuration_cannot_be_counted) ... ok
+test_hidden_regression_rejects_even_after_rehash (__main__.NativeSessionEvidenceTests.test_hidden_regression_rejects_even_after_rehash) ... ok
+test_independent_acceptance_is_not_created_by_hashes (__main__.NativeSessionEvidenceTests.test_independent_acceptance_is_not_created_by_hashes) ... ok
+test_missing_historical_client_manifest_rejects (__main__.NativeSessionEvidenceTests.test_missing_historical_client_manifest_rejects) ... ok
+test_missing_session_input_cannot_be_called_unmeasured_addition (__main__.NativeSessionEvidenceTests.test_missing_session_input_cannot_be_called_unmeasured_addition) ... ok
+test_model_efficacy_not_rerun_by_this_workstream (__main__.NativeSessionEvidenceTests.test_model_efficacy_not_rerun_by_this_workstream) ... ok
+test_old_receipt_cannot_replace_actual_new_backend_run (__main__.NativeSessionEvidenceTests.test_old_receipt_cannot_replace_actual_new_backend_run) ... ok
+test_omitted_receiver_sample_is_not_complete_pipeline (__main__.NativeSessionEvidenceTests.test_omitted_receiver_sample_is_not_complete_pipeline) ... ok
+test_pipeline_is_not_a_native_full_node (__main__.NativeSessionEvidenceTests.test_pipeline_is_not_a_native_full_node) ... ok
+test_pipeline_is_not_public_confirmed_tps (__main__.NativeSessionEvidenceTests.test_pipeline_is_not_public_confirmed_tps) ... ok
+test_pipeline_must_select_actual_native_components (__main__.NativeSessionEvidenceTests.test_pipeline_must_select_actual_native_components) ... ok
+test_real_new_selectors_cannot_be_erased_from_success_log (__main__.NativeSessionEvidenceTests.test_real_new_selectors_cannot_be_erased_from_success_log) ... ok
+test_rehashed_native_test_count_inflation_rejects (__main__.NativeSessionEvidenceTests.test_rehashed_native_test_count_inflation_rejects) ... ok
+test_session_must_be_explicit_not_single_shot_or_reference (__main__.NativeSessionEvidenceTests.test_session_must_be_explicit_not_single_shot_or_reference) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 104.532s
+
+OK
+test_client_navigation_retains_observations_without_covering_changed_runtime (__main__.ClientEvidenceTests.test_client_navigation_retains_observations_without_covering_changed_runtime) ... ok
+test_duplicate_named_result_rejects (__main__.ClientEvidenceTests.test_duplicate_named_result_rejects) ... ok
+test_edited_log_without_rehash_rejects (__main__.ClientEvidenceTests.test_edited_log_without_rehash_rejects) ... ok
+test_fabricated_source_digest_rejects (__main__.ClientEvidenceTests.test_fabricated_source_digest_rejects) ... ok
+test_failed_execution_cannot_be_hidden (__main__.ClientEvidenceTests.test_failed_execution_cannot_be_hidden) ... ok
+test_historical_inventory_cannot_be_dropped (__main__.ClientEvidenceTests.test_historical_inventory_cannot_be_dropped) ... ok
+test_independent_acceptance_cannot_be_rehashed (__main__.ClientEvidenceTests.test_independent_acceptance_cannot_be_rehashed) ... ok
+test_missing_client_runtime_input_rejects (__main__.ClientEvidenceTests.test_missing_client_runtime_input_rejects) ... ok
+test_missing_measured_runner_rejects (__main__.ClientEvidenceTests.test_missing_measured_runner_rejects) ... ok
+test_native_backend_must_be_explicit (__main__.ClientEvidenceTests.test_native_backend_must_be_explicit) ... ok
+test_native_build_cannot_drop_work_verifier (__main__.ClientEvidenceTests.test_native_build_cannot_drop_work_verifier) ... ok
+test_native_suite_cannot_drop_locked_dependencies (__main__.ClientEvidenceTests.test_native_suite_cannot_drop_locked_dependencies) ... ok
+test_native_suite_count_cannot_be_inflated (__main__.ClientEvidenceTests.test_native_suite_count_cannot_be_inflated) ... ok
+test_old_evidence_cannot_be_repinned (__main__.ClientEvidenceTests.test_old_evidence_cannot_be_repinned) ... ok
+test_old_model_measurement_is_not_rerun (__main__.ClientEvidenceTests.test_old_model_measurement_is_not_rerun) ... ok
+test_one_backend_cannot_replace_two (__main__.ClientEvidenceTests.test_one_backend_cannot_replace_two) ... ok
+test_physical_power_loss_is_not_inferred (__main__.ClientEvidenceTests.test_physical_power_loss_is_not_inferred) ... ok
+test_public_acceptance_cannot_be_rehashed (__main__.ClientEvidenceTests.test_public_acceptance_cannot_be_rehashed) ... ok
+test_rehashed_log_cannot_drop_actual_client_selectors (__main__.ClientEvidenceTests.test_rehashed_log_cannot_drop_actual_client_selectors) ... ok
+test_unchanged_complete_package_passes (__main__.ClientEvidenceTests.test_unchanged_complete_package_passes) ... ok
+test_unmeasured_network_throughput_rejects (__main__.ClientEvidenceTests.test_unmeasured_network_throughput_rejects) ... ok
+test_all_direct_cases_remain_required (__main__.ClientSelectorBindingTests.test_all_direct_cases_remain_required) ... ok
+test_nested_callbacks_are_not_independent_unittest_cases (__main__.ClientSelectorBindingTests.test_nested_callbacks_are_not_independent_unittest_cases) ... ok
+
+----------------------------------------------------------------------
+Ran 23 tests in 10.120s
+
+OK
+test_class_name_in_another_file_is_not_a_test_invocation (__main__.CurrentEvaluationEvidenceTests.test_class_name_in_another_file_is_not_a_test_invocation) ... ok
+test_component_mode_reports_new_files_without_dropping_originals (__main__.CurrentEvaluationEvidenceTests.test_component_mode_reports_new_files_without_dropping_originals) ... ok
+test_failed_command_cannot_be_counted (__main__.CurrentEvaluationEvidenceTests.test_failed_command_cannot_be_counted) ... ok
+test_failed_remote_cleanup_is_not_hidden (__main__.CurrentEvaluationEvidenceTests.test_failed_remote_cleanup_is_not_hidden) ... ok
+test_forged_aggregate_score_fails_even_with_updated_file_hash (__main__.CurrentEvaluationEvidenceTests.test_forged_aggregate_score_fails_even_with_updated_file_hash) ... ok
+test_future_generations_cannot_be_invented (__main__.CurrentEvaluationEvidenceTests.test_future_generations_cannot_be_invented) ... ok
+test_historical_component_mode_cannot_drop_a_transitive_runtime_input (__main__.CurrentEvaluationEvidenceTests.test_historical_component_mode_cannot_drop_a_transitive_runtime_input) ... ok
+test_historical_component_mode_cannot_drop_locked_native_dependencies (__main__.CurrentEvaluationEvidenceTests.test_historical_component_mode_cannot_drop_locked_native_dependencies) ... ok
+test_host_result_cannot_change_its_evaluation_hash (__main__.CurrentEvaluationEvidenceTests.test_host_result_cannot_change_its_evaluation_hash) ... ok
+test_independent_operators_cannot_be_invented (__main__.CurrentEvaluationEvidenceTests.test_independent_operators_cannot_be_invented) ... ok
+test_missing_native_oracle_command_rejects (__main__.CurrentEvaluationEvidenceTests.test_missing_native_oracle_command_rejects) ... ok
+test_native_backend_cannot_be_silently_reference (__main__.CurrentEvaluationEvidenceTests.test_native_backend_cannot_be_silently_reference) ... ok
+test_old_evidence_is_not_silently_replaced (__main__.CurrentEvaluationEvidenceTests.test_old_evidence_is_not_silently_replaced) ... ok
+test_original_evidence_does_not_cover_changed_current_runtime (__main__.CurrentEvaluationEvidenceTests.test_original_evidence_does_not_cover_changed_current_runtime) ... ok
+test_original_source_and_all_named_experiments_recompute (__main__.CurrentEvaluationEvidenceTests.test_original_source_and_all_named_experiments_recompute) ... ok
+test_retrospective_zero_reward_cannot_be_promoted (__main__.CurrentEvaluationEvidenceTests.test_retrospective_zero_reward_cannot_be_promoted) ... ok
+test_source_hash_binding_cannot_be_omitted (__main__.CurrentEvaluationEvidenceTests.test_source_hash_binding_cannot_be_omitted) ... ok
+test_supplement_must_be_same_clean_implementation (__main__.CurrentEvaluationEvidenceTests.test_supplement_must_be_same_clean_implementation) ... ok
+test_three_no_change_attempts_are_not_three_adoptions (__main__.CurrentEvaluationEvidenceTests.test_three_no_change_attempts_are_not_three_adoptions) ... ok
+test_unmeasured_vram_cannot_be_filled (__main__.CurrentEvaluationEvidenceTests.test_unmeasured_vram_cannot_be_filled) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 29.463s
+
+OK
+# Responsibility evidence at 5589434f2a5bc6452fd61a0c70e8cb4272c93326
+
+Working tree dirty: False. No tests are executed by this report.
+
+| Responsibility | Package / measured source | Subject bytes | Complete recorded runtime | Exact tests observed / declared |
+|---|---|---|---|---|
+| M00.DecodeHeader | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/2 |
+| M00.DecodeHeader | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | True | False | 2/2 |
+| M00.DecodeHeader | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | True | False | 2/2 |
+| M00.DecodeHeader | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | True | False | 2/2 |
+| M00.DecodeHeader | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | True | False | 2/2 |
+| M00.DecodeHeader | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | True | True | 2/2 |
+| M00.DecodeTransaction | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/1 |
+| M00.DecodeTransaction | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | True | False | 1/1 |
+| M00.DecodeTransaction | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | True | False | 1/1 |
+| M00.DecodeTransaction | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | True | False | 1/1 |
+| M00.DecodeTransaction | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | True | False | 1/1 |
+| M00.DecodeTransaction | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | True | True | 1/1 |
+| M01.VerifyWork | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/2 |
+| M01.VerifyWork | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 2/2 |
+| M01.VerifyWork | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 2/2 |
+| M01.VerifyWork | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 2/2 |
+| M01.VerifyWork | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 2/2 |
+| M01.VerifyWork | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | True | True | 2/2 |
+| M01.VerifyTransactionSignature | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/2 |
+| M01.VerifyTransactionSignature | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 2/2 |
+| M01.VerifyTransactionSignature | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 2/2 |
+| M01.VerifyTransactionSignature | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 2/2 |
+| M01.VerifyTransactionSignature | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 2/2 |
+| M01.VerifyTransactionSignature | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | True | True | 2/2 |
+| M02.AdmitBlock | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/2 |
+| M02.AdmitBlock | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 2/2 |
+| M02.AdmitBlock | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 2/2 |
+| M02.AdmitBlock | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 2/2 |
+| M02.AdmitBlock | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 2/2 |
+| M02.AdmitBlock | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | True | True | 2/2 |
+| M02.ChooseBranch | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/2 |
+| M02.ChooseBranch | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 2/2 |
+| M02.ChooseBranch | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 2/2 |
+| M02.ChooseBranch | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 2/2 |
+| M02.ChooseBranch | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 2/2 |
+| M02.ChooseBranch | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | True | True | 2/2 |
+| M03.RunWorkAttempt | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/1 |
+| M03.RunWorkAttempt | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 1/1 |
+| M03.RunWorkAttempt | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 1/1 |
+| M03.RunWorkAttempt | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 1/1 |
+| M03.RunWorkAttempt | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 1/1 |
+| M03.RunWorkAttempt | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | True | True | 1/1 |
+| M03.EnterExternalEffect | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/2 |
+| M03.EnterExternalEffect | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 2/2 |
+| M03.EnterExternalEffect | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 2/2 |
+| M03.EnterExternalEffect | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 2/2 |
+| M03.EnterExternalEffect | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 2/2 |
+| M03.EnterExternalEffect | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | True | True | 2/2 |
+| M04.ReadFrame | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/0 |
+| M04.ReadFrame | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | True | False | 0/0 |
+| M04.ReadFrame | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | True | False | 0/0 |
+| M04.ReadFrame | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | True | False | 0/0 |
+| M04.ReadFrame | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | True | False | 0/0 |
+| M04.ReadFrame | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | True | True | 0/0 |
+| M04.PropagateVerifiedBlock | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/0 |
+| M04.PropagateVerifiedBlock | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 0/0 |
+| M04.PropagateVerifiedBlock | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 0/0 |
+| M04.PropagateVerifiedBlock | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 0/0 |
+| M04.PropagateVerifiedBlock | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 0/0 |
+| M04.PropagateVerifiedBlock | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | True | True | 0/0 |
+| M05.ValidateTransaction | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/2 |
+| M05.ValidateTransaction | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 1/2 |
+| M05.ValidateTransaction | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 2/2 |
+| M05.ValidateTransaction | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 2/2 |
+| M05.ValidateTransaction | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 2/2 |
+| M05.ValidateTransaction | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | True | True | 2/2 |
+| M05.ReconsiderAfterReorg | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/0 |
+| M05.ReconsiderAfterReorg | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | True | False | 0/0 |
+| M05.ReconsiderAfterReorg | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | True | False | 0/0 |
+| M05.ReconsiderAfterReorg | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | True | False | 0/0 |
+| M05.ReconsiderAfterReorg | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | True | False | 0/0 |
+| M05.ReconsiderAfterReorg | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | True | True | 0/0 |
+| M06.ExecuteCandidate | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/6 |
+| M06.ExecuteCandidate | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 1/6 |
+| M06.ExecuteCandidate | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 2/6 |
+| M06.ExecuteCandidate | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 2/6 |
+| M06.ExecuteCandidate | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 2/6 |
+| M06.ExecuteCandidate | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | True | True | 6/6 |
+| M06.DeriveBranchDelta | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/1 |
+| M06.DeriveBranchDelta | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 1/1 |
+| M06.DeriveBranchDelta | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 1/1 |
+| M06.DeriveBranchDelta | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 1/1 |
+| M06.DeriveBranchDelta | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 1/1 |
+| M06.DeriveBranchDelta | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | True | True | 1/1 |
+| M07.OpenNamespace | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/2 |
+| M07.OpenNamespace | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 2/2 |
+| M07.OpenNamespace | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 2/2 |
+| M07.OpenNamespace | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 2/2 |
+| M07.OpenNamespace | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 2/2 |
+| M07.OpenNamespace | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | True | True | 2/2 |
+| M07.StageBranch | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/2 |
+| M07.StageBranch | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 2/2 |
+| M07.StageBranch | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 2/2 |
+| M07.StageBranch | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 2/2 |
+| M07.StageBranch | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 2/2 |
+| M07.StageBranch | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | True | True | 2/2 |
+| M08.PlanReorg | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/2 |
+| M08.PlanReorg | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 2/2 |
+| M08.PlanReorg | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 2/2 |
+| M08.PlanReorg | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 2/2 |
+| M08.PlanReorg | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 2/2 |
+| M08.PlanReorg | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | True | True | 2/2 |
+| M08.RecoverAndPublish | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/2 |
+| M08.RecoverAndPublish | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 2/2 |
+| M08.RecoverAndPublish | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 2/2 |
+| M08.RecoverAndPublish | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 2/2 |
+| M08.RecoverAndPublish | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 2/2 |
+| M08.RecoverAndPublish | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | True | True | 2/2 |
+| M09.ValidateArtifact | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/2 |
+| M09.ValidateArtifact | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 2/2 |
+| M09.ValidateArtifact | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 2/2 |
+| M09.ValidateArtifact | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | True | False | 2/2 |
+| M09.ValidateArtifact | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | True | False | 2/2 |
+| M09.ValidateArtifact | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | True | True | 2/2 |
+| M09.FetchWithoutAuthor | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/0 |
+| M09.FetchWithoutAuthor | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 0/0 |
+| M09.FetchWithoutAuthor | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 0/0 |
+| M09.FetchWithoutAuthor | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | True | False | 0/0 |
+| M09.FetchWithoutAuthor | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | True | False | 0/0 |
+| M09.FetchWithoutAuthor | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | True | True | 0/0 |
+| M10.SubmitContribution | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/2 |
+| M10.SubmitContribution | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 2/2 |
+| M10.SubmitContribution | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 2/2 |
+| M10.SubmitContribution | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 2/2 |
+| M10.SubmitContribution | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 2/2 |
+| M10.SubmitContribution | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | True | True | 2/2 |
+| M10.PublishEvaluatedRelease | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/1 |
+| M10.PublishEvaluatedRelease | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 1/1 |
+| M10.PublishEvaluatedRelease | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 1/1 |
+| M10.PublishEvaluatedRelease | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 1/1 |
+| M10.PublishEvaluatedRelease | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 1/1 |
+| M10.PublishEvaluatedRelease | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | True | True | 1/1 |
+| M11.EvaluateFrozenModel | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/2 |
+| M11.EvaluateFrozenModel | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 0/2 |
+| M11.EvaluateFrozenModel | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 0/2 |
+| M11.EvaluateFrozenModel | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | True | False | 2/2 |
+| M11.EvaluateFrozenModel | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | True | False | 2/2 |
+| M11.EvaluateFrozenModel | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | True | True | 2/2 |
+| M11.AdmitEvaluation | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/2 |
+| M11.AdmitEvaluation | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 2/2 |
+| M11.AdmitEvaluation | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 2/2 |
+| M11.AdmitEvaluation | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 2/2 |
+| M11.AdmitEvaluation | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 2/2 |
+| M11.AdmitEvaluation | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | True | True | 2/2 |
+| M12.ClaimContributionReward | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/6 |
+| M12.ClaimContributionReward | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 2/6 |
+| M12.ClaimContributionReward | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 2/6 |
+| M12.ClaimContributionReward | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 2/6 |
+| M12.ClaimContributionReward | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 2/6 |
+| M12.ClaimContributionReward | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | True | True | 6/6 |
+| M12.ConsumeSponsoredQuota | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/6 |
+| M12.ConsumeSponsoredQuota | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 2/6 |
+| M12.ConsumeSponsoredQuota | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 2/6 |
+| M12.ConsumeSponsoredQuota | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 2/6 |
+| M12.ConsumeSponsoredQuota | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 2/6 |
+| M12.ConsumeSponsoredQuota | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | True | True | 6/6 |
+| M13.RebuildBranchState | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/1 |
+| M13.RebuildBranchState | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 1/1 |
+| M13.RebuildBranchState | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 1/1 |
+| M13.RebuildBranchState | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 1/1 |
+| M13.RebuildBranchState | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 1/1 |
+| M13.RebuildBranchState | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | True | True | 1/1 |
+| M13.VerifyIncomingHistory | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/6 |
+| M13.VerifyIncomingHistory | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 0/6 |
+| M13.VerifyIncomingHistory | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 0/6 |
+| M13.VerifyIncomingHistory | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 0/6 |
+| M13.VerifyIncomingHistory | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 5/6 |
+| M13.VerifyIncomingHistory | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | True | True | 6/6 |
+| M14.QueryCurrentState | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/10 |
+| M14.QueryCurrentState | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 0/10 |
+| M14.QueryCurrentState | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 0/10 |
+| M14.QueryCurrentState | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 0/10 |
+| M14.QueryCurrentState | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 7/10 |
+| M14.QueryCurrentState | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | True | True | 10/10 |
+| M14.ConsumePublishedModel | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/1 |
+| M14.ConsumePublishedModel | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 0/1 |
+| M14.ConsumePublishedModel | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 0/1 |
+| M14.ConsumePublishedModel | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | True | False | 1/1 |
+| M14.ConsumePublishedModel | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | True | False | 1/1 |
+| M14.ConsumePublishedModel | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | True | True | 1/1 |
+| M15.StartExecutableSpecPeer | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/2 |
+| M15.StartExecutableSpecPeer | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 0/2 |
+| M15.StartExecutableSpecPeer | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 0/2 |
+| M15.StartExecutableSpecPeer | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 0/2 |
+| M15.StartExecutableSpecPeer | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 0/2 |
+| M15.StartExecutableSpecPeer | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | True | True | 2/2 |
+| M15.StopAndReconcile | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/2 |
+| M15.StopAndReconcile | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | True | False | 2/2 |
+| M15.StopAndReconcile | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | True | False | 2/2 |
+| M15.StopAndReconcile | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | True | False | 2/2 |
+| M15.StopAndReconcile | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | True | False | 2/2 |
+| M15.StopAndReconcile | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | True | True | 2/2 |
+| M16.TrainCompatibleCandidate | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/0 |
+| M16.TrainCompatibleCandidate | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 0/0 |
+| M16.TrainCompatibleCandidate | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 0/0 |
+| M16.TrainCompatibleCandidate | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | True | False | 0/0 |
+| M16.TrainCompatibleCandidate | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | True | False | 0/0 |
+| M16.TrainCompatibleCandidate | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | True | True | 0/0 |
+| M16.CompareOrAbstain | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/2 |
+| M16.CompareOrAbstain | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 0/2 |
+| M16.CompareOrAbstain | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 0/2 |
+| M16.CompareOrAbstain | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | True | False | 2/2 |
+| M16.CompareOrAbstain | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | True | False | 2/2 |
+| M16.CompareOrAbstain | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | True | True | 2/2 |
+| M17.CheckDetailedContracts | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/0 |
+| M17.CheckDetailedContracts | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 0/0 |
+| M17.CheckDetailedContracts | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 0/0 |
+| M17.CheckDetailedContracts | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 0/0 |
+| M17.CheckDetailedContracts | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 0/0 |
+| M17.CheckDetailedContracts | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | False | True | 0/0 |
+| M17.QualifyExecutedCampaign | v1 / `8b87fee77ddee6a9778e8bebe880ba2627b05d5d` | False | False | 0/0 |
+| M17.QualifyExecutedCampaign | v3 / `242906bae4f281c738c60adbd2c053d2ded1eae5` | False | False | 0/0 |
+| M17.QualifyExecutedCampaign | v4 / `30b85c34d1be404dcccd9f415286bb43b00f64ea` | False | False | 0/0 |
+| M17.QualifyExecutedCampaign | e3 / `50e158640d8278ca94dbecb6539dab96c6a9fb84` | False | False | 0/0 |
+| M17.QualifyExecutedCampaign | client_confirmation / `ed4d95c3e558ad28b5f3132152704bdf77df5f49` | False | False | 0/0 |
+| M17.QualifyExecutedCampaign | native_session / `fbe72b70f096d04290b8ef14ac95a4b32cdaf4fb` | False | True | 0/0 |
+
+**M00.DecodeHeader:** Independent implementation and production upgrade acceptance; decoding is not admission.
+
+**M00.DecodeTransaction:** No nonce reservation or balance authority from decoded bytes.
+
+**M01.VerifyWork:** Fastest-adversary work cost, public ingress fairness and complete native host remain unqualified.
+
+**M01.VerifyTransactionSignature:** Component signature parity does not establish independent cryptographic acceptance.
+
+**M02.AdmitBlock:** Native consensus actor and hostile public network are not implemented by the reference owner.
+
+**M02.ChooseBranch:** No independent network security or work-hardness acceptance.
+
+**M03.RunWorkAttempt:** Selector uses real mining to construct reorg inputs only; durable miner, stale-job cancellation and publication reconciliation remain unimplemented.
+
+**M03.EnterExternalEffect:** Entry is not actual dispatch, target-side exactly-once, final-use authority or coherent rollback protection.
+
+**M04.ReadFrame:** Exact retained native transport and proof-admission components are not the ordinary peer service; no current registered per-procedure network test.
+
+**M04.PropagateVerifiedBlock:** Historical network/host reports are separate observations; no source-equal byte check makes a new WAN or independent-operator run.
+
+**M05.ValidateTransaction:** Native mempool reservation and ordinary peer event wiring remain separate.
+
+**M05.ReconsiderAfterReorg:** New-generation nonce/funds rechecking must connect to mempool events; existing execution tests do not demonstrate resubmission or physical-effect reconciliation.
+
+**M06.ExecuteCandidate:** Compressed in-memory root updates are not native paged persistence; full maps, 16 MiB bridge bounds and complete native host remain open.
+
+**M06.DeriveBranchDelta:** No separate native branch store is implied by reusable local MVCC persistence.
+
+**M07.OpenNamespace:** Native paged state owner, full descriptor/sidecar fencing and physical power loss remain open.
+
+**M07.StageBranch:** Root rejection and admission/restart tests are not independent disk durability acceptance.
+
+**M08.PlanReorg:** Full fork lists/staging copy remain reference limits; public immutable plan API and bounded native planning are absent.
+
+**M08.RecoverAndPublish:** Physical power loss, native long runs and external-effect compensation remain unaccepted.
+
+**M09.ValidateArtifact:** Not arbitrary large-model loading, model provenance or a public export grant.
+
+**M09.FetchWithoutAuthor:** Current zero-adoption E3 run is not a new author-loss/DA campaign; use historical artifacts for their actual scope. Independent long-term custodians and repair remain open.
+
+**M10.SubmitContribution:** Bounded windows are not public economic Sybil fairness or authentic task provenance.
+
+**M10.PublishEvaluatedRelease:** Synthetic signed release transitions are not three improving public-model generations.
+
+**M11.EvaluateFrozenModel:** Future-window, independent evaluator, provenance and poisoning acceptance remain open.
+
+**M11.AdmitEvaluation:** First-two attestation policy is not objective ML truth, evaluator independence or ledger work.
+
+**M12.ClaimContributionReward:** No monetary-value, fairness or external payout reconciliation claim.
+
+**M12.ConsumeSponsoredQuota:** Real GPU availability, delivery evidence, sponsor self-traffic and sustainable funding remain separate.
+
+**M13.RebuildBranchState:** Checkpoint/spool tests do not demonstrate native paged WAN synchronization or long-term archival economics.
+
+**M13.VerifyIncomingHistory:** Controlled file/stdio delivery with receiver-verified block cursors; not a persistent native WAN node, succinct proof, independently operated network or global-freshness guarantee.
+
+**M14.QueryCurrentState:** Not a succinct light client or proof of latest global tip; public discovery, eclipse defense, ordinary Hepta authority and native node assembly remain unintegrated.
+
+**M14.ConsumePublishedModel:** Not an ordinary Hepta destination, a final-use token or a proof of actual provider delivery.
+
+**M15.StartExecutableSpecPeer:** Native node startup and ordinary product entry are absent; historical loopback/owned-host experiments retain their exact sources.
+
+**M15.StopAndReconcile:** Child cleanup tests do not prove full node shutdown, durable miner stop or physical target reconciliation.
+
+**M16.TrainCompatibleCandidate:** Training executions are retained campaign observations, not a unit-test result or real future user-task generation.
+
+**M16.CompareOrAbstain:** Three no-update attempts do not establish prospective improving generations.
+
+**M17.CheckDetailedContracts:** Current checker-source changes need their own executed PR checks; historic source-contract logs are not proof of this checker revision.
+
+**M17.QualifyExecutedCampaign:** Does not execute old tests again, confer scientific independence or grant deployment authority.
+
+Subject matches are not a new execution, a dependency-closure proof, integration, or independent acceptance.
+
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/chain-pr204-continuation-20260929-w2v1wt_g/source/scripts/pon_work_cost_report.py", line 237, in <module>
+    value = verify(args.verify, require_current=not args.historical)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/Documents/chain-pr204-continuation-20260929-w2v1wt_g/source/scripts/pon_work_cost_report.py", line 217, in verify
+    require(matches, 'source changed: retain historical costs and execute a new collection')
+  File "/home/qian-qi/Documents/chain-pr204-continuation-20260929-w2v1wt_g/source/scripts/ci/check_invariant_evidence.py", line 9, in require
+    if not condition:raise ValueError(message)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: source changed: retain historical costs and execute a new collection

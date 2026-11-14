@@ -1,0 +1,25 @@
+{
+  "schema": "pq-owner-evidence-integrity-validation-v1",
+  "observed_utc": "2026-11-05T07:01:49.696154+00:00",
+  "candidate_source_pair": {
+    "chain": "70df2c644ed8dd64afa1e7533743664cddacb9da",
+    "runtime": "70115620a7f540c8618a9b0d32ead20f8bc508f0"
+  },
+  "selected_source_pins_verified": 37,
+  "runtime_terminal_receipt_references_verified": 12,
+  "publication_receipt_references_verified": 3,
+  "source_integration_archive_members_verified": 57,
+  "new_local_document_links_verified": 7,
+  "active_draft_markers_absent": true,
+  "native_tests_executed_by_this_validation": 0,
+  "complete_repository_check_on_evidence_publication": false,
+  "complete_repository_check_scope": "Preserve prior exact-S results. Historical working copies remain unmaterialized after the separately recorded reclamation; this is targeted evidence verification, not a new complete repository or native run.",
+  "qualification": "HOLD_NO_GO",
+  "publication_carrier_parent": "2e3e1cc2df14f809dcbfb560b94bca2b37a48a35",
+  "publication_carrier_differs_from_frozen_source": true,
+  "later_carrier_native_or_complete_repository_validation": "NOT_RUN",
+  "carrier_path_mapping_record": "publication-carrier-scope.json",
+  "later_carrier_current_leaf_blob_count": 8710,
+  "later_carrier_missing_current_leaf_blobs": 0,
+  "later_carrier_parent_history_complete": false
+}

@@ -1,0 +1,119 @@
+{
+  "schema": "all908-publication-planning-addendum-v1",
+  "recorded_utc": "2026-11-14T04:57:48.936163+00:00",
+  "primary_open_pr_inventory": {
+    "summary": {
+      "path": "/private/tmp/chain-consolidation-20261114-root/remote-open-pr-graphql-continuation-0212-v1/summary.json",
+      "bytes": 3300,
+      "sha256": "970eacef9488917fa68593309192982485751da95f7341708b8fd50515f34dc4"
+    },
+    "normalized": {
+      "path": "/private/tmp/chain-consolidation-20261114-root/remote-open-pr-graphql-continuation-0212-v1/open-pulls-normalized.json",
+      "bytes": 307374,
+      "sha256": "5a0ad93370510112238f2a0a7870f03f9018b9486f63abceaa6c265bb728daaf"
+    },
+    "observed_at": "2026-11-14T04:50:42.630337+00:00",
+    "finished_at": "2026-11-14T04:52:21.898537+00:00",
+    "open": 579,
+    "draft": 569,
+    "non_draft": 10,
+    "base_main": 80,
+    "base_nonmain": 499,
+    "same_repository_heads": 579,
+    "page_totalCounts_consistent": true,
+    "snapshot_atomic": false,
+    "failed_prior_attempts_preserved": [
+      "/private/tmp/chain-consolidation-20261114-root/remote-ref-and-open-pr-inventory-0208-v1",
+      "/private/tmp/chain-consolidation-20261114-root/remote-open-pr-graphql-0210-v1/page-4.receipt.json"
+    ]
+  },
+  "independent_rest_crosscheck": {
+    "receipt": {
+      "path": "/private/tmp/chain-audit-20261114-branch-graph/all-908-final-disposition-ledger-v1/publication-planning-addendum-v1/independent-rest-open-pr-identities.json",
+      "bytes": 275099,
+      "sha256": "d0afa8dcf269749f9b1c237efcf8adbb99b28bd53dbf1b78672bf74275a4bf64"
+    },
+    "observed_utc": "2026-11-14T04:55:06.217Z",
+    "pages": [
+      100,
+      100,
+      100,
+      100,
+      100,
+      79,
+      0,
+      0,
+      0,
+      0
+    ],
+    "number_sets_equal": true,
+    "head_sha_head_ref_base_name_draft_repo_differences": [],
+    "head_mapping_differences_against_remote0170": [],
+    "same_current_ref_inventory_is_not_inferred_from_PR_base_oids": true
+  },
+  "additional_readonly_ref_observation": {
+    "observed_utc": "2026-11-14T04:56:45.097Z",
+    "refs": [
+      {
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/ref/heads/main",
+        "ref": "refs/heads/main",
+        "object": {
+          "sha": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+          "type": "commit",
+          "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/dd6e1c3cbeacbdc532b0679297835b3a0aac78f0"
+        }
+      },
+      {
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/ref/heads/fix/chain-hepta-closure-candidate-20261109-481716",
+        "ref": "refs/heads/fix/chain-hepta-closure-candidate-20261109-481716",
+        "object": {
+          "sha": "e40d7071c4724e6600deef8a2820bf35c1982289",
+          "type": "commit",
+          "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/e40d7071c4724e6600deef8a2820bf35c1982289"
+        }
+      }
+    ],
+    "scope": "Only main and current candidate, not a new complete branch snapshot; both agree with remote0170"
+  },
+  "current_selection": {
+    "overlay": {
+      "path": "/private/tmp/chain-audit-20261114-branch-graph/all-908-final-disposition-ledger-v1/current-source-overlay-v1.json",
+      "bytes": 17891,
+      "sha256": "eaffb139c9a8e4d501d9c79ca714ea3e269799ef703e653749f2226546ceb014"
+    },
+    "head": "5c04c60e463462d9df8884786e0d5bb32af08a64",
+    "tree": "8f26631e80c14a3c750210019606df13327d633f",
+    "explicit_selected_port_commits_checked": 60,
+    "all_sixty_in_current_ancestry": true,
+    "T03_commit": "898532d47f11c1a4cf92d769b7bb7264fb23ce36",
+    "T03_integrated": true,
+    "scope": "The 60 are the explicitly enumerated port commits in this overlay, not a claim that the repository has only 60 implementation commits or that ancestry alone proves equivalence."
+  },
+  "original_delivery_unchanged": {
+    "zip": {
+      "path": "/private/tmp/chain-audit-20261114-branch-graph/all-908-final-disposition-ledger-v1/all-908-ledger-and-original-receipts-v1.zip",
+      "bytes": 5582062,
+      "sha256": "d52ad6f7b22e2a8a93d61fee5f10d60758b7ccfb28d7734645e81f5bd9161f3f"
+    },
+    "index": {
+      "path": "/private/tmp/chain-audit-20261114-branch-graph/all-908-final-disposition-ledger-v1/delivery-index.json",
+      "bytes": 11343,
+      "sha256": "ae4fba38d0491ea09e5710c4ef3d2daee02dde5ba691fc8cd9b0522e3fcfefc7"
+    },
+    "main_ledger": {
+      "path": "/private/tmp/chain-audit-20261114-branch-graph/all-908-final-disposition-ledger-v1/all-908-branch-dispositions-v1.json",
+      "bytes": 3470559,
+      "sha256": "a8064b7da972de7ff6a4dc50b0ac8db41860be02ff04aadf28bab13904125e52"
+    }
+  },
+  "remaining_conditions": {
+    "archive_verified": false,
+    "source_bindings": "coordinator final pass",
+    "required_hosted_head_and_prospective_checks": "pending exact final publication; original four-second failures remain blockers",
+    "protected_legacy_deletion": "allowsDeletions=false; no bypass",
+    "one_branch_result": "not yet asserted"
+  },
+  "remote_writes": false,
+  "new_native_tests_run": false,
+  "qualification_granted": false
+}

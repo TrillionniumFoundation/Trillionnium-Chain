@@ -1,0 +1,59 @@
+{
+  "source_head": "5c04c60e463462d9df8884786e0d5bb32af08a64",
+  "source_tree": "8f26631e80c14a3c750210019606df13327d633f",
+  "branch": "fix/chain-ci-binding-repair-20261114",
+  "status_after": "",
+  "tests_exit_code": 1,
+  "steps": [
+    {
+      "name": "pre-update-preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.09,
+      "bytes": 167,
+      "sha256": "5a50395959c308d79c47de79377045e1510e1d8a249c78273a1abf20c7eb005c"
+    },
+    {
+      "name": "fast-forward",
+      "argv": [
+        "git",
+        "merge",
+        "--ff-only",
+        "5c04c60e463462d9df8884786e0d5bb32af08a64"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.151,
+      "bytes": 1443,
+      "sha256": "e5d95907c2279abd3a1c72a05fdbec2f71078d5dce23f881e15b3ea21334fc80"
+    },
+    {
+      "name": "preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.048,
+      "bytes": 167,
+      "sha256": "5a50395959c308d79c47de79377045e1510e1d8a249c78273a1abf20c7eb005c"
+    },
+    {
+      "name": "test-ci-contract-full-before",
+      "argv": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "scripts/ci/test_ci_contract.py",
+        "-v"
+      ],
+      "exit_code": 1,
+      "elapsed_seconds": 60.137,
+      "bytes": 99582,
+      "sha256": "3b3a8d3e16832a9903363784c5633c82999049b948344d810bd0041645a854d6"
+    }
+  ],
+  "no_native_or_remote_actions": true,
+  "qualification_granted": false
+}

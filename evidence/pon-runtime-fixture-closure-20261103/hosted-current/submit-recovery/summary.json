@@ -1,0 +1,243 @@
+{
+  "all_original_bytes_roundtrip_verified": true,
+  "base_head": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+  "c1_or_c2_hosted_outcomes_inherited": false,
+  "c3_hosted_runtime_qualified": false,
+  "changed_native_paths_vs_c2": {
+    "trillionnium/crates/trnm-pon-node/src/public_submit.rs": {
+      "after": "90f748bd5c7f6046e0d5340b4f36c70de7f030b4432ad4ec3674d7e2d020eb6c",
+      "before": "8920f6a9742c63245b4f2560b7bccd41e22fdd5c617b24e1197b716e68bb0a9f"
+    },
+    "trillionnium/crates/trnm-pon-node/tests/public_submit_recovery.rs": {
+      "after": "62df5e98a5a8f793b319f5232d3cae3b7e2b59a3ed459bc30658fd93f631fcb3",
+      "before": "a3b25beed3c39d304de96a735dc6efd888e85643fd72d539789b9deca49dc96a"
+    }
+  },
+  "corrected_fixture_sha256": "62df5e98a5a8f793b319f5232d3cae3b7e2b59a3ed459bc30658fd93f631fcb3",
+  "corrected_production_sha256": "90f748bd5c7f6046e0d5340b4f36c70de7f030b4432ad4ec3674d7e2d020eb6c",
+  "current_node_registry": {
+    "exact_original_names_and_order_match": true,
+    "full_suite_pass_inherited": false,
+    "identity_record_sha256": "fe3ee158ca012d7fb9c2634279176bf16cdb6909a5fb42a18731fbf3f31aebaf",
+    "names": 974,
+    "original_registry_sha256": "c85222711cb8ef0a65c11a828d8471cfc6f7faa7bd9b9a6228f745530171e27d",
+    "stdout_sha256": "c4ef91a8f3c358688bc1ba65ea8ea31edb39c230da00b97ffb795d8a5c135a8e",
+    "tests_executed_by_listing": false
+  },
+  "detailed_readback": {
+    "bytes": 74880,
+    "file": "submit-recovery/readback.json",
+    "sha256": "39e4b184dbdbaa50fd17cbbebe1e6633b10d2291f13907decf00f774f570e547"
+  },
+  "distinct_byte_blobs": 84,
+  "failure_stage_meanings": {
+    "baseline": "Original retained 24-test fixture aborted with signal 6/SIGABRT; no complete test summary. Preserve the three earlier cap/label failures and the actual worker/proxy panic and secondary connection-refused assertion.",
+    "corrected_v1": "Actual 21 PASS/3 FAIL. Newly added fixture assertion physical_execution == !existing was wrong; this field is not a full-W1/native-execution flag. Its corrected false assertion preserves original behavior, original 24 test identities and original 194 assertion sequence per independent fixture review."
+  },
+  "final_local_executables": [
+    {
+      "bytes": 193178696,
+      "executable_bytes_copied": false,
+      "independently_rehashed_at_packaging": true,
+      "path": "/workspace/scratch/b5a148b09b11/target/debug/deps/public_submit_recovery-4839bae310a9bf03",
+      "root_receipt_file": "native/executables.json",
+      "root_receipt_sha256": "4b0abfbd660a37546e8a92ad3417bd0ba99e0d2e6d593cfeca7bd580132973eb",
+      "sha256": "e20402b7b585c778d0b524acdbf539bfcf04f91e65bed9c759a5cdd0cb4a0c4c"
+    },
+    {
+      "bytes": 200393032,
+      "executable_bytes_copied": false,
+      "independently_rehashed_at_packaging": true,
+      "path": "/workspace/scratch/b5a148b09b11/target/debug/trnm-pon-node",
+      "root_receipt_file": "native/executables.json",
+      "root_receipt_sha256": "4b0abfbd660a37546e8a92ad3417bd0ba99e0d2e6d593cfeca7bd580132973eb",
+      "sha256": "08c51b5cb34634e117ad319d29f957a942a8e882e3fb23a709cb38d83ebf64b0"
+    },
+    {
+      "bytes": 364075040,
+      "executable_bytes_copied": false,
+      "independently_rehashed_at_packaging": true,
+      "path": "/workspace/scratch/b5a148b09b11/target/debug/deps/trnm_pon_node-4a176b3f1058369c",
+      "root_receipt_file": "native/executables.json",
+      "root_receipt_sha256": "4b0abfbd660a37546e8a92ad3417bd0ba99e0d2e6d593cfeca7bd580132973eb",
+      "sha256": "3b362ab33622e6c9c34a0ee585aaf0a64c8d4ff4e7f272c9a343bfc625901289"
+    }
+  ],
+  "final_scoped_native_counts": {
+    "distinct_selected_tests": 35,
+    "error_boundaries": 10,
+    "failed": 0,
+    "ignored": 0,
+    "not_a_complete_974_run": true,
+    "tcp_fixture": 24,
+    "typed_eof": 1
+  },
+  "final_source_path_count": 1190,
+  "final_source_snapshot_sha256": "aab2fa9de01f64a8739fbf941287d06c80a0ec2e16719845aaf5717e4f14b9df",
+  "fixture_fix_scope": "Fixture setup and fork interventions use the existing original paid CPU domain and metered ingress after pinned Head readiness; preserve original packet/state/generation/nonce/epoch/call assertions. No CPU credit, policy or service limit increases.",
+  "four_second_confirmation_target_qualified": false,
+  "full_974_current_source_qualified": false,
+  "native_results": [
+    {
+      "exit_code": 101,
+      "fixture_sha256": "a3b25beed3c39d304de96a735dc6efd888e85643fd72d539789b9deca49dc96a",
+      "name": "baseline-v1",
+      "native_summary": null,
+      "production_sha256": "8920f6a9742c63245b4f2560b7bccd41e22fdd5c617b24e1197b716e68bb0a9f",
+      "sigabrt_observed": true,
+      "source_unchanged": true,
+      "total_invocation_wall_ns": 8007697737
+    },
+    {
+      "exit_code": 101,
+      "fixture_sha256": "9a8258eee3c7cfed16192a3004354d906cd96d33eb9c619a2d8aff08240c9ef4",
+      "name": "corrected-v1",
+      "native_summary": {
+        "elapsed_seconds": "15.93",
+        "failed": 3,
+        "filtered_out": 0,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 21,
+        "status": "FAILED"
+      },
+      "production_sha256": "90f748bd5c7f6046e0d5340b4f36c70de7f030b4432ad4ec3674d7e2d020eb6c",
+      "sigabrt_observed": false,
+      "source_unchanged": true,
+      "total_invocation_wall_ns": 227804644478
+    },
+    {
+      "exit_code": 0,
+      "fixture_sha256": "62df5e98a5a8f793b319f5232d3cae3b7e2b59a3ed459bc30658fd93f631fcb3",
+      "name": "corrected-v2",
+      "native_summary": {
+        "elapsed_seconds": "16.21",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 24,
+        "status": "ok"
+      },
+      "production_sha256": "90f748bd5c7f6046e0d5340b4f36c70de7f030b4432ad4ec3674d7e2d020eb6c",
+      "sigabrt_observed": false,
+      "source_unchanged": true,
+      "total_invocation_wall_ns": 25433691061
+    },
+    {
+      "exit_code": 0,
+      "fixture_sha256": "62df5e98a5a8f793b319f5232d3cae3b7e2b59a3ed459bc30658fd93f631fcb3",
+      "name": "eof-boundary-v1",
+      "native_summary": {
+        "elapsed_seconds": "0.00",
+        "failed": 0,
+        "filtered_out": 973,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 1,
+        "status": "ok"
+      },
+      "production_sha256": "90f748bd5c7f6046e0d5340b4f36c70de7f030b4432ad4ec3674d7e2d020eb6c",
+      "sigabrt_observed": false,
+      "source_unchanged": true,
+      "total_invocation_wall_ns": 386965237
+    },
+    {
+      "exit_code": 0,
+      "fixture_sha256": "62df5e98a5a8f793b319f5232d3cae3b7e2b59a3ed459bc30658fd93f631fcb3",
+      "name": "error-boundaries-v1",
+      "native_summary": {
+        "elapsed_seconds": "0.00",
+        "failed": 0,
+        "filtered_out": 964,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 10,
+        "status": "ok"
+      },
+      "production_sha256": "90f748bd5c7f6046e0d5340b4f36c70de7f030b4432ad4ec3674d7e2d020eb6c",
+      "sigabrt_observed": false,
+      "source_unchanged": true,
+      "total_invocation_wall_ns": 521805345155
+    }
+  ],
+  "nonnative_gates": [
+    {
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "name": "fmt-v1",
+      "source_unchanged": true,
+      "wall_ns": 10810815940
+    },
+    {
+      "command": [
+        "cargo",
+        "clippy",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "name": "clippy-v1",
+      "source_unchanged": true,
+      "wall_ns": 57890510405
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "scripts.ci.test_pq_research_integration",
+        "scripts.ci.test_ci_source_integrity"
+      ],
+      "exit_code": 0,
+      "name": "source-negative-v2",
+      "source_unchanged": true,
+      "wall_ns": 13916376185
+    }
+  ],
+  "observed_utc": "2026-11-04T00:11:55.631750+00:00",
+  "original_record_bytes": 5612601,
+  "original_record_count": 111,
+  "original_summary_and_collector_retained": true,
+  "packaging_executed_native": false,
+  "production_activation": false,
+  "production_fix_scope": "Only two complete authenticated Submit refusal labels select existing bounded recovery actions; Error::remote remains untyped, local EOF/fatal authority remains separate.",
+  "public_host_qualified": false,
+  "raw_archive": {
+    "bytes": 842652,
+    "file": "submit-recovery/original-records.json.gz",
+    "sha256": "5d033bc9a7f16efda9450869027604c7ea1d9f06a58a138271cbc9df29f08584"
+  },
+  "repeated_68_not_additional_unique_tests": true,
+  "schema": "trnm-submit-recovery-local-native-summary-v1",
+  "source_negative_python_elapsed_seconds": "13.652",
+  "source_negative_python_tests": 68,
+  "source_phase": "C3 local corrected working tree on C2; actual invocation HEAD remains C2 with recorded tracked modifications",
+  "source_snapshot_scope": {
+    "final_manifest_paths": 1190,
+    "final_only_paths": 42,
+    "run_recorded_only_paths": 194,
+    "run_recorded_paths": 1342,
+    "shared_hashes_equal": true,
+    "shared_paths": 1148
+  },
+  "terminal_name_metadata_correction_scope": "The first summarizer stripped five characters instead of the seven-character libtest suffix and appended a spurious space/dot to pass names. Names are now re-read from original stdout; counts, native outcomes, durations, source and executable hashes are unchanged. No native rerun or failed native result is invented.",
+  "terminal_name_metadata_correction_sha256": "6f3aea8bd8cb37da22b9002b9965e0955efc9c51a7236c07f22a82b44a16469d",
+  "terminal_summary_v2_sha256": "200dc213e4a9bd6039314b6b56151dbf7fa9411b03de9e8c86388f4bbe09cd08"
+}

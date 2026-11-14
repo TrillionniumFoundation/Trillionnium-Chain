@@ -1,0 +1,8 @@
+    Checking trnm-protocol v0.1.0 (/workspace/scratch/abae1861b451/chain-post-ci/trillionnium/crates/trnm-protocol)
+    Checking trnm-crypto-primitives v0.1.0 (/workspace/scratch/abae1861b451/chain-post-ci/trillionnium/crates/trnm-crypto-primitives)
+    Checking trnm-mvcc-fee v0.1.0 (/workspace/scratch/abae1861b451/chain-post-ci/trillionnium/crates/trnm-mvcc-fee)
+    Checking trnm-data-availability v0.1.0 (/workspace/scratch/abae1861b451/chain-post-ci/trillionnium/crates/trnm-data-availability)
+    Checking trnm-research-protocol v0.1.0 (/workspace/scratch/abae1861b451/chain-post-ci/trillionnium/crates/trnm-research-protocol)
+    Checking trnm-pon-node v0.1.0 (/workspace/scratch/abae1861b451/chain-post-ci/trillionnium/crates/trnm-pon-node)
+    Checking trnm-transport v0.1.0 (/workspace/scratch/abae1861b451/chain-post-ci/trillionnium/crates/trnm-transport)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1m 15s

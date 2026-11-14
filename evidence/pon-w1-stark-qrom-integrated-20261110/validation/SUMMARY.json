@@ -1,0 +1,98 @@
+{
+  "schema": "TRNM-STARK-QROM-INTEGRATED-SELECTED-CHECKS1",
+  "executed_commit": "784274926d97207e9ee94cf76eef22e1006d84e1",
+  "executed_tree": "ebe84c04a79dd6bedf75d8b2ba852a87dbfd749f",
+  "merge_parents": [
+    "eb272801e18112e90506fe5016e4dfc4660ad736",
+    "06c3d24cc4fc05011e04951d30f066c057394836"
+  ],
+  "commands": [
+    {
+      "name": "field",
+      "command": "python3 -B scripts/ci/test_w1_stark_field_certificates.py > ../stark-integrated-validation/field.stdout 2> ../stark-integrated-validation/field.stderr",
+      "exit_code": 0
+    },
+    {
+      "name": "route",
+      "command": "python3 -B scripts/ci/test_w1_stark_route_audit.py > ../stark-integrated-validation/route.stdout 2> ../stark-integrated-validation/route.stderr",
+      "exit_code": 0
+    },
+    {
+      "name": "ideal",
+      "command": "python3 -B scripts/ci/test_w1_fri_ideal_sampler.py > ../stark-integrated-validation/ideal.stdout 2> ../stark-integrated-validation/ideal.stderr",
+      "exit_code": 0
+    },
+    {
+      "name": "replay",
+      "command": "python3 -B scripts/ci/test_w1_fri_query_replay.py > ../stark-integrated-validation/replay.stdout 2> ../stark-integrated-validation/replay.stderr",
+      "exit_code": 0
+    },
+    {
+      "name": "ci",
+      "command": "python3 -B scripts/ci/test_ci_contract.py > ../stark-integrated-validation/ci.stdout 2> ../stark-integrated-validation/ci.stderr",
+      "exit_code": 0
+    },
+    {
+      "name": "source",
+      "command": "python3 -B scripts/ci/test_ci_source_integrity.py > ../stark-integrated-validation/source.stdout 2> ../stark-integrated-validation/source.stderr",
+      "exit_code": 0
+    },
+    {
+      "name": "pq",
+      "command": "python3 -B scripts/ci/test_pq_research_integration.py > ../stark-integrated-validation/pq.stdout 2> ../stark-integrated-validation/pq.stderr",
+      "exit_code": 0
+    },
+    {
+      "name": "repository",
+      "command": "python3 -B scripts/ci/check_repository.py > ../stark-integrated-validation/repository.stdout 2> ../stark-integrated-validation/repository.stderr",
+      "exit_code": 0
+    },
+    {
+      "name": "corpus",
+      "command": "python3 -B scripts/ci/check_pq_research_integration.py > ../stark-integrated-validation/corpus.stdout 2> ../stark-integrated-validation/corpus.stderr",
+      "exit_code": 0
+    },
+    {
+      "name": "preflight",
+      "command": "bash scripts/project-preflight.sh",
+      "exit_code": 0
+    },
+    {
+      "name": "inventory",
+      "command": "python3 -B scripts/refresh_distributed_source_inventory.py --check",
+      "exit_code": 0
+    },
+    {
+      "name": "field-report",
+      "command": "python3 -B scripts/w1_stark_field_certificates.py",
+      "exit_code": 0
+    },
+    {
+      "name": "route-report",
+      "command": "python3 -B scripts/w1_stark_route_audit.py",
+      "exit_code": 0
+    },
+    {
+      "name": "ideal-report",
+      "command": "python3 -B scripts/w1_fri_query_replay.py --ideal-sampler-law",
+      "exit_code": 0
+    },
+    {
+      "name": "cargo-graph",
+      "command": "cargo metadata --locked --offline --manifest-path trillionnium/Cargo.toml --format-version 1",
+      "exit_code": 127
+    }
+  ],
+  "qualification": {
+    "complete_w1_soundness_qualified": false,
+    "post_quantum_soundness_qualified": false,
+    "production_activation": false,
+    "consensus_admission": false,
+    "actual_lifetime_failure_bound": null
+  },
+  "limits": [
+    "Selected local head checks; no hosted Actions, historical positive lane, prospective merge or native proof execution is implied.",
+    "Cargo returned 127 because executable absent; no graph/build/fmt/Clippy pass claimed.",
+    "Named workflow rosters overlap separately reported modules; no distinct grand total is claimed."
+  ]
+}

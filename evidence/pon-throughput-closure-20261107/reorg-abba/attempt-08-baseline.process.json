@@ -1,0 +1,26 @@
+{
+  "command": [
+    "/workspace/scratch/ae364bcbabfb/validation/reorg-baseline-e70f134"
+  ],
+  "cwd": "/workspace/scratch/ae364bcbabfb/chain-throughput",
+  "elapsed_ns": 73745110340,
+  "executed": true,
+  "exit_code": 0,
+  "global_cpu_complete": false,
+  "global_memory_peak_observed": false,
+  "process_exit_code": 0,
+  "stderr": "attempt-08-baseline.stderr",
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout": "attempt-08-baseline.stdout",
+  "stdout_bytes": 8517,
+  "stdout_sha256": "ac6cfb760f6bc98d5eb9031f0bae66abf67cbe229f5a317fdc298c03a1e1d600",
+  "termination_grace_seconds": 5,
+  "termination_signal": null,
+  "timed_out": false,
+  "timeout_seconds": 300,
+  "wait4_cpu_ns": 71578047000,
+  "wait4_maxrss_kib": 23580,
+  "wait4_system_ns": 9301528000,
+  "wait4_user_ns": 62276519000
+}

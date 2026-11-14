@@ -1,0 +1,69 @@
+{
+  "archived_at": "2026-11-04T08:34:56.181855+00:00",
+  "scope": "Only static workflow evidence and snapshots. Exact current workflow bytes matched the independently validated 58-selector report before copying. No native execution or registry listing. Historical 63-item files copied without rewriting their original hashes.",
+  "copies": [
+    {
+      "file": "final-58-static-validation.json",
+      "raw_sha256": "248b59773c8a29e6be054fa24d65e1fe9dafd9ec3ea6ff8e58937d1e27768279",
+      "stored_sha256": "248b59773c8a29e6be054fa24d65e1fe9dafd9ec3ea6ff8e58937d1e27768279",
+      "raw_bytes": 11711,
+      "stored_bytes": 11711,
+      "compression": "none",
+      "copied_bytes_verified": true
+    },
+    {
+      "file": "final-58-versus-b811.patch",
+      "raw_sha256": "e451d07c011b03d1022b8552574e849c7f1d1469a1bb4dbeeff504920d79f538",
+      "stored_sha256": "e451d07c011b03d1022b8552574e849c7f1d1469a1bb4dbeeff504920d79f538",
+      "raw_bytes": 4972,
+      "stored_bytes": 4972,
+      "compression": "none",
+      "copied_bytes_verified": true
+    },
+    {
+      "file": "historical-63-static-validation.json",
+      "raw_sha256": "49f43d553deb7b9419c72b4e51bc6ea840f6570ab37ceb2f45a655e96efcb3bc",
+      "stored_sha256": "49f43d553deb7b9419c72b4e51bc6ea840f6570ab37ceb2f45a655e96efcb3bc",
+      "raw_bytes": 23378,
+      "stored_bytes": 23378,
+      "compression": "none",
+      "copied_bytes_verified": true
+    },
+    {
+      "file": "historical-63-versus-b811.patch",
+      "raw_sha256": "ef20cef733486b6d16210a741b512004184f3c2b5a633eac90f8676835b6a9cb",
+      "stored_sha256": "ef20cef733486b6d16210a741b512004184f3c2b5a633eac90f8676835b6a9cb",
+      "raw_bytes": 7634,
+      "stored_bytes": 7634,
+      "compression": "none",
+      "copied_bytes_verified": true
+    },
+    {
+      "file": "pon-original-workspace-large-state-cpu.yml.gz",
+      "raw_sha256": "28bdbe712b26e6e6f12ba67b5dc5d1fe43e5fbdf8a81b3d8a3d86c8a937642c9",
+      "stored_sha256": "fa80cf3a7220d653478031fae0fcd168a77c8bd0321c2f30a3fa5c6b7dfafb3f",
+      "raw_bytes": 29673,
+      "stored_bytes": 7296,
+      "compression": "gzip-mtime0",
+      "copied_bytes_verified": true
+    },
+    {
+      "file": "pon-recent-batch-acceptance.yml.gz",
+      "raw_sha256": "ee11630e5ae6620fae85ead7a23c022413557bad34f4893e9598447c37a534d4",
+      "stored_sha256": "de989bcef45ffd5f0e3521c3f991513c8056c5a70c661ccf7065de6b3632d91e",
+      "raw_bytes": 31731,
+      "stored_bytes": 7561,
+      "compression": "gzip-mtime0",
+      "copied_bytes_verified": true
+    },
+    {
+      "file": "pon-pq-system-continuation.yml.gz",
+      "raw_sha256": "bc083f658deb6c228723fb001b3ee2691b5ec2e6a186d8bef7343c5c61729bc2",
+      "stored_sha256": "6d97020c037659efa2bcd26e8c98c501e4ee04391020a1a3a4ed3d7361a6ff49",
+      "raw_bytes": 12240,
+      "stored_bytes": 3395,
+      "compression": "gzip-mtime0",
+      "copied_bytes_verified": true
+    }
+  ]
+}

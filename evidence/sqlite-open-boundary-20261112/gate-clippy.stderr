@@ -1,0 +1,76 @@
+    Checking typenum v1.20.1
+    Checking cfg-if v1.0.4
+    Checking zeroize v1.9.1
+    Checking libc v0.2.184
+    Checking generic-array v0.14.7
+    Checking cpufeatures v0.2.17
+    Checking rand_core v0.10.1
+    Checking getrandom v0.4.2
+    Checking sha2-asm v0.6.4
+   Compiling curve25519-dalek v4.1.3
+    Checking crypto-common v0.1.7
+    Checking block-buffer v0.10.4
+    Checking serde_core v1.0.228
+    Checking digest v0.10.7
+    Checking sha2 v0.10.9
+    Checking signature v2.2.0
+    Checking foldhash v0.2.0
+    Checking subtle v2.6.1
+    Checking bitflags v2.11.0
+    Checking hashbrown v0.17.1
+    Checking ed25519 v2.2.3
+    Checking cmov v0.5.4
+    Checking ed25519-dalek v2.2.0
+    Checking ctutils v0.4.6
+    Checking libsqlite3-sys v0.39.0
+    Checking hashlink v0.12.2
+    Checking zmij v1.0.21
+    Checking smallvec v1.15.1
+    Checking fallible-streaming-iterator v0.1.9
+    Checking memchr v2.8.0
+    Checking itoa v1.0.18
+    Checking fallible-iterator v0.3.0
+    Checking serde_json v1.0.149
+    Checking rusqlite v0.41.0
+    Checking borsh v1.8.0
+    Checking hybrid-array v0.4.15
+    Checking linux-raw-sys v0.12.1
+    Checking hex v0.4.3
+    Checking rustix v1.1.6
+    Checking crypto-common v0.2.2
+    Checking const-oid v0.10.2
+    Checking der v0.8.3
+    Checking digest v0.11.3
+    Checking num-traits v0.2.19
+    Checking keccak v0.2.2
+    Checking sponge-cursor v0.1.0
+    Checking spki v0.8.1
+    Checking shake v0.1.0
+    Checking serde v1.0.228
+    Checking pkcs8 v0.11.0
+    Checking thiserror v1.0.69
+    Checking module-lattice v0.2.3
+    Checking signature v3.0.0
+    Checking once_cell v1.21.4
+    Checking fastrand v2.3.0
+    Checking trnm-protocol v0.1.0 (/workspace/scratch/3069292387f3/chain-sqlite/trillionnium/crates/trnm-protocol)
+    Checking tempfile v3.27.0
+    Checking ml-dsa v0.1.1
+    Checking anyhow v1.0.103
+    Checking trnm-verification-profiles v0.1.0 (/workspace/scratch/3069292387f3/chain-sqlite/trillionnium/crates/trnm-verification-profiles)
+    Checking trnm-crypto-primitives v0.1.0 (/workspace/scratch/3069292387f3/chain-sqlite/trillionnium/crates/trnm-crypto-primitives)
+    Checking fs2 v0.4.3
+    Checking getrandom v0.2.17
+    Checking trnm-task-kernel v0.1.0 (/workspace/scratch/3069292387f3/chain-sqlite/trillionnium/crates/trnm-task-kernel)
+    Checking trnm-mvcc-fee v0.1.0 (/workspace/scratch/3069292387f3/chain-sqlite/trillionnium/crates/trnm-mvcc-fee)
+    Checking trnm-data-availability v0.1.0 (/workspace/scratch/3069292387f3/chain-sqlite/trillionnium/crates/trnm-data-availability)
+    Checking trnm-service-settlement v0.1.0 (/workspace/scratch/3069292387f3/chain-sqlite/trillionnium/crates/trnm-service-settlement)
+error: could not compile `trnm-mvcc-fee` (lib test)
+
+Caused by:
+  process didn't exit successfully: `/workspace/scratch/747d27b1ca86/build-setup/rust195/bin/clippy-driver /workspace/scratch/747d27b1ca86/build-setup/rust195/bin/rustc --crate-name trnm_mvcc_fee --edition=2021 crates/trnm-mvcc-fee/src/lib.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --emit=dep-info,metadata -C embed-bitcode=no -C debuginfo=2 --test --cfg 'feature="default"' --check-cfg 'cfg(docsrs,test)' --check-cfg 'cfg(feature, values("default", "pq-native-openssl"))' -C metadata=d9dcafa0309bf3e1 -C extra-filename=-d8719c881904c5aa --out-dir /workspace/scratch/3069292387f3/sqlite-target/debug/deps -C incremental=/workspace/scratch/3069292387f3/sqlite-target/debug/incremental -L dependency=/workspace/scratch/3069292387f3/sqlite-target/debug/deps --extern borsh=/workspace/scratch/3069292387f3/sqlite-target/debug/deps/libborsh-4265c6e6dab2f193.rmeta --extern hex=/workspace/scratch/3069292387f3/sqlite-target/debug/deps/libhex-7029ca3838e3fb5b.rmeta --extern ml_dsa=/workspace/scratch/3069292387f3/sqlite-target/debug/deps/libml_dsa-3e8d80e0d290cd9d.rmeta --extern rusqlite=/workspace/scratch/3069292387f3/sqlite-target/debug/deps/librusqlite-fd78068bce66a1ff.rmeta --extern serde=/workspace/scratch/3069292387f3/sqlite-target/debug/deps/libserde-b16e63406a0b6821.rmeta --extern serde_json=/workspace/scratch/3069292387f3/sqlite-target/debug/deps/libserde_json-e0c440b8e3735cf3.rmeta --extern sha2=/workspace/scratch/3069292387f3/sqlite-target/debug/deps/libsha2-c6c1886f431b02f0.rmeta --extern tempfile=/workspace/scratch/3069292387f3/sqlite-target/debug/deps/libtempfile-8be45037d92ebbbf.rmeta --extern trnm_crypto_primitives=/workspace/scratch/3069292387f3/sqlite-target/debug/deps/libtrnm_crypto_primitives-46de4bf836baa77f.rmeta --extern trnm_protocol=/workspace/scratch/3069292387f3/sqlite-target/debug/deps/libtrnm_protocol-f7202d0b138dde72.rmeta --extern trnm_verification_profiles=/workspace/scratch/3069292387f3/sqlite-target/debug/deps/libtrnm_verification_profiles-a79b900d6e37a216.rmeta -L native=/workspace/scratch/3069292387f3/sqlite-target/debug/build/libsqlite3-sys-10fe53ba697a87a6/out -L native=/workspace/scratch/3069292387f3/sqlite-target/debug/build/sha2-asm-5496e21e45cba969/out -L native=/workspace/scratch/3069292387f3/sqlite-target/debug/build/sha2-asm-5496e21e45cba969/out` (signal: 9, SIGKILL: kill)
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `trnm-data-availability` (lib test)
+
+Caused by:
+  process didn't exit successfully: `/workspace/scratch/747d27b1ca86/build-setup/rust195/bin/clippy-driver /workspace/scratch/747d27b1ca86/build-setup/rust195/bin/rustc --crate-name trnm_data_availability --edition=2021 crates/trnm-data-availability/src/lib.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --emit=dep-info,metadata -C embed-bitcode=no -C debuginfo=2 --test --cfg 'feature="default"' --check-cfg 'cfg(docsrs,test)' --check-cfg 'cfg(feature, values("default"))' -C metadata=1a9984c092d5e9da -C extra-filename=-32eedc610eaec550 --out-dir /workspace/scratch/3069292387f3/sqlite-target/debug/deps -C incremental=/workspace/scratch/3069292387f3/sqlite-target/debug/incremental -L dependency=/workspace/scratch/3069292387f3/sqlite-target/debug/deps --extern borsh=/workspace/scratch/3069292387f3/sqlite-target/debug/deps/libborsh-4265c6e6dab2f193.rmeta --extern ed25519_dalek=/workspace/scratch/3069292387f3/sqlite-target/debug/deps/libed25519_dalek-39288af95e4dfd22.rmeta --extern fs2=/workspace/scratch/3069292387f3/sqlite-target/debug/deps/libfs2-e999aabeb9702368.rmeta --extern getrandom=/workspace/scratch/3069292387f3/sqlite-target/debug/deps/libgetrandom-51a6e6e1cf54382e.rmeta --extern hex=/workspace/scratch/3069292387f3/sqlite-target/debug/deps/libhex-7029ca3838e3fb5b.rmeta --extern libc=/workspace/scratch/3069292387f3/sqlite-target/debug/deps/liblibc-9e3036e9e06353da.rmeta --extern ml_dsa=/workspace/scratch/3069292387f3/sqlite-target/debug/deps/libml_dsa-3e8d80e0d290cd9d.rmeta --extern rusqlite=/workspace/scratch/3069292387f3/sqlite-target/debug/deps/librusqlite-fd78068bce66a1ff.rmeta --extern rustix=/workspace/scratch/3069292387f3/sqlite-target/debug/deps/librustix-8085514ace004fff.rmeta --extern serde=/workspace/scratch/3069292387f3/sqlite-target/debug/deps/libserde-b16e63406a0b6821.rmeta --extern serde_json=/workspace/scratch/3069292387f3/sqlite-target/debug/deps/libserde_json-e0c440b8e3735cf3.rmeta --extern sha2=/workspace/scratch/3069292387f3/sqlite-target/debug/deps/libsha2-c6c1886f431b02f0.rmeta --extern tempfile=/workspace/scratch/3069292387f3/sqlite-target/debug/deps/libtempfile-8be45037d92ebbbf.rmeta --extern trnm_crypto_primitives=/workspace/scratch/3069292387f3/sqlite-target/debug/deps/libtrnm_crypto_primitives-46de4bf836baa77f.rmeta --extern trnm_protocol=/workspace/scratch/3069292387f3/sqlite-target/debug/deps/libtrnm_protocol-f7202d0b138dde72.rmeta --extern zeroize=/workspace/scratch/3069292387f3/sqlite-target/debug/deps/libzeroize-4ba50b9b76cf69b1.rmeta -L native=/workspace/scratch/3069292387f3/sqlite-target/debug/build/sha2-asm-5496e21e45cba969/out -L native=/workspace/scratch/3069292387f3/sqlite-target/debug/build/sha2-asm-5496e21e45cba969/out -L native=/workspace/scratch/3069292387f3/sqlite-target/debug/build/libsqlite3-sys-10fe53ba697a87a6/out` (signal: 9, SIGKILL: kill)

@@ -1,0 +1,418 @@
+{
+  "M12": {
+    "cold_begin_observed": "Pending",
+    "complete_hash_chain_and_payloads_verified": true,
+    "configuration": {
+      "genesis": "88e947fbcd0f40304edaf0325a57b41cb959c02c4473119b350032c91fe7b312",
+      "max_records": 16,
+      "network": "df112ec87745f0dab60317b37a610793147bf1c13fae8db6bd5436c2b698dfa9",
+      "parameters": "ed04e871b388b32c155c3f8000f543e208da79d37248e56e97ff88ad515b2bd4"
+    },
+    "event_counts": {
+      "BindJob": 1,
+      "Cancel": 1,
+      "Intent": 1,
+      "Prepare": 1
+    },
+    "events": [
+      {
+        "kind": "Prepare",
+        "payload_bytes": 866,
+        "payload_sha256": "8cdfc68d6d6467a23a265d5527de15f5ce4daa2da493bf889bb5d2bd7c25ca62",
+        "root": "ff285063092e1ea8a3e7d1d9fd67af9fc55908f37c068dbfc6827337d2d62ad4",
+        "sequence": 1
+      },
+      {
+        "kind": "Intent",
+        "payload_bytes": 249,
+        "payload_sha256": "9340c0afbe23577d172868a6f56d0cf50f25d0e8bc12f8b6a3ed02de78bf6d5c",
+        "root": "fe2c31e00209a8cbbf468028a52f270ab3b2ab0892381ec44623138e21192e20",
+        "sequence": 2
+      },
+      {
+        "kind": "BindJob",
+        "payload_bytes": 197,
+        "payload_sha256": "5920c76770f003dee900ca168a86d8ae62e7617beec3429c4450b1424e6677d7",
+        "root": "a16cac914724c7be7f1416a0afb799039d81c6c7b8ed87b05dd8bbd60ef3f361",
+        "sequence": 3
+      },
+      {
+        "kind": "Cancel",
+        "payload_bytes": 65,
+        "payload_sha256": "92180dca9896b1c9565c8aeee991e2d0d0446e7cfaab646591e2e4ca8e261788",
+        "root": "763228a492279bb2fdf71d4da7c7c14546a822547544666ef28ce1066512da25",
+        "sequence": 4
+      }
+    ],
+    "failure_event_present": false,
+    "gpu_usage_ns": null,
+    "journal": "cb3aa939089bcf2a579581200402314e5634188d65143df8c132c78825eebf95",
+    "namespace": "pon-native-owner-w1-generation-budget-v2",
+    "original_provider_job_decoded": {
+      "job_id": "fd1c1b05dfd3d7b5287a8c8cf600563210ad627edada407bdf03f0be0af7ae1a",
+      "operation": "ebe3c586d634730e7464f2e3661aea37f6ed7402c0d74f1a695224510d2e2f5e",
+      "provider_namespace": "98118aa5717941623fac232b6b2db0b864fb41af64b123f6a3fd94a187381fbf",
+      "request_digest": "96b22a60af63bf2ddec8375bd1b97de741a85ebc16519bf2eff5cf471a86f1b7",
+      "statement": "b8769801cf2824799954d43eba78dfa684a5107c11d96abca8092b0f1ea3659f"
+    },
+    "original_statement_decoded": {
+      "chain_deadline": 20,
+      "execution_source_commitment": "483f28090674fd4180777786a7458116c80188bbe8ddd9a324b3f0fa862154e1",
+      "expected_artifacts_sha256": "802adcdd951cfb4cd7271df22c3bca6af66fee9f40454c74f8b5ff2c98a1b683",
+      "expected_journal_sha256": "56a5fcd0a18fc4db36aa37583dc8f7f75fe8f811482eec36d9b7121bae6f07ee",
+      "expected_work_id": "ccf544056c6df13a5ab4e6c021e587ff0008d92388270e64f72a6e2168a326cd",
+      "guest_sha256": "25718312ec3c6f5219d832e3516adfb5f82983156f669c5e7daa15bd22d1798f",
+      "header_sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "image_id": [
+        1958252411,
+        3287394615,
+        1805488136,
+        1516578702,
+        78549041,
+        790278610,
+        301018785,
+        4279049364
+      ],
+      "input_sha256": "67b74fa2f417c0240d974e5ecea410d2b68d97d6dde667603aeb4d7ce59036cb",
+      "original_deadline": {
+        "clock_domain": "fe07e57a0dbe0d567037e83c12e988c7d929c9ef37c5fc3c337ab6f09202ef86",
+        "deadline_ns": 1167336972674704,
+        "winner_ns": 1166745089168164
+      },
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+      "provider_namespace": "98118aa5717941623fac232b6b2db0b864fb41af64b123f6a3fd94a187381fbf",
+      "provider_operation": "ebe3c586d634730e7464f2e3661aea37f6ed7402c0d74f1a695224510d2e2f5e",
+      "request_digest": "96b22a60af63bf2ddec8375bd1b97de741a85ebc16519bf2eff5cf471a86f1b7",
+      "resource_cap": {
+        "cpu_ns": 4800000000000,
+        "gpu_ns": 1200000000000,
+        "memory_peak_upper_bound_bytes": 8589934592,
+        "receipt_bytes": 16777216
+      },
+      "task": "93fdb42f44108cd1125e755dbbb1818a23c404ec85f198ddac7bdd89b43beb1e",
+      "verifier_binary_sha256": "98a51115e7937b8676cfad525de1ef22388368a115f18f8e4c1cbf1f83588444"
+    },
+    "payment_event_present": false,
+    "persistent_cancel": {
+      "reason": "c90d036684b86987c940807e90271a8a5d790fd740ac81c422ca152fdcacc4de",
+      "statement": "b8769801cf2824799954d43eba78dfa684a5107c11d96abca8092b0f1ea3659f"
+    },
+    "resource_charge_derived_from_unchanged_Record_readback": {
+      "cpu_ns": 4800000000000,
+      "gpu_ns": 1200000000000,
+      "memory_peak_upper_bound_bytes": 8589934592,
+      "receipt_bytes": 16777216
+    },
+    "resource_credit_or_release_authorized": false,
+    "root": "763228a492279bb2fdf71d4da7c7c14546a822547544666ef28ce1066512da25",
+    "scope": "No Verified/Failure consumption exists; unchanged Record::readback retains the original cap. This audit invoked no M12 method.",
+    "sequence": 4,
+    "settlement_event_present": false,
+    "statement": "b8769801cf2824799954d43eba78dfa684a5107c11d96abca8092b0f1ea3659f",
+    "verified_event_present": false
+  },
+  "Node_M12_target_calls": 0,
+  "actual_request": {
+    "all_configured_source_and_binary_pins_preserved": true,
+    "canonical_bytes": 66585,
+    "canonical_sha256": "090361c6425009b00738aa06e14d045ab16b68498a9ce36536424f768000e0e2",
+    "file_pins": 339,
+    "new_128KiB_raw_admission_satisfied": true,
+    "normalized_sha256": "96b22a60af63bf2ddec8375bd1b97de741a85ebc16519bf2eff5cf471a86f1b7",
+    "old_64KiB_raw_admission_would_reject": true,
+    "raw_bytes": 68944,
+    "raw_sha256": "d1cf5f237edb4b2d24cd8136e51064a3fce1493fe186ca7d572814c989f77cf6"
+  },
+  "all_historical_descendants_wait_reaped": null,
+  "analysis_complete": true,
+  "cold_recovery": {
+    "actual_separate_entry_succeeded": true,
+    "begin": "Pending",
+    "deadline_renewed": false,
+    "native_transactions_submitted": 0,
+    "new_generation_dispatches": 0,
+    "original_deadline_ns": 1167336972674704,
+    "original_resource_cap_retained": true,
+    "provider_payment_authorized": false,
+    "scope": "Actual separate cold entry plus final private-copy journal/assignment/canonical state audit. No pre-cold DB byte snapshot was taken by this audit; no byte-for-byte pre/post-cold DB identity claim.",
+    "source": {
+      "bytes": 7569,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-cancel-cold-readback-02/result.json",
+      "sha256": "e134bcc6b5be3bc3e17d753c26247064212a153d6b3f86943a7342b518016e16"
+    },
+    "target_cancel_requests_sent": 0
+  },
+  "duplicate_wire_resubmission_executed_by_this_audit": false,
+  "errors": [],
+  "finished_monotonic_ns": 1167730726549801,
+  "fresh_proofs_generated_by_this_audit": 0,
+  "generation_owner_fence": {
+    "journal": "cb3aa939089bcf2a579581200402314e5634188d65143df8c132c78825eebf95",
+    "operation": "ebe3c586d634730e7464f2e3661aea37f6ed7402c0d74f1a695224510d2e2f5e",
+    "request": "96b22a60af63bf2ddec8375bd1b97de741a85ebc16519bf2eff5cf471a86f1b7",
+    "statement": "b8769801cf2824799954d43eba78dfa684a5107c11d96abca8092b0f1ea3659f",
+    "task": "93fdb42f44108cd1125e755dbbb1818a23c404ec85f198ddac7bdd89b43beb1e"
+  },
+  "native_funding": {
+    "canonical_blocks": [
+      {
+        "height": 0,
+        "id": "88e947fbcd0f40304edaf0325a57b41cb959c02c4473119b350032c91fe7b312",
+        "packet_bytes": null,
+        "packet_sha256": null,
+        "parent": null
+      },
+      {
+        "height": 1,
+        "id": "3f3e2bead3d12278ea3e27696e65373e92c46e227132f51117b0329fb0f8ccdf",
+        "packet_bytes": 50001,
+        "packet_sha256": "1307e3306eb84a1f5f90d5fb35216473c4f869d6296d749905d215f012da0b40",
+        "parent": "88e947fbcd0f40304edaf0325a57b41cb959c02c4473119b350032c91fe7b312"
+      },
+      {
+        "height": 2,
+        "id": "9106aa00fd98086ceba112c228c487398311b407bf81dd886378c2b0587f06fd",
+        "packet_bytes": 49953,
+        "packet_sha256": "6a6125eceb7916ccf4afb673e9abeaa54d4c66ea6a21de5b0a45956dc4805295",
+        "parent": "3f3e2bead3d12278ea3e27696e65373e92c46e227132f51117b0329fb0f8ccdf"
+      }
+    ],
+    "current_tip": "9106aa00fd98086ceba112c228c487398311b407bf81dd886378c2b0587f06fd",
+    "duplicate_wire_resubmission_executed": false,
+    "exact_retained_cancel_packet_canonical_occurrences": 1,
+    "fee_fields_independently_decoded_from_wire": false,
+    "generation": 2,
+    "gross_principal_refund_units": 1000,
+    "gross_refund_minus_net_cancel_change": 291,
+    "money_scope": "Gross NativeTask principal refund is distinct from the actual owner net balance change, provider payment and M12 resource credit. Balance residuals above are arithmetic, not a separate wire-fee decoder.",
+    "native_signature_and_Packet_transaction_list_reverification_by_this_audit": false,
+    "once_scope": "One exact canonical packet, one Cancel transition and nonce 1->2. Cold entry did not resubmit. No claim that a live duplicate-wire rejection was exercised.",
+    "owner_account_transitions": [
+      {
+        "after": {
+          "balance": 9998581,
+          "nonce": 1
+        },
+        "before": {
+          "balance": 10000000,
+          "nonce": 0
+        },
+        "block": "3f3e2bead3d12278ea3e27696e65373e92c46e227132f51117b0329fb0f8ccdf",
+        "key": "account:79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9"
+      },
+      {
+        "after": {
+          "balance": 9999290,
+          "nonce": 2
+        },
+        "before": {
+          "balance": 9998581,
+          "nonce": 1
+        },
+        "block": "9106aa00fd98086ceba112c228c487398311b407bf81dd886378c2b0587f06fd",
+        "key": "account:79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9"
+      }
+    ],
+    "owner_net_change_across_reserve_and_cancel": -710,
+    "owner_net_change_in_cancel_block": 709,
+    "provider_account_delta_in_these_blocks": 0,
+    "provider_account_delta_present": false,
+    "provider_full_balance_independently_decoded": false,
+    "reserve_net_debit_minus_obligation": 419,
+    "retained_wire_byte_occurrences_in_exact_packet": 1,
+    "signed_packet_sha256": "6a6125eceb7916ccf4afb673e9abeaa54d4c66ea6a21de5b0a45956dc4805295",
+    "signed_wire_sha256": "f73e5433dc740e181426a3e50fc5f4e54d19cd9a84a1c96043257f0bfcfeb17d",
+    "task_transitions": [
+      {
+        "after": {
+          "deadline": 20,
+          "output": null,
+          "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+          "provider": "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+          "remaining": 1000,
+          "status": "reserved"
+        },
+        "before": null,
+        "block": "3f3e2bead3d12278ea3e27696e65373e92c46e227132f51117b0329fb0f8ccdf",
+        "key": "task:93fdb42f44108cd1125e755dbbb1818a23c404ec85f198ddac7bdd89b43beb1e"
+      },
+      {
+        "after": {
+          "deadline": 20,
+          "output": null,
+          "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+          "provider": "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+          "remaining": 0,
+          "status": "cancelled"
+        },
+        "before": {
+          "deadline": 20,
+          "output": null,
+          "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+          "provider": "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+          "remaining": 1000,
+          "status": "reserved"
+        },
+        "block": "9106aa00fd98086ceba112c228c487398311b407bf81dd886378c2b0587f06fd",
+        "key": "task:93fdb42f44108cd1125e755dbbb1818a23c404ec85f198ddac7bdd89b43beb1e"
+      }
+    ]
+  },
+  "new_generation_dispatches": 0,
+  "new_native_transactions": 0,
+  "original_database_connections_opened": 0,
+  "original_database_pins": {
+    "m12-generation": {
+      "bytes": 12288,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-cancel-run-02/native-generation-v2.sqlite",
+      "sha256": "577d39400cb633c462a2e2961143d68e56dc58214bff183bab55b5ccef6c5fd0"
+    },
+    "native-node": {
+      "bytes": 282624,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-cancel-research-node-02/native.sqlite",
+      "sha256": "95b879a5fd90bff92adf59910c4b57349fbcb826260684daadef8ff7e5e00bd5"
+    },
+    "owner-fence": {
+      "bytes": 20480,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-cancel-research-node-02/native.sqlite.w1-generation-owner-v2.sqlite",
+      "sha256": "d1b8be6d8e3fa81856a5d07acb03af83608f1db08b84044e10d2cea91c0b40a6"
+    },
+    "posix-target": {
+      "bytes": 155648,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-cancel-local-target-02/target-v2.sqlite",
+      "sha256": "5343b1b356a1e1254edb08bd53ff7fa27a154c339e1b2d90fafa88b8427a753b"
+    }
+  },
+  "original_databases_written": false,
+  "original_deadline_ns": 1167336972674704,
+  "original_files_unchanged_after": true,
+  "original_operation": "ebe3c586d634730e7464f2e3661aea37f6ed7402c0d74f1a695224510d2e2f5e",
+  "original_statement": "b8769801cf2824799954d43eba78dfa684a5107c11d96abca8092b0f1ea3659f",
+  "prelaunch_failure_retained": [
+    {
+      "bytes": 394,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-cancel-preparation-failure-02/parent-preparation.json",
+      "sha256": "00df99c3205e1f32a1a6019fb4e3a4f75d12fb6098ff7d0919e7f4dad65985eb"
+    },
+    {
+      "bytes": 7579,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-cancel-preparation-failure-02/receipt.json",
+      "sha256": "8d6cae7fbf775a9e79abf084e0fe67b3d1bfca0c6026802c11c7c4a693874fcf"
+    },
+    {
+      "bytes": 1078,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-cancel-preparation-failure-02/stderr.log",
+      "sha256": "da97cc7f5fdaa4065f0bbc6943599d7ee419b7afe8b6cf6e4edb81817de924de"
+    },
+    {
+      "bytes": 0,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-cancel-preparation-failure-02/stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "private_database_publication_prohibited": true,
+  "production_qualified": false,
+  "proof_scope": "One real expensive generation started and was cancelled; zero new full proofs in this trial.",
+  "provider_payment_authorized": false,
+  "publish_scope": "Explicit public allowlist only; private copies and complete DB dumps are excluded.",
+  "schema": "TRNM-W1-OWNER-CANCEL02-INDEPENDENT-STATE-AUDIT1",
+  "source_commit": "0f18f93f2d35b62c6ca6d63faf4f336d55cbf4bf",
+  "source_tree": "94334bb6b52cfd13040059a5e71f47d8cc9603f2",
+  "started_monotonic_ns": 1167729523504260,
+  "target": {
+    "actual_proving_stage_started": "prove-batch-0000",
+    "actual_result": {
+      "all_descendants_reaped": null,
+      "all_owned_processes_terminal": true,
+      "can_authorize_payment": false,
+      "cause": "cancelled",
+      "cgroup_members_after_cleanup": [],
+      "child_cgroup_observation": {
+        "all_descendants_reaped": null,
+        "events": {
+          "frozen": 0,
+          "populated": 0
+        },
+        "groups": {
+          "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b80aa46c-12894-d18.service/trnm-w1-generation-ebe3c586d634730e7464f2e3661aea37f6ed7402c0d74f1a695224510d2e2f5e": {
+            "device": 30,
+            "inode": 63426421
+          }
+        },
+        "identity": {
+          "device": 30,
+          "inode": 63426421
+        },
+        "members": [],
+        "observation_complete": true,
+        "path": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b80aa46c-12894-d18.service/trnm-w1-generation-ebe3c586d634730e7464f2e3661aea37f6ed7402c0d74f1a695224510d2e2f5e",
+        "recursive_empty": true,
+        "schema": "TRNM-W1-OWNED-CGROUP-OBSERVATION1"
+      },
+      "child_identity": {
+        "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+        "pid": 1905277,
+        "start_ticks": 116675109
+      },
+      "clock_domain": "fe07e57a0dbe0d567037e83c12e988c7d929c9ef37c5fc3c337ab6f09202ef86",
+      "command_success": false,
+      "direct_child_reaped": true,
+      "error": null,
+      "exit_code": -9,
+      "finished_monotonic_ns": 1166770784567725,
+      "generation_qualification": "requires-full-independent-verifier-and-fresh-pipeline-closure",
+      "may_dispatch_again": false,
+      "operation": "ebe3c586d634730e7464f2e3661aea37f6ed7402c0d74f1a695224510d2e2f5e",
+      "original_deadline_monotonic_ns": 1167336972674704,
+      "process_containment": "cgroup-v2",
+      "provider_job": {
+        "identity": {
+          "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+          "pid": 1905265,
+          "start_ticks": 116674977
+        },
+        "job_id": "fd1c1b05dfd3d7b5287a8c8cf600563210ad627edada407bdf03f0be0af7ae1a",
+        "operation": "ebe3c586d634730e7464f2e3661aea37f6ed7402c0d74f1a695224510d2e2f5e",
+        "provider_namespace": "98118aa5717941623fac232b6b2db0b864fb41af64b123f6a3fd94a187381fbf",
+        "request_sha256": "090361c6425009b00738aa06e14d045ab16b68498a9ce36536424f768000e0e2"
+      },
+      "request_sha256": "090361c6425009b00738aa06e14d045ab16b68498a9ce36536424f768000e0e2",
+      "resource_qualification": "unknown",
+      "resources": {
+        "cpu_stat": {
+          "core_sched.force_idle_usec": "0",
+          "nice_usec": "28881000",
+          "system_usec": "4677982",
+          "usage_usec": "33565046",
+          "user_usec": "28887064"
+        },
+        "gpu_ns": null,
+        "memory_peak_bytes": null
+      },
+      "schema": "trnm-w1-generation-posix-target-v2/result",
+      "started_monotonic_ns": 1166749845576654,
+      "sticky_cancel": true
+    },
+    "cold_same_request_worker_result": true,
+    "gpu_usage_ns": null,
+    "may_dispatch_again": false,
+    "new_complete_proofs": 0,
+    "original_provider_worker": {
+      "identity": {
+        "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+        "pid": 1905265,
+        "start_ticks": 116674977
+      },
+      "job_id": "fd1c1b05dfd3d7b5287a8c8cf600563210ad627edada407bdf03f0be0af7ae1a",
+      "operation": "ebe3c586d634730e7464f2e3661aea37f6ed7402c0d74f1a695224510d2e2f5e",
+      "provider_namespace": "98118aa5717941623fac232b6b2db0b864fb41af64b123f6a3fd94a187381fbf",
+      "request_sha256": "090361c6425009b00738aa06e14d045ab16b68498a9ce36536424f768000e0e2"
+    },
+    "resource_accounting_complete": false,
+    "scope_after_sha256": "9287032cba5f84b9b03af34ac4937f232bfca4731339438bd30c8b3753899f6a",
+    "start_observation_sha256": "e456006cc02e3c350b232633846eb4fb58c5283b32e2eac57a7fc6cd004ce947",
+    "state": "terminal",
+    "sticky_cancel": true
+  }
+}

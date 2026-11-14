@@ -1,0 +1,13 @@
+[workspace]
+resolver = "3"
+members = ["hepta-types", "hepta-learning-artifacts", "exporter"]
+[workspace.package]
+version = "0.0.0"
+edition = "2024"
+license = "Apache-2.0"
+[workspace.dependencies]
+ed25519-dalek = { version = "2.2.0", features = ["pkcs8"] }
+sha2 = "0.10"
+pretty_assertions = "1.4.1"
+[workspace.lints]
+rust = {}

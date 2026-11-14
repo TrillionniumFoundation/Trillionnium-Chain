@@ -1,0 +1,210 @@
+{
+  "files": [
+    {
+      "all_chunk_versions_and_hashes_verified": true,
+      "chunks": [
+        {
+          "chunk_sha256": "102b93c750c2ecc37aa9c9840bf6d27206375de5c6108ad351c8c4ae2a8a8db5",
+          "eof": false,
+          "next_offset": 65536,
+          "offset": 0,
+          "path": "/home/qian-qi/chain-hepta-481716-native-check/m6-native-validation-logs-01.tar.gz",
+          "size": 1022076,
+          "version": "66306:36355284:1022076:1794245647230211671:1794245647230211671"
+        },
+        {
+          "chunk_sha256": "10ef4fd633d766816cb39ad6a4e706b17912e34cd64abd8eba62a04bede3535f",
+          "eof": false,
+          "next_offset": 131072,
+          "offset": 65536,
+          "path": "/home/qian-qi/chain-hepta-481716-native-check/m6-native-validation-logs-01.tar.gz",
+          "size": 1022076,
+          "version": "66306:36355284:1022076:1794245647230211671:1794245647230211671"
+        },
+        {
+          "chunk_sha256": "ee0fbe79b5ceedb445faecca9db5d06a86b58c7051605f04295c7b06e3e6a179",
+          "eof": false,
+          "next_offset": 196608,
+          "offset": 131072,
+          "path": "/home/qian-qi/chain-hepta-481716-native-check/m6-native-validation-logs-01.tar.gz",
+          "size": 1022076,
+          "version": "66306:36355284:1022076:1794245647230211671:1794245647230211671"
+        },
+        {
+          "chunk_sha256": "aac7ccec5819c2ca56b53f5732e762f432fbc79d1420f06e6da9215ecc1a9795",
+          "eof": false,
+          "next_offset": 262144,
+          "offset": 196608,
+          "path": "/home/qian-qi/chain-hepta-481716-native-check/m6-native-validation-logs-01.tar.gz",
+          "size": 1022076,
+          "version": "66306:36355284:1022076:1794245647230211671:1794245647230211671"
+        },
+        {
+          "chunk_sha256": "ae79975ac36ccd5ab1a7cef35f03c49c21c85c4a11f48606cf83131a911b6042",
+          "eof": false,
+          "next_offset": 327680,
+          "offset": 262144,
+          "path": "/home/qian-qi/chain-hepta-481716-native-check/m6-native-validation-logs-01.tar.gz",
+          "size": 1022076,
+          "version": "66306:36355284:1022076:1794245647230211671:1794245647230211671"
+        },
+        {
+          "chunk_sha256": "3efe8d0f985d48ee1e8d23fd95b3485da1d76822ffe16a5d9042f394bb2ac77c",
+          "eof": false,
+          "next_offset": 393216,
+          "offset": 327680,
+          "path": "/home/qian-qi/chain-hepta-481716-native-check/m6-native-validation-logs-01.tar.gz",
+          "size": 1022076,
+          "version": "66306:36355284:1022076:1794245647230211671:1794245647230211671"
+        },
+        {
+          "chunk_sha256": "a7afbc4c9e0beddbc1d84a40508ca007f0691739a088739d55eb2d78e4580706",
+          "eof": false,
+          "next_offset": 458752,
+          "offset": 393216,
+          "path": "/home/qian-qi/chain-hepta-481716-native-check/m6-native-validation-logs-01.tar.gz",
+          "size": 1022076,
+          "version": "66306:36355284:1022076:1794245647230211671:1794245647230211671"
+        },
+        {
+          "chunk_sha256": "8e72ce5bd1798e74875fdfb790c08af5533ff91e815af57904c259109c849f93",
+          "eof": false,
+          "next_offset": 524288,
+          "offset": 458752,
+          "path": "/home/qian-qi/chain-hepta-481716-native-check/m6-native-validation-logs-01.tar.gz",
+          "size": 1022076,
+          "version": "66306:36355284:1022076:1794245647230211671:1794245647230211671"
+        },
+        {
+          "chunk_sha256": "50421e108dea8a55efd6e8bedefd22e84a71438525c7ef18fbcc32ce36349c95",
+          "eof": false,
+          "next_offset": 589824,
+          "offset": 524288,
+          "path": "/home/qian-qi/chain-hepta-481716-native-check/m6-native-validation-logs-01.tar.gz",
+          "size": 1022076,
+          "version": "66306:36355284:1022076:1794245647230211671:1794245647230211671"
+        },
+        {
+          "chunk_sha256": "006ac592f3b3ee006e1829e62d96c7da4ecea8b9b29dd95988fcd924c77b44fd",
+          "eof": false,
+          "next_offset": 655360,
+          "offset": 589824,
+          "path": "/home/qian-qi/chain-hepta-481716-native-check/m6-native-validation-logs-01.tar.gz",
+          "size": 1022076,
+          "version": "66306:36355284:1022076:1794245647230211671:1794245647230211671"
+        },
+        {
+          "chunk_sha256": "35c97ac3b7b18cdf18b3a75998c175e5f7baa9fbfdd0651e9e3cd600e31e93be",
+          "eof": false,
+          "next_offset": 720896,
+          "offset": 655360,
+          "path": "/home/qian-qi/chain-hepta-481716-native-check/m6-native-validation-logs-01.tar.gz",
+          "size": 1022076,
+          "version": "66306:36355284:1022076:1794245647230211671:1794245647230211671"
+        },
+        {
+          "chunk_sha256": "0fdd19cb7bd5aee8e55dcae5de64768efe6ddd142bbe567557a7b1c763a0112f",
+          "eof": false,
+          "next_offset": 786432,
+          "offset": 720896,
+          "path": "/home/qian-qi/chain-hepta-481716-native-check/m6-native-validation-logs-01.tar.gz",
+          "size": 1022076,
+          "version": "66306:36355284:1022076:1794245647230211671:1794245647230211671"
+        },
+        {
+          "chunk_sha256": "79018ddbf6577f9d0b9ed7f2cc2c9df4a627b2ae56ec8835213b9c2541302306",
+          "eof": false,
+          "next_offset": 851968,
+          "offset": 786432,
+          "path": "/home/qian-qi/chain-hepta-481716-native-check/m6-native-validation-logs-01.tar.gz",
+          "size": 1022076,
+          "version": "66306:36355284:1022076:1794245647230211671:1794245647230211671"
+        },
+        {
+          "chunk_sha256": "907a6bbdfb7fde1b472fab2ac2d1a8bebef72126576afaea3b9a026b8b85f5d9",
+          "eof": false,
+          "next_offset": 917504,
+          "offset": 851968,
+          "path": "/home/qian-qi/chain-hepta-481716-native-check/m6-native-validation-logs-01.tar.gz",
+          "size": 1022076,
+          "version": "66306:36355284:1022076:1794245647230211671:1794245647230211671"
+        },
+        {
+          "chunk_sha256": "ec805b7a84a090a8c606125f2f3442f8f6d53ee33edce0d01d81a18313ee211c",
+          "eof": false,
+          "next_offset": 983040,
+          "offset": 917504,
+          "path": "/home/qian-qi/chain-hepta-481716-native-check/m6-native-validation-logs-01.tar.gz",
+          "size": 1022076,
+          "version": "66306:36355284:1022076:1794245647230211671:1794245647230211671"
+        },
+        {
+          "chunk_sha256": "3dc4974c805f923b475efa9f575e56b20f37c516d03fcc725e454872f694aeab",
+          "eof": true,
+          "next_offset": 1022076,
+          "offset": 983040,
+          "path": "/home/qian-qi/chain-hepta-481716-native-check/m6-native-validation-logs-01.tar.gz",
+          "size": 1022076,
+          "version": "66306:36355284:1022076:1794245647230211671:1794245647230211671"
+        }
+      ],
+      "kind": "archive",
+      "local_bytes": 1022076,
+      "local_file": "validation-logs-01.tar.gz",
+      "local_sha256": "c59397c89f1ed4e50605dfe337b77d2b63d82309f339ea7fa29f8884c99c16f9",
+      "remote_file_info": {
+        "metadata": {
+          "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "gid": 1000,
+          "link_count": 1,
+          "metadata_platform": "linux",
+          "mode": 384,
+          "uid": 1000,
+          "xattr_names": [],
+          "xattr_sha256": {}
+        },
+        "mode": 384,
+        "path": "/home/qian-qi/chain-hepta-481716-native-check/m6-native-validation-logs-01.tar.gz",
+        "sha256": "c59397c89f1ed4e50605dfe337b77d2b63d82309f339ea7fa29f8884c99c16f9",
+        "size": 1022076,
+        "version": "66306:36355284:1022076:1794245647230211671:1794245647230211671"
+      }
+    },
+    {
+      "all_chunk_versions_and_hashes_verified": true,
+      "chunks": [
+        {
+          "chunk_sha256": "b8b136c5f0e5842e3bd4cd3aa683d39df9e23d1ff0573db031f5fc520a323130",
+          "eof": true,
+          "next_offset": 26693,
+          "offset": 0,
+          "path": "/home/qian-qi/chain-hepta-481716-native-check/m6-archive-summary.json",
+          "size": 26693,
+          "version": "66306:36355285:26693:1794245647232172283:1794245647232172283"
+        }
+      ],
+      "kind": "summary",
+      "local_bytes": 26693,
+      "local_file": "archive-summary.json",
+      "local_sha256": "b8b136c5f0e5842e3bd4cd3aa683d39df9e23d1ff0573db031f5fc520a323130",
+      "remote_file_info": {
+        "metadata": {
+          "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "gid": 1000,
+          "link_count": 1,
+          "metadata_platform": "linux",
+          "mode": 384,
+          "uid": 1000,
+          "xattr_names": [],
+          "xattr_sha256": {}
+        },
+        "mode": 384,
+        "path": "/home/qian-qi/chain-hepta-481716-native-check/m6-archive-summary.json",
+        "sha256": "b8b136c5f0e5842e3bd4cd3aa683d39df9e23d1ff0573db031f5fc520a323130",
+        "size": 26693,
+        "version": "66306:36355285:26693:1794245647232172283:1794245647232172283"
+      }
+    }
+  ],
+  "schema": "m6-fixed-version-binary-transfer-v1"
+}

@@ -1,0 +1,309 @@
+[
+  {
+    "label": "preflight-before-edit",
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh",
+      "--audit"
+    ],
+    "started_unix": 1794392074.7765012,
+    "finished_unix": 1794392074.8917727,
+    "exit_code": 0,
+    "stdout": {
+      "bytes": 133,
+      "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "label": "branch",
+    "argv": [
+      "git",
+      "switch",
+      "-c",
+      "fix/chain-pon-five-claims-before-20261111-d6cb"
+    ],
+    "started_unix": 1794392074.8925936,
+    "finished_unix": 1794392074.9014018,
+    "exit_code": 0,
+    "stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "bytes": 74,
+      "sha256": "aaeca596684a3fe235ac62503227b44255969ce79d101a2ffe41ed456995034b"
+    }
+  },
+  {
+    "label": "probe-apply-check",
+    "argv": [
+      "git",
+      "apply",
+      "--check",
+      "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/negative-probe.patch"
+    ],
+    "started_unix": 1794392074.9023633,
+    "finished_unix": 1794392074.910822,
+    "exit_code": 0,
+    "stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "label": "probe-apply",
+    "argv": [
+      "git",
+      "apply",
+      "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/negative-probe.patch"
+    ],
+    "started_unix": 1794392074.9117908,
+    "finished_unix": 1794392074.9201586,
+    "exit_code": 0,
+    "stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "label": "rustfmt-probe",
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustfmt",
+      "--edition",
+      "2021",
+      "trillionnium/crates/trnm-pon-node/src/ingress/submit_activation_history_tests.rs"
+    ],
+    "started_unix": 1794392074.9211006,
+    "finished_unix": 1794392074.9860892,
+    "exit_code": 0,
+    "stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "label": "diff-check",
+    "argv": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "started_unix": 1794392074.9871125,
+    "finished_unix": 1794392075.0200515,
+    "exit_code": 0,
+    "stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "label": "preflight-before-commit",
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "started_unix": 1794392075.0208507,
+    "finished_unix": 1794392075.1359258,
+    "exit_code": 0,
+    "stdout": {
+      "bytes": 177,
+      "sha256": "7ba92de2e86e35bd8f486042978e0f3664c67111645b407ca022a311d6bdd436"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "label": "stage",
+    "argv": [
+      "git",
+      "add",
+      "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+      "trillionnium/crates/trnm-pon-node/src/ingress/submit_activation_history_tests.rs"
+    ],
+    "started_unix": 1794392075.1372268,
+    "finished_unix": 1794392075.2525415,
+    "exit_code": 0,
+    "stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "label": "commit",
+    "argv": [
+      "git",
+      "-c",
+      "user.name=Codex",
+      "-c",
+      "user.email=codex@openai.com",
+      "commit",
+      "-s",
+      "-m",
+      "test(pon): expose late ordinary Submit ancestry refusal"
+    ],
+    "started_unix": 1794392075.2538717,
+    "finished_unix": 1794392075.820404,
+    "exit_code": 0,
+    "stdout": {
+      "bytes": 253,
+      "sha256": "350e0964a6ae592f57ceaf5381b5359b1dc91467f2d9b7c03798dd0d9ab318cc"
+    },
+    "stderr": {
+      "bytes": 180,
+      "sha256": "22119bdb8e09d1f7d8f4ef21b18f9dc9b31eccc0869900e66a6bca939a02d3bd"
+    }
+  },
+  {
+    "label": "preflight-before-build",
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "started_unix": 1794392075.8219938,
+    "finished_unix": 1794392075.93729,
+    "exit_code": 0,
+    "stdout": {
+      "bytes": 177,
+      "sha256": "7ba92de2e86e35bd8f486042978e0f3664c67111645b407ca022a311d6bdd436"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "label": "rustc-version",
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+      "--version"
+    ],
+    "started_unix": 1794392087.7592363,
+    "finished_unix": 1794392087.7756798,
+    "exit_code": 0,
+    "stdout": {
+      "bytes": 36,
+      "sha256": "f4d034f5660bb49f22bfcba3f3445be67e25b704c193ff421b53863b4faee148"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "label": "cargo-version",
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "--version"
+    ],
+    "started_unix": 1794392087.7767885,
+    "finished_unix": 1794392087.7850058,
+    "exit_code": 0,
+    "stdout": {
+      "bytes": 36,
+      "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "label": "metadata",
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "metadata",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "--format-version",
+      "1"
+    ],
+    "started_unix": 1794392087.7890432,
+    "finished_unix": 1794392088.054092,
+    "exit_code": 0,
+    "stdout": {
+      "bytes": 854849,
+      "sha256": "b6f2b29e8400ee9354d325c942b3e0e55cb98ada69c18c2f5138ae8782e521e6"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "label": "build",
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--release",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "--no-run",
+      "--message-format=json"
+    ],
+    "started_unix": 1794392088.061713,
+    "finished_unix": 1794392702.22757,
+    "exit_code": 0,
+    "stdout": {
+      "bytes": 110012,
+      "sha256": "b3805452850c46aee4468ce0085aa7070b99c43cd0a4ae2f12721783fefa5d6e"
+    },
+    "stderr": {
+      "bytes": 4348,
+      "sha256": "06557fddcf3c879bb74562be2540c016258717b2d0ee7188adf91bee65e2ac90"
+    }
+  },
+  {
+    "label": "native-probe",
+    "argv": [
+      "/home/qian-qi/work/chain-pon-submit-target-d6cb/release/deps/trnm_pon_node-b9510f5893fe9b62",
+      "--exact",
+      "ingress::submit_activation_history_tests::submit_future_ancestor_is_checked_after_full_work_before_m06",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "started_unix": 1794392702.6700842,
+    "finished_unix": 1794392702.835421,
+    "exit_code": 101,
+    "stdout": {
+      "bytes": 367,
+      "sha256": "8b717d57b1fcbe36f6a9cac1a0cc81587604ce58d025917d5a612290a588ca7e"
+    },
+    "stderr": {
+      "bytes": 420,
+      "sha256": "b4ffeba922b88b4a8d118d45101beeba0af0d53883fcd3cf6c92850e3e3ed34e"
+    }
+  }
+]

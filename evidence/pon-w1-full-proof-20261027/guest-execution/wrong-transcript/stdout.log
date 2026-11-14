@@ -1,0 +1,1 @@
+{"consensus_admission":false,"cryptographic_proof_generated":false,"executor_error":"Guest panicked: full native PNH1/PNW1 relation: Work(Transcript)","guest_rejection_established":false,"input_sha256":"9bc2613f33687d16078f52f489611d0e134130e2f4b709e425e3627f012d248c","mode":"wrong-transcript","schema":"trnm-w1-real-guest-execution-control-v1"}

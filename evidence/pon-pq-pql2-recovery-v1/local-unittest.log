@@ -1,0 +1,26 @@
+test_cold_reject_corrupt_nonce_or_active_pointer (test_pq_pql2_fork_recovery.PQL3Tests.test_cold_reject_corrupt_nonce_or_active_pointer) ... ok
+test_cold_retry_same_parent_and_op_idempotent (test_pq_pql2_fork_recovery.PQL3Tests.test_cold_retry_same_parent_and_op_idempotent) ... ok
+test_concurrent_writers_same_tip_one_generation_advance (test_pq_pql2_fork_recovery.PQL3Tests.test_concurrent_writers_same_tip_one_generation_advance) ... ok
+test_exact_pql2_identity_account_nonce_and_all_four_liabilities (test_pq_pql2_fork_recovery.PQL3Tests.test_exact_pql2_identity_account_nonce_and_all_four_liabilities) ... ok
+test_foreign_new_db_refuses_before_enabling_wal (test_pq_pql2_fork_recovery.PQL3Tests.test_foreign_new_db_refuses_before_enabling_wal) ... ok
+test_full_128_accounts_256_liabilities_import_parser (test_pq_pql2_fork_recovery.PQL3Tests.test_full_128_accounts_256_liabilities_import_parser) ... ok
+test_full_snapshot_rollback_still_undetectable_without_external_anchor (test_pq_pql2_fork_recovery.PQL3Tests.test_full_snapshot_rollback_still_undetectable_without_external_anchor) ... ok
+test_import_pin_is_required_on_reopen (test_pq_pql2_fork_recovery.PQL3Tests.test_import_pin_is_required_on_reopen) ... ok
+test_independent_pin_validation_and_strict_types (test_pq_pql2_fork_recovery.PQL3Tests.test_independent_pin_validation_and_strict_types) ... ok
+test_irreversible_observation_not_rewound_by_branch_switch (test_pq_pql2_fork_recovery.PQL3Tests.test_irreversible_observation_not_rewound_by_branch_switch) ... ok
+test_mutate_all_pql2_bytes_under_original_independent_root (test_pq_pql2_fork_recovery.PQL3Tests.test_mutate_all_pql2_bytes_under_original_independent_root) ... ok
+test_post_open_foreign_meta_mutation_refuses_new_write (test_pq_pql2_fork_recovery.PQL3Tests.test_post_open_foreign_meta_mutation_refuses_new_write) ... ok
+test_quarantined_never_advances_even_on_sibling_fork (test_pq_pql2_fork_recovery.PQL3Tests.test_quarantined_never_advances_even_on_sibling_fork) ... ok
+test_real_process_exit_after_commit_of_tip_cas (test_pq_pql2_fork_recovery.PQL3Tests.test_real_process_exit_after_commit_of_tip_cas) ... ok
+test_real_process_exit_after_committed_append_before_ack (test_pq_pql2_fork_recovery.PQL3Tests.test_real_process_exit_after_committed_append_before_ack) ... ok
+test_reanchored_dropped_or_overcredited_liability_reject (test_pq_pql2_fork_recovery.PQL3Tests.test_reanchored_dropped_or_overcredited_liability_reject) ... ok
+test_reanchored_wrong_nonce_balance_gen_and_quarantine_reject (test_pq_pql2_fork_recovery.PQL3Tests.test_reanchored_wrong_nonce_balance_gen_and_quarantine_reject) ... ok
+test_refuse_symlinked_sqlite (test_pq_pql2_fork_recovery.PQL3Tests.test_refuse_symlinked_sqlite) ... ok
+test_sqlite_foreign_trigger_or_view_refuses_open (test_pq_pql2_fork_recovery.PQL3Tests.test_sqlite_foreign_trigger_or_view_refuses_open) ... ok
+test_stale_generation_refuses_cas_and_unknown_tip (test_pq_pql2_fork_recovery.PQL3Tests.test_stale_generation_refuses_cas_and_unknown_tip) ... ok
+test_two_forks_exact_nonce_reorg_does_not_unlock_liabilities (test_pq_pql2_fork_recovery.PQL3Tests.test_two_forks_exact_nonce_reorg_does_not_unlock_liabilities) ... ok
+
+----------------------------------------------------------------------
+Ran 21 tests in 3.408s
+
+OK

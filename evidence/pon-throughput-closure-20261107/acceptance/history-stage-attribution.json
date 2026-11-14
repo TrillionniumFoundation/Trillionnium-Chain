@@ -1,0 +1,768 @@
+{
+  "candidate_change_scope": {
+    "arithmetic_resource_scope": "Existing 2 MiB retained mathematical payload; complete-State traversal remains O(N). This is not a process RSS bound or a successful validation cache.",
+    "covered_stages": [
+      {
+        "coverage": "Complete-State root arithmetic only; original fresh SQLite read, continuity and stored-root checks remain.",
+        "stage": "Reorg intent staging validation"
+      },
+      {
+        "coverage": "Complete-State root arithmetic only; before-images, deltas, cursor transactions and cancellation remain.",
+        "stage": "Each detach/attach staging validation"
+      },
+      {
+        "coverage": "Complete-State root arithmetic only; active generation/slot, namespace, ancestry and original callback checks remain.",
+        "stage": "Each ReorgStep transaction active-tail validation before commit"
+      },
+      {
+        "coverage": "Candidate path would apply if reached; the retained ARM execution did not successfully reach final publication.",
+        "stage": "Final prepublication and publication State root checks"
+      }
+    ],
+    "pins": [
+      {
+        "bytes": 369306,
+        "commit": "a9efd4cba7546a8ef1e854ee0acdce9f5903ac2d",
+        "git_blob": "f4284f6dc6d004b0b816ad1dcb0b9f4243c748d6",
+        "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "sha256": "a8767acddd8c49133d105f87a988514c509866fc36e3817866c5fc7d3ac494c3"
+      },
+      {
+        "bytes": 111392,
+        "commit": "a9efd4cba7546a8ef1e854ee0acdce9f5903ac2d",
+        "git_blob": "09000b3db14c5f07be33cfa438ee792dc27c3936",
+        "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+        "sha256": "624b2fb4bb9bd511999ff94883dc4e76891565d2c9beaf43a735b8ae1fea0fe6"
+      }
+    ],
+    "selection": "StateBackend::Legacy, with native PQ Accounts V2/Application V6 and Growth profiles explicitly excluded.",
+    "source_commit": "a9efd4cba7546a8ef1e854ee0acdce9f5903ac2d",
+    "source_tree": "807e589d4cb8c2c0d2c2123e8e4ff0870d6a1eb7",
+    "uncovered_or_unchanged_stages": [
+      "Validator block generation and ordinary direct-child append.",
+      "Public History RPC admission, transport, paid request proof, page decode and original 1800-second server lifetime.",
+      "Ordinary per-packet admission, PNW1 validation, execution replay and history persistence before final activation.",
+      "Reading all actual State rows, canonical input checking and validation of keys untouched by the block.",
+      "SQL before-image/delta/cursor/event writes, transaction commits and storage/fsync cost.",
+      "Original 30-second importer deadline, cancellation, terminal lifecycle and recovery rules.",
+      "AuthenticatedV1 graph/history validation, separately selected Growth/COW state backend and PQ State validation."
+    ]
+  },
+  "created_utc": "2026-11-07T11:04:14.109219+00:00",
+  "independent_schema_reconstruction": {
+    "AuthenticatedV1": {
+      "additional_required_tables": [
+        "archive_nodes",
+        "native_state_commitments"
+      ],
+      "ddl_relation": "BASE_DDL + ancestry_index::DDL + native_authenticated::DDL",
+      "ddl_sha256": "023cf836707db0289e502c8d122a03eaf658007c05a7663c2f1105b8737e5c16",
+      "ddl_utf8_bytes": 5553,
+      "schema_id": "90d538f28c4cf29bdcb31204af5c51bb2ef63a5df5398105ac24c58bbd81b45d",
+      "tag_ascii": "native-authenticated-branch-schema-v1"
+    },
+    "Legacy": {
+      "ddl_relation": "BASE_DDL + ancestry_index::DDL",
+      "ddl_sha256": "a6088860f96f03ce18d126ea7273098e885b0de1b08828ce95f71ed159be1819",
+      "ddl_utf8_bytes": 5404,
+      "schema_id": "9cfc36489e0ae98abd0110a9974d5c4f388cab91ebd701f93fba401830fb6658",
+      "tag_ascii": "native-branch-schema-v2"
+    },
+    "components": [
+      {
+        "name": "BASE_DDL",
+        "sha256": "2da4a5c306f2e1742667f4097a3205546b4b51005547654bb97bd10d6bbda257",
+        "source_path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "utf8_bytes": 4899
+      },
+      {
+        "name": "ancestry_index::DDL",
+        "sha256": "8472de73b6eb7cac5d3c58da8f711db65fc58d0c9d778246c093a23718daa187",
+        "source_path": "trillionnium/crates/trnm-pon-node/src/ancestry_index.rs",
+        "utf8_bytes": 505
+      },
+      {
+        "name": "native_authenticated::DDL",
+        "sha256": "a5587cbca4cb4f674d985c0a4dcf6d009759da6e14b5416467640b53f3ab2f80",
+        "source_path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+        "utf8_bytes": 149
+      }
+    ],
+    "encoding": "ASCII TRNM-PON1 followed by one zero byte, u16 little-endian tag length, tag bytes, then u32 little-endian byte length and bytes of each part. Each schema uses exactly one part: the complete DDL string.",
+    "hash_algorithm": "SHA-256",
+    "rust_literal_decoding": "Extract named Rust string literal, preserve actual embedded newlines, decode explicit string escapes; concatenate without inserted separator.",
+    "scope": "Storage namespace discrimination under the retained classical V3 task profile; no validation or authority is inferred from a schema hash alone.",
+    "source_commit": "e70f13448aad715286fb8eb56fc802b09db643a3"
+  },
+  "interpretation_limits": [
+    "No native test or benchmark was rerun to create this report. The report classifies archived exact-e70 executions and the frozen candidate source.",
+    "Successful import returns, stored block rows and durably activated State are distinct observations.",
+    "The stage timing intervals include work beyond root arithmetic and are not an estimate of removable cost; nested component measurements are not generally additive.",
+    "CPU counters are calling-thread observations, not complete process/cgroup CPU.",
+    "No speedup, successful 4105-block completion, original hostile-load acceptance, finality or production TPS follows from path coverage.",
+    "The current artifact values 2362 X64 imports and ARM cursor 3404 are separate from older observations quoting 3322 imports or cursor 3407.",
+    "Public transport/authentication terminology and peer replay tables do not identify the AuthenticatedV1 State backend."
+  ],
+  "observations": [
+    {
+      "architecture": "ARM64",
+      "artifact_id": "13568038035",
+      "configuration": {
+        "bytes": 632,
+        "relative_to_workspace": "acceptance-raw/13568038035/history-native/long-history/config.json",
+        "sha256": "31f9e07989d0bad9e830c2b691e093715f65e2c575376ccf29da4bfd04f517b2"
+      },
+      "database": {
+        "absent_authenticated_v1_tables": [
+          "archive_nodes",
+          "native_state_commitments"
+        ],
+        "active": {
+          "equals_stored_genesis": true,
+          "generation": 0,
+          "state_slot": 0,
+          "tip": "fd782755e40205dd331c0911fd7aa178dbc44803b4b4fba2de8146810df9221c"
+        },
+        "blocks": {
+          "maximum_height": 4105,
+          "non_genesis": 4105,
+          "total_including_genesis": 4106
+        },
+        "does_not_match_authenticated_v1_schema": true,
+        "empty_wal_required_and_verified": true,
+        "file": {
+          "bytes": 220864512,
+          "relative_to_workspace": "acceptance-raw/13568038035/history-native/long-history/confirmer/native.sqlite",
+          "sha256": "8c09808288cefb9590d950a7fe9306b66e6481f0b15fd0d1a3a1c15a50848803"
+        },
+        "main_database_sha256_before_after_equal": true,
+        "matches_independently_reconstructed_backend": "Legacy",
+        "metadata_schema": "9cfc36489e0ae98abd0110a9974d5c4f388cab91ebd701f93fba401830fb6658",
+        "query_only": true,
+        "read_uri_options": "mode=ro&immutable=1",
+        "reorg": [
+          {
+            "cursor": 3404,
+            "done": 2,
+            "generation": 1,
+            "new_tip": "b41eb7e48c58049cd7580f67e362e91313fdf2a48c4752afba34e75105d07265",
+            "old_tip": "fd782755e40205dd331c0911fd7aa178dbc44803b4b4fba2de8146810df9221c"
+          }
+        ],
+        "tables": [
+          "active",
+          "ancestry_jump",
+          "blocks",
+          "deltas",
+          "events",
+          "kv",
+          "local_pool_groups",
+          "local_pool_metadata",
+          "local_pool_removals",
+          "local_pool_rows",
+          "metadata",
+          "peer_outbox",
+          "peer_replay",
+          "peer_request_audit",
+          "reorg",
+          "reorg_lifecycle_v1",
+          "snapshots",
+          "sqlite_sequence",
+          "steps"
+        ],
+        "wal": {
+          "bytes": 0,
+          "relative_to_workspace": "acceptance-raw/13568038035/history-native/long-history/confirmer/native.sqlite-wal",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "history_log": {
+        "bytes": 11502,
+        "relative_to_workspace": "acceptance-raw/13568038035/history-native/history.log",
+        "sha256": "284e26e3eddaf32ef7ca3c7a4d2e2750a91db4c571deb58897eb0a002598f10a"
+      },
+      "manifest": {
+        "bytes": 4885,
+        "relative_to_workspace": "acceptance-raw/13568038035/history-native/manifest.json",
+        "sha256": "f9a0515580c04e8ecaf858b90468a08783f6ac30e675c2ae8b4742b01c88308f"
+      },
+      "native_server_exit": {
+        "log_line": 28,
+        "raw_json_line_sha256": "bc59b7c91f17fc5448b4aef6468d27056b805d7202e4ac1c89da4b6ec6eef25d",
+        "record": {
+          "configured_lifetime_seconds": 1800,
+          "loop_exit_before_internal_shutdown": {
+            "configured_lifetime_ns": 1800000000000,
+            "elapsed_ns": 1800000854375,
+            "lifetime_reached_before_shutdown": true,
+            "reason": "lifetime_expired",
+            "stop_requested_before_shutdown": false
+          },
+          "production_activation": false,
+          "schema": "native-ancestry-public-server-exit-evidence-v1",
+          "scope": "actual native loopback server; observation only, not a readiness or qualification verdict",
+          "server_exit_error": null,
+          "server_exit_ok": true,
+          "service_elapsed_ns": 1800001682394,
+          "stop_requested_when_exited": true
+        }
+      },
+      "native_sync_observation": {
+        "cpu_scope": "calling thread only; unknown or unentered complete CPU remains null; known subtotal is not complete CPU",
+        "error": "PUBLIC_REQUEST_DEADLINE",
+        "failure_location": {
+          "activation_cursor": null,
+          "advertised_page_complete": true,
+          "completed_import_calls": 4104,
+          "durable_committed_blocks": null,
+          "head_rpc_elapsed_ns": 7957500,
+          "last_history_rpc_elapsed_ns": 7513863,
+          "last_import_call_expression_elapsed_ns": 30001567869,
+          "last_requested_after": "a50fe906946b4d15120ed42bcdbaa9193492d303e7f112851b79c74e7cadf302",
+          "last_successful_after": "a50fe906946b4d15120ed42bcdbaa9193492d303e7f112851b79c74e7cadf302",
+          "pinned_tip": "b41eb7e48c58049cd7580f67e362e91313fdf2a48c4752afba34e75105d07265",
+          "production_activation": false,
+          "schema": "native-ancestry-independent-sync-failure-location-v1",
+          "scope": "Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.",
+          "stage": "import-call-expression"
+        },
+        "interval_scope": "component intervals are not complete importer time; nested observations are not generally additive",
+        "legacy_observer_enabled": true,
+        "log_line": 29,
+        "observed_backend": "legacy",
+        "observer_scope": "explicit owner-local cumulative diagnostics; fresh staging validation and active-tail validation in original reorg transactions, including intent, detach/attach and publication; no State, SQL or validation result is reused",
+        "raw_json_line_sha256": "7ee9c35833eb2d6c61bda135a3e5b25829033adc3078196cbf782f2b2edb1434",
+        "roles": [
+          {
+            "calls": 3406,
+            "collector_stage": "verify_state",
+            "complete_cpu_ns": 3169065232,
+            "complete_wall_ns": 12368103786,
+            "role": "staging_validation",
+            "totals": {
+              "calls": 3406,
+              "cpu_known_calls": 3406,
+              "cpu_ns": 3169065232,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 12368103786
+            }
+          },
+          {
+            "calls": 3406,
+            "collector_stage": "read_active",
+            "complete_cpu_ns": 1479929560,
+            "complete_wall_ns": 5611721846,
+            "role": "active_tail_validation",
+            "totals": {
+              "calls": 3406,
+              "cpu_known_calls": 3406,
+              "cpu_ns": 1479929560,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 5611721846
+            }
+          }
+        ],
+        "sql_commit_sites": [
+          {
+            "calls_in_flight": 0,
+            "site": "admission_persistence",
+            "totals": {
+              "calls_abandoned": 0,
+              "calls_failed": 0,
+              "calls_returned": 0,
+              "calls_started": 0,
+              "calls_succeeded": 0,
+              "calls_unwinding": 0,
+              "cpu_known_calls": 0,
+              "cpu_ns": null,
+              "cpu_ns_known_sum": 0,
+              "cpu_unknown_calls": 0,
+              "wall_ns": null,
+              "wall_unknown_calls": 0
+            }
+          },
+          {
+            "calls_in_flight": 0,
+            "site": "atomic",
+            "totals": {
+              "calls_abandoned": 0,
+              "calls_failed": 0,
+              "calls_returned": 0,
+              "calls_started": 0,
+              "calls_succeeded": 0,
+              "calls_unwinding": 0,
+              "cpu_known_calls": 0,
+              "cpu_ns": null,
+              "cpu_ns_known_sum": 0,
+              "cpu_unknown_calls": 0,
+              "wall_ns": null,
+              "wall_unknown_calls": 0
+            }
+          },
+          {
+            "calls_in_flight": 0,
+            "site": "reorg_step",
+            "totals": {
+              "calls_abandoned": 0,
+              "calls_failed": 0,
+              "calls_returned": 3405,
+              "calls_started": 3405,
+              "calls_succeeded": 3405,
+              "calls_unwinding": 0,
+              "cpu_known_calls": 3405,
+              "cpu_ns": 519728144,
+              "cpu_ns_known_sum": 519728144,
+              "cpu_unknown_calls": 0,
+              "wall_ns": 3055576972,
+              "wall_unknown_calls": 0
+            }
+          },
+          {
+            "calls_in_flight": 0,
+            "site": "reorg_termination",
+            "totals": {
+              "calls_abandoned": 0,
+              "calls_failed": 0,
+              "calls_returned": 1,
+              "calls_started": 1,
+              "calls_succeeded": 1,
+              "calls_unwinding": 0,
+              "cpu_known_calls": 1,
+              "cpu_ns": 109648,
+              "cpu_ns_known_sum": 109648,
+              "cpu_unknown_calls": 0,
+              "wall_ns": 474858,
+              "wall_unknown_calls": 0
+            }
+          }
+        ],
+        "stage_outcome_scope": "calls include ordinary errors, cancellation and unwind; there are no per-role success, failure or cancellation counters"
+      },
+      "raw_archive": {
+        "bytes": 61208167,
+        "relative_to_workspace": "acceptance-raw/13568038035.zip",
+        "sha256": "68f6b619a76ce43074c2f4287210f3fc278128496b4fa01ad8f4e85091d14aac"
+      },
+      "retained_execution": {
+        "binary_before_after_equal": true,
+        "binary_sha256": "81fa9b2d0393e89b47d068a460559ed1dd5e353b31073c260b1c4809ee0e3308",
+        "exit_code": 101,
+        "genesis": "fd782755e40205dd331c0911fd7aa178dbc44803b4b4fba2de8146810df9221c",
+        "native_argv": [
+          "/usr/bin/time",
+          "-v",
+          "-o",
+          "/home/runner/work/_temp/priority-observations/history-native/history-resources.txt",
+          "/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-148cb0436c393794",
+          "actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal",
+          "--exact",
+          "--ignored",
+          "--show-output"
+        ],
+        "parameters": "938468a9741d17573f6fcf848a8f767b8aa9769366e69daba61f59db02901ef8",
+        "passed": false,
+        "source_before_after_equal": true,
+        "source_commit": "e70f13448aad715286fb8eb56fc802b09db643a3",
+        "task_profile": "signed-task-lifecycle-dev-v3",
+        "test_sha256": "1a27418789d4c97d2a12aeda7f525b2327627e901f5416dc5c6f9b18110777c3"
+      },
+      "stage_attribution": {
+        "candidate_root_reuse_would_apply_to_the_observed_reorg_validation_path": true,
+        "explanation": "The final complete page durably imported its block, then attempted Legacy activation from genesis. The original 30-second importer deadline cancelled the reorganization at durable cursor 3404; active remained genesis. Candidate root reuse addresses only arithmetic within original staging/active-tail checks. It does not prove completion under the deadline.",
+        "final_atomic_publication_completed": false,
+        "reorganization_entered": true
+      }
+    },
+    {
+      "architecture": "X64",
+      "artifact_id": "13568123690",
+      "configuration": {
+        "bytes": 632,
+        "relative_to_workspace": "acceptance-raw/13568123690/history-native/long-history/config.json",
+        "sha256": "4c15ce35ade478b0d18b3d51d8e17c460276f9f68996a129db694653e3067039"
+      },
+      "database": {
+        "absent_authenticated_v1_tables": [
+          "archive_nodes",
+          "native_state_commitments"
+        ],
+        "active": {
+          "equals_stored_genesis": true,
+          "generation": 0,
+          "state_slot": 0,
+          "tip": "13632417743090d77acfc37438d343953a79181379d57f8351e71c279f07d294"
+        },
+        "blocks": {
+          "maximum_height": 2362,
+          "non_genesis": 2362,
+          "total_including_genesis": 2363
+        },
+        "does_not_match_authenticated_v1_schema": true,
+        "empty_wal_required_and_verified": true,
+        "file": {
+          "bytes": 126537728,
+          "relative_to_workspace": "acceptance-raw/13568123690/history-native/long-history/confirmer/native.sqlite",
+          "sha256": "325fb54c9c172095fae1152034d4079c28fe1449fa1abc82e8323cfc7e435440"
+        },
+        "main_database_sha256_before_after_equal": true,
+        "matches_independently_reconstructed_backend": "Legacy",
+        "metadata_schema": "9cfc36489e0ae98abd0110a9974d5c4f388cab91ebd701f93fba401830fb6658",
+        "query_only": true,
+        "read_uri_options": "mode=ro&immutable=1",
+        "reorg": [],
+        "tables": [
+          "active",
+          "ancestry_jump",
+          "blocks",
+          "deltas",
+          "events",
+          "kv",
+          "local_pool_groups",
+          "local_pool_metadata",
+          "local_pool_removals",
+          "local_pool_rows",
+          "metadata",
+          "peer_outbox",
+          "peer_replay",
+          "peer_request_audit",
+          "reorg",
+          "reorg_lifecycle_v1",
+          "snapshots",
+          "sqlite_sequence",
+          "steps"
+        ],
+        "wal": {
+          "bytes": 0,
+          "relative_to_workspace": "acceptance-raw/13568123690/history-native/long-history/confirmer/native.sqlite-wal",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "history_log": {
+        "bytes": 11094,
+        "relative_to_workspace": "acceptance-raw/13568123690/history-native/history.log",
+        "sha256": "a20c17fc6864a6a61e027adb7d6aa494316b016cb44326c3a4f346febb47c57c"
+      },
+      "manifest": {
+        "bytes": 4899,
+        "relative_to_workspace": "acceptance-raw/13568123690/history-native/manifest.json",
+        "sha256": "2318b9bee506dcad179392e2ff84d1df5ba3b19c405b37b4acffae0977359adf"
+      },
+      "native_server_exit": {
+        "log_line": 24,
+        "raw_json_line_sha256": "76ac11db5f554ea4524188e4f4fee8aeec4607d41041144c766a3d2cb0ad9bc2",
+        "record": {
+          "configured_lifetime_seconds": 1800,
+          "loop_exit_before_internal_shutdown": {
+            "configured_lifetime_ns": 1800000000000,
+            "elapsed_ns": 1800000085783,
+            "lifetime_reached_before_shutdown": true,
+            "reason": "lifetime_expired",
+            "stop_requested_before_shutdown": false
+          },
+          "production_activation": false,
+          "schema": "native-ancestry-public-server-exit-evidence-v1",
+          "scope": "actual native loopback server; observation only, not a readiness or qualification verdict",
+          "server_exit_error": null,
+          "server_exit_ok": true,
+          "service_elapsed_ns": 1800001114400,
+          "stop_requested_when_exited": true
+        }
+      },
+      "native_sync_observation": {
+        "cpu_scope": "calling thread only; unknown or unentered complete CPU remains null; known subtotal is not complete CPU",
+        "error": "IO: Connection refused (os error 111)",
+        "failure_location": {
+          "activation_cursor": null,
+          "advertised_page_complete": null,
+          "completed_import_calls": 2362,
+          "durable_committed_blocks": null,
+          "head_rpc_elapsed_ns": 5915641,
+          "last_history_rpc_elapsed_ns": 123832,
+          "last_import_call_expression_elapsed_ns": null,
+          "last_requested_after": "4ca9984bc0d619cad49a9655402b1c9989e666628e8d6f91bd9d691e03f1475c",
+          "last_successful_after": "4ca9984bc0d619cad49a9655402b1c9989e666628e8d6f91bd9d691e03f1475c",
+          "pinned_tip": "d36d62758db50cdb3a27fd2ddbafb174f6860eb07bca32fb9a87bc44b86db215",
+          "production_activation": false,
+          "schema": "native-ancestry-independent-sync-failure-location-v1",
+          "scope": "Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.",
+          "stage": "history-rpc"
+        },
+        "interval_scope": "component intervals are not complete importer time; nested observations are not generally additive",
+        "legacy_observer_enabled": true,
+        "log_line": 25,
+        "observed_backend": "legacy",
+        "observer_scope": "explicit owner-local cumulative diagnostics; fresh staging validation and active-tail validation in original reorg transactions, including intent, detach/attach and publication; no State, SQL or validation result is reused",
+        "raw_json_line_sha256": "b2c552b883253affc7e9dc85f00617373d0a9ad7bfe10138aa22a6872cd5eb5f",
+        "roles": [
+          {
+            "calls": 0,
+            "collector_stage": "verify_state",
+            "complete_cpu_ns": null,
+            "complete_wall_ns": null,
+            "role": "staging_validation",
+            "totals": {
+              "calls": 0,
+              "cpu_known_calls": 0,
+              "cpu_ns": 0,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 0
+            }
+          },
+          {
+            "calls": 0,
+            "collector_stage": "read_active",
+            "complete_cpu_ns": null,
+            "complete_wall_ns": null,
+            "role": "active_tail_validation",
+            "totals": {
+              "calls": 0,
+              "cpu_known_calls": 0,
+              "cpu_ns": 0,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 0
+            }
+          }
+        ],
+        "sql_commit_sites": [
+          {
+            "calls_in_flight": 0,
+            "site": "admission_persistence",
+            "totals": {
+              "calls_abandoned": 0,
+              "calls_failed": 0,
+              "calls_returned": 0,
+              "calls_started": 0,
+              "calls_succeeded": 0,
+              "calls_unwinding": 0,
+              "cpu_known_calls": 0,
+              "cpu_ns": null,
+              "cpu_ns_known_sum": 0,
+              "cpu_unknown_calls": 0,
+              "wall_ns": null,
+              "wall_unknown_calls": 0
+            }
+          },
+          {
+            "calls_in_flight": 0,
+            "site": "atomic",
+            "totals": {
+              "calls_abandoned": 0,
+              "calls_failed": 0,
+              "calls_returned": 0,
+              "calls_started": 0,
+              "calls_succeeded": 0,
+              "calls_unwinding": 0,
+              "cpu_known_calls": 0,
+              "cpu_ns": null,
+              "cpu_ns_known_sum": 0,
+              "cpu_unknown_calls": 0,
+              "wall_ns": null,
+              "wall_unknown_calls": 0
+            }
+          },
+          {
+            "calls_in_flight": 0,
+            "site": "reorg_step",
+            "totals": {
+              "calls_abandoned": 0,
+              "calls_failed": 0,
+              "calls_returned": 0,
+              "calls_started": 0,
+              "calls_succeeded": 0,
+              "calls_unwinding": 0,
+              "cpu_known_calls": 0,
+              "cpu_ns": null,
+              "cpu_ns_known_sum": 0,
+              "cpu_unknown_calls": 0,
+              "wall_ns": null,
+              "wall_unknown_calls": 0
+            }
+          },
+          {
+            "calls_in_flight": 0,
+            "site": "reorg_termination",
+            "totals": {
+              "calls_abandoned": 0,
+              "calls_failed": 0,
+              "calls_returned": 0,
+              "calls_started": 0,
+              "calls_succeeded": 0,
+              "calls_unwinding": 0,
+              "cpu_known_calls": 0,
+              "cpu_ns": null,
+              "cpu_ns_known_sum": 0,
+              "cpu_unknown_calls": 0,
+              "wall_ns": null,
+              "wall_unknown_calls": 0
+            }
+          }
+        ],
+        "stage_outcome_scope": "calls include ordinary errors, cancellation and unwind; there are no per-role success, failure or cancellation counters"
+      },
+      "raw_archive": {
+        "bytes": 51119282,
+        "relative_to_workspace": "acceptance-raw/13568123690.zip",
+        "sha256": "14bc8eb4d062ad5fbd8cb17d088dfaffae726e2a2dc6d18d0ea09467d1afd185"
+      },
+      "retained_execution": {
+        "binary_before_after_equal": true,
+        "binary_sha256": "316022388b7c7c89d0b1a1765a758968d321b83376e3d162a6ff1095d52d59f6",
+        "exit_code": 101,
+        "genesis": "13632417743090d77acfc37438d343953a79181379d57f8351e71c279f07d294",
+        "native_argv": [
+          "/usr/bin/time",
+          "-v",
+          "-o",
+          "/home/runner/work/_temp/priority-observations/history-native/history-resources.txt",
+          "/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-08bb9944f2e51e3e",
+          "actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal",
+          "--exact",
+          "--ignored",
+          "--show-output"
+        ],
+        "parameters": "fc18ded8144bf916b11ca45d84a3dbd417ceb8e495e398ed7833b4603ebe7769",
+        "passed": false,
+        "source_before_after_equal": true,
+        "source_commit": "e70f13448aad715286fb8eb56fc802b09db643a3",
+        "task_profile": "signed-task-lifecycle-dev-v3",
+        "test_sha256": "1a27418789d4c97d2a12aeda7f525b2327627e901f5416dc5c6f9b18110777c3"
+      },
+      "stage_attribution": {
+        "candidate_root_reuse_would_apply_to_the_observed_reorg_validation_path": false,
+        "explanation": "The public server reached its original 1800-second lifetime. The next History RPC refused the connection after 2362 successful imports; no reorg row or entered reorg validation call exists. The Legacy reorg root change does not directly address this observed failure position.",
+        "final_atomic_publication_completed": false,
+        "reorganization_entered": false
+      }
+    }
+  ],
+  "operation": "read-only attribution of retained exact-source History executions; no native execution or rebuild",
+  "qualifications": {
+    "authenticated_state_backend_qualified": false,
+    "confirmed_tps_qualified": false,
+    "cross_arch_candidate_qualified": false,
+    "hardness_accepted": false,
+    "history_bottleneck_resolved": false,
+    "independent_accepted": false,
+    "legacy_reorg_performance_qualified": false,
+    "original_four_second_accepted": false,
+    "original_history_4105_accepted": false,
+    "physical_power_loss_qualified": false,
+    "pq_application_v6_throughput_qualified": false,
+    "production_activation": false,
+    "public_network_ready": false,
+    "touched_set_or_cow_migration_qualified": false,
+    "wan_qualified": false
+  },
+  "result": "backend-and-stage-attribution-complete",
+  "schema": "pon-history-stage-attribution-readback-v1",
+  "source": {
+    "call_chain": [
+      {
+        "exact_source_text": "let mut confirmer = Node::open(&directory.join(\"confirmer\"), settings.clone(), 2)?;",
+        "line": 278,
+        "source_commit": "e70f13448aad715286fb8eb56fc802b09db643a3",
+        "source_path": "trillionnium/crates/trnm-pon-node/tests/ancestry_long_sync.rs",
+        "symbol": "History confirmer construction"
+      },
+      {
+        "exact_source_text": "Self::open_with_fault(path, settings, workers, None)",
+        "line": 1534,
+        "source_commit": "e70f13448aad715286fb8eb56fc802b09db643a3",
+        "source_path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "symbol": "Node::open"
+      },
+      {
+        "exact_source_text": "Self::open_inner(path, settings, workers, hook, None, None, None)",
+        "line": 1544,
+        "source_commit": "e70f13448aad715286fb8eb56fc802b09db643a3",
+        "source_path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "symbol": "Node::open_with_fault"
+      },
+      {
+        "exact_source_text": "            StateBackend::Legacy,\n            false,\n        )\n    }\n    fn open_selected(",
+        "line": 1711,
+        "source_commit": "e70f13448aad715286fb8eb56fc802b09db643a3",
+        "source_path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "symbol": "Node::open_inner backend argument"
+      },
+      {
+        "exact_source_text": "let activate = (page.complete && index + 1 == count).then_some(tip);",
+        "line": 514,
+        "source_commit": "e70f13448aad715286fb8eb56fc802b09db643a3",
+        "source_path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+        "symbol": "History final-page activation decision"
+      }
+    ],
+    "pins": [
+      {
+        "bytes": 21736,
+        "commit": "e70f13448aad715286fb8eb56fc802b09db643a3",
+        "git_blob": "e04a6c60dab06388aae7ee7c95c68424d90628f9",
+        "path": "trillionnium/crates/trnm-pon-node/tests/ancestry_long_sync.rs",
+        "sha256": "1a27418789d4c97d2a12aeda7f525b2327627e901f5416dc5c6f9b18110777c3"
+      },
+      {
+        "bytes": 366948,
+        "commit": "e70f13448aad715286fb8eb56fc802b09db643a3",
+        "git_blob": "5f6f16ddabde5d7fa67d0c993e9d508e804ef3b7",
+        "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "sha256": "8e65b358f83e7be4863879dd719fd7bf17af7ff78dae60e7b8ebb30c64605541"
+      },
+      {
+        "bytes": 34815,
+        "commit": "e70f13448aad715286fb8eb56fc802b09db643a3",
+        "git_blob": "ab18a5b18b534dbeb18955ae29555ef1ea42383e",
+        "path": "trillionnium/crates/trnm-pon-node/src/ancestry_index.rs",
+        "sha256": "c7018524cefd74961862150893bd593b01e720c6fdaa84350b4fc1c54bc378ef"
+      },
+      {
+        "bytes": 94925,
+        "commit": "e70f13448aad715286fb8eb56fc802b09db643a3",
+        "git_blob": "e99453b1abe6ce589f003be199b5553241cba398",
+        "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+        "sha256": "92bfaca74ad0b7e5f9c7559d05a13a5535420b7df536a474de4035191e7a838f"
+      },
+      {
+        "bytes": 32354,
+        "commit": "e70f13448aad715286fb8eb56fc802b09db643a3",
+        "git_blob": "9333ce92c6ba130dd182538bfd8f69ec289acc83",
+        "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+        "sha256": "be816ee5b209098fa790d6e190d1d9c659634ac22d58b95c83dc8b49899c70cd"
+      },
+      {
+        "bytes": 21380,
+        "commit": "e70f13448aad715286fb8eb56fc802b09db643a3",
+        "git_blob": "fd305e7735a9bf4969bdf7166b435dfeed46b0f2",
+        "path": "scripts/ci/run_history_native.py",
+        "sha256": "35ca32bbf23d33242b88a2edf994739ff804fbd7b33b5b7ac2e090b4ffce4797"
+      },
+      {
+        "bytes": 22763,
+        "commit": "e70f13448aad715286fb8eb56fc802b09db643a3",
+        "git_blob": "bd89990d6e1d7bda56f0be69a526815d87edbc29",
+        "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+        "sha256": "df389b242de3f75f8ee2448b755726c23b3196f0bef0dc79573c183791118882"
+      }
+    ],
+    "repository": "TrillionniumFoundation/Trillionnium-Chain",
+    "retained_execution_commit": "e70f13448aad715286fb8eb56fc802b09db643a3",
+    "retained_execution_tree": "1fc19c44ab2d4b35672b25d0f4e4039b769cadea",
+    "retained_test_sha256": "1a27418789d4c97d2a12aeda7f525b2327627e901f5416dc5c6f9b18110777c3",
+    "runner_selects_original_release_test": true,
+    "selector": "actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal",
+    "settings": {
+      "blocks": 4105,
+      "evaluation_policy": "native-public-evaluation-dev-v1",
+      "pq_or_growth_profile": false,
+      "renew_every": 900,
+      "selected_backend": "Legacy",
+      "storage_constructor": "Node::open",
+      "task_profile": "signed-task-lifecycle-dev-v3"
+    },
+    "target": "ancestry_long_sync"
+  }
+}

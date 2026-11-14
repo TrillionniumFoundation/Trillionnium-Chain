@@ -1,0 +1,427 @@
+{
+  "schema": "trnm-admission-final-evidence-docs-v1",
+  "state": "COPIES_VERIFIED",
+  "commands": [
+    {
+      "label": "preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "state": "completed",
+      "exit": 0
+    }
+  ],
+  "files": [
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/EXTERNAL_ORIGINAL_ARCHIVE.json",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/EXTERNAL_ORIGINAL_ARCHIVE.json",
+      "bytes": 754,
+      "sha256": "9ebd57b97c676c5aac65f813f438455e077c25e1413cd1fc62bfb03ca985a7a7"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/FILES.json",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/FILES.json",
+      "bytes": 20995,
+      "sha256": "c26da99e5e5ed18a50197dfb98dbb8edd50e74b4df12e74b5f6a4727bf6257da"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/README.md",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/README.md",
+      "bytes": 3626,
+      "sha256": "9c3a26e008d72f7db6ef238965a5fc867b7b12fb57a64810e56af2928ed689b4"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/SEAL.json",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/SEAL.json",
+      "bytes": 650,
+      "sha256": "fb81f7917cb0a2e19c342c7abea8c2af87fa3ac7fc8d4dd9735979c6815c7805"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/SHA256SUMS",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/SHA256SUMS",
+      "bytes": 5398,
+      "sha256": "6bb8cb82fde10ab661607385552e8d7bc100db6878848ebaaeb698a67baa7aa7"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/W1_FINAL_COVERAGE.json",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/W1_FINAL_COVERAGE.json",
+      "bytes": 20093,
+      "sha256": "365c332315154cfe21fb99df52b709aac4d06203461dbbfcb306317156938cea"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/artifact/independent-v2-w1-legal-strategy-v3.json.gz",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/artifact/independent-v2-w1-legal-strategy-v3.json.gz",
+      "bytes": 1026812,
+      "sha256": "91b9ab9917429633bd1b2d2f51c72f63423bd25b4b9a5a0cc8d7ca7eeb78349e"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/artifact/members/cargo-graph.json.gz",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/artifact/members/cargo-graph.json.gz",
+      "bytes": 92376,
+      "sha256": "8cc0f54ffc149c091b5595e7599d7abdd17b068ebe43663fb4bec5348a8a734d"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/artifact/members/cpu-completion-tests.log",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/artifact/members/cpu-completion-tests.log",
+      "bytes": 3271,
+      "sha256": "a17f8085fc3bae032f6d14bf764ae694767de293bd1050b0209c7a5c4b03c191"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/artifact/members/factorial-example-tests.log",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/artifact/members/factorial-example-tests.log",
+      "bytes": 3843,
+      "sha256": "9e59ed6e55e1170f7c643c008c2d9e58d8017ca713d91bc7ef8ea3c3aa812046"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/artifact/members/factorial-kernel-clippy.log",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/artifact/members/factorial-kernel-clippy.log",
+      "bytes": 1973,
+      "sha256": "8eaefd0fa78fbf3dd0fdb3d47a245c37f0902a3d10dc5eefd2883bc8a19406e5"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/artifact/members/factorial-kernel-tests.log",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/artifact/members/factorial-kernel-tests.log",
+      "bytes": 3866,
+      "sha256": "9f7b691dc9b50677caeabd63a29f8bd6b0b693c486f65d7f06374b6767338c46"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/artifact/members/factorial-node-clippy.log",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/artifact/members/factorial-node-clippy.log",
+      "bytes": 3398,
+      "sha256": "aa2ac7562a344473d3b0c6baad137e2cad1a37c1005f011e54b52b01a6c8ffeb"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/artifact/members/factorial-reader-controls.log",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/artifact/members/factorial-reader-controls.log",
+      "bytes": 117,
+      "sha256": "a4abe8f5fb9a54723dfe3f4ade82c74e8f7703ce7efb96569e1b7253fe8e9dc1"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/artifact/members/format.log",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/artifact/members/format.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/artifact/members/header-binding-tests.log",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/artifact/members/header-binding-tests.log",
+      "bytes": 527,
+      "sha256": "5a91cf9918640ce98831a8750272d7bb667947d9cd86f8e71b4bce590012adc4"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/artifact/members/history-import-tests.log",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/artifact/members/history-import-tests.log",
+      "bytes": 15191,
+      "sha256": "cf20533a206c8fe7383ddedc49be425e12c14ccb028c3be708314d7a780ac0bb"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/artifact/members/history-w1-tests.log",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/artifact/members/history-w1-tests.log",
+      "bytes": 4814,
+      "sha256": "fc1e337e144a2ed69c7cf777791f3e6b5856b2df6f0fb367247d2594f6b17075"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/artifact/members/preflight.log",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/artifact/members/preflight.log",
+      "bytes": 133,
+      "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/artifact/members/push-source-context.json",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/artifact/members/push-source-context.json",
+      "bytes": 2267,
+      "sha256": "5a1ea114d87384bb6b4674126366592d707c77414861a79f91691e7454c7a225"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/artifact/members/retained-legal-reader-controls.log",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/artifact/members/retained-legal-reader-controls.log",
+      "bytes": 111,
+      "sha256": "1c51ff3348a7f9fa407d03fec6c64e1b3051559af0bdf752edbf384bda27b1e8"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/artifact/members/runner-controls.log",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/artifact/members/runner-controls.log",
+      "bytes": 148,
+      "sha256": "246a7b448d6eb73fb718ad064b53a5fe547b664e680adb2ebe3917cce68fef5a"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/artifact/members/source-after.json",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/artifact/members/source-after.json",
+      "bytes": 423,
+      "sha256": "5759d06c351357aa4d7b24e1b56c03607da60870788f30139a8e10460744c6b6"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/artifact/members/source-before.json",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/artifact/members/source-before.json",
+      "bytes": 423,
+      "sha256": "5759d06c351357aa4d7b24e1b56c03607da60870788f30139a8e10460744c6b6"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/artifact/members/source-rejection-controls.log",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/artifact/members/source-rejection-controls.log",
+      "bytes": 6898,
+      "sha256": "3c0c7d3e0425483e4975b847368f8f88fd203570e251dd43bf1b71380b5fa4dc"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/artifact/members/w1-legal-strategy-v3/manifest.json.gz",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/artifact/members/w1-legal-strategy-v3/manifest.json.gz",
+      "bytes": 2060945,
+      "sha256": "eb4f9742e3b5537f273a7b17672a37874637e08455042e33f5e13741bc7cc284"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/artifact/pure-outcome.json",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/artifact/pure-outcome.json",
+      "bytes": 859,
+      "sha256": "4430bc72a408c7edf8dd128b8fc3574b78ae6fdda18612d5af24a122b20d40fb"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/artifact/pure.stderr",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/artifact/pure.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/artifact/pure.stdout",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/artifact/pure.stdout",
+      "bytes": 166,
+      "sha256": "46c5d7d3220114478c22d706e8efbe3ef1f67611bbca8517e4e387f5a5e0e01d"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/artifact/readback-pure-v2.json",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/artifact/readback-pure-v2.json",
+      "bytes": 22430,
+      "sha256": "0b362f59b0401245880939f425f2eaedd2ef9915c1af85d56fbe8709590ddaff"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/artifact/readback-stage1.json",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/artifact/readback-stage1.json",
+      "bytes": 21754,
+      "sha256": "b20e7d3fd2a9bbc01baf2750c971062e9cad449ff27a2bda1f33a4307ea1147e"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/artifact/tail.bin",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/artifact/tail.bin",
+      "bytes": 3208816,
+      "sha256": "54648d1d464be4d15e21c2170dd2bad796e5cad008eb0a46300f6d757d721e37"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/identity-after.json",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/identity-after.json",
+      "bytes": 1221,
+      "sha256": "fb21e626cd6c7f169945f4113574e68390b5c924c73ea971fac98e8c2b3117a3"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/identity-before.json",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/identity-before.json",
+      "bytes": 1221,
+      "sha256": "fb21e626cd6c7f169945f4113574e68390b5c924c73ea971fac98e8c2b3117a3"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/observer/build_w1_range_v3_package.py",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/observer/build_w1_range_v3_package.py",
+      "bytes": 11433,
+      "sha256": "2282b8d2f3a3c2d98db016e74f893c9f11d42e3811d1d08fefa45fd1082aeeba"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/observer/read_w1_pure_records_819_v2.py",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/observer/read_w1_pure_records_819_v2.py",
+      "bytes": 8894,
+      "sha256": "d6de643b9440731fc23272f3c5f81fccdcfa62f6d8d57e1729540b715fc8d2ca"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/observer/read_w1_range_v3_819.py",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/observer/read_w1_range_v3_819.py",
+      "bytes": 9977,
+      "sha256": "cb675b382fa570d1a419378b12c2bfadf64913b391ca6767338c0b5c360fdc4e"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/observer/read_w1_range_v3_819_b.py",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/observer/read_w1_range_v3_819_b.py",
+      "bytes": 10251,
+      "sha256": "6940ee045dc0022bf7a50f422402daf2dcffb2c4adf69ad9111586e18b0ed04c"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/observer/test_range_v3_response_controls.py",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/observer/test_range_v3_response_controls.py",
+      "bytes": 2392,
+      "sha256": "56bcc1d2d4e0098466640d32b0c3519dc71d43067764ebf232581b052fb1e8e0"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/observer/test_range_v3_response_controls_b.py",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/observer/test_range_v3_response_controls_b.py",
+      "bytes": 2394,
+      "sha256": "54ca592965600d54d24362f0b8e3a95c03466b8a36aa5806c1b42aa5e41a98f8"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/observer/validate_range_v3_original_w1.py",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/observer/validate_range_v3_original_w1.py",
+      "bytes": 7737,
+      "sha256": "2ea6155945f2673ca998e3e90d8032857edb465f1bf06e2c66824a92af3a3c08"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/observer/w1-range-v3-authoritative-receipts.json",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/observer/w1-range-v3-authoritative-receipts.json",
+      "bytes": 18243,
+      "sha256": "3eaa620f4e4f58b65191eaa7cd4333125afb9c248ade1f3f649a11477061cee8"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/plan.json",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/plan.json",
+      "bytes": 926,
+      "sha256": "4fd719ff01821317c2a19ed67957b2bf5652edec14cad90b385fd60d94c66d13"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/preparation/gh-api-help.stderr",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/preparation/gh-api-help.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/preparation/gh-api-help.stdout",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/preparation/gh-api-help.stdout",
+      "bytes": 5856,
+      "sha256": "ac14534b0dab56ddba00994c50a5cc1e13ceceb8ef7f4b8a439f6c4990567063"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/preparation/gh-version.stderr",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/preparation/gh-version.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/preparation/gh-version.stdout",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/preparation/gh-version.stdout",
+      "bytes": 104,
+      "sha256": "bea5e34b2e2a652e5952756f8757bee261c2175fab4c90de801c56503c5edbac"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/preparation/parser-controls-b.stderr",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/preparation/parser-controls-b.stderr",
+      "bytes": 1355,
+      "sha256": "c842ada16f52495e79d0650b54c2c23c8f418d1a09ba9131f0ed2b5e76923f37"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/preparation/parser-controls-b.stdout",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/preparation/parser-controls-b.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/preparation/parser-controls.stderr",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/preparation/parser-controls.stderr",
+      "bytes": 1355,
+      "sha256": "c842ada16f52495e79d0650b54c2c23c8f418d1a09ba9131f0ed2b5e76923f37"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/preparation/parser-controls.stdout",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/preparation/parser-controls.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/receipt.json",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/receipt.json",
+      "bytes": 3429,
+      "sha256": "18023ffb3ab684ccb1ea3a3af89b296b52843c6917a2ed918b1b440aa4029c4b"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/v2-reference/EXTERNAL_ARCHIVES.json",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/v2-reference/EXTERNAL_ARCHIVES.json",
+      "bytes": 4197,
+      "sha256": "5e25c54312b040e99af0cfa679427ae261fb04cb34b3c540854683f63859f6dc"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/v2-reference/SEAL.json",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/v2-reference/SEAL.json",
+      "bytes": 726,
+      "sha256": "f2952e394846e5f15d4f016bc00895b283872111ebe29ee2f09b468401d79edc"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/v2-reference/SHA256SUMS",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/v2-reference/SHA256SUMS",
+      "bytes": 16936,
+      "sha256": "3599d9306ef108b8afc305709d1603a0f33cb683f730dfeb9ba489e661bf3b50"
+    },
+    {
+      "source": "/home/qian-qi/throughput-final-ci-observation-20261107/w1-range-v3-package/v2-reference/W1_COVERAGE.json",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/w1-v3/v2-reference/W1_COVERAGE.json",
+      "bytes": 18717,
+      "sha256": "d0da1651882ed694eae48303ec76155942b58f0d0658b1a709321b1bd8f702b7"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/history-sql-cow-addendum-v1/ADDENDUM.json",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/candidate/history-sql-cow-addendum-v1/ADDENDUM.json",
+      "bytes": 9233,
+      "sha256": "bf0cdc309ab9aa2da8429b3819dcd93cbec33efa8921f6987a7bdb985cf3e906"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/history-sql-cow-addendum-v1/README.md",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/candidate/history-sql-cow-addendum-v1/README.md",
+      "bytes": 7193,
+      "sha256": "51e44c32514843d9fdfdc08fc4d37cb9a79d3c87efb4f58ab74b0e864d537494"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/history-sql-cow-addendum-v1/SHA256SUMS",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/candidate/history-sql-cow-addendum-v1/SHA256SUMS",
+      "bytes": 156,
+      "sha256": "5ca3405c32efa4a9e13081cebbf9599053b5ec3518b98d9c884ff7c06dbfd6cb"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/integration/additional-evidence-v1/diff-check.stderr",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/candidate/integration/additional-evidence-v1/diff-check.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/integration/additional-evidence-v1/diff-check.stdout",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/candidate/integration/additional-evidence-v1/diff-check.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/integration/additional-evidence-v1/inventory-check.stderr",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/candidate/integration/additional-evidence-v1/inventory-check.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/integration/additional-evidence-v1/inventory-check.stdout",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/candidate/integration/additional-evidence-v1/inventory-check.stdout",
+      "bytes": 35,
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/integration/additional-evidence-v1/preflight.stderr",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/candidate/integration/additional-evidence-v1/preflight.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/integration/additional-evidence-v1/preflight.stdout",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/candidate/integration/additional-evidence-v1/preflight.stdout",
+      "bytes": 171,
+      "sha256": "b9b4fc9fa721067b07b18744eda9f748c5ce9b84d4349950179d9386357db2b0"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/integration/additional-evidence-v1/receipt.json",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/candidate/integration/additional-evidence-v1/receipt.json",
+      "bytes": 94684,
+      "sha256": "a7c59bbbb2821b4c96fbeaf26c3021368a12720536bf5ffd73037335ed046dff"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/integration/additional-evidence-v1/repository-check.stderr",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/candidate/integration/additional-evidence-v1/repository-check.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/integration/additional-evidence-v1/repository-check.stdout",
+      "destination": "evidence/pon-business-gates-819309-final-20261107/candidate/integration/additional-evidence-v1/repository-check.stdout",
+      "bytes": 307,
+      "sha256": "d150562d9ccb7ab609129cc0452e2300bb381d1087e56091de4ed75225ccdd2c"
+    }
+  ],
+  "file_count": 68,
+  "total_bytes": 6772220
+}

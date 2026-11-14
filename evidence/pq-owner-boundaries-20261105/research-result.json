@@ -1,0 +1,328 @@
+{
+  "checkout_head": "dbc24913e9c23f2359dd22ff9b01243877a6dd4d",
+  "target_research_source": "ef1fa4d48ab9894f3d7a4b1c797ca9e7e490b155",
+  "scope": "13 research and component-budget suites; no native, WAN, QROM theorem or independent deployment acceptance",
+  "tests_run": 230,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "seconds": 156.849799436,
+  "failed_ids": [],
+  "error_ids": [],
+  "inputs": [
+    {
+      "path": "config/pon/devnet-v1.json",
+      "bytes": 1964,
+      "sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4",
+      "git_blob": "a60f403b2f0e7343aed61170ca2aef875a787790"
+    },
+    {
+      "path": "config/pon/ledger-v1.json",
+      "bytes": 7793,
+      "sha256": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a",
+      "git_blob": "f7d8dba05cd0267b716834d76774a7ce94a1276b"
+    },
+    {
+      "path": "config/pon/model-family-v1.json",
+      "bytes": 1383,
+      "sha256": "30b250db074e7fbb5776c1474371258a6110cc1742e0e9970232a799ab790ca1",
+      "git_blob": "9a931f21ca86563cf7e5c6415acd20a0ced7da68"
+    },
+    {
+      "path": "config/pon/work-profile-v1.json",
+      "bytes": 1596,
+      "sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880",
+      "git_blob": "54e43139d3691b62f76f9e8976e1d2a974e8524b"
+    },
+    {
+      "path": "evidence/pon-w1-transparent-profile-20261104/security-map.json",
+      "bytes": 30208,
+      "sha256": "fff5548201e366565b22e93b6dd9b4436691e4dcb3bf6744075a60d2d0de5cfe",
+      "git_blob": "0888ef42a6d71a40fc58dc67f99dae1cd501c31c"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/contract_wire.py",
+      "bytes": 8924,
+      "sha256": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6",
+      "git_blob": "37f62b2f0913e372bc1c75fed2cd3a3e1267870b"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/experiments/parallel_variable_ohie_campaign.py",
+      "bytes": 15187,
+      "sha256": "c26cbc28ef617f8a1531447e8f1fc5961e81a91733794945a5c54c0265e1502a",
+      "git_blob": "9173eef5470760ffbb23d3c4141cdb3b9cfc8445"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/experiments/quantum_adversarial_campaign.py",
+      "bytes": 16641,
+      "sha256": "84c05396744e67b37547d36ae7bbd017a4ad011b5cc726142c63fd080176b5df",
+      "git_blob": "c8ab59bf8bd9158acb7cfa8b737f3479f7fea310"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/experiments/quantum_daa_campaign.py",
+      "bytes": 10912,
+      "sha256": "d8c4aabe5f5132cc4c86d06e2acb729453850415960bddc35f1d189c22aa87e6",
+      "git_blob": "6d17b4a4888d31efca7c80f4fb3c11f811ff4ec8"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/experiments/quantum_network_campaign.py",
+      "bytes": 12517,
+      "sha256": "72abd0bed908e1a5e0f714cd3e6ff4dc85f252fe8ad67f0e081a5cfbac9ce645",
+      "git_blob": "a7b51838a80c39cb521550cd512f0023b9325f23"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/experiments/quantum_resource_clock_campaign.py",
+      "bytes": 10806,
+      "sha256": "d8db66393f665edc40a2dbba899223c4546ca6e878417fe4a5add359d04de4f1",
+      "git_blob": "3508cac9d629a4d357735d1d35d8ea780626b8dd"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/experiments/w1_quantum_oracle_campaign.py",
+      "bytes": 16753,
+      "sha256": "b3a0cd0916a1e17cff3a011c6942acae7b05aa053aefbc2a882bfe4f63012d0a",
+      "git_blob": "c514b206cce772b5e0880819a46722b88e5e86cb"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/experiments/w1_restricted_oracle_campaign.py",
+      "bytes": 12461,
+      "sha256": "876c732404602439117aaec1b100409501c245129bc55885d1886877e170f6f5",
+      "git_blob": "4b1b1a2ab5a1d4cdc664b58255180673e4d4c556"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/fast_daa_reference_component.py",
+      "bytes": 7525,
+      "sha256": "a4f10c2929e9ff511ced9db125a7a10f1623105cd05f00af4ef94267eb598f47",
+      "git_blob": "544b0945834ff5a0342df8ea74ff491064c7e1e8"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/parallel_variable_ohie.py",
+      "bytes": 47371,
+      "sha256": "9ae2a58663f44d63d43ef639d0093021a15fa9507fe83cbfa811d369cd6a1155",
+      "git_blob": "f6a861917022e72f486d6c1f9ea50bbdd3ed30ea"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/quantum_adversarial_search.py",
+      "bytes": 11210,
+      "sha256": "1d6833b0cc52abc549e6169d8da70c774a3f779d7ce0d7f6381590d37e096387",
+      "git_blob": "ec1cfc9178e8fc8d37cce43cf6f8dfa95089fb8c"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/quantum_daa_model.py",
+      "bytes": 16888,
+      "sha256": "4dd08a40f9719b6a8e310c65b63fc3af44b6d4fb6a6db83af296600334da747b",
+      "git_blob": "df3a050b6f8ae84991a614ee7fd9deb7ff358825"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/quantum_network_sim.py",
+      "bytes": 60687,
+      "sha256": "a9a0980f25dda02960d0b5dae0269e1de1190287df66144b32965ab80d46dad7",
+      "git_blob": "582dee64057b81edbacc477c2eb285ee162bc61a"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/quantum_oracle_resources.py",
+      "bytes": 27502,
+      "sha256": "72879d40ff1583b514cb43ab10f1fd69edb60522f9c67997dfd200747977279f",
+      "git_blob": "e903407e792b77db97878e29e8c04b1d8994ae0e"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/quantum_resource_clock.py",
+      "bytes": 15682,
+      "sha256": "8d7257c315da4590e463b6bdb49434d284c0239681d6d8e50759dafda42c456a",
+      "git_blob": "50cc314bd4e15232889d752fb70b59289f1418d2"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/reference.py",
+      "bytes": 4753,
+      "sha256": "5c5e7cba07709ff6fd390eb7eea3e9db1e9d588809a9ad6a06a9884b8856aa71",
+      "git_blob": "76f61ae20aa924ce2df2ebfa0029d8b9b3cce04c"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/reversible_components.py",
+      "bytes": 23039,
+      "sha256": "f518669b0b4ac41a442986ff779da618227b375ef69bdb17db0eacc505908fe0",
+      "git_blob": "721f7efbbf9a7626b7f2971bcd3e8985da79a31c"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_fast_daa_reference_component.py",
+      "bytes": 7377,
+      "sha256": "0fe5c36c5d8ed6b4da7283add817875e93d7c6babbe95fb6f842a66cb22447ef",
+      "git_blob": "f6f0c6e58e5d0fb5f41356ad15b828244a3c7e15"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_parallel_variable_ohie.py",
+      "bytes": 24889,
+      "sha256": "563191033d4e2be366acfcaf7d786cd0e975dc6da6fe2cd272269de7e558ed0e",
+      "git_blob": "3f5f510024df697910520460879b60b8f4bc8122"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_quantum_adversarial_search.py",
+      "bytes": 13988,
+      "sha256": "d6f5e0b77909aa0c898fb073fae4b70c88e27f370811c8008e2766d7f252984a",
+      "git_blob": "b88dfbda888766d6a7f63c2596d2b561d227d79d"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_quantum_candidate_check_clock.py",
+      "bytes": 4924,
+      "sha256": "ce27e580c57d17679dbc7a66d0137ec7936ca6d2328149dfb3616cb71473d025",
+      "git_blob": "5aea3b1ea4f3edf1d717fd5fc7bbeb6655760fc1"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_quantum_daa_model.py",
+      "bytes": 14353,
+      "sha256": "9c171c57cdf3260a5bcd2c1faf488f655e9bafe0114cb7dc387bf8c1436e4949",
+      "git_blob": "7eb237821dade4be41ef6872624a539ea716255f"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_quantum_network_sim.py",
+      "bytes": 36937,
+      "sha256": "6b0ff17dabaab2bbd62ef71aae7f82117f01fdbb0d9f7e15cf596249f32bbdad",
+      "git_blob": "7fae9b900d0598efde22f38bc8631e2538c76ec6"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_quantum_oracle_resources.py",
+      "bytes": 18007,
+      "sha256": "0c930e1f86fd4a3f8534a14fe418c83dfd5099b114272eb5de3e9866f95f54ef",
+      "git_blob": "c7e5ebd5111b7e4b303e9d9761c51d072f5fe802"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_quantum_resource_clock.py",
+      "bytes": 14323,
+      "sha256": "e9046a27c18bcd8ae720f0942640388ec0578c009ae69909ff835a67234cc40e",
+      "git_blob": "8fbb0bdd76f7dff92f1e335ded4e60c0106101e2"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_reversible_components.py",
+      "bytes": 8862,
+      "sha256": "9e16585a34932212305b78f8719013672f7c3eba781d2adb227612e87cb210ea",
+      "git_blob": "4c6803d96db2eef9751e707aba044ae2f619c96b"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_w1_quantum_oracle.py",
+      "bytes": 16978,
+      "sha256": "3e1ed86090092e59da120916f69e923dd2a88c6caedf740ea0585c3f06085c78",
+      "git_blob": "b19052928e1a0fcf2a9fd45719355926e0d3e10c"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_w1_quantum_restricted_oracle.py",
+      "bytes": 11225,
+      "sha256": "6d3ebffc20dc2a1dada6e03841a5fd387fe7d6164a30eac5eb6000c052e6e74f",
+      "git_blob": "8f63c0ceb2335e92ccc60be81af000c4fe862dd1"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/vectors/fast-daa-author-slides-retarget-v1.json",
+      "bytes": 3538,
+      "sha256": "652b5841df7625d2f3011b9a2eb59015fb546c73fc0a2283a1a2bee8f18fb4a8",
+      "git_blob": "7301aeaf0e6effdbcc81299ae3a6d921611e9e80"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/vectors/header.bin",
+      "bytes": 318,
+      "sha256": "af1eb43700a2ac269c7360e21acd6be5f21f9d7e0400b4a62e07f4ee6b12e71b",
+      "git_blob": "da90d3ab6d55d2f8496f3005c14a65dd2d22f8df"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/vectors/quantum-daa-asert-bchn-v1.json",
+      "bytes": 6993,
+      "sha256": "7412b08ebb1bbdfbdc6d2d6debeb006a8d1375e6a19061b11cc21f70fa1adb7d",
+      "git_blob": "d8e23bb1d9d1128bcf5354d5e405e4f400db922e"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/vectors/work.bin",
+      "bytes": 49188,
+      "sha256": "35de8899201fd8a30f32f440d2e9145b4fef867d0d331efc271de1f1be822fc0",
+      "git_blob": "22328d115fe159c183bea1f2d6a5920a94acc097"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_marked_domain.py",
+      "bytes": 17332,
+      "sha256": "1a34e85ad780dc89af40f8dfe31ab310fd2d289473bb3473d347c7f8fc347460",
+      "git_blob": "2ac5f5b1bec12e14a8098f8ff032a0d1f6380054"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_quantum_oracle.py",
+      "bytes": 37767,
+      "sha256": "5a1a250680299561cb83b0b7d17ab57cf180e64277f981f5130cdf04e70aeb99",
+      "git_blob": "f8a14f707e8088488470cd0b2d211ba30aa01676"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_quantum_primitives.py",
+      "bytes": 7191,
+      "sha256": "1d1f0a800e24e1d82aab1794ec0cf207ed845e7a7080bacd41b0d0c575f98ac1",
+      "git_blob": "2326123599c31f55e9b957967591bc4caf3a4fa6"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_quantum_restricted_oracle.py",
+      "bytes": 10893,
+      "sha256": "b590ed91d491577c494a667a9271410b420dc35b7088705ef99982c2abd3b702",
+      "git_blob": "0797be9cb0e97433a74d04f24fbe617bad4ab259"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/work_oracle.py",
+      "bytes": 2944,
+      "sha256": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18",
+      "git_blob": "9cbfccd2d50af48fc43522b967ffdfb1f45ec098"
+    },
+    {
+      "path": "scripts/ci/pq_quantum_daa_scenarios.py",
+      "bytes": 8050,
+      "sha256": "09a1351c726dd410bb436f68c45300fdb3d74dfe516cdb697125008d92b55d46",
+      "git_blob": "0c1d7c0785edee2c588d24301df6399c47eb0593"
+    },
+    {
+      "path": "scripts/ci/test_pq_quantum_daa_scenarios.py",
+      "bytes": 4684,
+      "sha256": "a72bb7d11a3aa9937c9752f59c2736f9343a44015f7f77ec8a13a25b4d256aa8",
+      "git_blob": "d86317801876961ed68e22c1134305c3749a615e"
+    },
+    {
+      "path": "scripts/ci/test_w1_security_budget.py",
+      "bytes": 11485,
+      "sha256": "ac4ddaaf0d82e4bd848ff804990895b38d1fd18539f4d7b7e4baa23886563912",
+      "git_blob": "08857d97914d342ca644e119b8b1beaf6111af31"
+    },
+    {
+      "path": "scripts/pon_daa_schedule_reader.py",
+      "bytes": 16896,
+      "sha256": "8a3d3f81dfc9a5393294595bf4ae14a8e716a56c624106b461697e3c097b526d",
+      "git_blob": "daff997555e0c3840087f33eccb549dab01a0727"
+    },
+    {
+      "path": "scripts/w1_security_budget.py",
+      "bytes": 19786,
+      "sha256": "1b274a42bf5da33af02a27312bbe9058fd5805cc1c260ced3c86b5b59a382e61",
+      "git_blob": "53707abbc95a76f478a11d76a07a05ff90075c13"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "bytes": 104121,
+      "sha256": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03",
+      "git_blob": "ce1608248d2ee67ed8f5d82a2c5f15942689139b"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs",
+      "bytes": 13531,
+      "sha256": "95944c121362223f43f5d1cea61972ce65330a65ae36903255d8b3fdead58727",
+      "git_blob": "89165df40fea479fc73a5b5ce8d2fc0262ccd1f6"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/consensus.rs",
+      "bytes": 20098,
+      "sha256": "a5600aeb8287cce30ae3075b675082df4e6e5569a80f23e9a2e381f8202a8f62",
+      "git_blob": "989ac5f08b8e4f707cda613617fd5245eb6a6463"
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/pon_growth.rs",
+      "bytes": 3760,
+      "sha256": "37b8c818e6dd7341b25cd3c1e66a8b5fe0aecca2c60201272a9a2551db147d5f",
+      "git_blob": "6b556163921abcea93513759125022c28e3689fc"
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+      "bytes": 32354,
+      "sha256": "be816ee5b209098fa790d6e190d1d9c659634ac22d58b95c83dc8b49899c70cd",
+      "git_blob": "9333ce92c6ba130dd182538bfd8f69ec289acc83"
+    }
+  ],
+  "production_qualified": false,
+  "security_theorem": false
+}

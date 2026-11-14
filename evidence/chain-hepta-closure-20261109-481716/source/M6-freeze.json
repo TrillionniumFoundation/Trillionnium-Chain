@@ -1,0 +1,185 @@
+{
+  "schema": "chain-hepta-source-freeze-v1",
+  "source_label": "M6",
+  "commit": "4dbeae12fa756fd662cc074390fcb628abe970ad",
+  "tree": "1943c3e69e3a717ce99d91aabc00eba4d37516f1",
+  "parent": "3ad605ecdac4b3b123dff83c1cb7458430acd776",
+  "branch": "refs/heads/fix/chain-hepta-closure-candidate-20261109-481716",
+  "observed_at_utc": "2026-11-09T17:15:05.064113+00:00",
+  "changed_paths": [
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "trillionnium/crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs"
+  ],
+  "cargo_lock_sha256": "f9e57d73899c5d9fabd4f5b4fedf45256b8db4efb448d15680d070bbcfcb30bd",
+  "bundle": {
+    "path": "/workspace/scratch/481716a90d06/verification/M6-source.bundle",
+    "bytes": 3338,
+    "sha256": "ab7cb922d435ae3904615735244bd1abb06851e2b0f76e24b5383ddf6fc9149b",
+    "prerequisite": "3ad605ecdac4b3b123dff83c1cb7458430acd776"
+  },
+  "production_files_unchanged": true,
+  "original_M5_failure_cause": "unestablished",
+  "journal_test_blob": "5882265bd8bfd7c982380270b0779803275e7be3",
+  "journal_test_sha256": "4aeac967ab618226d2ea5d20e8c7fd7d681dd00962573b2425cec712609e4215",
+  "commands": [
+    {
+      "name": "head-before",
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "returncode": 0
+    },
+    {
+      "name": "branch-before",
+      "argv": [
+        "git",
+        "symbolic-ref",
+        "HEAD"
+      ],
+      "returncode": 0
+    },
+    {
+      "name": "preflight-dev",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "returncode": 0
+    },
+    {
+      "name": "changed-paths",
+      "argv": [
+        "git",
+        "diff",
+        "--name-only"
+      ],
+      "returncode": 0
+    },
+    {
+      "name": "production-files-diff",
+      "argv": [
+        "git",
+        "diff",
+        "HEAD",
+        "--",
+        "trillionnium/crates/trnm-pon-node/src/public_submit/pq/files.rs",
+        "trillionnium/crates/trnm-pon-node/src/public_submit/pq/journal.rs",
+        "trillionnium/Cargo.lock"
+      ],
+      "returncode": 0
+    },
+    {
+      "name": "diff-check",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "returncode": 0
+    },
+    {
+      "name": "stage",
+      "argv": [
+        "git",
+        "add",
+        "--",
+        "config/pon/pq-cross-branch-corpus-v1.json",
+        "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+        "trillionnium/crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs"
+      ],
+      "returncode": 0
+    },
+    {
+      "name": "staged-paths",
+      "argv": [
+        "git",
+        "diff",
+        "--cached",
+        "--name-only"
+      ],
+      "returncode": 0
+    },
+    {
+      "name": "preflight-staged",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--staged"
+      ],
+      "returncode": 0
+    },
+    {
+      "name": "write-tree",
+      "argv": [
+        "git",
+        "write-tree"
+      ],
+      "returncode": 0
+    },
+    {
+      "name": "commit-tree",
+      "argv": [
+        "git",
+        "commit-tree",
+        "1943c3e69e3a717ce99d91aabc00eba4d37516f1",
+        "-p",
+        "3ad605ecdac4b3b123dff83c1cb7458430acd776"
+      ],
+      "returncode": 0
+    },
+    {
+      "name": "update-branch",
+      "argv": [
+        "git",
+        "update-ref",
+        "refs/heads/fix/chain-hepta-closure-candidate-20261109-481716",
+        "4dbeae12fa756fd662cc074390fcb628abe970ad",
+        "3ad605ecdac4b3b123dff83c1cb7458430acd776"
+      ],
+      "returncode": 0
+    },
+    {
+      "name": "status-after",
+      "argv": [
+        "git",
+        "status",
+        "--porcelain"
+      ],
+      "returncode": 0
+    },
+    {
+      "name": "bundle-create",
+      "argv": [
+        "git",
+        "bundle",
+        "create",
+        "/workspace/scratch/481716a90d06/verification/M6-source.bundle",
+        "refs/heads/fix/chain-hepta-closure-candidate-20261109-481716",
+        "^3ad605ecdac4b3b123dff83c1cb7458430acd776"
+      ],
+      "returncode": 0
+    },
+    {
+      "name": "bundle-verify",
+      "argv": [
+        "git",
+        "bundle",
+        "verify",
+        "/workspace/scratch/481716a90d06/verification/M6-source.bundle"
+      ],
+      "returncode": 0
+    },
+    {
+      "name": "journal-test-blob",
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD:trillionnium/crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs"
+      ],
+      "returncode": 0
+    }
+  ]
+}

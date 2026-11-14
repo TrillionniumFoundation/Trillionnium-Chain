@@ -1,0 +1,700 @@
+{
+  "aggregate_green_campaign": false,
+  "all_algorithm_cost_bound": null,
+  "authority": {
+    "adoption_authorized": false,
+    "consensus_credit_authorized": false,
+    "payment_authorized": false,
+    "production_activation": false
+  },
+  "corrected_original_entries": [
+    "scripts/ci/test_ci_source_integrity.py",
+    "scripts/ci/check_repository.py"
+  ],
+  "executions": [
+    {
+      "commands": [
+        {
+          "argv": [
+            "bash",
+            "scripts/project-preflight.sh",
+            "--audit"
+          ],
+          "exit_code": 0
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/refresh_distributed_source_inventory.py",
+            "--check"
+          ],
+          "exit_code": 0
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/check_pq_research_integration.py"
+          ],
+          "exit_code": 0
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/check_ci_contract.py"
+          ],
+          "exit_code": 0
+        },
+        {
+          "argv": [
+            "python3",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "formal/pon-nakamoto-v1",
+            "-p",
+            "test_four_propositions_w1_v2.py",
+            "-v"
+          ],
+          "exit_code": 0
+        },
+        {
+          "argv": [
+            "python3",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "formal/pon-nakamoto-v1",
+            "-p",
+            "test_four_propositions_v1.py",
+            "-v"
+          ],
+          "exit_code": 0
+        },
+        {
+          "argv": [
+            "python3",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "formal/pon-nakamoto-v1",
+            "-p",
+            "test_demand_evidence.py",
+            "-v"
+          ],
+          "exit_code": 0
+        },
+        {
+          "argv": [
+            "python3",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "formal/pon-nakamoto-v1",
+            "-p",
+            "test_work_utility.py",
+            "-v"
+          ],
+          "exit_code": 0
+        },
+        {
+          "argv": [
+            "python3",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "formal/pon-nakamoto-v1",
+            "-p",
+            "test_upgrade_policy.py",
+            "-v"
+          ],
+          "exit_code": 0
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/test_ci_contract.py"
+          ],
+          "exit_code": 0
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/test_verify_ci_source.py"
+          ],
+          "exit_code": 2
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/test_w1_qrom_current_implementation_audit.py"
+          ],
+          "exit_code": 0
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/test_w1_qrom_current_ci.py"
+          ],
+          "exit_code": 0
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/test_w1_lifetime_current_observation.py"
+          ],
+          "exit_code": 0
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/test_w1_qrom_closure_current_controls.py"
+          ],
+          "exit_code": 0
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/test_w1_stark_field_certificates.py"
+          ],
+          "exit_code": 0
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/test_w1_stark_route_audit.py"
+          ],
+          "exit_code": 0
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/test_w1_fri_ideal_sampler.py"
+          ],
+          "exit_code": 0
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/test_w1_fri_query_replay.py"
+          ],
+          "exit_code": 0
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/w1_stark_field_certificates.py"
+          ],
+          "exit_code": 0
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/w1_stark_route_audit.py"
+          ],
+          "exit_code": 0
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/w1_fri_query_replay.py",
+            "--ideal-sampler-law"
+          ],
+          "exit_code": 0
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/w1_qrom_current_implementation_audit.py"
+          ],
+          "exit_code": 0
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/w1_lifetime_current_observation.py"
+          ],
+          "exit_code": 0
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/check_markdown_links.py"
+          ],
+          "exit_code": 2
+        }
+      ],
+      "exit_code": 1,
+      "method_observations": [
+        {
+          "argv": [
+            "bash",
+            "scripts/project-preflight.sh",
+            "--audit"
+          ],
+          "observed_method_counts": []
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/refresh_distributed_source_inventory.py",
+            "--check"
+          ],
+          "observed_method_counts": []
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/check_pq_research_integration.py"
+          ],
+          "observed_method_counts": []
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/check_ci_contract.py"
+          ],
+          "observed_method_counts": []
+        },
+        {
+          "argv": [
+            "python3",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "formal/pon-nakamoto-v1",
+            "-p",
+            "test_four_propositions_w1_v2.py",
+            "-v"
+          ],
+          "observed_method_counts": [
+            17
+          ]
+        },
+        {
+          "argv": [
+            "python3",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "formal/pon-nakamoto-v1",
+            "-p",
+            "test_four_propositions_v1.py",
+            "-v"
+          ],
+          "observed_method_counts": [
+            21
+          ]
+        },
+        {
+          "argv": [
+            "python3",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "formal/pon-nakamoto-v1",
+            "-p",
+            "test_demand_evidence.py",
+            "-v"
+          ],
+          "observed_method_counts": [
+            29
+          ]
+        },
+        {
+          "argv": [
+            "python3",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "formal/pon-nakamoto-v1",
+            "-p",
+            "test_work_utility.py",
+            "-v"
+          ],
+          "observed_method_counts": [
+            15
+          ]
+        },
+        {
+          "argv": [
+            "python3",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "formal/pon-nakamoto-v1",
+            "-p",
+            "test_upgrade_policy.py",
+            "-v"
+          ],
+          "observed_method_counts": [
+            23
+          ]
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/test_ci_contract.py"
+          ],
+          "observed_method_counts": [
+            169
+          ]
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/test_verify_ci_source.py"
+          ],
+          "observed_method_counts": []
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/test_w1_qrom_current_implementation_audit.py"
+          ],
+          "observed_method_counts": [
+            14
+          ]
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/test_w1_qrom_current_ci.py"
+          ],
+          "observed_method_counts": [
+            13
+          ]
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/test_w1_lifetime_current_observation.py"
+          ],
+          "observed_method_counts": [
+            14
+          ]
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/test_w1_qrom_closure_current_controls.py"
+          ],
+          "observed_method_counts": [
+            31
+          ]
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/test_w1_stark_field_certificates.py"
+          ],
+          "observed_method_counts": [
+            16
+          ]
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/test_w1_stark_route_audit.py"
+          ],
+          "observed_method_counts": [
+            28
+          ]
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/test_w1_fri_ideal_sampler.py"
+          ],
+          "observed_method_counts": [
+            7
+          ]
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/test_w1_fri_query_replay.py"
+          ],
+          "observed_method_counts": [
+            13
+          ]
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/w1_stark_field_certificates.py"
+          ],
+          "observed_method_counts": []
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/w1_stark_route_audit.py"
+          ],
+          "observed_method_counts": []
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/w1_fri_query_replay.py",
+            "--ideal-sampler-law"
+          ],
+          "observed_method_counts": []
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/w1_qrom_current_implementation_audit.py"
+          ],
+          "observed_method_counts": []
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/w1_lifetime_current_observation.py"
+          ],
+          "observed_method_counts": []
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/check_markdown_links.py"
+          ],
+          "observed_method_counts": []
+        }
+      ],
+      "receipt": "exact-49e7aa8a-controls.json",
+      "status": "command_failed"
+    },
+    {
+      "commands": [
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/test_ci_source_integrity.py",
+            "-v"
+          ],
+          "exit_code": 0
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/check_repository.py"
+          ],
+          "exit_code": 0
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/w1_qrom_current_ci.py",
+            "named",
+            "--repo-root",
+            "/home/qq/work/chain-four-qrom-composed-20261110",
+            "--out",
+            "/home/qq/work/chain-four-qrom-composed-20261110-checks/current-implementation"
+          ],
+          "exit_code": 0
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/w1_qrom_current_ci.py",
+            "drift",
+            "--repo-root",
+            "/home/qq/work/chain-four-qrom-composed-20261110",
+            "--out",
+            "/home/qq/work/chain-four-qrom-composed-20261110-checks/current-implementation"
+          ],
+          "exit_code": 0
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/w1_qrom_closure_current_controls.py",
+            "run",
+            "--roster-sha256",
+            "f5292042233ba22fad6af1b7d89c0b57298038e9b98558d360b8feae50ecdfed",
+            "--output",
+            "/home/qq/work/chain-four-qrom-composed-20261110-checks/current-closure"
+          ],
+          "exit_code": 0
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/w1_qrom_closure_current_controls.py",
+            "check",
+            "--roster-sha256",
+            "f5292042233ba22fad6af1b7d89c0b57298038e9b98558d360b8feae50ecdfed",
+            "--output",
+            "/home/qq/work/chain-four-qrom-composed-20261110-checks/current-closure"
+          ],
+          "exit_code": 0
+        }
+      ],
+      "exit_code": 0,
+      "method_observations": [
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/test_ci_source_integrity.py",
+            "-v"
+          ],
+          "observed_method_counts": [
+            43
+          ]
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/check_repository.py"
+          ],
+          "observed_method_counts": []
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/w1_qrom_current_ci.py",
+            "named",
+            "--repo-root",
+            "/home/qq/work/chain-four-qrom-composed-20261110",
+            "--out",
+            "/home/qq/work/chain-four-qrom-composed-20261110-checks/current-implementation"
+          ],
+          "observed_method_counts": [
+            28,
+            13,
+            14,
+            7,
+            13
+          ]
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/w1_qrom_current_ci.py",
+            "drift",
+            "--repo-root",
+            "/home/qq/work/chain-four-qrom-composed-20261110",
+            "--out",
+            "/home/qq/work/chain-four-qrom-composed-20261110-checks/current-implementation"
+          ],
+          "observed_method_counts": []
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/w1_qrom_closure_current_controls.py",
+            "run",
+            "--roster-sha256",
+            "f5292042233ba22fad6af1b7d89c0b57298038e9b98558d360b8feae50ecdfed",
+            "--output",
+            "/home/qq/work/chain-four-qrom-composed-20261110-checks/current-closure"
+          ],
+          "observed_method_counts": [
+            14,
+            16,
+            10,
+            22,
+            9,
+            8,
+            31
+          ]
+        },
+        {
+          "argv": [
+            "python3",
+            "scripts/ci/w1_qrom_closure_current_controls.py",
+            "check",
+            "--roster-sha256",
+            "f5292042233ba22fad6af1b7d89c0b57298038e9b98558d360b8feae50ecdfed",
+            "--output",
+            "/home/qq/work/chain-four-qrom-composed-20261110-checks/current-closure"
+          ],
+          "observed_method_counts": []
+        }
+      ],
+      "receipt": "exact-49e7aa8a-source-and-named.json",
+      "status": "command_succeeded"
+    }
+  ],
+  "files": {
+    "current-closure/named-controls.json": {
+      "bytes": 46343,
+      "sha256": "5b886545ef89090f54d3fecddc7b814cd7fadeffd244bf27b5ac4023c55c3289"
+    },
+    "current-implementation/historical-drift.json": {
+      "bytes": 2818,
+      "sha256": "62800de352f7211004f73cd6cc9ed2a42aad68d662a806609f90870e12742b44"
+    },
+    "current-implementation/historical-on-current.stderr.log": {
+      "bytes": 388,
+      "sha256": "cf0e8063b0192bcdd80c6db442548e8e6ef8ffa105a4f7b9c369f2f6d72a5858"
+    },
+    "current-implementation/historical-on-current.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "current-implementation/named-tests.json": {
+      "bytes": 38133,
+      "sha256": "5e7c907a777f46b2a16dea30c21f30084cad39f8f31f04e23f07c679c33cdc9f"
+    },
+    "current-implementation/required-tests.json": {
+      "bytes": 9892,
+      "sha256": "e48c23d4d6737d0143798a5c93a194310ebdf7ba1a0cb87bdf3a36af65b8f581"
+    },
+    "exact-49e7aa8a-controls.json": {
+      "bytes": 1923,
+      "sha256": "d77e42764f39e52098098afa74ad9b0feadca4727bb6c11eaaa9fd5212dea51a"
+    },
+    "exact-49e7aa8a-controls.log": {
+      "bytes": 257286,
+      "sha256": "ad9c03899a1082b2665b8e46d083bd8babae78b4a03edf364e5a9f95335ebfc4"
+    },
+    "exact-49e7aa8a-source-and-named.json": {
+      "bytes": 3265,
+      "sha256": "12a89bf08b20a1757ad4ee2c5788ae72ad35c120f3288a9726693a28c2df7063"
+    },
+    "exact-49e7aa8a-source-and-named.log": {
+      "bytes": 46809,
+      "sha256": "d7a4cb588d79c57a4a1121836c6203982ca13bfd245efcd7a6458a65d5b21c1a"
+    },
+    "precommit-whitespace-original.log": {
+      "bytes": 11204,
+      "sha256": "b33f9b381de18cd6f58d81fe5a61e92429bf3f84b608e9ad88501b10f3606b20"
+    }
+  },
+  "first_driver_errors": [
+    "nonexistent test_verify_ci_source.py",
+    "nonexistent check_markdown_links.py"
+  ],
+  "four_proven": {
+    "computation": false,
+    "demand": false,
+    "sybil": false,
+    "utility": false
+  },
+  "hosted_head": "NOT_OBSERVED_FOR_NEW_CANDIDATE",
+  "hosted_prospective_merge": "NOT_OBSERVED_FOR_NEW_CANDIDATE",
+  "native_checks": "NOT_RUN on this composed candidate; ai395 PATH has no cargo/rustc/rustfmt",
+  "ordered_parents": [
+    "6ab14e5f3cb642e685196a52942d9235eff2f4a0",
+    "c213cace86ddf1874d6335ba74b8690d5c3a1599"
+  ],
+  "overlapping_method_counts_must_not_be_summed": true,
+  "schema": "TRNM-FOUR-QROM-COMPOSITION-OBSERVATION1",
+  "source": "49e7aa8a1c4021e073090b13278bf2fc38fed523",
+  "tracked_bytes": 2540418272,
+  "tracked_entries": 26592,
+  "tree": "5254a29d1245f5fbb7d62f8fe75f2039a3f8b437",
+  "unknown_gpu_cost_preserved": true
+}

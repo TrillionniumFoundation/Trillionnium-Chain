@@ -1,0 +1,25 @@
+{
+  "command": [
+    "/usr/bin/git",
+    "diff",
+    "--check",
+    "690f710c1b6808787996e86aa4c36bd53e1f3939",
+    "HEAD"
+  ],
+  "elapsed_seconds": 0.004645586013793945,
+  "exit_code": 0,
+  "head": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+  "independent_business_acceptance": false,
+  "label": "diff-whitespace",
+  "schema": "pon-publication-static-gate-v1",
+  "started_unix_seconds": 1794068084.5841436,
+  "stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "unittest_summaries": []
+}

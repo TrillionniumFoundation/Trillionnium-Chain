@@ -1,0 +1,218 @@
+{
+  "recorded_at_utc": "2026-11-09T14:03:09.587350+00:00",
+  "source_commit": "44e96b1a841a50613d0b93484c5e576caec9f81f",
+  "command": [
+    "python3",
+    "scripts/ci/pq_proof_profile_binding.py",
+    "--expected-profile-descriptor-sha256",
+    "da0c97f1c549e10ecfc066f6b0a9721147dc3d430eab6f53d502cbc7b91dd48c"
+  ],
+  "returncode": 0,
+  "native_tests_executed": false,
+  "outputs": {
+    "stdout": {
+      "path": "/workspace/scratch/481716a90d06/pon_pq_patch/integration-review/profile-m2-candidate-pin.stdout.log",
+      "bytes": 8272,
+      "sha256": "e19e35919217ebe95829cb61092ac2b79526e62dd7fdac1d58c030593dedd998"
+    },
+    "stderr": {
+      "path": "/workspace/scratch/481716a90d06/pon_pq_patch/integration-review/profile-m2-candidate-pin.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "report": {
+    "actual_lifetime_failure_bound": null,
+    "binding_manifest_sha256": "9154595097a2abe460f23e53ab96b3de5712702b156ada71fc5d2d65c337e424",
+    "candidate_profile_identity_matched": true,
+    "compiled_or_loaded_identity_verified": false,
+    "complete_dependency_closure_verified": false,
+    "composition_coverage_proved": false,
+    "excluded_proof_profiles": [
+      {
+        "parameters_or_bound_imported": false,
+        "profile_id": "TRNM-W1-FULL-PUBLIC-STARK-RESEARCH-P3-0.8.0-R1",
+        "shared_primitive_identity": "poseidon2-goldilocks-p3-0.8.0",
+        "source_sha256": "98876ea9e223f90079f69bd6f1f75f6a17b9988ed9412fdda8a16bc40367aebf"
+      },
+      {
+        "parameters_or_bound_imported": false,
+        "profile_id": "TRNM-W1-P3-SHA3-512-TAGGED-R1",
+        "shared_primitive_identity": "FIPS202/SHA3-512",
+        "source_sha256": "b6bf9e1d77e0e1711f3a8c667223afc5a7262b7658011d3fbbf6006ccd5b0847"
+      }
+    ],
+    "independent_source_authentication": false,
+    "native_proof_verification_performed": false,
+    "note": "A source/profile binding is not a security theorem. The native-PNW1 register and both P3 candidates supply no selected-profile failure bound; byte pins and endpoint equality do not authenticate a deployed implementation.",
+    "open_obligations": [
+      {
+        "id": "latest_theorem_version_equivalence",
+        "state": "UNRESOLVED"
+      },
+      {
+        "id": "complete_relation_and_compiler",
+        "state": "UNRESOLVED"
+      },
+      {
+        "id": "all_27_recursion_program_semantics",
+        "state": "UNRESOLVED"
+      },
+      {
+        "id": "control_padding_and_recursive_trace_size_reachability",
+        "state": "UNRESOLVED"
+      },
+      {
+        "id": "relaxed_rbr_knowledge_soundness",
+        "state": "UNRESOLVED"
+      },
+      {
+        "id": "committed_relation_monotonicity",
+        "state": "UNRESOLVED"
+      },
+      {
+        "id": "merkle_multi_extractability",
+        "state": "UNRESOLVED"
+      },
+      {
+        "id": "sponge_and_domain_separation_mapping",
+        "state": "UNRESOLVED"
+      },
+      {
+        "id": "fiat_shamir_challenge_and_salt_mapping",
+        "state": "UNRESOLVED"
+      },
+      {
+        "id": "finite_field_sampling_and_challenge_length",
+        "state": "UNRESOLVED"
+      },
+      {
+        "id": "sequential_adaptive_composition",
+        "state": "UNRESOLVED"
+      },
+      {
+        "id": "lifetime_global_quantum_budget",
+        "state": "UNRESOLVED"
+      },
+      {
+        "id": "concrete_enabled_features_and_debug_exclusion",
+        "state": "UNRESOLVED"
+      },
+      {
+        "id": "quantum_work_and_chainweight",
+        "state": "UNRESOLVED"
+      },
+      {
+        "id": "pq_signature_owner_authorization",
+        "state": "UNRESOLVED"
+      }
+    ],
+    "production_activation": false,
+    "schema": "trnm-pq-proof-profile-binding-result-v1",
+    "selected_identity": {
+      "field": {
+        "base_modulus": "2013265921",
+        "extension_degree": 4,
+        "extension_polynomial": "X^4 + 11"
+      },
+      "final_control_id": "7a8f24092c34ed3eb81b3d0a0b796c588c615d3488ef9e61c21dbd1e4b83ea6e",
+      "fri": {
+        "final_min_degree": 256,
+        "folding_factor": 16,
+        "inverse_rate": 4,
+        "queries": 50
+      },
+      "hash_suite": "poseidon2",
+      "image_id": [
+        1958252411,
+        3287394615,
+        1805488136,
+        1516578702,
+        78549041,
+        790278610,
+        301018785,
+        4279049364
+      ],
+      "sdk": "3.0.6",
+      "verifier_parameters_digest": "ece5e9b8ae2cd6ea6b1827b464ff0348f9a7f4decd269c0087fdfd75098da013"
+    },
+    "selected_input_observation_count": 29,
+    "selected_inputs_before_after_equal": true,
+    "selected_lifetime_budget": {
+      "accepted_statements_lifetime": null,
+      "adaptive_composition_bound": null,
+      "concrete_hash_to_ideal_oracle_error": null,
+      "hash_output_sigma_bits": null,
+      "max_fs_rounds_per_reduction": null,
+      "max_recursive_nodes_per_statement": null,
+      "min_verifier_randomness_bits": null,
+      "policy_adopted": false,
+      "quantum_queries_lifetime": null,
+      "rrbr_knowledge_error": null,
+      "target_total_failure_probability": null
+    },
+    "selected_profile_descriptor_sha256": "da0c97f1c549e10ecfc066f6b0a9721147dc3d430eab6f53d502cbc7b91dd48c",
+    "selected_profile_id": "trnm-w1-risc0-3.0.6-poseidon2-join-v2",
+    "source_binding_scope": "selected-project-and-fixture-files-only",
+    "source_files_sha256": {
+      "config/pon/pq-proof-profile-binding-v1.json": "9154595097a2abe460f23e53ab96b3de5712702b156ada71fc5d2d65c337e424",
+      "config/pon/pq128-lifetime-budget-v1.json": "639a283d352b713b1373161099649d251ed5c14172b71f6955a7ab22d2618719",
+      "config/pon/w1-qrom-implementation-current-v2.json": "e2c5377ac02c0ed47e7f69125fbcabe61072d42597b3208264abaa5be2961c78",
+      "evidence/pon-w1-full-v2-20261105/expected-artifacts.bin": "802adcdd951cfb4cd7271df22c3bca6af66fee9f40454c74f8b5ff2c98a1b683",
+      "evidence/pon-w1-full-v2-20261105/guest.bin": "25718312ec3c6f5219d832e3516adfb5f82983156f669c5e7daa15bd22d1798f",
+      "evidence/pon-w1-full-v2-20261105/header.bin": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "evidence/pon-w1-full-v2-20261105/input.bin": "67b74fa2f417c0240d974e5ecea410d2b68d97d6dde667603aeb4d7ce59036cb",
+      "evidence/pon-w1-full-v2-20261105/proof-result.json": "a2bbd9ed141b87823ea6d50322c0d65f706e32aca028d1b5ab19f1327c1194cc",
+      "evidence/pon-w1-full-v2-20261105/succinct.bin": "6c72828c9d05a62175e08fa3e7e1d0d5e85e785ad96b5beb5ec7a2e2490c26ee",
+      "evidence/pon-w1-qrom-implementation-20261107/upstream-sources.json.gz": "f6be3667106df6843f5f29c0954cdce8e2617da36c9c91a7a5198665675e0253",
+      "formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.lock": "3d6b7e7895169e638240a0ed835a5352d64a0ae44f4b56ba0a00acc2ec6b3865",
+      "formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.toml": "9ed358e1e24b58505d5d37e0a88ef3538b2c6146c3303a87c33b19208d667d25",
+      "formal/pon-nakamoto-v1/w1_hardened_verifier/src/profile.rs": "b4f4f35fc69f8846e465928052d1ee006d262d05baedfbce00703ea8fa11a6a9",
+      "formal/pon-nakamoto-v1/w1_hardened_verifier/src/wire.rs": "fae4f60cca4bcd5aff132935307d3ea11de194765c6e3050adfaf7f346ef9cf3",
+      "formal/pon-nakamoto-v1/w1_public_stark_research/src/proof_config.rs": "98876ea9e223f90079f69bd6f1f75f6a17b9988ed9412fdda8a16bc40367aebf",
+      "formal/pon-nakamoto-v1/w1_public_stark_research/src/tagged_sha3.rs": "b6bf9e1d77e0e1711f3a8c667223afc5a7262b7658011d3fbbf6006ccd5b0847",
+      "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock": "9756a0d8cb88c4f0e67f722dad933d30dcbe93d5bb2b6ca2be15f23fd0a3f2ef",
+      "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml": "65263e60248f29008ff098d5fcf1f573a19da5a40f87ecdaa6d3cd5063c104ba",
+      "formal/pon-nakamoto-v1/w1_v2_verifier/src/image.rs": "c972778fe557d3e1a23470423c46c899ade1633ba76cac48268129b2af5d1ddb",
+      "formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs": "5e102fcbe4881e3d163c7a8b65364304b14d080ae64f23b0d5032daa84208aa7",
+      "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/Cargo.lock": "03a3b7f6cc81a6e1678f2fd23b2b448f8f90931c258f4e66a7bcdc422447d2bf",
+      "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/Cargo.toml": "48f1c4580ff7de989bdcf1055d12ed5128b105994e653e6d11a593c029bd2037",
+      "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/src/main.rs": "c2db185d338be3ab7c6256239b750445e084547de742221517f9fc9f12711468",
+      "formal/pon-nakamoto-v1/w1_zkvm/relation/src/lib.rs": "aeee8bebc5b098744a34a568232fadb5a79963760d8e2e8b3fb6176683987322",
+      "formal/pon-nakamoto-v1/w1_zkvm/relation/src/v2.rs": "9f31aec3b6d7f376164b58f3ab2f89a191716a560235f73c692b390d1c9fa45b",
+      "scripts/w1_qrom_composition_budget.py": "4d3d6a3b8efcac266cfaf7fb2204a4f3b0482ea0ead2481b72617556f0771427",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work/artifacts.rs": "fd99053e94bb38b929b848898f4f2ad9f7d3ce33d48097e444337f6ed1d82919",
+      "trillionnium/crates/trnm-protocol/src/pon_wire.rs": "ee443e739da946fc023f119e7f3b882f373b3787820295b29b182ef0ee3ef83b"
+    },
+    "status": "PROFILE_BOUND_SECURITY_HOLD",
+    "system_lifetime_register": {
+      "arithmetic_imported": false,
+      "manifest_sha256": "639a283d352b713b1373161099649d251ed5c14172b71f6955a7ab22d2618719",
+      "profile_id": "pon-nakamoto-v1-pq-research-native-pnw1",
+      "relationship": "separate-native-system-experiment",
+      "selected_proof_profile_covered": false,
+      "source_revision": "66b7064be597039ce871b5b12ad5568850a2dd46",
+      "source_revision_bound": false,
+      "unknown_term_count": 8
+    },
+    "theorem_version": {
+      "evaluator_revision": "2026-01-01",
+      "evaluator_source": {
+        "bytes": 21292,
+        "path": "scripts/w1_qrom_composition_budget.py",
+        "sha256": "4d3d6a3b8efcac266cfaf7fb2204a4f3b0482ea0ead2481b72617556f0771427"
+      },
+      "latest_full_text_obtained": false,
+      "observation_date": "2026-11-09",
+      "official_latest_revision_observed": "2026-03-02",
+      "official_url": "https://eprint.iacr.org/2025/2166",
+      "version_equivalence_verified": false
+    },
+    "unregistered_selected_primitive_identities": [
+      "risc0-3.0.6/Poseidon2/BabyBear"
+    ],
+    "whole_chain_hash_query_scope_closed": false,
+    "whole_chain_pq_qualified": false
+  }
+}

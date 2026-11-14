@@ -1,0 +1,314 @@
+{
+  "environment.json": {
+    "file": "environment.json",
+    "encoding": "identity",
+    "raw_bytes": 1800,
+    "raw_sha256": "b00a484c3a10e22ad92008512d26cc9897994336257385b8141cf70c9d501871",
+    "stored_bytes": 1800,
+    "stored_sha256": "b00a484c3a10e22ad92008512d26cc9897994336257385b8141cf70c9d501871"
+  },
+  "native-00.log": {
+    "file": "native-00.log",
+    "encoding": "identity",
+    "raw_bytes": 2496,
+    "raw_sha256": "e242428c808ecfbea59c701620a88421146a75c631230472c39196ec42f46d30",
+    "stored_bytes": 2496,
+    "stored_sha256": "e242428c808ecfbea59c701620a88421146a75c631230472c39196ec42f46d30"
+  },
+  "native-01.log": {
+    "file": "native-01.log",
+    "encoding": "identity",
+    "raw_bytes": 1074,
+    "raw_sha256": "d41dbf9148ac583bab415aa3c10a534f0769ebb0667e8be21d9d890079e787e7",
+    "stored_bytes": 1074,
+    "stored_sha256": "d41dbf9148ac583bab415aa3c10a534f0769ebb0667e8be21d9d890079e787e7"
+  },
+  "native-02.log": {
+    "file": "native-02.log",
+    "encoding": "identity",
+    "raw_bytes": 2745,
+    "raw_sha256": "ff31c865860109ad0a8981a0b3db73a7af22be76d555a9f72e2d9ca4e85781a0",
+    "stored_bytes": 2745,
+    "stored_sha256": "ff31c865860109ad0a8981a0b3db73a7af22be76d555a9f72e2d9ca4e85781a0"
+  },
+  "native-commands.json": {
+    "file": "native-commands.json",
+    "encoding": "identity",
+    "raw_bytes": 1720,
+    "raw_sha256": "b4d6c583c4393d1713482bd8cdf99c3f43fbd363ee3b12555f0af028e4ec187f",
+    "stored_bytes": 1720,
+    "stored_sha256": "b4d6c583c4393d1713482bd8cdf99c3f43fbd363ee3b12555f0af028e4ec187f"
+  },
+  "rust-00.log": {
+    "file": "rust-00.log.gz",
+    "encoding": "gzip",
+    "raw_bytes": 849929,
+    "raw_sha256": "3cd711972f7cea5df7ced25f87dd90dcf5b124f929aa87bf89aa5e09a1488b59",
+    "stored_bytes": 67233,
+    "stored_sha256": "4c960145f557926b5ac314d0407e28d46b9e801807f40debf12fd6e7ed75dc8a"
+  },
+  "rust-01.log": {
+    "file": "rust-01.log.gz",
+    "encoding": "gzip",
+    "raw_bytes": 865079,
+    "raw_sha256": "acf88563f7968b0d4f11e607bc43c3005d03ce87a33567e4197278bf4fe83913",
+    "stored_bytes": 68306,
+    "stored_sha256": "9cb97e1f208a9e6fa7d649b2af79a6defc33db3d820b19da1674de5e22857a26"
+  },
+  "rust-02.log": {
+    "file": "rust-02.log",
+    "encoding": "identity",
+    "raw_bytes": 149,
+    "raw_sha256": "08ea8a2d41ce1af28117f7315273884295d0c8f16717dcb4959e16b90b010572",
+    "stored_bytes": 149,
+    "stored_sha256": "08ea8a2d41ce1af28117f7315273884295d0c8f16717dcb4959e16b90b010572"
+  },
+  "rust-03.log": {
+    "file": "rust-03.log.gz",
+    "encoding": "gzip",
+    "raw_bytes": 734788,
+    "raw_sha256": "28b108f24b3a553938a6889aab44289e7b49593edd4937bf947cb628844dbd26",
+    "stored_bytes": 59390,
+    "stored_sha256": "5d7836810be8a17cb5cf6d1a4bc98d53dd79e4af541398ca6e2c6e02a72a6e36"
+  },
+  "rust-04.log": {
+    "file": "rust-04.log",
+    "encoding": "identity",
+    "raw_bytes": 0,
+    "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stored_bytes": 0,
+    "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "rust-05.log": {
+    "file": "rust-05.log",
+    "encoding": "identity",
+    "raw_bytes": 5855,
+    "raw_sha256": "6f2942ea4b4216afcf23d939cb85adc4e722a1a766cf3934b4fbe700785e021e",
+    "stored_bytes": 5855,
+    "stored_sha256": "6f2942ea4b4216afcf23d939cb85adc4e722a1a766cf3934b4fbe700785e021e"
+  },
+  "rust-06.log": {
+    "file": "rust-06.log",
+    "encoding": "identity",
+    "raw_bytes": 19400,
+    "raw_sha256": "fdd7f2f2ca17d99c38d9fe543e4f0a6ea81a87880f125c485d249302ba6a0e1b",
+    "stored_bytes": 19400,
+    "stored_sha256": "fdd7f2f2ca17d99c38d9fe543e4f0a6ea81a87880f125c485d249302ba6a0e1b"
+  },
+  "rust-07.log": {
+    "file": "rust-07.log",
+    "encoding": "identity",
+    "raw_bytes": 5380,
+    "raw_sha256": "90ffffb6bfbc5adb470f9337d21bcebff70c1562bd02bf601ea9f4b82c000b85",
+    "stored_bytes": 5380,
+    "stored_sha256": "90ffffb6bfbc5adb470f9337d21bcebff70c1562bd02bf601ea9f4b82c000b85"
+  },
+  "rust-clippy-multiarch.json": {
+    "file": "rust-clippy-multiarch.json",
+    "encoding": "identity",
+    "raw_bytes": 901,
+    "raw_sha256": "49ac0b0c8d74c352dbaee67ac5310862adb09ce129f98c470fc7817062487568",
+    "stored_bytes": 901,
+    "stored_sha256": "49ac0b0c8d74c352dbaee67ac5310862adb09ce129f98c470fc7817062487568"
+  },
+  "rust-clippy-multiarch.log": {
+    "file": "rust-clippy-multiarch.log",
+    "encoding": "identity",
+    "raw_bytes": 996,
+    "raw_sha256": "094df19ffc9d5bd258297db74b74ef5cf1c25dce7e7360b45e7ae070f8b3c1fd",
+    "stored_bytes": 996,
+    "stored_sha256": "094df19ffc9d5bd258297db74b74ef5cf1c25dce7e7360b45e7ae070f8b3c1fd"
+  },
+  "rust-commands.json": {
+    "file": "rust-commands.json",
+    "encoding": "identity",
+    "raw_bytes": 5183,
+    "raw_sha256": "72f0f25a217db9445cb765b3ae01520c6f970ca44d706c5204d992b3bd4938fb",
+    "stored_bytes": 5183,
+    "stored_sha256": "72f0f25a217db9445cb765b3ae01520c6f970ca44d706c5204d992b3bd4938fb"
+  },
+  "source-after.json": {
+    "file": "source-after.json",
+    "encoding": "identity",
+    "raw_bytes": 423,
+    "raw_sha256": "61b017bd3db359f3ee095a82d038ba7c44fce7fb189536ea8ebabaa50b151b51",
+    "stored_bytes": 423,
+    "stored_sha256": "61b017bd3db359f3ee095a82d038ba7c44fce7fb189536ea8ebabaa50b151b51"
+  },
+  "source-before.json": {
+    "file": "source-before.json",
+    "encoding": "identity",
+    "raw_bytes": 423,
+    "raw_sha256": "61b017bd3db359f3ee095a82d038ba7c44fce7fb189536ea8ebabaa50b151b51",
+    "stored_bytes": 423,
+    "stored_sha256": "61b017bd3db359f3ee095a82d038ba7c44fce7fb189536ea8ebabaa50b151b51"
+  },
+  "static-00.log": {
+    "file": "static-00.log",
+    "encoding": "identity",
+    "raw_bytes": 181,
+    "raw_sha256": "6cb741e14b61e7871ee62000ca541aae67aef655465c772af9256b1bbd2f46fd",
+    "stored_bytes": 181,
+    "stored_sha256": "6cb741e14b61e7871ee62000ca541aae67aef655465c772af9256b1bbd2f46fd"
+  },
+  "static-01.log": {
+    "file": "static-01.log",
+    "encoding": "identity",
+    "raw_bytes": 157,
+    "raw_sha256": "cb02799687093187e37e9e754ea193dd22907c381f6e0cefa0a40f009e5917c2",
+    "stored_bytes": 157,
+    "stored_sha256": "cb02799687093187e37e9e754ea193dd22907c381f6e0cefa0a40f009e5917c2"
+  },
+  "static-02.log": {
+    "file": "static-02.log",
+    "encoding": "identity",
+    "raw_bytes": 12824,
+    "raw_sha256": "5ec6d9237665c7c7500b3f63b35a4380b397dada80668b3804913be008c09b90",
+    "stored_bytes": 12824,
+    "stored_sha256": "5ec6d9237665c7c7500b3f63b35a4380b397dada80668b3804913be008c09b90"
+  },
+  "static-03.log": {
+    "file": "static-03.log",
+    "encoding": "identity",
+    "raw_bytes": 148,
+    "raw_sha256": "2428a6ccb37217f334b9fec9e110489b375d99ddde2096719151026bbb6704f1",
+    "stored_bytes": 148,
+    "stored_sha256": "2428a6ccb37217f334b9fec9e110489b375d99ddde2096719151026bbb6704f1"
+  },
+  "static-04.log": {
+    "file": "static-04.log",
+    "encoding": "identity",
+    "raw_bytes": 4683,
+    "raw_sha256": "78f25fd969f6a8d85efa294c5449e9c5f3ba1771624333114b6f7e90f18246cf",
+    "stored_bytes": 4683,
+    "stored_sha256": "78f25fd969f6a8d85efa294c5449e9c5f3ba1771624333114b6f7e90f18246cf"
+  },
+  "static-05.log": {
+    "file": "static-05.log",
+    "encoding": "identity",
+    "raw_bytes": 2708,
+    "raw_sha256": "345d8ccafa1895862bbfc22952622dc8af61a4c4179fcf5b1bc9037b7cd1555c",
+    "stored_bytes": 2708,
+    "stored_sha256": "345d8ccafa1895862bbfc22952622dc8af61a4c4179fcf5b1bc9037b7cd1555c"
+  },
+  "static-06.log": {
+    "file": "static-06.log",
+    "encoding": "identity",
+    "raw_bytes": 2728,
+    "raw_sha256": "2e702303f9ba4c393824632cf09d265ac7bdd4f0fe88843b337f15dd7bbb6e0b",
+    "stored_bytes": 2728,
+    "stored_sha256": "2e702303f9ba4c393824632cf09d265ac7bdd4f0fe88843b337f15dd7bbb6e0b"
+  },
+  "static-07.log": {
+    "file": "static-07.log",
+    "encoding": "identity",
+    "raw_bytes": 117,
+    "raw_sha256": "b2ea23d1e539f924757c8b75e4ce58a3064e65cb65fba1e22b4a15d170a6c0ec",
+    "stored_bytes": 117,
+    "stored_sha256": "b2ea23d1e539f924757c8b75e4ce58a3064e65cb65fba1e22b4a15d170a6c0ec"
+  },
+  "static-08.log": {
+    "file": "static-08.log",
+    "encoding": "identity",
+    "raw_bytes": 114,
+    "raw_sha256": "7751c4f6dde25cf7538240d6b444585fcc54159071d2346f2431a10276d540dc",
+    "stored_bytes": 114,
+    "stored_sha256": "7751c4f6dde25cf7538240d6b444585fcc54159071d2346f2431a10276d540dc"
+  },
+  "static-09.log": {
+    "file": "static-09.log",
+    "encoding": "identity",
+    "raw_bytes": 155,
+    "raw_sha256": "55c9586aca3aa4d4eb82b1125a8d6c5c1aac5000b878f336cef495f89023cd62",
+    "stored_bytes": 155,
+    "stored_sha256": "55c9586aca3aa4d4eb82b1125a8d6c5c1aac5000b878f336cef495f89023cd62"
+  },
+  "static-10.log": {
+    "file": "static-10.log",
+    "encoding": "identity",
+    "raw_bytes": 17848,
+    "raw_sha256": "25d51424e44c5de03683d80bc121b093b93f8fe852d03c511dfa7b313ffcf0b3",
+    "stored_bytes": 17848,
+    "stored_sha256": "25d51424e44c5de03683d80bc121b093b93f8fe852d03c511dfa7b313ffcf0b3"
+  },
+  "static-11.log": {
+    "file": "static-11.log",
+    "encoding": "identity",
+    "raw_bytes": 1512,
+    "raw_sha256": "c839c6bd2c0a4005c4bdf55a1138af841829321335a1a973911dc30717dc5b67",
+    "stored_bytes": 1512,
+    "stored_sha256": "c839c6bd2c0a4005c4bdf55a1138af841829321335a1a973911dc30717dc5b67"
+  },
+  "static-12.log": {
+    "file": "static-12.log",
+    "encoding": "identity",
+    "raw_bytes": 6898,
+    "raw_sha256": "757c729247d9e19cb31518c75b87438bca6b9b0604d71c45820e671ad3679f87",
+    "stored_bytes": 6898,
+    "stored_sha256": "757c729247d9e19cb31518c75b87438bca6b9b0604d71c45820e671ad3679f87"
+  },
+  "static-13.log": {
+    "file": "static-13.log",
+    "encoding": "identity",
+    "raw_bytes": 5345,
+    "raw_sha256": "cc49e47ff9341e3044c11e86fc9a09efc5ee639623deea002911b993795aa683",
+    "stored_bytes": 5345,
+    "stored_sha256": "cc49e47ff9341e3044c11e86fc9a09efc5ee639623deea002911b993795aa683"
+  },
+  "static-14.log": {
+    "file": "static-14.log",
+    "encoding": "identity",
+    "raw_bytes": 180,
+    "raw_sha256": "1811739ab56176be2d74cfd1b12a86ba05919a96769d5479faca6db12f37dd54",
+    "stored_bytes": 180,
+    "stored_sha256": "1811739ab56176be2d74cfd1b12a86ba05919a96769d5479faca6db12f37dd54"
+  },
+  "static-15.log": {
+    "file": "static-15.log",
+    "encoding": "identity",
+    "raw_bytes": 35,
+    "raw_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+    "stored_bytes": 35,
+    "stored_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+  },
+  "static-16.log": {
+    "file": "static-16.log",
+    "encoding": "identity",
+    "raw_bytes": 557,
+    "raw_sha256": "80631ed6136e7675eeaaac82dbab4535f8c41bc1ea55b51d7379122e18cb1c45",
+    "stored_bytes": 557,
+    "stored_sha256": "80631ed6136e7675eeaaac82dbab4535f8c41bc1ea55b51d7379122e18cb1c45"
+  },
+  "static-17.log": {
+    "file": "static-17.log",
+    "encoding": "identity",
+    "raw_bytes": 4835,
+    "raw_sha256": "1071e58361cfdbc4b70e270822fc6984fe5f82331614be861ea41db0b9d6b7ec",
+    "stored_bytes": 4835,
+    "stored_sha256": "1071e58361cfdbc4b70e270822fc6984fe5f82331614be861ea41db0b9d6b7ec"
+  },
+  "static-18.log": {
+    "file": "static-18.log",
+    "encoding": "identity",
+    "raw_bytes": 307,
+    "raw_sha256": "85bfa370f3790c633eac181a48958c50533e61e594bb2deae1b1462091142957",
+    "stored_bytes": 307,
+    "stored_sha256": "85bfa370f3790c633eac181a48958c50533e61e594bb2deae1b1462091142957"
+  },
+  "static-19.log": {
+    "file": "static-19.log",
+    "encoding": "identity",
+    "raw_bytes": 0,
+    "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stored_bytes": 0,
+    "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "static-commands.json": {
+    "file": "static-commands.json",
+    "encoding": "identity",
+    "raw_bytes": 10632,
+    "raw_sha256": "33e12262565e5b229a3cfe9064f9e79817828a47ef3ac311263b6d3080145725",
+    "stored_bytes": 10632,
+    "stored_sha256": "33e12262565e5b229a3cfe9064f9e79817828a47ef3ac311263b6d3080145725"
+  }
+}

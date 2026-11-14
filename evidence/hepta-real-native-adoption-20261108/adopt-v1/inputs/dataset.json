@@ -1,0 +1,22 @@
+{
+  "records": [
+    {
+      "expected_output": "yes",
+      "prompt": "Answer with only yes or no. Is 35 greater than 34?"
+    },
+    {
+      "expected_output": "no",
+      "prompt": "Answer with only yes or no. Is 38 greater than 39?"
+    },
+    {
+      "expected_output": "yes",
+      "prompt": "Answer with only yes or no. Is 73 greater than 72?"
+    },
+    {
+      "expected_output": "no",
+      "prompt": "Answer with only yes or no. Is 88 greater than 89?"
+    }
+  ],
+  "schema": "hepta-smollm-training-input-v1",
+  "scope": "public-smoke-fixtures"
+}

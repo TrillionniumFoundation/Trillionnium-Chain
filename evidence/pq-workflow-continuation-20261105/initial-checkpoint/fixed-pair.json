@@ -1,0 +1,19 @@
+{
+  "chain": {
+    "repository": "TrillionniumFoundation/Trillionnium-Chain",
+    "code_commit": "b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c",
+    "code_tree": "8be28a72673ce318d60a464898ab610d9ba39216",
+    "draft_pr": 688
+  },
+  "runtime": {
+    "repository": "TrillionniumFoundation/hepta-private-ci",
+    "code_commit": "d206c3c787f6b67c771b67a8e1d46c8261810042",
+    "code_tree": "00048be8564f7726716f78edbb37d79ab273167a",
+    "draft_pr": 4812
+  },
+  "preceding_runtime_code": "29fcd2e88654d5bec2bf30134cc030b5bfa7831b",
+  "preceding_runtime_test_compilation": "E0277 in four dynamic SQL calls; zero new owner tests executed",
+  "historical_records_are_current_acceptance": false,
+  "component_checks_are_end_to_end": false,
+  "production_activation": false
+}

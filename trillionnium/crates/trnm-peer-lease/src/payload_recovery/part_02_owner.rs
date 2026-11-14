@@ -232,6 +232,14 @@ impl PayloadJournalRecoveryV1 {
         match self.classify(target)? {
             PublicationStateV1::Durable => return Ok(()),
             PublicationStateV1::HeadLag => {
+                // Classification performs an earlier identity check, but
+                // pathname operations below cross the durable boundary. A
+                // same-UID replacement can occur while the target is being
+                // inspected, so fence the exact payload/head/parent
+                // descriptors immediately before publishing the repaired
+                // head. The final owner-level fence still covers races
+                // during rename and directory sync.
+                self.revalidate_bound_paths()?;
                 persist_head(
                     &self.head_path,
                     &self.directory,
@@ -479,6 +487,12 @@ impl PayloadReplayRecoveryOwnerV1 {
             .expect("fixed Core acknowledgement checksum");
         let final_path = ack_path(&self.acknowledgement_root, self.target);
         let temp_path = ack_temp_path(&final_path);
+        // The checks above may inspect a large payload journal before this
+        // write. Recheck the pinned authority endpoints immediately before
+        // creating the acknowledgement temporary so a pathname replacement
+        // cannot receive a durable ACK before the post-write fence notices
+        // the mismatch.
+        self.verify_bound_endpoint_identity()?;
         let write_result = write_ack_temp(&temp_path, &bytes).and_then(|file| {
             drop(file);
             match fs::hard_link(&temp_path, &final_path) {

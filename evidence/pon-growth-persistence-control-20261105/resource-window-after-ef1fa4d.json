@@ -1,0 +1,262 @@
+{
+  "schema": "growth-local-resource-window-v1",
+  "actual_new_attempt_started": false,
+  "original_stop_floor_bytes": 536870912,
+  "samples": [
+    {
+      "observed_at_unix": 1793853435.8616238,
+      "memory": {
+        "host_available": 3142004736,
+        "cgroup_limit": "8589934592",
+        "cgroup_current": 8486080512,
+        "events": "low 0\nhigh 0\nmax 5013774\noom 4\noom_kill 4\noom_group_kill 0\n",
+        "event_counters": {
+          "low": 0,
+          "high": 0,
+          "max": 5013774,
+          "oom": 4,
+          "oom_kill": 4,
+          "oom_group_kill": 0
+        },
+        "effective_available": 1278517248,
+        "hard_cgroup_headroom": 103854080,
+        "reclaimable_inactive_file_estimate": 1174663168,
+        "memory_stat_inputs": {
+          "file": 1462169600,
+          "shmem": 147456,
+          "file_dirty": 161701888,
+          "file_writeback": 0,
+          "inactive_file": 1174663168
+        }
+      },
+      "rust_processes": [
+        {
+          "pid": 127174,
+          "program": "cargo",
+          "rss": "28656 kB"
+        },
+        {
+          "pid": 130795,
+          "program": "rustc",
+          "rss": "402028 kB",
+          "--out-dir": "/workspace/scratch/48266f5bd43f/chain-target/debug/deps",
+          "--crate-name": "trnm_pon_node"
+        },
+        {
+          "pid": 150307,
+          "program": "cargo",
+          "rss": "26732 kB"
+        },
+        {
+          "pid": 173745,
+          "program": "cargo",
+          "rss": "31708 kB"
+        },
+        {
+          "pid": 179882,
+          "program": "cargo",
+          "rss": "28932 kB"
+        },
+        {
+          "pid": 179941,
+          "program": "rustc",
+          "rss": "422288 kB",
+          "--out-dir": "/workspace/scratch/fee7901564fd-next/target-native799/debug/deps",
+          "--crate-name": "trnm_pon_node"
+        },
+        {
+          "pid": 181407,
+          "program": "cargo",
+          "rss": "180752 kB"
+        },
+        {
+          "pid": 184660,
+          "program": "cargo",
+          "rss": "28316 kB"
+        },
+        {
+          "pid": 186188,
+          "program": "rustc",
+          "rss": "2048704 kB",
+          "--out-dir": "/workspace/scratch/3042e909dc8c/target-integrated/debug/deps",
+          "--crate-name": "trnm_pon_node"
+        },
+        {
+          "pid": 190263,
+          "program": "rustc",
+          "rss": "582088 kB",
+          "--out-dir": "/workspace/scratch/7318042bb6cb/target/debug/deps",
+          "--crate-name": "trnm_mvcc_fee"
+        },
+        {
+          "pid": 193766,
+          "program": "cargo",
+          "rss": "29948 kB"
+        },
+        {
+          "pid": 196971,
+          "program": "cargo",
+          "rss": "28536 kB"
+        },
+        {
+          "pid": 197536,
+          "program": "rustc",
+          "rss": "944176 kB",
+          "--out-dir": "/workspace/scratch/0c2d131ac5a9/target/debug/deps",
+          "--crate-name": "trnm_pon_node"
+        },
+        {
+          "pid": 198088,
+          "program": "rustc",
+          "rss": "532280 kB",
+          "--out-dir": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/deps",
+          "--crate-name": "trnm_mvcc_fee"
+        },
+        {
+          "pid": 198217,
+          "program": "rustc",
+          "rss": "476200 kB",
+          "--out-dir": "/workspace/scratch/48266f5bd43f/hepta-effects-target/debug/deps",
+          "--crate-name": "codex_hepta_evidence"
+        },
+        {
+          "pid": 198256,
+          "program": "cargo",
+          "rss": "24620 kB"
+        },
+        {
+          "pid": 199602,
+          "program": "rustc",
+          "rss": "137932 kB",
+          "--out-dir": "/workspace/scratch/8de1bcb09af8/target/release/deps",
+          "--crate-name": "serde_core"
+        }
+      ]
+    },
+    {
+      "observed_at_unix": 1793853437.865739,
+      "memory": {
+        "host_available": 3427155968,
+        "cgroup_limit": "8589934592",
+        "cgroup_current": 8584110080,
+        "events": "low 0\nhigh 0\nmax 5017994\noom 4\noom_kill 4\noom_group_kill 0\n",
+        "event_counters": {
+          "low": 0,
+          "high": 0,
+          "max": 5017994,
+          "oom": 4,
+          "oom_kill": 4,
+          "oom_group_kill": 0
+        },
+        "effective_available": 1325301760,
+        "hard_cgroup_headroom": 5824512,
+        "reclaimable_inactive_file_estimate": 1319477248,
+        "memory_stat_inputs": {
+          "file": 1744723968,
+          "shmem": 147456,
+          "file_dirty": 7806976,
+          "file_writeback": 0,
+          "inactive_file": 1319477248
+        }
+      },
+      "rust_processes": [
+        {
+          "pid": 150307,
+          "program": "cargo",
+          "rss": "36884 kB"
+        },
+        {
+          "pid": 173745,
+          "program": "cargo",
+          "rss": "31708 kB"
+        },
+        {
+          "pid": 179882,
+          "program": "cargo",
+          "rss": "28932 kB"
+        },
+        {
+          "pid": 179941,
+          "program": "rustc",
+          "rss": "421296 kB",
+          "--out-dir": "/workspace/scratch/fee7901564fd-next/target-native799/debug/deps",
+          "--crate-name": "trnm_pon_node"
+        },
+        {
+          "pid": 181407,
+          "program": "cargo",
+          "rss": "180752 kB"
+        },
+        {
+          "pid": 184660,
+          "program": "cargo",
+          "rss": "28316 kB"
+        },
+        {
+          "pid": 186188,
+          "program": "rustc",
+          "rss": "1991792 kB",
+          "--out-dir": "/workspace/scratch/3042e909dc8c/target-integrated/debug/deps",
+          "--crate-name": "trnm_pon_node"
+        },
+        {
+          "pid": 190263,
+          "program": "rustc",
+          "rss": "563184 kB",
+          "--out-dir": "/workspace/scratch/7318042bb6cb/target/debug/deps",
+          "--crate-name": "trnm_mvcc_fee"
+        },
+        {
+          "pid": 193766,
+          "program": "cargo",
+          "rss": "29948 kB"
+        },
+        {
+          "pid": 196971,
+          "program": "cargo",
+          "rss": "28536 kB"
+        },
+        {
+          "pid": 197536,
+          "program": "rustc",
+          "rss": "1006588 kB",
+          "--out-dir": "/workspace/scratch/0c2d131ac5a9/target/debug/deps",
+          "--crate-name": "trnm_pon_node"
+        },
+        {
+          "pid": 198088,
+          "program": "rustc",
+          "rss": "552876 kB",
+          "--out-dir": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target/debug/deps",
+          "--crate-name": "trnm_mvcc_fee"
+        },
+        {
+          "pid": 198217,
+          "program": "rustc",
+          "rss": "538944 kB",
+          "--out-dir": "/workspace/scratch/48266f5bd43f/hepta-effects-target/debug/deps",
+          "--crate-name": "codex_hepta_evidence"
+        },
+        {
+          "pid": 198256,
+          "program": "cargo",
+          "rss": "25976 kB"
+        },
+        {
+          "pid": 199602,
+          "program": "rustc",
+          "rss": "191716 kB",
+          "--out-dir": "/workspace/scratch/8de1bcb09af8/target/release/deps",
+          "--crate-name": "serde_core"
+        },
+        {
+          "pid": 199781,
+          "program": "rustc",
+          "rss": "196928 kB",
+          "--out-dir": "/workspace/scratch/48266f5bd43f/chain-target/debug/deps",
+          "--crate-name": "trnm_mvcc_fee"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,355 @@
+{
+  "authority": "DENY_ALL",
+  "base_commit": "8c95a8d0a9199e9f72405835c8f0662c36af7c42",
+  "base_tree": "20f27cc513247b8f3f8bbdff549e43144c90b724",
+  "hepta_final_use_integrated": false,
+  "independent_consumer_accepted": false,
+  "original_failure": {
+    "job_id": 130240478504,
+    "old_execution_qualification_transferred": false,
+    "reason": "upload-artifact rejects colon in generated filename",
+    "run_id": 42934311467,
+    "source_commit": "ced03a7aa4a09af36825a6fa258fd6bd80c79fa7",
+    "source_tree": "ff1e6c252e273b45ed29a7150f7fd24dc5934b2c",
+    "successful_artifact_available": false,
+    "workflow_blob": "27adab1aa9913d811d9bb1fb549589a0a95b6965"
+  },
+  "pin_changes": [
+    {
+      "new_blob": "acd1a30562a2bcf73552f384b048d302d8799491",
+      "old_blob": "27adab1aa9913d811d9bb1fb549589a0a95b6965",
+      "path": ".github/workflows/pon-next-architecture-security.yml"
+    },
+    {
+      "new_blob": "df6d98f7e7cb3ea7c994266e6ab91061b41fc61e",
+      "old_blob": "da4ffd67bfeffe39f529c32af1ab086f700ba6f5",
+      "path": "scripts/ci/test_cell_storage_convergence_ci.py"
+    }
+  ],
+  "preserved": {
+    "all_other_manifest_fields_sha256": "1d187a81a3371480bc2458f3dfeb6d45adcbab9feefe6cb168777b2f3f8909e2",
+    "all_other_manifest_fields_unchanged": true,
+    "native_test_selectors": [
+      {
+        "label": "native-storage--store-storage_service-tests-version-native_version_reorg_keeps_custody_but_cannot_grant_new_funding_or_foreign_retirement",
+        "original_selector": "store::storage_service::tests::version::native_version_reorg_keeps_custody_but_cannot_grant_new_funding_or_foreign_retirement",
+        "prefix": "native-storage"
+      },
+      {
+        "label": "native-storage--store-storage_service-tests-version-native_version_scheduler_pending_metadata_accepts_only_new_funded_copy_then_reopens_done",
+        "original_selector": "store::storage_service::tests::version::native_version_scheduler_pending_metadata_accepts_only_new_funded_copy_then_reopens_done",
+        "prefix": "native-storage"
+      },
+      {
+        "label": "native-storage--store-storage_service-tests-version-native_version_pending_monetary_effect_cannot_retry_copy_with_a_new_source",
+        "original_selector": "store::storage_service::tests::version::native_version_pending_monetary_effect_cannot_retry_copy_with_a_new_source",
+        "prefix": "native-storage"
+      },
+      {
+        "label": "native-storage--store-storage_service-tests-version-native_version_scope_alias_and_late_funding_errors_precede_every_reservation",
+        "original_selector": "store::storage_service::tests::version::native_version_scope_alias_and_late_funding_errors_precede_every_reservation",
+        "prefix": "native-storage"
+      },
+      {
+        "label": "native-storage--store-storage_service-tests-version-native_version_outer_history_cannot_invent_missing_member_intents",
+        "original_selector": "store::storage_service::tests::version::native_version_outer_history_cannot_invent_missing_member_intents",
+        "prefix": "native-storage"
+      },
+      {
+        "label": "native-storage--store-storage_service-tests-shard-native_shard_real_funding_target_readback_and_repair_keep_original_debits",
+        "original_selector": "store::storage_service::tests::shard::native_shard_real_funding_target_readback_and_repair_keep_original_debits",
+        "prefix": "native-storage"
+      },
+      {
+        "label": "native-storage--store-storage_service-tests-shard-native_shard_pending_initial_effect_cannot_dispatch_even_with_source_present",
+        "original_selector": "store::storage_service::tests::shard::native_shard_pending_initial_effect_cannot_dispatch_even_with_source_present",
+        "prefix": "native-storage"
+      },
+      {
+        "label": "native-storage--store-storage_service-tests-shard-native_shard_unknown_repair_never_reissues_and_foreign_owner_cannot_retire",
+        "original_selector": "store::storage_service::tests::shard::native_shard_unknown_repair_never_reissues_and_foreign_owner_cannot_retire",
+        "prefix": "native-storage"
+      },
+      {
+        "label": "native-storage--store-storage_service-tests-version-shard_plan-native_complete_version_to_complete_local_shard_plan_reopens_without_sources_or_new_debits",
+        "original_selector": "store::storage_service::tests::version::shard_plan::native_complete_version_to_complete_local_shard_plan_reopens_without_sources_or_new_debits",
+        "prefix": "native-storage"
+      },
+      {
+        "label": "native-storage--store-storage_service-tests-version-shard_plan-recovery-native_shard_plan_automatic_recovery_uses_four_targets_after_all_sources_are_deleted",
+        "original_selector": "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_automatic_recovery_uses_four_targets_after_all_sources_are_deleted",
+        "prefix": "native-storage"
+      },
+      {
+        "label": "native-storage--store-storage_service-tests-version-shard_plan-recovery-native_shard_plan_recovery_refuses_missing_quorum_without_spending_new_repairs_or_refunding_reads",
+        "original_selector": "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_recovery_refuses_missing_quorum_without_spending_new_repairs_or_refunding_reads",
+        "prefix": "native-storage"
+      },
+      {
+        "label": "native-storage--store-storage_service-tests-version-shard_plan-recovery-native_shard_plan_pending_repair_cannot_redispatch_and_needs_independent_new_funding",
+        "original_selector": "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_pending_repair_cannot_redispatch_and_needs_independent_new_funding",
+        "prefix": "native-storage"
+      },
+      {
+        "label": "native-storage--store-storage_service-tests-version-shard_plan-recovery-native_shard_plan_recovery_preflight_cpu_and_metadata_fail_closed_without_hidden_copies",
+        "original_selector": "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_recovery_preflight_cpu_and_metadata_fail_closed_without_hidden_copies",
+        "prefix": "native-storage"
+      },
+      {
+        "label": "native-storage-component--cell-host_handoff-tests-research_fds-research_fd_sender_transfers_actual_complete_sealed_pair_with_original_deadline",
+        "original_selector": "cell::host_handoff::tests::research_fds::research_fd_sender_transfers_actual_complete_sealed_pair_with_original_deadline",
+        "prefix": "native-storage-component"
+      },
+      {
+        "label": "native-storage-component--cell-host_handoff-tests-research_fds-research_fd_sender_refuses_changed_pins_budget_task_parent_or_expiry_before_any_byte",
+        "original_selector": "cell::host_handoff::tests::research_fds::research_fd_sender_refuses_changed_pins_budget_task_parent_or_expiry_before_any_byte",
+        "prefix": "native-storage-component"
+      },
+      {
+        "label": "native-storage-component--cell-version_retention-tests-shard_plan-capacity-retained_shard_plan_initial_128_profile_accepts_complete_65_and_128_chunk_catalogs",
+        "original_selector": "cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_accepts_complete_65_and_128_chunk_catalogs",
+        "prefix": "native-storage-component"
+      },
+      {
+        "label": "native-storage-component--cell-version_retention-tests-shard_plan-capacity-retained_shard_plan_initial_128_profile_refuses_129_complete_chunks_before_staging",
+        "original_selector": "cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_refuses_129_complete_chunks_before_staging",
+        "prefix": "native-storage-component"
+      },
+      {
+        "label": "native-storage-component--cell-version_retention-tests-shard_plan-capacity-retained_shard_plan_initial_128_profile_keeps_original_two_mib_wire_and_file_ceiling",
+        "original_selector": "cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_keeps_original_two_mib_wire_and_file_ceiling",
+        "prefix": "native-storage-component"
+      }
+    ],
+    "original_capture_helper_indented_body_sha256": "88a8fdce2ba1979ae8af3ff558442aad52b8dbcabd8828d15c2aa16e5e9a19dd",
+    "pin_count": 1079,
+    "pinned_key_order_unchanged": true,
+    "pinned_keys_sha256": "cc7b301c3c9242e052899e039cf08842b478cff7cbef11d0c60e2633de6b9622",
+    "required_native_reader_blob": "277137b9e6ced74e9ec81061040ebfbb3949ffaf",
+    "required_path_count": 987,
+    "required_paths_and_order_unchanged": true,
+    "required_paths_sha256": "b39ffada91d68f15fc2e09a8c4e5dc7c20e5f2db22f0d5e3ed56efa39b75c8b2"
+  },
+  "production_activation": false,
+  "qualification": "HOLD_NO_GO",
+  "schema": "trnm-native-selector-artifact-correction-v1",
+  "source_files": {
+    ".github/workflows/pon-next-architecture-security.yml": {
+      "blob": "acd1a30562a2bcf73552f384b048d302d8799491",
+      "bytes": 26295,
+      "sha256": "13fca7ff72901f39097eabbd21fe81fc59feddba989babcdda7908784d76f9e1"
+    },
+    "config/pon/pq-cross-branch-corpus-v1.json": {
+      "blob": "9501aad84839d3050cc2b53e628f7a4f22241467",
+      "bytes": 197098,
+      "sha256": "f09aa9ad821004c0ae10a13c502fcaadba4e3559a7534267409e3322cfb14976"
+    },
+    "scripts/ci/test_cell_storage_convergence_ci.py": {
+      "blob": "df6d98f7e7cb3ea7c994266e6ab91061b41fc61e",
+      "bytes": 47259,
+      "sha256": "4dfd0ffda149584d7172f407cde6f16eaf170179d11d4d41c8cb66bff5f475c1"
+    }
+  },
+  "streams": [
+    {
+      "encoding": "gzip; mtime=0",
+      "origin": "fresh unchanged gates and artifact-name controls on selected candidate source",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "validation/selector-artifact-and-retained-controls.stdout.gz",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "encoding": "gzip; mtime=0",
+      "origin": "fresh unchanged gates and artifact-name controls on selected candidate source",
+      "original_bytes": 4708,
+      "original_sha256": "77a17ffcb2c45c8e3aa3c496258f9f5f1a73b3a1f1bcb076a266e2cce95619e3",
+      "path": "validation/selector-artifact-and-retained-controls.stderr.gz",
+      "stored_bytes": 975,
+      "stored_sha256": "b14ea3d0657894a8a42cd3985137f36e0b476fcf95b13ddd31443acb6b6417ac"
+    },
+    {
+      "encoding": "gzip; mtime=0",
+      "origin": "fresh unchanged gates and artifact-name controls on selected candidate source",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "validation/discovery-workflow-controls.stdout.gz",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "encoding": "gzip; mtime=0",
+      "origin": "fresh unchanged gates and artifact-name controls on selected candidate source",
+      "original_bytes": 880,
+      "original_sha256": "a8b3f91bf89d0979e5fcd1a53bd39789e143d147e1e21b7d62620651a173225d",
+      "path": "validation/discovery-workflow-controls.stderr.gz",
+      "stored_bytes": 284,
+      "stored_sha256": "463257537401278fb77dabf5b44881a569833972330380c741f53089c7e710be"
+    },
+    {
+      "encoding": "gzip; mtime=0",
+      "origin": "fresh unchanged gates and artifact-name controls on selected candidate source",
+      "original_bytes": 171,
+      "original_sha256": "5767635a368c165b74875ea7ae1f9d2d95f78a7a46077be19e77494b5014ef58",
+      "path": "validation/preflight.stdout.gz",
+      "stored_bytes": 154,
+      "stored_sha256": "fc3dd5a60ca8713f185bf81880d365149ababab0e5d14783ed1187bce7150915"
+    },
+    {
+      "encoding": "gzip; mtime=0",
+      "origin": "fresh unchanged gates and artifact-name controls on selected candidate source",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "validation/preflight.stderr.gz",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "encoding": "gzip; mtime=0",
+      "origin": "fresh unchanged gates and artifact-name controls on selected candidate source",
+      "original_bytes": 558,
+      "original_sha256": "8793fbe30b01dd62830c3bef5face6c018474777c94b60e900dc5a075e6c4d6e",
+      "path": "validation/corpus-inspector.stdout.gz",
+      "stored_bytes": 295,
+      "stored_sha256": "c21e273f326268f38ba5621fbae17f9695b86c85dcc8c54b9cf54ca07190323c"
+    },
+    {
+      "encoding": "gzip; mtime=0",
+      "origin": "fresh unchanged gates and artifact-name controls on selected candidate source",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "validation/corpus-inspector.stderr.gz",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "encoding": "gzip; mtime=0",
+      "origin": "fresh unchanged gates and artifact-name controls on selected candidate source",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "validation/corpus-controls.stdout.gz",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "encoding": "gzip; mtime=0",
+      "origin": "fresh unchanged gates and artifact-name controls on selected candidate source",
+      "original_bytes": 8425,
+      "original_sha256": "b8f512d52fbd66521977eea239db62f80849d06e42b1151afd96e98577958cfa",
+      "path": "validation/corpus-controls.stderr.gz",
+      "stored_bytes": 1466,
+      "stored_sha256": "81472d65c56960fb62ce9870dc3dafa94bed768c515069798752877ad3f08d97"
+    },
+    {
+      "encoding": "gzip; mtime=0",
+      "origin": "fresh unchanged gates and artifact-name controls on selected candidate source",
+      "original_bytes": 4835,
+      "original_sha256": "4ceb7ff78a6022cc70b6bb8a821692d8c6f1f4a284a76234b265260d20bcebfb",
+      "path": "validation/claim-guard.stdout.gz",
+      "stored_bytes": 1548,
+      "stored_sha256": "e66b30a562e167a64cc4aae6af232c6b1774cc963549c7c71cbf5432617035e7"
+    },
+    {
+      "encoding": "gzip; mtime=0",
+      "origin": "fresh unchanged gates and artifact-name controls on selected candidate source",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "validation/claim-guard.stderr.gz",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "encoding": "gzip; mtime=0",
+      "origin": "fresh unchanged gates and artifact-name controls on selected candidate source",
+      "original_bytes": 431,
+      "original_sha256": "334cc2b26ed99ad5f867ee9b65f3047e23afcfae056d4ba9c852b0a201e2dbeb",
+      "path": "validation/ci-contract.stdout.gz",
+      "stored_bytes": 272,
+      "stored_sha256": "1048066ac70968663062956f78e9c9cee86d10740be3d7cf85ecb0781c26405c"
+    },
+    {
+      "encoding": "gzip; mtime=0",
+      "origin": "fresh unchanged gates and artifact-name controls on selected candidate source",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "validation/ci-contract.stderr.gz",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "encoding": "gzip; mtime=0",
+      "origin": "fresh unchanged gates and artifact-name controls on selected candidate source",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "validation/diff-check.stdout.gz",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "encoding": "gzip; mtime=0",
+      "origin": "fresh unchanged gates and artifact-name controls on selected candidate source",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "validation/diff-check.stderr.gz",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "encoding": "identity",
+      "origin": "normalized GitHub job observation; original source ced03a7",
+      "original_bytes": 4884,
+      "original_sha256": "5808a29376de7bf8455ba8407c9df105b3fb71f14c4aa8cae44444e516e09d7e",
+      "path": "original-failure/job-observation.json",
+      "stored_bytes": 4884,
+      "stored_sha256": "5808a29376de7bf8455ba8407c9df105b3fb71f14c4aa8cae44444e516e09d7e"
+    },
+    {
+      "encoding": "gzip; mtime=0",
+      "origin": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42934311467/job/130240478504",
+      "original_bytes": 400088,
+      "original_sha256": "4a472550aa491168b83e81fee9d6829351e307a36f8f373bb321e74717f23cec",
+      "path": "original-failure/job-130240478504.log.gz",
+      "stored_bytes": 73198,
+      "stored_sha256": "750af265fe7ef8ff71337cbeb7936acff6b4437848fd17171d25d56baec527ed"
+    }
+  ],
+  "validation": {
+    "command_results": "validation/results.json",
+    "control_results": {
+      "corpus-controls": {
+        "passed": 59,
+        "unittest_seconds": 207.393
+      },
+      "discovery-workflow-controls": {
+        "passed": 5,
+        "unittest_seconds": 0.002
+      },
+      "selector-artifact-and-retained-controls": {
+        "passed": 25,
+        "unittest_seconds": 1.553
+      }
+    },
+    "corpus_inspector": {
+      "canonical_default_provider_contract_checked": true,
+      "canonical_pnq2_contract_checked": true,
+      "continuous_npq6_combination_accepted": false,
+      "cryptographic_acceptance": false,
+      "exact_source_blobs": 1079,
+      "legacy_qtx1_optional_adapter_contract_checked": true,
+      "native_transfer_account_contract_checked": true,
+      "native_transport_contract_checked": true,
+      "node_activated": false,
+      "production_confidentiality_accepted": false,
+      "schema": "trnm-pq-cross-branch-check-v1",
+      "status": "HOLD_NO_GO",
+      "upstream_heads": 6,
+      "whole_native_authorization_migrated": false
+    },
+    "full_repository_requalified": false,
+    "hosted_upload_on_changed_source_executed": false,
+    "native_execution_and_upload_acceptance_gates_changed": false,
+    "native_tests_executed": 0,
+    "tests_passed": 89
+  }
+}

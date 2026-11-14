@@ -1,0 +1,31 @@
+{
+  "archive": "theory-development.tar.gz",
+  "archive_bytes": 3310,
+  "archive_sha256": "784710c403c3e574847a00c818a5c347d1429e0dda66ae57aecd357b25c717e9",
+  "container_metadata_normalized": true,
+  "member_bytes_unchanged": true,
+  "member_count": 3,
+  "members": [
+    {
+      "bytes": 4315,
+      "mode": "0o644",
+      "path": "theory-development/finite-report.json",
+      "sha256": "1d3a7da84e75f622f6253fd3990dc237cf6396410c448847cf856ba08b3aea81"
+    },
+    {
+      "bytes": 715,
+      "mode": "0o644",
+      "path": "theory-development/summary.json",
+      "sha256": "cc01c7de7919b97cc3377853238dc7a7f00fcfe97a07b3d18ec1aca335f21a96"
+    },
+    {
+      "bytes": 7743,
+      "mode": "0o644",
+      "path": "theory-development/tests.log",
+      "sha256": "08c506a2d6731604c283a7383b719c537a6d19266d1095e50a602e831ba85cac"
+    }
+  ],
+  "payload_bytes": 12773,
+  "readback_verified": true,
+  "schema": "pon-evidence-archive-members-v0"
+}

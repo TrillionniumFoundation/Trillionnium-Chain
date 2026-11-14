@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/Users/qianqi/work/chain-throughput-continue-20261109-48c53a/evidence/pon-throughput-selector-20261109/recheck_original_ci.py", line 12, in <module>
+    import run_component_observations as runner
+  File "/Users/qianqi/work/chain-throughput-continue-20261109-48c53a/formal/throughput-v1/run_component_observations.py", line 28, in <module>
+    import execution_report  # noqa: E402
+    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/qianqi/work/chain-throughput-continue-20261109-48c53a/formal/throughput-v1/execution_report.py", line 24, in <module>
+    import read_original_native_campaign as original_campaign  # noqa: E402
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/qianqi/work/chain-throughput-continue-20261109-48c53a/scripts/read_original_native_campaign.py", line 28, in <module>
+    from contract_wire import H, header_decode, header_encode
+ModuleNotFoundError: No module named 'contract_wire'

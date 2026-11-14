@@ -1,0 +1,68 @@
+{
+  "schema": "pon-joint-ci-terminal-readback-v1",
+  "observed_date_utc": "2026-11-10",
+  "tested_head": "341b7b6195a44d3f4a758c98f846457567ac1de3",
+  "tested_preview": "a040a36e5a16822e56cbed29a6dce31b8c265f67",
+  "tested_tree": "eb37d4499ca92121a81ef9c0af1e7b221d5f85b1",
+  "original_run": {
+    "id": 42778406804,
+    "status": "completed",
+    "conclusion": "failure",
+    "source": "4716bade250f327b012a098418f4eece6b73fcaa",
+    "total_jobs": 21
+  },
+  "work_time": {
+    "run": 42815422267,
+    "head_job": 129827163245,
+    "preview_job": 129827163342,
+    "conclusion": "success",
+    "research_controls_passed": true,
+    "frozen_source": "b16bae2824e6c8236ef2011fc93a74df3ac7f039",
+    "native_binary_executed": false,
+    "current_native_cost_qualified": false,
+    "qualification": "HOLD_NO_GO"
+  },
+  "pq": {
+    "run": 42815422270,
+    "retained_x64_head_job": 129827165862,
+    "conclusion": "failure",
+    "retained_guard_exit": 1,
+    "retained_guard_message": "HOLD_NO_GO: changed source: scripts/ci/check_ci_contract.py",
+    "four_witness_jobs_failed_at_source_controls": true,
+    "cryptographic_failure_established_by_this_packet": false
+  },
+  "cleanup": {
+    "run": 42815422293,
+    "conclusion": "failure",
+    "job_conclusions": {
+      "success": 6,
+      "cancelled": 2
+    },
+    "cancellation_cause": null
+  },
+  "parent_model": {
+    "run": 42815422238,
+    "job_conclusion": "success",
+    "total_jobs": 4,
+    "scope": "bounded research model controls, not native security theorem"
+  },
+  "work_security": {
+    "run": 42815421824,
+    "conclusion": "failure",
+    "scope": "job census retained; new failure logs/artifacts not recovered or uniquely attributed here"
+  },
+  "rog_r1": {
+    "status": "failed",
+    "exit_code": 2,
+    "scope": "previously retained pre-setup free-space refusal; not resubmitted"
+  },
+  "all_13_actual_joint_obligations": "open",
+  "actual_joint_obligations_closed": 0,
+  "native_cp_cg_cq": null,
+  "native_six_successor_bound": null,
+  "native_lifetime_bound": null,
+  "qualification": "HOLD_NO_GO",
+  "production_activation": false,
+  "workflow_manually_retriggered": false,
+  "source_or_pin_changes": false
+}

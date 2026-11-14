@@ -1,0 +1,24 @@
+{
+  "all_member_CRC_SHA_verified": true,
+  "failure": "CollectorControls.test_actual_post_fork_identity_failure_reaps_gated_root_without_exec: root_returncode -15 != 125",
+  "finished_at": "2026-11-14T08:38:15.340030+00:00",
+  "index": {
+    "bytes": 14929,
+    "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-repository-truth-1a7afc-failure-v1/EVIDENCE_INDEX.json",
+    "sha256": "d9be663934186c7c79b68f408841a2bc686b33a47dfba569307c3ad5f436b66e"
+  },
+  "original_execution_bytes": 729951,
+  "original_execution_file_count": 39,
+  "original_files_unchanged": true,
+  "original_result": "failed",
+  "payload_file_count": 41,
+  "schema": "trnm-original-M4-repository-failure-package-completion-v1",
+  "source_or_Git_objects_modified": false,
+  "tests_rerun": false,
+  "zip": {
+    "bytes": 152665,
+    "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-repository-truth-1a7afc-failure-v1/original-repository-truth-1a7afc-failure-v1.zip",
+    "sha256": "c67721b25a546d73b25b498c6afbeb1e6338fb267eea202403d2e167f2bf469a"
+  },
+  "zip_member_count": 42
+}

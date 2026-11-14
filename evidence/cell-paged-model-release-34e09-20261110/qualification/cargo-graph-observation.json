@@ -1,0 +1,19 @@
+{
+  "command": [
+    "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "metadata",
+    "--locked",
+    "--offline",
+    "--format-version",
+    "1",
+    "--features",
+    "trnm-pon-node/pq-native-openssl"
+  ],
+  "completed_at_utc": "2026-11-10T11:55:02.295478+00:00",
+  "elapsed_seconds": 0.06388568598777056,
+  "exit_code": 0,
+  "failure": null,
+  "log_sha256": "3529ade41a3920ae62862909ebf56dd9a1d451b28c3d64fc177907155af9a8cd",
+  "name": "cargo-graph",
+  "started_at_utc": "2026-11-10T11:55:02.231598+00:00"
+}

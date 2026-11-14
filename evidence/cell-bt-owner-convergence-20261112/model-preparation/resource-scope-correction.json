@@ -1,0 +1,72 @@
+{
+  "actual_service_fee_paid": false,
+  "authoritative_observer": {
+    "current_candidate_bytes": 13640,
+    "current_candidate_path": "validation/remote_run_model.py",
+    "current_candidate_sha256": "d6540d88b88341c94a2be72fc76b16261f0607e1fd9c2a98ed9096aa913435f4",
+    "exact_bytes_rechecked_during_recovery": true,
+    "only_candidate_change": "REPO path; all original admission and result guards are byte-identical.",
+    "original_bytes": 13639,
+    "original_repository_path": "evidence/cell-native-shard-674c72-20261110/model/control/run_model.py.txt",
+    "original_revision": "a67d83a05d6ff4c2fdc4a5fd5c23fc38d38b563d",
+    "original_sha256": "120c70fb52909072eacf84251a44ff6c62f777479685db2cacf8cc1846a9e139",
+    "remote_execution_claimed": false,
+    "review_support_candidate": "reviews/run_model.candidate.py.txt",
+    "review_support_original": "reviews/run_model.original-a67d83.py.txt"
+  },
+  "corrected_description": {
+    "corrected_value": true,
+    "field": "resource_owner.required_cgroup_for_this_research_route",
+    "original_value": false,
+    "reason": "The false value was an early preparation-description error. The actual original model-operation observer requires the outer cgroup limits before starting the native process."
+  },
+  "draft": false,
+  "execution_admission_granted": false,
+  "hepta_final_use": false,
+  "independent_failure_domains": false,
+  "original_manifest": {
+    "bytes": 67483,
+    "digest_provenance_at_drafting": "Parent/root retained prior original-file read; independent reviewer recomputation is pending while the workspace is unavailable.",
+    "digest_provenance_at_finalization": "Independently recomputed from byte-preserved recovered archive in this collection; exact match to the parent-retained original digest.",
+    "local_hash_rechecked_before_publication": true,
+    "path": "model-preparation/prep-manifest.json",
+    "recovered_path": "recovered-originals/model-preparation/prep-manifest.json",
+    "sha256": "bb0ef4a26a40d5062d42d4f33a5fb7f890bbed4e6f0a41e85d49d45e5e2703c5"
+  },
+  "original_result_or_manifest_modified": false,
+  "preserved_observations": {
+    "actual_local_whole_job_limit_verified": false,
+    "dependency_preflight_is_cts1_or_chb1_admission": false,
+    "dependency_preflight_is_model_execution": false,
+    "model_executed": false,
+    "model_loaded": false,
+    "model_started": false,
+    "native_operation_started": false,
+    "original_dependency_preflight_failure_and_later_success_preserved": true,
+    "original_manifest_status": "BLOCKED_HOST_AF_UNIX",
+    "original_named_unix_socket_refusal_preserved": true
+  },
+  "production_activation": false,
+  "recovery_context": {
+    "archive_sha256": "b8ca4b885d89e19065e31766a0001bf9f1a941a02812e562f782119f637b360b",
+    "correction_is_new_derived_record": true,
+    "original_file_bytes_untouched": true,
+    "original_workspace_restored": false
+  },
+  "required_resource_scope": {
+    "actual_cgroup_cpu_max_relation": "quota == 4 * period",
+    "actual_cgroup_memory_max_bytes": 8589934592,
+    "cleanup_watchdog_extends_acceptance_deadline": false,
+    "compiler_memory_is_part_of_model_operation_grant": false,
+    "internal_worker_rss_or_wait4_establishes_whole_process_tree_hard_cap": false,
+    "native_and_outer_process_elapsed_must_each_be_below_seconds": 300,
+    "original_native_seconds": 300,
+    "outer_cleanup_watchdog_kill_seconds": 435,
+    "outer_cleanup_watchdog_term_seconds": 420,
+    "torch_interop_threads": 1,
+    "torch_intraop_threads": 4
+  },
+  "schema": "trnm-bt-resource-scope-correction-v1",
+  "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+  "source_code_or_admission_guard_modified": false
+}

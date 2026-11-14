@@ -1,0 +1,10 @@
+{
+  "count": 1000,
+  "input_sha256": "67b74fa2f417c0240d974e5ecea410d2b68d97d6dde667603aeb4d7ce59036cb",
+  "max_ns": 6346603,
+  "median_ns": 693803.5,
+  "min_ns": 528284,
+  "mining_search_cost_established": false,
+  "observed_nearest_rank_p99_ns": 1559635,
+  "production_tail_established": false
+}

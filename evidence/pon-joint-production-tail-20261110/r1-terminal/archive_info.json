@@ -1,0 +1,10 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"metadata\":{\"acl_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"gid\":1000,\"link_count\":1,\"metadata_platform\":\"linux\",\"mode\":384,\"uid\":1000,\"xattr_names\":[],\"xattr_sha256\":{}},\"mode\":384,\"path\":\"/home/qian-qi/chain-joint-tail-native-20261110-8e76/raw-records.tar.gz\",\"sha256\":\"f804c99db721cff21206eabb4b54aff4628e9b624a8101a6a2091c43d0bc3000\",\"size\":7178,\"version\":\"66306:27184333:7178:1794297672796594603:1794297672796594603\"}"
+    }
+  ],
+  "structuredContent": null,
+  "isError": false
+}

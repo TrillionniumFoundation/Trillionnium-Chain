@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="nextest-run" tests="1" failures="0" errors="0" uuid="431e2258-3852-4710-84e7-45821e000b04" timestamp="2026-11-09T05:01:52.571+08:00" time="51.141">
+    <testsuite name="codex-hepta-agentd" tests="1" disabled="0" errors="0" failures="0">
+        <testcase name="neuron_generation_runtime::tests::update::real_learning::actual_smollm_external_artifact_native_adoption_and_cold_readback" classname="codex-hepta-agentd" timestamp="2026-11-09T05:01:52.574+08:00" time="51.138">
+        </testcase>
+    </testsuite>
+</testsuites>

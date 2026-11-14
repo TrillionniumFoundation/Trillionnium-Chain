@@ -1,0 +1,41 @@
+[
+  {
+    "type": "prelaunch_tool_argument_rejection",
+    "idempotency_key": "backend-gain-f16ac-upload-build-01",
+    "error": "executable `python3` must be an absolute path without parent traversal",
+    "child_submitted": false,
+    "resolution": "explicit /usr/bin/python3 with a new operation key"
+  },
+  {
+    "type": "unpacked_verifier_regression",
+    "A_median_s": 0.967995241,
+    "B_median_s": 1.2515285185,
+    "B_over_A": 1.292907718437843,
+    "retained": true
+  },
+  {
+    "type": "unpacked_baseline_variability",
+    "pipeline_s": [
+      44.058102799,
+      32.511755344,
+      32.145081198,
+      23.805702891
+    ],
+    "samples_discarded": 0,
+    "cause": "not established; shared host was not exclusive"
+  },
+  {
+    "type": "packed_payload_increase_relative_to_unpacked",
+    "unpacked_bytes": 5039604,
+    "packed_bytes": 5187252,
+    "delta_bytes": 147648
+  },
+  {
+    "type": "cgroup_cpuset_observation_unavailable",
+    "field": "cpuset.cpus.effective",
+    "fallback": "successful sched_setaffinity in harness plus fixed inherited process affinity",
+    "retained_error": {
+      "error": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b933ca11-12894-1286.service/cpuset.cpus.effective'"
+    }
+  }
+]

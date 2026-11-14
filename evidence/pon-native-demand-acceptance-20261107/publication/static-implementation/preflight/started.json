@@ -1,0 +1,8 @@
+{
+  "command": [
+    "bash",
+    "scripts/project-preflight.sh"
+  ],
+  "head": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+  "started_unix_seconds": 1794067600.2174497
+}

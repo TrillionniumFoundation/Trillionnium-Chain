@@ -1,0 +1,44 @@
+{
+  "schema": "pon-local-environment-recovery-v1",
+  "observed_date_utc": "2026-11-12",
+  "local_environment_was_temporarily_unavailable": true,
+  "local_environment_recovered": true,
+  "original_local_files_recovered_without_reconstruction": true,
+  "verified_preserved_artifacts": {
+    "joint-risk/validation.json": "d3003a45e412bb106992bc56a83b99b0f533ed9de12b08a7da06e9251debc839",
+    "risk/typed-binding-reproduction.tar.gz": "d11580e840a88d5dea245b852c27755cc94fd0d09f09585cc706440137fb72d9"
+  },
+  "unused_remote_recovery_driver": {
+    "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/run-python-gates-d23488c5-v1.py",
+    "upload_client_wait_terminated": true,
+    "upload_effect_not_checked": true,
+    "ever_launched": false
+  },
+  "checkpoint": {
+    "scope": "intermediate stage, not final evidence; contains draft placeholders",
+    "bytes": 209437,
+    "sha256": "5c5001c4c9dacdc5d6b18f3a94e5c32a24c5c2a8b474d29ff6143c1afb4eb175",
+    "upload_result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "tool call error: tool call failed for `codex_apps/h.binary_write`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out"
+        }
+      ],
+      "isError": true
+    },
+    "independent_file_info": {
+      "status": "fulfilled",
+      "value": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"metadata\":{\"acl_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"gid\":1000,\"link_count\":1,\"metadata_platform\":\"linux\",\"mode\":384,\"uid\":1000,\"xattr_names\":[],\"xattr_sha256\":{}},\"mode\":384,\"path\":\"/home/qian-qi/chain-daa-monotone-20261111-7f73/daa-local-evidence-checkpoint-v1.tar.gz\",\"sha256\":\"5c5001c4c9dacdc5d6b18f3a94e5c32a24c5c2a8b474d29ff6143c1afb4eb175\",\"size\":209437,\"version\":\"2050:55904494:209437:1794443350700246799:1794443350705937455\"}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    }
+  }
+}

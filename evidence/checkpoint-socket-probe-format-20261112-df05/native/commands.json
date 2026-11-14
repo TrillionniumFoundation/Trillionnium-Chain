@@ -1,0 +1,561 @@
+[
+  {
+    "bytes": 178,
+    "command": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "cwd": "/data/chain-checkpoint-probe-format-20261112-df05",
+    "elapsed_ns": 13793218795,
+    "executed": true,
+    "exit_code": 0,
+    "expected_source": "00b3a848009460e425d58b62f9edc9abe9603b78",
+    "log": "preflight.log",
+    "name": "preflight",
+    "process_exit_code": 0,
+    "sha256": "1b4181c1273561873a4cc6c0100792b2dc4cbb6a4aa880dc261752b52dc177a1",
+    "source": "00b3a848009460e425d58b62f9edc9abe9603b78",
+    "source_after_verified": true,
+    "source_before_verified": true,
+    "source_verified": true,
+    "target_after_identity": {
+      "device": 2067,
+      "gid": 1000,
+      "inode": 26345745,
+      "mode": 448,
+      "uid": 1000
+    },
+    "target_before_identity": {
+      "device": 2067,
+      "gid": 1000,
+      "inode": 26345745,
+      "mode": 448,
+      "uid": 1000
+    },
+    "target_identity_error": null,
+    "timed_out": false
+  },
+  {
+    "bytes": 196,
+    "command": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+      "-Vv"
+    ],
+    "cwd": "/data/chain-checkpoint-probe-format-20261112-df05",
+    "elapsed_ns": 12749099625,
+    "executed": true,
+    "exit_code": 0,
+    "expected_source": "00b3a848009460e425d58b62f9edc9abe9603b78",
+    "log": "rustc-version.log",
+    "name": "rustc-version",
+    "process_exit_code": 0,
+    "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+    "source": "00b3a848009460e425d58b62f9edc9abe9603b78",
+    "source_after_verified": true,
+    "source_before_verified": true,
+    "source_verified": true,
+    "target_after_identity": {
+      "device": 2067,
+      "gid": 1000,
+      "inode": 26345745,
+      "mode": 448,
+      "uid": 1000
+    },
+    "target_before_identity": {
+      "device": 2067,
+      "gid": 1000,
+      "inode": 26345745,
+      "mode": 448,
+      "uid": 1000
+    },
+    "target_identity_error": null,
+    "timed_out": false
+  },
+  {
+    "bytes": 36,
+    "command": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "-V"
+    ],
+    "cwd": "/data/chain-checkpoint-probe-format-20261112-df05",
+    "elapsed_ns": 12826190862,
+    "executed": true,
+    "exit_code": 0,
+    "expected_source": "00b3a848009460e425d58b62f9edc9abe9603b78",
+    "log": "cargo-version.log",
+    "name": "cargo-version",
+    "process_exit_code": 0,
+    "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5",
+    "source": "00b3a848009460e425d58b62f9edc9abe9603b78",
+    "source_after_verified": true,
+    "source_before_verified": true,
+    "source_verified": true,
+    "target_after_identity": {
+      "device": 2067,
+      "gid": 1000,
+      "inode": 26345745,
+      "mode": 448,
+      "uid": 1000
+    },
+    "target_before_identity": {
+      "device": 2067,
+      "gid": 1000,
+      "inode": 26345745,
+      "mode": 448,
+      "uid": 1000
+    },
+    "target_identity_error": null,
+    "timed_out": false
+  },
+  {
+    "bytes": 795,
+    "command": [
+      "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN/install/bin/openssl",
+      "version",
+      "-a"
+    ],
+    "cwd": "/data/chain-checkpoint-probe-format-20261112-df05",
+    "elapsed_ns": 13081789456,
+    "executed": true,
+    "exit_code": 0,
+    "expected_source": "00b3a848009460e425d58b62f9edc9abe9603b78",
+    "log": "openssl-version.log",
+    "name": "openssl-version",
+    "process_exit_code": 0,
+    "sha256": "6a5f30b4dc344636f86abaecceec752798a15d5b4c6ecd161bb4631538d5f00c",
+    "source": "00b3a848009460e425d58b62f9edc9abe9603b78",
+    "source_after_verified": true,
+    "source_before_verified": true,
+    "source_verified": true,
+    "target_after_identity": {
+      "device": 2067,
+      "gid": 1000,
+      "inode": 26345745,
+      "mode": 448,
+      "uid": 1000
+    },
+    "target_before_identity": {
+      "device": 2067,
+      "gid": 1000,
+      "inode": 26345745,
+      "mode": 448,
+      "uid": 1000
+    },
+    "target_identity_error": null,
+    "timed_out": false
+  },
+  {
+    "bytes": 852817,
+    "command": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "metadata",
+      "--locked",
+      "--offline",
+      "--format-version",
+      "1",
+      "--manifest-path",
+      "trillionnium/Cargo.toml"
+    ],
+    "cwd": "/data/chain-checkpoint-probe-format-20261112-df05",
+    "elapsed_ns": 13775155092,
+    "executed": true,
+    "exit_code": 0,
+    "expected_source": "00b3a848009460e425d58b62f9edc9abe9603b78",
+    "log": "metadata-default.log",
+    "name": "metadata-default",
+    "process_exit_code": 0,
+    "sha256": "e27a24f7812090a3a635dcd8879967594e06a073003aecf9c77aeb83c5dd65cd",
+    "source": "00b3a848009460e425d58b62f9edc9abe9603b78",
+    "source_after_verified": true,
+    "source_before_verified": true,
+    "source_verified": true,
+    "target_after_identity": {
+      "device": 2067,
+      "gid": 1000,
+      "inode": 26345745,
+      "mode": 448,
+      "uid": 1000
+    },
+    "target_before_identity": {
+      "device": 2067,
+      "gid": 1000,
+      "inode": 26345745,
+      "mode": 448,
+      "uid": 1000
+    },
+    "target_identity_error": null,
+    "timed_out": false
+  },
+  {
+    "bytes": 867853,
+    "command": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "metadata",
+      "--locked",
+      "--offline",
+      "--format-version",
+      "1",
+      "--all-features",
+      "--manifest-path",
+      "trillionnium/Cargo.toml"
+    ],
+    "cwd": "/data/chain-checkpoint-probe-format-20261112-df05",
+    "elapsed_ns": 12840186896,
+    "executed": true,
+    "exit_code": 0,
+    "expected_source": "00b3a848009460e425d58b62f9edc9abe9603b78",
+    "log": "metadata-all-features.log",
+    "name": "metadata-all-features",
+    "process_exit_code": 0,
+    "sha256": "69182985c67ac7f4482640382f987c1997218df2ba03e19fd1bfd95c050ec26d",
+    "source": "00b3a848009460e425d58b62f9edc9abe9603b78",
+    "source_after_verified": true,
+    "source_before_verified": true,
+    "source_verified": true,
+    "target_after_identity": {
+      "device": 2067,
+      "gid": 1000,
+      "inode": 26345745,
+      "mode": 448,
+      "uid": 1000
+    },
+    "target_before_identity": {
+      "device": 2067,
+      "gid": 1000,
+      "inode": 26345745,
+      "mode": 448,
+      "uid": 1000
+    },
+    "target_identity_error": null,
+    "timed_out": false
+  },
+  {
+    "bytes": 739411,
+    "command": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "metadata",
+      "--locked",
+      "--offline",
+      "--format-version",
+      "1",
+      "--manifest-path",
+      "tests/fuzz/Cargo.toml"
+    ],
+    "cwd": "/data/chain-checkpoint-probe-format-20261112-df05",
+    "elapsed_ns": 13573419172,
+    "executed": true,
+    "exit_code": 0,
+    "expected_source": "00b3a848009460e425d58b62f9edc9abe9603b78",
+    "log": "metadata-fuzz.log",
+    "name": "metadata-fuzz",
+    "process_exit_code": 0,
+    "sha256": "7f5a9b132bcb31430650ed7997515aaa384c30b574c867e3ab49ae4b52d519c4",
+    "source": "00b3a848009460e425d58b62f9edc9abe9603b78",
+    "source_after_verified": true,
+    "source_before_verified": true,
+    "source_verified": true,
+    "target_after_identity": {
+      "device": 2067,
+      "gid": 1000,
+      "inode": 26345745,
+      "mode": 448,
+      "uid": 1000
+    },
+    "target_before_identity": {
+      "device": 2067,
+      "gid": 1000,
+      "inode": 26345745,
+      "mode": 448,
+      "uid": 1000
+    },
+    "target_identity_error": null,
+    "timed_out": false
+  },
+  {
+    "bytes": 0,
+    "command": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "fmt",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "cwd": "/data/chain-checkpoint-probe-format-20261112-df05",
+    "elapsed_ns": 36130112269,
+    "executed": true,
+    "exit_code": 0,
+    "expected_source": "00b3a848009460e425d58b62f9edc9abe9603b78",
+    "log": "format.log",
+    "name": "format",
+    "process_exit_code": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "source": "00b3a848009460e425d58b62f9edc9abe9603b78",
+    "source_after_verified": true,
+    "source_before_verified": true,
+    "source_verified": true,
+    "target_after_identity": {
+      "device": 2067,
+      "gid": 1000,
+      "inode": 26345745,
+      "mode": 448,
+      "uid": 1000
+    },
+    "target_before_identity": {
+      "device": 2067,
+      "gid": 1000,
+      "inode": 26345745,
+      "mode": 448,
+      "uid": 1000
+    },
+    "target_identity_error": null,
+    "timed_out": false
+  },
+  {
+    "bytes": 7946,
+    "command": [
+      "/usr/bin/python3",
+      "-B",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/ci",
+      "-p",
+      "test_ci_source_integrity.py",
+      "-v"
+    ],
+    "cwd": "/data/chain-checkpoint-probe-format-20261112-df05",
+    "elapsed_ns": 19187522512,
+    "executed": true,
+    "exit_code": 0,
+    "expected_source": "00b3a848009460e425d58b62f9edc9abe9603b78",
+    "log": "source-integrity-controls.log",
+    "name": "source-integrity-controls",
+    "process_exit_code": 0,
+    "sha256": "8ba1463aa9d1e728ce8f1464e7df40f5cbbcc19ba878a543e142b69b1cf5861e",
+    "source": "00b3a848009460e425d58b62f9edc9abe9603b78",
+    "source_after_verified": true,
+    "source_before_verified": true,
+    "source_verified": true,
+    "target_after_identity": {
+      "device": 2067,
+      "gid": 1000,
+      "inode": 26345745,
+      "mode": 448,
+      "uid": 1000
+    },
+    "target_before_identity": {
+      "device": 2067,
+      "gid": 1000,
+      "inode": 26345745,
+      "mode": 448,
+      "uid": 1000
+    },
+    "target_identity_error": null,
+    "timed_out": false
+  },
+  {
+    "bytes": 307,
+    "command": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/check_repository.py"
+    ],
+    "cwd": "/data/chain-checkpoint-probe-format-20261112-df05",
+    "elapsed_ns": 42184049026,
+    "executed": true,
+    "exit_code": 0,
+    "expected_source": "00b3a848009460e425d58b62f9edc9abe9603b78",
+    "log": "repository-links.log",
+    "name": "repository-links",
+    "process_exit_code": 0,
+    "sha256": "474f893e2e12ae6358ad70e239c5203e3a5ebbd0717186be04f0b1f1f189829a",
+    "source": "00b3a848009460e425d58b62f9edc9abe9603b78",
+    "source_after_verified": true,
+    "source_before_verified": true,
+    "source_verified": true,
+    "target_after_identity": {
+      "device": 2067,
+      "gid": 1000,
+      "inode": 26345745,
+      "mode": 448,
+      "uid": 1000
+    },
+    "target_before_identity": {
+      "device": 2067,
+      "gid": 1000,
+      "inode": 26345745,
+      "mode": 448,
+      "uid": 1000
+    },
+    "target_identity_error": null,
+    "timed_out": false
+  },
+  {
+    "bytes": 558,
+    "command": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/check_pq_research_integration.py"
+    ],
+    "cwd": "/data/chain-checkpoint-probe-format-20261112-df05",
+    "elapsed_ns": 14086176809,
+    "executed": true,
+    "exit_code": 0,
+    "expected_source": "00b3a848009460e425d58b62f9edc9abe9603b78",
+    "log": "research-corpus.log",
+    "name": "research-corpus",
+    "process_exit_code": 0,
+    "sha256": "50518792325c5578661cfa589881f9c136a8dc69df4c716c45b1367b7ff81dfc",
+    "source": "00b3a848009460e425d58b62f9edc9abe9603b78",
+    "source_after_verified": true,
+    "source_before_verified": true,
+    "source_verified": true,
+    "target_after_identity": {
+      "device": 2067,
+      "gid": 1000,
+      "inode": 26345745,
+      "mode": 448,
+      "uid": 1000
+    },
+    "target_before_identity": {
+      "device": 2067,
+      "gid": 1000,
+      "inode": 26345745,
+      "mode": 448,
+      "uid": 1000
+    },
+    "target_identity_error": null,
+    "timed_out": false
+  },
+  {
+    "bytes": 35,
+    "command": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/refresh_distributed_source_inventory.py",
+      "--check"
+    ],
+    "cwd": "/data/chain-checkpoint-probe-format-20261112-df05",
+    "elapsed_ns": 12812326213,
+    "executed": true,
+    "exit_code": 0,
+    "expected_source": "00b3a848009460e425d58b62f9edc9abe9603b78",
+    "log": "source-inventory.log",
+    "name": "source-inventory",
+    "process_exit_code": 0,
+    "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+    "source": "00b3a848009460e425d58b62f9edc9abe9603b78",
+    "source_after_verified": true,
+    "source_before_verified": true,
+    "source_verified": true,
+    "target_after_identity": {
+      "device": 2067,
+      "gid": 1000,
+      "inode": 26345745,
+      "mode": 448,
+      "uid": 1000
+    },
+    "target_before_identity": {
+      "device": 2067,
+      "gid": 1000,
+      "inode": 26345745,
+      "mode": 448,
+      "uid": 1000
+    },
+    "target_identity_error": null,
+    "timed_out": false
+  },
+  {
+    "bytes": 10677,
+    "command": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-checkpoint-store",
+      "--",
+      "--show-output",
+      "--test-threads=1"
+    ],
+    "cwd": "/data/chain-checkpoint-probe-format-20261112-df05",
+    "elapsed_ns": 18335106162,
+    "executed": true,
+    "exit_code": 0,
+    "expected_source": "00b3a848009460e425d58b62f9edc9abe9603b78",
+    "log": "checkpoint-package.log",
+    "name": "checkpoint-package",
+    "process_exit_code": 0,
+    "sha256": "d67f18bc984fe43b8adb9a081f9945e2319825fd844454ee2db9c814e457d457",
+    "source": "00b3a848009460e425d58b62f9edc9abe9603b78",
+    "source_after_verified": true,
+    "source_before_verified": true,
+    "source_verified": true,
+    "target_after_identity": {
+      "device": 2067,
+      "gid": 1000,
+      "inode": 26345745,
+      "mode": 448,
+      "uid": 1000
+    },
+    "target_before_identity": {
+      "device": 2067,
+      "gid": 1000,
+      "inode": 26345745,
+      "mode": 448,
+      "uid": 1000
+    },
+    "target_identity_error": null,
+    "timed_out": false
+  },
+  {
+    "bytes": 4121,
+    "command": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "clippy",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--workspace",
+      "--all-targets",
+      "--all-features",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "cwd": "/data/chain-checkpoint-probe-format-20261112-df05",
+    "elapsed_ns": 151331016530,
+    "executed": true,
+    "exit_code": 0,
+    "expected_source": "00b3a848009460e425d58b62f9edc9abe9603b78",
+    "log": "strict-workspace-clippy.log",
+    "name": "strict-workspace-clippy",
+    "process_exit_code": 0,
+    "sha256": "6978c9341e051cf7118ab15328477b76400a55a90144a710a2fdd955e7123f02",
+    "source": "00b3a848009460e425d58b62f9edc9abe9603b78",
+    "source_after_verified": true,
+    "source_before_verified": true,
+    "source_verified": true,
+    "target_after_identity": {
+      "device": 2067,
+      "gid": 1000,
+      "inode": 26345745,
+      "mode": 448,
+      "uid": 1000
+    },
+    "target_before_identity": {
+      "device": 2067,
+      "gid": 1000,
+      "inode": 26345745,
+      "mode": 448,
+      "uid": 1000
+    },
+    "target_identity_error": null,
+    "timed_out": false
+  }
+]

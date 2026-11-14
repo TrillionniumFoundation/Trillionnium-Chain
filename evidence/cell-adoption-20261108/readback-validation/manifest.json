@@ -1,0 +1,101 @@
+{
+  "tested_commit": "1011c05d14be10151f2fb042eada04098b77274d",
+  "records": [
+    {
+      "source_relative_path": "summary.json",
+      "retained": "summary.json",
+      "bytes": 5137,
+      "sha256": "42477a99087faa0236221229dc5edba6673c2310d28732eec16dcff3bc76dad2"
+    },
+    {
+      "source_relative_path": "source-before.json",
+      "retained": "source-before.json",
+      "bytes": 423,
+      "sha256": "3cfde56d58ea3cb9ede93147019a2f67d4b5c8de3947bb0939a25dbaaff64d42"
+    },
+    {
+      "source_relative_path": "source-after.json",
+      "retained": "source-after.json",
+      "bytes": 423,
+      "sha256": "3cfde56d58ea3cb9ede93147019a2f67d4b5c8de3947bb0939a25dbaaff64d42"
+    },
+    {
+      "source_relative_path": "finality/receipt.json",
+      "retained": "finality-receipt.json",
+      "bytes": 2419,
+      "sha256": "5d48ea8f8b76799c9395a1de20db0426902381b68d3ef6ee3f6afda96480cd06"
+    },
+    {
+      "source_relative_path": "finality/tests.log",
+      "retained": "finality-tests.txt",
+      "bytes": 18055,
+      "sha256": "d22a89b84199e401ecfd77f2f113747f8afbc0ed73f4f26c5969433bca4328c3"
+    },
+    {
+      "source_relative_path": "preflight.txt",
+      "retained": "preflight.txt",
+      "bytes": 174,
+      "sha256": "c8c014f17e387e02000e54f8996a5d3a7391a7d739eb2bd3c12f5a0448d8e6f4"
+    },
+    {
+      "source_relative_path": "source-before.txt",
+      "retained": "source-before.txt",
+      "bytes": 423,
+      "sha256": "3cfde56d58ea3cb9ede93147019a2f67d4b5c8de3947bb0939a25dbaaff64d42"
+    },
+    {
+      "source_relative_path": "finality.txt",
+      "retained": "finality.txt",
+      "bytes": 2251,
+      "sha256": "93790760cbb796d46d781dbf47ba85b70e19a894c770d36b183bbe97f62ab2f3"
+    },
+    {
+      "source_relative_path": "native-readback-reader.txt",
+      "retained": "native-readback-reader.txt",
+      "bytes": 4725,
+      "sha256": "8ee33f254c47becc1fd873362a3a2377ea3ace82fbb30adc6fcacd1ec091cc01"
+    },
+    {
+      "source_relative_path": "source-integrity-negatives.txt",
+      "retained": "source-integrity-negatives.txt",
+      "bytes": 6898,
+      "sha256": "140d3443bc80b60bb1839e91ff2a4c9808195a212ac043881c9bbda568f6f91f"
+    },
+    {
+      "source_relative_path": "ci-contract.txt",
+      "retained": "ci-contract.txt",
+      "bytes": 180,
+      "sha256": "1811739ab56176be2d74cfd1b12a86ba05919a96769d5479faca6db12f37dd54"
+    },
+    {
+      "source_relative_path": "ci-contract-negatives.txt",
+      "retained": "ci-contract-negatives.txt",
+      "bytes": 17640,
+      "sha256": "df5a34df9c55a6d2fb1d44a233164dc1ce08904944728f326e38766043a58c69"
+    },
+    {
+      "source_relative_path": "finality-profile.txt",
+      "retained": "finality-profile.txt",
+      "bytes": 86,
+      "sha256": "9f13e6c98108b2a82e73a7c658df612a8027d68f74b8b18610d649a3e3846364"
+    },
+    {
+      "source_relative_path": "original-parent.txt",
+      "retained": "original-parent.txt",
+      "bytes": 1821,
+      "sha256": "a1cb9567256ee4e94864c4c42648fcb1e309d7f38a7cc6ccdc2d10f0c3fb4417"
+    },
+    {
+      "source_relative_path": "original-learning.txt",
+      "retained": "original-learning.txt",
+      "bytes": 105,
+      "sha256": "5a6abd032bd2e9e4fd4254ed96bd3f838e47a9b1717807f43f6efbd9a0004ba9"
+    },
+    {
+      "source_relative_path": "source-after.txt",
+      "retained": "source-after.txt",
+      "bytes": 423,
+      "sha256": "3cfde56d58ea3cb9ede93147019a2f67d4b5c8de3947bb0939a25dbaaff64d42"
+    }
+  ]
+}

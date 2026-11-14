@@ -1,0 +1,160 @@
+name: PoN four-axis throughput evidence controls
+on:
+  pull_request:
+    paths:
+      - .github/workflows/pon-throughput-evidence.yml
+      - formal/throughput-v1/**
+      - formal/pon-native-fullpath-v1/**
+      - scripts/run_smollm_cell_replica_research.py
+      - scripts/ci/test_smollm_command_receipts.py
+      - scripts/pon_public_v3_phase_read.py
+      - scripts/ci/test_pon_public_v3_phase_read.py
+      - scripts/ci/prepare_pq_provider.sh
+      - trillionnium/crates/trnm-mvcc-fee/**
+      - trillionnium/crates/trnm-pon-node/src/ingress/public_v3/**
+      - trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs
+      - trillionnium/crates/trnm-pon-node/src/peer_polling.rs
+      - evidence/pon-throughput-engineering-20261108/**
+      - evidence/pon-throughput-business-20261109/**
+      - evidence/pon-throughput-20261108/**
+      - config/pon/pq-cross-branch-corpus-v1.json
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: throughput-evidence-${{ github.ref }}
+  cancel-in-progress: false
+env:
+  PYTHONDONTWRITEBYTECODE: "1"
+  TRNM_EXPECTED_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+jobs:
+  evidence-controls:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Check original boundary and exact raw source
+        run: |
+          set -euo pipefail
+          bash scripts/project-preflight.sh --audit
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/throughput-evidence/source-before.json"
+      - name: Verify failure denominators and native confirmation distinctions
+        run: |
+          set -euo pipefail
+          test -f formal/pon-native-fullpath-v1/test_transaction_throughput.py
+          python3 -m unittest discover -s formal/pon-native-fullpath-v1 -p 'test_*.py' -v
+          python3 formal/throughput-v1/test_proof_cpu_metrics.py -v
+          python3 formal/throughput-v1/test_cell_model_metrics.py -v
+          python3 formal/throughput-v1/test_useful_task_metrics.py -v
+          python3 formal/throughput-v1/test_whole_block_cost_metrics.py -v
+          python3 formal/throughput-v1/test_component_observations.py -v
+          python3 formal/throughput-v1/test_reproduce_reports.py -v
+          python3 formal/throughput-v1/test_execution_report.py -v
+          python3 formal/throughput-v1/test_sqlite_syscall_profile.py -v
+          python3 scripts/ci/test_pon_public_v3_phase_read.py -v
+          python3 scripts/ci/test_smollm_command_receipts.py -v
+      - name: Reproduce original records without granting throughput qualification
+        run: python3 formal/throughput-v1/reproduce_reports.py --output "$RUNNER_TEMP/throughput-evidence/reproduced"
+      - name: Verify unchanged source guards and original resource controls
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/check_pq_research_integration.py
+          python3 scripts/refresh_distributed_source_inventory.py --check
+          python3 scripts/ci/check_ci_contract.py
+          python3 scripts/ci/check_repository.py
+          python3 -m unittest discover -s scripts/ci -p test_ci_source_integrity.py -v
+          python3 -m unittest discover -s scripts/ci -p test_from_zero_host_ci.py -v
+      - name: Verify exact raw source after execution
+        if: always()
+        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/throughput-evidence/source-after.json"
+      - name: Retain reproduction and source evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: throughput-evidence-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/throughput-evidence/
+          if-no-files-found: error
+          retention-days: 30
+  native-components:
+    name: Native component observations (not business TPS)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      CARGO_BUILD_JOBS: "1"
+      CARGO_INCREMENTAL: "0"
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Bind source and allocate separate component paths
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash scripts/project-preflight.sh --audit
+          printf 'CARGO_TARGET_DIR=%s/throughput-component-target\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          printf 'TRNM_COMPONENT_RECEIPTS=%s/throughput-component-receipts\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          mkdir "$RUNNER_TEMP/throughput-component-receipts"
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/throughput-component-receipts/source-before.json"
+      - name: Install the pinned compiler and retain its identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+          printf 'RUSTC=%s\n' "$(rustup which --toolchain 1.95.0 rustc)" >> "$GITHUB_ENV"
+          rustc +1.95.0 -Vv > "$TRNM_COMPONENT_RECEIPTS/rustc.txt"
+          cargo +1.95.0 -V > "$TRNM_COMPONENT_RECEIPTS/cargo.txt"
+      - name: Prepare pinned OpenSSL 3.5.9 PQ provider
+        id: pq_provider
+        shell: bash
+        run: |
+          set -euo pipefail
+          export TRNM_CI_RECEIPT_DIR="$TRNM_COMPONENT_RECEIPTS"
+          bash scripts/ci/prepare_pq_provider.sh
+      - name: Check locked graphs, formatting and strict component Clippy
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 metadata --locked --manifest-path trillionnium/Cargo.toml --format-version 1 > "$TRNM_COMPONENT_RECEIPTS/graph-default.json"
+          cargo +1.95.0 metadata --locked --all-features --manifest-path trillionnium/Cargo.toml --format-version 1 > "$TRNM_COMPONENT_RECEIPTS/graph-all-features.json"
+          cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+          cargo +1.95.0 clippy --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-mvcc-fee -p trnm-pon-node --all-targets --all-features -- -D warnings 2>&1 | tee "$TRNM_COMPONENT_RECEIPTS/clippy.txt"
+      - name: Build both real libtest executables
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-mvcc-fee -p trnm-pon-node --lib --no-run --message-format=json > "$TRNM_COMPONENT_RECEIPTS/build.jsonl" 2> "$TRNM_COMPONENT_RECEIPTS/build.stderr"
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          rows = [json.loads(line) for line in (Path(os.environ['TRNM_COMPONENT_RECEIPTS']) / 'build.jsonl').read_text().splitlines() if line.startswith('{')]
+          for name, variable in [('trnm_mvcc_fee', 'TRNM_MVCC_BINARY'), ('trnm_pon_node', 'TRNM_NODE_BINARY')]:
+              candidates = [row['executable'] for row in rows if row.get('reason') == 'compiler-artifact' and row.get('target', {}).get('name') == name and row.get('profile', {}).get('test') is True and row.get('executable')]
+              if len(candidates) != 1:
+                  raise SystemExit(f'exactly one compiled {name} libtest executable required')
+              with open(os.environ['GITHUB_ENV'], 'a') as output:
+                  output.write(f'{variable}={Path(candidates[0]).resolve(strict=True)}\n')
+          PY
+      - name: Retain every planned component observation and failure
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B formal/throughput-v1/run_component_observations.py --mvcc-binary "$TRNM_MVCC_BINARY" --node-binary "$TRNM_NODE_BINARY" --output "$TRNM_COMPONENT_RECEIPTS/native"
+      - name: Verify source after the component attempt
+        if: always()
+        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/throughput-component-receipts/source-after.json"
+      - name: Retain native component receipts without granting business qualification
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: throughput-components-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/throughput-component-receipts/
+          if-no-files-found: error
+          retention-days: 30

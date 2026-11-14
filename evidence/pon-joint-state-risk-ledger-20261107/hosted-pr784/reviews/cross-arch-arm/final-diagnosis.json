@@ -1,0 +1,89 @@
+{
+  "schema": "pr784-arm64-original-confirmation-target-review-v1",
+  "observed_at": "2026-11-08T01:08:12.996433+00:00",
+  "source_head": "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+  "run_id": 42431209912,
+  "job_id": 128580281431,
+  "job_conclusion": "failure",
+  "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42431209912/job/128580281431",
+  "native_invocations": [
+    {
+      "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+      "status": "returned",
+      "exit_code": 0,
+      "timed_out": false
+    },
+    {
+      "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+      "status": "returned",
+      "exit_code": 0,
+      "timed_out": false
+    },
+    {
+      "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+      "status": "returned",
+      "exit_code": 0,
+      "timed_out": false
+    },
+    {
+      "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+      "status": "returned",
+      "exit_code": 0,
+      "timed_out": false
+    },
+    {
+      "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+      "status": "returned",
+      "exit_code": 0,
+      "timed_out": false
+    }
+  ],
+  "acceptance_stages": {
+    "service_report": {
+      "status": "passed",
+      "error": null
+    },
+    "sustained_report": {
+      "status": "passed",
+      "error": null
+    },
+    "confirmation_report": {
+      "status": "failed",
+      "error": "CONFIRMATION_TARGET"
+    }
+  },
+  "overall_passed": false,
+  "finite_confirmation_target_met": false,
+  "same_packet_sequence": true,
+  "signed_honest_packets": 7,
+  "phases": [
+    {
+      "index": 0,
+      "requested_window_ns": 4000000000,
+      "client_confirmed_transactions": 1,
+      "client_confirmed_before_original_window_end": true,
+      "finite_business_target_met": true,
+      "honest_head_successes_in_window": 72,
+      "full_native_state_equal": true,
+      "scope": "one host, same operator; separate native verifying client; six depth/work confirmations during unchanged four-second traffic window; no post-pressure drain credit"
+    },
+    {
+      "index": 1,
+      "requested_window_ns": 4000000000,
+      "client_confirmed_transactions": 0,
+      "client_confirmed_before_original_window_end": false,
+      "finite_business_target_met": false,
+      "honest_head_successes_in_window": 29,
+      "full_native_state_equal": false,
+      "scope": "one host, same operator; separate native verifying client; six depth/work confirmations during unchanged four-second traffic window; no post-pressure drain credit"
+    }
+  ],
+  "artifact_id": 13597409283,
+  "artifact_zip_sha256": "56a055a59f8064cbf6c9e3fd578048f516229011d2af6ec7eeed1d16d2576194",
+  "artifact_sha256_matches_github_digest": true,
+  "all_algorithm_work_cost_proved": false,
+  "all_world_views_covered": false,
+  "native_six_successor_failure_probability": null,
+  "production_qualified": false,
+  "causal_regression_from_this_PR_proved": false
+}

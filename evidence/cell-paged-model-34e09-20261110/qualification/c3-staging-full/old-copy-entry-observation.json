@@ -1,0 +1,23 @@
+{
+  "command": [
+    "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "--jobs",
+    "2",
+    "-p",
+    "trnm-data-availability",
+    "--example",
+    "cell_sealed_research_next_use_v2",
+    "--",
+    "--test-threads=1"
+  ],
+  "completed_at_utc": "2026-11-10T09:56:47.621305+00:00",
+  "elapsed_seconds": 8.074188628001139,
+  "exit_code": 101,
+  "failure": null,
+  "log_sha256": "910ba0600da0096dc3072ccc154bf57dcb6fc7780a5e78d10ecf1d5d4ae52f69",
+  "name": "old-copy-entry",
+  "started_at_utc": "2026-11-10T09:56:39.547117+00:00"
+}

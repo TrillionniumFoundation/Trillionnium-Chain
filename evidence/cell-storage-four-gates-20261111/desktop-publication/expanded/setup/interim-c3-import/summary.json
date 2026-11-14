@@ -1,0 +1,178 @@
+{
+  "base": "30ce6e99c5d0d86e6563a49786e8b1e41b44c6c6",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "elapsed_seconds": 0.005989209981635213,
+      "exit_code": 0,
+      "name": "before-head",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "git",
+        "symbolic-ref",
+        "HEAD"
+      ],
+      "elapsed_seconds": 0.0025235768407583237,
+      "exit_code": 0,
+      "name": "before-branch",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "elapsed_seconds": 1.2619266209658235,
+      "exit_code": 0,
+      "name": "before-status",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "elapsed_seconds": 0.09033112204633653,
+      "exit_code": 0,
+      "name": "before-preflight",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "git",
+        "bundle",
+        "verify",
+        "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-import/candidate.bundle"
+      ],
+      "elapsed_seconds": 0.0033114280086010695,
+      "exit_code": 0,
+      "name": "bundle-verify",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "git",
+        "bundle",
+        "list-heads",
+        "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-import/candidate.bundle"
+      ],
+      "elapsed_seconds": 0.0022858208976686,
+      "exit_code": 0,
+      "name": "bundle-heads",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "git",
+        "fetch",
+        "--no-tags",
+        "--no-recurse-submodules",
+        "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-import/candidate.bundle",
+        "HEAD"
+      ],
+      "elapsed_seconds": 0.16023712395690382,
+      "exit_code": 0,
+      "name": "bundle-fetch",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "FETCH_HEAD"
+      ],
+      "elapsed_seconds": 0.0036814699415117502,
+      "exit_code": 0,
+      "name": "fetched-head",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "git",
+        "merge",
+        "--ff-only",
+        "--no-edit",
+        "030de92be05bfd4f73e199098c12dfeaedf29b17"
+      ],
+      "elapsed_seconds": 0.5532804820686579,
+      "exit_code": 0,
+      "name": "fast-forward",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "elapsed_seconds": 0.09043976105749607,
+      "exit_code": 0,
+      "name": "candidate-preflight",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "elapsed_seconds": 0.0028685841243714094,
+      "exit_code": 0,
+      "name": "candidate-head",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "git",
+        "symbolic-ref",
+        "HEAD"
+      ],
+      "elapsed_seconds": 0.0033273331355303526,
+      "exit_code": 0,
+      "name": "candidate-branch",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "elapsed_seconds": 0.050839951960369945,
+      "exit_code": 0,
+      "name": "candidate-status",
+      "timed_out": false
+    }
+  ],
+  "completed": true,
+  "materials": [
+    {
+      "kind": "bundle",
+      "sha256": "5bde7e04c201d25d940a56d855e9d5dd7b9013fc3675c697c00d3ca28484b2e5",
+      "size": 35021
+    },
+    {
+      "kind": "body",
+      "sha256": "7226f2e36ed2cb202b5c93c28a17308aebd6d4bbc63ba4d3cfe5822ffef0a8ad",
+      "size": 2783
+    }
+  ],
+  "passed": true,
+  "paths": {
+    "body": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-import/pr-body.md",
+    "bundle": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-import/candidate.bundle"
+  },
+  "root": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish",
+  "scope": "authorized interim C3 import; no push in this phase",
+  "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"
+}

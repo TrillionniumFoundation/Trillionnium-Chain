@@ -1,0 +1,37 @@
+{
+  "accepted": true,
+  "command": [
+    "python3",
+    "-B",
+    "scripts/ci/check_repository.py"
+  ],
+  "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-publish",
+  "elapsed_seconds": 30.352817,
+  "execution_error": null,
+  "exit_code": 0,
+  "expected_python_tests": null,
+  "expected_rust_tests": null,
+  "finished_utc": "2026-11-12T01:00:02.758202+00:00",
+  "interrupted": false,
+  "label": "repository-and-links",
+  "observations": {
+    "build_script_events": [],
+    "cargo_json_errors": [],
+    "python_ok": false,
+    "python_tests": [],
+    "rust_tests": [],
+    "unqualified": false
+  },
+  "python_suite_required": false,
+  "rejections": [],
+  "source_snapshot_sha256": null,
+  "sqlite_package_id": "path+file:///home/qian-qi/work/chain-pon-outcome-7612-publish/trillionnium/crates/trnm-sqlite-io-boundary#0.1.0",
+  "sqlite_witness_required": false,
+  "sqlite_witnesses": [],
+  "started_utc": "2026-11-12T00:59:32.405398+00:00",
+  "stderr": "repository-and-links.stderr",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout": "repository-and-links.stdout",
+  "stdout_sha256": "cbddbb4b14a1d08f3f72a3a8ed122ff1dc36724c19e97c80c5aa4c6d8d64bc10",
+  "timed_out": false
+}

@@ -1,0 +1,72 @@
+[
+  {
+    "artifact_id": 13824310394,
+    "run_id": 42943747016,
+    "job_id": 130271439587,
+    "source_head": "a28d62facc71ab4aa5b433a141cdd55f56d75fb0",
+    "source_tree": "fa3e59e39e8ce45e63cd377635f93276d17ca013",
+    "zip_bytes": 177030,
+    "zip_sha256": "30216bba0321768ef8f83c615f34fd23f984e6fde2c5b2b997371a459ce789fb",
+    "artifact_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42943747016/artifacts/13824310394",
+    "complete_zip_retained_in_repository": false,
+    "note": "Selected original members only; all retained members reproduced exactly from the SHA-256-verified ZIP.",
+    "retained_members": [
+      {
+        "original_member": "cpq1-full-content/source-integrity.json",
+        "archive_path": "remote-artifacts/cpq1/cpq1-full-content/source-integrity.json.gz",
+        "bytes": 2211,
+        "sha256": "f3c415da915b7bf804b2cef87ece27da8baf83e2d9c1621b1ffa92261e4ca83c",
+        "archive_sha256": "8bbfd8b95c10b0f6ac5f31a554a74f4c79d98f8e5eb61d4fbaa48e759e84855a"
+      },
+      {
+        "original_member": "cpq1-full-content/source-integrity.log",
+        "archive_path": "remote-artifacts/cpq1/cpq1-full-content/source-integrity.log.gz",
+        "bytes": 91,
+        "sha256": "50840b5fce9aaf1a3d23ea0a6efb6af9ef48c7e5c77619fcfb7682a6436fd301",
+        "archive_sha256": "2426e66e4ec1ca60b3f58dc82e1a95c1401b0b06b670241df88625653f1a7f85"
+      }
+    ]
+  },
+  {
+    "artifact_id": 13824493403,
+    "run_id": 42943747030,
+    "job_id": 130271440560,
+    "source_head": "a28d62facc71ab4aa5b433a141cdd55f56d75fb0",
+    "source_tree": "fa3e59e39e8ce45e63cd377635f93276d17ca013",
+    "zip_bytes": 6413715,
+    "zip_sha256": "56d7243c3409a098bd57f489ea07e6781edd123bedf7decfa57d222601e7fef6",
+    "artifact_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42943747030/artifacts/13824493403",
+    "complete_zip_retained_in_repository": false,
+    "note": "Selected original members only; all retained members reproduced exactly from the SHA-256-verified ZIP.",
+    "retained_members": [
+      {
+        "original_member": "from-zero-native/manifest.json",
+        "archive_path": "remote-artifacts/protocol/from-zero-native/manifest.json.gz",
+        "bytes": 72961,
+        "sha256": "1c8356574193a7919c55f18fe58fdb1080c51c5222b265a087ba7aac5f0820ae",
+        "archive_sha256": "bd37db7d01640367fa72d6c2a64d85663f220c085c10dd088514aae80e4227fd"
+      },
+      {
+        "original_member": "from-zero-native-host/child-result.json",
+        "archive_path": "remote-artifacts/protocol/from-zero-native-host/child-result.json.gz",
+        "bytes": 333,
+        "sha256": "b624dd8f68fd721f45d9a3242294d04b80982ba4d060d61d55eaf1125394a321",
+        "archive_sha256": "cbcd7a9c0f907ca97383bc2a9b51bb14687e5c2644ca8f9a4608ec145da686d9"
+      },
+      {
+        "original_member": "from-zero-native-host/controller-result.json",
+        "archive_path": "remote-artifacts/protocol/from-zero-native-host/controller-result.json.gz",
+        "bytes": 7953,
+        "sha256": "b310478baa9431083ab7289c46f44d739994658c3b9afbbf0d1f103ec4bd0a86",
+        "archive_sha256": "9e2fe2af2c76aabc8eb6791c5f7e2f789ff322ecaca9ecbd6721293d829a1f6a"
+      },
+      {
+        "original_member": "from-zero-native-host/systemd-run.log",
+        "archive_path": "remote-artifacts/protocol/from-zero-native-host/systemd-run.log.gz",
+        "bytes": 6916,
+        "sha256": "24c7656ee7c99448ef02bbbabff685a1abd991ef277ce4dbee6958c4eb306d94",
+        "archive_sha256": "e88dd4cefebac09342fd43068ba3214ac141305ef89b1de06e5237274acff8c3"
+      }
+    ]
+  }
+]

@@ -1,0 +1,37 @@
+{
+  "description": "Reconstructed stress illustration. M*R is a loose cap, not a claim each candidate makes R guesses. Total event queries have a separate cap. Not measured.",
+  "candidate_pair_cap_M": 18446744073709551616,
+  "early_event_guesses_per_pair_cap_R": 18446744073709551616,
+  "adversary_distinct_row_access_cap_H": 1440,
+  "target_hex": "03ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "adversary_query_caps": {
+    "leaf": 1048576,
+    "node": 1048576,
+    "task": 18446744073709551616,
+    "context": 18446744073709551616,
+    "noise-seed": 18446744073709551616,
+    "selected-coordinate": 18446744073709551616,
+    "noise-eight": 184320,
+    "event": 18446744073709551616,
+    "ticket": 18446744073709551616,
+    "other": 1048576
+  },
+  "setup_query_caps": {
+    "leaf": 128,
+    "node": 126,
+    "task": 1,
+    "context": 1
+  },
+  "completion_query_caps": {
+    "leaf": 2048,
+    "node": 12288,
+    "task": 1024,
+    "context": 1024,
+    "noise-seed": 1024,
+    "selected-coordinate": 1024,
+    "noise-eight": 4194304,
+    "event": 1024,
+    "ticket": 1024
+  },
+  "required_distinct_events": 1
+}

@@ -1,0 +1,97 @@
+{
+  "schema": "pon-final-lint-boundary-review-v1",
+  "created_utc": "2026-11-09T03:01:20.788012+00:00",
+  "parent": "fc5c44ca91c56e77ca2ffc9943e10f0f777a5937",
+  "fixed_source": "11791e2da79b69322271be2cffe03725165151d1",
+  "fixed_tree": "162552848110fda532504b78865a16930bc6d9bb",
+  "changed_paths": [
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "trillionnium/crates/trnm-pon-node/examples/pon_w1_lifecycle_cost_v4.rs",
+    "trillionnium/crates/trnm-pon-node/examples/support/w1_cost_producers.rs"
+  ],
+  "lint_allow_scope": [
+    "NoObserver struct only",
+    "legacy search compatibility function only"
+  ],
+  "lint_functional_effect": "Two item-scoped allow(dead_code) attributes and explanatory comments; compatibility adapter execution, MEASURE_ATTEMPTS=false and V2/V3 paths unchanged.",
+  "loop_review": {
+    "old": "for search in 0..SEARCHES",
+    "new": "for (search, canonical_search) in canonical.iter_mut().enumerate()",
+    "bound": "canonical is &mut [Option<Search>; SEARCHES]",
+    "conclusion": "Same array elements in ascending index order. Existing comparison and first-write assignment use the same cell; no challenge, proof, roster, event ordering, verification or credit fields changed.",
+    "measured_timing_bytes_claimed_identical": false
+  },
+  "corpus_changed_top_level_fields": [
+    "pinned_blobs"
+  ],
+  "pin_changes": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/pon_w1_lifecycle_cost_v4.rs",
+      "old": "112b8943a1cfc009d7a8fc70e8d486b41429409f",
+      "new": "e1870e82a3ddfb9e117d6c0e232acb23ca9c4008",
+      "actual_new_git_blob": "e1870e82a3ddfb9e117d6c0e232acb23ca9c4008",
+      "matches_actual_blob": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/w1_cost_producers.rs",
+      "old": "06ee7d87a9252c467fddc1f3676cb7fabe733b33",
+      "new": "7109064c900422e23f3ad2c2769e6d3a7386e8c8",
+      "actual_new_git_blob": "7109064c900422e23f3ad2c2769e6d3a7386e8c8",
+      "matches_actual_blob": true
+    }
+  ],
+  "pin_count": 907,
+  "required_count": 815,
+  "all_other_corpus_fields_unchanged": true,
+  "ci_formal_docs_qrom_changes": [],
+  "historical_guards_and_legacy_examples": [
+    {
+      "path": "formal/pon-nakamoto-v1/fixed_probability_contract_v1.json",
+      "same_as_e798": true,
+      "sha256": "e249dfcda10720a1fc388cef9613302253a96b125c0ab1f0eda1b584b72cebef"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/fixed_probability_contract.py",
+      "same_as_e798": true,
+      "sha256": "5d797bfe7b82f11613162636d2ae30778b4e17070e6570705041e86e9fbd75bc"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_fixed_probability_contract.py",
+      "same_as_e798": true,
+      "sha256": "d84bf207c8aec58de95912f6f282109145e6fa1be010e942908d2122a2c4cf51"
+    },
+    {
+      "path": "config/pon/w1-qrom-current-source-observation-v1.json",
+      "same_as_e798": true,
+      "sha256": "7eac13d310d91177dfbdbfd1adc70af4ccfe5eddb64821558e3fa4a109b43353"
+    },
+    {
+      "path": "config/pon/w1-qrom-implementation-v1.json",
+      "same_as_e798": true,
+      "sha256": "7761787fca9ea92c7b678186ccb302900bfabc974460b7f6793c7a0aabb6cf22"
+    },
+    {
+      "path": "config/pon/w1-qrom-closure-required-tests-v1.json",
+      "same_as_e798": true,
+      "sha256": "ee2b11492a362bd4be2f2df4e7ad691f4dd8a78cd9df884979cb3409e117745f"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/pon_w1_cost_matrix_v2.rs",
+      "same_as_e798": true,
+      "sha256": "1ec1866e6f52fd3b916a968bbffd1979c0a1dd0b09263f01b59a8372f80fc545"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/pon_w1_reused_cost_v3.rs",
+      "same_as_e798": true,
+      "sha256": "7027516cdb2c2fafa6c68d7051e965bc7bb573f395466974fc09c8dd3187b20a"
+    }
+  ],
+  "blocking_correctness_issue_found": false,
+  "qualification_changed": false,
+  "native_execution_claimed_by_review": false,
+  "static_receipts": "/workspace/scratch/pon-joint-58fd59-build/final-static/validation-summary.json",
+  "static_file_manifest": "/workspace/scratch/pon-joint-58fd59-build/final-static/artifact-file-manifest.json",
+  "working_head_at_review_end": "11791e2da79b69322271be2cffe03725165151d1",
+  "working_status_at_review_end": "",
+  "source_modified_by_this_review": false
+}

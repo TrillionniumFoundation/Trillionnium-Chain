@@ -1,0 +1,11 @@
+{
+  "fresh_leaf_phase": "PREPARED",
+  "operation": "operation-b94a94c0c7004accaf767558efdbb995",
+  "original_membership": "0::/user.slice/user-1000.slice/session-108532.scope\n",
+  "pid": 1311262,
+  "preparation_profile": "FRESH_U_CHILD_GROUPS_ONLY_V1",
+  "scope_request_not_yet_called": true,
+  "source": "03b67a955b8fcb6b6c920be584eaad5c0a71d34d",
+  "starttime": 95695523,
+  "unit": "trnm-host-8594de94044d42ae822441799e90c115.scope"
+}

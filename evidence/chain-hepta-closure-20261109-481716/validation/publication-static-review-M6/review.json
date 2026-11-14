@@ -1,0 +1,1125 @@
+{
+  "schema": "closure-evidence-M6-publication-static-review-v1",
+  "review_completed_utc": "2026-11-09T17:31:07.124534+00:00",
+  "conclusion": "NO_MATERIAL_STATIC_PUBLICATION_ISSUE_FOUND_WITHIN_REVIEWED_SCOPE",
+  "method": "Read-only local files and fixed Git objects, SHA-256 recomputation, normal retained archive member checks and display Markdown link/privacy scanning. No source edits, tests, native retries, qualification reader execution or network access.",
+  "core_input_snapshot": [
+    {
+      "path": "candidate-profile.json",
+      "bytes": 4052,
+      "sha256": "175524d6cafe93f1f175d272bee1b9be4d22c954909be3fca6d4955362900775"
+    },
+    {
+      "path": "qualification-plan.json",
+      "bytes": 4018,
+      "sha256": "94d02a1f21b9e33b5fb22ea53fe0445433aaa8e03d5f0ca446ad3c33cd3b3df8"
+    },
+    {
+      "path": "qualification-packet.json",
+      "bytes": 230,
+      "sha256": "30f71c34f28eeba630127859947379b4ea6eb853f53c0090686cc3694fe77463"
+    },
+    {
+      "path": "qualification-review.json",
+      "bytes": 14086,
+      "sha256": "d536c4d56b66d6ca622d7cc400205d91e6ea93a59d8012d45ba73f65fdaa0356"
+    },
+    {
+      "path": "qualification-identities.json",
+      "bytes": 593,
+      "sha256": "9b3f1ade3bf13dd975da543df087a7a045bb9296dd95dabec373fa1a507c6681"
+    },
+    {
+      "path": "execution-status.json",
+      "bytes": 7807,
+      "sha256": "395038c6691369c1e10c81737570a6ce9298012cf686c3ef36f3dca8dbac7144"
+    },
+    {
+      "path": "README.md",
+      "bytes": 20626,
+      "sha256": "a20376e551508fd7859737d7f49dbf3521d0dc672af35301df8ddadc1cecdd2e"
+    }
+  ],
+  "additional_inputs": [
+    {
+      "path": "source/hepta-lock-observations.json",
+      "bytes": 536,
+      "sha256": "660ed6e29878283c3d3c067c0f9c641b71844bac86867151bb1bd59ba819ea8d"
+    },
+    {
+      "path": "source/hepta-717-lock-object-verification.json",
+      "bytes": 1252,
+      "sha256": "24da20cae25b340d4971df1e87a24002c0655d4a936afd7e0b04d7867f592a99"
+    },
+    {
+      "path": "source/M6-freeze.json",
+      "bytes": 4523,
+      "sha256": "c9b4ed9cabb9000ecf75821e64eff7a14e05ac1be12d0581d75e23e38115635c"
+    },
+    {
+      "path": "qualification-history/M5/retention.json",
+      "bytes": 1129,
+      "sha256": "21e066cefbf7df1c87dead57e99496f05d8f67751cbfb5812fe994428191c8ef"
+    },
+    {
+      "path": "validation/native-M5/archive-summary.json",
+      "bytes": 83778,
+      "sha256": "c653caed1801150795048ff6627211bfa4e906af0cca6228ea607aa6e4b96a7d"
+    },
+    {
+      "path": "validation/native-M5/local-validation.json",
+      "bytes": 667,
+      "sha256": "8a62c369d06527ff2aa8f5cbdb10c96ba94fbf3ea5a076480668ca6e961f0ace"
+    },
+    {
+      "path": "research-publication-transform.json",
+      "bytes": 65090,
+      "sha256": "aa445fa05e98b03f76926b3077cee566e98184e62a27b0a3015423e03196b2b4"
+    }
+  ],
+  "source_pair": {
+    "chain": {
+      "locks": {
+        "formal/pon-nakamoto-v1/selected_nonce_bank_research/native_selected/Cargo.lock": "c8d66fe14008ffeb39a78f6d802ecac2255fe1eb1de58a423aa5d5824a31717c",
+        "formal/pon-nakamoto-v1/w1_batch/Cargo.lock": "e56accd1c0259adba715ea17e252aee6214eb5ff06a449b5cee4d4c72b18ac8a",
+        "formal/pon-nakamoto-v1/w1_batch/methods/guest/Cargo.lock": "018423c898d09d0be7a7fbe207e4a1672c5b6f36202dda765a81da852c044d18",
+        "formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.lock": "3d6b7e7895169e638240a0ed835a5352d64a0ae44f4b56ba0a00acc2ec6b3865",
+        "formal/pon-nakamoto-v1/w1_native_cost/Cargo.lock": "b88ad1d11b966101d46f1797a3b7ab9f5e4806d8a0fdd9f90b6091163d5c30a0",
+        "formal/pon-nakamoto-v1/w1_node_adapter_research/Cargo.lock": "3a94af4cfcad63eef08f1cc5921797112fd5191bf5e93b2b133c840524c629a7",
+        "formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.lock": "24f146fc5d5ba89f6070725a4453fbfe160fae0a81fb2449932f420fd2b7f281",
+        "formal/pon-nakamoto-v1/w1_public_stark_research/security_model_audit/source_inputs/w1_Cargo.lock": "35e29723f30ca10dd6712403456755ac41cb8d73d963ab73f8cbd7a8d69d3ae1",
+        "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock": "9756a0d8cb88c4f0e67f722dad933d30dcbe93d5bb2b6ca2be15f23fd0a3f2ef",
+        "formal/pon-nakamoto-v1/w1_zkvm/Cargo.lock": "ed6ea70f20cbe45bf0bdef7f841adbdaa7c3b2a9838ffdfed64fa88f129b707a",
+        "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/Cargo.lock": "03a3b7f6cc81a6e1678f2fd23b2b448f8f90931c258f4e66a7bcdc422447d2bf",
+        "formal/pon-nakamoto-v1/w1_zkvm/methods/guest/Cargo.lock": "b9f3e243c5b78300329827d1837244dd3244ca1eba569cac967fe8d5e012314c",
+        "tests/fuzz/Cargo.lock": "290799f8243743e2619d8bd2cb99e1cae9295c4fbfea3d952f01b2d7f873caae",
+        "trillionnium/Cargo.lock": "f9e57d73899c5d9fabd4f5b4fedf45256b8db4efb448d15680d070bbcfcb30bd"
+      },
+      "sha": "4dbeae12fa756fd662cc074390fcb628abe970ad",
+      "tree": "1943c3e69e3a717ce99d91aabc00eba4d37516f1"
+    },
+    "hepta": {
+      "locks": {
+        "MODULE.bazel.lock": "2be801e80e41fc993798e133a168c8202c73ed8c8e4e06f419779e317f7c0679",
+        "codex-rs/Cargo.lock": "48b55c7ff5c23516fd0aeedca7c10a6e7902aeb5dc49fa4cef80971e1ae57d3f"
+      },
+      "sha": "71738345326b98d88b738250d2b84ecbcb466eb8",
+      "tree": "bfd8384241bf09fcf79daa94f2ef9c9438f92ee4"
+    }
+  },
+  "qualification_hash_chain": {
+    "all_nine_edges_match": true,
+    "edges": [
+      {
+        "source": "qualification-plan.json",
+        "field": "profile_sha256",
+        "target": "candidate-profile.json",
+        "raw_sha256_matches": true
+      },
+      {
+        "source": "qualification-packet.json",
+        "field": "plan_sha256",
+        "target": "qualification-plan.json",
+        "raw_sha256_matches": true
+      },
+      {
+        "source": "qualification-review.json",
+        "field": "profile_sha256",
+        "target": "candidate-profile.json",
+        "raw_sha256_matches": true
+      },
+      {
+        "source": "qualification-review.json",
+        "field": "plan_sha256",
+        "target": "qualification-plan.json",
+        "raw_sha256_matches": true
+      },
+      {
+        "source": "qualification-review.json",
+        "field": "packet_sha256",
+        "target": "qualification-packet.json",
+        "raw_sha256_matches": true
+      },
+      {
+        "source": "qualification-identities.json",
+        "field": "profile_sha256",
+        "target": "candidate-profile.json",
+        "raw_sha256_matches": true
+      },
+      {
+        "source": "qualification-identities.json",
+        "field": "plan_sha256",
+        "target": "qualification-plan.json",
+        "raw_sha256_matches": true
+      },
+      {
+        "source": "qualification-identities.json",
+        "field": "packet_sha256",
+        "target": "qualification-packet.json",
+        "raw_sha256_matches": true
+      },
+      {
+        "source": "qualification-identities.json",
+        "field": "review_sha256",
+        "target": "qualification-review.json",
+        "raw_sha256_matches": true
+      }
+    ],
+    "four_unique_linked_digests": true,
+    "source_pair_equal_in_profile_plan_review": true,
+    "status": "HOLD_NO_GO",
+    "authority": "DENY_ALL",
+    "seven_gates_blocked": true,
+    "all_build_load_fields_null": true,
+    "ordinary_daemon_case_roster_configured": false,
+    "full_two_worktree_collector_executed": false,
+    "empty_cases_not_waivers": true
+  },
+  "selected_locks": {
+    "chain_count": 14,
+    "hepta_count": 2,
+    "all_match_exact_local_fixed_commit_Git_object_bytes": true,
+    "GIT_NO_LAZY_FETCH": "1",
+    "GIT_NO_REPLACE_OBJECTS": "1",
+    "hepta_observation_register_matches_raw_objects": true,
+    "files": [
+      {
+        "side": "chain",
+        "path": "formal/pon-nakamoto-v1/selected_nonce_bank_research/native_selected/Cargo.lock",
+        "source_commit": "4dbeae12fa756fd662cc074390fcb628abe970ad",
+        "git_blob": "3aab92c0129f40ac27f18dc701eb096abe165694",
+        "bytes": 4909,
+        "sha256": "c8d66fe14008ffeb39a78f6d802ecac2255fe1eb1de58a423aa5d5824a31717c",
+        "matches": true
+      },
+      {
+        "side": "chain",
+        "path": "formal/pon-nakamoto-v1/w1_batch/Cargo.lock",
+        "source_commit": "4dbeae12fa756fd662cc074390fcb628abe970ad",
+        "git_blob": "70ef9c45aaa139a857e8123c4af8da175c390636",
+        "bytes": 67890,
+        "sha256": "e56accd1c0259adba715ea17e252aee6214eb5ff06a449b5cee4d4c72b18ac8a",
+        "matches": true
+      },
+      {
+        "side": "chain",
+        "path": "formal/pon-nakamoto-v1/w1_batch/methods/guest/Cargo.lock",
+        "source_commit": "4dbeae12fa756fd662cc074390fcb628abe970ad",
+        "git_blob": "6d2ee496115f3e7cd3833f3b22aed1e06bb9039b",
+        "bytes": 37525,
+        "sha256": "018423c898d09d0be7a7fbe207e4a1672c5b6f36202dda765a81da852c044d18",
+        "matches": true
+      },
+      {
+        "side": "chain",
+        "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.lock",
+        "source_commit": "4dbeae12fa756fd662cc074390fcb628abe970ad",
+        "git_blob": "1020d2fd06b76312c69972261be5b56ebeb66972",
+        "bytes": 38332,
+        "sha256": "3d6b7e7895169e638240a0ed835a5352d64a0ae44f4b56ba0a00acc2ec6b3865",
+        "matches": true
+      },
+      {
+        "side": "chain",
+        "path": "formal/pon-nakamoto-v1/w1_native_cost/Cargo.lock",
+        "source_commit": "4dbeae12fa756fd662cc074390fcb628abe970ad",
+        "git_blob": "8b8f188c7c0d70521736277fafc5c2036c92e328",
+        "bytes": 15508,
+        "sha256": "b88ad1d11b966101d46f1797a3b7ab9f5e4806d8a0fdd9f90b6091163d5c30a0",
+        "matches": true
+      },
+      {
+        "side": "chain",
+        "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/Cargo.lock",
+        "source_commit": "4dbeae12fa756fd662cc074390fcb628abe970ad",
+        "git_blob": "6e32fbb0c7425f6f8fc95b2980cbc4d239b1d271",
+        "bytes": 40778,
+        "sha256": "3a94af4cfcad63eef08f1cc5921797112fd5191bf5e93b2b133c840524c629a7",
+        "matches": true
+      },
+      {
+        "side": "chain",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.lock",
+        "source_commit": "4dbeae12fa756fd662cc074390fcb628abe970ad",
+        "git_blob": "f4aa755210a9c9c2b8e07ec67ca8013f82f07104",
+        "bytes": 18270,
+        "sha256": "24f146fc5d5ba89f6070725a4453fbfe160fae0a81fb2449932f420fd2b7f281",
+        "matches": true
+      },
+      {
+        "side": "chain",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/security_model_audit/source_inputs/w1_Cargo.lock",
+        "source_commit": "4dbeae12fa756fd662cc074390fcb628abe970ad",
+        "git_blob": "58c5110b6a01fc6c3bc76d6321a704120cd95f6c",
+        "bytes": 17799,
+        "sha256": "35e29723f30ca10dd6712403456755ac41cb8d73d963ab73f8cbd7a8d69d3ae1",
+        "matches": true
+      },
+      {
+        "side": "chain",
+        "path": "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock",
+        "source_commit": "4dbeae12fa756fd662cc074390fcb628abe970ad",
+        "git_blob": "3f1c4aab639b302c5003052b407da92b37a45010",
+        "bytes": 46489,
+        "sha256": "9756a0d8cb88c4f0e67f722dad933d30dcbe93d5bb2b6ca2be15f23fd0a3f2ef",
+        "matches": true
+      },
+      {
+        "side": "chain",
+        "path": "formal/pon-nakamoto-v1/w1_zkvm/Cargo.lock",
+        "source_commit": "4dbeae12fa756fd662cc074390fcb628abe970ad",
+        "git_blob": "9cb18cf7dec99a1ae25900261129784a0d2b0424",
+        "bytes": 74379,
+        "sha256": "ed6ea70f20cbe45bf0bdef7f841adbdaa7c3b2a9838ffdfed64fa88f129b707a",
+        "matches": true
+      },
+      {
+        "side": "chain",
+        "path": "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/Cargo.lock",
+        "source_commit": "4dbeae12fa756fd662cc074390fcb628abe970ad",
+        "git_blob": "79c0652b73163740e6114be1e02c02bb441271d5",
+        "bytes": 46025,
+        "sha256": "03a3b7f6cc81a6e1678f2fd23b2b448f8f90931c258f4e66a7bcdc422447d2bf",
+        "matches": true
+      },
+      {
+        "side": "chain",
+        "path": "formal/pon-nakamoto-v1/w1_zkvm/methods/guest/Cargo.lock",
+        "source_commit": "4dbeae12fa756fd662cc074390fcb628abe970ad",
+        "git_blob": "828d317c2ca5907239cd358edd40b9525a8d0785",
+        "bytes": 46021,
+        "sha256": "b9f3e243c5b78300329827d1837244dd3244ca1eba569cac967fe8d5e012314c",
+        "matches": true
+      },
+      {
+        "side": "chain",
+        "path": "tests/fuzz/Cargo.lock",
+        "source_commit": "4dbeae12fa756fd662cc074390fcb628abe970ad",
+        "git_blob": "552c0458c74f5afb3a3ac03d412ee44c5c52d61b",
+        "bytes": 34087,
+        "sha256": "290799f8243743e2619d8bd2cb99e1cae9295c4fbfea3d952f01b2d7f873caae",
+        "matches": true
+      },
+      {
+        "side": "chain",
+        "path": "trillionnium/Cargo.lock",
+        "source_commit": "4dbeae12fa756fd662cc074390fcb628abe970ad",
+        "git_blob": "2ff1e1c42dfa7061f4a77620c0bb65b656d158a5",
+        "bytes": 40365,
+        "sha256": "f9e57d73899c5d9fabd4f5b4fedf45256b8db4efb448d15680d070bbcfcb30bd",
+        "matches": true
+      },
+      {
+        "side": "hepta",
+        "path": "MODULE.bazel.lock",
+        "source_commit": "71738345326b98d88b738250d2b84ecbcb466eb8",
+        "git_blob": "34a567e6140eadd1a422b6b3dca536965069bd47",
+        "bytes": 1786971,
+        "sha256": "2be801e80e41fc993798e133a168c8202c73ed8c8e4e06f419779e317f7c0679",
+        "matches": true
+      },
+      {
+        "side": "hepta",
+        "path": "codex-rs/Cargo.lock",
+        "source_commit": "71738345326b98d88b738250d2b84ecbcb466eb8",
+        "git_blob": "46b1be5a5534631bf3151fbf1b3b1884451a8df9",
+        "bytes": 421418,
+        "sha256": "48b55c7ff5c23516fd0aeedca7c10a6e7902aeb5dc49fa4cef80971e1ae57d3f",
+        "matches": true
+      }
+    ],
+    "scope_limit": "Selected input byte binding, including research/audit locks; neither all-locks-participated-in-build nor a full two-worktree collector is claimed."
+  },
+  "proof_profile": {
+    "manifest_path": "config/pon/pq-proof-profile-binding-v1.json",
+    "manifest_bytes": 2378,
+    "manifest_sha256": "9154595097a2abe460f23e53ab96b3de5712702b156ada71fc5d2d65c337e424",
+    "M6_git_object_matches": true,
+    "selected_profile_id": "trnm-w1-risc0-3.0.6-poseidon2-join-v2",
+    "mapping_contract_sha256": "e2c5377ac02c0ed47e7f69125fbcabe61072d42597b3208264abaa5be2961c78",
+    "mapping_source_base_commit": "44e96b1a841a50613d0b93484c5e576caec9f81f",
+    "selected_inputs": [
+      {
+        "group": "project_files",
+        "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/src/profile.rs",
+        "bytes": 5246,
+        "sha256": "b4f4f35fc69f8846e465928052d1ee006d262d05baedfbce00703ea8fa11a6a9",
+        "matches": true
+      },
+      {
+        "group": "project_files",
+        "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/src/wire.rs",
+        "bytes": 1282,
+        "sha256": "fae4f60cca4bcd5aff132935307d3ea11de194765c6e3050adfaf7f346ef9cf3",
+        "matches": true
+      },
+      {
+        "group": "project_files",
+        "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.toml",
+        "bytes": 349,
+        "sha256": "9ed358e1e24b58505d5d37e0a88ef3538b2c6146c3303a87c33b19208d667d25",
+        "matches": true
+      },
+      {
+        "group": "project_files",
+        "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.lock",
+        "bytes": 38332,
+        "sha256": "3d6b7e7895169e638240a0ed835a5352d64a0ae44f4b56ba0a00acc2ec6b3865",
+        "matches": true
+      },
+      {
+        "group": "project_files",
+        "path": "formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs",
+        "bytes": 11172,
+        "sha256": "5e102fcbe4881e3d163c7a8b65364304b14d080ae64f23b0d5032daa84208aa7",
+        "matches": true
+      },
+      {
+        "group": "project_files",
+        "path": "formal/pon-nakamoto-v1/w1_v2_verifier/src/image.rs",
+        "bytes": 284,
+        "sha256": "c972778fe557d3e1a23470423c46c899ade1633ba76cac48268129b2af5d1ddb",
+        "matches": true
+      },
+      {
+        "group": "project_files",
+        "path": "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml",
+        "bytes": 498,
+        "sha256": "65263e60248f29008ff098d5fcf1f573a19da5a40f87ecdaa6d3cd5063c104ba",
+        "matches": true
+      },
+      {
+        "group": "project_files",
+        "path": "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock",
+        "bytes": 46489,
+        "sha256": "9756a0d8cb88c4f0e67f722dad933d30dcbe93d5bb2b6ca2be15f23fd0a3f2ef",
+        "matches": true
+      },
+      {
+        "group": "project_files",
+        "path": "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/src/main.rs",
+        "bytes": 445,
+        "sha256": "c2db185d338be3ab7c6256239b750445e084547de742221517f9fc9f12711468",
+        "matches": true
+      },
+      {
+        "group": "project_files",
+        "path": "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/Cargo.toml",
+        "bytes": 564,
+        "sha256": "48f1c4580ff7de989bdcf1055d12ed5128b105994e653e6d11a593c029bd2037",
+        "matches": true
+      },
+      {
+        "group": "project_files",
+        "path": "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/Cargo.lock",
+        "bytes": 46025,
+        "sha256": "03a3b7f6cc81a6e1678f2fd23b2b448f8f90931c258f4e66a7bcdc422447d2bf",
+        "matches": true
+      },
+      {
+        "group": "project_files",
+        "path": "formal/pon-nakamoto-v1/w1_zkvm/relation/src/lib.rs",
+        "bytes": 14597,
+        "sha256": "aeee8bebc5b098744a34a568232fadb5a79963760d8e2e8b3fb6176683987322",
+        "matches": true
+      },
+      {
+        "group": "project_files",
+        "path": "formal/pon-nakamoto-v1/w1_zkvm/relation/src/v2.rs",
+        "bytes": 11159,
+        "sha256": "9f31aec3b6d7f376164b58f3ab2f89a191716a560235f73c692b390d1c9fa45b",
+        "matches": true
+      },
+      {
+        "group": "project_files",
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+        "bytes": 104121,
+        "sha256": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03",
+        "matches": true
+      },
+      {
+        "group": "project_files",
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/artifacts.rs",
+        "bytes": 3747,
+        "sha256": "fd99053e94bb38b929b848898f4f2ad9f7d3ce33d48097e444337f6ed1d82919",
+        "matches": true
+      },
+      {
+        "group": "project_files",
+        "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+        "bytes": 32654,
+        "sha256": "ee443e739da946fc023f119e7f3b882f373b3787820295b29b182ef0ee3ef83b",
+        "matches": true
+      },
+      {
+        "group": "saved_v2_files",
+        "path": "evidence/pon-w1-full-v2-20261105/succinct.bin",
+        "bytes": 257014,
+        "sha256": "6c72828c9d05a62175e08fa3e7e1d0d5e85e785ad96b5beb5ec7a2e2490c26ee",
+        "matches": true
+      },
+      {
+        "group": "saved_v2_files",
+        "path": "evidence/pon-w1-full-v2-20261105/header.bin",
+        "bytes": 318,
+        "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+        "matches": true
+      },
+      {
+        "group": "saved_v2_files",
+        "path": "evidence/pon-w1-full-v2-20261105/expected-artifacts.bin",
+        "bytes": 64,
+        "sha256": "802adcdd951cfb4cd7271df22c3bca6af66fee9f40454c74f8b5ff2c98a1b683",
+        "matches": true
+      },
+      {
+        "group": "saved_v2_files",
+        "path": "evidence/pon-w1-full-v2-20261105/input.bin",
+        "bytes": 49506,
+        "sha256": "67b74fa2f417c0240d974e5ecea410d2b68d97d6dde667603aeb4d7ce59036cb",
+        "matches": true
+      },
+      {
+        "group": "saved_v2_files",
+        "path": "evidence/pon-w1-full-v2-20261105/guest.bin",
+        "bytes": 375928,
+        "sha256": "25718312ec3c6f5219d832e3516adfb5f82983156f669c5e7daa15bd22d1798f",
+        "matches": true
+      },
+      {
+        "group": "saved_v2_files",
+        "path": "evidence/pon-w1-full-v2-20261105/proof-result.json",
+        "bytes": 198014,
+        "sha256": "a2bbd9ed141b87823ea6d50322c0d65f706e32aca028d1b5ab19f1327c1194cc",
+        "matches": true
+      }
+    ],
+    "upstream_snapshot": {
+      "path": "evidence/pon-w1-qrom-implementation-20261107/upstream-sources.json.gz",
+      "bytes": 69332,
+      "sha256": "f6be3667106df6843f5f29c0954cdce8e2617da36c9c91a7a5198665675e0253",
+      "fixed_M6_bytes_match": true
+    },
+    "descriptor_sha256": "da0c97f1c549e10ecfc066f6b0a9721147dc3d430eab6f53d502cbc7b91dd48c",
+    "descriptor_matches_candidate": true,
+    "descriptor_method": "Deterministic descriptor schema using pinned declared identity and freshly hashed selected Git-object inputs; no proof execution or new theorem qualification.",
+    "open_obligation_count": 15,
+    "qualification_fields": {
+      "post_quantum_soundness_qualified": false,
+      "complete_w1_soundness_qualified": false,
+      "quantum_work_qualified": false,
+      "pq_signature_qualification_inferred": false,
+      "production_qualified": false,
+      "consensus_admission": false,
+      "security_bits_quantum": null
+    },
+    "lifetime_budget": {
+      "quantum_queries_lifetime": null,
+      "accepted_statements_lifetime": null,
+      "max_recursive_nodes_per_statement": null,
+      "max_fs_rounds_per_reduction": null,
+      "target_total_failure_probability": null,
+      "rrbr_knowledge_error": null,
+      "concrete_hash_to_ideal_oracle_error": null,
+      "hash_output_sigma_bits": null,
+      "min_verifier_randomness_bits": null,
+      "adaptive_composition_bound": null,
+      "policy_adopted": false
+    },
+    "theorem_reference": {
+      "evaluator_source": {
+        "path": "scripts/w1_qrom_composition_budget.py",
+        "bytes": 21292,
+        "sha256": "4d3d6a3b8efcac266cfaf7fb2204a4f3b0482ea0ead2481b72617556f0771427"
+      },
+      "evaluator_revision": "2026-01-01",
+      "official_url": "https://eprint.iacr.org/2025/2166",
+      "official_latest_revision_observed": "2026-03-02",
+      "observation_date": "2026-11-09",
+      "latest_full_text_obtained": false,
+      "version_equivalence_verified": false
+    },
+    "native_pnw1_p3_not_promoted": true
+  },
+  "original_contract": {
+    "path": "docs/development/specs/pon/CELL_STORAGE_NETWORK_ACCEPTANCE_V1.md",
+    "original_commit": "097f59f505f8ec42f72e3b8255e6cb7822a70646",
+    "original_blob": "edd0f3942e798f20fd78474f451b28147adce191",
+    "M6_blob": "edd0f3942e798f20fd78474f451b28147adce191",
+    "bytes": 9915,
+    "sha256": "9796d49c535de01ea79dd331e1d9c6768326770b6411b76caac0f33d53fdd5a9",
+    "original_M6_worktree_bytes_equal": true,
+    "thresholds": {
+      "host_service_seconds": 4,
+      "separate_campaign_seconds": 30,
+      "thresholds_changed": false,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/097f59f505f8ec42f72e3b8255e6cb7822a70646/docs/development/specs/pon/CELL_STORAGE_NETWORK_ACCEPTANCE_V1.md",
+      "wan_minimum_hours": 72,
+      "wan_minimum_independently_administered_failure_domains": 3
+    },
+    "research_and_runner_windows_do_not_replace_service_gates": true
+  },
+  "M5_history": {
+    "files": [
+      {
+        "path": "qualification-history/M5/candidate-profile.json",
+        "bytes": 4052,
+        "sha256": "5e046ca20f6faece5c7bc0a189ecf5e5d82462a30fe60e5a69ff1b5371751f88",
+        "matches_retention": true
+      },
+      {
+        "path": "qualification-history/M5/qualification-plan.json",
+        "bytes": 4018,
+        "sha256": "9cd7c3cbd2c785458a3764f3d6dba6bca148b5f88a140f322a00510236e7ea92",
+        "matches_retention": true
+      },
+      {
+        "path": "qualification-history/M5/qualification-packet.json",
+        "bytes": 230,
+        "sha256": "cd0c52abc544bee2794cba92d0010294d0170830a2179734add1a5bbe8f92ce8",
+        "matches_retention": true
+      },
+      {
+        "path": "qualification-history/M5/qualification-review.json",
+        "bytes": 14086,
+        "sha256": "9bba26b27c26973e6a4521727d8b4d726a385dbefdda112cd002f8e94fc10844",
+        "matches_retention": true
+      },
+      {
+        "path": "qualification-history/M5/qualification-identities.json",
+        "bytes": 593,
+        "sha256": "73b3c3500905b598b917d7c0190d97207a6ff68d1ca78c568b62e4c36fef6214",
+        "matches_retention": true
+      },
+      {
+        "path": "qualification-history/M5/execution-status.json",
+        "bytes": 4347,
+        "sha256": "dfc4d356af8d99836dd72da108e46fa3b7a570f17d8dc2d7ee51f2142024ebcf",
+        "matches_retention": true
+      }
+    ],
+    "all_six_raw_hashes_match": true,
+    "execution_status_time": "2026-11-09T15:57:06.981202+00:00",
+    "execution_status_M5": {
+      "all_five_libraries_passed": null,
+      "evidence": null,
+      "source_commit": "3ad605ecdac4b3b123dff83c1cb7458430acd776",
+      "source_tree": "fbbb4dca143775bae75ea825ff502f368e122ebb",
+      "status": "PREPARING_FRESH_FIXED_SOURCE_VALIDATION"
+    },
+    "historical_pending_scope_explicit": true,
+    "not_M6_evidence": true
+  },
+  "native_M5_retained_packet": {
+    "archive_bytes": 577631,
+    "archive_sha256": "2ad7f1189e1286301beac719dc98bb92b1c73410cecb1d0da4ad096fdcec3e16",
+    "manifest_sha256": "1e6d3c7f902f0857ead03518d914e2702db45336f841d8012312815e8e41acc3",
+    "manifest_files_verified": 471,
+    "members": 472,
+    "all_sizes_and_sha256_match": true,
+    "source_commit": "3ad605ecdac4b3b123dff83c1cb7458430acd776",
+    "source_tree": "fbbb4dca143775bae75ea825ff502f368e122ebb",
+    "status": "FAILED_LIBRARY_TESTS",
+    "all_harnesses_complete": true,
+    "all_libraries_passed": false,
+    "totals": {
+      "failed": 1,
+      "filtered_out": 0,
+      "ignored": 41,
+      "measured": 0,
+      "passed": 2449
+    },
+    "old_dynamic_355_release": [
+      {
+        "elapsed": "2.78s",
+        "failed": 11,
+        "filtered_out": 0,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 56,
+        "raw_line": "test result: FAILED. 56 passed; 11 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.78s",
+        "status": "FAILED"
+      }
+    ],
+    "lock_failure_cause_unestablished": true,
+    "nested_and_cohort_counts_not_added": true
+  },
+  "display_MD": {
+    "scope": "All current display Markdown except the two immutable research-originals. Inline and reference-style destinations checked; external sites not fetched. This is not a general credential scan of every archive or repository file.",
+    "files": [
+      {
+        "path": "README.md",
+        "bytes": 20626,
+        "sha256": "a20376e551508fd7859737d7f49dbf3521d0dc672af35301df8ddadc1cecdd2e",
+        "relative_links": 31,
+        "external_links": 5
+      },
+      {
+        "path": "final-pon-research.md",
+        "bytes": 45056,
+        "sha256": "abe22f9fc778d97a3792584a9fc6b1cc5e9613e2a32d1c16773d836936ab2dfb",
+        "relative_links": 0,
+        "external_links": 64
+      },
+      {
+        "path": "history-import-review/AUTHORIZATION_NOTE.md",
+        "bytes": 804,
+        "sha256": "7b29f02ce64f894947588eb652c3d2ac50d6ce48a8ade320ec98267a177bbe1d",
+        "relative_links": 1,
+        "external_links": 0
+      },
+      {
+        "path": "history-import-review/README.md",
+        "bytes": 12140,
+        "sha256": "d4b8d401fa16d9f645d1d56ff678173417ff8600b111fd9b5f2060d06ee817e1",
+        "relative_links": 1,
+        "external_links": 13
+      },
+      {
+        "path": "history-import-review/snapshot-followup.md",
+        "bytes": 11398,
+        "sha256": "4dca78e2e7ab2a0d0af4c2ed6c280f6c5455d76515dd3eb3c5368a6abdd96258",
+        "relative_links": 4,
+        "external_links": 5
+      },
+      {
+        "path": "native/M4/README.md",
+        "bytes": 8244,
+        "sha256": "37c8b70b72f7e547d8af0a9c78d801cfcf30538b90762a12688658bb41a50489",
+        "relative_links": 0,
+        "external_links": 0
+      },
+      {
+        "path": "ordinary-daemon-717-engineering-gap.md",
+        "bytes": 11758,
+        "sha256": "191020ef6f85c86be99ecbb849be94a7077aa7d9cb34540564eb8bd8f67418a6",
+        "relative_links": 0,
+        "external_links": 9
+      },
+      {
+        "path": "original-campaign/README.md",
+        "bytes": 5046,
+        "sha256": "7b6031c09db9e97b7fc797e939fc63aa2a602c894c82e907d1d1b941e3bb5815",
+        "relative_links": 0,
+        "external_links": 0
+      },
+      {
+        "path": "original-history-snapshots/README.md",
+        "bytes": 2694,
+        "sha256": "e5efb47cb90200a331c33bc99ef23b4191adf3c3e1adf12e85d212cad05a54a7",
+        "relative_links": 0,
+        "external_links": 0
+      },
+      {
+        "path": "qrom-latest-followup.md",
+        "bytes": 12173,
+        "sha256": "7d9cadeabe82b7c7ed956c61f915a7cf349ad3e35ff1e5dcb94f087be1ce844c",
+        "relative_links": 5,
+        "external_links": 17
+      },
+      {
+        "path": "qualification-history/README.md",
+        "bytes": 1068,
+        "sha256": "30fae197cbf27feb06860e455342f7295c10b274d275ce2cf02f7d8c123bc06c",
+        "relative_links": 0,
+        "external_links": 0
+      },
+      {
+        "path": "validation/fd-probe-static-review/README.md",
+        "bytes": 3633,
+        "sha256": "1ef313577d4c2a65bf731c6110ccba718b1ac2df612bf8fa5017a380427ac00d",
+        "relative_links": 1,
+        "external_links": 0
+      },
+      {
+        "path": "validation/journal-isolation-static-review/README.md",
+        "bytes": 5116,
+        "sha256": "582b9f32939bf5c57686a37e5c020949b85bd9f93de313784d789174eb56a65a",
+        "relative_links": 2,
+        "external_links": 5
+      },
+      {
+        "path": "validation/native-M5/README.md",
+        "bytes": 11748,
+        "sha256": "bed8238258ddba1193138bcd743f8581ddd97011c575838033eb73338a26561b",
+        "relative_links": 0,
+        "external_links": 0
+      },
+      {
+        "path": "validation/provider-fixture-static-review/README.md",
+        "bytes": 6439,
+        "sha256": "d32fd9adae40a3150c5865269d44a430b57008bc7edd2f66cbb5d9263babf1c9",
+        "relative_links": 1,
+        "external_links": 7
+      }
+    ],
+    "count": 15,
+    "inline_destinations": 143,
+    "reference_definitions": 28,
+    "relative_destinations": 46,
+    "external_destinations": 125,
+    "relative_checks": [
+      {
+        "file": "README.md",
+        "kind": "inline",
+        "destination": "qualification-history/M4/qualification-identities.json",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "file": "README.md",
+        "kind": "inline",
+        "destination": "qualification-history/M5/qualification-identities.json",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "file": "README.md",
+        "kind": "inline",
+        "destination": "candidate-profile.json",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "file": "README.md",
+        "kind": "inline",
+        "destination": "qualification-plan.json",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "file": "README.md",
+        "kind": "inline",
+        "destination": "qualification-packet.json",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "file": "README.md",
+        "kind": "inline",
+        "destination": "qualification-review.json",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "file": "README.md",
+        "kind": "inline",
+        "destination": "validation/M6-controls/summary.json",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "file": "README.md",
+        "kind": "inline",
+        "destination": "validation/final-source-structure-M6/results.json",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "file": "README.md",
+        "kind": "inline",
+        "destination": "source/hepta-717-lock-object-verification.json",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "file": "README.md",
+        "kind": "inline",
+        "destination": "validation/M5-controls/summary.json",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "file": "README.md",
+        "kind": "inline",
+        "destination": "validation/ci-M4-passed/summary.json",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "file": "README.md",
+        "kind": "inline",
+        "destination": "validation/readers-M4/summary.json",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "file": "README.md",
+        "kind": "inline",
+        "destination": "validation/final-source-structure-M5/results.json",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "file": "README.md",
+        "kind": "inline",
+        "destination": "binding-review/m2-python-controls.json",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "file": "README.md",
+        "kind": "inline",
+        "destination": "validation/ci-M3-failed/summary.json",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "file": "README.md",
+        "kind": "inline",
+        "destination": "native/M4/README.md",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "file": "README.md",
+        "kind": "inline",
+        "destination": "validation/fd-probe-static-review/README.md",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "file": "README.md",
+        "kind": "inline",
+        "destination": "source/M5-freeze.json",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "file": "README.md",
+        "kind": "inline",
+        "destination": "validation/provider-fixture-static-review/README.md",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "file": "README.md",
+        "kind": "inline",
+        "destination": "validation/native-M5/README.md",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "file": "README.md",
+        "kind": "inline",
+        "destination": "source/M6-freeze.json",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "file": "README.md",
+        "kind": "inline",
+        "destination": "validation/journal-isolation-static-review/README.md",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "file": "README.md",
+        "kind": "inline",
+        "destination": "execution-status.json",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "file": "README.md",
+        "kind": "inline",
+        "destination": "original-campaign/README.md",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "file": "README.md",
+        "kind": "inline",
+        "destination": "history-import-review/README.md",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "file": "README.md",
+        "kind": "inline",
+        "destination": "history-import-review/snapshot-followup.md",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "file": "README.md",
+        "kind": "inline",
+        "destination": "original-history-snapshots/README.md",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "file": "README.md",
+        "kind": "inline",
+        "destination": "ordinary-daemon-717-engineering-gap.md",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "file": "README.md",
+        "kind": "inline",
+        "destination": "final-pon-research.md",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "file": "README.md",
+        "kind": "inline",
+        "destination": "final-pon-research-sources.json",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "file": "README.md",
+        "kind": "inline",
+        "destination": "qrom-latest-followup.md",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "file": "history-import-review/AUTHORIZATION_NOTE.md",
+        "kind": "inline",
+        "destination": "README.md",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "file": "history-import-review/README.md",
+        "kind": "inline",
+        "destination": "review.json",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "file": "history-import-review/snapshot-followup.md",
+        "kind": "inline",
+        "destination": "README.md",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "file": "history-import-review/snapshot-followup.md",
+        "kind": "inline",
+        "destination": "review.json",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "file": "history-import-review/snapshot-followup.md",
+        "kind": "inline",
+        "destination": "snapshot-followup.json",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "file": "history-import-review/snapshot-followup.md",
+        "kind": "inline",
+        "destination": "AUTHORIZATION_NOTE.md",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "file": "qrom-latest-followup.md",
+        "kind": "inline",
+        "destination": "qrom-followup-inputs/official-fetch-attempt01.json",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "file": "qrom-latest-followup.md",
+        "kind": "inline",
+        "destination": "qrom-latest-followup-sources.json",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "file": "qrom-latest-followup.md",
+        "kind": "inline",
+        "destination": "qrom-followup-inputs/tracked-manuscript-comparison.json",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "file": "qrom-latest-followup.md",
+        "kind": "inline",
+        "destination": "qrom-followup-inputs/tracked-comparison-review.json",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "file": "qrom-latest-followup.md",
+        "kind": "inline",
+        "destination": "qrom-latest-followup-sources.json",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "file": "validation/fd-probe-static-review/README.md",
+        "kind": "inline",
+        "destination": "review.json",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "file": "validation/journal-isolation-static-review/README.md",
+        "kind": "inline",
+        "destination": "review.json",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "file": "validation/journal-isolation-static-review/README.md",
+        "kind": "inline",
+        "destination": "reviewed.patch",
+        "exists": true,
+        "inside_package": true
+      },
+      {
+        "file": "validation/provider-fixture-static-review/README.md",
+        "kind": "inline",
+        "destination": "review.json",
+        "exists": true,
+        "inside_package": true
+      }
+    ],
+    "missing_outside_or_sandbox_findings": [],
+    "private_Library_or_signed_URL_findings": []
+  },
+  "claim_boundaries": [
+    "M6 source, historical M4/M5 and original 0746 campaign remain separately identified.",
+    "M5 canonical failure 2449/1/41, old dynamic release 56/11 initialization failure and all retained ignored gates remain; no cross-provider success is substituted.",
+    "M6 whole-test exec isolation retains original same-child lifetime and assertions; it does not identify the M5 lock holder or establish production concurrent-spawn correctness.",
+    "0746 first-confirmed-round 21-import subset and recovered whole-baseline 30-import snapshots retain distinct sample scopes. Unseparated progress/Host/refill components remain unmeasured.",
+    "Ordinary daemon identities and learning cycle, original 4/30 service acceptance, independent three-domain/72h WAN, proof/theorem/lifetime qualification and production activation are not granted.",
+    "Positive existing Jan-to-March QROM comparison remains acknowledged without claiming new PDF retrieval or closure of fifteen obligations."
+  ],
+  "M6_native_status_at_snapshot": {
+    "M5_failure_cause_remains_unestablished": true,
+    "all_five_libraries_passed": null,
+    "evidence": null,
+    "source_commit": "4dbeae12fa756fd662cc074390fcb628abe970ad",
+    "source_tree": "1943c3e69e3a717ce99d91aabc00eba4d37516f1",
+    "status": "PREPARING_FRESH_FIXED_SOURCE_VALIDATION"
+  },
+  "new_M6_controls_text_present_but_result_truth_out_of_scope": true,
+  "excluded": [
+    "Actual new M6 native terminal results and binary/provider/count joins",
+    "Actual new M6 controls terminal truth, logs/counts and input-guard validation, including README current-M6-control section and execution-status python_controls_M6",
+    "Changes after the exact core-input hashes pinned here",
+    "Full two-worktree identity collector, ordinary daemon execution, service campaign, deployment, crypto proof and publication actions"
+  ],
+  "first_capture_refusal": {
+    "status": "REFUSED_CHANGED_REVIEW_INPUTS_BEFORE_WRITING_REPORT",
+    "cause": "Parent added M6 controls while final snapshot was being captured; five qualification core inputs stayed unchanged. Capture stopped, changed text/link scope was reread, and execution/control result truth remains excluded.",
+    "previous_README_sha256": "16881d7f8cb33ebbd165623f252a7f774efa780657ce2acfaeb8e66a2bbdbfb1",
+    "previous_execution_status_sha256": "5d32c1ae9dd750ebbd7e2e7776d3de7e175967aa52a91fe8b1f72ab8a47fd79c",
+    "observed_current_README_sha256": "a20376e551508fd7859737d7f49dbf3521d0dc672af35301df8ddadc1cecdd2e",
+    "observed_current_execution_status_sha256": "395038c6691369c1e10c81737570a6ce9298012cf686c3ef36f3dca8dbac7144"
+  },
+  "previous_review_preserved": {
+    "path": "pon_pq_patch/final-static-review/review.json",
+    "sha256": "45ffb1604e9d528a3e5b0609e99d46f5d24c517dcf1798aadab0ebfdfdbf4f15",
+    "not_overwritten": true
+  },
+  "material_findings": []
+}

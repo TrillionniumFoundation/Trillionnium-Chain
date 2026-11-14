@@ -1,0 +1,221 @@
+{
+  "schema": "chain-published-source-integration-handoff-v1",
+  "created_utc": "2026-11-05T05:53:11.486588+00:00",
+  "source_commit": "70df2c644ed8dd64afa1e7533743664cddacb9da",
+  "source_tree": "ef6eee36f4ac1cc823b29a2e499e2f2ef6b54855",
+  "ordered_parents": [
+    "160b6f91e39708454d1edd200ab9ef2b4192192e",
+    "14fcbede085b414a9621aef3f288d2b1ca1839ae"
+  ],
+  "source_mapping": {
+    "published_source_commit": "70df2c644ed8dd64afa1e7533743664cddacb9da",
+    "published_tree": "ef6eee36f4ac1cc823b29a2e499e2f2ef6b54855",
+    "published_parents": [
+      "160b6f91e39708454d1edd200ab9ef2b4192192e",
+      "14fcbede085b414a9621aef3f288d2b1ca1839ae"
+    ],
+    "earlier_checked_commit": "e218ec649509e328eee4c7ef6021d96c647514ef",
+    "earlier_checked_tree": "07add784b1e1be265ea0e4cc2fc4381a18c8e51f",
+    "changed_paths": [
+      "evidence/pon-shared-material-v1-20261105/README.md",
+      "evidence/pon-shared-material-v1-20261105/archive.json",
+      "evidence/pon-shared-material-v1-20261105/summary.json",
+      "evidence/pon-shared-material-v1-20261105/v2-setup-followup.json"
+    ],
+    "only_four_peer_evidence_documents_differ": true,
+    "all_other_blob_and_mode_entries_exact": true,
+    "working_tree_clean": true,
+    "missing_tracked_working_copies": 0,
+    "source_negative_tests": {
+      "passed": 35,
+      "actual_execution_commit": "e218ec649509e328eee4c7ef6021d96c647514ef",
+      "repeated_on_published_source": false
+    },
+    "native_on_published_source": "NOT_RUN",
+    "raw_commit_sha256": "6a36bb5343225148475e9990edb7b65f61d47aff76b6a45db4f817425dc4837b",
+    "remote_ref_written_by_child": false,
+    "peer_blob_receipts": [
+      {
+        "path": "evidence/pon-shared-material-v1-20261105/v2-setup-followup.json",
+        "sha": "329e5ff45559db4a06b504901b72110168fd3631",
+        "bytes": 9327,
+        "sha256": "a46455870f49ca26f1532e2cab002217288f58c22446cae064e0aa90a7267e65",
+        "fetched_ref": "70df2c644ed8dd64afa1e7533743664cddacb9da",
+        "verified": true
+      },
+      {
+        "path": "evidence/pon-shared-material-v1-20261105/summary.json",
+        "sha": "40b2ac2f59fbe2f39e17734fe831f16c7d63df76",
+        "bytes": 74546,
+        "sha256": "2522f341b4f9605c863cefcb3aaa161446c1f5fd81e9cc8a9bd4e5bbf9da7bbc",
+        "fetched_ref": "70df2c644ed8dd64afa1e7533743664cddacb9da",
+        "verified": true
+      },
+      {
+        "path": "evidence/pon-shared-material-v1-20261105/README.md",
+        "sha": "cd4ae3b2cbbff15ad2c6a3ef5655d3d99c89ad41",
+        "bytes": 9372,
+        "sha256": "9540ed3f7e845cb478fedf23118cf54a1aeda4468e51bedaa5ca5d81c9d49fbe",
+        "fetched_ref": "70df2c644ed8dd64afa1e7533743664cddacb9da",
+        "verified": true
+      },
+      {
+        "path": "evidence/pon-shared-material-v1-20261105/archive.json",
+        "sha": "d34aaec7ca9900b262c7adea884af864af945c6f",
+        "bytes": 411,
+        "sha256": "37027fec0fa6b800f7f9046f2c0a840cdac2b95977c63da3583810cb0788a7f2",
+        "fetched_ref": "70df2c644ed8dd64afa1e7533743664cddacb9da",
+        "verified": true
+      }
+    ]
+  },
+  "source_check_results": {
+    "source-corpus": {
+      "scope": "Source/package/link checks and source-integrity fixtures only; no Rust/native/deployment acceptance",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "source_before": {
+        "head": "70df2c644ed8dd64afa1e7533743664cddacb9da",
+        "tree": "ef6eee36f4ac1cc823b29a2e499e2f2ef6b54855",
+        "status": ""
+      },
+      "source_after": {
+        "head": "70df2c644ed8dd64afa1e7533743664cddacb9da",
+        "tree": "ef6eee36f4ac1cc823b29a2e499e2f2ef6b54855",
+        "status": ""
+      },
+      "source_unchanged": true,
+      "exit_code": 0,
+      "elapsed_seconds": 0.31814766800016514,
+      "output_sha256": "9aff167000acadac6524cfe2a0f75be9376dbfef329d140cdbcec2beec10917c",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "GIT_OPTIONAL_LOCKS": "0"
+      }
+    },
+    "distributed-inventory": {
+      "scope": "Source/package/link checks and source-integrity fixtures only; no Rust/native/deployment acceptance",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "source_before": {
+        "head": "70df2c644ed8dd64afa1e7533743664cddacb9da",
+        "tree": "ef6eee36f4ac1cc823b29a2e499e2f2ef6b54855",
+        "status": ""
+      },
+      "source_after": {
+        "head": "70df2c644ed8dd64afa1e7533743664cddacb9da",
+        "tree": "ef6eee36f4ac1cc823b29a2e499e2f2ef6b54855",
+        "status": ""
+      },
+      "source_unchanged": true,
+      "exit_code": 0,
+      "elapsed_seconds": 0.10965027500060387,
+      "output_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "GIT_OPTIONAL_LOCKS": "0"
+      }
+    },
+    "repository": {
+      "scope": "Source/package/link checks and source-integrity fixtures only; no Rust/native/deployment acceptance",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/check_repository.py"
+      ],
+      "source_before": {
+        "head": "70df2c644ed8dd64afa1e7533743664cddacb9da",
+        "tree": "ef6eee36f4ac1cc823b29a2e499e2f2ef6b54855",
+        "status": ""
+      },
+      "source_after": {
+        "head": "70df2c644ed8dd64afa1e7533743664cddacb9da",
+        "tree": "ef6eee36f4ac1cc823b29a2e499e2f2ef6b54855",
+        "status": ""
+      },
+      "source_unchanged": true,
+      "exit_code": 0,
+      "elapsed_seconds": 61.66195397000047,
+      "output_sha256": "053c07ed54549d153420c42a07c240c3c5549dc0151aa8dcf6905f42f5b1f742",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "GIT_OPTIONAL_LOCKS": "0"
+      }
+    }
+  },
+  "full_repository_result": {
+    "activation": false,
+    "head": "70df2c644ed8dd64afa1e7533743664cddacb9da",
+    "local_links": 2970,
+    "normal_dependency_edges": 25,
+    "result": "PASS",
+    "runtime_implemented": false,
+    "rust_files": 1146,
+    "source_state": "committed-clean",
+    "tree": "ef6eee36f4ac1cc823b29a2e499e2f2ef6b54855",
+    "workspace_packages": 26
+  },
+  "source_corpus_result": {
+    "canonical_default_provider_contract_checked": true,
+    "canonical_pnq2_contract_checked": true,
+    "continuous_npq6_combination_accepted": false,
+    "cryptographic_acceptance": false,
+    "exact_source_blobs": 487,
+    "legacy_qtx1_optional_adapter_contract_checked": true,
+    "native_transfer_account_contract_checked": true,
+    "native_transport_contract_checked": true,
+    "node_activated": false,
+    "production_confidentiality_accepted": false,
+    "schema": "trnm-pq-cross-branch-check-v1",
+    "status": "HOLD_NO_GO",
+    "upstream_heads": 6,
+    "whole_native_authorization_migrated": false
+  },
+  "source_negative_tests": {
+    "actual_commit": "e218ec649509e328eee4c7ef6021d96c647514ef",
+    "passed": 35,
+    "failed": 0,
+    "repeated_on_published_source": false
+  },
+  "native_on_published_source": "NOT_RUN",
+  "strict_clippy_on_published_source": "NOT_RUN",
+  "rust_format_on_published_source": "NOT_RUN",
+  "full_working_copy_during_published_checks": true,
+  "current_working_copy": {
+    "tracked_paths": 9817,
+    "missing_historical_evidence_paths": 213,
+    "skip_worktree_count": 213,
+    "all_git_blobs_retained": true,
+    "source_unchanged": true,
+    "git_status": "clean",
+    "completely_materialized": false,
+    "receipt": "published-source/working-copy-reclamation-after-checks.json"
+  },
+  "full_recursive_metadata_inputs": [
+    {
+      "path": "/dev/shm/pq-owner-chain_dba_tree.json",
+      "bytes": 1996825,
+      "sha256": "3ff3470dbe020875c43e13c2352db543d6bbde3165ab4fe1f477ceabf1fc5f8c",
+      "declared_root": "25ae0d2035b763b916575292d04571e93a512dd1",
+      "truncated": false,
+      "entries": 10899
+    },
+    {
+      "path": "/dev/shm/pq-owner-chain_last_tree.json",
+      "bytes": 3535278,
+      "sha256": "299361e2fdb4e869d3e78fc02c827279df28485c01529599cfc170e81c7bd987",
+      "declared_root": "121923cce94535a01ffde024134653f4a770e4cb",
+      "truncated": false,
+      "entries": 10900
+    }
+  ],
+  "remote_writes_by_child": false,
+  "historical_results_scope_preserved": true
+}

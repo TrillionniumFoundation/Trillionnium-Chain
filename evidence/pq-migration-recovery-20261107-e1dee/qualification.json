@@ -1,0 +1,246 @@
+{
+  "schema": "trnm-pq-migration-recovery-qualification-v1",
+  "disposition": "HOLD_NO_GO",
+  "source_preservation": {
+    "initial_baseline": "840522d0b65b4989f1a2a1d09c0ad51af1a1956d",
+    "concurrent_candidate": "f943c23b041532eec7d1c5dc0546f393fb33d45e",
+    "current_base": "0ca272d09d1522b0ffd740e441b6d3de1ed81de6",
+    "concurrent_base_merge": "dfffc5b2447cbf81a8a656ec8e0cdd2e2af6a422",
+    "history_preserving_parent": "b35b6a7c2a7f140f73506b29486b984ba7a54d1e",
+    "evidence_publication_is_another_native_execution": false,
+    "history_preserving_parent_matches_9fb011c_tree": true,
+    "first_evidence_candidate": "b0dadfdc0d906d35f19a1ba79df2ddbb8bbfba25",
+    "concurrent_m15_head": "1c14fab4cca9c2ad1a48c502f51eb89edeb7df50",
+    "reintegrated_native_source": "2c51e15e5b4f57b133b53cc9c386431e29563db5",
+    "reintegrated_entire_tree_matches_9fb011c": false,
+    "migration_recovery_component_blobs_unchanged": true
+  },
+  "migration": {
+    "admitted_restricted_source_handoff_executed": true,
+    "source_backends": [
+      "legacy",
+      "authenticated_v1"
+    ],
+    "destination_backend": "pq_network_v2",
+    "prior_registry_exact_nonzero_commitment_required": true,
+    "supported_balances_nonce_floors_tasks_rewards_reconciled": true,
+    "dual_pq_claim_and_strict_cold_open_executed": true,
+    "unsupported_source_rights_refused": true,
+    "concurrent_integration_positive_source_is_explicit_trusted_synthetic_checkpoint": true,
+    "source_finality_qualified": false,
+    "historical_binding_time_qualified": false,
+    "ordinary_full_source_state_migration_qualified": false,
+    "source_assets_locked_or_retired": false
+  },
+  "endpoint_recovery": {
+    "red_source": "555d2e5bb338fa67d8b08f77f2bd86d68850fbf5",
+    "red_implementation_matches_baseline": true,
+    "identical_red_green_public_test_blob": "623013c6d93589d120b9b6eec58698f60156294c",
+    "red_actual_failed": 2,
+    "red_failures_are_successful_tests": false,
+    "endpoint_ownership_fix_executed": true,
+    "endpoint_lease_is_independent_freshness": false
+  },
+  "two_host_observation": {
+    "source": "2058225aa0d50ca57b1eb0d5f520d7f4eefae69b",
+    "runtime_host": "rog",
+    "pin_custody_host": "x230",
+    "synthetic_checkpoint_fields": true,
+    "full_declared_four_file_namespace_restored": true,
+    "fresh_pin_returned_after_restore": true,
+    "fresh_pin_bytes": 84,
+    "fresh_pin_sha256": "6b1cbc4afafca25b15c40e849f827a387c3a1354be338494f1d2d7fe600e54d3",
+    "both_hosts_complete_pin_bytes_independently_read_back": true,
+    "fresh_pin_rejects_restored_old_world": true,
+    "fresh_pin_accepts_current_world": true,
+    "same_count_different_root_rejected": true,
+    "missing_pin_input_rejected": true,
+    "missing_input_control_is_wan_outage_test": false,
+    "co_restored_old_pin_accepts_old_world_counterexample": true,
+    "refusals_leave_restored_files_unchanged": true,
+    "continuously_current_per_effect_external_custody_delivered": false
+  },
+  "retained_failed_observations": [
+    "original socket displacement and unlink regressions",
+    "local Unix bind EPERM",
+    "incomplete dependency caches",
+    "local Node compiler SIGKILL before tests",
+    "zero-test wrong-filter attempt",
+    "cancelled local check",
+    "2058225 Node migration 6 passed / 1 failed from wrong test opener",
+    "upload capacity refusal: no child submitted",
+    "first integrated preparation missing real shallow prerequisite 513e92df: zero tests",
+    "publication expected-head guard refused concurrent branch advance",
+    "b0dadfdc publication upload timeout reconciled without overwrite; expected-head guard stopped on 1c14fab4 before fast-forward/preflight/dry-run/push",
+    "first 2c51e15 preparation: shallow local clone did not transfer unadvertised b0dadfdc prerequisite; clean new checkout remained at 9fb011c and zero tests executed",
+    "local publication dry-run lacked Git credentials and stopped before pre-push; no actual push attempted"
+  ],
+  "remaining_boundaries": {
+    "running_network_migration_qualified": false,
+    "independent_administrator_qualified": false,
+    "independent_power_and_backup_domains_qualified": false,
+    "physical_power_loss_recovery_qualified": false,
+    "whole_node_runtime_effects_recovery_qualified": false,
+    "current_final_use_and_revocation_fully_composed": false,
+    "production_key_custody_qualified": false,
+    "sustained_public_wan_qualified": false,
+    "whole_chain_quantum_security_qualified": false,
+    "production_activation": false,
+    "optional_counted_sqlite_io_boundary_qualified": false,
+    "generic_unix_checkpoint_client_absolute_deadline_complete": false
+  },
+  "publication": {
+    "pull_request": 723,
+    "draft_required": true,
+    "ordinary_fast_forward_only": true,
+    "protected_main_merge": false,
+    "self_approval": false
+  },
+  "prior_native_execution": {
+    "source": "9fb011c4af1f9f54353207f9ad9fbc54ab6235e3",
+    "tree": "5f4f1730e0f5218e4db9706e6daf2c25cde5c182",
+    "host": "rog",
+    "job_id": "1a1b37b370d-fc05-8322",
+    "state": "succeeded",
+    "exit_code": 0,
+    "output_complete": true,
+    "output_durable": true,
+    "suites": {
+      "checkpoint": {
+        "passed": 56,
+        "failed": 0,
+        "ignored": 0
+      },
+      "integration-claim-cold-open": {
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0
+      },
+      "integration-signatures-domain": {
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0
+      },
+      "integration-unsupported-source": {
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0
+      },
+      "m06-migration": {
+        "passed": 7,
+        "failed": 0,
+        "ignored": 0
+      },
+      "node-migration": {
+        "passed": 7,
+        "failed": 0,
+        "ignored": 0
+      }
+    },
+    "strict_workspace_all_targets_all_features_clippy": true,
+    "native_elf_identity_unchanged": true,
+    "elf_bodies_in_archives": false,
+    "root_reviewers_locally_hashed_remote_elf_bodies": false,
+    "complete_receipt_sha256": "2e4d1d8db83e876f49972aae7c83d4d1e071582fd060c1ebca2e3ca26263c104"
+  },
+  "native_execution": {
+    "source": "2c51e15e5b4f57b133b53cc9c386431e29563db5",
+    "tree": "3f62762d719765b920cb7c7f1c1621440f98818e",
+    "host": "rog",
+    "job_id": "1a1b3a2b972-fc05-83fc",
+    "state": "succeeded",
+    "exit_code": 0,
+    "output_complete": true,
+    "output_durable": true,
+    "suites": {
+      "checkpoint": {
+        "passed": 56,
+        "failed": 0,
+        "ignored": 0
+      },
+      "integration-claim-cold-open": {
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0
+      },
+      "integration-signatures-domain": {
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0
+      },
+      "integration-unsupported-source": {
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0
+      },
+      "m06-migration": {
+        "passed": 7,
+        "failed": 0,
+        "ignored": 0
+      },
+      "node-migration": {
+        "passed": 7,
+        "failed": 0,
+        "ignored": 0
+      },
+      "root-separation": {
+        "passed": 7,
+        "failed": 0,
+        "ignored": 0
+      },
+      "sealed": {
+        "passed": 7,
+        "failed": 0,
+        "ignored": 0
+      }
+    },
+    "command_count": 35,
+    "strict_workspace_all_targets_all_features_clippy": true,
+    "native_elf_identity_unchanged": true,
+    "prior_9fb_elf_bodies_independently_retained": true,
+    "prior_9fb_elf_count": 11,
+    "elf_bodies_in_archives": false,
+    "root_reviewers_locally_hashed_remote_elf_bodies": false,
+    "complete_receipt_sha256": "e7f9fca25ca1fe266818145ff28eaabfb406d3d14b4b06dc26b0374340d1762e",
+    "all_command_receipts_and_log_bytes_independently_verified": true,
+    "node_root_sealed_elf_records_match_final_aggregate": true
+  },
+  "prior_python_and_source_checks": {
+    "source": "9fb011c4af1f9f54353207f9ad9fbc54ab6235e3",
+    "source_integrity_passed": 43,
+    "pq_source_negatives_passed": 38,
+    "pq_hold_negatives_passed": 22,
+    "pq_provider_ci_passed": 9,
+    "public_readiness_passed": 71,
+    "rust_shards_passed": 9,
+    "ci_execution_passed": 77,
+    "ci_contract_tests_passed": 104,
+    "suite_counts_overlap_and_are_not_distinct_control_totals": true,
+    "ci_contract_checker": "PASS",
+    "repository_and_local_markdown_links": "PASS",
+    "pinned_source_blobs": 694,
+    "source_inventory": "PASS",
+    "locked_offline_cargo_graph": "PASS",
+    "workspace_format": "PASS"
+  },
+  "python_and_source_checks": {
+    "source": "2c51e15e5b4f57b133b53cc9c386431e29563db5",
+    "source_integrity_passed": 43,
+    "pq_source_negatives_passed": 38,
+    "pq_hold_negatives_passed": 22,
+    "pq_provider_ci_passed": 9,
+    "public_readiness_passed": 71,
+    "rust_shards_passed": 9,
+    "ci_execution_passed": 77,
+    "ci_contract_tests_passed": 104,
+    "suite_counts_overlap_and_are_not_distinct_control_totals": true,
+    "ci_contract_checker": "PASS",
+    "repository_and_local_markdown_links": "PASS",
+    "pinned_source_blobs": 694,
+    "source_inventory": "PASS",
+    "locked_offline_cargo_graph": "PASS",
+    "workspace_format": "PASS",
+    "command_receipts_verified": 16,
+    "local_log_bytes_and_hashes_verified": true
+  }
+}

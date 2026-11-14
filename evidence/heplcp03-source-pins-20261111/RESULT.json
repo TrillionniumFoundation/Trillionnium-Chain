@@ -1,0 +1,441 @@
+{
+  "authority": "DENY_ALL",
+  "base_commit": "ced03a7aa4a09af36825a6fa258fd6bd80c79fa7",
+  "base_tree": "ff1e6c252e273b45ed29a7150f7fd24dc5934b2c",
+  "fresh_validation": {
+    "command_results": "validation/results.json",
+    "controls_passed": 59,
+    "first_corpus_control_attempt": {
+      "reason": "execution budget exhausted after 180 seconds; no observed assertion failure",
+      "returncode": 124
+    },
+    "full_repository_checker_requalified": false,
+    "full_repository_materialization": false,
+    "inspector_result": {
+      "canonical_default_provider_contract_checked": true,
+      "canonical_pnq2_contract_checked": true,
+      "continuous_npq6_combination_accepted": false,
+      "cryptographic_acceptance": false,
+      "exact_source_blobs": 1079,
+      "legacy_qtx1_optional_adapter_contract_checked": true,
+      "native_transfer_account_contract_checked": true,
+      "native_transport_contract_checked": true,
+      "node_activated": false,
+      "production_confidentiality_accepted": false,
+      "schema": "trnm-pq-cross-branch-check-v1",
+      "status": "HOLD_NO_GO",
+      "upstream_heads": 6,
+      "whole_native_authorization_migrated": false
+    },
+    "unchanged_rule_and_test_sources": {
+      "scripts/ci/check_pq_research_integration.py": {
+        "blob": "250454d67b984e5b7784a27e7a326a2d91f4205a",
+        "bytes": 70313,
+        "sha256": "09c2a6f74ce43645efc7f0397f36a87eb8085b3494bb73ce6d7163b3aa0952c4",
+        "unchanged_from_published_base": true
+      },
+      "scripts/ci/pq_chain_claim_guard.py": {
+        "blob": "9b616a77ee437b195349887d6e60f880903ebf7d",
+        "bytes": 14253,
+        "sha256": "d2c4ef94d854f748fb112d0639d13c054794f1d57764bafef2ca16d6be6e75fd",
+        "unchanged_from_published_base": true
+      },
+      "scripts/ci/pq_source_reader.py": {
+        "blob": "a35092e9d3d4457d8e9a9f30b73ca65a34359546",
+        "bytes": 5569,
+        "sha256": "b3eb3f23b42c012dc1a5a07daa479db5e2982b2a20006f047552c9f13e1a65cb",
+        "unchanged_from_published_base": true
+      },
+      "scripts/ci/test_pq_chain_claim_guard.py": {
+        "blob": "95d77463a35c690b188d5dbfcb16ebf499276cc6",
+        "bytes": 28476,
+        "sha256": "5a3c2e0d15dbfed68cb7afcc0c7f88a6b5c8620823ea7257e0dc5ef2be570a6f",
+        "unchanged_from_published_base": true
+      },
+      "scripts/ci/test_pq_research_integration.py": {
+        "blob": "37bafb4d3536956d13de13ecf703e1ec1f70b19f",
+        "bytes": 47894,
+        "sha256": "21b42925b83e599f4b777847a5a116193bfcce3e9a81be463fe7963a87625580",
+        "unchanged_from_published_base": true
+      },
+      "scripts/project-preflight.sh": {
+        "blob": "cfd4f58405ca7620ad267f6aa42b240be038797c",
+        "bytes": 242,
+        "sha256": "08645a9c6c8ab5cd9a92aa24e1c19fb71e7330d28e379b805d8e3f81ce8ede1f",
+        "unchanged_from_published_base": true
+      }
+    },
+    "unittest_seconds": 403.74
+  },
+  "hepta_final_use_integrated": false,
+  "historical_parent_observations": {
+    "applies_to_successor_tree": false,
+    "arm64_native_job": {
+      "baseline_confirmed": 1,
+      "failure": "CONFIRMATION_TARGET",
+      "job_id": 130240478443,
+      "named_tests_passed": 5,
+      "original_window_ns": 4000000000,
+      "passed": false,
+      "pressure_confirmed": 0,
+      "required_confirmations": 1
+    },
+    "artifacts": [
+      {
+        "artifact_id": 13816619944,
+        "retained_here": "selected exact original files; complete archive available at original Actions artifact URL",
+        "source_commit": "ced03a7aa4a09af36825a6fa258fd6bd80c79fa7",
+        "zip_bytes": 41839,
+        "zip_sha256": "fd26709efeb7d8a20cfe0e5b82cb16771c799a7cfa1be1c54935882799a83db3"
+      },
+      {
+        "artifact_id": 13817144943,
+        "retained_here": "selected exact original files; complete archive available at original Actions artifact URL",
+        "source_commit": "ced03a7aa4a09af36825a6fa258fd6bd80c79fa7",
+        "zip_bytes": 8984896,
+        "zip_sha256": "2f03c52763cc1c6e9d2bc39ee89e42ae78cc26b0a08720ba6e843124f1ddda2a"
+      }
+    ],
+    "business_job": {
+      "controls_passed": 144,
+      "job_id": 130240477842,
+      "original_material_readbacks_passed": 2,
+      "qualification": "HOLD_NO_GO"
+    },
+    "scope_jobs": {
+      "each_scope_controls": 11,
+      "each_training_no_update_controls": 17,
+      "head_job": 130240477452,
+      "prospective_merge_job": 130240477798
+    },
+    "source_commit": "ced03a7aa4a09af36825a6fa258fd6bd80c79fa7",
+    "source_tree": "ff1e6c252e273b45ed29a7150f7fd24dc5934b2c"
+  },
+  "independent_consumer_accepted": false,
+  "manifest": {
+    "after_blob": "f25c3a2e4693d5c253d22dc266c704e3e9a09101",
+    "after_sha256": "7f0a7d48ca375e23731d2909d2a4346aa4c28ee556e73a2b88b912c3600ebea6",
+    "before_blob": "9781fc7225c50b3a8710ce10a1adba332c2617df",
+    "before_sha256": "ec51f57a21432c05a296ac64df6483dd96de6a1682d284cf5055eded3b7d4c2d",
+    "path": "config/pon/pq-cross-branch-corpus-v1.json"
+  },
+  "native_source_changes": 0,
+  "old_execution_qualification_transferred": false,
+  "ordinary_task_completion_accepted": false,
+  "pin_changes": [
+    {
+      "new_blob": "d2da0705039d6f63c7028bac7200701dd0483eca",
+      "old_blob": "2c309c806e04cf9bc3bf73cac56db2e608268ce8",
+      "path": ".github/workflows/chain-hepta-closure-candidate.yml",
+      "source_commit": "ced03a7aa4a09af36825a6fa258fd6bd80c79fa7",
+      "source_tree": "ff1e6c252e273b45ed29a7150f7fd24dc5934b2c"
+    },
+    {
+      "new_blob": "7de526f8fdc9160a6f4fdde44f288f6dda09d477",
+      "old_blob": "a5ca681129a34363def3dcacf013ec05672e3b58",
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "source_commit": "ced03a7aa4a09af36825a6fa258fd6bd80c79fa7",
+      "source_tree": "ff1e6c252e273b45ed29a7150f7fd24dc5934b2c"
+    },
+    {
+      "new_blob": "5e1fdb9d04ecc5e484317f525f6cee9de3bcf9fc",
+      "old_blob": "f7468e21fd937694bef29db932ed2dcad82c8d0f",
+      "path": "scripts/cell_learning_scope_join.py",
+      "source_commit": "ced03a7aa4a09af36825a6fa258fd6bd80c79fa7",
+      "source_tree": "ff1e6c252e273b45ed29a7150f7fd24dc5934b2c"
+    },
+    {
+      "new_blob": "4fc95c50a05e267fcfa5e939e67ad65eb3410b4d",
+      "old_blob": "8d7b8b6029deaaeb9f7db64aa015c6f27dbaebb3",
+      "path": "scripts/ci/check_ci_contract.py",
+      "source_commit": "ced03a7aa4a09af36825a6fa258fd6bd80c79fa7",
+      "source_tree": "ff1e6c252e273b45ed29a7150f7fd24dc5934b2c"
+    },
+    {
+      "new_blob": "1d814e19ec6cab9096d6085077b6b9eb70831578",
+      "old_blob": "648295580fa3d8f6c6b0cc219fd550dffdcc85b2",
+      "path": "scripts/ci/ci_job.sh",
+      "source_commit": "ced03a7aa4a09af36825a6fa258fd6bd80c79fa7",
+      "source_tree": "ff1e6c252e273b45ed29a7150f7fd24dc5934b2c"
+    },
+    {
+      "new_blob": "936f47295f11ac5a51ed9e693b5b162f1162d54b",
+      "old_blob": "89eb4c339c1ed8023345570fa019e9ffb95f81c9",
+      "path": "scripts/ci/test_ci_contract.py",
+      "source_commit": "ced03a7aa4a09af36825a6fa258fd6bd80c79fa7",
+      "source_tree": "ff1e6c252e273b45ed29a7150f7fd24dc5934b2c"
+    }
+  ],
+  "preserved": {
+    "all_other_manifest_fields_sha256": "1d187a81a3371480bc2458f3dfeb6d45adcbab9feefe6cb168777b2f3f8909e2",
+    "all_other_manifest_fields_unchanged": true,
+    "original_acceptance_flags_unchanged": true,
+    "original_observations_unchanged": true,
+    "pin_count": 1079,
+    "pin_keys_sha256": "cc7b301c3c9242e052899e039cf08842b478cff7cbef11d0c60e2633de6b9622",
+    "pinned_key_order_unchanged": true,
+    "required_path_count": 987,
+    "required_paths_and_order_unchanged": true,
+    "required_paths_sha256": "b39ffada91d68f15fc2e09a8c4e5dc7c20e5f2db22f0d5e3ed56efa39b75c8b2"
+  },
+  "production_activation": false,
+  "production_reader_changes": 0,
+  "qualification": "HOLD_NO_GO",
+  "schema": "trnm-heplcp03-source-pin-correction-v1",
+  "scope": "six exact source-corpus blob corrections and fresh unchanged-source-gate controls only",
+  "streams": [
+    {
+      "encoding": "gzip; mtime=0",
+      "origin": "actual original inspector on the published source tree",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "original-failure/original-corpus-check.stdout.gz",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "encoding": "gzip; mtime=0",
+      "origin": "actual original inspector on the published source tree",
+      "original_bytes": 80,
+      "original_sha256": "87d8f925cd77838fd46dbf997a8437cab57f3a5211ff1243ce347fd25d45463d",
+      "path": "original-failure/original-corpus-check.stderr.gz",
+      "stored_bytes": 99,
+      "stored_sha256": "58f17ee2ce5216333a8c697b78d88fb6e99a66f5a3fefc96cf973597af14c57e"
+    },
+    {
+      "encoding": "identity",
+      "origin": "actual original inspector on the published source tree",
+      "original_bytes": 330,
+      "original_sha256": "66cefc0671ee29e975a6ac1579c0362e7809002c747758ae26ff97d22811cc8b",
+      "path": "original-failure/result.json",
+      "stored_bytes": 330,
+      "stored_sha256": "66cefc0671ee29e975a6ac1579c0362e7809002c747758ae26ff97d22811cc8b"
+    },
+    {
+      "encoding": "gzip; mtime=0",
+      "origin": "fresh source-pin working tree; 180-second corpus timeout retained",
+      "original_bytes": 558,
+      "original_sha256": "8793fbe30b01dd62830c3bef5face6c018474777c94b60e900dc5a075e6c4d6e",
+      "path": "validation/corpus-inspector.stdout.gz",
+      "stored_bytes": 295,
+      "stored_sha256": "c21e273f326268f38ba5621fbae17f9695b86c85dcc8c54b9cf54ca07190323c"
+    },
+    {
+      "encoding": "gzip; mtime=0",
+      "origin": "fresh source-pin working tree; 180-second corpus timeout retained",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "validation/corpus-inspector.stderr.gz",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "encoding": "gzip; mtime=0",
+      "origin": "fresh source-pin working tree; 180-second corpus timeout retained",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "validation/corpus-controls.stdout.gz",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "encoding": "gzip; mtime=0",
+      "origin": "fresh source-pin working tree; 180-second corpus timeout retained",
+      "original_bytes": 3635,
+      "original_sha256": "0dea5f6f9a0357f85957f6af1241191652776f6d0f0de614d9ab9933c08660c3",
+      "path": "validation/corpus-controls.stderr.gz",
+      "stored_bytes": 753,
+      "stored_sha256": "a90a1e0d5b36eda2179b1a4fc92a2dbd92687a45959d21595f1477754ec77491"
+    },
+    {
+      "encoding": "gzip; mtime=0",
+      "origin": "fresh source-pin working tree; 180-second corpus timeout retained",
+      "original_bytes": 4835,
+      "original_sha256": "4ceb7ff78a6022cc70b6bb8a821692d8c6f1f4a284a76234b265260d20bcebfb",
+      "path": "validation/claim-guard.stdout.gz",
+      "stored_bytes": 1548,
+      "stored_sha256": "e66b30a562e167a64cc4aae6af232c6b1774cc963549c7c71cbf5432617035e7"
+    },
+    {
+      "encoding": "gzip; mtime=0",
+      "origin": "fresh source-pin working tree; 180-second corpus timeout retained",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "validation/claim-guard.stderr.gz",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "encoding": "gzip; mtime=0",
+      "origin": "fresh source-pin working tree; 180-second corpus timeout retained",
+      "original_bytes": 170,
+      "original_sha256": "b233829a49775536cd3ab9f50cfc1506c40c7e2c95f55e52a7f8e162bbcd5ebf",
+      "path": "validation/preflight.stdout.gz",
+      "stored_bytes": 155,
+      "stored_sha256": "ad0d3c549d1e6fc10f8e532bfb3148f6931df0f0605bb6ec3ce01a824b4c1713"
+    },
+    {
+      "encoding": "gzip; mtime=0",
+      "origin": "fresh source-pin working tree; 180-second corpus timeout retained",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "validation/preflight.stderr.gz",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "encoding": "gzip; mtime=0",
+      "origin": "fresh source-pin working tree; 180-second corpus timeout retained",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "validation/diff-check.stdout.gz",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "encoding": "gzip; mtime=0",
+      "origin": "fresh source-pin working tree; 180-second corpus timeout retained",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "validation/diff-check.stderr.gz",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "encoding": "gzip; mtime=0",
+      "origin": "unchanged original corpus tests; execution budget 600 seconds",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "validation/corpus-controls-600s.stdout.gz",
+      "stored_bytes": 20,
+      "stored_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "encoding": "gzip; mtime=0",
+      "origin": "unchanged original corpus tests; execution budget 600 seconds",
+      "original_bytes": 8425,
+      "original_sha256": "90d26d7c959c729b9cdb1960726a6ba66cd5eb65f95e9a26137a468926fbcf56",
+      "path": "validation/corpus-controls-600s.stderr.gz",
+      "stored_bytes": 1466,
+      "stored_sha256": "438e36b2d7dbd12d0b78e76fee2ad3df495b80dfe3c48a61fef8576b7320da9f"
+    },
+    {
+      "encoding": "gzip; mtime=0",
+      "origin": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42934311442/job/130240477452",
+      "original_bytes": 168993,
+      "original_sha256": "f9b5cd527d1f18e7e6cd4608bcfb9821d6cce4d1acf63ed4973d64604a7ef01b",
+      "path": "parent-hosted/job-130240477452.log.gz",
+      "stored_bytes": 26855,
+      "stored_sha256": "83b09e556d8e8e2c215c6d86001195902a2ce2a7ea8d37dbf0b7bcde7f1d17ae"
+    },
+    {
+      "encoding": "gzip; mtime=0",
+      "origin": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42934311442/job/130240477798",
+      "original_bytes": 169795,
+      "original_sha256": "031ea2bb107bfe3d2b70fbafd5cce95d3255440e43b9924f8df16ef4136dbd4f",
+      "path": "parent-hosted/job-130240477798.log.gz",
+      "stored_bytes": 26945,
+      "stored_sha256": "b86f1b176fab3d11a2df00c47c475457508ba796e70574a11466a88116752469"
+    },
+    {
+      "encoding": "gzip; mtime=0",
+      "origin": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42934311314/job/130240477842",
+      "original_bytes": 158647,
+      "original_sha256": "f47bf98c7cb6b9665c4104b7c9a5d04d0bdbfda0ca233aa0450a48700c0a7493",
+      "path": "parent-hosted/job-130240477842.log.gz",
+      "stored_bytes": 25414,
+      "stored_sha256": "935c1a831705fba5b7856bdd2eba3bc697da90bc791a742113b00375141081fe"
+    },
+    {
+      "encoding": "gzip; mtime=0",
+      "origin": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42934311432/job/130240478443",
+      "original_bytes": 177612,
+      "original_sha256": "b8e45fce43880c8748ebdc2bddd07225d922cc19df6fad702d397969ea5e47b7",
+      "path": "parent-hosted/job-130240478443.log.gz",
+      "stored_bytes": 29034,
+      "stored_sha256": "2eab0ff225e169225fdbdc93f0e75000dc2776b1f5213f6b42e08b563e52728d"
+    },
+    {
+      "encoding": "identity",
+      "origin": "original GitHub API job logs; UTF-8 bytes exactly preserved",
+      "original_bytes": 1187,
+      "original_sha256": "a3ad65238eb3afbc1e9aeddfe59f5cea8d9f30a7ddf92c92097c3db83706c5fe",
+      "path": "parent-hosted/job-log-manifest.json",
+      "stored_bytes": 1187,
+      "stored_sha256": "a3ad65238eb3afbc1e9aeddfe59f5cea8d9f30a7ddf92c92097c3db83706c5fe"
+    },
+    {
+      "encoding": "identity",
+      "origin": "GitHub Actions API snapshot of published parent; not successor execution",
+      "original_bytes": 54183,
+      "original_sha256": "76940e691b35249f4d7fb60f405dbbf563212158e0c51efc70f1c77416f26841",
+      "path": "parent-hosted/observations.json",
+      "stored_bytes": 54183,
+      "stored_sha256": "76940e691b35249f4d7fb60f405dbbf563212158e0c51efc70f1c77416f26841"
+    },
+    {
+      "encoding": "gzip; mtime=0",
+      "origin": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42934311314/artifacts/13816619944",
+      "original_bytes": 423,
+      "original_sha256": "111c091dd5d4d7d07ebf691b12d158f843e47d12fd383b4e310f4e5c6e8c37c0",
+      "path": "parent-hosted/business-source-before.json.gz",
+      "stored_bytes": 256,
+      "stored_sha256": "65c8f4f71fbd68701c592b0d2a6c7f1c94ddf456f23b7f40aaa9ce8dbaeafa4f"
+    },
+    {
+      "encoding": "gzip; mtime=0",
+      "origin": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42934311314/artifacts/13816619944",
+      "original_bytes": 423,
+      "original_sha256": "111c091dd5d4d7d07ebf691b12d158f843e47d12fd383b4e310f4e5c6e8c37c0",
+      "path": "parent-hosted/business-source-after.json.gz",
+      "stored_bytes": 256,
+      "stored_sha256": "65c8f4f71fbd68701c592b0d2a6c7f1c94ddf456f23b7f40aaa9ce8dbaeafa4f"
+    },
+    {
+      "encoding": "gzip; mtime=0",
+      "origin": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42934311314/artifacts/13816619944",
+      "original_bytes": 13166,
+      "original_sha256": "f3d185548e938683eefe0856c0367e89adce20738cb31e36d5a6ae7fce2fc637",
+      "path": "parent-hosted/business-commands-summary.json.gz",
+      "stored_bytes": 3360,
+      "stored_sha256": "6340d1847cf97cfae4ccc19008cade5cacc64f7cc4ba31f92e39d184e9b1726b"
+    },
+    {
+      "encoding": "gzip; mtime=0",
+      "origin": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42934311432/artifacts/13817144943",
+      "original_bytes": 72846,
+      "original_sha256": "b028cf1cc2d2b70e07218c56a950a91ba08ab65b07549477b6d33b63c60e8819",
+      "path": "parent-hosted/arm64-from-zero-native-manifest.json.gz",
+      "stored_bytes": 10866,
+      "stored_sha256": "1ec458701d4432426fce7cf2d698efc84b0c6df482ea59dc34bc5b24630f0108"
+    },
+    {
+      "encoding": "gzip; mtime=0",
+      "origin": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42934311432/artifacts/13817144943",
+      "original_bytes": 12044945,
+      "original_sha256": "84d7b8897a3799c4f9131f7ce9f63c6b8d7b1c7501183fda72c3ec0302cfe5c1",
+      "path": "parent-hosted/arm64-from-zero-native-confirmation-report.json.gz",
+      "stored_bytes": 445715,
+      "stored_sha256": "c986c855459b717d9671fbef2d3c7db760344e7b87ead5f0201a31a9079368f6"
+    },
+    {
+      "encoding": "gzip; mtime=0",
+      "origin": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42934311432/artifacts/13817144943",
+      "original_bytes": 6903,
+      "original_sha256": "5360ce3824ce071846cb200f281141dbfa73987d7a2dfbe6303aaf581bc58ff1",
+      "path": "parent-hosted/arm64-from-zero-native-host-systemd-run.log.gz",
+      "stored_bytes": 1417,
+      "stored_sha256": "9791e5eb7fdefd0d65e4659081a6ccc88bbf3e17a4ba9e45081e9608d2aef569"
+    },
+    {
+      "encoding": "gzip; mtime=0",
+      "origin": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42934311432/artifacts/13817144943",
+      "original_bytes": 333,
+      "original_sha256": "b624dd8f68fd721f45d9a3242294d04b80982ba4d060d61d55eaf1125394a321",
+      "path": "parent-hosted/arm64-from-zero-native-host-child-result.json.gz",
+      "stored_bytes": 232,
+      "stored_sha256": "cbcd7a9c0f907ca97383bc2a9b51bb14687e5c2644ca8f9a4608ec145da686d9"
+    }
+  ],
+  "test_or_threshold_changes": 0
+}

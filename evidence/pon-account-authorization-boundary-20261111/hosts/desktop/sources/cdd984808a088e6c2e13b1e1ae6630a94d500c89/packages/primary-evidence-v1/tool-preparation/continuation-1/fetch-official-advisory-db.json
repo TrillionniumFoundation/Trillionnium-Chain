@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "/home/qian-qi/chain-pq-a418-final-ci-tools/deny-0.20.2/bin/cargo-deny",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--config",
+    "deny.toml",
+    "--locked",
+    "fetch",
+    "db"
+  ],
+  "cargo_net_offline": "false",
+  "elapsed_seconds": 7.687731357989833,
+  "id": "fetch-official-advisory-db",
+  "returncode": 0,
+  "stderr": "/home/qian-qi/chain-pq-a418-final-ci-tools/preparation-evidence/continuation-1/fetch-official-advisory-db.stderr",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout": "/home/qian-qi/chain-pq-a418-final-ci-tools/preparation-evidence/continuation-1/fetch-official-advisory-db.stdout",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

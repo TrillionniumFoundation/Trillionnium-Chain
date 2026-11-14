@@ -1,0 +1,2 @@
+Local shared clone from #824 failed before checkout: cannot lock refs/remotes/origin/HEAD, unable to create directory. Clone removed its incomplete destination. No source edits or tests ran.
+Sparse-checkout add with --no-cone was rejected by installed Git; corrected using the repository's existing non-cone setting. No source changes resulted from the rejected Git subcommand.

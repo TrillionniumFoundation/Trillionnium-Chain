@@ -1,0 +1,29 @@
+{
+  "bytes": 1250,
+  "command": [
+    "/usr/bin/python3",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/ci",
+    "-p",
+    "test_run_pq_root_witness_v5.py",
+    "-v"
+  ],
+  "cwd": "/data/chain-root-operation-owned-20261112-df05-v4",
+  "elapsed_ns": 13194761651,
+  "executed": true,
+  "exit_code": 0,
+  "expected_source": "87943f6229d8785c3f431ede5eadba62b634ab8c",
+  "log": "root-runner-controls.log",
+  "name": "root-runner-controls",
+  "process_exit_code": 0,
+  "sha256": "7cd2f92fecb655f4087867b25f85146ab1e60f599e2a47b3178c0abb7b46cadb",
+  "source": "87943f6229d8785c3f431ede5eadba62b634ab8c",
+  "source_after_verified": true,
+  "source_before_verified": true,
+  "source_verified": true,
+  "timed_out": false
+}

@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "python3",
+    "scripts/ci/test_ci_contract.py"
+  ],
+  "exit": 0,
+  "duration_seconds": 101.43313799216412,
+  "cwd": "/home/qian-qi/pon-fixed-probability-contract-20261108-63b38",
+  "source_head": "8d5389748873dad6e296d17f2ff20483b5afa5bc"
+}

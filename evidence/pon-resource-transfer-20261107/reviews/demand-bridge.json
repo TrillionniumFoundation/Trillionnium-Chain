@@ -1,0 +1,87 @@
+{
+  "schema": "pon-grouped-fresh-demand-bridge-audit-v0",
+  "scope": "source-owner inventory and explicit missing composition, no authority grant",
+  "components": [
+    {
+      "owner": "M06 native task lifecycle",
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tasks_v5.rs",
+      "mechanism": "Native requester/source authorization, lease currentness, immutable model/input/task/meter bindings and recorded output.",
+      "boundary": "Existing PQ5/W1 matrix relation; not grouped-fresh-profile eligibility or evidence of independent operators.",
+      "source_status": "present",
+      "source_sha256": "1ba4028feb9a0f80a6d1bbea9abf3c8e1a67484b997ff2789f416588276a1120",
+      "source_bytes": 32264,
+      "owner_operation_executed_by_this_audit": false,
+      "matches_exact_commit": true
+    },
+    {
+      "owner": "Native Node funding snapshot",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/funding.rs",
+      "mechanism": "Reads active anchor and the requested native monetary row from an owner snapshot.",
+      "boundary": "A supplied JSON observation or caller-implemented owner trait is not an authenticated chain.",
+      "source_status": "present",
+      "source_sha256": "7cd7a6155e35d413ba1b31678a3e36c6d9f18bc2d6b49f3e9032a0146f34bc11",
+      "source_bytes": 3030,
+      "owner_operation_executed_by_this_audit": false,
+      "matches_exact_commit": true
+    },
+    {
+      "owner": "Native Node payment observation",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/funding/payment.rs",
+      "mechanism": "Reexecutes the exact ordinary native transition and checks source, subject, beneficiary and gross/net debit/credit.",
+      "boundary": "Historical/current-chain payment is distinct from irreversible finality, real customer need and fresh grouped work.",
+      "source_status": "present",
+      "source_sha256": "a2096b5dc5f8ec8290fe638e127e138000d932af34c74798e2a64a0d598d4da9",
+      "source_bytes": 21603,
+      "owner_operation_executed_by_this_audit": false,
+      "matches_exact_commit": true
+    },
+    {
+      "owner": "M12 local resource/effect journal",
+      "path": "trillionnium/crates/trnm-service-settlement/src/native_budget.rs",
+      "mechanism": "Rechecks native funding; durably binds operation/effect and retains unknown costs and prior payment observations.",
+      "boundary": "Local reserve/begin_effect alone is not request-specific serving consent; full database rollback and external effects need other owners.",
+      "source_status": "present",
+      "source_sha256": "dd200bb218967dc4456ad48cf81a4e648202f0ed6593972717d7ee4a5eafe4db",
+      "source_bytes": 68208,
+      "owner_operation_executed_by_this_audit": false,
+      "matches_exact_commit": true
+    },
+    {
+      "owner": "Offline consumer context supplement",
+      "path": "formal/pon-nakamoto-v1/model_consumer_context.py",
+      "mechanism": "Checks complete V2 relations plus separately pinned signatures and declared causal use order.",
+      "boundary": "It explicitly does not establish installation, independently controlled operators, current FinalUse or new consumer benefit.",
+      "source_status": "present",
+      "source_sha256": "f672afc9146dca5d193e2477a3dbf7a810097f0cf90e035403706b2acc1cd0dc",
+      "source_bytes": 6046,
+      "owner_operation_executed_by_this_audit": false,
+      "matches_exact_commit": true
+    },
+    {
+      "owner": "Grouped fresh research admission",
+      "path": "trillionnium/crates/trnm-pon-node/src/grouped_fresh_admission_v0.rs",
+      "mechanism": "Native parent/target and signed canonical capsule; one-policy local verification journal.",
+      "boundary": "Public controlled fixture keys and historical corpus; no authentic external demand or monetary settlement bridge.",
+      "source_status": "present",
+      "source_sha256": "1497aad78223415b90f86c0562121acfed8b6263b7995ecc4bb9f50ba294a161",
+      "source_bytes": 34676,
+      "owner_operation_executed_by_this_audit": false,
+      "matches_exact_commit": true
+    }
+  ],
+  "missing_composition": [
+    "An actual independently authorized task and its original source/consumer are not established by this campaign.",
+    "No actual Node-funded service subject is joined to this grouped profile, request and delivered output.",
+    "No ordinary consumer owner grants current FinalUse or proves one actual externally used result.",
+    "No ordinary native payment for this grouped output is observed or settled.",
+    "A demand/consumer receipt is not reusable security-ticket credit or evidence of a physical work floor."
+  ],
+  "external_demand_authenticated": false,
+  "independent_operators": false,
+  "actual_consumer_uses_observed": 0,
+  "native_payment_for_grouped_output_observed": false,
+  "production_activation": false,
+  "chainwork_awarded": 0,
+  "source_sha": "e95e2eb9f456a37ec8841def69db79f49fbba7cb",
+  "source_tree": "c815d3710d5f7feffc043aed1aa6e003e03d3a10"
+}

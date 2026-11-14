@@ -1,0 +1,28 @@
+{
+  "required": [
+    "test_frozen_work_profile_replay_v1.FrozenWorkReferenceTests.test_changed_bytes_keep_original_and_new_refusals",
+    "test_frozen_work_profile_replay_v1.FrozenWorkReferenceTests.test_changed_head_refuses_even_when_original_bytes_still_match",
+    "test_frozen_work_profile_replay_v1.FrozenWorkReferenceTests.test_current_reference_and_ancestor_alias_are_rejected",
+    "test_frozen_work_profile_replay_v1.FrozenWorkReferenceTests.test_current_research_identity_checks_actual_raw_bytes",
+    "test_frozen_work_profile_replay_v1.FrozenWorkReferenceTests.test_descendant_without_its_own_git_root_is_rejected",
+    "test_frozen_work_profile_replay_v1.FrozenWorkReferenceTests.test_grafts_are_not_a_new_baseline",
+    "test_frozen_work_profile_replay_v1.FrozenWorkReferenceTests.test_independent_fixed_reference_keeps_original_scope",
+    "test_frozen_work_profile_replay_v1.FrozenWorkReferenceTests.test_loaded_relation_modules_must_belong_to_research_source",
+    "test_frozen_work_profile_replay_v1.FrozenWorkReferenceTests.test_mode_drift_cannot_borrow_matching_content",
+    "test_frozen_work_profile_replay_v1.FrozenWorkReferenceTests.test_non_repository_directory_is_not_a_source_receipt",
+    "test_frozen_work_profile_replay_v1.FrozenWorkReferenceTests.test_replacement_ref_is_not_a_new_baseline",
+    "test_frozen_work_profile_replay_v1.FrozenWorkReferenceTests.test_reused_input_pin_is_not_caller_authority",
+    "test_frozen_work_profile_replay_v1.FrozenWorkReferenceTests.test_symlink_cannot_borrow_matching_target_bytes"
+  ],
+  "started": [],
+  "successful": [],
+  "tests_run": 0,
+  "failures": 0,
+  "errors": 1,
+  "skipped": 0,
+  "expected_failures": 0,
+  "unexpected_successes": 0,
+  "passed": false,
+  "native_execution": false,
+  "current_native_cost_qualified": false
+}

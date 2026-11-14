@@ -1,0 +1,43 @@
+{
+  "command": [
+    "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-crypto-primitives",
+    "--lib",
+    "pon_work::legal_attempt::tests::changed_challenge_and_task_never_gain_acceptance_from_cached_product",
+    "--",
+    "--exact",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-publish",
+  "elapsed_seconds": 76.08563,
+  "exact_test_required": true,
+  "exactly_one_test_passed": true,
+  "execution_error": null,
+  "exit_code": 0,
+  "finished_utc": "2026-11-12T00:24:34.001483+00:00",
+  "interrupted": false,
+  "label": "crypto-fresh-challenge-refusal",
+  "observation_accepted": true,
+  "source_report_sha256": null,
+  "sqlite_unqualified_diagnostic": false,
+  "started_utc": "2026-11-12T00:23:17.915866+00:00",
+  "stderr": "crypto-fresh-challenge-refusal.stderr",
+  "stderr_sha256": "fbebc0455482c708ce3e71167deb1725a3c907905b521b45ca65f9385e33e071",
+  "stdout": "crypto-fresh-challenge-refusal.stdout",
+  "stdout_sha256": "72c1caa8f58457745f73bfa038a423cadee0e6e9347352db3d3a6e5af6137eea",
+  "test_harness_counts": [
+    [
+      "1",
+      "0",
+      "0"
+    ]
+  ],
+  "timed_out": false
+}

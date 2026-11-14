@@ -1,0 +1,18 @@
+{
+  "check_repository_exit_code": 0,
+  "ci_python_source_hashes_equal": true,
+  "clean_after": true,
+  "clean_before": true,
+  "elapsed_seconds": 41.422609580000426,
+  "expected_head": "b66e66d2465258d808c0f56ff851123306d4bdb4",
+  "head_after": "b66e66d2465258d808c0f56ff851123306d4bdb4",
+  "head_and_tree_unchanged": true,
+  "head_before": "b66e66d2465258d808c0f56ff851123306d4bdb4",
+  "preflight_exit_code": 0,
+  "production_qualified": false,
+  "result": "PASS",
+  "schema": "exact-commit-local-repository-gate-v1",
+  "source_byte_attestation": false,
+  "tree_after": "11eee4a56ccab63394102a19204ab3922021d87c",
+  "tree_before": "11eee4a56ccab63394102a19204ab3922021d87c"
+}

@@ -1,0 +1,192 @@
+{
+  "files": [
+    {
+      "bytes": 802,
+      "path": "raw-python/ci-contract-tests.json",
+      "sha256": "c51711a729ae7ce0122a1278f4b76b027fd303bb56fbe101040845929a44a9b4"
+    },
+    {
+      "bytes": 28779,
+      "path": "raw-python/ci-contract-tests.stderr.log",
+      "sha256": "9f9b9303d5e8c6c21b71c43a00476ea6043cb5accfac457391f0982533f0a15c"
+    },
+    {
+      "bytes": 0,
+      "path": "raw-python/ci-contract-tests.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 787,
+      "path": "raw-python/ci-contract.json",
+      "sha256": "468f5e83f003021fd2191933aa4a85664c5e0e574751c00840069e7d8b9ff6c2"
+    },
+    {
+      "bytes": 0,
+      "path": "raw-python/ci-contract.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 431,
+      "path": "raw-python/ci-contract.stdout.log",
+      "sha256": "334cc2b26ed99ad5f867ee9b65f3047e23afcfae056d4ba9c852b0a201e2dbeb"
+    },
+    {
+      "bytes": 809,
+      "path": "raw-python/dynamic.json",
+      "sha256": "95a9dc86bfe70765c78335eaf3a453dac270fd3a567029169ef50e1097e50821"
+    },
+    {
+      "bytes": 4267,
+      "path": "raw-python/dynamic.stderr.log",
+      "sha256": "46c6f073b535e9e152d2335e7ce7db353f022d07a95212f594910f79d4dcf2bf"
+    },
+    {
+      "bytes": 0,
+      "path": "raw-python/dynamic.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3060,
+      "path": "raw-python/fresh-summary.json",
+      "sha256": "02cc2d8b5f9748dd4f2515f310dc8540a41d3b1fe953576e71310b5f70ab517b"
+    },
+    {
+      "bytes": 812,
+      "path": "raw-python/new-tail.json",
+      "sha256": "f314672211e32a4635de16ae31e3c7fb713a4f85696cceb7282e36181d2c9ace"
+    },
+    {
+      "bytes": 3784,
+      "path": "raw-python/new-tail.stderr.log",
+      "sha256": "303f39feb8268c67f47b59c0efa4e15ec1bcc973f8c0180242d57bae1d230a4e"
+    },
+    {
+      "bytes": 0,
+      "path": "raw-python/new-tail.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 850,
+      "path": "raw-python/qualification-check.json",
+      "sha256": "d9a7a148d2ebae269104e858270685ea4672e810a07f28b812fadc1f8e4659b1"
+    },
+    {
+      "bytes": 0,
+      "path": "raw-python/qualification-check.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 9301,
+      "path": "raw-python/qualification-check.stdout.log",
+      "sha256": "d37d5e0121421363d399164ace713cbc899a3159ea1f32f6e5085ed9846f957e"
+    },
+    {
+      "bytes": 868,
+      "path": "raw-python/qualification-refusal.json",
+      "sha256": "2940c867b27d56303c46fa3cba29fd1ced413470e81b9c66979b72aec971cadf"
+    },
+    {
+      "bytes": 0,
+      "path": "raw-python/qualification-refusal.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 9364,
+      "path": "raw-python/qualification-refusal.stdout.log",
+      "sha256": "f55c8d1b7ebbe4b512a35af8ccd619a52b818e848167e77762ea023504592fc5"
+    },
+    {
+      "bytes": 850,
+      "path": "raw-python/qualification-tests.json",
+      "sha256": "7a494cef418398b5bc593bdcaf90b86ed53da587ca15b39f42e3d9f417d1a62f"
+    },
+    {
+      "bytes": 4983,
+      "path": "raw-python/qualification-tests.stderr.log",
+      "sha256": "9ad94cb46789488bfd15b99923d13f760edc9e71faad820a8467d5340c2a232a"
+    },
+    {
+      "bytes": 0,
+      "path": "raw-python/qualification-tests.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 781,
+      "path": "raw-python/repository.json",
+      "sha256": "7981615165518cae724a05f77a935de8659ac9cc04b10c85a16e4f68c047cdf3"
+    },
+    {
+      "bytes": 0,
+      "path": "raw-python/repository.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 307,
+      "path": "raw-python/repository.stdout.log",
+      "sha256": "fb936d18b3ce7d445c3a840a34af276de472811a242593e75a282afc46038093"
+    },
+    {
+      "bytes": 2607,
+      "path": "raw-python/run_gates.py",
+      "sha256": "310150cd1e833ec5bcbf8fe47bff315bed85e1ea0b43082f9050ce7ec9505fde"
+    },
+    {
+      "bytes": 979,
+      "path": "raw-python/source-before.json",
+      "sha256": "60dd6099f65737ec125ce6011f6d161d443f8b033fa042ecd087cd2c0f11ba17"
+    },
+    {
+      "bytes": 423,
+      "path": "raw-python/source-before.report.json",
+      "sha256": "110ae17e699c03d9214dee7d91677c53b19a5d504dbcf83bf7d48229cdc8344e"
+    },
+    {
+      "bytes": 0,
+      "path": "raw-python/source-before.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 423,
+      "path": "raw-python/source-before.stdout.log",
+      "sha256": "110ae17e699c03d9214dee7d91677c53b19a5d504dbcf83bf7d48229cdc8344e"
+    },
+    {
+      "bytes": 975,
+      "path": "raw-python/source-final.json",
+      "sha256": "da6408d90be2513c394125eec65f360092c01994bc742552a23211bb7dbde183"
+    },
+    {
+      "bytes": 423,
+      "path": "raw-python/source-final.report.json",
+      "sha256": "110ae17e699c03d9214dee7d91677c53b19a5d504dbcf83bf7d48229cdc8344e"
+    },
+    {
+      "bytes": 0,
+      "path": "raw-python/source-final.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 423,
+      "path": "raw-python/source-final.stdout.log",
+      "sha256": "110ae17e699c03d9214dee7d91677c53b19a5d504dbcf83bf7d48229cdc8344e"
+    },
+    {
+      "bytes": 825,
+      "path": "raw-python/source-integrity-tests.json",
+      "sha256": "ee1086b6715f1245afa5acef0f10573a6c89dce4809e4b4be7b33c3e5020ad15"
+    },
+    {
+      "bytes": 6414,
+      "path": "raw-python/source-integrity-tests.stderr.log",
+      "sha256": "a4accf8553dc986d4e90c89f320b48977463a87bb871a34b6f43b446d5046942"
+    },
+    {
+      "bytes": 484,
+      "path": "raw-python/source-integrity-tests.stdout.log",
+      "sha256": "d2d91cc9e2c6e74632b3649e19d47fa655346db2dedba787e3d301f619d6b271"
+    }
+  ],
+  "schema": "joint-tail-raw-python-inventory-v1",
+  "source_commit": "4716bade250f327b012a098418f4eece6b73fcaa",
+  "source_tree": "bbc0278f87282d9bcf4e22b167040233516da310"
+}

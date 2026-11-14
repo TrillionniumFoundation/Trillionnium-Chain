@@ -1,0 +1,141 @@
+{
+  "result": "PASS_WITH_EXPLICIT_M06_REGISTRY_GAP",
+  "scope": "Offline readback of existing Node registry and frozen workflow only; no build or native test execution.",
+  "base_commit": "b8116f65789a85148254f870c678a44f895316de",
+  "source_kind": "dirty composed b811 source; neither clean b811 nor later 69d2",
+  "native_input_files": 1190,
+  "native_manifest_sha256": "27920633e57be739926218c370ecfbdfea624df71d84b89c2f9e3fc6f48605d2",
+  "elf_sha256": "7cef941c2174339125cbc43d56ed6b79976466ec225388860e1b20415ff889c3",
+  "registered_node_tests": 1019,
+  "ignored_node_tests": 27,
+  "node_selected_actual_registry": 40,
+  "node_selected_ignored": 0,
+  "node_groups": [
+    {
+      "group": "account-root-digest",
+      "count": 3,
+      "tests": [
+        "account_archive_prototype::native_root_digest::tests::native_root_digest_matches_record_and_sparse_references_after_exact_input_changes",
+        "account_archive_prototype::native_root_digest::tests::native_root_digest_keeps_original_traversal_cancellation_and_collision_order",
+        "account_archive_prototype::native_root_digest::tests::native_root_digest_keeps_fork_shape_and_all_lift_input_relations"
+      ]
+    },
+    {
+      "group": "growth-return-observations",
+      "count": 2,
+      "tests": [
+        "store::growth::tests::scale_observation::native_growth_scale_retains_rejected_and_cancelled_admission_returns",
+        "store::growth::tests::scale_observation::native_growth_scale_retains_admission_when_activation_returns_error"
+      ]
+    },
+    {
+      "group": "reorg-tail",
+      "count": 6,
+      "tests": [
+        "store::reorg_readback_tests::final_callback_writes_fail_with_or_without_a_consumed_graph_hit",
+        "store::reorg_readback_tests::no_scope_keeps_full_graphs_and_rejects_transaction_replacement_with_cancel_source",
+        "store::reorg_readback_tests::non_genesis_common_ancestor_keeps_every_cut_and_publication_on_cold_reopen",
+        "store::reorg_readback_tests::original_write_lock_blocks_foreign_writer_and_no_scope_survives_commit",
+        "store::reorg_readback_tests::prehit_write_cannot_restamp_and_callback_errors_keep_original_precedence",
+        "store::reorg_readback_tests::real_reorg_tail_keeps_rows_events_fault_recovery_and_cold_reopen"
+      ]
+    },
+    {
+      "group": "direct-append-readback",
+      "count": 2,
+      "tests": [
+        "store::append_readback_tests::direct_append_keeps_complete_rows_events_state_and_cold_reopen",
+        "store::append_readback_tests::direct_append_cancellation_at_each_callback_leaves_no_partial_publication"
+      ]
+    },
+    {
+      "group": "current-sql-root",
+      "count": 1,
+      "tests": [
+        "store::detached_admission::tests::large_parent_root_arithmetic_keeps_current_sql_and_original_read_checkpoints"
+      ]
+    },
+    {
+      "group": "prepared-current-history",
+      "count": 3,
+      "tests": [
+        "store::historical_commitment_tests::legacy_prepared_history_reads_observe_current_rows_writes_and_rollback",
+        "store::historical_commitment_tests::legacy_prepared_history_reads_reprepare_after_schema_and_authorizer_changes",
+        "store::historical_commitment_tests::actual_foreign_snapshot_delta_and_root_damage_preserve_original_failures"
+      ]
+    },
+    {
+      "group": "postwrite-readback",
+      "count": 23,
+      "tests": [
+        "store::native_authenticated::post_write_readback::tests::a_current_child_record_with_another_node_cannot_borrow_the_parent_graph",
+        "store::native_authenticated::post_write_readback::tests::actual_admission_reuses_graphs_and_keeps_original_state_packet_and_reopen",
+        "store::native_authenticated::post_write_readback::tests::actual_original_writer_excludes_an_independent_database_writer",
+        "store::native_authenticated::post_write_readback::tests::actual_stored_graph_damage_is_reread_after_a_receipt",
+        "store::native_authenticated::post_write_readback::tests::another_actual_connection_cannot_use_the_original_write_scope",
+        "store::native_authenticated::post_write_readback::tests::changed_schema_or_namespace_never_creates_a_new_scope",
+        "store::native_authenticated::post_write_readback::tests::consumed_active_reader_refuses_a_last_callback_write",
+        "store::native_authenticated::post_write_readback::tests::cross_record_reuse_keeps_current_nonce_existence_grammar_and_working_state_checks",
+        "store::native_authenticated::post_write_readback::tests::current_complete_state_remains_mandatory_on_a_graph_hit",
+        "store::native_authenticated::post_write_readback::tests::different_current_records_share_only_the_exact_account_graph_in_one_writer",
+        "store::native_authenticated::post_write_readback::tests::fences::cross_record_matches_preserve_boundary_cancellation_and_final_write_fencing",
+        "store::native_authenticated::post_write_readback::tests::fences::final_callback_after_a_first_match_falls_back_to_the_actual_original_graph",
+        "store::native_authenticated::post_write_readback::tests::fences::four_original_roles_are_bounded_and_a_fifth_root_never_becomes_a_receipt",
+        "store::native_authenticated::post_write_readback::tests::fences::trusted_reset_exposes_preexisting_catalog_and_prepared_vm_divergence",
+        "store::native_authenticated::post_write_readback::tests::first_graph_callback_write_cannot_mint_a_result_or_reenable_it",
+        "store::native_authenticated::post_write_readback::tests::frontier::final_callback_deletion_and_later_outer_write_cannot_use_partial_availability",
+        "store::native_authenticated::post_write_readback::tests::frontier::partial_cancellation_and_no_row_writes_keep_original_boundaries_and_sticky_fences",
+        "store::native_authenticated::post_write_readback::tests::frontier::real_different_roots_use_bounded_subtrees_without_promoting_partial_results",
+        "store::native_authenticated::post_write_readback::tests::frontier::reencoded_frontier_child_ids_cannot_hide_missing_nodes_or_wrong_side_edges",
+        "store::native_authenticated::post_write_readback::tests::no_row_writes_and_reversed_ddl_disable_reuse_without_resetting_the_scope",
+        "store::native_authenticated::post_write_readback::tests::original_cancellation_before_and_after_a_match_is_preserved",
+        "store::native_authenticated::post_write_readback::tests::original_transaction_owner_refuses_commit_begin_and_savepoint_aba",
+        "store::native_authenticated::post_write_readback::tests::prepare_only_schema_reset_preserves_the_normalized_writer"
+      ]
+    }
+  ],
+  "m06_static_selected": 18,
+  "m06_actual_registry_observed_here": false,
+  "m06_static_groups": [
+    {
+      "kind": "prefix",
+      "crate": "m06",
+      "group": "full-root-arithmetic",
+      "selectors": "pon_commitment::full_root_arithmetic_tests::",
+      "count": 5
+    },
+    {
+      "kind": "exact",
+      "crate": "m06",
+      "group": "unchanged-canonical-map",
+      "selectors": [
+        "pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_shares_only_after_full_actual_bytes_match",
+        "pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_retains_exact_capacity_charges_and_all_budget_boundaries",
+        "pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_misleading_root_and_changed_bytes_take_original_repair_path",
+        "pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_keeps_late_canonical_errors_before_wire_and_cache_limits",
+        "pon_commitment::unchanged_snapshot_tests::unchanged_candidate_early_miss_retains_complete_late_validation",
+        "pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_empty_delta_still_checks_the_original_tree_root"
+      ],
+      "count": 6
+    },
+    {
+      "kind": "exact",
+      "crate": "m06",
+      "group": "canonical-ascii",
+      "selectors": [
+        "pon_executor::root_arithmetic_tests::canonical_ascii_guard_matches_exhaustive_bytes_pairs_and_borrow_chains",
+        "pon_executor::root_arithmetic_tests::canonical_ascii_keeps_original_serde_bytes_and_vec_capacities",
+        "pon_executor::root_arithmetic_tests::canonical_ascii_into_keeps_reused_capacity_and_failed_input_untouched",
+        "pon_executor::root_arithmetic_tests::canonical_ascii_commitment_keeps_late_grammar_before_wire_and_cache_errors",
+        "pon_executor::root_arithmetic_tests::arithmetic_root_ascii_encoding_matches_independent_serde_reference",
+        "pon_executor::root_arithmetic_tests::arithmetic_root_preserves_complete_grammar_before_all_wire_limits",
+        "pon_commitment::bounded_encoding_tests::canonical_ascii_fast_encoding_keeps_direct_serde_budget_decisions_and_charges"
+      ],
+      "count": 7
+    }
+  ],
+  "all_original_b811_56_selectors_and_counts_preserved": true,
+  "removing_only_direct_append_2_recovers_b811_workflow_bytes": true,
+  "full_node_suite_verdict": null,
+  "public_confirmation_verdict": null
+}

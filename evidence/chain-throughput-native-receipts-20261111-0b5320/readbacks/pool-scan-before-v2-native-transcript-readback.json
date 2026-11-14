@@ -1,0 +1,190 @@
+{
+  "schema": "pon-native-lane-transcript-readback-v1",
+  "scope": "copied original process streams, source receipts, input bytes and recorded binary guards; no local native execution or independent ELF download",
+  "result": "PASS",
+  "driver": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+  "errors": [],
+  "streams": [
+    {
+      "file": "driver-preflight.stdout",
+      "bytes": 178,
+      "sha256": "0fbc5b00ad46e834971ab15e544ef7fe1712d9e4a1e90b451fa9303ca039f646"
+    },
+    {
+      "file": "driver-preflight.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "subject-preflight.stdout",
+      "bytes": 189,
+      "sha256": "15c4348c510c328b1973d5d46488c171ccf741c02a5764ba58dc721ad3c7291a"
+    },
+    {
+      "file": "subject-preflight.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "rustc-path.stdout",
+      "bytes": 75,
+      "sha256": "243513c3ce04d68278e450b9406ac8d65ffc73da605e77a745965cff5ca1d1a0"
+    },
+    {
+      "file": "rustc-path.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "rustc-version.stdout",
+      "bytes": 196,
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+    },
+    {
+      "file": "rustc-version.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "cargo-version.stdout",
+      "bytes": 336,
+      "sha256": "bfd735e736b354adabe72cea24bc1b393488223889b6ab95e974fd8fb963552e"
+    },
+    {
+      "file": "cargo-version.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "cargo-graph.stdout",
+      "bytes": 858123,
+      "sha256": "0fde40e9dbeaa4e76e6bf5327e3755835a9eb8820ab30e880c1ff64724be6dfe"
+    },
+    {
+      "file": "cargo-graph.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "build.stdout",
+      "bytes": 111544,
+      "sha256": "3a9433877ad276d7653d615a7b8f71bd61a59011e669eef1bc57a217b59b1bc8"
+    },
+    {
+      "file": "build.stderr",
+      "bytes": 4307,
+      "sha256": "440b86d68b0cd0f3d31a30fb1579d6878df8c536faaf6472cd2de6ef618a2f81"
+    },
+    {
+      "file": "libtest-list.stdout",
+      "bytes": 152892,
+      "sha256": "f26a8e9a6eb893d0913890ae8df747e42ced7f77d43dd3c9055e8e6d7c0bcef4"
+    },
+    {
+      "file": "libtest-list.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "test-01.stdout",
+      "bytes": 337,
+      "sha256": "abc098a2b6922884497e542814223b1a1f97b40522f7431f0dec8a50e6943eca"
+    },
+    {
+      "file": "test-01.stderr",
+      "bytes": 382,
+      "sha256": "20c490a9d5d72f29cb9b8b0b09aa9ea847932d9c8ac0ebdb0b8335d0035d3db5"
+    },
+    {
+      "file": "test-02.stdout",
+      "bytes": 346,
+      "sha256": "232f9d3dc5e5b326bf1922bde2e9d7796e0d2acc50314dcefce689e36e92472f"
+    },
+    {
+      "file": "test-02.stderr",
+      "bytes": 386,
+      "sha256": "253b004126cf05d63fc305de1f29f4d102a3b781855d4906757d13e8c69c2868"
+    }
+  ],
+  "controls": [
+    {
+      "test": "mining::pool_reconcile_control_tests::pool_run_stop_interrupts_reconciliation_pool_rows",
+      "group": "pool-scan",
+      "expected": "fail",
+      "expected_outcome_observed": true
+    },
+    {
+      "test": "mining::pool_reconcile_control_tests::pool_run_deadline_interrupts_reconciliation_pool_rows",
+      "group": "pool-scan",
+      "expected": "fail",
+      "expected_outcome_observed": true
+    }
+  ],
+  "reader_sha256": "c7604dcf0bb9f533902e368a44b170c927d98c46080570673f268391fd9dc479",
+  "mode": "pool-scan-before",
+  "source": "ae657e262278ae4a058220f66a6a0495721eb9ad",
+  "report_sha256": "07bdf0b8f1898cce1e1c6a5e94550e12dc716a2aff47b03d3c1b29a81ed35b40",
+  "native_report_result": "PASS",
+  "recorded_binary_guards": {
+    "libtest": {
+      "built_after": {
+        "bytes": 102243560,
+        "path": "/dev/shm/chain-throughput-0b5320/target-pool-scan-before-v2/release/deps/trnm_pon_node-b9510f5893fe9b62",
+        "sha256": "4074bc00b39e200904538763be67047d46b61e498e268aff0feda82fdd88a90d"
+      },
+      "built_before": {
+        "bytes": 102243560,
+        "path": "/dev/shm/chain-throughput-0b5320/target-pool-scan-before-v2/release/deps/trnm_pon_node-b9510f5893fe9b62",
+        "sha256": "4074bc00b39e200904538763be67047d46b61e498e268aff0feda82fdd88a90d"
+      },
+      "compiler_artifact": {
+        "executable": "/dev/shm/chain-throughput-0b5320/target-pool-scan-before-v2/release/deps/trnm_pon_node-b9510f5893fe9b62",
+        "features": [
+          "default"
+        ],
+        "filenames": [
+          "/dev/shm/chain-throughput-0b5320/target-pool-scan-before-v2/release/deps/trnm_pon_node-b9510f5893fe9b62"
+        ],
+        "fresh": false,
+        "manifest_path": "/dev/shm/chain-throughput-0b5320/pool-scan-before-subject-v2/trillionnium/crates/trnm-pon-node/Cargo.toml",
+        "package_id": "path+file:///dev/shm/chain-throughput-0b5320/pool-scan-before-subject-v2/trillionnium/crates/trnm-pon-node#0.1.0",
+        "profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "3",
+          "overflow_checks": false,
+          "test": true
+        },
+        "reason": "compiler-artifact",
+        "target": {
+          "crate_types": [
+            "lib"
+          ],
+          "doc": true,
+          "doctest": true,
+          "edition": "2021",
+          "kind": [
+            "lib"
+          ],
+          "name": "trnm_pon_node",
+          "src_path": "/dev/shm/chain-throughput-0b5320/pool-scan-before-subject-v2/trillionnium/crates/trnm-pon-node/src/lib.rs",
+          "test": true
+        }
+      },
+      "execution_path": "/dev/shm/chain-throughput-0b5320/official-pool-scan-before-v2/trnm-pon-node-libtest",
+      "retained_after": {
+        "bytes": 102243560,
+        "path": "/dev/shm/chain-throughput-0b5320/official-pool-scan-before-v2/trnm-pon-node-libtest",
+        "sha256": "4074bc00b39e200904538763be67047d46b61e498e268aff0feda82fdd88a90d"
+      },
+      "retained_before": {
+        "bytes": 102243560,
+        "path": "/dev/shm/chain-throughput-0b5320/official-pool-scan-before-v2/trnm-pon-node-libtest",
+        "sha256": "4074bc00b39e200904538763be67047d46b61e498e268aff0feda82fdd88a90d"
+      }
+    }
+  },
+  "actual_control_count": 2,
+  "native_pass_controls": 0,
+  "native_expected_failures": 2
+}

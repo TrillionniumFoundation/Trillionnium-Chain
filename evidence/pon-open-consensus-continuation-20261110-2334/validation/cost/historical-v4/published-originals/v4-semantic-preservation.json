@@ -1,0 +1,21 @@
+{
+  "schema": "pon-w1-v4-lint-semantic-readback-v1",
+  "before_head": "fc5c44ca91c56e77ca2ffc9943e10f0f777a5937",
+  "after_head": "11791e2da79b69322271be2cffe03725165151d1",
+  "before": {
+    "records": 23069,
+    "semantics_sha256": "d42efee26829764021345dc3055b91b31d264f71ec19f140e3d43e4abff493f8"
+  },
+  "after": {
+    "records": 23069,
+    "semantics_sha256": "d42efee26829764021345dc3055b91b31d264f71ec19f140e3d43e4abff493f8"
+  },
+  "timing_fields_excluded": [
+    "timing",
+    "total_with_observation_and_verification",
+    "total_before_terminal_record"
+  ],
+  "scope": "all fixed-roster record fields apart from listed timing measurements; comparison does not transfer source, process or resource qualification",
+  "cost_lower_bound_proved": false,
+  "production_qualified": false
+}

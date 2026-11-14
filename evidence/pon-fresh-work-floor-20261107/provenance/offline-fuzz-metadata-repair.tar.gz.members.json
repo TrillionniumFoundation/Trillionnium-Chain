@@ -1,0 +1,54 @@
+{
+  "archive": "offline-fuzz-metadata-repair.tar.gz",
+  "archive_bytes": 816193,
+  "archive_sha256": "74d292a9f1ac029b953040443e161ef4778591125f38d98aafe2c19074c48e2f",
+  "members": [
+    {
+      "bytes": 36,
+      "path": "fuzz-metadata-repair/cargo-version.log",
+      "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5"
+    },
+    {
+      "bytes": 702955,
+      "path": "fuzz-metadata-repair/metadata.json",
+      "sha256": "af58b6db66f7d4bda48d1df5860c351b287130eefe53755ddf8e515ce1e500e0"
+    },
+    {
+      "bytes": 0,
+      "path": "fuzz-metadata-repair/metadata.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 108867,
+      "path": "fuzz-metadata-repair/repair-provenance.json",
+      "sha256": "5d52c91e23bdfcc948a9e99ec0d7132b69f308aa4d18211544d48e9d353c75ac"
+    },
+    {
+      "bytes": 13739,
+      "path": "fuzz-metadata-repair/restore_fuzz_metadata.py",
+      "sha256": "5cc70bb9a4b542757e08de6a2829a2f92780cf50d6c85a09889049b9194a6db4"
+    },
+    {
+      "bytes": 196,
+      "path": "fuzz-metadata-repair/rustc-version.log",
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+    },
+    {
+      "bytes": 9421,
+      "path": "fuzz-metadata-repair/source-after.json",
+      "sha256": "28956f0f77ff81ce24366952603f0ca4ba12c1be4a4df9a4b6faa4661348ed1f"
+    },
+    {
+      "bytes": 9421,
+      "path": "fuzz-metadata-repair/source-before.json",
+      "sha256": "28956f0f77ff81ce24366952603f0ca4ba12c1be4a4df9a4b6faa4661348ed1f"
+    },
+    {
+      "bytes": 8237197,
+      "path": "fuzz-metadata-repair/source-files.ndjson",
+      "sha256": "a7b0a401da3e812084edbffd38123551078badcbaf52e3e7788d13108e8ddb1d"
+    }
+  ],
+  "members_verified_by_full_readback": true,
+  "scope": "Exact regular-file bytes; archive uid/gid/mode/mtime normalized. No source data or failed observations rewritten."
+}

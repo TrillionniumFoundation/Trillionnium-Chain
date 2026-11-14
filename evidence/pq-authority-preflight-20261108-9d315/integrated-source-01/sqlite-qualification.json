@@ -1,0 +1,24 @@
+{
+  "outputs": [
+    {
+      "qualified": true,
+      "retained": {
+        "bytes": 5119,
+        "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/integrated-source-01/sqlite-build-outputs/trnm-sqlite-io-boundary-6b71c612131449db.txt",
+        "sha256": "3a516385fceade7912072ca038a103b00bca00ff458396d2e86d3637992e21a1"
+      },
+      "source": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/target/debug/build/trnm-sqlite-io-boundary-6b71c612131449db/output"
+    },
+    {
+      "qualified": true,
+      "retained": {
+        "bytes": 5119,
+        "path": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/validation/integrated-source-01/sqlite-build-outputs/trnm-sqlite-io-boundary-6d872784d1deb3c0.txt",
+        "sha256": "11963f843f117bc388f8486c484b010a00e0f6691bd23c08cf3dd5ba34493889"
+      },
+      "source": "/home/qian-qi/work/chain-pq-authority-20261108-9d315/target/debug/build/trnm-sqlite-io-boundary-6d872784d1deb3c0/output"
+    }
+  ],
+  "passed": true,
+  "scope": "actual retained build-script qualification markers"
+}

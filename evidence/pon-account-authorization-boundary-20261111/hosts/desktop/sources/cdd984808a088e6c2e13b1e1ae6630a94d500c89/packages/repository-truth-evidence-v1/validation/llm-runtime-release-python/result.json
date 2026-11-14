@@ -1,0 +1,24 @@
+{
+  "id": "llm-runtime-release-python",
+  "argv": [
+    "/home/qian-qi/chain-pq-a418-final-python-venv/bin/python",
+    "scripts/test_llm_runtime_release.py"
+  ],
+  "returncode": 0,
+  "launch_error": null,
+  "elapsed_seconds": 6.8904290669597685,
+  "finished_utc": "2026-11-11T02:23:56.376180+00:00",
+  "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_status_after": "",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "e92b09503a2c87cb24271712fcc2c9f43d779940c45740616cb12740bc02993a",
+  "pass": true,
+  "qualification_granted": false,
+  "child_resources": {
+    "user_cpu_seconds": 5.421343,
+    "system_cpu_seconds": 1.323151,
+    "maximum_rss_kib": 46048,
+    "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis"
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "source_head": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+  "source_tree": "00479a98dabc6b1fd91a0ceef82ffbdbffb78067",
+  "retrieval": "GitHub connector original Actions job logs; timestamps retained",
+  "readback_changes_historical_conclusion": false,
+  "jobs": [
+    {
+      "job": "129678540672",
+      "run": "42771007925",
+      "role": "legal-v1-x64-head",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42771007925/job/129678540672",
+      "file": "gh-job-129678540672.log",
+      "bytes": 183384,
+      "sha256": "f21d453397bd9b9a77e3a76a219c4e8903749da85c433c9fa1c7df97ded48395"
+    },
+    {
+      "job": "129678540786",
+      "run": "42771007925",
+      "role": "fresh-service-head",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42771007925/job/129678540786",
+      "file": "gh-job-129678540786.log",
+      "bytes": 196426,
+      "sha256": "099ed085b91427871dd2146ee4b5c834926bdbca8b2a1e6cee2c199155b3cd97"
+    },
+    {
+      "job": "129678540829",
+      "run": "42771007925",
+      "role": "factorial-v3-x64-head",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42771007925/job/129678540829",
+      "file": "gh-job-129678540829.log",
+      "bytes": 232279,
+      "sha256": "160aedc6dbe422213fdecf25e52439cd70e776740b382fb53df1aafb71085c6d"
+    },
+    {
+      "job": "129678542303",
+      "run": "42771007913",
+      "role": "protocol-contract",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42771007913/job/129678542303",
+      "file": "gh-job-129678542303.log",
+      "bytes": 196122,
+      "sha256": "4602806c4c7af42c5ad748314989e7379654ef607245cd7579233916582fd5de"
+    },
+    {
+      "job": "129678542314",
+      "run": "42771007913",
+      "role": "node-runtime",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42771007913/job/129678542314",
+      "file": "gh-job-129678542314.log",
+      "bytes": 845496,
+      "sha256": "18ebdf5872d99d169c17b0a71b686c7b2fc8bebe4cbebbb2c2463c48bff8edb7"
+    },
+    {
+      "job": "129678542344",
+      "run": "42771007913",
+      "role": "repository-truth",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42771007913/job/129678542344",
+      "file": "gh-job-129678542344.log",
+      "bytes": 581816,
+      "sha256": "b2bb33a64080b1896bb998f756b81056643a6c97d0c1d27fb3e3f79af3e3de6f"
+    }
+  ]
+}

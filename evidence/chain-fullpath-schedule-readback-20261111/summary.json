@@ -1,0 +1,493 @@
+{
+  "all_planned_outcome_counts": {
+    "unknown": 9,
+    "unobserved": 15,
+    "validated": 3
+  },
+  "artifact_id": 13894656010,
+  "measurement_source": {
+    "head": "53e1b98a7955898b9feff4778f7136c0fd0199c8",
+    "tree": "094ccb0afc9e7ffbbcc83f85efb6ca4ad8d54aa0"
+  },
+  "new_native_experiment": false,
+  "original_campaign_complete_success": false,
+  "original_campaign_failure": "ORIGINAL_THREE_RUN_CAMPAIGN_FAILED",
+  "original_metrics_exactly_unchanged_after_removing_additive_output": true,
+  "phases": [
+    {
+      "actual_parent_phase_wall_ns": 34497972115,
+      "attempt": 1,
+      "finite_phase_criteria_met": false,
+      "mode": "baseline",
+      "native_returncode": 101,
+      "observed_rounds": 2,
+      "observed_validated_business_per_actual_second": {
+        "denominator": 6899594423,
+        "numerator": 200000000
+      },
+      "outcomes": [
+        {
+          "ended_ns": 28005193220,
+          "on_time_validated_round_end_from_schedule_ns": 27005193220,
+          "round": 0,
+          "round_end_from_schedule_ns": 27005193220,
+          "scheduled_ns": 1000000000,
+          "start_delay_ns": 727695,
+          "started_ns": 1000727695,
+          "state": "validated",
+          "transaction": "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+        },
+        {
+          "ended_ns": 30001812979,
+          "on_time_validated_round_end_from_schedule_ns": null,
+          "round": 1,
+          "round_end_from_schedule_ns": 25001812979,
+          "scheduled_ns": 5000000000,
+          "start_delay_ns": 23005243084,
+          "started_ns": 28005243084,
+          "state": "unknown",
+          "transaction": "7fd88b9f9882f0cdf279b79d6eab6ec2c7583c3e1511442b3f1318d914ec5f82"
+        },
+        {
+          "ended_ns": null,
+          "on_time_validated_round_end_from_schedule_ns": null,
+          "round": 2,
+          "round_end_from_schedule_ns": null,
+          "scheduled_ns": 9000000000,
+          "start_delay_ns": null,
+          "started_ns": null,
+          "state": "unobserved",
+          "transaction": "48b9ae81bd3f28ec8753c2976fb6c290cebf6b7a645bbd2045552c86cfac6d16"
+        }
+      ],
+      "successful_entered_round_latency_p50_ns": 27004465525,
+      "successful_scheduled_round_latency_p50_ns": 27005193220,
+      "unique_validated_business_observed": 1,
+      "unobserved_rounds": 1,
+      "validated_goodput_per_second": null
+    },
+    {
+      "actual_parent_phase_wall_ns": 35587355709,
+      "attempt": 1,
+      "finite_phase_criteria_met": false,
+      "mode": "from-zero",
+      "native_returncode": 101,
+      "observed_rounds": 1,
+      "observed_validated_business_per_actual_second": {
+        "denominator": 1,
+        "numerator": 0
+      },
+      "outcomes": [
+        {
+          "ended_ns": 30002747736,
+          "on_time_validated_round_end_from_schedule_ns": null,
+          "round": 0,
+          "round_end_from_schedule_ns": 29002747736,
+          "scheduled_ns": 1000000000,
+          "start_delay_ns": 571889,
+          "started_ns": 1000571889,
+          "state": "unknown",
+          "transaction": "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+        },
+        {
+          "ended_ns": null,
+          "on_time_validated_round_end_from_schedule_ns": null,
+          "round": 1,
+          "round_end_from_schedule_ns": null,
+          "scheduled_ns": 5000000000,
+          "start_delay_ns": null,
+          "started_ns": null,
+          "state": "unobserved",
+          "transaction": "7fd88b9f9882f0cdf279b79d6eab6ec2c7583c3e1511442b3f1318d914ec5f82"
+        },
+        {
+          "ended_ns": null,
+          "on_time_validated_round_end_from_schedule_ns": null,
+          "round": 2,
+          "round_end_from_schedule_ns": null,
+          "scheduled_ns": 9000000000,
+          "start_delay_ns": null,
+          "started_ns": null,
+          "state": "unobserved",
+          "transaction": "48b9ae81bd3f28ec8753c2976fb6c290cebf6b7a645bbd2045552c86cfac6d16"
+        }
+      ],
+      "successful_entered_round_latency_p50_ns": null,
+      "successful_scheduled_round_latency_p50_ns": null,
+      "unique_validated_business_observed": 0,
+      "unobserved_rounds": 2,
+      "validated_goodput_per_second": null
+    },
+    {
+      "actual_parent_phase_wall_ns": 35583680336,
+      "attempt": 1,
+      "finite_phase_criteria_met": false,
+      "mode": "late-product",
+      "native_returncode": 101,
+      "observed_rounds": 1,
+      "observed_validated_business_per_actual_second": {
+        "denominator": 1,
+        "numerator": 0
+      },
+      "outcomes": [
+        {
+          "ended_ns": 30085389402,
+          "on_time_validated_round_end_from_schedule_ns": null,
+          "round": 0,
+          "round_end_from_schedule_ns": 29085389402,
+          "scheduled_ns": 1000000000,
+          "start_delay_ns": 1973121,
+          "started_ns": 1001973121,
+          "state": "unknown",
+          "transaction": "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+        },
+        {
+          "ended_ns": null,
+          "on_time_validated_round_end_from_schedule_ns": null,
+          "round": 1,
+          "round_end_from_schedule_ns": null,
+          "scheduled_ns": 5000000000,
+          "start_delay_ns": null,
+          "started_ns": null,
+          "state": "unobserved",
+          "transaction": "7fd88b9f9882f0cdf279b79d6eab6ec2c7583c3e1511442b3f1318d914ec5f82"
+        },
+        {
+          "ended_ns": null,
+          "on_time_validated_round_end_from_schedule_ns": null,
+          "round": 2,
+          "round_end_from_schedule_ns": null,
+          "scheduled_ns": 9000000000,
+          "start_delay_ns": null,
+          "started_ns": null,
+          "state": "unobserved",
+          "transaction": "48b9ae81bd3f28ec8753c2976fb6c290cebf6b7a645bbd2045552c86cfac6d16"
+        }
+      ],
+      "successful_entered_round_latency_p50_ns": null,
+      "successful_scheduled_round_latency_p50_ns": null,
+      "unique_validated_business_observed": 0,
+      "unobserved_rounds": 2,
+      "validated_goodput_per_second": null
+    },
+    {
+      "actual_parent_phase_wall_ns": 34602517025,
+      "attempt": 2,
+      "finite_phase_criteria_met": false,
+      "mode": "baseline",
+      "native_returncode": 101,
+      "observed_rounds": 2,
+      "observed_validated_business_per_actual_second": {
+        "denominator": 1384100681,
+        "numerator": 40000000
+      },
+      "outcomes": [
+        {
+          "ended_ns": 27900482073,
+          "on_time_validated_round_end_from_schedule_ns": 26900482073,
+          "round": 0,
+          "round_end_from_schedule_ns": 26900482073,
+          "scheduled_ns": 1000000000,
+          "start_delay_ns": 1738545,
+          "started_ns": 1001738545,
+          "state": "validated",
+          "transaction": "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+        },
+        {
+          "ended_ns": 30008777814,
+          "on_time_validated_round_end_from_schedule_ns": null,
+          "round": 1,
+          "round_end_from_schedule_ns": 25008777814,
+          "scheduled_ns": 5000000000,
+          "start_delay_ns": 22900569426,
+          "started_ns": 27900569426,
+          "state": "unknown",
+          "transaction": "7fd88b9f9882f0cdf279b79d6eab6ec2c7583c3e1511442b3f1318d914ec5f82"
+        },
+        {
+          "ended_ns": null,
+          "on_time_validated_round_end_from_schedule_ns": null,
+          "round": 2,
+          "round_end_from_schedule_ns": null,
+          "scheduled_ns": 9000000000,
+          "start_delay_ns": null,
+          "started_ns": null,
+          "state": "unobserved",
+          "transaction": "48b9ae81bd3f28ec8753c2976fb6c290cebf6b7a645bbd2045552c86cfac6d16"
+        }
+      ],
+      "successful_entered_round_latency_p50_ns": 26898743528,
+      "successful_scheduled_round_latency_p50_ns": 26900482073,
+      "unique_validated_business_observed": 1,
+      "unobserved_rounds": 1,
+      "validated_goodput_per_second": null
+    },
+    {
+      "actual_parent_phase_wall_ns": 35591453426,
+      "attempt": 2,
+      "finite_phase_criteria_met": false,
+      "mode": "from-zero",
+      "native_returncode": 101,
+      "observed_rounds": 1,
+      "observed_validated_business_per_actual_second": {
+        "denominator": 1,
+        "numerator": 0
+      },
+      "outcomes": [
+        {
+          "ended_ns": 30075493856,
+          "on_time_validated_round_end_from_schedule_ns": null,
+          "round": 0,
+          "round_end_from_schedule_ns": 29075493856,
+          "scheduled_ns": 1000000000,
+          "start_delay_ns": 1481318,
+          "started_ns": 1001481318,
+          "state": "unknown",
+          "transaction": "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+        },
+        {
+          "ended_ns": null,
+          "on_time_validated_round_end_from_schedule_ns": null,
+          "round": 1,
+          "round_end_from_schedule_ns": null,
+          "scheduled_ns": 5000000000,
+          "start_delay_ns": null,
+          "started_ns": null,
+          "state": "unobserved",
+          "transaction": "7fd88b9f9882f0cdf279b79d6eab6ec2c7583c3e1511442b3f1318d914ec5f82"
+        },
+        {
+          "ended_ns": null,
+          "on_time_validated_round_end_from_schedule_ns": null,
+          "round": 2,
+          "round_end_from_schedule_ns": null,
+          "scheduled_ns": 9000000000,
+          "start_delay_ns": null,
+          "started_ns": null,
+          "state": "unobserved",
+          "transaction": "48b9ae81bd3f28ec8753c2976fb6c290cebf6b7a645bbd2045552c86cfac6d16"
+        }
+      ],
+      "successful_entered_round_latency_p50_ns": null,
+      "successful_scheduled_round_latency_p50_ns": null,
+      "unique_validated_business_observed": 0,
+      "unobserved_rounds": 2,
+      "validated_goodput_per_second": null
+    },
+    {
+      "actual_parent_phase_wall_ns": 35589532306,
+      "attempt": 2,
+      "finite_phase_criteria_met": false,
+      "mode": "late-product",
+      "native_returncode": 101,
+      "observed_rounds": 1,
+      "observed_validated_business_per_actual_second": {
+        "denominator": 1,
+        "numerator": 0
+      },
+      "outcomes": [
+        {
+          "ended_ns": 30079574687,
+          "on_time_validated_round_end_from_schedule_ns": null,
+          "round": 0,
+          "round_end_from_schedule_ns": 29079574687,
+          "scheduled_ns": 1000000000,
+          "start_delay_ns": 620006,
+          "started_ns": 1000620006,
+          "state": "unknown",
+          "transaction": "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+        },
+        {
+          "ended_ns": null,
+          "on_time_validated_round_end_from_schedule_ns": null,
+          "round": 1,
+          "round_end_from_schedule_ns": null,
+          "scheduled_ns": 5000000000,
+          "start_delay_ns": null,
+          "started_ns": null,
+          "state": "unobserved",
+          "transaction": "7fd88b9f9882f0cdf279b79d6eab6ec2c7583c3e1511442b3f1318d914ec5f82"
+        },
+        {
+          "ended_ns": null,
+          "on_time_validated_round_end_from_schedule_ns": null,
+          "round": 2,
+          "round_end_from_schedule_ns": null,
+          "scheduled_ns": 9000000000,
+          "start_delay_ns": null,
+          "started_ns": null,
+          "state": "unobserved",
+          "transaction": "48b9ae81bd3f28ec8753c2976fb6c290cebf6b7a645bbd2045552c86cfac6d16"
+        }
+      ],
+      "successful_entered_round_latency_p50_ns": null,
+      "successful_scheduled_round_latency_p50_ns": null,
+      "unique_validated_business_observed": 0,
+      "unobserved_rounds": 2,
+      "validated_goodput_per_second": null
+    },
+    {
+      "actual_parent_phase_wall_ns": 34688094048,
+      "attempt": 3,
+      "finite_phase_criteria_met": false,
+      "mode": "baseline",
+      "native_returncode": 101,
+      "observed_rounds": 2,
+      "observed_validated_business_per_actual_second": {
+        "denominator": 1084002939,
+        "numerator": 31250000
+      },
+      "outcomes": [
+        {
+          "ended_ns": 28208363602,
+          "on_time_validated_round_end_from_schedule_ns": 27208363602,
+          "round": 0,
+          "round_end_from_schedule_ns": 27208363602,
+          "scheduled_ns": 1000000000,
+          "start_delay_ns": 1927470,
+          "started_ns": 1001927470,
+          "state": "validated",
+          "transaction": "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+        },
+        {
+          "ended_ns": 30006711140,
+          "on_time_validated_round_end_from_schedule_ns": null,
+          "round": 1,
+          "round_end_from_schedule_ns": 25006711140,
+          "scheduled_ns": 5000000000,
+          "start_delay_ns": 23208438732,
+          "started_ns": 28208438732,
+          "state": "unknown",
+          "transaction": "7fd88b9f9882f0cdf279b79d6eab6ec2c7583c3e1511442b3f1318d914ec5f82"
+        },
+        {
+          "ended_ns": null,
+          "on_time_validated_round_end_from_schedule_ns": null,
+          "round": 2,
+          "round_end_from_schedule_ns": null,
+          "scheduled_ns": 9000000000,
+          "start_delay_ns": null,
+          "started_ns": null,
+          "state": "unobserved",
+          "transaction": "48b9ae81bd3f28ec8753c2976fb6c290cebf6b7a645bbd2045552c86cfac6d16"
+        }
+      ],
+      "successful_entered_round_latency_p50_ns": 27206436132,
+      "successful_scheduled_round_latency_p50_ns": 27208363602,
+      "unique_validated_business_observed": 1,
+      "unobserved_rounds": 1,
+      "validated_goodput_per_second": null
+    },
+    {
+      "actual_parent_phase_wall_ns": 35682832094,
+      "attempt": 3,
+      "finite_phase_criteria_met": false,
+      "mode": "from-zero",
+      "native_returncode": 101,
+      "observed_rounds": 1,
+      "observed_validated_business_per_actual_second": {
+        "denominator": 1,
+        "numerator": 0
+      },
+      "outcomes": [
+        {
+          "ended_ns": 30004173976,
+          "on_time_validated_round_end_from_schedule_ns": null,
+          "round": 0,
+          "round_end_from_schedule_ns": 29004173976,
+          "scheduled_ns": 1000000000,
+          "start_delay_ns": 357942,
+          "started_ns": 1000357942,
+          "state": "unknown",
+          "transaction": "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+        },
+        {
+          "ended_ns": null,
+          "on_time_validated_round_end_from_schedule_ns": null,
+          "round": 1,
+          "round_end_from_schedule_ns": null,
+          "scheduled_ns": 5000000000,
+          "start_delay_ns": null,
+          "started_ns": null,
+          "state": "unobserved",
+          "transaction": "7fd88b9f9882f0cdf279b79d6eab6ec2c7583c3e1511442b3f1318d914ec5f82"
+        },
+        {
+          "ended_ns": null,
+          "on_time_validated_round_end_from_schedule_ns": null,
+          "round": 2,
+          "round_end_from_schedule_ns": null,
+          "scheduled_ns": 9000000000,
+          "start_delay_ns": null,
+          "started_ns": null,
+          "state": "unobserved",
+          "transaction": "48b9ae81bd3f28ec8753c2976fb6c290cebf6b7a645bbd2045552c86cfac6d16"
+        }
+      ],
+      "successful_entered_round_latency_p50_ns": null,
+      "successful_scheduled_round_latency_p50_ns": null,
+      "unique_validated_business_observed": 0,
+      "unobserved_rounds": 2,
+      "validated_goodput_per_second": null
+    },
+    {
+      "actual_parent_phase_wall_ns": 35513644648,
+      "attempt": 3,
+      "finite_phase_criteria_met": false,
+      "mode": "late-product",
+      "native_returncode": 101,
+      "observed_rounds": 1,
+      "observed_validated_business_per_actual_second": {
+        "denominator": 1,
+        "numerator": 0
+      },
+      "outcomes": [
+        {
+          "ended_ns": 30078371964,
+          "on_time_validated_round_end_from_schedule_ns": null,
+          "round": 0,
+          "round_end_from_schedule_ns": 29078371964,
+          "scheduled_ns": 1000000000,
+          "start_delay_ns": 748866,
+          "started_ns": 1000748866,
+          "state": "unknown",
+          "transaction": "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+        },
+        {
+          "ended_ns": null,
+          "on_time_validated_round_end_from_schedule_ns": null,
+          "round": 1,
+          "round_end_from_schedule_ns": null,
+          "scheduled_ns": 5000000000,
+          "start_delay_ns": null,
+          "started_ns": null,
+          "state": "unobserved",
+          "transaction": "7fd88b9f9882f0cdf279b79d6eab6ec2c7583c3e1511442b3f1318d914ec5f82"
+        },
+        {
+          "ended_ns": null,
+          "on_time_validated_round_end_from_schedule_ns": null,
+          "round": 2,
+          "round_end_from_schedule_ns": null,
+          "scheduled_ns": 9000000000,
+          "start_delay_ns": null,
+          "started_ns": null,
+          "state": "unobserved",
+          "transaction": "48b9ae81bd3f28ec8753c2976fb6c290cebf6b7a645bbd2045552c86cfac6d16"
+        }
+      ],
+      "successful_entered_round_latency_p50_ns": null,
+      "successful_scheduled_round_latency_p50_ns": null,
+      "unique_validated_business_observed": 0,
+      "unobserved_rounds": 2,
+      "validated_goodput_per_second": null
+    }
+  ],
+  "planned_phases": 9,
+  "planned_rounds": 27,
+  "planned_runs": 3,
+  "qualification": "HOLD_NO_GO",
+  "schema": "original-fixed-schedule-metric-readback-summary-v1",
+  "scope": "Read-only replay of source-bound existing failure evidence; phase/campaign qualification and original metrics unchanged; completed rounds are not independent unique businesses across reset phases",
+  "workflow_run_id": 43104547221
+}

@@ -1,0 +1,32 @@
+   Compiling trnm-data-availability v0.1.0 (/home/qq/work/chain-cell-paged-model-34e09-20261110/trillionnium/crates/trnm-data-availability)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.89s
+     Running unittests examples/cell_sealed_research_next_use_v2.rs (/home/qq/work/chain-cell-paged-model-34e09-20261110-target/debug/examples/cell_sealed_research_next_use_v2-1bad5a80098a9f42)
+
+running 11 tests
+test linux::bep52::tests::explicit_endpoint_allowances_fit_one_total ... ok
+test linux::bep52::tests::old_network_profile_unknown_fields_and_missing_grants_are_refused ... ok
+test linux::bep52::tests::same_operation_transfer_handles_cross_member_cache_dedup ... ok
+test linux::paged::tests::paged_research_expired_original_deadline_retains_failure_observation ... ok
+test linux::paged::tests::paged_research_original_cancellation_is_not_reset_for_cold_reconstruction ... ok
+test linux::paged::tests::paged_research_profile_binds_exact_canonical_available_slots ... ok
+test linux::paged::tests::paged_research_restores_two_pages_from_four_reopened_targets ... FAILED
+test linux::paged::tests::paged_research_wrapper_is_explicit_and_old_v2_wire_stays_closed ... ok
+test linux::paged::tests::paged_research_wrapper_requires_independent_previous_identity_and_canonical_pins ... ok
+test linux::snapshot::tests::actual_worker_and_closed_composition_profile_are_required ... ok
+test linux::snapshot::tests::dense_roster_rejects_unknown_dtype_duplicate_fields_and_layout_gaps ... ok
+
+failures:
+
+---- linux::paged::tests::paged_research_restores_two_pages_from_four_reopened_targets stdout ----
+
+thread 'linux::paged::tests::paged_research_restores_two_pages_from_four_reopened_targets' (66279) panicked at crates/trnm-data-availability/examples/cell_sealed_research_v2/paged/tests.rs:300:29:
+restore failed: CacheQuotaExceeded; retained observation: {"hepta_final_use":false,"m12_funding_admitted":false,"paged_custody":{"actual_provider_read_attempts":0,"callback_attempts":0,"catalog_anchor":"435641330000000000000002fe0ab3515f88bc0e34d780af3ba41307ddfc9d64e70ab9ceb7a70bdf27a832ac","catalog_payload_unavailable":false,"catalog_zero_bytes":0,"chunk_count":66,"codec_budget":{"attempts_committed":0,"cache_bytes_committed":0,"input_bytes_committed":0,"reconstruction_bytes_committed":0},"current_slot":{"chunk_in_page":63,"operation":"ec061bfb1570856b30cb2f6d9726fcb820f0078331e48603daaea742fe267538","outcome":"original_target_readback_observed","page":0,"slot":5},"custody_completion_granted":false,"custody_elapsed_ms":6732,"elapsed_ms":7006,"elapsed_ms_scope":"whole operation including earlier stages","error":"cell: CELL_CACHE_QUOTA_EXHAUSTED","execution_granted":false,"independent_failure_domains":false,"m12_funding_admitted":false,"obtained_wire_bytes":0,"operation_elapsed_ms":7006,"page_count":2,"passed":false,"payload_bytes":1064980,"plan":"ce506195008e252c9eeb7802d798ef97fc7d464913207eda008d705077bd6a5a","potential":{"cache_bytes":2129960,"input_bytes":1629546,"provider_reads":396,"readback_chunks":66,"readback_payload_bytes":1064980,"reconstruction_bytes":2694526},"profile":"676b97beb87759572fbc68cb7e490a552a7dea7df2e82ef2e9b25c6c123dd8d4","provider_capacity_bytes":536576,"provider_reads":0,"provider_reads_are_logical_callback_attempts":true,"provider_repair_dispatched":false,"provider_root":"/home/qq/work/chain-cell-paged-model-34e09-20261110-validation/tmp/.tmpFg6ZJa/paged-shard-providers","provider_slots":[0,2,4,5],"provider_wire_bytes":271591,"published_slots":384,"readback_budget":{"attempted_scans":0,"reserved_chunks":0,"reserved_payload_bytes":0},"restore_budget":{"attempts_committed":0,"cache_bytes_committed":0,"chunks_committed":0,"input_bytes_committed":0,"provider_reads_committed":0,"readback_chunks_committed":0,"readback_payload_bytes_committed":0,"reconstruction_bytes_committed":0},"retention_heights_are_research_terms":true,"schema":"trnm.cell-sealed-paged-custody-observation.v1","stage":"stage and acknowledge six original provider targets","staged_chunks":64,"staging_logical_bytes":1736862,"staging_manifest_bytes":107316,"staging_path":"/home/qq/work/chain-cell-paged-model-34e09-20261110-validation/tmp/.tmpFg6ZJa/paged-shard-staging.sqlite","unavailable_callbacks":0},"production_activation":false}
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    linux::paged::tests::paged_research_restores_two_pages_from_four_reopened_targets
+
+test result: FAILED. 10 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 7.13s
+
+error: test failed, to rerun pass `-p trnm-data-availability --example cell_sealed_research_next_use_v2`

@@ -1,0 +1,154 @@
+{
+  "argv": [
+    "/home/qian-qi/work/p3-shared-profile-target-3acf89/release/examples/tagged_sha3_backend",
+    "verify",
+    "/home/qian-qi/work/p3-shared-profile-observations-3acf89-base-sync/abba-v2/01-retained-B/prepared/statement.bin",
+    "/home/qian-qi/work/p3-shared-profile-observations-3acf89-base-sync/input-fixtures/retained.expected-header.bin",
+    "/home/qian-qi/work/p3-shared-profile-observations-3acf89-base-sync/input-fixtures/retained.artifacts.bin",
+    "/home/qian-qi/work/p3-shared-profile-observations-3acf89-base-sync/abba-v2/01-retained-B/proof"
+  ],
+  "exit_code": 0,
+  "timeout": false,
+  "outer_wall_s": 0.569346864,
+  "peak_rss_kib": 133064,
+  "report": {
+    "arith_proof_bytes": 590533,
+    "arith_proof_sha256": "dcb0365d8727fbbf123dbd6a34e9bb6e939ae5b48c7ce69ea49b2a53bf824fbc",
+    "preprocessing_source": "canonical public statement plus independent expected inputs; rebuilt in this process",
+    "process_wall_ms": 519.327759,
+    "public_bytes": 377290,
+    "qualification": "HOLD_NO_GO",
+    "schema": "trnm-w1-complete-public-tagged-sha3-stark-run-v1",
+    "security": {
+      "complete_noninteractive_security_bits": null,
+      "concrete_binding_bits": null,
+      "descriptor": "p3=0.8.0;sha3=512;r=576;c=1024;F=18446744069414584321;E=X^2-7;binary;cap=0;log_blowup=2;log_final_poly=0;max_log_arity=1;queries=64;pow=0;zk=0;sha=d13,w7728,p27,q2,next1;carry=d14,w370,p180,q1,next0",
+      "fri": {
+        "all_grinding_bits": 0,
+        "log_blowup": 2,
+        "log_final_poly_len": 0,
+        "max_log_arity": 1,
+        "num_queries": 64
+      },
+      "independent_role_oracle_claim": false,
+      "lifecycle_security_bits": null,
+      "mmcs": {
+        "arity": 2,
+        "branch_payload_bytes": 128,
+        "cap_height": 0,
+        "digest_encoding": "8 raw little-endian u64 words, no field reduction",
+        "leaf_encoding": "canonical Goldilocks u64le stream with byte-length suffix",
+        "matrix_boundary_tagged": false,
+        "position_tagged": false
+      },
+      "new_recursive_sha3_air": false,
+      "open_obligations": [
+        "joint concrete shared-hash binding and Fiat-Shamir analysis",
+        "actual MMCS opening geometry including adversarial sibling digests",
+        "quantum and preprocessing-advice composition",
+        "recursive AIR and in-circuit verification cost"
+      ],
+      "profile_id": "TRNM-W1-P3-SHA3-512-TAGGED-R1",
+      "qualification": "HOLD_NO_GO",
+      "quantum_security_bits": null,
+      "schema": "w1-p3-tagged-sha3-512-research-profile-v1",
+      "sha3": {
+        "capacity_bits": 1024,
+        "digest_bytes": 64,
+        "rate_bits": 576
+      },
+      "shared_primitive": "one concrete FIPS 202 SHA3-512 implementation for leaf, branch, transcript, and statement context",
+      "statement_context_hex": "8b8a96aeebb7f351af08bfacd6d223db672f359a5fc066014bf8aeb2d2dd32c6f27de92df759f5fb85b94c76ee08502d71c536afb5e59653d1b4cb73facdd84f",
+      "transcript": {
+        "adapter": "P3 0.8.0 HashChallenger<u8, TranscriptHasher,64> with SerializingChallenger64",
+        "application_context": "typed length-framed canonical public statement + independent expected header + independent expected artifacts",
+        "byte_order": "HashChallenger pops output bytes in reverse digest order",
+        "field_sampling": "8-byte little-endian candidates; reject candidates >= Goldilocks modulus; extension coefficients sampled separately",
+        "inherited_state_alias": "HashChallenger does not encode observe-call boundaries or count of bytes already popped within an output block before a new observation; generic transcript-history injectivity is not claimed",
+        "p3_message_schedule": "unchanged frozen P3 transcript order; no new per-message semantic tags",
+        "query_sampling": "mask 8-byte samples as required by P3"
+      },
+      "unchanged_w1_relation": "existing W1 SHA-256 AIR plus five-lane packed carry AIR"
+    },
+    "security_claim": "research execution only; one shared concrete SHA3-512, no complete noninteractive or quantum security qualification",
+    "sha_proof_bytes": 4467429,
+    "sha_proof_sha256": "220e442f50a050710a07b21646787a9b32514b9fb5e32ca885de495eba766712",
+    "statement_sha256": "d8b06f64c5e3ff0242e1fe30110280be56fe9eca9cfb55086f7ed7ab5bdb3b6c",
+    "status": "VERIFIED_COMPLETE_W1_RESEARCH_ONLY",
+    "timings": [
+      {
+        "elapsed_ms": 18.2849,
+        "phase": "bounded_read_decode_and_proof_shape"
+      },
+      {
+        "elapsed_ms": 17.506256,
+        "phase": "canonical_plans_and_public_only_sha_air"
+      },
+      {
+        "elapsed_ms": 35.787558,
+        "phase": "sha_verifier_independent_preprocessing_setup"
+      },
+      {
+        "elapsed_ms": 110.41703,
+        "phase": "sha_stark_verify"
+      },
+      {
+        "elapsed_ms": 278.820902,
+        "phase": "arith_verifier_independent_preprocessing_setup"
+      },
+      {
+        "elapsed_ms": 18.501086,
+        "phase": "arith_stark_verify"
+      }
+    ],
+    "wire_admission": {
+      "arithmetic": {
+        "field_elements": 38243,
+        "maximum_bytes": 1001733,
+        "merkle_siblings": 4263,
+        "vector_headers": 1339
+      },
+      "global_rejection_cost_bound": false,
+      "schema": "w1-fixed-p3-tagged-sha3-wire-admission-v1",
+      "sha": {
+        "field_elements": 529232,
+        "maximum_bytes": 4855845,
+        "merkle_siblings": 3467,
+        "vector_headers": 1338
+      },
+      "structural_admission_only": true
+    }
+  },
+  "before": {
+    "monotonic_ns": 1199474350484392,
+    "utc_unix_ns": 1794121808358173498,
+    "loadavg": "17.55 16.03 17.32 15/4425 3682087",
+    "cpu_pressure": "some avg10=0.13 avg60=1.05 avg300=1.07 total=9283474411\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+    "memory_pressure": "some avg10=0.00 avg60=0.00 avg300=0.13 total=1693986759\nfull avg10=0.00 avg60=0.00 avg300=0.12 total=1625754194",
+    "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b9fbc99d-12894-17e6.service\n",
+    "cgroup_values": {
+      "cpu.max": "max 100000",
+      "cpu.stat": "usage_usec 860633647\nuser_usec 841013829\nsystem_usec 19619818\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+      "memory.max": "max",
+      "memory.current": "186916864",
+      "memory.peak": "2515861504",
+      "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0"
+    }
+  },
+  "after": {
+    "monotonic_ns": 1199474922505193,
+    "utc_unix_ns": 1794121808930194930,
+    "loadavg": "17.55 16.03 17.32 9/4426 3682116",
+    "cpu_pressure": "some avg10=0.11 avg60=1.02 avg300=1.06 total=9283479041\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+    "memory_pressure": "some avg10=0.00 avg60=0.00 avg300=0.12 total=1693986759\nfull avg10=0.00 avg60=0.00 avg300=0.11 total=1625754194",
+    "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b9fbc99d-12894-17e6.service\n",
+    "cgroup_values": {
+      "cpu.max": "max 100000",
+      "cpu.stat": "usage_usec 863079974\nuser_usec 843345391\nsystem_usec 19734583\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+      "memory.max": "max",
+      "memory.current": "186626048",
+      "memory.peak": "2515861504",
+      "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0"
+    }
+  }
+}

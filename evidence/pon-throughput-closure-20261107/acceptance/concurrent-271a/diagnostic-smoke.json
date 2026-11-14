@@ -1,0 +1,11 @@
+{
+  "schema": "codeql-failure-scene-diagnostic-smoke-v1",
+  "workflow_yaml_parsed": true,
+  "after_step_shell_syntax": true,
+  "status_captures_staged_unstaged_untracked": true,
+  "both_tracked_diffs_retained": true,
+  "source_unmodified_by_capture": true,
+  "strict_source_after_check_retained": true,
+  "upload_never": true,
+  "hosted_scan_reexecuted": false
+}

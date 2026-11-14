@@ -1,0 +1,32 @@
+{
+  "scope": "Observed development/preparation failures; missing raw details remain unavailable",
+  "observations": [
+    {
+      "kind": "repository_check",
+      "exit_code": 2,
+      "observed_error": "protocol-contract must retain its complete straight-line command sequence",
+      "resolution": "Added both new commands to independent expected lane and new omission controls; no old gate removed."
+    },
+    {
+      "kind": "ci_contract_first",
+      "exit_code": 1,
+      "retained_log": "development/ci-contract.log",
+      "observed_error": "setUpClass ERROR followed by truncated traceback",
+      "resource_observation": "Full repository copy required about1016MiB, greater than physical free during first run; exact exception text unavailable in truncated log.",
+      "resolution": "Relocated own reproducible build caches to executable tmpfs; unchanged102test followup passed."
+    },
+    {
+      "kind": "format_first",
+      "exit_code": 1,
+      "retained_log": "development/format-first.log",
+      "resolution": "Applied rustfmt to two test expressions; followup clean."
+    },
+    {
+      "kind": "first_source_freeze_command",
+      "exit_code": 1,
+      "observed_error": "ValueError: noncanonical expected head",
+      "argument": "b9ccd327b",
+      "resolution": "Use full40hex b9ccd327b363335ae6c219fd73565ab4ccaa9f17; no source change."
+    }
+  ]
+}

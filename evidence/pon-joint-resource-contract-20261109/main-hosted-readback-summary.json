@@ -1,0 +1,887 @@
+{
+  "schema": "pon-joint-main-hosted-readback-summary-v1",
+  "implementation": "11791e2da79b69322271be2cffe03725165151d1",
+  "tree": "162552848110fda532504b78865a16930bc6d9bb",
+  "original": {
+    "executed": 3,
+    "complete_success": 0,
+    "failure": "ORIGINAL_THREE_RUN_CAMPAIGN_FAILED",
+    "build": {
+      "command": [
+        "/home/runner/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--release",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "public_v3_multiprocess",
+        "--no-run",
+        "--message-format=json"
+      ],
+      "complete_success": true,
+      "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+      "elapsed_ns": 169587441543,
+      "elapsed_seconds": 169.587441543,
+      "error": null,
+      "name": "build",
+      "outer_stage_timeout_seconds": 1800,
+      "returncode": 0,
+      "stderr": "build.stderr.log",
+      "stderr_bytes": 4184,
+      "stderr_sha256": "fbf3f6691f28635972c31bb72c672ad9a70c823e271278e3b6a4e9bb9af81d67",
+      "stderr_truncated": false,
+      "stdout": "build.stdout.log",
+      "stdout_bytes": 114469,
+      "stdout_sha256": "2c411a6e47a699fdfbef72dba4abd7afde5f71effb9053015d2118c3f9f149bc",
+      "stdout_truncated": false
+    },
+    "finalization_failures": [],
+    "phase_rows": [
+      {
+        "run": 1,
+        "mode": "baseline",
+        "duration_seconds": 30,
+        "attackers": 0,
+        "scheduled": 3,
+        "observed": 2,
+        "confirmed": 1,
+        "startup_error": null,
+        "criteria": false,
+        "submissions": {
+          "attempts": 14,
+          "status_counts": {
+            "ok": 14
+          }
+        },
+        "history": {
+          "attempts": 10,
+          "status_counts": {
+            "ok": 10
+          }
+        }
+      },
+      {
+        "run": 1,
+        "mode": "from-zero",
+        "duration_seconds": 30,
+        "attackers": 24,
+        "scheduled": 3,
+        "observed": 1,
+        "confirmed": 0,
+        "startup_error": null,
+        "criteria": false,
+        "submissions": {
+          "attempts": 7,
+          "status_counts": {
+            "ok": 7
+          }
+        },
+        "history": {
+          "attempts": 6,
+          "status_counts": {
+            "ok": 6
+          }
+        }
+      },
+      {
+        "run": 1,
+        "mode": "late-product",
+        "duration_seconds": 30,
+        "attackers": 24,
+        "scheduled": 3,
+        "observed": 1,
+        "confirmed": 0,
+        "startup_error": null,
+        "criteria": false,
+        "submissions": {
+          "attempts": 7,
+          "status_counts": {
+            "ok": 7
+          }
+        },
+        "history": {
+          "attempts": 6,
+          "status_counts": {
+            "ok": 6
+          }
+        }
+      },
+      {
+        "run": 2,
+        "mode": "baseline",
+        "duration_seconds": 30,
+        "attackers": 0,
+        "scheduled": 3,
+        "observed": 2,
+        "confirmed": 1,
+        "startup_error": null,
+        "criteria": false,
+        "submissions": {
+          "attempts": 14,
+          "status_counts": {
+            "ok": 14
+          }
+        },
+        "history": {
+          "attempts": 10,
+          "status_counts": {
+            "ok": 10
+          }
+        }
+      },
+      {
+        "run": 2,
+        "mode": "from-zero",
+        "duration_seconds": 30,
+        "attackers": 24,
+        "scheduled": 3,
+        "observed": 1,
+        "confirmed": 0,
+        "startup_error": null,
+        "criteria": false,
+        "submissions": {
+          "attempts": 7,
+          "status_counts": {
+            "ok": 7
+          }
+        },
+        "history": {
+          "attempts": 6,
+          "status_counts": {
+            "ok": 6
+          }
+        }
+      },
+      {
+        "run": 2,
+        "mode": "late-product",
+        "duration_seconds": 30,
+        "attackers": 24,
+        "scheduled": 3,
+        "observed": 1,
+        "confirmed": 0,
+        "startup_error": null,
+        "criteria": false,
+        "submissions": {
+          "attempts": 7,
+          "status_counts": {
+            "ok": 7
+          }
+        },
+        "history": {
+          "attempts": 6,
+          "status_counts": {
+            "ok": 6
+          }
+        }
+      },
+      {
+        "run": 3,
+        "mode": "baseline",
+        "duration_seconds": 30,
+        "attackers": 0,
+        "scheduled": 3,
+        "observed": 2,
+        "confirmed": 1,
+        "startup_error": null,
+        "criteria": false,
+        "submissions": {
+          "attempts": 14,
+          "status_counts": {
+            "ok": 14
+          }
+        },
+        "history": {
+          "attempts": 9,
+          "status_counts": {
+            "ok": 9
+          }
+        }
+      },
+      {
+        "run": 3,
+        "mode": "from-zero",
+        "duration_seconds": 30,
+        "attackers": 24,
+        "scheduled": 3,
+        "observed": 1,
+        "confirmed": 0,
+        "startup_error": null,
+        "criteria": false,
+        "submissions": {
+          "attempts": 7,
+          "status_counts": {
+            "ok": 7
+          }
+        },
+        "history": {
+          "attempts": 6,
+          "status_counts": {
+            "ok": 6
+          }
+        }
+      },
+      {
+        "run": 3,
+        "mode": "late-product",
+        "duration_seconds": 30,
+        "attackers": 24,
+        "scheduled": 3,
+        "observed": 1,
+        "confirmed": 0,
+        "startup_error": null,
+        "criteria": false,
+        "submissions": {
+          "attempts": 7,
+          "status_counts": {
+            "ok": 7
+          }
+        },
+        "history": {
+          "attempts": 6,
+          "status_counts": {
+            "ok": 6
+          }
+        }
+      }
+    ],
+    "observed_rounds": 12,
+    "confirmed_rounds": 3,
+    "unknown_phases": 0,
+    "scheduled_rounds": 27,
+    "unobserved_scheduled_rounds": 15,
+    "denominator_note": "0/3 complete campaign runs; 9 phases each plan 3 confirmation rounds; 27 planned, 12 observed, 3 confirmed, 15 unobserved. Do not replace the planned denominator with the observed denominator, count unobserved rounds as observed failures, or infer confirmations from submit ACKs.",
+    "original_inputs": {
+      "attacker_processes": [
+        0,
+        24,
+        24
+      ],
+      "business_blocks": 21,
+      "modes": [
+        "baseline",
+        "from-zero",
+        "late-product"
+      ],
+      "phase_seconds": 30,
+      "seed_blocks": 4,
+      "seed_transfers": 1024
+    },
+    "expected_resources": {
+      "cpu_max": "400000 100000",
+      "memory_max": "17179869184",
+      "nice": 10
+    },
+    "public_phase_placement": {
+      "attacker_processes_remain_in_original_controller_domain": true,
+      "fixed_parent": "/sys/fs/cgroup/trnmponpublic.slice",
+      "original_3x3_workload_and_depletion_predicates_changed": false,
+      "profile": "fixed-public-phase-external-actors-v1",
+      "receiver_and_verifier_cpu_max": "25000 100000",
+      "receiver_and_verifier_memory_max": "2147483648"
+    },
+    "binary": {
+      "actual_compiler_artifact_profile": {
+        "debug_assertions": false,
+        "debuginfo": 0,
+        "opt_level": "3",
+        "overflow_checks": false,
+        "test": true
+      },
+      "build_artifact": "/home/runner/work/_temp/target-native-campaign/release/deps/public_v3_multiprocess-f2ec8cfbb025f448",
+      "build_separate_from_measured_campaign": true,
+      "bytes": 12601856,
+      "execution": "original cargo test command using the checked build artifact",
+      "retained": "public_v3_multiprocess.bin",
+      "sha256_after": "f9cd85c7b053746cea0610aa184bd4993def306bd6bb8aeb875583c803dfa619",
+      "sha256_before": "f9cd85c7b053746cea0610aa184bd4993def306bd6bb8aeb875583c803dfa619"
+    },
+    "source_before": {
+      "base": null,
+      "candidate": "11791e2da79b69322271be2cffe03725165151d1",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "11791e2da79b69322271be2cffe03725165151d1",
+      "tested_tree": "162552848110fda532504b78865a16930bc6d9bb",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 2485379627,
+      "tracked_entries": 26124,
+      "tracked_worktree_verified": true
+    },
+    "source_after": {
+      "base": null,
+      "candidate": "11791e2da79b69322271be2cffe03725165151d1",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "11791e2da79b69322271be2cffe03725165151d1",
+      "tested_tree": "162552848110fda532504b78865a16930bc6d9bb",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 2485379627,
+      "tracked_entries": 26124,
+      "tracked_worktree_verified": true
+    },
+    "attempt_processes": [
+      {
+        "number": 1,
+        "returncode": 101,
+        "elapsed_seconds": 112.01456518,
+        "report_sha256": "42b9991771a1e86589667c68c93e43d1a77276a52cd5311ce1434c1034aa00e8",
+        "report_validation_failure": null,
+        "original_criteria_met": false,
+        "complete_success": false,
+        "logs": [
+          {
+            "path": "/workspace/scratch/pon-joint-58fd59-build/preparation/ci-readback-117/main-hosted-42553751914-42553751985/native-run-1.stdout.log",
+            "bytes": 271,
+            "sha256": "e19de6190069080ac5f3f00b5ba609cf0a64e70c7beb070ec8e541036ea39de9"
+          },
+          {
+            "path": "/workspace/scratch/pon-joint-58fd59-build/preparation/ci-readback-117/main-hosted-42553751914-42553751985/native-run-1.stderr.log",
+            "bytes": 1615,
+            "sha256": "8a581f8d862f7ede27d715175f3b2663875f40f79796b2f8fa750dfd59ea9b7b"
+          }
+        ]
+      },
+      {
+        "number": 2,
+        "returncode": 101,
+        "elapsed_seconds": 111.400162725,
+        "report_sha256": "63015262011215ca56f5ebf7416c7ba920e7d6709b4bb8bd37d7ed98aef9ba6a",
+        "report_validation_failure": null,
+        "original_criteria_met": false,
+        "complete_success": false,
+        "logs": [
+          {
+            "path": "/workspace/scratch/pon-joint-58fd59-build/preparation/ci-readback-117/main-hosted-42553751914-42553751985/native-run-2.stdout.log",
+            "bytes": 271,
+            "sha256": "d616fadcf953f4fc5e8c942d9b071f813defcb7996b15c44c121f9fb75f0c629"
+          },
+          {
+            "path": "/workspace/scratch/pon-joint-58fd59-build/preparation/ci-readback-117/main-hosted-42553751914-42553751985/native-run-2.stderr.log",
+            "bytes": 1615,
+            "sha256": "c859850488183458e607c152fab1e412697679ac83d6fbd702a327aa459cefe9"
+          }
+        ]
+      },
+      {
+        "number": 3,
+        "returncode": 101,
+        "elapsed_seconds": 111.735490434,
+        "report_sha256": "1958aa8ccf3caaf3d6f2fa4b64ea94b6a4f2c0e280aadecba20e82376555fd67",
+        "report_validation_failure": null,
+        "original_criteria_met": false,
+        "complete_success": false,
+        "logs": [
+          {
+            "path": "/workspace/scratch/pon-joint-58fd59-build/preparation/ci-readback-117/main-hosted-42553751914-42553751985/native-run-3.stdout.log",
+            "bytes": 271,
+            "sha256": "4ccad3ac63a16c6a00ab1160fee62b617194b3d7d0a1fb6825a74b1c8b94f1db"
+          },
+          {
+            "path": "/workspace/scratch/pon-joint-58fd59-build/preparation/ci-readback-117/main-hosted-42553751914-42553751985/native-run-3.stderr.log",
+            "bytes": 1615,
+            "sha256": "478a6e5f2715d72e9014533b89da797dd739c9d15ddefa900ff283a2485ec851"
+          }
+        ]
+      }
+    ]
+  },
+  "work_time": [
+    {
+      "zip": "worktime-head-42553751985.zip",
+      "named": {
+        "required": 104,
+        "started": 104,
+        "successful": 104,
+        "tests_run": 104,
+        "failed": 0,
+        "errors": 0,
+        "controls_passed": true
+      },
+      "reference": {
+        "required": 13,
+        "started": 13,
+        "successful": 13,
+        "tests_run": 13,
+        "failures": 0,
+        "errors": 0,
+        "passed": true
+      },
+      "execution": {
+        "artifacts": [
+          {
+            "bytes": 0,
+            "path": "catalog-generate.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "bytes": 668,
+            "path": "catalog-generate.stdout",
+            "sha256": "de9c82e7d64db712c33554511f62ff000cbc5fc3504766836baa3475bcae8961"
+          },
+          {
+            "bytes": 0,
+            "path": "catalog-replay.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "bytes": 668,
+            "path": "catalog-replay.stdout",
+            "sha256": "8e57ae0d31b89b91092e897e0983a8fb448b758cd2e3f596dc33f5268bab6762"
+          },
+          {
+            "bytes": 2453503,
+            "path": "catalog.json",
+            "sha256": "ec1f216dc5303378206f691ae602aac8594d693d50037d8fb5d22b85e2be44fc"
+          },
+          {
+            "bytes": 2447954,
+            "path": "catalog.json.partial.jsonl",
+            "sha256": "3026c9882992cca54a861376c4730d4922990a739db61a7ab32aebd223f1c32c"
+          },
+          {
+            "bytes": 1339,
+            "path": "contract-after.json",
+            "sha256": "c6a1af3460551b36895c68a53114014bc06167ab808bda44ac5c2c67233d7247"
+          },
+          {
+            "bytes": 1339,
+            "path": "contract-before.json",
+            "sha256": "c6a1af3460551b36895c68a53114014bc06167ab808bda44ac5c2c67233d7247"
+          },
+          {
+            "bytes": 4607,
+            "path": "cost-envelope-counterexample.json",
+            "sha256": "578f61de20ebe3f330349964b8ef8b51c8898ac7b72f07693926530c87055799"
+          },
+          {
+            "bytes": 4008,
+            "path": "cost-envelope-current-hold.json",
+            "sha256": "6dfd09f543cee38ab12d840dd21d3cf5b16b60e8197b8f2c40786d0bf9b7b854"
+          },
+          {
+            "bytes": 47372,
+            "path": "named-controls.json",
+            "sha256": "3b9155157881c70b60cfeafef7961da7ef7159f77943105dce9def72f7396819"
+          },
+          {
+            "bytes": 4880,
+            "path": "reference-controls.json",
+            "sha256": "229e746ab791dc813a901bfc528f1930a9524275e55c2b22e8c0f2ea80c20f06"
+          },
+          {
+            "bytes": 2324,
+            "path": "reference-tests.log",
+            "sha256": "c10e9f6a6eb02c1b9d4e6361d6a21729c4e81f66f8b39df0a243528f42b55131"
+          },
+          {
+            "bytes": 423,
+            "path": "research-source-after.json",
+            "sha256": "4c753951d66399d4c89c8126852524ff16a5f8f8b7e7b7aa9fe0fc3adff6d086"
+          },
+          {
+            "bytes": 423,
+            "path": "research-source-before.json",
+            "sha256": "4c753951d66399d4c89c8126852524ff16a5f8f8b7e7b7aa9fe0fc3adff6d086"
+          },
+          {
+            "bytes": 18215,
+            "path": "tests.log",
+            "sha256": "ac733000ec40636fa98e0ce884f9185a88266c758f04d8671dae0a0e88815974"
+          }
+        ],
+        "current_native_cost_qualified": false,
+        "head_at_execution": "11791e2da79b69322271be2cffe03725165151d1",
+        "head_tree_at_execution": "162552848110fda532504b78865a16930bc6d9bb",
+        "original_current_contract": {
+          "error": {
+            "message": "SOURCE_BYTES:config/pon/pq-cross-branch-corpus-v1.json",
+            "type": "ValueError"
+          },
+          "matched": false
+        },
+        "passed_research_controls": true,
+        "qualification": {
+          "all_legal_algorithm_cost_lower_bound": false,
+          "joint_cp_cq_cg_proof": false,
+          "lifetime_security_bound": null,
+          "native_time_daa_upgrade": false,
+          "production_activation": false,
+          "real_hepta_product_loop": false,
+          "same_iteration_deployment": false,
+          "variable_u_native_relation": false
+        },
+        "reference": {
+          "baseline_contract_check": {
+            "contract_and_source_consistent": true,
+            "contract_digest": "6d71aced74e18bcb025653ba0f03efc8475d014de04ed4563f2ba3545b213ed7",
+            "native_binary_executed": false,
+            "qualification": {
+              "all_legal_algorithm_cost_lower_bound": false,
+              "joint_cp_cq_cg_proof": false,
+              "lifetime_security_bound": null,
+              "native_time_daa_upgrade": false,
+              "production_activation": false,
+              "real_hepta_product_loop": false,
+              "same_iteration_deployment": false,
+              "variable_u_native_relation": false
+            },
+            "schema": "pon-work-cost-contract-check-v1",
+            "source_commit": "b16bae2824e6c8236ef2011fc93a74df3ac7f039",
+            "source_tree": "49392edc1b49a1ad92c1956f8a37c741d835677a",
+            "status": "HOLD_NO_GO",
+            "verified_source_bytes": 27613671,
+            "verified_source_entries": 1747
+          },
+          "current_native_cost_qualified": false,
+          "directory": "/home/runner/work/_temp/work-time-baseline",
+          "native_binary_executed": false,
+          "native_tree": "bf84f89b235adfcffcb0d3540c22c120f4031e13",
+          "production_activation": false,
+          "schema": "pon-frozen-work-reference-v1",
+          "scope": "fixed historical source contract; not current native cost qualification",
+          "source_commit": "b16bae2824e6c8236ef2011fc93a74df3ac7f039",
+          "source_tree": "49392edc1b49a1ad92c1956f8a37c741d835677a"
+        },
+        "schema": "pon-work-time-frozen-replay-execution-v1",
+        "scope": "current research replay of fixed historical W1; no current native cost qualification",
+        "stage_results": [
+          {
+            "passed": true,
+            "stage": "frozen-reference-boundaries"
+          },
+          {
+            "passed": true,
+            "stage": "frozen-contract-before"
+          },
+          {
+            "passed": true,
+            "stage": "named-controls"
+          },
+          {
+            "arithmetic_status": "HOLD_MISSING_BOUNDS",
+            "passed": true,
+            "stage": "cost-envelope-current-hold"
+          },
+          {
+            "arithmetic_status": "INFEASIBLE",
+            "passed": true,
+            "stage": "cost-envelope-counterexample"
+          },
+          {
+            "exit_code": 0,
+            "passed": true,
+            "stage": "catalog-generate"
+          },
+          {
+            "exit_code": 0,
+            "passed": true,
+            "stage": "catalog-replay"
+          },
+          {
+            "passed": true,
+            "stage": "frozen-contract-after"
+          },
+          {
+            "passed": true,
+            "stage": "current-research-source-after"
+          }
+        ],
+        "status": "HOLD_NO_GO"
+      },
+      "catalog_scalars": {
+        "schema": "pon-legal-optimization-observation-v1"
+      },
+      "catalog_list_counts": {
+        "cohorts": 24
+      }
+    },
+    {
+      "zip": "worktime-merge-42553751985.zip",
+      "named": {
+        "required": 104,
+        "started": 104,
+        "successful": 104,
+        "tests_run": 104,
+        "failed": 0,
+        "errors": 0,
+        "controls_passed": true
+      },
+      "reference": {
+        "required": 13,
+        "started": 13,
+        "successful": 13,
+        "tests_run": 13,
+        "failures": 0,
+        "errors": 0,
+        "passed": true
+      },
+      "execution": {
+        "artifacts": [
+          {
+            "bytes": 0,
+            "path": "catalog-generate.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "bytes": 668,
+            "path": "catalog-generate.stdout",
+            "sha256": "12035a26e9135908056a91985de4fe7915c415733c14062d1bd05ed6dd7932a4"
+          },
+          {
+            "bytes": 0,
+            "path": "catalog-replay.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "bytes": 668,
+            "path": "catalog-replay.stdout",
+            "sha256": "8b5cead775505a9e2ce8978ccdf79b8c664da77bd7f22f71d5e7e01ae9c95fbd"
+          },
+          {
+            "bytes": 2453479,
+            "path": "catalog.json",
+            "sha256": "cd273e4296163c15222ed0b63665cba1b02e8c4b8d95a8ef6196e1e6a8531909"
+          },
+          {
+            "bytes": 2447934,
+            "path": "catalog.json.partial.jsonl",
+            "sha256": "cf4ad7eb38b0086d98239bcd3a37183bc942378ed95f5e5e49a8b45a09e64da6"
+          },
+          {
+            "bytes": 1339,
+            "path": "contract-after.json",
+            "sha256": "c6a1af3460551b36895c68a53114014bc06167ab808bda44ac5c2c67233d7247"
+          },
+          {
+            "bytes": 1339,
+            "path": "contract-before.json",
+            "sha256": "c6a1af3460551b36895c68a53114014bc06167ab808bda44ac5c2c67233d7247"
+          },
+          {
+            "bytes": 4607,
+            "path": "cost-envelope-counterexample.json",
+            "sha256": "578f61de20ebe3f330349964b8ef8b51c8898ac7b72f07693926530c87055799"
+          },
+          {
+            "bytes": 4008,
+            "path": "cost-envelope-current-hold.json",
+            "sha256": "6dfd09f543cee38ab12d840dd21d3cf5b16b60e8197b8f2c40786d0bf9b7b854"
+          },
+          {
+            "bytes": 47372,
+            "path": "named-controls.json",
+            "sha256": "fd2d9eefeadefcb5399a8ce436e15af94eefba0003e3b5bffcd20051cdb9d35a"
+          },
+          {
+            "bytes": 4880,
+            "path": "reference-controls.json",
+            "sha256": "229e746ab791dc813a901bfc528f1930a9524275e55c2b22e8c0f2ea80c20f06"
+          },
+          {
+            "bytes": 2324,
+            "path": "reference-tests.log",
+            "sha256": "b5fc4e5292e320650b21c7afd17cca1d51f1e09c9986da4b9f23d36e1e01f839"
+          },
+          {
+            "bytes": 423,
+            "path": "research-source-after.json",
+            "sha256": "df826ed960c9a71641ab0f0f6133f8afa74ff5c127239003c288c52b3bb51efc"
+          },
+          {
+            "bytes": 423,
+            "path": "research-source-before.json",
+            "sha256": "df826ed960c9a71641ab0f0f6133f8afa74ff5c127239003c288c52b3bb51efc"
+          },
+          {
+            "bytes": 18215,
+            "path": "tests.log",
+            "sha256": "142cebe86176acc4b49ebf1cb851e9d1cb3415bb415408818470a36059d95c17"
+          }
+        ],
+        "current_native_cost_qualified": false,
+        "head_at_execution": "b472c21f7b14ba27bb87d9d2f52d299365ed3145",
+        "head_tree_at_execution": "162552848110fda532504b78865a16930bc6d9bb",
+        "original_current_contract": {
+          "error": {
+            "message": "SOURCE_BYTES:config/pon/pq-cross-branch-corpus-v1.json",
+            "type": "ValueError"
+          },
+          "matched": false
+        },
+        "passed_research_controls": true,
+        "qualification": {
+          "all_legal_algorithm_cost_lower_bound": false,
+          "joint_cp_cq_cg_proof": false,
+          "lifetime_security_bound": null,
+          "native_time_daa_upgrade": false,
+          "production_activation": false,
+          "real_hepta_product_loop": false,
+          "same_iteration_deployment": false,
+          "variable_u_native_relation": false
+        },
+        "reference": {
+          "baseline_contract_check": {
+            "contract_and_source_consistent": true,
+            "contract_digest": "6d71aced74e18bcb025653ba0f03efc8475d014de04ed4563f2ba3545b213ed7",
+            "native_binary_executed": false,
+            "qualification": {
+              "all_legal_algorithm_cost_lower_bound": false,
+              "joint_cp_cq_cg_proof": false,
+              "lifetime_security_bound": null,
+              "native_time_daa_upgrade": false,
+              "production_activation": false,
+              "real_hepta_product_loop": false,
+              "same_iteration_deployment": false,
+              "variable_u_native_relation": false
+            },
+            "schema": "pon-work-cost-contract-check-v1",
+            "source_commit": "b16bae2824e6c8236ef2011fc93a74df3ac7f039",
+            "source_tree": "49392edc1b49a1ad92c1956f8a37c741d835677a",
+            "status": "HOLD_NO_GO",
+            "verified_source_bytes": 27613671,
+            "verified_source_entries": 1747
+          },
+          "current_native_cost_qualified": false,
+          "directory": "/home/runner/work/_temp/work-time-baseline",
+          "native_binary_executed": false,
+          "native_tree": "bf84f89b235adfcffcb0d3540c22c120f4031e13",
+          "production_activation": false,
+          "schema": "pon-frozen-work-reference-v1",
+          "scope": "fixed historical source contract; not current native cost qualification",
+          "source_commit": "b16bae2824e6c8236ef2011fc93a74df3ac7f039",
+          "source_tree": "49392edc1b49a1ad92c1956f8a37c741d835677a"
+        },
+        "schema": "pon-work-time-frozen-replay-execution-v1",
+        "scope": "current research replay of fixed historical W1; no current native cost qualification",
+        "stage_results": [
+          {
+            "passed": true,
+            "stage": "frozen-reference-boundaries"
+          },
+          {
+            "passed": true,
+            "stage": "frozen-contract-before"
+          },
+          {
+            "passed": true,
+            "stage": "named-controls"
+          },
+          {
+            "arithmetic_status": "HOLD_MISSING_BOUNDS",
+            "passed": true,
+            "stage": "cost-envelope-current-hold"
+          },
+          {
+            "arithmetic_status": "INFEASIBLE",
+            "passed": true,
+            "stage": "cost-envelope-counterexample"
+          },
+          {
+            "exit_code": 0,
+            "passed": true,
+            "stage": "catalog-generate"
+          },
+          {
+            "exit_code": 0,
+            "passed": true,
+            "stage": "catalog-replay"
+          },
+          {
+            "passed": true,
+            "stage": "frozen-contract-after"
+          },
+          {
+            "passed": true,
+            "stage": "current-research-source-after"
+          }
+        ],
+        "status": "HOLD_NO_GO"
+      },
+      "catalog_scalars": {
+        "schema": "pon-legal-optimization-observation-v1"
+      },
+      "catalog_list_counts": {
+        "cohorts": 24
+      }
+    }
+  ],
+  "complete_job_logs": [
+    {
+      "job_id": 128954796488,
+      "path": "/workspace/scratch/pon-joint-58fd59-build/preparation/ci-readback-117/main-hosted-42553751914-42553751985/job-128954796488-complete.log",
+      "bytes": 208478,
+      "sha256": "94020f0a259ff593d25213e6c31cb84c0669b1be1eab176c6b9d6949cee12146",
+      "matches_complete_desktop_raw_log": true,
+      "desktop": {
+        "path": "/home/qian-qi/work/pon-joint-58fd59-11791e2d-main-hosted-collection/original-campaign/job-128954796488.log",
+        "bytes": 208478,
+        "sha256": "94020f0a259ff593d25213e6c31cb84c0669b1be1eab176c6b9d6949cee12146"
+      }
+    },
+    {
+      "job_id": 128954796545,
+      "path": "/workspace/scratch/pon-joint-58fd59-build/preparation/ci-readback-117/main-hosted-42553751914-42553751985/job-128954796545-complete.log",
+      "bytes": 161683,
+      "sha256": "8c3e870ddfe788c050035cf765412ccae53d8046687d1734fe4ae1177df56f92",
+      "matches_complete_desktop_raw_log": true,
+      "desktop": {
+        "path": "/home/qian-qi/work/pon-joint-58fd59-11791e2d-main-hosted-collection/work-time-contract/job-128954796545.log",
+        "bytes": 161683,
+        "sha256": "8c3e870ddfe788c050035cf765412ccae53d8046687d1734fe4ae1177df56f92"
+      }
+    },
+    {
+      "job_id": 128954796817,
+      "path": "/workspace/scratch/pon-joint-58fd59-build/preparation/ci-readback-117/main-hosted-42553751914-42553751985/job-128954796817-complete.log",
+      "bytes": 162344,
+      "sha256": "23c4fae0d5af814a881833f911aa25f71effe0f813a7d4fa48d92e93155734ef",
+      "matches_complete_desktop_raw_log": true,
+      "desktop": {
+        "path": "/home/qian-qi/work/pon-joint-58fd59-11791e2d-main-hosted-collection/work-time-contract/job-128954796817.log",
+        "bytes": 162344,
+        "sha256": "23c4fae0d5af814a881833f911aa25f71effe0f813a7d4fa48d92e93155734ef"
+      }
+    }
+  ],
+  "status": "HOLD_NO_GO",
+  "native_reexecuted_during_readback": false,
+  "readback_history": [
+    {
+      "job": "1a1be5d37f1-5e21-70",
+      "host": "desktop",
+      "exit": 1,
+      "cause": "A readback filename selector matched resource-* as source-*; this derivation bug was stopped before issuing a summary. Actual source-before/source-after are equal and identify the exact implementation; raw native evidence was unchanged."
+    }
+  ],
+  "original_artifacts": [
+    {
+      "id": 13646762679,
+      "path": "/workspace/scratch/pon-joint-58fd59-build/preparation/ci-readback-117/main-hosted-42553751914-42553751985/original-campaign-42553751914.zip",
+      "bytes": 76217297,
+      "sha256": "4568b72cd9ab324e7d63eda766785efb61c754810267529ca3af82863064abed",
+      "api_digest_and_size_verified": true
+    },
+    {
+      "id": 13646476586,
+      "path": "/workspace/scratch/pon-joint-58fd59-build/preparation/ci-readback-117/main-hosted-42553751914-42553751985/worktime-head-42553751985.zip",
+      "bytes": 1812700,
+      "sha256": "738c55807bd4e26b9b7f635d7fffbfbcb9240440856c992127c0e9ca2df51f81",
+      "api_digest_and_size_verified": true
+    },
+    {
+      "id": 13647015097,
+      "path": "/workspace/scratch/pon-joint-58fd59-build/preparation/ci-readback-117/main-hosted-42553751914-42553751985/worktime-merge-42553751985.zip",
+      "bytes": 1812824,
+      "sha256": "5ac4c7720c6a2eb2786c8a2257d62cb19e5fc3131032bcf39d84d7c9567e1379",
+      "api_digest_and_size_verified": true
+    }
+  ]
+}

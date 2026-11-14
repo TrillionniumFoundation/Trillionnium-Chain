@@ -1,0 +1,167 @@
+{
+  "binary_pin_unchanged": true,
+  "collection": [
+    {
+      "bytes": 27277,
+      "path": "native-result.json",
+      "present": true,
+      "sha256": "f838b26ff6074852f6ddd72e516fb4d03706560d93799ef32ad9600e50b4706a"
+    },
+    {
+      "bytes": 923,
+      "path": "owner-paged-custody.json",
+      "present": true,
+      "sha256": "4df023d5c0a85fa85dcd5f2cd393740ca1745570b8a5ed807d5a1b351425f99d"
+    },
+    {
+      "bytes": 3539,
+      "path": "next-use-result.json",
+      "present": true,
+      "sha256": "e775b76d0deb3477cec3351d88a1c1220809b92b7a80512b39ad7f5536c514eb"
+    },
+    {
+      "bytes": 2356,
+      "path": "next-use-observations.json",
+      "present": true,
+      "sha256": "1fe2db29186331e9045939a727f2d0451143e8a46c71efe3bc8b4b321cff7a72"
+    },
+    {
+      "bytes": 3504,
+      "path": "independent-execution-inputs.json",
+      "present": true,
+      "sha256": "d2ca855124411da012008f7edb85dad16512c34c449da82eb3b4f7710a588ea1"
+    },
+    {
+      "bytes": 11638,
+      "path": "original-paged-source-inputs.json",
+      "present": true,
+      "sha256": "cfeb462afd142ba0c2dd29f722216161346810038e19c0ac1815b12f4828d107"
+    },
+    {
+      "bytes": 39018,
+      "path": "owner-release-snapshot.cts1",
+      "present": true,
+      "sha256": "43014f0ebd949852dee9f8667459083ff6e4f5b428c2a7350414f98a5f82e259"
+    },
+    {
+      "bytes": 24479,
+      "path": "owner-content.tcv2",
+      "present": true,
+      "sha256": "2952d3371fdcc142e69d983f099b7999a68f622ebfcd5b4def9fe6114a4c01e6"
+    },
+    {
+      "bytes": 44,
+      "path": "independent-catalog-anchor.cva3",
+      "present": true,
+      "sha256": "32a4f5699511dcfbd5cde286bca2b33772b19db95eada48956a51716fecf569c"
+    },
+    {
+      "bytes": 3573,
+      "path": "owner-authorization.cpv4",
+      "present": true,
+      "sha256": "f40e723ac039b7b226da6ed76f7cc6b9a0954a20a5ed11e594efac49b7dd0e66"
+    },
+    {
+      "bytes": 537,
+      "path": "owner-handoff.chb1",
+      "present": true,
+      "sha256": "213f3ea93558b8494c0c917fbeffe692e19bf522513a1f2ae6b80f39d14b0aa2"
+    },
+    {
+      "bytes": 0,
+      "path": "supervisor.stdout",
+      "present": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "supervisor.stderr",
+      "present": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1439,
+      "path": "worker/cost-events.jsonl",
+      "present": true,
+      "sha256": "f3b2f2dd1e78fc47352adb053770f9258e25bee93ccda669baf2120c6a6eebab"
+    },
+    {
+      "bytes": 0,
+      "path": "worker/process.log",
+      "present": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 4247,
+      "path": "worker/ready.json",
+      "present": true,
+      "sha256": "860d5ba77c931807477ac77bc71500ceaa284772e8cb851f6aaaa63b8096582a"
+    },
+    {
+      "bytes": 2839,
+      "path": "worker/supervisor.json",
+      "present": true,
+      "sha256": "e34ee47ee44cfac0e50876af02ba51fa23bf683dee0e2bea13803e54f080e383"
+    }
+  ],
+  "completed": true,
+  "ended_unix_ns": 1794445311530363404,
+  "identity_after": {
+    "commit": "030de92be05bfd4f73e199098c12dfeaedf29b17",
+    "status": "",
+    "tree": "21e970bfdb11ab64403d2af5f3c56536a2961f80"
+  },
+  "independent_domains_qualified": false,
+  "latency_observation_v1": {
+    "clock": "std::time::Instant monotonic wall clock",
+    "cold_recovery_complete_ns": 62318658435,
+    "first_use_scope": "complete CTS1/TCV1 selected and admitted for typed local byte use; not first token or first model output",
+    "loopback_only": true,
+    "origin": "custody observation entry after input-file read/parse and fresh output setup; before source checks, packing and transport",
+    "pinned_snapshot_ready_ns": 5454308496,
+    "sealed_model_environment_ready_ns": 67697317774,
+    "selected_typed_release_ready_ns": 66401049437,
+    "transport_complete_ns": 15970244233,
+    "two_forward_receipt_ns": 103736029521,
+    "values_are_cumulative_not_additive": true,
+    "wan_qualified": false
+  },
+  "metadata_evidence_complete": true,
+  "native": {
+    "child_max_rss_kib": 1430912,
+    "child_system_cpu_seconds": 14.856832,
+    "child_user_cpu_seconds": 78.940139,
+    "elapsed_ns": 103804071986,
+    "exit_code": 0,
+    "interruption": null,
+    "pid": 1725467,
+    "reaped_pid": 1725467,
+    "scope": "One native process wait4; native packaging, recovery and forwards included. Source checks, build and evidence collection excluded. Not simultaneous process-tree RSS or independent WAN service.",
+    "stderr_bytes": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_bytes": 20070,
+    "stdout_sha256": "06e226c0e24d3d92a3cd9bfde03752c2fd13f5afcb491ce24bbafc52ce28e1f9",
+    "wait_status": 0,
+    "watchdog_terminated": false
+  },
+  "native_error": null,
+  "native_input_pin_matches": true,
+  "native_observed_passed": true,
+  "native_stage": "complete research next-use",
+  "native_start_attempted": true,
+  "native_started": true,
+  "operation_output": "/home/qq/work/chain-cell-four-gates-2bfb-real-operation-01",
+  "ordinary_hepta_final_use_qualified": false,
+  "production_qualified": false,
+  "provider_pin_unchanged": true,
+  "root": "/home/qq/work/chain-cell-four-gates-20261111-2bfb",
+  "run_passed": true,
+  "runner_sha256": "b407dcfc881589388cbd0f2f0a29273647780184f745e2b1db04e193225b0481",
+  "schema": "cell-storage-four-gates-paged-operation-v1",
+  "source": "030de92be05bfd4f73e199098c12dfeaedf29b17",
+  "source_unchanged": true,
+  "spec_pin_unchanged": true,
+  "started_unix_ns": 1794445177179839409,
+  "tree": "21e970bfdb11ab64403d2af5f3c56536a2961f80",
+  "wan_qualified": false
+}

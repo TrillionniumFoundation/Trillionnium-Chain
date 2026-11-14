@@ -1,0 +1,53 @@
+   Compiling getrandom v0.4.2
+   Compiling rand_core v0.10.1
+   Compiling const-oid v0.10.2
+   Compiling crypto-common v0.2.2
+   Compiling digest v0.11.3
+   Compiling shake v0.1.0
+   Compiling signature v3.0.0
+   Compiling rustix v1.1.4
+   Compiling der v0.8.3
+   Compiling rusqlite v0.39.0
+   Compiling spki v0.8.1
+   Compiling pkcs8 v0.11.0
+   Compiling linux-raw-sys v0.12.1
+   Compiling ml-dsa v0.1.1
+   Compiling tempfile v3.27.0
+   Compiling trnm-crypto-primitives v0.1.0 (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/chain-source-bounded/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-task-kernel v0.1.0 (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/chain-source-bounded/trillionnium/crates/trnm-task-kernel)
+   Compiling trnm-mvcc-fee v0.1.0 (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/chain-source-bounded/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-service-settlement v0.1.0 (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/chain-source-bounded/trillionnium/crates/trnm-service-settlement)
+   Compiling trnm-protocol v0.1.0 (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/chain-source-bounded/trillionnium/crates/trnm-protocol)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3m 10s
+     Running unittests src/lib.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/trnm_mvcc_fee-d84608d7777c78ee)
+     Running tests/capacity_progress.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/capacity_progress-7693071852bf8c5f)
+     Running tests/checkpoint_tile_material_v1.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/checkpoint_tile_material_v1-41ab5b3b181d3d0e)
+     Running tests/checkpoint_tile_policy_v1.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/checkpoint_tile_policy_v1-11d60c2b53a39919)
+     Running tests/continuity_v1.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/continuity_v1-ca0eebfd816af8d6)
+     Running tests/evaluation_quorum_v2.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/evaluation_quorum_v2-21ba1ca84bded307)
+     Running tests/incremental_prefix.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/incremental_prefix-10b232654470fae2)
+     Running tests/model_evolution_v5.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/model_evolution_v5-f1213e11974103ef)
+     Running tests/pon_commitment.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/pon_commitment-2293d8add97de130)
+     Running tests/pq2_authority_capacity.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/pq2_authority_capacity-550c7f6652f72b19)
+     Running tests/pq3_quota_authority.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/pq3_quota_authority-c350d9530f1c0b73)
+     Running tests/pq4_task_authority.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/pq4_task_authority-6d43dbfca1b5fa3e)
+     Running tests/pq5_task_renewal.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/pq5_task_renewal-dea0525873396ccd)
+     Running tests/pq_account_owner.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/pq_account_owner-e710b87026bfe5f4)
+     Running tests/qualified_task_lifecycle_v2.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/qualified_task_lifecycle_v2-a36e8279fd4b4dce)
+     Running tests/qualified_task_lifecycle_v3.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/qualified_task_lifecycle_v3-25e31cc07af85f85)
+     Running tests/qualified_task_lifecycle_v4.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/qualified_task_lifecycle_v4-73dded547aac673d)
+     Running unittests examples/borrowed_non_account_allocations.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/examples/borrowed_non_account_allocations-fba33f54fb040274)
+     Running unittests examples/borrowed_non_account_cost.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/examples/borrowed_non_account_cost-4056cb8c88ac4309)
+     Running unittests examples/checkpoint_tile_material_v1.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/examples/checkpoint_tile_material_v1-df2da0f7dd3c6c63)
+     Running unittests examples/continuity_transition_vectors.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/examples/continuity_transition_vectors-211124f2afb8154f)
+     Running unittests examples/continuity_vectors.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/examples/continuity_vectors-46fe4463fd7dac43)
+     Running unittests examples/pon_commitment_resource_bounds.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/examples/pon_commitment_resource_bounds-e705a492cbee58df)
+     Running unittests examples/pon_execute.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/examples/pon_execute-477f4d6474f60424)
+     Running unittests examples/pon_execute_session.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/examples/pon_execute_session-e1f265a788da0a27)
+     Running unittests src/lib.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/trnm_protocol-9821288ca0b24160)
+     Running tests/integer_evolution_v3.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/integer_evolution_v3-c23ebac35b07b61f)
+     Running tests/qualified_task_lifecycle_v2.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/qualified_task_lifecycle_v2-c6b97c8e3e568d55)
+     Running tests/qualified_task_lifecycle_v3.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/qualified_task_lifecycle_v3-b78761713d1ac2ef)
+     Running tests/qualified_work_task.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/qualified_work_task-1a51fc03ec3a8589)
+     Running unittests examples/pon_wire.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/examples/pon_wire-279fddbb51451ab3)
+     Running unittests src/lib.rs (/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/target/debug/deps/trnm_service_settlement-ea8ef1b53f7dbeaa)

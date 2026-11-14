@@ -1,0 +1,51 @@
+{
+  "exit_code": 0,
+  "passed": true,
+  "elapsed_seconds": 11.642230642959476,
+  "command": [
+    "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-release-bundle",
+    "--all-targets",
+    "--all-features",
+    "quorum_preflight_tests"
+  ],
+  "source_sha256": {
+    "trillionnium/crates/trnm-release-bundle/Cargo.toml": "1253706cf981ca12a4d4da734ffd14412d13a6941fd8f6649dab34b488cf2c52",
+    "trillionnium/crates/trnm-release-bundle/src/pq_release.rs": "eb17390e1d16fe7fa82c773c0ed81004374687469f6081a2ad5ce9bd7d87ac9b",
+    "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs": "d07034b3a674a687135aa344e23ab8644dacefd9e1e587fbe76c07150ab0df6e",
+    "trillionnium/crates/trnm-release-bundle/src/pq_release/quorum_preflight_tests.rs": "0791d81f9f0059ca5672d6c042dd9c9bb7d7f2b5403dafce35631bd0c3c1e34b"
+  },
+  "lock_sha256": "05cce83ab22c3085ff18ba8107b28bed70349fa56176784eab033897c282216c",
+  "logs": {
+    "stdout.log": {
+      "bytes": 1201,
+      "sha256": "f3531b608295e2e4cff0a3248a8471e42821b0f88aa2f6093c76b139afb672b6"
+    },
+    "preflight.stdout.log": {
+      "bytes": 178,
+      "sha256": "3e9e970d160b66960d5566a0f7e262756d1bd8d7873459da8c146b0d8ee8a6d9"
+    },
+    "fmt.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr.log": {
+      "bytes": 357,
+      "sha256": "b0a527996e585b53ba4ff7f55d30501da699c0dcc1a711dc866d50c8f56ccf98"
+    },
+    "fmt.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "preflight.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

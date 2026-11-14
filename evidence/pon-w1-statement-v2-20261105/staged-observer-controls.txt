@@ -1,0 +1,24 @@
+$ python3 -m unittest discover -s scripts/ci -p test_w1_staged_observer.py -v
+test_actual_serialization_and_loopback_keep_remote_metrics_unmeasured (test_w1_staged_observer.BindingAndLocalCostTests.test_actual_serialization_and_loopback_keep_remote_metrics_unmeasured) ... ok
+test_duplicate_nonfinite_and_overflow_json_are_not_observations (test_w1_staged_observer.BindingAndLocalCostTests.test_duplicate_nonfinite_and_overflow_json_are_not_observations) ... ok
+test_old_journal_cannot_be_relabelled_v2 (test_w1_staged_observer.BindingAndLocalCostTests.test_old_journal_cannot_be_relabelled_v2) ... ok
+test_v2_envelope_requires_external_64_byte_commitments (test_w1_staged_observer.BindingAndLocalCostTests.test_v2_envelope_requires_external_64_byte_commitments) ... ok
+test_v2_report_requires_same_work_bytes_profile_and_real_sample_types (test_w1_staged_observer.BindingAndLocalCostTests.test_v2_report_requires_same_work_bytes_profile_and_real_sample_types) ... ok
+test_exit_zero_without_actual_checkpoint_cannot_claim_a_full_proof (test_w1_staged_observer.CoordinatorFailureTests.test_exit_zero_without_actual_checkpoint_cannot_claim_a_full_proof) ... ok
+test_preparation_consumes_same_cumulative_budget (test_w1_staged_observer.CoordinatorFailureTests.test_preparation_consumes_same_cumulative_budget) ... ok
+test_same_prior_observation_is_not_counted_twice (test_w1_staged_observer.CoordinatorFailureTests.test_same_prior_observation_is_not_counted_twice) ... ok
+test_absolute_budget_exhaustion_does_not_spawn (test_w1_staged_observer.ProcessLifecycleTests.test_absolute_budget_exhaustion_does_not_spawn) ... ok
+test_absolute_deadline_wins_over_fresh_stage_allowance (test_w1_staged_observer.ProcessLifecycleTests.test_absolute_deadline_wins_over_fresh_stage_allowance) ... ok
+test_actual_success_and_failure_keep_raw_logs_and_usage (test_w1_staged_observer.ProcessLifecycleTests.test_actual_success_and_failure_keep_raw_logs_and_usage) ... ok
+test_cancellation_signal_is_recorded_by_real_supervisor (test_w1_staged_observer.ProcessLifecycleTests.test_cancellation_signal_is_recorded_by_real_supervisor) ... ok
+test_exit_zero_cannot_leave_unsettled_descendants (test_w1_staged_observer.ProcessLifecycleTests.test_exit_zero_cannot_leave_unsettled_descendants) ... ok
+test_ignored_sigterm_escalates_and_output_overflow_remains_failure (test_w1_staged_observer.ProcessLifecycleTests.test_ignored_sigterm_escalates_and_output_overflow_remains_failure) ... ok
+test_late_observed_exit_zero_cannot_pass_the_budget (test_w1_staged_observer.ProcessLifecycleTests.test_late_observed_exit_zero_cannot_pass_the_budget) ... ok
+test_timeout_preserves_failed_trial_and_settles_session (test_w1_staged_observer.ProcessLifecycleTests.test_timeout_preserves_failed_trial_and_settles_session) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 3.613s
+
+OK
+
+exit_code=0

@@ -1,0 +1,48 @@
+{
+  "schema": "trnm-evidence-child-wrapper-precondition-review-v1",
+  "review_kind": "single-condition coordination preparation repair and static syntax review",
+  "generator": {
+    "path": "/workspace/scratch/a4188f5c86b5/coordination/prepare_evidence_child_validation.py",
+    "before_bytes": 19926,
+    "before_sha256": "7f79dbbb2e6cbafce7f172ef1aa1462f50c1cf1d243f4ef25ef1f4b8317d5b7c",
+    "after_bytes": 19990,
+    "after_sha256": "503ee850c33cde1656c7f869d414bbe327a73cdc92fa4d525674aaa5ecd83ae3"
+  },
+  "create_only_original": {
+    "path": "/workspace/scratch/a4188f5c86b5/coordination/prepare_evidence_child_validation.before-precondition-wrapper-check.py",
+    "bytes": 19926,
+    "sha256": "7f79dbbb2e6cbafce7f172ef1aa1462f50c1cf1d243f4ef25ef1f4b8317d5b7c"
+  },
+  "change": "A precondition now requires both receipt_state PASS and wrapper_returncode 0; the former final overall wrapper check remains intact.",
+  "static_checks": {
+    "generator_ast_parse": true,
+    "literal_launcher_template_ast_parse": true,
+    "exactly_one_condition_changed": true,
+    "backup_and_current_bytes_read_back": true
+  },
+  "unchanged_files": {
+    "verify_evidence_only_child.py": "cd6fc57bdc8f206c4345a78c02d938441697cce2f53f85a961d201f92e8a267e",
+    "E_VALIDATION_QUEUE.md": "571044d344fcb1f292fe22aab95a1f13bfe2b60eff6bae92e68292bde33ccdbd",
+    "delivery-evidence-plan.json": "dd113245a56029843c0dbaf6d96996918f73702a27184a2aeeb618a0465adaa0"
+  },
+  "original_review_findings": {
+    "blocking_issues_found": 0,
+    "historical_context_pins_checked": 10,
+    "all_historical_context_pins_match": true,
+    "source_cohort_Z_preserved": true,
+    "literal_E_direct_parent_and_old_tree_objects_guarded": true,
+    "payload_canonical_definition_matches_assembler": true,
+    "separate_manifest_pin_binds_generated_indexes": true,
+    "old_full_rust_FAIL_and_Node_INCOMPLETE_preserved": true,
+    "desktop_environment_prefix_is_inside_actual_recorder_command": true,
+    "runtime_binary_equivalence_claimed": false
+  },
+  "generator_executed": false,
+  "queue_executed": false,
+  "proof_executed": false,
+  "native_tests_executed": false,
+  "remote_action_executed": false,
+  "repository_source_modified": false,
+  "plan_modified": false,
+  "qualification_granted": false
+}

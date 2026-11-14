@@ -1,0 +1,94 @@
+{
+  "all_original_result_stream_hashes_match": true,
+  "archive": {
+    "bytes": 1100360,
+    "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/desktop-full-rust-evidence-v1.tar.gz",
+    "sha256": "096cb2d208ad92dff1b2c39ec04da7579e9f06edba5e44451809ab6e11b66456"
+  },
+  "archive_member_count": 47,
+  "archive_uncompressed_member_bytes": 2021317,
+  "created_utc": "2026-11-11T03:39:59.891484+00:00",
+  "empty_export_directories": [
+    {
+      "archive_prefix": "primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/rust-baseline/native-receipts/account-multiproof/",
+      "recursive_file_bytes": 0,
+      "recursive_regular_files": 0,
+      "remote_directory": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/rust-baseline/native-receipts/account-multiproof"
+    },
+    {
+      "archive_prefix": "primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/rust-baseline/native-receipts/authenticated-state/",
+      "recursive_file_bytes": 0,
+      "recursive_regular_files": 0,
+      "remote_directory": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/rust-baseline/native-receipts/authenticated-state"
+    },
+    {
+      "archive_prefix": "primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/rust-baseline/native-receipts/model-composition/",
+      "recursive_file_bytes": 0,
+      "recursive_regular_files": 0,
+      "remote_directory": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/rust-baseline/native-receipts/model-composition"
+    },
+    {
+      "archive_prefix": "primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/rust-baseline/native-receipts/obligation-range/",
+      "recursive_file_bytes": 0,
+      "recursive_regular_files": 0,
+      "remote_directory": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/rust-baseline/native-receipts/obligation-range"
+    }
+  ],
+  "every_archive_member_matches_current_extracted_bytes_and_manifest": true,
+  "full_ci_acceptance_granted": false,
+  "helper_stage_executed": false,
+  "host": "desktop",
+  "limits": [
+    "This independently checks the received archive and original receipts, not a new test execution.",
+    "Four empty export directory declarations are preserved; no missing native results were fabricated.",
+    "Node follow-up remains incomplete and is not included."
+  ],
+  "manifest": {
+    "bytes": 26968,
+    "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/full-rust-evidence-v1/export-manifest.json",
+    "sha256": "cb849325d2a99c825dc8ca711660ad552b082eb79eae0b25670daad4b9e32532"
+  },
+  "original_fail_retained": true,
+  "original_member_count": 46,
+  "project_tests_executed": false,
+  "qualification_granted": false,
+  "records": {
+    "baseline-preflight": {
+      "context_sha256": "4891478caa770805d1074b778c947053db65996bd70d168d95b74d007366a562",
+      "finished_utc": "2026-11-11T02:16:00.186929+00:00",
+      "pass": true,
+      "result_sha256": "b3458240771043e333bf512e44c3ab61692c921e39fb4293026931b1a3619397",
+      "returncode": 0
+    },
+    "pq-feature-off": {
+      "context_sha256": "e4e501ed6896d31e2671210d463ebdd8c26f87b8d858dad8675ac5a855c46dde",
+      "finished_utc": "2026-11-11T03:09:29.350685+00:00",
+      "pass": true,
+      "result_sha256": "2a6cd04730e53af98315789b243465c5a3bcd11e75018b4c609be5ee17bc5f38",
+      "returncode": 0
+    },
+    "rust-baseline": {
+      "context_sha256": "3d42e81bde9d9a825b0ed8fb869ec4904e15b690485edcd3fe26743ceafb39a4",
+      "finished_utc": "2026-11-11T03:03:21.945206+00:00",
+      "pass": false,
+      "result_sha256": "9a8b556ee56c48e08feb58c887d3317943a1395faf825228cac8ca0104773310",
+      "returncode": 101
+    },
+    "source-after": {
+      "context_sha256": "b403d1e483f0cb50be28583b0cc23acd15a9145759945d022c2d44c3d073e940",
+      "finished_utc": "2026-11-11T03:10:36.789389+00:00",
+      "pass": true,
+      "result_sha256": "c3203906a77c57c28d08d6870d7395a156393b1e087097532ba9473eccb81bf8",
+      "returncode": 0
+    }
+  },
+  "schema": "trnm-desktop-full-rust-independent-readback-v1",
+  "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_identity_before_and_after_export_exact_clean": true,
+  "source_tree": "1ed39b6ebe55cb00c238f26f6bfc9361ab93faec",
+  "transfer_report": {
+    "bytes": 11263,
+    "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/full-rust-transfer-verification.json",
+    "sha256": "79d0fc647623b4018c9a0bee4fc4cc0f3ed099e1abd9113ce72ad03edb07447d"
+  }
+}

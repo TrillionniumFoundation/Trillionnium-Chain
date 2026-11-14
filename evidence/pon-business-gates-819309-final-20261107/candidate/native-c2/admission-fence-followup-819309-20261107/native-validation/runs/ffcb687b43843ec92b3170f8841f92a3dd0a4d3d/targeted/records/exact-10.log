@@ -1,0 +1,8 @@
+    Finished `test` profile [unoptimized] target(s) in 0.14s
+     Running unittests src/lib.rs (/home/qian-qi/chain-throughput-local-admin-20261107/local-build/admission-fence-target/debug/deps/trnm_pon_node-3d075b189916f208)
+
+running 1 test
+test store::legacy_admission_readback::tests::legacy_pair_ineligible_schema_keeps_original_reads_and_refuses_bad_delta_writes ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1204 filtered out; finished in 0.91s
+

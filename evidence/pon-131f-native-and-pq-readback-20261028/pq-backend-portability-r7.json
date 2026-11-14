@@ -1,0 +1,693 @@
+{
+  "schema": "pq-backend-portability-readonly-r7-v1",
+  "created_at_utc": "2026-10-28T02:43:28.431626+00:00",
+  "scope": {
+    "reviewed_source": "131f673d9563e72aca7139f3239856957d118d49",
+    "reviewed_tree": "b8bdd87dca3cd6288c38f63848b24b1a2df6a09d",
+    "observed_current_head": "581f2ab283d958f6cf6b894b39897c4bdf8c9bc6",
+    "source_modified": false,
+    "native_crypto_executed": false,
+    "native_replay_executed": false,
+    "cargo_or_rustc_executed": false,
+    "openssl_cli_executed": false,
+    "ci_triggered": false,
+    "prepare_script_executed": false,
+    "approval_boundary": "Parent reports prior automatic safety interruption of native PQ path. This review only reads retained sources/logs and writes reports. New native validation must be separately permitted; do not move the interrupted action into CI."
+  },
+  "verdict": "OPEN: two separately evidenced backend contracts; E0599 is build portability, original oracle nonzero CLI result has unresolved exact backend/error cause. No PQ acceptance or whole-chain quantum-security conclusion.",
+  "source_files": [
+    {
+      "path": "trillionnium/Cargo.toml",
+      "sha256": "18bfd6f65c0bd8a033b2faa266e1f668a1aa80d808c24d3edaef82559f42b988",
+      "bytes": 2168,
+      "current_worktree_equal": true,
+      "same_as_local_clippy_source_4370": true
+    },
+    {
+      "path": "trillionnium/Cargo.lock",
+      "sha256": "5025f35db1903b5670cf03d84b2b88ef93317963340964713995613f99364eb7",
+      "bytes": 32395,
+      "current_worktree_equal": true,
+      "same_as_local_clippy_source_4370": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/Cargo.toml",
+      "sha256": "46fe79650a2f2846a245ba4c46ce16e4b911392dadac1b50828f4e6813b2afe4",
+      "bytes": 722,
+      "current_worktree_equal": true,
+      "same_as_local_clippy_source_4370": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/Cargo.toml",
+      "sha256": "72b9ec837104bb743bd7fddb8f7756d9c61f52f6b64604f092d75df7d26badb0",
+      "bytes": 960,
+      "current_worktree_equal": true,
+      "same_as_local_clippy_source_4370": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/Cargo.toml",
+      "sha256": "821ae0c7a798a97c3194d60f3217ec7d04f908f1e88a01a555834f460b3424c4",
+      "bytes": 1446,
+      "current_worktree_equal": true,
+      "same_as_local_clippy_source_4370": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tests.rs",
+      "sha256": "8ab4644a3c239833b11bd77f6b8a79e08bf70b595e97e0ce616a43e39ee02c01",
+      "bytes": 25244,
+      "current_worktree_equal": true,
+      "same_as_local_clippy_source_4370": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/tests/pq_account_owner.rs",
+      "sha256": "3d4381aba6850515fb947f44591fa1f543ddc1588c5f5668c1ac4d22493a6827",
+      "bytes": 21338,
+      "current_worktree_equal": true,
+      "same_as_local_clippy_source_4370": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs",
+      "sha256": "568a7c10c59383e174527e8c91e2f63294e79fcc65ccb97b937c9d7fa3d2c762",
+      "bytes": 8157,
+      "current_worktree_equal": true,
+      "same_as_local_clippy_source_4370": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/pq_genesis_handoff.py",
+      "sha256": "59535bccd1b1b91bfe27a990c4c338726f36509f4b4a50825d8cff38edf81844",
+      "bytes": 16893,
+      "current_worktree_equal": true,
+      "same_as_local_clippy_source_4370": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/requirements.txt",
+      "sha256": "ae117e781e1420b46bfc2c4b9a550da3fe3f98ff9cbe868192036d34c342aed5",
+      "bytes": 128,
+      "current_worktree_equal": true,
+      "same_as_local_clippy_source_4370": true
+    },
+    {
+      "path": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "sha256": "1a3d4e5c4ce28e6fc1b9b48d52d268862bb760be24878df18a7e664f3d2d5f34",
+      "bytes": 27922,
+      "current_worktree_equal": true,
+      "same_as_local_clippy_source_4370": true
+    },
+    {
+      "path": ".github/workflows/pon-baseline-diagnostic-readback.yml",
+      "sha256": "924063ebc1fb7685f0103c6103ce4e58ad81bc6526b2b4a1db26f20ce1ba2d6d",
+      "bytes": 8402,
+      "current_worktree_equal": true,
+      "same_as_local_clippy_source_4370": true
+    },
+    {
+      "path": ".github/workflows/trnm-required-baseline.yml",
+      "sha256": "be0e4df4f1904d8de6a9305d4f42afac8a62efaca68728d822580111b079a013",
+      "bytes": 30501,
+      "current_worktree_equal": true,
+      "same_as_local_clippy_source_4370": true
+    },
+    {
+      "path": "scripts/ci/prepare_pq_provider.sh",
+      "sha256": "34ec1b84b0aa24a4d0b4f20e34a31240e227ba2ee69a2be4a9834da27583044f",
+      "bytes": 6810,
+      "current_worktree_equal": true,
+      "same_as_local_clippy_source_4370": true
+    },
+    {
+      "path": "scripts/ci/rust_baseline_shards.py",
+      "sha256": "3a2a0f960c0f58dd8dbe8a5b9c889fee963c9bba8ecadb9c751af6def4c543e5",
+      "bytes": 8725,
+      "current_worktree_equal": true,
+      "same_as_local_clippy_source_4370": true
+    }
+  ],
+  "local_evidence_files": [
+    {
+      "path": "/tmp/pure-pon-cargo-20261027/registry/src/index.crates.io-1949cf8c6b5b557f/openssl-0.10.81/src/pkey.rs",
+      "sha256": "1f32be54d88ee49ad3db4dea4415f2ca8d508ac4de635dbab83957d5b414f16c",
+      "bytes": 58107
+    },
+    {
+      "path": "/tmp/pure-pon-cargo-20261027/registry/src/index.crates.io-1949cf8c6b5b557f/openssl-0.10.81/build.rs",
+      "sha256": "ee2656bba4668b5850a6ff638a56910dbc555c0f1e574c3b4210a45a3ea98382",
+      "bytes": 6675
+    },
+    {
+      "path": "/tmp/pure-pon-cargo-20261027/registry/src/index.crates.io-1949cf8c6b5b557f/openssl-0.10.81/.cargo_vcs_info.json",
+      "sha256": "01e117ca65e5a2794af82da5b6f07cd2637c444bb36bd69a36f44e2dbfaafde8",
+      "bytes": 101
+    },
+    {
+      "path": "/tmp/pure-pon-cargo-20261027/registry/src/index.crates.io-1949cf8c6b5b557f/openssl-sys-0.9.117/build/find_normal.rs",
+      "sha256": "015b5d233c175a67111743c25839a1917242b575f9bbf2fa36582d060c9d1696",
+      "bytes": 8885
+    },
+    {
+      "path": "/tmp/chain-integrated-check-20261028.py",
+      "sha256": "ac60a1dd7f96465f242a972ae6989adfb6c0ea58bd7dac3c47ab28e67243c8b0",
+      "bytes": 3636
+    },
+    {
+      "path": "/tmp/chain-pq-target-56818e4fba76/debug/build/openssl-sys-be5042f97574949f/output",
+      "sha256": "76a6e7bcdc6ee84ca84cc9a4e6e159021d3cdd9018d10f85e1883679e71f3b58",
+      "bytes": 4991
+    },
+    {
+      "path": "/tmp/chain-phase-context-clippy-20261028/record.json",
+      "sha256": "8e2c76865681a6d9f19d95869a1da0bb755800078efd80cd0293e6e5df9b1b24",
+      "bytes": 1198
+    }
+  ],
+  "dependency_contract": {
+    "locked_packages": [
+      {
+        "name": "openssl",
+        "version": "0.10.81",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "77823a27f0babb03091cb9ed9ef80af3b39dbc82f97e8fa530374b7dafd87a45",
+        "dependencies": [
+          "bitflags",
+          "cfg-if",
+          "foreign-types",
+          "libc",
+          "openssl-macros",
+          "openssl-sys"
+        ]
+      },
+      {
+        "name": "openssl-sys",
+        "version": "0.9.117",
+        "source": "registry+https://github.com/rust-lang/crates.io-index",
+        "checksum": "b47e7e6bb2c38cd930d25a23b40fa52e068c10e85f3e03a7f5ba5aaca5713695",
+        "dependencies": [
+          "cc",
+          "libc",
+          "pkg-config",
+          "vcpkg"
+        ]
+      }
+    ],
+    "openssl_src_present": false,
+    "features": {
+      "trnm-crypto-primitives": {
+        "features": {
+          "default": [],
+          "pq-native-openssl": [
+            "dep:openssl"
+          ]
+        },
+        "openssl_dependency": {
+          "version": "=0.10.81",
+          "optional": true
+        }
+      },
+      "trnm-mvcc-fee": {
+        "features": {
+          "default": [],
+          "pq-native-openssl": [
+            "trnm-crypto-primitives/pq-native-openssl",
+            "dep:openssl"
+          ]
+        },
+        "openssl_dependency": {
+          "version": "=0.10.81",
+          "optional": true
+        }
+      },
+      "trnm-pon-node": {
+        "features": {
+          "default": [],
+          "pq-native-openssl": [
+            "trnm-crypto-primitives/pq-native-openssl",
+            "trnm-mvcc-fee/pq-native-openssl",
+            "dep:openssl"
+          ]
+        },
+        "openssl_dependency": {
+          "version": "=0.10.81",
+          "optional": true
+        }
+      }
+    },
+    "dependency_graph_scope": "Read workspace manifests plus Cargo.lock and cached upstream build sources; retained cargo metadata is no-deps (25 workspace packages, no resolve graph), not a full resolved allfeatures graph. No cargo metadata/tree executed.",
+    "upstream_crate_git_sha": "db9c9e2f5db2ad7b45fd894e8d297ee15bfd0c7c",
+    "required_api_cfg": {
+      "method": "PKey::private_key_from_seed",
+      "source": "openssl-0.10.81/src/pkey.rs:896-908",
+      "cfg": "ossl350",
+      "cfg_emission_source": "openssl-0.10.81/build.rs:128-164",
+      "condition": "DEP_OPENSSL_VERSION_NUMBER >= 0x3_05_00_00_0",
+      "minimum_upstream_openssl_feature_version": "3.5",
+      "cargo_package_pin_does_not_pin_native_backend": true
+    }
+  },
+  "local_build": {
+    "record": {
+      "schema": "integrated-native-compile-observation-v1",
+      "source": "4370f250236d89fb86dab215f862fe7e4d91c648",
+      "command": [
+        "cargo",
+        "clippy",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "timeout_seconds": 900,
+      "build_jobs": 1,
+      "started_at_utc": "2026-10-28T01:48:36.941158+00:00",
+      "completed": true,
+      "native_tests_executed": false,
+      "concurrent_complete_w1_proving": true,
+      "isolated_performance_claim": false,
+      "whole_work_package_accepted": false,
+      "exit_code": 0,
+      "complete_success": true,
+      "wall_seconds": 1.7077877139963675,
+      "waited_child_cpu_seconds": 1.1807779999999999,
+      "max_waited_child_rss_kib": 239448,
+      "rss_scope": "maximum waited child, not simultaneous process-group peak",
+      "stdout.txt": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr.txt": {
+        "bytes": 190,
+        "sha256": "15a464d751599fb8ba386d94621ecc03f3238220039f8a620e19641b9cd7d97f"
+      },
+      "source_unchanged": true,
+      "finished_at_utc": "2026-10-28T01:48:41.676610+00:00"
+    },
+    "environment_explicitly_selected": {
+      "OPENSSL_DIR": "/tmp/pure-pon-openssl-3.5.9",
+      "OPENSSL_STATIC": "1",
+      "CARGO_HOME": "/tmp/pure-pon-cargo-20261027",
+      "CARGO_TARGET_DIR": "/tmp/chain-pq-target-56818e4fba76",
+      "toolchain_bin": "/tmp/pure-pon-toolchain-20261027/bin"
+    },
+    "retained_build_output": [
+      "cargo:rustc-link-search=native=/tmp/pure-pon-openssl-3.5.9/lib64",
+      "cargo:include=/tmp/pure-pon-openssl-3.5.9/include",
+      "version: 3_5_9",
+      "cargo:rustc-cfg=ossl350",
+      "cargo:version_number=30500090",
+      "cargo:rustc-link-lib=static=ssl",
+      "cargo:rustc-link-lib=static=crypto"
+    ],
+    "scope_limit": "Existing 4370 compile-only PASS with warmed cache and explicit 3.5.9 static backend; not a new run, not runtime signature/account/reorg/network acceptance, not hosted backend proof."
+  },
+  "new_recent_compile_logs": [
+    {
+      "path": "/workspace/scratch/56818e4fba76/recovery/next-publication/ci-final-readback-r7-raw/new-chain-job-122594446924.log",
+      "lane": "131f recent x64 head",
+      "bytes": 334316,
+      "sha256": "9afff9a2558758362df05d1b8cde829d7c06d01addf1eb46ac145f3aaf1d5021",
+      "raw_file_test_result_line_count": 96,
+      "raw_file_failed_test_result_line_count": 0,
+      "raw_line_count_is_not_unique_selectors": true,
+      "error_hits": [
+        {
+          "line": 2852,
+          "text": "2026-10-28T02:33:47.6702342Z error[E0599]: no function or associated item named `private_key_from_seed` found for struct `openssl::pkey::PKey<_>` in the current scope"
+        },
+        {
+          "line": 2853,
+          "text": "2026-10-28T02:33:47.6703010Z    --> crates/trnm-pon-node/src/ingress/pq_network/tests.rs:7:21"
+        }
+      ],
+      "actual_openssl_header_version": null,
+      "actual_linked_library_version": null,
+      "actual_openssl_cfg_dump": null
+    },
+    {
+      "path": "/workspace/scratch/56818e4fba76/recovery/next-publication/ci-final-readback-r7-raw/new-chain-job-122594447106.log",
+      "lane": "131f recent x64 prospective merge",
+      "bytes": 335813,
+      "sha256": "986c77e378686174a7dacca82c028f43c830f19088f48f088e37ae491c406c7c",
+      "raw_file_test_result_line_count": 96,
+      "raw_file_failed_test_result_line_count": 0,
+      "raw_line_count_is_not_unique_selectors": true,
+      "error_hits": [
+        {
+          "line": 2863,
+          "text": "2026-10-28T02:36:01.5795071Z error[E0599]: no function or associated item named `private_key_from_seed` found for struct `openssl::pkey::PKey<_>` in the current scope"
+        },
+        {
+          "line": 2864,
+          "text": "2026-10-28T02:36:01.5796053Z    --> crates/trnm-pon-node/src/ingress/pq_network/tests.rs:7:21"
+        }
+      ],
+      "actual_openssl_header_version": null,
+      "actual_linked_library_version": null,
+      "actual_openssl_cfg_dump": null
+    }
+  ],
+  "historical_log_archive": {
+    "path": "/workspace/scratch/56818e4fba76/recovery/next-publication/e25-final-ci-decoded-failed-job-logs-20261028.zip",
+    "bytes": 749046,
+    "sha256": "fc2e8e93686c66fd7c3070d1c78ce9391e278e745619e0de67864915dd425441",
+    "reviewed_members": [
+      {
+        "member": "jobs/122579371249.log",
+        "bytes": 396027,
+        "sha256": "eda8262ce306720b7c31ac058a15bc0cc69d3bf1800fb34ea58954ed55b480fc",
+        "hits": [
+          {
+            "line": 1036,
+            "text": "2026-10-28T01:44:04.4924174Z Prepared isolated static OpenSSL 3.5.9 with verified ML-DSA-65"
+          },
+          {
+            "line": 3873,
+            "text": "2026-10-28T01:56:57.3961234Z test result: FAILED. 0 passed; 8 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.67s"
+          }
+        ],
+        "oracle_generic_reject_count": 8,
+        "first_oracle_trace": [
+          {
+            "line": 3736,
+            "text": "2026-10-28T01:56:57.3892908Z reference oracle: Traceback (most recent call last):"
+          },
+          {
+            "line": 3737,
+            "text": "2026-10-28T01:56:57.3893896Z   File \"<string>\", line 5, in <module>"
+          },
+          {
+            "line": 3738,
+            "text": "2026-10-28T01:56:57.3894966Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/pq_genesis_handoff.py\", line 346, in verify_handoff"
+          },
+          {
+            "line": 3739,
+            "text": "2026-10-28T01:56:57.3896004Z     kid=pq_key_id(m.new_pq_public_pem)"
+          },
+          {
+            "line": 3740,
+            "text": "2026-10-28T01:56:57.3896287Z         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+          },
+          {
+            "line": 3741,
+            "text": "2026-10-28T01:56:57.3897114Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/pq_genesis_handoff.py\", line 96, in pq_key_id"
+          },
+          {
+            "line": 3742,
+            "text": "2026-10-28T01:56:57.3897951Z     der = _openssl(['openssl','pkey','-pubin','-in',str(path),'-outform','DER'])"
+          },
+          {
+            "line": 3743,
+            "text": "2026-10-28T01:56:57.3898376Z           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+          },
+          {
+            "line": 3744,
+            "text": "2026-10-28T01:56:57.3899040Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/pq_genesis_handoff.py\", line 71, in _openssl"
+          },
+          {
+            "line": 3745,
+            "text": "2026-10-28T01:56:57.3899745Z     raise Reject('ML-DSA-65 cryptographic operation rejected')"
+          },
+          {
+            "line": 3746,
+            "text": "2026-10-28T01:56:57.3900195Z pq_genesis_handoff.Reject: ML-DSA-65 cryptographic operation rejected"
+          },
+          {
+            "line": 3747,
+            "text": "2026-10-28T01:56:57.3900489Z "
+          },
+          {
+            "line": 3748,
+            "text": "2026-10-28T01:56:57.3900694Z note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace"
+          },
+          {
+            "line": 3749,
+            "text": "2026-10-28T01:56:57.3901007Z "
+          },
+          {
+            "line": 3750,
+            "text": "2026-10-28T01:56:57.3901335Z ---- dual_migration_native_verification_rejects_either_signature_revocation_or_target_substitution stdout ----"
+          }
+        ]
+      },
+      {
+        "member": "jobs/122579371614.log",
+        "bytes": 399417,
+        "sha256": "67166bf86f07ed75c717edd91065190cac48d29482236dbf75ab85432905c5b6",
+        "hits": [
+          {
+            "line": 1043,
+            "text": "2026-10-28T01:44:03.9067525Z Prepared isolated static OpenSSL 3.5.9 with verified ML-DSA-65"
+          },
+          {
+            "line": 3882,
+            "text": "2026-10-28T01:56:07.9168333Z test result: FAILED. 0 passed; 8 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.57s"
+          }
+        ],
+        "oracle_generic_reject_count": 8,
+        "first_oracle_trace": [
+          {
+            "line": 3745,
+            "text": "2026-10-28T01:56:07.9103126Z reference oracle: Traceback (most recent call last):"
+          },
+          {
+            "line": 3746,
+            "text": "2026-10-28T01:56:07.9103665Z   File \"<string>\", line 5, in <module>"
+          },
+          {
+            "line": 3747,
+            "text": "2026-10-28T01:56:07.9104479Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/pq_genesis_handoff.py\", line 346, in verify_handoff"
+          },
+          {
+            "line": 3748,
+            "text": "2026-10-28T01:56:07.9105415Z     kid=pq_key_id(m.new_pq_public_pem)"
+          },
+          {
+            "line": 3749,
+            "text": "2026-10-28T01:56:07.9105680Z         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+          },
+          {
+            "line": 3750,
+            "text": "2026-10-28T01:56:07.9106213Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/pq_genesis_handoff.py\", line 96, in pq_key_id"
+          },
+          {
+            "line": 3751,
+            "text": "2026-10-28T01:56:07.9106874Z     der = _openssl(['openssl','pkey','-pubin','-in',str(path),'-outform','DER'])"
+          },
+          {
+            "line": 3752,
+            "text": "2026-10-28T01:56:07.9107275Z           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+          },
+          {
+            "line": 3753,
+            "text": "2026-10-28T01:56:07.9107868Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/pq_genesis_handoff.py\", line 71, in _openssl"
+          },
+          {
+            "line": 3754,
+            "text": "2026-10-28T01:56:07.9108488Z     raise Reject('ML-DSA-65 cryptographic operation rejected')"
+          },
+          {
+            "line": 3755,
+            "text": "2026-10-28T01:56:07.9108915Z pq_genesis_handoff.Reject: ML-DSA-65 cryptographic operation rejected"
+          },
+          {
+            "line": 3756,
+            "text": "2026-10-28T01:56:07.9109181Z "
+          },
+          {
+            "line": 3757,
+            "text": "2026-10-28T01:56:07.9109381Z note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace"
+          },
+          {
+            "line": 3758,
+            "text": "2026-10-28T01:56:07.9109668Z "
+          },
+          {
+            "line": 3759,
+            "text": "2026-10-28T01:56:07.9109970Z ---- dual_migration_native_verification_rejects_either_signature_revocation_or_target_substitution stdout ----"
+          }
+        ]
+      },
+      {
+        "member": "jobs/122577354363.log",
+        "bytes": 126026,
+        "sha256": "9afe4016e665730fffc222aded490388ddcb18dc704ea6201a46f9948cb0bc24",
+        "hits": [
+          {
+            "line": 843,
+            "text": "2026-10-28T01:33:30.1508041Z error[E0599]: no function or associated item named `private_key_from_seed` found for struct `openssl::pkey::PKey<_>` in the current scope"
+          },
+          {
+            "line": 844,
+            "text": "2026-10-28T01:33:30.1510284Z    --> crates/trnm-pon-node/src/ingress/pq_network/tests.rs:7:21"
+          }
+        ],
+        "oracle_generic_reject_count": 0,
+        "first_oracle_trace": []
+      },
+      {
+        "member": "jobs/122577354438.log",
+        "bytes": 124519,
+        "sha256": "0632f3448a8af0d1cb79c091af5cfff218765547803b2970388d62ea701c35b3",
+        "hits": [
+          {
+            "line": 818,
+            "text": "2026-10-28T01:33:16.9592447Z error[E0599]: no function or associated item named `private_key_from_seed` found for struct `openssl::pkey::PKey<_>` in the current scope"
+          },
+          {
+            "line": 819,
+            "text": "2026-10-28T01:33:16.9593195Z    --> crates/trnm-pon-node/src/ingress/pq_network/tests.rs:7:21"
+          }
+        ],
+        "oracle_generic_reject_count": 0,
+        "first_oracle_trace": []
+      },
+      {
+        "member": "jobs/122577354462.log",
+        "bytes": 126240,
+        "sha256": "482ccc1e14e44de725d172720fa5d3c75560637c4ba743730c9cee11a89d59eb",
+        "hits": [
+          {
+            "line": 837,
+            "text": "2026-10-28T01:33:22.2597348Z error[E0599]: no function or associated item named `private_key_from_seed` found for struct `openssl::pkey::PKey<_>` in the current scope"
+          },
+          {
+            "line": 838,
+            "text": "2026-10-28T01:33:22.2598126Z    --> crates/trnm-pon-node/src/ingress/pq_network/tests.rs:7:21"
+          }
+        ],
+        "oracle_generic_reject_count": 0,
+        "first_oracle_trace": []
+      },
+      {
+        "member": "jobs/122577354480.log",
+        "bytes": 132383,
+        "sha256": "48e78fc53435a63013bb4f40d962475890826585e811a7a1ab1f43168e58f3df",
+        "hits": [
+          {
+            "line": 818,
+            "text": "2026-10-28T01:33:28.0412757Z error[E0599]: no function or associated item named `private_key_from_seed` found for struct `openssl::pkey::PKey<_>` in the current scope"
+          },
+          {
+            "line": 819,
+            "text": "2026-10-28T01:33:28.0414320Z    --> crates/trnm-pon-node/src/ingress/pq_network/tests.rs:7:21"
+          },
+          {
+            "line": 861,
+            "text": "2026-10-28T01:33:39.3551376Z error[E0599]: no function or associated item named `private_key_from_seed` found for struct `openssl::pkey::PKey<_>` in the current scope"
+          },
+          {
+            "line": 904,
+            "text": "2026-10-28T01:33:39.3985860Z error[E0599]: no function or associated item named `private_key_from_seed` found for struct `openssl::pkey::PKey<_>` in the current scope"
+          }
+        ],
+        "oracle_generic_reject_count": 0,
+        "first_oracle_trace": []
+      }
+    ]
+  },
+  "workflow_contract": {
+    "recent_and_diagnostic": {
+      "runner_matrix": [
+        "ubuntu-24.04",
+        "ubuntu-24.04-arm"
+      ],
+      "source_matrix": [
+        "head",
+        "prospective-merge"
+      ],
+      "rust": "1.95.0",
+      "all_features_clippy": true,
+      "provider_preparation_step": false,
+      "explicit_OPENSSL_DIR_or_STATIC": false,
+      "container_or_image_digest_declared_in_reviewed_workflows": false,
+      "actual_hosted_OpenSSL_version": "UNKNOWN; runner label and missing method do not identify exact backend/library/version"
+    },
+    "required_baseline": {
+      "provider_preparation_steps": 4,
+      "prepared_version": "3.5.9",
+      "source_archive_sha256": "603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a",
+      "script_runs_real_smoke": true,
+      "library_env_export": [
+        "OPENSSL_DIR",
+        "OPENSSL_STATIC"
+      ],
+      "cli_export_or_GITHUB_PATH_binding": false,
+      "smoke_cli": "absolute prefix/bin/openssl with invocation-local OPENSSL_CONF=/dev/null and OPENSSL_MODULES",
+      "later_python_oracle_cli": "bare openssl inherited from PATH",
+      "python_cryptography_requirement": "50.0.2",
+      "python_wheel_crypto_backend_proves_neither_cli_nor_rust_backend": true
+    }
+  },
+  "findings": [
+    {
+      "id": "PQ-BACKEND-COMPILE",
+      "certainty": "source and original logs established; exact hosted native version unknown",
+      "claim": "The requested fixture method exists only under ossl350. Local explicit 3.5.9 build records this cfg; recent/diagnostic hosted workflows leave native backend unspecified and hit E0599. This is an unmet build portability/backend contract, not evidence of a signature forgery vulnerability.",
+      "runtime_version_guard_is_insufficient_to_create_compile_time_api": true
+    },
+    {
+      "id": "PQ-ORACLE-CLI-BINDING",
+      "certainty": "source-level unbound CLI selection established; exact failure cause unresolved",
+      "claim": "The baseline preparation binds Rust headers/libraries and independently smokes an absolute new CLI, but does not bind the later Python oracle CLI. The original two runtime logs show 8/8 tests failing in the shared fixture while converting PEM to DER through bare openssl. The error occurs on nonzero CLI status before strict SPKI parsing.",
+      "nonzero_returncode_proved": true,
+      "raw_cli_stderr_retained": false,
+      "resolved_cli_path_retained": false,
+      "resolved_cli_version_retained": false,
+      "strict_der_parser_rejection_proved": false,
+      "older_cli_likely_but_unproven": true
+    },
+    {
+      "id": "PQ-ACCEPTANCE-SCOPE",
+      "certainty": "source and observation boundary",
+      "claim": "Rust production verifier is in-process EVP with provider version checks, pinned ML-DSA-65 SPKI/algorithm/length/context and actual verification; the Python subprocess is a test oracle. Compile PASS and setup smoke cannot discharge actual account migration, nonce/reorg and network test obligations. No unreviewed classical fallback is recommended."
+    }
+  ],
+  "minimal_followup_contract_design_only": [
+    {
+      "id": "C1",
+      "proposal": "Declare one supported PQ native backend identity for every PQ-enabled/allfeatures lane: exact source checksum, target architecture, headers/version/cfg, linked static/shared library and provider/config identity. Cargo.lock alone is insufficient; do not infer backend identity from runner/OCI labels.",
+      "implementation_performed": false
+    },
+    {
+      "id": "C2",
+      "proposal": "Bind the independent Python oracle to an explicit absolute supported CLI plus its provider/config, separately from OPENSSL_DIR. Preserve independent transcript/state-root reconstruction and all strict ML-DSA-65 SPKI checks. If Rust and oracle share OpenSSL, call it protocol/encoding cross-check, not independent crypto implementation.",
+      "implementation_performed": false
+    },
+    {
+      "id": "C3",
+      "proposal": "Retain bounded, scrubbed child returncode/stderr, resolved CLI identity and backend cfg/build metadata. Keep missing backend and malformed input as fail-closed failures; diagnostics must not expose any real private keys.",
+      "implementation_performed": false
+    },
+    {
+      "id": "C4",
+      "proposal": "Keep full feature and test denominators and original failures. Future separately permitted evidence must distinguish compile, real algorithm smoke, PEM/SPKI interoperability, all account/nonce/reorg tests and network authentication. No cfg-skips, ignored tests, feature disable, classical fallback, parser relaxation or synthetic passing receipt.",
+      "implementation_performed": false
+    },
+    {
+      "id": "C5",
+      "proposal": "Do not add or invoke current provider preparation as an approval workaround: it includes real ML-DSA key generation/signing/verification. This report is reviewable design only; new native validation remains subject to explicit resolution of the existing automatic safety interruption.",
+      "implementation_performed": false
+    }
+  ],
+  "unknowns": [
+    "Exact OpenSSL header/library/cfg observed by the failed hosted Clippy builds.",
+    "Exact binary path, version, provider configuration and stderr of failed bare-openssl oracle invocation.",
+    "Whether canonical ML-DSA SPKI interoperation succeeds after a permitted, explicitly bound backend run.",
+    "All original eight runtime test assertions after the shared fixture and the new source runtime acceptance.",
+    "No binding OCI image digest was present in the reviewed failed-lane workflow sources or selected logs."
+  ],
+  "primary_web_sources": [
+    {
+      "url": "https://docs.openssl.org/3.5/man7/EVP_PKEY-ML-DSA/",
+      "retrieved_at_utc": "2026-10-28",
+      "ref": "turn176view0",
+      "supports": "OpenSSL ML-DSA support was added in 3.5; seed parameter requires 32 bytes.",
+      "scope_limit": "Current upstream documentation, not evidence of actual CI backend."
+    }
+  ],
+  "whole_chain_quantum_security_qualified": false,
+  "pq_work_package_accepted": false
+}

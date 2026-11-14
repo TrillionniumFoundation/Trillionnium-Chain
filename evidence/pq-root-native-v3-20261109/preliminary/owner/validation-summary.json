@@ -1,0 +1,124 @@
+{
+  "kind": "local-native-owner-component-validation",
+  "source_files": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/root_recovery_v3.rs",
+      "bytes": 25385,
+      "sha512": "f394cad3bebfccfcaa49718247026a93fcd7cb34a400d3aba541a6627f162bc154d9956f1f3f9353bba72a5eaafab76127badaa290d013cc727b58190573da70"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/anchor.rs",
+      "bytes": 8326,
+      "sha512": "00aadf2becf537b559e92ec9ee9e1b67fd9ccffdee4478e1a47c0e3cbb7e0e4ece7d3c050fd0121112098446b697aa05162d6b89589ca0aba12c5dfa749a4d12"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/storage.rs",
+      "bytes": 21113,
+      "sha512": "f3e26e5d1a33c297b9dd50765b2690854658bb11f2b504841a68162d08a77942f6730c527148e49853a41c0824e8d7302b868a5b16ceb229ac71b40bdff4053a"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/root_recovery_v3_native.rs",
+      "bytes": 26853,
+      "sha512": "399f6c37f2ae3b6128ad140d8092224b3aa86e499bd0ac3d7ed782706b236ffe0d222ba259deb284dd07155dd6e9b91299215aae4f80629afde22326d1918f3e"
+    }
+  ],
+  "test_names": [
+    "native_owner_v3_domain_binds_each_independent_identity_without_zero_fallback",
+    "native_owner_v3_real_signed_append_reopen_and_exact_intent_observation",
+    "native_owner_v3_replay_preserves_nonce_and_refuses_second_exact_operation",
+    "native_owner_v3_lost_successful_cas_reply_requires_explicit_exact_completion",
+    "native_owner_v3_unadvanced_anchor_cannot_clear_pending_or_retry",
+    "native_owner_v3_corrupt_pending_state_cannot_promote_even_after_real_cas",
+    "native_owner_v3_retained_external_anchor_refuses_whole_local_rollback",
+    "native_owner_v3_co_restored_owner_and_anchor_counterexample_remains_accepted",
+    "native_owner_v3_wrong_enrollment_scope_and_service_aliases_are_refused",
+    "native_owner_v3_successor_cannot_reuse_an_anchor_or_writer_key",
+    "native_owner_v3_last_observation_rechecks_persisted_revocation_and_rotation",
+    "native_owner_v3_authenticated_response_still_must_bind_fresh_challenge",
+    "native_owner_v3_writer_signature_is_verified_before_transport",
+    "native_owner_v3_callback_cannot_replace_original_owner_budget",
+    "native_owner_v3_same_budget_exhaustion_retains_pending_before_cas",
+    "native_owner_v3_cancellation_after_external_commit_requires_reconciliation",
+    "native_owner_v3_storage_tamper_schema_alias_and_concurrent_open_fail_closed",
+    "native_owner_v3_changed_current_bytes_and_replaced_database_are_not_authority",
+    "native_owner_v3_foreign_sqlite_namespace_is_refused_without_mutating_it",
+    "native_owner_v3_reopen_reverifies_retained_signature_bytes"
+  ],
+  "native_tests": {
+    "exit_code": 0,
+    "passed": 20,
+    "failed": 0,
+    "ignored": 0,
+    "filtered_out": 0,
+    "runtime_seconds": 138.91,
+    "log": "integration-tests-v3.log",
+    "profile": "original locked default test profile; CARGO_BUILD_JOBS=2; two test threads"
+  },
+  "strict_clippy": {
+    "exit_code": 0,
+    "target": "-p trnm-pon-node --features pq-root-v3 --test root_recovery_v3_native -- -D warnings",
+    "log": "integration-clippy.log"
+  },
+  "rustfmt_check": {
+    "exit_code": 0,
+    "files": [
+      "trillionnium/crates/trnm-pon-node/src/root_recovery_v3.rs",
+      "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/anchor.rs",
+      "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/storage.rs",
+      "trillionnium/crates/trnm-pon-node/tests/root_recovery_v3_native.rs"
+    ]
+  },
+  "retained_failures": [
+    {
+      "kind": "original Node --lib test build SIGKILL, cause not established",
+      "exit_code": 101,
+      "evidence": "initial-lib-build-observation.txt",
+      "full_raw_log_available": false
+    },
+    {
+      "kind": "fixture directory lacked required mode 0700",
+      "exit_code": 101,
+      "log": "integration-tests.log"
+    },
+    {
+      "kind": "SQLite NOFOLLOW refused proc-fd symlink path",
+      "exit_code": 101,
+      "log": "integration-positive-v2.log"
+    }
+  ],
+  "limitations": [
+    "The co-restored owner-and-anchor test deliberately accepts restored authenticated state, preserving the whole-owner rollback counterexample.",
+    "The same-host in-memory fixture authority does not demonstrate independent custody or production external-anchor persistence.",
+    "The native owner returns current intent observations only; no actual M15 installation, launch, FinalUse, effect-entry, or reconciliation migration is implemented.",
+    "Trusted Unix admission time is provided by the caller; no M15 signed clock integration is claimed.",
+    "Concurrent filesystem administration by the private directory owner UID is trusted; ordinary SQLite does not expose its main-file descriptor for inode-continuity proof.",
+    "No whole-chain qualification or numerical lifetime failure bound is established."
+  ],
+  "logs": [
+    {
+      "path": "/workspace/scratch/5faaca703596/root-owner-v3-validation/integration-build.log",
+      "bytes": 832,
+      "sha512": "2d8b40ff0a80a77ab75d582cb79897eef1703eeb4d28507e8f5a53f328415f56a7e74ac90ba5b451a37a689c8d543da8f3cf700e2e0267b861c98c74c942555d"
+    },
+    {
+      "path": "/workspace/scratch/5faaca703596/root-owner-v3-validation/integration-clippy.log",
+      "bytes": 3350,
+      "sha512": "062d10eaabbea901102e008bcf10d52634c2e428c70fa5363e38a9b26116e846cc6a2f937a5f6d905987cc5cebe1d55e29f87c1a78b82575befb17f754947209"
+    },
+    {
+      "path": "/workspace/scratch/5faaca703596/root-owner-v3-validation/integration-positive-v2.log",
+      "bytes": 1411,
+      "sha512": "70ff21555e498cf9111c59510f8d287d47d29d456d39f958dbe50559e249f5af3118ab9f8c96e907bd28440b92d7b690666f14a089f2450d356d726d28cfd2b6"
+    },
+    {
+      "path": "/workspace/scratch/5faaca703596/root-owner-v3-validation/integration-tests-v3.log",
+      "bytes": 2103,
+      "sha512": "86534b51e2ee84ac62ca7aabb83469b287548d1585ec375b8c1c856076049d35689eb5f270fe11c0e927fa9044a7004624a7cc7b18c44d1526e4b17b198552de"
+    },
+    {
+      "path": "/workspace/scratch/5faaca703596/root-owner-v3-validation/integration-tests.log",
+      "bytes": 10161,
+      "sha512": "371b1f033371a3e70d10629c9cd33bcbc535796153a5f1f9983d02c57b8e777a710220962f8374687f12e38200b044c6a4363bd4fed5bfc285cb515f6e5ab899"
+    }
+  ]
+}

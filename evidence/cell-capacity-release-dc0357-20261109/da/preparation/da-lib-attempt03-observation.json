@@ -1,0 +1,30 @@
+{
+  "changed_da_library_input_files": [],
+  "changed_workspace_source_files": [],
+  "command": [
+    "/workspace/scratch/a6fe7c2e72c7/pq-validation/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "--jobs",
+    "2",
+    "-p",
+    "trnm-data-availability",
+    "--lib",
+    "cell::discovery::pq::epoch_directory::tests::retained_source_ip_prefix_and_global_caps_are_exact_and_epoch_reclaims_all_512",
+    "--",
+    "--test-threads=1",
+    "--exact"
+  ],
+  "completed_at_utc": "2026-11-09T14:21:58.324732+00:00",
+  "da_library_inputs_unchanged": true,
+  "elapsed_seconds": 107.15991286700046,
+  "exit_code": 0,
+  "log_sha256": "1606039e14e9b3193885c2ee04696e0b9fc5af3f3331c46b8a5100742f9e5b3a",
+  "source_end_manifest_sha256": "b22d8b1754b5b5b48010fc21d2fae3ac536ee85002f080b46ed878ed177c408e",
+  "source_start_manifest_sha256": "b22d8b1754b5b5b48010fc21d2fae3ac536ee85002f080b46ed878ed177c408e",
+  "started_at_utc": "2026-11-09T14:20:10.448924+00:00",
+  "test_result_lines": [
+    "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 760 filtered out; finished in 106.79s"
+  ]
+}

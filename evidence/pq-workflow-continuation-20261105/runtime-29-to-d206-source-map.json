@@ -1,0 +1,111 @@
+{
+  "schema": "hepta-runtime-exact-source-map-v1",
+  "status": "SOURCE_IDENTITY_CHECK_PASS",
+  "repository": "TrillionniumFoundation/hepta-private-ci",
+  "old_commit": "29fcd2e88654d5bec2bf30134cc030b5bfa7831b",
+  "old_tree": "9653293a81dfda7f17c12a54fd7bd5f4170ea867",
+  "new_commit": "d206c3c787f6b67c771b67a8e1d46c8261810042",
+  "new_tree": "00048be8564f7726716f78edbb37d79ab273167a",
+  "new_parent": "f2bc730eb40faaf1937c5f5f5c6286e24cb2b4f7",
+  "verification": {
+    "method": "Compare complete Git tree entries recursively at every differing subtree; equal SHA/type/mode subtrees are identical closures. Independently cross-check the GitHub commit comparison.",
+    "tree_api_responses": 11,
+    "every_tree_response_nontruncated": true,
+    "equal_subtree_closures": 192,
+    "equal_direct_leaf_entries": 91,
+    "compared_tree_objects": [
+      "9653293a81dfda7f17c12a54fd7bd5f4170ea867",
+      "00048be8564f7726716f78edbb37d79ab273167a",
+      "96482bae486a65b85184c8294229273dfc60abae",
+      "10132462e34fab83ca09f8b5b4d1796702c27001",
+      "43053269f254a8d78a0dab234bdc894097338ab0",
+      "5ecae90486b2c372e6d59a92898e7918a9ff7ec0",
+      "22eef2707af885e473b63eb9cba20a71fc691c96",
+      "9b38b0566d3c13578312d6fadb4a9533b637d813",
+      "b12954f56310ebdb53eaf3a559e0955bd938b990",
+      "3fa9beac9e15c6a67f20531530199ed765b8a1a2",
+      "0b79ecf9858cbe4357f5eb5afae90e5d00264d7d"
+    ],
+    "github_compare": {
+      "status": "ahead",
+      "ahead_by": 2,
+      "behind_by": 0,
+      "merge_base": "29fcd2e88654d5bec2bf30134cc030b5bfa7831b",
+      "changed_paths": 4
+    },
+    "changed_test_files": 1,
+    "added_historical_evidence_files": 3,
+    "other_changed_entries": 0
+  },
+  "changes": [
+    {
+      "path": "codex-rs/hepta-evidence/src/recovery_effect_frontier_tests.rs",
+      "classification": "test_source",
+      "status": "modified",
+      "old_blob": "369d06302da7abda994e3befb3e5dbdd8a4648e9",
+      "new_blob": "1b03f6f7975331088fd3cfa08839d51f7e736a29",
+      "old_mode": "100644",
+      "new_mode": "100644"
+    },
+    {
+      "path": "evidence/recovery-v2-integration-20261105/manifest.json",
+      "classification": "historical_evidence_manifest",
+      "status": "added",
+      "old_blob": null,
+      "new_blob": "bc5a73acb680cd2157f551c254982140d47ba8b7",
+      "old_mode": null,
+      "new_mode": "100644"
+    },
+    {
+      "path": "evidence/recovery-v2-integration-20261105/README.md",
+      "classification": "historical_evidence_document",
+      "status": "added",
+      "old_blob": null,
+      "new_blob": "d90d845dedd09277a8142b6e76b177dc9de186c0",
+      "old_mode": null,
+      "new_mode": "100644"
+    },
+    {
+      "path": "evidence/recovery-v2-integration-20261105/reproduce.py",
+      "classification": "historical_evidence_reproduction_script",
+      "status": "added",
+      "old_blob": null,
+      "new_blob": "e6ca4489dcaa4efe1b30100fc87454db3ccedbce",
+      "old_mode": null,
+      "new_mode": "100755"
+    }
+  ],
+  "changed_test_module": {
+    "path": "codex-rs/hepta-evidence/src/lib.rs",
+    "blob": "2bf6230c9a8a615fde97eaabf5d1222c82093628",
+    "context": [
+      "#[cfg(test)]",
+      "#[path = \"recovery_effect_frontier_tests.rs\"]",
+      "mod recovery_effect_frontier_tests;",
+      ""
+    ],
+    "compiled_only_under_cfg_test": true,
+    "repair": "Replace four dynamic format! SQL expressions with static SQL tuples for the same three tables. Corruption assertions and parameter-bound restoration are preserved.",
+    "unsafe_sql_assertion_added": false
+  },
+  "historical_evidence": {
+    "manifest_blob": "bc5a73acb680cd2157f551c254982140d47ba8b7",
+    "candidate_code_commit": "29fcd2e88654d5bec2bf30134cc030b5bfa7831b",
+    "candidate_code_tree": "9653293a81dfda7f17c12a54fd7bd5f4170ea867",
+    "recorded_status": "HOLD_NO_GO",
+    "records_do_not_describe_execution_of_the_new_test_bytes": true
+  },
+  "conclusions": {
+    "production_source_blobs_types_and_modes_unchanged": true,
+    "all_entries_outside_listed_paths_identical": true,
+    "native_tests_executed_by_this_check": false,
+    "prior_test_execution_or_acceptance_transferred_to_new_commit": false,
+    "production_or_security_qualification_granted": false,
+    "active_runtime_checkout_accessed_or_modified_by_this_check": false
+  },
+  "sources": [
+    "https://api.github.com/repos/TrillionniumFoundation/hepta-private-ci/compare/29fcd2e88654d5bec2bf30134cc030b5bfa7831b...d206c3c787f6b67c771b67a8e1d46c8261810042",
+    "https://api.github.com/repos/TrillionniumFoundation/hepta-private-ci/git/commits/29fcd2e88654d5bec2bf30134cc030b5bfa7831b",
+    "https://api.github.com/repos/TrillionniumFoundation/hepta-private-ci/git/commits/d206c3c787f6b67c771b67a8e1d46c8261810042"
+  ]
+}

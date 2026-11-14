@@ -1,0 +1,12 @@
+{
+  "additional_bytes": 86,
+  "final_bytes": 1798,
+  "final_sha256": "07aaeed74218f6e156096d7fc8e096fc0d26941ecd7ccdfcdd415c47d1c3f5ce",
+  "original_exit_code": 124,
+  "original_receipt_rewritten": false,
+  "prefix_bytes": 1712,
+  "prefix_matches_original_receipt": true,
+  "prefix_sha256": "adff49e4073515834c7dbf94a952eea72141d0eba200cc6fecc5abc41db69e2f",
+  "recorded_bytes": 1712,
+  "recorded_sha256": "adff49e4073515834c7dbf94a952eea72141d0eba200cc6fecc5abc41db69e2f"
+}

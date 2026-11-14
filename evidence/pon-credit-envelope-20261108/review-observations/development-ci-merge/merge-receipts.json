@@ -1,0 +1,46 @@
+{
+  "files": [
+    {
+      "base_blob": "556c7fe5ab6958f46e1f70cb117f3657b3f0e38b",
+      "conflict_markers": [],
+      "latest_blob": "d8803b26fd4c8a3f6726863ed77970acbb973ada",
+      "merge_exit_code": 0,
+      "merged_blob": "40ab97508fbb9afdf5ddf9022ab82e98253707eb",
+      "ours_blob": "c0e59aa4745935c88676fb3455f4a947f7cfb586",
+      "path": "scripts/ci/ci_job.sh",
+      "raw_blob": "6033319c42f20b15dcff2d01b99570d424dbf2e9",
+      "removed_exactly_one_newline": true
+    },
+    {
+      "base_blob": "fd536030a81db24efc65ea967abbb27a6d8683af",
+      "conflict_markers": [
+        133,
+        166,
+        167
+      ],
+      "latest_blob": "82d45ae3136971ef1872868144480c40eda6ee2d",
+      "merge_exit_code": 1,
+      "merged_blob": "8b841eb594de5cd00aa91508fb551f8ac66e13d8",
+      "ours_blob": "91f2c872fc144da76d7ab6ccd077d592b42a7f2c",
+      "path": "scripts/ci/check_ci_contract.py",
+      "raw_blob": "c8abdb7b68d075970387d8a11c1ba10c2ca1eba6",
+      "removed_exactly_one_newline": true
+    },
+    {
+      "base_blob": "056c42e4e7cb352257fa86f4ba716fc5cf2661ba",
+      "conflict_markers": [
+        21,
+        25,
+        26
+      ],
+      "latest_blob": "f5b37eed463b4058e573e85d1550f2b0d72de164",
+      "merge_exit_code": 1,
+      "merged_blob": "8a1c4b1debd5f680c677fbe2e67429af281ec3cc",
+      "ours_blob": "99a15ed5634409d8774650df15579678d677e2bb",
+      "path": "scripts/ci/test_ci_contract.py",
+      "raw_blob": "58d20c3f44a40fab647ef6366b7c28a4032f9633",
+      "removed_exactly_one_newline": true
+    }
+  ],
+  "initial_local_command_failure": "git merge-file rejected unsupported --label before any repository file was modified; corrected to -L"
+}

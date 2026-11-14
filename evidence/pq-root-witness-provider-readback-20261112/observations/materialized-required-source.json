@@ -1,0 +1,358 @@
+[
+  {
+    "path": "evidence/cell-storage-convergence-f2568-20261109/controls/original-auth-server-tests.rs",
+    "bytes": 68436
+  },
+  {
+    "path": "evidence/crypto-profile-20261104/recompute_benchmark.py",
+    "bytes": 7180
+  },
+  {
+    "path": "evidence/crypto-profile-20261104/recompute_profile_ids.py",
+    "bytes": 10500
+  },
+  {
+    "path": "evidence/pon-pq-cell-deadline-native-v1/README.md",
+    "bytes": 1833
+  },
+  {
+    "path": "evidence/pon-pq-cell-deadline-native-v1/baseline-real-tcp.log",
+    "bytes": 1963
+  },
+  {
+    "path": "evidence/pon-pq-cell-deadline-native-v1/fixed-python.log",
+    "bytes": 7409
+  },
+  {
+    "path": "evidence/pon-pq-cell-deadline-native-v1/local-qualification.json",
+    "bytes": 6618
+  },
+  {
+    "path": "evidence/pon-pq-cell-deadline-native-v1/native-clippy.log",
+    "bytes": 72
+  },
+  {
+    "path": "evidence/pon-pq-cell-deadline-native-v1/native-format.log",
+    "bytes": 0
+  },
+  {
+    "path": "evidence/pon-pq-cell-deadline-native-v1/native-rust.log",
+    "bytes": 2110
+  },
+  {
+    "path": "evidence/pon-pq-pql10-pem-source-v1/local-qualification.json",
+    "bytes": 2348
+  },
+  {
+    "path": "evidence/pon-pq-pql11b-source-guard-v1/local-qualification.json",
+    "bytes": 1507
+  },
+  {
+    "path": "evidence/pon-pq-spki-v1/README.md",
+    "bytes": 1247
+  },
+  {
+    "path": "evidence/pon-pq-tpq1-native-v1/README.md",
+    "bytes": 2239
+  },
+  {
+    "path": "evidence/pon-pq-tpq1-native-v1/native-sanitizer-test.log",
+    "bytes": 918
+  },
+  {
+    "path": "evidence/pon-pq-tpq1-native-v1/native-test.log",
+    "bytes": 918
+  },
+  {
+    "path": "evidence/pon-six-workpackages-20261106/next/service/ABBA_PROTOCOL.md",
+    "bytes": 3977
+  },
+  {
+    "path": "evidence/pon-six-workpackages-20261106/next/service/run_reorg_abba.py",
+    "bytes": 14923
+  },
+  {
+    "path": "evidence/pon-six-workpackages-20261106/next/service/test_run_reorg_abba.py",
+    "bytes": 4853
+  },
+  {
+    "path": "evidence/pon-six-workpackages-20261106/strategy/package_raw.py",
+    "bytes": 13018
+  },
+  {
+    "path": "evidence/pon-six-workpackages-20261106/strategy/run_campaign.py",
+    "bytes": 13233
+  },
+  {
+    "path": "evidence/pon-six-workpackages-20261106/strategy/summarize_costs.py",
+    "bytes": 6893
+  },
+  {
+    "path": "evidence/pon-w1-backend-sdk-20261107/fixed-sdk-contract.json",
+    "bytes": 10921
+  },
+  {
+    "path": "evidence/pon-w1-full-v2-20261105/asset-sha256.json",
+    "bytes": 1711
+  },
+  {
+    "path": "evidence/pon-w1-full-v2-20261105/expected-artifacts.bin",
+    "bytes": 64
+  },
+  {
+    "path": "evidence/pon-w1-full-v2-20261105/guest.bin",
+    "bytes": 375928
+  },
+  {
+    "path": "evidence/pon-w1-full-v2-20261105/header.bin",
+    "bytes": 318
+  },
+  {
+    "path": "evidence/pon-w1-full-v2-20261105/input.bin",
+    "bytes": 49506
+  },
+  {
+    "path": "evidence/pon-w1-full-v2-20261105/succinct.bin",
+    "bytes": 257014
+  },
+  {
+    "path": "evidence/pon-w1-lifetime-current-20261109/README.md",
+    "bytes": 4309
+  },
+  {
+    "path": "evidence/pon-w1-lifetime-current-20261109/project-input.json",
+    "bytes": 6107
+  },
+  {
+    "path": "evidence/pon-w1-lifetime-current-20261109/project-report.json",
+    "bytes": 31311
+  },
+  {
+    "path": "evidence/pon-w1-lifetime-current-20261111/README.md",
+    "bytes": 1561
+  },
+  {
+    "path": "evidence/pon-w1-lifetime-current-20261111/project-input.json",
+    "bytes": 6107
+  },
+  {
+    "path": "evidence/pon-w1-lifetime-current-20261111/project-report.json",
+    "bytes": 31311
+  },
+  {
+    "path": "evidence/pon-w1-qrom-semantics-20261107/report.json",
+    "bytes": 76729
+  },
+  {
+    "path": "evidence/pon-w1-qrom-semantics-current-20261109/README.md",
+    "bytes": 4886
+  },
+  {
+    "path": "evidence/pon-w1-qrom-semantics-current-20261109/report.json",
+    "bytes": 76729
+  },
+  {
+    "path": "evidence/pon-w1-statement-v2-20261105/expected-artifacts.bin",
+    "bytes": 64
+  },
+  {
+    "path": "evidence/pon-w1-statement-v2-20261105/input-declaration.json",
+    "bytes": 661
+  },
+  {
+    "path": "evidence/pq-authority-preflight-20261108-9d315/authority-final-validation-runner.py",
+    "bytes": 25774
+  },
+  {
+    "path": "evidence/pq-authority-preflight-20261108-9d315/authority-integrated-validation-runner.py",
+    "bytes": 25660
+  },
+  {
+    "path": "evidence/pq-authority-preflight-20261108-9d315/authority-validation-runner.py",
+    "bytes": 24795
+  },
+  {
+    "path": "evidence/pq-chain-convergence-20261111-d4d2/README.md",
+    "bytes": 5004
+  },
+  {
+    "path": "evidence/pq-chain-convergence-20261111-d4d2/lifetime-input.json",
+    "bytes": 6107
+  },
+  {
+    "path": "evidence/pq-chain-convergence-20261111-d4d2/lifetime-report.json",
+    "bytes": 31311
+  },
+  {
+    "path": "evidence/pq-live-retry-20261111-fa62381e/FINDINGS.md",
+    "bytes": 10959
+  },
+  {
+    "path": "evidence/pq-live-retry-20261111-fa62381e/README.md",
+    "bytes": 58732
+  },
+  {
+    "path": "evidence/pq-live-retry-20261111-fa62381e/c4-failed-command-summary.json",
+    "bytes": 1053
+  },
+  {
+    "path": "evidence/pq-live-retry-20261111-fa62381e/c4-final-output-evidence.archive.json",
+    "bytes": 1091
+  },
+  {
+    "path": "evidence/pq-live-retry-20261111-fa62381e/c4-final-output-evidence.manifest.json",
+    "bytes": 106949
+  },
+  {
+    "path": "evidence/pq-live-retry-20261111-fa62381e/c4-final-output-evidence.tar.xz",
+    "bytes": 243888
+  },
+  {
+    "path": "evidence/pq-live-retry-20261111-fa62381e/c4-final-output-evidence.verification.json",
+    "bytes": 36887
+  },
+  {
+    "path": "evidence/pq-live-retry-20261111-fa62381e/c4-final-summary.json",
+    "bytes": 41868
+  },
+  {
+    "path": "evidence/pq-live-retry-20261111-fa62381e/c4-native-batch-summary.json",
+    "bytes": 8427
+  },
+  {
+    "path": "evidence/pq-live-retry-20261111-fa62381e/c4-source-reconciliation.json",
+    "bytes": 3113
+  },
+  {
+    "path": "evidence/pq-live-retry-20261111-fa62381e/evidence-artifact-manifest.json",
+    "bytes": 13525
+  },
+  {
+    "path": "evidence/pq-live-retry-20261111-fa62381e/lifetime-input.json",
+    "bytes": 6107
+  },
+  {
+    "path": "evidence/pq-live-retry-20261111-fa62381e/lifetime-report.json",
+    "bytes": 31311
+  },
+  {
+    "path": "evidence/pq-live-retry-20261111-fa62381e/native-campaign-failure-evidence.filelist.tsv",
+    "bytes": 15142
+  },
+  {
+    "path": "evidence/pq-live-retry-20261111-fa62381e/native-campaign-failure-evidence.manifest.json",
+    "bytes": 48584
+  },
+  {
+    "path": "evidence/pq-live-retry-20261111-fa62381e/native-campaign-failure-evidence.parts.json",
+    "bytes": 2162
+  },
+  {
+    "path": "evidence/pq-live-retry-20261111-fa62381e/native-campaign-failure-evidence.tar.xz.part-000",
+    "bytes": 4194304
+  },
+  {
+    "path": "evidence/pq-live-retry-20261111-fa62381e/native-campaign-failure-evidence.tar.xz.part-001",
+    "bytes": 1712532
+  },
+  {
+    "path": "evidence/pq-live-retry-20261111-fa62381e/native-campaign-failure-evidence.tar.xz.sha256",
+    "bytes": 106
+  },
+  {
+    "path": "evidence/pq-live-retry-20261111-fa62381e/native-campaign-failure-evidence.verification.json",
+    "bytes": 18181
+  },
+  {
+    "path": "evidence/pq-live-retry-20261111-fa62381e/native-controls-manifest.json",
+    "bytes": 90962
+  },
+  {
+    "path": "evidence/pq-live-retry-20261111-fa62381e/native-controls-s3-and-negative.tar.xz",
+    "bytes": 152176
+  },
+  {
+    "path": "evidence/pq-live-retry-20261111-fa62381e/native-controls-verification.json",
+    "bytes": 5499
+  },
+  {
+    "path": "evidence/pq-live-retry-20261111-fa62381e/negative-source-lineage.json",
+    "bytes": 6765
+  },
+  {
+    "path": "evidence/pq-live-retry-20261111-fa62381e/negative7-batch-summary.json",
+    "bytes": 942
+  },
+  {
+    "path": "evidence/pq-live-retry-20261111-fa62381e/negative7-summary.json",
+    "bytes": 4782
+  },
+  {
+    "path": "evidence/pq-live-retry-20261111-fa62381e/positive64-batch-summary.json",
+    "bytes": 8425
+  },
+  {
+    "path": "evidence/pq-live-retry-20261111-fa62381e/positive64-summary.json",
+    "bytes": 11904
+  },
+  {
+    "path": "evidence/pq-live-retry-20261111-fa62381e/provider-evidence.tar.xz",
+    "bytes": 54920
+  },
+  {
+    "path": "evidence/pq-live-retry-20261111-fa62381e/public-ci-observations.tar.gz",
+    "bytes": 399522
+  },
+  {
+    "path": "evidence/pq-live-retry-20261111-fa62381e/root-dependency-register-current-report.json",
+    "bytes": 7896
+  },
+  {
+    "path": "evidence/pq-live-retry-20261111-fa62381e/root-register-c4-review.tar.gz",
+    "bytes": 472783
+  },
+  {
+    "path": "evidence/pq-live-retry-20261111-fa62381e/root-register-maintenance-observations.tar.gz",
+    "bytes": 11425
+  },
+  {
+    "path": "evidence/pq-live-retry-20261111-fa62381e/s3-arm-from-zero-evidence.tar.xz",
+    "bytes": 458132
+  },
+  {
+    "path": "evidence/pq-live-retry-20261111-fa62381e/s3-ci-status-snapshot.tar.gz",
+    "bytes": 555412
+  },
+  {
+    "path": "evidence/pq-live-retry-20261111-fa62381e/s3-hosted-controls.tar.gz",
+    "bytes": 247966
+  },
+  {
+    "path": "evidence/pq-live-retry-20261111-fa62381e/s3-strict-clippy.json",
+    "bytes": 2451
+  },
+  {
+    "path": "evidence/pq-live-retry-20261111-fa62381e/source-records-controller.tar.gz",
+    "bytes": 618149
+  },
+  {
+    "path": "evidence/pq-live-retry-20261111-fa62381e/source-records-desktop-s3.tar.gz",
+    "bytes": 1568049
+  },
+  {
+    "path": "evidence/pq-live-retry-20261111-fa62381e/strict-clippy-s3-archive.json",
+    "bytes": 1857
+  },
+  {
+    "path": "evidence/pq-live-retry-20261111-fa62381e/strict-clippy-s3.tar.gz",
+    "bytes": 3503
+  },
+  {
+    "path": "evidence/pq-live-retry-20261111-fa62381e/tracked-source-restoration.tar.gz",
+    "bytes": 33205
+  },
+  {
+    "path": "evidence/pq-live-retry-20261111-fa62381e/transfer-observations.json",
+    "bytes": 23852
+  }
+]

@@ -1,0 +1,33 @@
+run 41297714882（e885，仅格式/读取器修正后）服务失败独立复核
+
+两个实际服务 job 仍失败；四个压力场景 ACK 7/7，但全部只取得第一个 History 包，独立客户端未持久存入非创世块，活跃高度仍为 0，确认数为 0，错误全部为 PUBLIC_REQUEST_DEADLINE。
+首轮 merge 曾存入高度 1、2；这个现象没有在第二轮重现，不能把旧的部分推进移植到新收据。
+
+源 head: e885a4a284d83019077c9b8f3420d39988a11eef
+源 prospective merge: 48b7a10a9950278815cfa002a3369a5763329944
+同一 tree: 92e722c38ad4daa206be3d4dfd57d6955c580551
+同一保留 binary SHA256: 97e47067484056c3b71296e5b437f004f06c870275c9772062ca78a6d67c4a21
+
+全部 106 文件/47,471,606 字节已读入，manifest 的 52 个文件 SHA256 全一致；用 e885 固定源码原 reader 重跑，四个拒绝标签原样复现；独立结构/成本/请求/SQLite 校验 9,725 项通过。没有原生重跑、证明工作关系或认证宿主时钟。
+
+lane | fixture | baseline确认秒 | 第7个ACK秒 | 攻击调用 | Transcript回执 | 网络/截止错误 | 独立stored/active | 确认
+head | original | 3.477388 | 2.349115 | 211 | 195 | 16 | 0/0 | 0
+head | fresh | 3.397061 | 2.667510 | 190 | 174 | 16 | 0/0 | 0
+prospective-merge | original | 3.408854 | 2.464836 | 209 | 193 | 16 | 0/0 | 0
+prospective-merge | fresh | 3.498987 | 2.757726 | 186 | 170 | 16 | 0/0 | 0
+
+四个 baseline 在同样 4 秒窗口内独立激活高度 7、depth=6，且 finalized=false / execution_authority=false。四个压力接收方均激活高度 7，仅保存原来七个合法区块；没有攻击写入。
+
+lane | fixture | receiver mutation CPU秒 | W1嵌套CPU秒 | attacker setup+worker CPU秒 | independent replay/confirmation CPU秒 | 结束credit秒
+head | original | 0.534950 | 0.307513 | 0.258534 | 0.069572 | 1.999089
+head | fresh | 0.498952 | 0.280686 | 0.343587 | 0.039738 | 1.999958
+prospective-merge | original | 0.550446 | 0.319907 | 0.244777 | 0.075013 | 1.989500
+prospective-merge | fresh | 0.489816 | 0.274523 | 0.329037 | 0.036796 | 1.999642
+
+预算仍是固定 Host cpu.max=25000 100000、burst0、内存2GiB、swap0、pids256；所有接收者和客户端共同分享0.25CPU。mutation bucket初始2秒、refill0.25秒/秒、reserve0.1秒、2workers。所有场景CPU拒绝、clock failure、结束in-flight都为0，initial/final credit没有显示耗尽；没有中途credit采样，不能断言从未短暂下降。
+
+原始 Rust diagnostic exit0只证明安全/记账assert通过，reader拒绝CONFIRMATION_TARGET。fresh native实际执行并exit101于业务assert；wrapper标签FRESH_NATIVE_PROCESS_REQUIRED来自进程返回码前置检查，实际report拒绝FRESH_BUSINESS_TARGET。与前一轮fmt失败无关。
+
+两轮不具备经过随机化的同机性能对照。此轮默认核仍是Transposed；后续8327 run41298626837才包含FullLimb默认切换，不能把此轮差异归因于FullLimb。
+
+具体路径与限制延续首轮：两fixture接收端和独立History都经过默认verify_with_progress，不使用ArithmeticFactCache或RejectionCache。每次完整真实W1的1099 callback各有当前合同要求的Host检查，另30个稀疏分支重复检查；静态调用计数不等于实际分阶段CPU测量，不能声称已证明单一bug或擅自减少guard。原定四秒业务目标仍未验收。

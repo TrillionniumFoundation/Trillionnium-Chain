@@ -1,0 +1,153 @@
+   Compiling rustix v1.1.4
+   Compiling linux-raw-sys v0.12.1
+   Compiling trnm-crypto-primitives v0.1.0 (/workspace/scratch/5faaca703596/chain-root/trillionnium/crates/trnm-crypto-primitives)
+
+thread 'opt 35gcjvukljqqy56oz9jqtssat' (1960) panicked at /rustc-dev/59807616e1fa2540724bfbac14d7976d7e4a3860/compiler/rustc_codegen_ssa/src/back/write.rs:874:21:
+Error writing pre-lto-bitcode file `/workspace/scratch/5faaca703596/cargo-target/debug/incremental/trnm_crypto_primitives-045u8gwymnitr/s-hnzkpgbqza-0kf4btl-working/35gcjvukljqqy56oz9jqtssat.pre-lto.bc`: No space left on device (os error 28)
+stack backtrace:
+   0:     0x7fb39639314b - <<std[e28293b1aa0f68bd]::sys::backtrace::BacktraceLock>::print::DisplayBacktrace as core[c1f1a4ba060b9bfa]::fmt::Display>::fmt
+   1:     0x7fb396a1f408 - core[c1f1a4ba060b9bfa]::fmt::write
+   2:     0x7fb397f683b6 - <std[e28293b1aa0f68bd]::sys::stdio::unix::Stderr as std[e28293b1aa0f68bd]::io::Write>::write_fmt
+   3:     0x7fb396369238 - std[e28293b1aa0f68bd]::panicking::default_hook::{closure#0}
+   4:     0x7fb3963865b3 - std[e28293b1aa0f68bd]::panicking::default_hook
+   5:     0x7fb39535cc30 - std[e28293b1aa0f68bd]::panicking::update_hook::<alloc[fdfd2bd8633a6659]::boxed::Box<rustc_driver_impl[e4ca9dd5dd6cf2a8]::install_ice_hook::{closure#1}>>::{closure#0}
+   6:     0x7fb396386892 - std[e28293b1aa0f68bd]::panicking::panic_with_hook
+   7:     0x7fb3963692f8 - std[e28293b1aa0f68bd]::panicking::panic_handler::{closure#0}
+   8:     0x7fb396360029 - std[e28293b1aa0f68bd]::sys::backtrace::__rust_end_short_backtrace::<std[e28293b1aa0f68bd]::panicking::panic_handler::{closure#0}, !>
+   9:     0x7fb39636ad5d - __rustc[b7974e8690430dd9]::rust_begin_unwind
+  10:     0x7fb3930de82c - core[c1f1a4ba060b9bfa]::panicking::panic_fmt
+  11:     0x7fb397c2aa6b - std[e28293b1aa0f68bd]::sys::backtrace::__rust_begin_short_backtrace::<<rustc_codegen_llvm[3c18e353d9a32df8]::LlvmCodegenBackend as rustc_codegen_ssa[fd5ecd340cdb7a09]::traits::backend::ExtraBackendMethods>::spawn_named_thread<rustc_codegen_ssa[fd5ecd340cdb7a09]::back::write::spawn_work<rustc_codegen_llvm[3c18e353d9a32df8]::LlvmCodegenBackend>::{closure#0}, ()>::{closure#0}, ()>
+  12:     0x7fb397c29ecc - <std[e28293b1aa0f68bd]::thread::lifecycle::spawn_unchecked<<rustc_codegen_llvm[3c18e353d9a32df8]::LlvmCodegenBackend as rustc_codegen_ssa[fd5ecd340cdb7a09]::traits::backend::ExtraBackendMethods>::spawn_named_thread<rustc_codegen_ssa[fd5ecd340cdb7a09]::back::write::spawn_work<rustc_codegen_llvm[3c18e353d9a32df8]::LlvmCodegenBackend>::{closure#0}, ()>::{closure#0}, ()>::{closure#1} as core[c1f1a4ba060b9bfa]::ops::function::FnOnce<()>>::call_once::{shim:vtable#0}
+  13:     0x7fb397c27b2c - <std[e28293b1aa0f68bd]::sys::thread::unix::Thread>::new::thread_start
+  14:     0x7fb39169e8bb - <unknown>
+  15:     0x7fb39171c538 - <unknown>
+  16:                0x0 - <unknown>
+
+error: the compiler unexpectedly panicked. This is a bug
+
+note: we would appreciate a bug report: https://github.com/rust-lang/rust/issues/new?labels=C-bug%2C+I-ICE%2C+T-compiler&template=ice.md
+
+note: rustc 1.95.0 (59807616e 2026-04-14) running on x86_64-unknown-linux-gnu
+
+note: compiler flags: -C opt-level=3 -C embed-bitcode=no -C debuginfo=2 -C debug-assertions=on -C incremental=[REDACTED]
+
+note: some of the compiler flags provided by cargo are hidden
+
+query stack during panic:
+end of query stack
+
+thread 'coordinator' (1868) panicked at /rustc-dev/59807616e1fa2540724bfbac14d7976d7e4a3860/compiler/rustc_codegen_ssa/src/back/write.rs:1749:29:
+/rustc-dev/59807616e1fa2540724bfbac14d7976d7e4a3860/compiler/rustc_codegen_ssa/src/back/write.rs:1749:29: worker thread panicked
+stack backtrace:
+   0:     0x7fb39639314b - <<std[e28293b1aa0f68bd]::sys::backtrace::BacktraceLock>::print::DisplayBacktrace as core[c1f1a4ba060b9bfa]::fmt::Display>::fmt
+   1:     0x7fb396a1f408 - core[c1f1a4ba060b9bfa]::fmt::write
+   2:     0x7fb397f683b6 - <std[e28293b1aa0f68bd]::sys::stdio::unix::Stderr as std[e28293b1aa0f68bd]::io::Write>::write_fmt
+   3:     0x7fb396369238 - std[e28293b1aa0f68bd]::panicking::default_hook::{closure#0}
+   4:     0x7fb3963865b3 - std[e28293b1aa0f68bd]::panicking::default_hook
+   5:     0x7fb39535cc30 - std[e28293b1aa0f68bd]::panicking::update_hook::<alloc[fdfd2bd8633a6659]::boxed::Box<rustc_driver_impl[e4ca9dd5dd6cf2a8]::install_ice_hook::{closure#1}>>::{closure#0}
+   6:     0x7fb396386892 - std[e28293b1aa0f68bd]::panicking::panic_with_hook
+   7:     0x7fb395976a82 - std[e28293b1aa0f68bd]::panicking::begin_panic::<alloc[fdfd2bd8633a6659]::string::String>::{closure#0}
+   8:     0x7fb395967756 - std[e28293b1aa0f68bd]::sys::backtrace::__rust_end_short_backtrace::<std[e28293b1aa0f68bd]::panicking::begin_panic<alloc[fdfd2bd8633a6659]::string::String>::{closure#0}, !>
+   9:     0x7fb395962643 - std[e28293b1aa0f68bd]::panicking::begin_panic::<alloc[fdfd2bd8633a6659]::string::String>
+  10:     0x7fb395976e76 - rustc_middle[9956b31dc9b62104]::util::bug::opt_span_bug_fmt::<rustc_span[e3c9a1967c4921fd]::span_encoding::Span>::{closure#0}
+  11:     0x7fb395976ff2 - rustc_middle[9956b31dc9b62104]::ty::context::tls::with_opt::<rustc_middle[9956b31dc9b62104]::util::bug::opt_span_bug_fmt<rustc_span[e3c9a1967c4921fd]::span_encoding::Span>::{closure#0}, !>::{closure#0}
+  12:     0x7fb395967b7b - rustc_middle[9956b31dc9b62104]::ty::context::tls::with_context_opt::<rustc_middle[9956b31dc9b62104]::ty::context::tls::with_opt<rustc_middle[9956b31dc9b62104]::util::bug::opt_span_bug_fmt<rustc_span[e3c9a1967c4921fd]::span_encoding::Span>::{closure#0}, !>::{closure#0}, !>
+  13:     0x7fb392feb2a4 - rustc_middle[9956b31dc9b62104]::util::bug::bug_fmt
+  14:     0x7fb397c2f348 - rustc_codegen_ssa[fd5ecd340cdb7a09]::back::write::start_executing_work::<rustc_codegen_llvm[3c18e353d9a32df8]::LlvmCodegenBackend>::{closure#4}
+  15:     0x7fb397c25dff - std[e28293b1aa0f68bd]::sys::backtrace::__rust_begin_short_backtrace::<<rustc_codegen_llvm[3c18e353d9a32df8]::LlvmCodegenBackend as rustc_codegen_ssa[fd5ecd340cdb7a09]::traits::backend::ExtraBackendMethods>::spawn_named_thread<rustc_codegen_ssa[fd5ecd340cdb7a09]::back::write::start_executing_work<rustc_codegen_llvm[3c18e353d9a32df8]::LlvmCodegenBackend>::{closure#4}, core[c1f1a4ba060b9bfa]::result::Result<rustc_codegen_ssa[fd5ecd340cdb7a09]::back::write::MaybeLtoModules<rustc_codegen_llvm[3c18e353d9a32df8]::LlvmCodegenBackend>, ()>>::{closure#0}, core[c1f1a4ba060b9bfa]::result::Result<rustc_codegen_ssa[fd5ecd340cdb7a09]::back::write::MaybeLtoModules<rustc_codegen_llvm[3c18e353d9a32df8]::LlvmCodegenBackend>, ()>>
+  16:     0x7fb397c25c7e - <std[e28293b1aa0f68bd]::thread::lifecycle::spawn_unchecked<<rustc_codegen_llvm[3c18e353d9a32df8]::LlvmCodegenBackend as rustc_codegen_ssa[fd5ecd340cdb7a09]::traits::backend::ExtraBackendMethods>::spawn_named_thread<rustc_codegen_ssa[fd5ecd340cdb7a09]::back::write::start_executing_work<rustc_codegen_llvm[3c18e353d9a32df8]::LlvmCodegenBackend>::{closure#4}, core[c1f1a4ba060b9bfa]::result::Result<rustc_codegen_ssa[fd5ecd340cdb7a09]::back::write::MaybeLtoModules<rustc_codegen_llvm[3c18e353d9a32df8]::LlvmCodegenBackend>, ()>>::{closure#0}, core[c1f1a4ba060b9bfa]::result::Result<rustc_codegen_ssa[fd5ecd340cdb7a09]::back::write::MaybeLtoModules<rustc_codegen_llvm[3c18e353d9a32df8]::LlvmCodegenBackend>, ()>>::{closure#1} as core[c1f1a4ba060b9bfa]::ops::function::FnOnce<()>>::call_once::{shim:vtable#0}
+  17:     0x7fb397c27b2c - <std[e28293b1aa0f68bd]::sys::thread::unix::Thread>::new::thread_start
+  18:     0x7fb39169e8bb - <unknown>
+  19:     0x7fb39171c538 - <unknown>
+  20:                0x0 - <unknown>
+
+error: the compiler unexpectedly panicked. This is a bug
+
+note: we would appreciate a bug report: https://github.com/rust-lang/rust/issues/new?labels=C-bug%2C+I-ICE%2C+T-compiler&template=ice.md
+
+note: rustc 1.95.0 (59807616e 2026-04-14) running on x86_64-unknown-linux-gnu
+
+note: compiler flags: -C opt-level=3 -C embed-bitcode=no -C debuginfo=2 -C debug-assertions=on -C incremental=[REDACTED]
+
+note: some of the compiler flags provided by cargo are hidden
+
+query stack during panic:
+end of query stack
+
+thread 'opt elvk5u6e7g71rr9yyrmh7r2jm' (1961) panicked at /rustc-dev/59807616e1fa2540724bfbac14d7976d7e4a3860/compiler/rustc_codegen_ssa/src/back/write.rs:874:21:
+Error writing pre-lto-bitcode file `/workspace/scratch/5faaca703596/cargo-target/debug/incremental/trnm_crypto_primitives-045u8gwymnitr/s-hnzkpgbqza-0kf4btl-working/elvk5u6e7g71rr9yyrmh7r2jm.pre-lto.bc`: No space left on device (os error 28)
+stack backtrace:
+   0:     0x7fb39639314b - <<std[e28293b1aa0f68bd]::sys::backtrace::BacktraceLock>::print::DisplayBacktrace as core[c1f1a4ba060b9bfa]::fmt::Display>::fmt
+   1:     0x7fb396a1f408 - core[c1f1a4ba060b9bfa]::fmt::write
+   2:     0x7fb397f683b6 - <std[e28293b1aa0f68bd]::sys::stdio::unix::Stderr as std[e28293b1aa0f68bd]::io::Write>::write_fmt
+   3:     0x7fb396369238 - std[e28293b1aa0f68bd]::panicking::default_hook::{closure#0}
+   4:     0x7fb3963865b3 - std[e28293b1aa0f68bd]::panicking::default_hook
+   5:     0x7fb39535cc30 - std[e28293b1aa0f68bd]::panicking::update_hook::<alloc[fdfd2bd8633a6659]::boxed::Box<rustc_driver_impl[e4ca9dd5dd6cf2a8]::install_ice_hook::{closure#1}>>::{closure#0}
+   6:     0x7fb396386892 - std[e28293b1aa0f68bd]::panicking::panic_with_hook
+   7:     0x7fb3963692f8 - std[e28293b1aa0f68bd]::panicking::panic_handler::{closure#0}
+   8:     0x7fb396360029 - std[e28293b1aa0f68bd]::sys::backtrace::__rust_end_short_backtrace::<std[e28293b1aa0f68bd]::panicking::panic_handler::{closure#0}, !>
+   9:     0x7fb39636ad5d - __rustc[b7974e8690430dd9]::rust_begin_unwind
+  10:     0x7fb3930de82c - core[c1f1a4ba060b9bfa]::panicking::panic_fmt
+  11:     0x7fb397c2aa6b - std[e28293b1aa0f68bd]::sys::backtrace::__rust_begin_short_backtrace::<<rustc_codegen_llvm[3c18e353d9a32df8]::LlvmCodegenBackend as rustc_codegen_ssa[fd5ecd340cdb7a09]::traits::backend::ExtraBackendMethods>::spawn_named_thread<rustc_codegen_ssa[fd5ecd340cdb7a09]::back::write::spawn_work<rustc_codegen_llvm[3c18e353d9a32df8]::LlvmCodegenBackend>::{closure#0}, ()>::{closure#0}, ()>
+  12:     0x7fb397c29ecc - <std[e28293b1aa0f68bd]::thread::lifecycle::spawn_unchecked<<rustc_codegen_llvm[3c18e353d9a32df8]::LlvmCodegenBackend as rustc_codegen_ssa[fd5ecd340cdb7a09]::traits::backend::ExtraBackendMethods>::spawn_named_thread<rustc_codegen_ssa[fd5ecd340cdb7a09]::back::write::spawn_work<rustc_codegen_llvm[3c18e353d9a32df8]::LlvmCodegenBackend>::{closure#0}, ()>::{closure#0}, ()>::{closure#1} as core[c1f1a4ba060b9bfa]::ops::function::FnOnce<()>>::call_once::{shim:vtable#0}
+  13:     0x7fb397c27b2c - <std[e28293b1aa0f68bd]::sys::thread::unix::Thread>::new::thread_start
+  14:     0x7fb39169e8bb - <unknown>
+  15:     0x7fb39171c538 - <unknown>
+  16:                0x0 - <unknown>
+
+error: the compiler unexpectedly panicked. This is a bug
+
+note: we would appreciate a bug report: https://github.com/rust-lang/rust/issues/new?labels=C-bug%2C+I-ICE%2C+T-compiler&template=ice.md
+
+note: rustc 1.95.0 (59807616e 2026-04-14) running on x86_64-unknown-linux-gnu
+
+note: compiler flags: -C opt-level=3 -C embed-bitcode=no -C debuginfo=2 -C debug-assertions=on -C incremental=[REDACTED]
+
+note: some of the compiler flags provided by cargo are hidden
+
+query stack during panic:
+end of query stack
+
+thread 'rustc' (1865) panicked at /rustc-dev/59807616e1fa2540724bfbac14d7976d7e4a3860/compiler/rustc_codegen_ssa/src/back/write.rs:2163:17:
+/rustc-dev/59807616e1fa2540724bfbac14d7976d7e4a3860/compiler/rustc_codegen_ssa/src/back/write.rs:2163:17: panic during codegen/LLVM phase
+stack backtrace:
+   0:     0x7fb39639314b - <<std[e28293b1aa0f68bd]::sys::backtrace::BacktraceLock>::print::DisplayBacktrace as core[c1f1a4ba060b9bfa]::fmt::Display>::fmt
+   1:     0x7fb396a1f408 - core[c1f1a4ba060b9bfa]::fmt::write
+   2:     0x7fb397f683b6 - <std[e28293b1aa0f68bd]::sys::stdio::unix::Stderr as std[e28293b1aa0f68bd]::io::Write>::write_fmt
+   3:     0x7fb396369238 - std[e28293b1aa0f68bd]::panicking::default_hook::{closure#0}
+   4:     0x7fb3963865b3 - std[e28293b1aa0f68bd]::panicking::default_hook
+   5:     0x7fb39535cc30 - std[e28293b1aa0f68bd]::panicking::update_hook::<alloc[fdfd2bd8633a6659]::boxed::Box<rustc_driver_impl[e4ca9dd5dd6cf2a8]::install_ice_hook::{closure#1}>>::{closure#0}
+   6:     0x7fb396386892 - std[e28293b1aa0f68bd]::panicking::panic_with_hook
+   7:     0x7fb395976a82 - std[e28293b1aa0f68bd]::panicking::begin_panic::<alloc[fdfd2bd8633a6659]::string::String>::{closure#0}
+   8:     0x7fb395967756 - std[e28293b1aa0f68bd]::sys::backtrace::__rust_end_short_backtrace::<std[e28293b1aa0f68bd]::panicking::begin_panic<alloc[fdfd2bd8633a6659]::string::String>::{closure#0}, !>
+   9:     0x7fb395962643 - std[e28293b1aa0f68bd]::panicking::begin_panic::<alloc[fdfd2bd8633a6659]::string::String>
+  10:     0x7fb395976e76 - rustc_middle[9956b31dc9b62104]::util::bug::opt_span_bug_fmt::<rustc_span[e3c9a1967c4921fd]::span_encoding::Span>::{closure#0}
+  11:     0x7fb395976ff2 - rustc_middle[9956b31dc9b62104]::ty::context::tls::with_opt::<rustc_middle[9956b31dc9b62104]::util::bug::opt_span_bug_fmt<rustc_span[e3c9a1967c4921fd]::span_encoding::Span>::{closure#0}, !>::{closure#0}
+  12:     0x7fb395967b7b - rustc_middle[9956b31dc9b62104]::ty::context::tls::with_context_opt::<rustc_middle[9956b31dc9b62104]::ty::context::tls::with_opt<rustc_middle[9956b31dc9b62104]::util::bug::opt_span_bug_fmt<rustc_span[e3c9a1967c4921fd]::span_encoding::Span>::{closure#0}, !>::{closure#0}, !>
+  13:     0x7fb392feb2a4 - rustc_middle[9956b31dc9b62104]::util::bug::bug_fmt
+  14:     0x7fb397d768a7 - <rustc_codegen_llvm[3c18e353d9a32df8]::LlvmCodegenBackend as rustc_codegen_ssa[fd5ecd340cdb7a09]::traits::backend::CodegenBackend>::join_codegen
+  15:     0x7fb397d77c99 - <rustc_interface[c8170c4b7b680ee8]::queries::Linker>::link
+  16:     0x7fb397c5651a - rustc_interface[c8170c4b7b680ee8]::interface::run_compiler::<(), rustc_driver_impl[e4ca9dd5dd6cf2a8]::run_compiler::{closure#0}>::{closure#1}
+  17:     0x7fb397c2663e - std[e28293b1aa0f68bd]::sys::backtrace::__rust_begin_short_backtrace::<rustc_interface[c8170c4b7b680ee8]::util::run_in_thread_with_globals<rustc_interface[c8170c4b7b680ee8]::util::run_in_thread_pool_with_globals<rustc_interface[c8170c4b7b680ee8]::interface::run_compiler<(), rustc_driver_impl[e4ca9dd5dd6cf2a8]::run_compiler::{closure#0}>::{closure#1}, ()>::{closure#0}, ()>::{closure#0}::{closure#0}, ()>
+  18:     0x7fb397c26ca0 - <std[e28293b1aa0f68bd]::thread::lifecycle::spawn_unchecked<rustc_interface[c8170c4b7b680ee8]::util::run_in_thread_with_globals<rustc_interface[c8170c4b7b680ee8]::util::run_in_thread_pool_with_globals<rustc_interface[c8170c4b7b680ee8]::interface::run_compiler<(), rustc_driver_impl[e4ca9dd5dd6cf2a8]::run_compiler::{closure#0}>::{closure#1}, ()>::{closure#0}, ()>::{closure#0}::{closure#0}, ()>::{closure#1} as core[c1f1a4ba060b9bfa]::ops::function::FnOnce<()>>::call_once::{shim:vtable#0}
+  19:     0x7fb397c27b2c - <std[e28293b1aa0f68bd]::sys::thread::unix::Thread>::new::thread_start
+  20:     0x7fb39169e8bb - <unknown>
+  21:     0x7fb39171c538 - <unknown>
+  22:                0x0 - <unknown>
+
+error: the compiler unexpectedly panicked. This is a bug
+
+note: we would appreciate a bug report: https://github.com/rust-lang/rust/issues/new?labels=C-bug%2C+I-ICE%2C+T-compiler&template=ice.md
+
+note: rustc 1.95.0 (59807616e 2026-04-14) running on x86_64-unknown-linux-gnu
+
+note: compiler flags: -C opt-level=3 -C embed-bitcode=no -C debuginfo=2 -C debug-assertions=on -C incremental=[REDACTED]
+
+note: some of the compiler flags provided by cargo are hidden
+
+query stack during panic:
+end of query stack
+error: could not compile `trnm-crypto-primitives` (lib test)
+
+Caused by:
+  process didn't exit successfully: `/workspace/scratch/5faaca703596/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc --crate-name trnm_crypto_primitives --edition=2021 crates/trnm-crypto-primitives/src/lib.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --emit=dep-info,link -C opt-level=3 -C embed-bitcode=no -C debuginfo=2 -C debug-assertions=on --test --cfg 'feature="default"' --check-cfg 'cfg(docsrs,test)' --check-cfg 'cfg(feature, values("default", "pq-native-openssl"))' -C metadata=9403264ba640d406 -C extra-filename=-a1293a4edf2a5613 --out-dir /workspace/scratch/5faaca703596/cargo-target/debug/deps -C incremental=/workspace/scratch/5faaca703596/cargo-target/debug/incremental -L dependency=/workspace/scratch/5faaca703596/cargo-target/debug/deps --extern anyhow=/workspace/scratch/5faaca703596/cargo-target/debug/deps/libanyhow-e7c1d2086df2d66b.rlib --extern ed25519_dalek=/workspace/scratch/5faaca703596/cargo-target/debug/deps/libed25519_dalek-99b5549d65365e0d.rlib --extern hex=/workspace/scratch/5faaca703596/cargo-target/debug/deps/libhex-1558f6adc06e3fa8.rlib --extern ml_dsa=/workspace/scratch/5faaca703596/cargo-target/debug/deps/libml_dsa-9fdd3d136ef5e556.rlib --extern rustix=/workspace/scratch/5faaca703596/cargo-target/debug/deps/librustix-730e4949d259658f.rlib --extern serde_json=/workspace/scratch/5faaca703596/cargo-target/debug/deps/libserde_json-f0d4891802ba697c.rlib --extern sha2=/workspace/scratch/5faaca703596/cargo-target/debug/deps/libsha2-fafdf068c84600ef.rlib --extern trnm_protocol=/workspace/scratch/5faaca703596/cargo-target/debug/deps/libtrnm_protocol-382ceb8fb5388ad6.rlib --extern zeroize=/workspace/scratch/5faaca703596/cargo-target/debug/deps/libzeroize-9917054cf4892abb.rlib -L native=/workspace/scratch/5faaca703596/cargo-target/debug/build/sha2-asm-5496e21e45cba969/out -L native=/workspace/scratch/5faaca703596/cargo-target/debug/build/sha2-asm-5496e21e45cba969/out` (exit status: 101)

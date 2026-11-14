@@ -1,0 +1,376 @@
+{
+  "schema": "desktop-environment-read-only-audit-v1",
+  "observed_tool_results": {
+    "default_deny_and_rustsec": {
+      "advisory_dbs": [
+        {
+          "cargo_home": "/home/qian-qi/.cargo",
+          "children": [
+            {
+              "git_repository": true,
+              "head": {
+                "argv": [
+                  "/usr/bin/git",
+                  "-C",
+                  "/home/qian-qi/.cargo/advisory-dbs/advisory-db-3157b0e258782691",
+                  "rev-parse",
+                  "HEAD"
+                ],
+                "returncode": 0,
+                "stderr": "",
+                "stdout": "d9cb059f3217db87aeccd190b81eaffe8cc29cb9\n"
+              },
+              "origin": {
+                "argv": [
+                  "/usr/bin/git",
+                  "-C",
+                  "/home/qian-qi/.cargo/advisory-dbs/advisory-db-3157b0e258782691",
+                  "remote",
+                  "get-url",
+                  "origin"
+                ],
+                "returncode": 0,
+                "stderr": "",
+                "stdout": "https://github.com/RustSec/advisory-db\n"
+              },
+              "path": "/home/qian-qi/.cargo/advisory-dbs/advisory-db-3157b0e258782691",
+              "status": {
+                "argv": [
+                  "/usr/bin/git",
+                  "-C",
+                  "/home/qian-qi/.cargo/advisory-dbs/advisory-db-3157b0e258782691",
+                  "status",
+                  "--porcelain",
+                  "--untracked-files=all"
+                ],
+                "returncode": 0,
+                "stderr": "",
+                "stdout": "?? crates/arrow-data/RUSTSEC-0000-0000.md\n?? crates/astral-tokio-tar/RUSTSEC-0000-0000.md\n?? crates/cargo-nextest/RUSTSEC-0000-0000.md\n?? crates/negentropy/RUSTSEC-0000-0000.md\n?? crates/pest_grammars/RUSTSEC-0000-0000.md\n?? crates/pin-utils/RUSTSEC-0000-0000.md\n"
+              }
+            }
+          ],
+          "exists": true,
+          "path": "/home/qian-qi/.cargo/advisory-dbs"
+        }
+      ],
+      "cargo_deny_candidates": [
+        {
+          "exists": false,
+          "path": "/tmp/trnm-ci-tools/deny-0.20.2/bin/cargo-deny"
+        },
+        {
+          "bytes": 15629200,
+          "elf": true,
+          "exists": true,
+          "path": "/home/qian-qi/.cargo/bin/cargo-deny",
+          "realpath": "/home/qian-qi/.cargo/bin/cargo-deny",
+          "sha256": "bf77f4a42eae9dd5bc384437289934bfcc4a5cec1cac5834f8167429d4b65e38",
+          "version": {
+            "argv": [
+              "/home/qian-qi/.cargo/bin/cargo-deny",
+              "--version"
+            ],
+            "returncode": 0,
+            "stderr": "",
+            "stdout": "cargo-deny 0.19.0\n"
+          }
+        },
+        {
+          "exists": false,
+          "path": "/usr/local/bin/cargo-deny"
+        },
+        {
+          "exists": false,
+          "path": "/usr/bin/cargo-deny"
+        }
+      ],
+      "cargo_home_env": null,
+      "ci_tool_root_env": null,
+      "probe": "readonly-desktop-cargo-deny-rustsec-v1",
+      "repo": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final",
+      "repo_exists": true,
+      "scripts/ci/install_ci_tools.sh": {
+        "bytes": 875,
+        "sha256": "7988b55c01f9fc1fb72506c1110ddd80e53ad6109b3ab2f5626c402ede8dcd88"
+      },
+      "scripts/ci/run_supply_chain.py": {
+        "bytes": 4476,
+        "sha256": "3ba25e784966e4d52efe22d400ddb73657a02550a8d7ac955c2968b652d839f6"
+      },
+      "scripts/ci/tool-versions.env": {
+        "bytes": 185,
+        "sha256": "b752f1fc81cdd1b4a2ca852e30f1597b27c08af13cef9259d066dbae825d1408"
+      },
+      "source_head": {
+        "argv": [
+          "/usr/bin/git",
+          "-C",
+          "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final",
+          "rev-parse",
+          "HEAD"
+        ],
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "cdd984808a088e6c2e13b1e1ae6630a94d500c89\n"
+      }
+    },
+    "toolchain_provider_and_cache": {
+      "bounded_other_cargo_deny_candidates": [
+        {
+          "path": "/home/qian-qi/work/chain-security-tools-20261104/deny-0.20.2/bin/cargo-deny",
+          "sha256": "5c6fbc977c16a36144f91ff4959e14a6e3468be150d6b2ac693bcdbdd591a535",
+          "version": {
+            "argv": [
+              "/home/qian-qi/work/chain-security-tools-20261104/deny-0.20.2/bin/cargo-deny",
+              "--version"
+            ],
+            "rc": 0,
+            "stderr": "",
+            "stdout": "cargo-deny 0.20.2\n"
+          }
+        }
+      ],
+      "cargo_home": "/home/qian-qi/.cargo",
+      "graphs": [
+        {
+          "archives_match": 156,
+          "extras": [],
+          "indices_match": 156,
+          "lock": "trillionnium/Cargo.lock",
+          "lock_sha256": "759c42c62d7b9a72d93c533039b5bf47f3508efabf1f1ee63f5eee59b9b9e55f",
+          "problems": [],
+          "registry_count": 156,
+          "sources_present": 156
+        },
+        {
+          "archives_match": 137,
+          "extras": [
+            {
+              "archives": [
+                {
+                  "bytes": 38307,
+                  "path": "/home/qian-qi/.cargo/registry/cache/index.crates.io-1949cf8c6b5b557f/arbitrary-1.4.2.crate",
+                  "sha256": "c3d036a3c4ab069c7b410a2ce876bd74808d2d0888a82667669f8e783a898bf1"
+                }
+              ],
+              "index": [
+                {
+                  "format_supported": true,
+                  "matched_version": [
+                    {
+                      "checksum": "c3d036a3c4ab069c7b410a2ce876bd74808d2d0888a82667669f8e783a898bf1",
+                      "version": "1.4.2",
+                      "yanked": false
+                    }
+                  ],
+                  "path": "/home/qian-qi/.cargo/registry/index/index.crates.io-1949cf8c6b5b557f/.cache/ar/bi/arbitrary",
+                  "sha256": "e35f16345bf7cba64692ef5b9dc7d522e6402fe4ae0fcf990433f286344425e5"
+                }
+              ],
+              "lock_checksum": "c3d036a3c4ab069c7b410a2ce876bd74808d2d0888a82667669f8e783a898bf1",
+              "name": "arbitrary",
+              "source_paths": [
+                "/home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/arbitrary-1.4.2/Cargo.toml"
+              ],
+              "version": "1.4.2"
+            },
+            {
+              "archives": [
+                {
+                  "bytes": 28890,
+                  "path": "/home/qian-qi/.cargo/registry/cache/index.crates.io-1949cf8c6b5b557f/jobserver-0.1.35.crate",
+                  "sha256": "1c00acbd29eabad4a2392fa0e921c874934dbbf4194312ad20f04a0ed67a3cb3"
+                }
+              ],
+              "index": [
+                {
+                  "format_supported": true,
+                  "matched_version": [
+                    {
+                      "checksum": "1c00acbd29eabad4a2392fa0e921c874934dbbf4194312ad20f04a0ed67a3cb3",
+                      "version": "0.1.35",
+                      "yanked": false
+                    }
+                  ],
+                  "path": "/home/qian-qi/.cargo/registry/index/index.crates.io-1949cf8c6b5b557f/.cache/jo/bs/jobserver",
+                  "sha256": "81803da55d493e67086dc17bd191c8cba475544dd176494ed24ca3c63404a449"
+                }
+              ],
+              "lock_checksum": "1c00acbd29eabad4a2392fa0e921c874934dbbf4194312ad20f04a0ed67a3cb3",
+              "name": "jobserver",
+              "source_paths": [
+                "/home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/jobserver-0.1.35/Cargo.toml"
+              ],
+              "version": "0.1.35"
+            },
+            {
+              "archives": [
+                {
+                  "bytes": 133968,
+                  "path": "/home/qian-qi/.cargo/registry/cache/index.crates.io-1949cf8c6b5b557f/libfuzzer-sys-0.4.10.crate",
+                  "sha256": "5037190e1f70cbeef565bd267599242926f724d3b8a9f510fd7e0b540cfa4404"
+                }
+              ],
+              "index": [
+                {
+                  "format_supported": true,
+                  "matched_version": [
+                    {
+                      "checksum": "5037190e1f70cbeef565bd267599242926f724d3b8a9f510fd7e0b540cfa4404",
+                      "version": "0.4.10",
+                      "yanked": false
+                    }
+                  ],
+                  "path": "/home/qian-qi/.cargo/registry/index/index.crates.io-1949cf8c6b5b557f/.cache/li/bf/libfuzzer-sys",
+                  "sha256": "c0f7ecb816dce1514f4a928e7a4a17e26d2f017639433db7365f649247b5a936"
+                }
+              ],
+              "lock_checksum": "5037190e1f70cbeef565bd267599242926f724d3b8a9f510fd7e0b540cfa4404",
+              "name": "libfuzzer-sys",
+              "source_paths": [
+                "/home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libfuzzer-sys-0.4.10/Cargo.toml"
+              ],
+              "version": "0.4.10"
+            }
+          ],
+          "indices_match": 137,
+          "lock": "tests/fuzz/Cargo.lock",
+          "lock_sha256": "c6c47bf71d51a8f046874418c81097cd03697de09d1149f2ad7839d1713107ae",
+          "problems": [],
+          "registry_count": 137,
+          "sources_present": 137
+        }
+      ],
+      "loader_lib_canonical": true,
+      "openssl_version": {
+        "argv": [
+          "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN/install/bin/openssl",
+          "version"
+        ],
+        "rc": 0,
+        "stderr": "",
+        "stdout": "OpenSSL 3.5.9 29 Sep 2026 (Library: OpenSSL 3.5.9 29 Sep 2026)\n"
+      },
+      "probe": "readonly-desktop-provider-toolchain-fuzz-v1",
+      "provider_files": [
+        {
+          "bytes": 8933408,
+          "expected_sha256": "41d5b79f937beed7f94d9623be504db72c5048fcd952965fc0e13305d2802a33",
+          "matches": true,
+          "path": "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN/install/bin/openssl",
+          "sha256": "41d5b79f937beed7f94d9623be504db72c5048fcd952965fc0e13305d2802a33"
+        },
+        {
+          "bytes": 3449,
+          "expected_sha256": "9647fc99758cf83e3bcf11ae310894fd4911ad62bff22d8213a614df89cfedda",
+          "matches": true,
+          "path": "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN/install/include/openssl/opensslv.h",
+          "sha256": "9647fc99758cf83e3bcf11ae310894fd4911ad62bff22d8213a614df89cfedda"
+        },
+        {
+          "bytes": 4729,
+          "expected_sha256": "406c26f93511299b264062f9f3faf0760e7a0506e91a61717c491f3c92e1a996",
+          "matches": true,
+          "path": "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN/install/include/openssl/configuration.h",
+          "sha256": "406c26f93511299b264062f9f3faf0760e7a0506e91a61717c491f3c92e1a996"
+        },
+        {
+          "bytes": 12381424,
+          "expected_sha256": "005a0f7d9f6a073e6530cc556c90b3c415df7c6bc2475e333d29aa9bfa409bfb",
+          "matches": true,
+          "path": "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN/install/lib/libcrypto.a",
+          "sha256": "005a0f7d9f6a073e6530cc556c90b3c415df7c6bc2475e333d29aa9bfa409bfb"
+        },
+        {
+          "bytes": 2123138,
+          "expected_sha256": "f355167951857505b5b0305fd2e8ea8f224fa29d780211175d32767b07234727",
+          "matches": true,
+          "path": "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN/install/lib/libssl.a",
+          "sha256": "f355167951857505b5b0305fd2e8ea8f224fa29d780211175d32767b07234727"
+        }
+      ],
+      "rustc_sysroot": {
+        "argv": [
+          "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+          "--print",
+          "sysroot"
+        ],
+        "rc": 0,
+        "stderr": "",
+        "stdout": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu\n"
+      },
+      "tools": [
+        {
+          "canonical": true,
+          "elf": true,
+          "exists": true,
+          "path": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+          "sha256": "bff349e72704ff70bc08a234a3847338e797065bbedde5e556808bc87b7bf7c6",
+          "version": {
+            "argv": [
+              "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+              "-Vv"
+            ],
+            "rc": 0,
+            "stderr": "",
+            "stdout": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n"
+          }
+        },
+        {
+          "canonical": true,
+          "elf": true,
+          "exists": true,
+          "path": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+          "sha256": "841072d1d92f9e841d9ba5b0814182a0adf064acf4527cd120967b7bc49dcb66",
+          "version": {
+            "argv": [
+              "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+              "-Vv"
+            ],
+            "rc": 0,
+            "stderr": "",
+            "stdout": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)\nrelease: 1.95.0\ncommit-hash: f2d3ce0bd7f24a49f8f72d9000448f8838c4e850\ncommit-date: 2026-03-21\nhost: x86_64-unknown-linux-gnu\nlibgit2: 1.9.2 (sys:0.20.4 vendored)\nlibcurl: 8.15.0-DEV (sys:0.4.83+curl-8.15.0 vendored ssl:OpenSSL/3.5.4)\nssl: OpenSSL 3.5.4 30 Sep 2025\nos: Ubuntu 24.4.0 (noble) [64-bit]\n"
+          }
+        },
+        {
+          "canonical": true,
+          "elf": true,
+          "exists": true,
+          "path": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustdoc",
+          "sha256": "e5144902aed6cf94280eae3ad7708da5bdd3819b5281728af432d0e70231439c",
+          "version": {
+            "argv": [
+              "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustdoc",
+              "-Vv"
+            ],
+            "rc": 0,
+            "stderr": "",
+            "stdout": "rustdoc 1.95.0 (59807616e 2026-04-14)\nbinary: rustdoc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n"
+          }
+        },
+        {
+          "canonical": true,
+          "elf": true,
+          "exists": true,
+          "path": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/clippy-driver",
+          "sha256": "81bd985ee50d78e9d8c5810f6ca836614d1bf95e0e8142f1ec5f42eb250ed729",
+          "version": {
+            "argv": [
+              "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/clippy-driver",
+              "--version"
+            ],
+            "rc": 0,
+            "stderr": "",
+            "stdout": "clippy 0.1.95 (59807616e1 2026-04-14)\n"
+          }
+        }
+      ]
+    }
+  },
+  "durable_jobs": [
+    "1a1c8595dc3-135c4-39",
+    "1a1c85a7242-135c4-3d"
+  ],
+  "source_mutated": false,
+  "cargo_compilation_started": false
+}

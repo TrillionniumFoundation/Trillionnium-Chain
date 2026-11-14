@@ -1,0 +1,901 @@
+{
+  "schema": "hepta-stage-trace-v1",
+  "status": "HOLD_NO_GO",
+  "authority": "DENY_ALL",
+  "engineering_controls_only": true,
+  "production_final_use_qualified": false,
+  "purpose": "Read-only source-to-effect trace for the exact f178 owner source and twelve selected native controls; not a completed Chain/Hepta campaign or production authority.",
+  "source": {
+    "repository": "TrillionniumFoundation/hepta-private-ci",
+    "sha": "f1785ca15e41e4e49509a5b211a659e3cbdbf60e",
+    "tree": "f07e40dbf570539eba6b683f7569804b0eb9ae5e",
+    "host": "rog",
+    "checkout": "/home/qian-qi/work/hepta-p0-source-f178-20261108-99b5",
+    "chain_sha": null,
+    "source_changed_by_this_trace": false
+  },
+  "evidence": {
+    "native_readback": {
+      "path": "native-attempt01/evidence/independent-native-readback.json",
+      "sha256": "04d1e39f51bedfd3795687ab472ea40902a8d85e3cfdba6d82f60c6a6b28bd84"
+    },
+    "source_metadata": {
+      "path": "stage-trace-source-observations.json",
+      "entries": 44,
+      "meaning": "Complete individual source files read from the f178 checkout; exact content hashes and immutable source URLs."
+    },
+    "source_searches": {
+      "path": "stage-trace-searches.json",
+      "observations": 7,
+      "meaning": "Original rg commands, native exits, complete stdout and stderr; source-only read observations."
+    },
+    "native_result": "12_SELECTED_TESTS_PASS",
+    "collector_status": "FAIL",
+    "collector_exit": 1,
+    "selected_unique_tests": 12,
+    "registry_tests": 796,
+    "unselected_unique_tests": 784,
+    "registry_ignored_total": 60,
+    "selected_ignored": 0,
+    "retry_attempts": 0,
+    "timed_out": 0,
+    "os_loaded_identity": "NOT_OBSERVED",
+    "new_tests_during_trace": 0,
+    "original_junit": {
+      "readback5": "LOST_BY_OVERWRITE",
+      "unknown_restart3": "LOST_BY_OVERWRITE",
+      "durable_effects4": "RECOVERED_ORIGINAL_4_TESTS"
+    },
+    "constraints": [
+      "Native streams and receipts establish the twelve selected controls' outcomes; OS executable observation was missing.",
+      "The source-only trace does not repair collector FAIL or manufacture actual model-load identity.",
+      "Source/codex-rs/target/nextest output was preserved outside source after ownership checks; no tracked, untracked or ignored source changes remained.",
+      "Component run chain_sha is null. Do not retroactively attach another Chain SHA, prior branch success, or a later integration build."
+    ]
+  },
+  "tests": {
+    "L1": {
+      "scope": "readback5",
+      "package": "codex-hepta-agentd",
+      "test": "neuron_generation_runtime::tests::update::adopted_learning::updated_candidate_uses_original_actor_and_recovers_without_another_reset",
+      "attempt": 1,
+      "native_status": "PASS",
+      "native_exit": 0
+    },
+    "L2": {
+      "scope": "readback5",
+      "package": "codex-hepta-agentd",
+      "test": "neuron_generation_runtime::tests::update::adopted_learning::updated_actor_rechecks_current_withdrawal_and_revocation",
+      "attempt": 1,
+      "native_status": "PASS",
+      "native_exit": 0
+    },
+    "L3": {
+      "scope": "readback5",
+      "package": "codex-hepta-agentd",
+      "test": "neuron_generation_runtime::tests::update::learning::ordinary_actor_reads_actual_use_and_cold_recovery_without_reexecution",
+      "attempt": 1,
+      "native_status": "PASS",
+      "native_exit": 0
+    },
+    "L4": {
+      "scope": "readback5",
+      "package": "codex-hepta-agentd",
+      "test": "neuron_generation_runtime::tests::update::learning::running_actor_refuses_current_withdrawal_and_revocation",
+      "attempt": 1,
+      "native_status": "PASS",
+      "native_exit": 0
+    },
+    "L5": {
+      "scope": "readback5",
+      "package": "codex-hepta-agentd",
+      "test": "neuron_generation_runtime::tests::update::learning::unpublished_actor_refuses_learning_readback_and_keeps_transport_errors",
+      "attempt": 1,
+      "native_status": "PASS",
+      "native_exit": 0
+    },
+    "U1": {
+      "scope": "unknown_restart3",
+      "package": "codex-hepta-agentd",
+      "test": "neuron_generation_runtime::tests::control::uncertain_dispatch_cancels_and_reads_original_without_second_execution",
+      "attempt": 1,
+      "native_status": "PASS",
+      "native_exit": 0
+    },
+    "U2": {
+      "scope": "unknown_restart3",
+      "package": "codex-hepta-agentd",
+      "test": "neuron_generation_runtime::tests::both_drain_paths_retain_unknown_work_and_unacknowledged_output",
+      "attempt": 1,
+      "native_status": "PASS",
+      "native_exit": 0
+    },
+    "U3": {
+      "scope": "unknown_restart3",
+      "package": "codex-hepta-agentd",
+      "test": "neuron_generation_runtime::tests::ordinary_shutdown_reopens_original_pending_and_exact_committed_outbox",
+      "attempt": 1,
+      "native_status": "PASS",
+      "native_exit": 0
+    },
+    "D1": {
+      "scope": "durable_effects4",
+      "package": "codex-hepta-operations",
+      "test": "durable_store::tests::crash_after_dispatch_admission_recovers_as_indeterminate_not_retryable",
+      "attempt": 1,
+      "native_status": "PASS",
+      "native_exit": 0
+    },
+    "D2": {
+      "scope": "durable_effects4",
+      "package": "codex-hepta-operations",
+      "test": "durable_store::tests::acknowledgement_loss_stays_indeterminate_until_terminal_observer",
+      "attempt": 1,
+      "native_status": "PASS",
+      "native_exit": 0
+    },
+    "D3": {
+      "scope": "durable_effects4",
+      "package": "codex-hepta-operations",
+      "test": "durable_store::tests::retirement_never_discards_an_unreconciled_external_effect",
+      "attempt": 1,
+      "native_status": "PASS",
+      "native_exit": 0
+    },
+    "D4": {
+      "scope": "durable_effects4",
+      "package": "codex-hepta-operations",
+      "test": "fault_tests::child_process_kill_matrix_preserves_durable_effect_semantics",
+      "attempt": 1,
+      "native_status": "PASS",
+      "native_exit": 0
+    }
+  },
+  "production_bridge": {
+    "entrypoints": [
+      {
+        "source_ref": "ports",
+        "path": "codex-rs/hepta-agentd/src/learning_iteration_ports.rs",
+        "symbol": "LearningIterationOwnerPortsV1",
+        "line": 52
+      },
+      {
+        "source_ref": "iteration_runtime",
+        "path": "codex-rs/hepta-agentd/src/learning_iteration.rs",
+        "symbol": "LearningIterationRuntimeBootstrapV1::process",
+        "line": 201
+      },
+      {
+        "source_ref": "checkpoint",
+        "path": "codex-rs/hepta-agentd/src/learning_iteration_checkpoint.rs",
+        "symbol": "LearningIterationCheckpointOwnerV1",
+        "line": 83
+      },
+      {
+        "source_ref": "config",
+        "path": "codex-rs/hepta-agentd/src/config.rs",
+        "symbol": "with_learning_iteration_bootstrap",
+        "line": 726
+      },
+      {
+        "source_ref": "runtime",
+        "path": "codex-rs/hepta-agentd/src/runtime.rs",
+        "symbol": "learning-iteration-owner optional spawn",
+        "line": 415
+      }
+    ],
+    "present": "The runtime restores, authenticates, checkpoints and advances a coordinator through host-supplied owners. Config/runtime plumbing can spawn it when explicitly supplied together with the governed plasticity owner.",
+    "exact_gap": "The complete codex-rs search finds only the test IterationPorts implementation of LearningIterationOwnerPortsV1, in hepta-agentd/src/learning_iteration_runtime_tests.rs:98. The checkpoint owner itself explicitly states that it does not implement the missing complete production adapter. The default bootstrap is None.",
+    "consequence": "No demonstrated production caller connects actual training job, independent evaluation, signed owner receipt, current selection and committed next-use under one stable operation. Payment, paid cold retrieval and installation are not stages of this coordinator.",
+    "negative_search_evidence": [
+      {
+        "observation": 7,
+        "query": 0,
+        "exit": 0,
+        "scope": "codex-rs; exact LearningIterationOwnerPortsV1 token"
+      },
+      {
+        "observation": 4,
+        "query": 0,
+        "exit": 0,
+        "scope": "codex-rs; implementation and explicit bootstrap callers"
+      }
+    ]
+  },
+  "synthetic_receipt_construction": [
+    {
+      "tests": [
+        "L3",
+        "L4",
+        "L5"
+      ],
+      "locations": [
+        {
+          "source_ref": "fixture_retained",
+          "path": "codex-rs/hepta-agentd/src/neuron_generation_update_learning_tests.rs",
+          "symbol": "decision",
+          "line": 62
+        },
+        {
+          "source_ref": "fixture_retained",
+          "path": "codex-rs/hepta-agentd/src/neuron_generation_update_learning_tests.rs",
+          "symbol": "LearningIterationObservationV1::Training",
+          "line": 144
+        },
+        {
+          "source_ref": "fixture_retained",
+          "path": "codex-rs/hepta-agentd/src/neuron_generation_update_learning_tests.rs",
+          "symbol": "LearningIterationObservationV1::Evaluation",
+          "line": 150
+        },
+        {
+          "source_ref": "fixture_retained",
+          "path": "codex-rs/hepta-agentd/src/neuron_generation_update_learning_tests.rs",
+          "symbol": "observed",
+          "line": 167
+        },
+        {
+          "source_ref": "readback_retained_tests",
+          "path": "codex-rs/hepta-agentd/src/neuron_generation_learning_runtime_tests.rs",
+          "symbol": "LearningRuntime::new",
+          "line": 43
+        }
+      ],
+      "meaning": "decision builds digest-labelled experience/dataset/training/evaluation receipts directly. Training reports steps=1, milliseconds=1, artifact_bytes=64; evaluation is NoUpdate. observed assigns the expected actor and evidence_digest from the literal fixture-role-attestation label. This is coordinator fixture construction, not an independently authenticated training/evaluation result."
+    },
+    {
+      "tests": [
+        "L1",
+        "L2"
+      ],
+      "locations": [
+        {
+          "source_ref": "fixture_adopted",
+          "path": "codex-rs/hepta-agentd/src/neuron_generation_adopted_learning_tests.rs",
+          "symbol": "decision",
+          "line": 48
+        },
+        {
+          "source_ref": "fixture_adopted",
+          "path": "codex-rs/hepta-agentd/src/neuron_generation_adopted_learning_tests.rs",
+          "symbol": "Training/Qualified evaluation/UpdateCandidates proposal literals",
+          "line": 62
+        }
+      ],
+      "meaning": "The adopted fixture reuses the earlier experience and dataset receipts, creates a labelled candidate, then records literal training steps=1/milliseconds=1/artifact_bytes=64, Qualified evaluation and UpdateCandidates proposal."
+    },
+    {
+      "tests": [
+        "L1",
+        "L2",
+        "L3",
+        "L4",
+        "L5"
+      ],
+      "locations": [
+        {
+          "source_ref": "fixture_worker",
+          "path": "codex-rs/hepta-agentd/src/neuron_generation_update_runtime_support.rs",
+          "symbol": "OUTPUT",
+          "line": 27
+        },
+        {
+          "source_ref": "fixture_worker",
+          "path": "codex-rs/hepta-agentd/src/neuron_generation_update_runtime_support.rs",
+          "symbol": "Control::execute_generation",
+          "line": 37
+        },
+        {
+          "source_ref": "fixture_worker",
+          "path": "codex-rs/hepta-agentd/src/neuron_generation_update_runtime_support.rs",
+          "symbol": "Control::read_generation",
+          "line": 62
+        }
+      ],
+      "meaning": "All five use a test control with OUTPUT=b\"synthetic successor task\"; it copies request.input into successor state, emits the literal output, increments execution/read counters and reads back the same request result. Native publication, journal, actor and outbox paths are real; learning evidence and model execution are synthetic."
+    }
+  ],
+  "stages": [
+    {
+      "id": "training",
+      "name": "真实训练",
+      "entries": [
+        {
+          "source_ref": "model_adapter",
+          "path": "qualification/neuron-v13-generation/vendor/reference/adapter.py.source",
+          "symbol": "Adapter.train",
+          "line": 81
+        },
+        {
+          "source_ref": "iteration_runtime",
+          "path": "codex-rs/hepta-agentd/src/learning_iteration.rs",
+          "symbol": "LearningIterationRuntimeBootstrapV1::process / execute_stage(Training)",
+          "line": 267
+        },
+        {
+          "source_ref": "ports",
+          "path": "codex-rs/hepta-agentd/src/learning_iteration_ports.rs",
+          "symbol": "LearningIterationOwnerPortsV1::execute_stage",
+          "line": 58
+        }
+      ],
+      "effect": "The reference Adapter.train primitive updates model parameters, optimizer moments, step, RNG and sampler state. The runtime can request a Training stage under a separate quota and checkpoint an authenticated receipt.",
+      "coverage": {
+        "tests": [],
+        "related_fixture_tests": [
+          "L1",
+          "L2",
+          "L3",
+          "L4",
+          "L5"
+        ],
+        "level": "SOURCE_PRIMITIVE_AND_SYNTHETIC_RECEIPTS"
+      },
+      "unconnected": "No production LearningIterationOwnerPortsV1 implementation calls this trainer or reconciles its durable remote job and authenticates the resulting exact closure. The selected controls never call Adapter.train; their step/time/byte fields are literal fixtures."
+    },
+    {
+      "id": "evaluation",
+      "name": "独立评价",
+      "entries": [
+        {
+          "source_ref": "evaluation",
+          "path": "codex-rs/hepta-agentd/src/neuron_cell_evaluation.rs",
+          "symbol": "freeze_cell_evaluation_plan_v1",
+          "line": 85
+        },
+        {
+          "source_ref": "evaluation",
+          "path": "codex-rs/hepta-agentd/src/neuron_cell_evaluation.rs",
+          "symbol": "CellEvaluationRunnerV1::evaluate",
+          "line": 194
+        },
+        {
+          "source_ref": "evaluation",
+          "path": "codex-rs/hepta-agentd/src/neuron_cell_evaluation.rs",
+          "symbol": "CellEvaluationRunnerV1::qualify_and_persist",
+          "line": 245
+        },
+        {
+          "source_ref": "ports",
+          "path": "codex-rs/hepta-agentd/src/learning_iteration_ports.rs",
+          "symbol": "LearningIterationOwnerPortsV1::receipt_attestation",
+          "line": 72
+        }
+      ],
+      "effect": "Evaluation checks candidate and fixed-expert journals against the frozen plan before the existing product temporal-comparison runner uses final holdout state; qualification requires authenticated evidence and a durable publication sink.",
+      "coverage": {
+        "tests": [],
+        "related_fixture_tests": [
+          "L1",
+          "L2",
+          "L3",
+          "L4",
+          "L5"
+        ],
+        "level": "SOURCE_RUNNER_PRESENT_NOT_EXECUTED"
+      },
+      "unconnected": "The available evaluation runner is not joined to the learning iteration by a production ports adapter. The selected readback cases directly construct Qualified/NoUpdate observations and do not establish trainer/evaluator organizational or failure-domain independence."
+    },
+    {
+      "id": "selection",
+      "name": "选择",
+      "entries": [
+        {
+          "source_ref": "artifact_selection",
+          "path": "codex-rs/hepta-learning-artifacts/src/selection.rs",
+          "symbol": "ArtifactSelectionVerifierV1::verify",
+          "line": 260
+        },
+        {
+          "source_ref": "artifact_selection",
+          "path": "codex-rs/hepta-learning-artifacts/src/selection.rs",
+          "symbol": "record_verified_selection",
+          "line": 352
+        },
+        {
+          "source_ref": "artifact_selection",
+          "path": "codex-rs/hepta-learning-artifacts/src/selection.rs",
+          "symbol": "load_selected_candidate",
+          "line": 389
+        },
+        {
+          "source_ref": "selection",
+          "path": "codex-rs/hepta-agentd/src/neuron_generation_update_selection.rs",
+          "symbol": "AgentdSelectedGenerationV1::load",
+          "line": 91
+        },
+        {
+          "source_ref": "selection",
+          "path": "codex-rs/hepta-agentd/src/neuron_generation_update_selection.rs",
+          "symbol": "AgentdSelectedGenerationV1::revalidate",
+          "line": 175
+        }
+      ],
+      "effect": "Verifies current trust/eligibility/withdrawal state and an Ed25519 selector signature; selector and producer differ. Loads the exact pinned payload, decodes CellBackendManifestV2 and binds its full digest. Revalidation checks current selection and withdrawal again before guarded use.",
+      "coverage": {
+        "tests": [
+          "L1",
+          "L2",
+          "L3",
+          "L4",
+          "L5"
+        ],
+        "level": "NATIVE_OWNER_CONTROL_WITH_FIXTURE_LEARNING_INPUT"
+      },
+      "unconnected": "The candidate's actual training/evaluation lineage is synthetic in these cases. Loading a selected backend manifest does not prove that every model/runtime asset was loaded, and local selector distinctness does not prove an independent deployed evaluator."
+    },
+    {
+      "id": "payment",
+      "name": "支付",
+      "entries": [
+        {
+          "source_ref": "stage_types",
+          "path": "codex-rs/hepta-learning-artifacts/src/learning_iteration_types.rs",
+          "symbol": "LearningIterationStageV1",
+          "line": 50
+        },
+        {
+          "source_ref": "operation_store",
+          "path": "codex-rs/hepta-operations/src/durable_store.rs",
+          "symbol": "DurableOperationStore::authorize_dispatch",
+          "line": 427
+        },
+        {
+          "source_ref": "operation_store",
+          "path": "codex-rs/hepta-operations/src/durable_store.rs",
+          "symbol": "DurableOperationStore::execute_authorized",
+          "line": 486
+        },
+        {
+          "source_ref": "current_owner",
+          "path": "codex-rs/hepta-agentd/src/neuron_generation_current.rs",
+          "symbol": "NeuronGenerationCurrentOwnerV1::publish",
+          "line": 146
+        }
+      ],
+      "effect": "The generic durable store admits a bounded effect under current authority; generation publication changes the Control CURRENT writer through a guarded CAS. These are existing reusable effect boundaries.",
+      "coverage": {
+        "tests": [],
+        "related_generic_effect_controls": [
+          "D1",
+          "D2",
+          "D3",
+          "D4"
+        ],
+        "level": "NO_PAYMENT_EXECUTED"
+      },
+      "unconnected": "The learning stage enum has no payment stage. The traced owner path has no Chain settlement caller or same-iteration paid receipt. CURRENT publication is a local generation-writer effect, not payment. Generic durable-store tests use local test effects and cannot establish Chain payment or a paid model purchase."
+    },
+    {
+      "id": "cold_fetch",
+      "name": "冷取",
+      "entries": [
+        {
+          "source_ref": "cold_reopen",
+          "path": "codex-rs/hepta-agentd/src/neuron_generation_update_cold.rs",
+          "symbol": "prepare_agentd_generation_cold_update_v1",
+          "line": 44
+        },
+        {
+          "source_ref": "cold_reopen",
+          "path": "codex-rs/hepta-agentd/src/neuron_generation_update_cold.rs",
+          "symbol": "prepare_agentd_generation_cold_same_model_task_v1",
+          "line": 94
+        },
+        {
+          "source_ref": "pinned_candidate",
+          "path": "codex-rs/hepta-learning-artifacts/src/pinned.rs",
+          "symbol": "load_pinned_candidate",
+          "line": 113
+        },
+        {
+          "source_ref": "descriptor",
+          "path": "codex-rs/hepta-agentd/examples/neuron_v13_acceptance/descriptor.rs",
+          "symbol": "load",
+          "line": 104
+        }
+      ],
+      "effect": "Cold generation helpers reopen supplied predecessor journals and guarded current state; pinned candidate reads a supplied already-opened file. V13 acceptance descriptors open local interpreter/model asset files into capabilities.",
+      "coverage": {
+        "tests": [
+          "L1",
+          "L3"
+        ],
+        "level": "NATIVE_LOCAL_COLD_RECOVERY"
+      },
+      "unconnected": "Local journal reopen is not remote paid content retrieval. No selected test obtains the trained/evaluated/paid closure from independent custodians or over qualified WAN failure domains. An authenticated retrieval client, storage-lease/payment binding and exact downloaded closure handoff are not connected by this learning owner."
+    },
+    {
+      "id": "installation",
+      "name": "安装",
+      "entries": [
+        {
+          "source_ref": "fleet_release",
+          "path": "codex-rs/hepta-fleet/src/release.rs",
+          "symbol": "FleetRegistry::install_release",
+          "line": 211
+        },
+        {
+          "source_ref": "fleet_release",
+          "path": "codex-rs/hepta-fleet/src/release.rs",
+          "symbol": "FleetRegistry::install_release_bundle",
+          "line": 230
+        },
+        {
+          "source_ref": "fleet_release",
+          "path": "codex-rs/hepta-fleet/src/release.rs",
+          "symbol": "FleetRegistry::allow_release",
+          "line": 320
+        }
+      ],
+      "effect": "The explicit administrator API copies agentd and optional matrixd executables into an immutable staged release, records hashes/sizes, fsyncs and renames it, then uses per-agent release allowances.",
+      "coverage": {
+        "tests": [],
+        "level": "SOURCE_EXECUTABLE_RELEASE_API_PRESENT"
+      },
+      "unconnected": "This installs executable releases, not a model closure. Complete install_release_bundle token search finds API/self-delegation and tests; the selected twelve controls do not invoke it. No production learning-loop caller connects payment/cold-fetched closure, installation allowance and the exact V13 model files."
+    },
+    {
+      "id": "loading",
+      "name": "加载",
+      "entries": [
+        {
+          "source_ref": "v13_assembly",
+          "path": "codex-rs/hepta-agentd/src/neuron_v13_generation_bootstrap.rs",
+          "symbol": "prepare_agentd_v13_generation_worker_v1",
+          "line": 52
+        },
+        {
+          "source_ref": "v13_worker",
+          "path": "codex-rs/hepta-neuron/src/cell_v13_generation.rs",
+          "symbol": "V13GenerationProcessWorkerV1::open_files",
+          "line": 72
+        },
+        {
+          "source_ref": "v13_assets",
+          "path": "codex-rs/hepta-neuron/src/cell_v13_assets.rs",
+          "symbol": "prepare",
+          "line": 150
+        },
+        {
+          "source_ref": "v13_worker",
+          "path": "codex-rs/hepta-neuron/src/cell_v13_generation.rs",
+          "symbol": "CellGenerationWorkerV2::execute",
+          "line": 414
+        },
+        {
+          "source_ref": "v13_process",
+          "path": "codex-rs/hepta-neuron/src/cell_v13_process.rs",
+          "symbol": "run",
+          "line": 104
+        },
+        {
+          "source_ref": "python_worker",
+          "path": "qualification/neuron-v13-generation/proposal_worker.py",
+          "symbol": "verify",
+          "line": 278
+        },
+        {
+          "source_ref": "python_worker",
+          "path": "qualification/neuron-v13-generation/proposal_worker.py",
+          "symbol": "infer / Adapter.load / FrozenEncoder",
+          "line": 328
+        }
+      ],
+      "effect": "The explicit V13 path pins the complete resumable closure and exactly 24 allowed assets plus interpreter/script hashes. A retained executable FD starts bounded Verify and Infer processes. Python verifies the complete checkpoint closure, reloads exact model bytes, checks state/encoder/source/data pins, runs ONNX encoding and model inference, and refuses changed inference state.",
+      "coverage": {
+        "tests": [],
+        "related_fixture_tests": [
+          "L1",
+          "L2",
+          "L3",
+          "L4",
+          "L5"
+        ],
+        "level": "REAL_LOADER_SOURCE_AND_EXPLICIT_EXAMPLE_CALLERS_PRESENT_NOT_EXECUTED"
+      },
+      "unconnected": "The selected controls substitute Control::execute_generation and never run this loader. Typed bootstrap/example callers do exist; they are not a production LearningIterationOwnerPortsV1 bridge, are not the default ordinary CLI selection, and were not executed in this campaign. OS process executable and actual model-load identity remain NOT_OBSERVED."
+    },
+    {
+      "id": "next_task",
+      "name": "下一任务",
+      "entries": [
+        {
+          "source_ref": "v13_runtime",
+          "path": "codex-rs/hepta-agentd/src/neuron_v13_generation_update_runtime.rs",
+          "symbol": "ReadyAgentdV13GenerationUpdateV1::into_runtime",
+          "line": 32
+        },
+        {
+          "source_ref": "v13_owners",
+          "path": "codex-rs/hepta-agentd/src/neuron_v13_generation_owners.rs",
+          "symbol": "V13BackendOwner::spawn",
+          "line": 74
+        },
+        {
+          "source_ref": "learning_runtime",
+          "path": "codex-rs/hepta-agentd/src/neuron_generation_learning_runtime.rs",
+          "symbol": "NeuronGenerationRuntimeHandleV2::read_learning_next_use",
+          "line": 220
+        },
+        {
+          "source_ref": "learning_runtime",
+          "path": "codex-rs/hepta-agentd/src/neuron_generation_learning_runtime.rs",
+          "symbol": "NeuronGenerationRuntimeHandleV2::read_learning_updated_next_use",
+          "line": 181
+        },
+        {
+          "source_ref": "learning_readback",
+          "path": "codex-rs/hepta-agentd/src/neuron_generation_learning_readback.rs",
+          "symbol": "GenerationLearningReadbackV1::export_next_use",
+          "line": 88
+        }
+      ],
+      "effect": "Runtime readback derives the committed original intent receipt, current checkpoint, selection and cutover/retained publication from the running generation owner. It does not accept a caller-supplied receipt, grant or success flag. The typed V13 runtime can spawn the real controlled worker.",
+      "coverage": {
+        "tests": [
+          "L1",
+          "L3",
+          "L5"
+        ],
+        "level": "NATIVE_COMMIT_AND_READBACK_WITH_SYNTHETIC_WORKER"
+      },
+      "unconnected": "The real journal commit/readback exercised here contains synthetic successor output, not a task run by the model produced by this iteration. The production ports adapter still has to obtain this readback and independently attest NextUse under the same original operation; no payment/cold-fetch/install sequence precedes it in this run."
+    },
+    {
+      "id": "unknown_recovery",
+      "name": "UNKNOWN恢复与重启",
+      "entries": [
+        {
+          "source_ref": "iteration_runtime",
+          "path": "codex-rs/hepta-agentd/src/learning_iteration.rs",
+          "symbol": "LearningIterationRuntimeBootstrapV1::process training timeout",
+          "line": 268
+        },
+        {
+          "source_ref": "publication",
+          "path": "codex-rs/hepta-agentd/src/neuron_generation_update.rs",
+          "symbol": "recover_agentd_generation_update_v1",
+          "line": 263
+        },
+        {
+          "source_ref": "operation_store",
+          "path": "codex-rs/hepta-operations/src/durable_store.rs",
+          "symbol": "DurableOperationStore::observe_terminal",
+          "line": 561
+        },
+        {
+          "source_ref": "operation_store",
+          "path": "codex-rs/hepta-operations/src/durable_store.rs",
+          "symbol": "DurableOperationStore::adopt_unsettled_generation",
+          "line": 670
+        },
+        {
+          "source_ref": "operation_store",
+          "path": "codex-rs/hepta-operations/src/durable_store.rs",
+          "symbol": "DurableOperationStore::reconcile_destination_receipt",
+          "line": 970
+        }
+      ],
+      "effect": "Training timeout returns CommitUncertain. Generation recovery reopens and reads the original operation; pending publication does not redispatch. The durable store records dispatch admission before effect, retains indeterminate work, and accepts a matching terminal observer result without inventing another operation. Restart retains the original pending work and exact committed outbox.",
+      "coverage": {
+        "tests": [
+          "U1",
+          "U2",
+          "U3",
+          "D1",
+          "D2",
+          "D3",
+          "D4",
+          "L1",
+          "L3"
+        ],
+        "level": "NATIVE_LOCAL_UNKNOWN_RESTART_AND_DURABLE_EFFECT_CONTROLS"
+      },
+      "unconnected": "The tests establish local operation/actor semantics with test authorities and destinations. They do not reconcile a real remote training job or a real Chain payment after unknown acknowledgement. D4 uses child process exit boundaries; it does not qualify power-loss, arbitrary SIGKILL, disk faults or WAN behavior."
+    },
+    {
+      "id": "revocation",
+      "name": "撤销与最终效果权限",
+      "entries": [
+        {
+          "source_ref": "selection",
+          "path": "codex-rs/hepta-agentd/src/neuron_generation_update_selection.rs",
+          "symbol": "AgentdSelectedGenerationV1::revalidate",
+          "line": 175
+        },
+        {
+          "source_ref": "live_guard",
+          "path": "codex-rs/hepta-agentd/src/neuron_generation_update_live.rs",
+          "symbol": "LiveGenerationCurrent::check_current",
+          "line": 196
+        },
+        {
+          "source_ref": "live_guard",
+          "path": "codex-rs/hepta-agentd/src/neuron_generation_update_live.rs",
+          "symbol": "LiveGenerationCurrent::check_live",
+          "line": 153
+        },
+        {
+          "source_ref": "retained_grant",
+          "path": "codex-rs/hepta-contracts/src/final_use_retained.rs",
+          "symbol": "FinalUseAuthority::verify_retained_use",
+          "line": 41
+        },
+        {
+          "source_ref": "current_owner",
+          "path": "codex-rs/hepta-agentd/src/neuron_generation_current.rs",
+          "symbol": "NeuronGenerationCurrentOwnerV1::publish / dispatch_final_use_with_witness",
+          "line": 181
+        }
+      ],
+      "effect": "Before current use, rechecks selection/withdrawal and retained final-use grant against the current independent authority frontier, exact epoch/revocation revision and consumed nonce; CURRENT is rechecked after authority IO. Published recovery keeps the original grant and operation.",
+      "coverage": {
+        "tests": [
+          "L2",
+          "L4",
+          "L5"
+        ],
+        "related_recovery_tests": [
+          "L1",
+          "L3",
+          "D1",
+          "D2",
+          "D3",
+          "D4"
+        ],
+        "level": "NATIVE_CLASSICAL_OWNER_CONTROL"
+      },
+      "unconnected": "The inspected final-use and selection signatures are Ed25519. These controls do not exercise a deployed PQ profile or downgrade rejection, and do not join Chain authority to every model-load/external-effect edge. Current classical owner refusal is useful evidence but does not qualify whole-PQ final use."
+    },
+    {
+      "id": "reorg",
+      "name": "重组",
+      "entries": [
+        {
+          "source_ref": "ports",
+          "path": "codex-rs/hepta-agentd/src/learning_iteration_ports.rs",
+          "symbol": "LearningIterationOwnerPortsV1",
+          "line": 52
+        },
+        {
+          "source_ref": "current_owner",
+          "path": "codex-rs/hepta-agentd/src/neuron_generation_current.rs",
+          "symbol": "NeuronGenerationCurrentOwnerV1",
+          "line": 53
+        },
+        {
+          "source_ref": "operation_store",
+          "path": "codex-rs/hepta-operations/src/durable_store.rs",
+          "symbol": "DurableOperationStore",
+          "line": 73
+        }
+      ],
+      "effect": "Current owner, independent authority frontier and durable-operation recovery are present. They provide local fencing/recovery primitives.",
+      "coverage": {
+        "tests": [],
+        "level": "NO_CHAIN_REORG_CONTROL_IN_THIS_NATIVE_RUN"
+      },
+      "unconnected": "The complete reorg/reorganiz search across agentd, learning-artifacts, fleet and operations source returns no hits. The traced loop has no demonstrated canonical Chain reorg callback that updates payment/availability/authority while preserving the original effect identity. A local CURRENT or rollback frontier is not Chain canonicality. Chain #787 controls must be run on the final frozen Chain candidate and cannot be borrowed as this f178 pair's result."
+    }
+  ],
+  "no_update_vs_unknown": {
+    "entries": [
+      {
+        "source_ref": "stage_types",
+        "path": "codex-rs/hepta-learning-artifacts/src/learning_iteration_types.rs",
+        "symbol": "LearningEvaluationDispositionV1",
+        "line": 61
+      },
+      {
+        "source_ref": "retained_readback",
+        "path": "codex-rs/hepta-agentd/src/neuron_generation_update_learning.rs",
+        "symbol": "learning_retained_task_operation_id_v1",
+        "line": 29
+      },
+      {
+        "source_ref": "retained_readback",
+        "path": "codex-rs/hepta-agentd/src/neuron_generation_update_learning.rs",
+        "symbol": "GenerationLearningReadbackV1::learning_bundle",
+        "line": 186
+      },
+      {
+        "source_ref": "iteration_runtime",
+        "path": "codex-rs/hepta-agentd/src/learning_iteration.rs",
+        "symbol": "Training timeout -> CommitUncertain",
+        "line": 268
+      }
+    ],
+    "no_update": "NoUpdate is an explicit completed evaluation disposition. It retains the evaluated baseline, still requires a current selection and committed use by a distinct task, preserves the same manifest, and derives the retained task operation from the original learning operation and decision head. It does not authorize installing the rejected candidate.",
+    "unknown": "Timeout or ambiguous stage/commit remains CommitUncertain and requires reconciliation of the original stable job. It is not an evaluation disposition and cannot be relabelled NoUpdate.",
+    "observed_control": "L1 rejects use of a NoUpdate coordinator as an adopted update; L3/L4 exercise retained baseline publication/readback with a synthetic completed NoUpdate decision. U1-U3 and D1-D4 cover local uncertain execution/restart. No selected test establishes that a real remote training timeout is reconciled end to end."
+  },
+  "model_load_ownership": {
+    "host_owner": "Explicit host opens and supplies interpreter, worker and asset file capabilities; configuration supplies exact closure/runtime/device pins.",
+    "agentd_owner": "prepare_agentd_v13_generation_worker_v1 and V13BackendOwner bind the worker to original durable inference control, scope, manifest, writer epoch and limits. ReadyAgentdV13GenerationUpdateV1::into_runtime spawns that controlled worker.",
+    "rust_worker_owner": "V13GenerationProcessWorkerV1 validates resumable closure and complete asset set; cell_v13_process::run rehashes the retained executable and starts Verify/Infer using the original FD.",
+    "python_load_owner": "proposal_worker.verify authenticates closure bytes. proposal_worker.infer performs Adapter.load and FrozenEncoder/ONNX execution and checks no learning-state mutation.",
+    "actual_callers": [
+      {
+        "source_ref": "acceptance_assets",
+        "path": "codex-rs/hepta-agentd/examples/neuron_v13_guarded_acceptance/assembly.rs",
+        "symbol": "Assets::load",
+        "line": 23
+      },
+      {
+        "source_ref": "acceptance_runner",
+        "path": "codex-rs/hepta-agentd/examples/neuron_v13_acceptance/runner.rs",
+        "symbol": "run / execute",
+        "line": 43
+      },
+      {
+        "source_ref": "descriptor",
+        "path": "codex-rs/hepta-agentd/examples/neuron_v13_acceptance/descriptor.rs",
+        "symbol": "load",
+        "line": 104
+      }
+    ],
+    "limits": "These are explicit acceptance/typed paths. Their presence is source evidence; this native control campaign used a synthetic worker and supplies no observed loader identity or trained-model task output."
+  },
+  "missing_production_edges": [
+    "Actual completed source task -> eligible exact dataset under current deletion/revocation frontier.",
+    "Durable training job -> full resumable model closure and authentic original-owner receipt.",
+    "Frozen independent evaluator -> signed current evaluation decision -> production learning coordinator.",
+    "Learning decision -> Chain service/payment settlement -> paid immutable content identity.",
+    "Paid content -> independent-custodian cold retrieval/WAN-qualified bytes -> host file capabilities.",
+    "Retrieved model closure -> installation/current selection allowance -> actual bound V13 process.",
+    "Actual model task commit -> independent NextUse attestation/checkpoint for the same iteration.",
+    "Remote UNKNOWN/restart/reorg -> original job/payment/effect reconciliation without duplicate execution.",
+    "Chain PQ final-use profile -> every real load/effect boundary with current revocation and downgrade refusal."
+  ],
+  "search_scope_limits": {
+    "authoritative_negative_scopes": [
+      {
+        "observation": 7,
+        "query": 0,
+        "claim": "Only test LearningIterationOwnerPortsV1 implementation in codex-rs.",
+        "exit": 0
+      },
+      {
+        "observation": 6,
+        "query": 0,
+        "claim": "install_release_bundle call sites within codex-rs are API/delegate and tests.",
+        "exit": 0
+      },
+      {
+        "observation": 7,
+        "query": 2,
+        "claim": "No reorg/reorganiz token in the four specifically searched source trees.",
+        "exit": 1
+      },
+      {
+        "observation": 4,
+        "query": 2,
+        "claim": "No payment/settlement/Chain tokens in the enumerated learning-owner files; not a global repository claim.",
+        "exit": 1
+      }
+    ],
+    "excluded_partial_searches": [
+      {
+        "observation": 3,
+        "query": 2,
+        "exit": 2,
+        "reason": "Guessed hepta-cell-artifacts/src path absent."
+      },
+      {
+        "observation": 5,
+        "query": 3,
+        "exit": 2,
+        "reason": "Guessed durable_effect.rs path absent."
+      },
+      {
+        "observation": 7,
+        "query": 1,
+        "exit": 2,
+        "reason": "Guessed hepta-cli/src path absent."
+      }
+    ],
+    "qualification": "Token absence is bounded to the recorded scopes. Existing explicit V13 bootstrap/acceptance callers and model/evaluation primitives are acknowledged; absence of their complete production-learning bridge is not absence of all implementations."
+  },
+  "gate_v1_interpretation": "chain_hepta_qualification.py v1 is an always-HOLD evidence-accounting and false-pass prevention gate. Structural tests and self-reported matching fields do not grant raw outcome verification or production authority; implementing it does not complete any P0 production qualification."
+}

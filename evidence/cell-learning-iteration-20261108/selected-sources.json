@@ -1,0 +1,15 @@
+{
+  "schema": "trnm-hepta-learning-join-development-source-v1",
+  "scope": "source-selection-not-production-qualification",
+  "chain_base_commit": "e02126dabef04f13792dec45d96ac5d6916d0651",
+  "chain_base_tree": "94752a3e02a6a8d53d4b98ea7bb7bf75216cc4da",
+  "hepta_source_commit": "4a93aaf01a594258bcc3e65a1a37ac772675be63",
+  "hepta_source_tree": "f9375fd1dc5f9151a8337fc51b0c6f574049f198",
+  "hepta_native_subtree": "3e7f1024a78aad91438496cf70008d2caaf1faa0",
+  "hepta_pull_request": "https://github.com/TrillionniumFoundation/hepta-private-ci/pull/5357",
+  "native_checkpoint_magic": "HEPLCP02",
+  "native_readback_schema": "hepta.agentd.learning-use-readback.v1",
+  "full_product_qualified": false,
+  "production_activation": false,
+  "qualification": "HOLD_NO_GO"
+}

@@ -1,0 +1,41 @@
+{
+  "schema": "trnm-final-integration-F-result-v1",
+  "commit": "d6be11987b44deb0028382bd9f791dc1c4efc37f",
+  "tree": "4604138f131fed7a68e417c9c3e1a5f074638c23",
+  "status": "PASS",
+  "command_exit_code": 0,
+  "source_before_after_equal": true,
+  "tracked_entries": 9305,
+  "tracked_bytes": 950106147,
+  "source_integrity_tests": {
+    "passed": 43,
+    "failed": 0,
+    "elapsed_seconds": 3.889,
+    "unique_test_identities": 43,
+    "repeated_E_run_not_added_to_unique_coverage": true
+  },
+  "formatting": "PASS",
+  "generated_source_inventory": "PASS",
+  "exact_source_pins": 464,
+  "ci_contract": "PASS",
+  "repository": {
+    "result": "PASS",
+    "local_links": 2785,
+    "rust_files": 1135,
+    "workspace_packages": 26,
+    "normal_dependency_edges": 25
+  },
+  "locked_offline_cargo_metadata": {
+    "workspace_members": 26,
+    "packages": 175,
+    "resolve_nodes": 175,
+    "complete_compressed_snapshot": "cargo-metadata.json.gz",
+    "cargo_lock_sha256": "00f3573879f3da7d5a702a8bc13245196bbfd53b86b0b6eb19c51f14887cef61"
+  },
+  "log_sha256": "e3d55f55bfc26ccfec761a222bcafae7c7cadebe01c023f88c50ba7167b3fc5a",
+  "native_tests_executed": 0,
+  "strict_clippy_executed": false,
+  "combined_native_acceptance": "HOLD",
+  "selected_node_attempt_on_N": "NOT_RUN_BUILD_FAILED_RESOURCE",
+  "production_activation": false
+}

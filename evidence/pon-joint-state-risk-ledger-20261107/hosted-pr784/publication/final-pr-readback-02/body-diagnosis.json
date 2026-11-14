@@ -1,0 +1,12 @@
+{
+  "actual_bytes": 6481,
+  "expected_bytes": 6481,
+  "actual_head": "'## Why\\n\\nThe work and native-execution certificate obligations need explicit evid'",
+  "expected_head": "'## Why\\n\\nThe work and native-execution certificate obligations need explicit evid'",
+  "actual_tail": "'ation/Trillionnium-Chain/blob/b5c655ebe9611b3d62cf739e61e6867decc053e3/formal/pon-nakamoto-v1/NATIVE_RISK_LEDGER_V1.md)\\n'",
+  "expected_tail": "'ation/Trillionnium-Chain/blob/b5c655ebe9611b3d62cf739e61e6867decc053e3/formal/pon-nakamoto-v1/NATIVE_RISK_LEDGER_V1.md)\\n'",
+  "actual_crlf": 0,
+  "expected_crlf": 0,
+  "equal_after_lf_normalization": true,
+  "diff_first_120_lines": []
+}

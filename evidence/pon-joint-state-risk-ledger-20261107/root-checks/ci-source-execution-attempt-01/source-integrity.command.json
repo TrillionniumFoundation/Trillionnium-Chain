@@ -1,0 +1,24 @@
+{
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "scripts/ci/test_ci_source_integrity.py",
+    "-v"
+  ],
+  "cwd": "/workspace/scratch/8f0d1a7a75bb/chain_certificates",
+  "elapsed_seconds": 3.0118090700016182,
+  "exit_code": 0,
+  "name": "source-integrity",
+  "started_at_utc": "2026-11-07T23:42:17.127438+00:00",
+  "streams": {
+    "stderr": {
+      "bytes": 6414,
+      "path": "source-integrity.stderr.log",
+      "sha256": "897d3854280fec2bf2f9d8a93c7cc5877e1a724f8a9006d1ba49b081f1f2f1c9"
+    },
+    "stdout": {
+      "bytes": 484,
+      "path": "source-integrity.stdout.log",
+      "sha256": "66beb30bb917460b1e8de29600d44ca8d20ef0f5a5907ce66b15c3f2bb559956"
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "actual_bytes": 13123954,
+  "actual_git_blob_sha1": "f8aa70032e46eac28cd8fd943da53c50bfaeebd0",
+  "command": [
+    "/usr/bin/gh",
+    "api",
+    "-H",
+    "Accept: application/vnd.github.raw+json",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs/f8aa70032e46eac28cd8fd943da53c50bfaeebd0"
+  ],
+  "elapsed_seconds": 4.595703125,
+  "exit_code": 0,
+  "expected_blob": "f8aa70032e46eac28cd8fd943da53c50bfaeebd0",
+  "expected_bytes": 13123954,
+  "import_exit_code": 0,
+  "import_stderr": "",
+  "import_stdout": "f8aa70032e46eac28cd8fd943da53c50bfaeebd0\n",
+  "imported": true,
+  "path": "evidence/pon-public-readiness-v1/observations/pre-correction-b/pipeline-growth-protected/summary.json",
+  "raw_sha256": "d9e6f31fed1666c8db32eebb47a54bb6911d0590d5d6094c76488338354399c9",
+  "timed_out": false
+}

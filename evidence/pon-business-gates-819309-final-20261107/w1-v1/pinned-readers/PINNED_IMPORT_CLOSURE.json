@@ -1,0 +1,204 @@
+{
+  "schema": "trnm-exact-reader-local-import-closure-v1",
+  "head": "819309fd312298e099642e1253b1d4ba07113e98",
+  "runtime_search_roots": [
+    "scripts/ci",
+    "scripts",
+    "formal/pon-nakamoto-v1"
+  ],
+  "seed_python_files": 9,
+  "python_files": 13,
+  "files": [
+    {
+      "path": "formal/pon-nakamoto-v1/bounded_process.py",
+      "bytes": 8627,
+      "git_blob": "b8579d1ea76e8c84214570f3f08d84595bfc77b6",
+      "sha256": "16fa98206e75db5e925a31508e889df9d1968c32f518554f52c2a0711047b356"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/contract_wire.py",
+      "bytes": 8924,
+      "git_blob": "37f62b2f0913e372bc1c75fed2cd3a3e1267870b",
+      "sha256": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6"
+    },
+    {
+      "path": "scripts/ci/check_required_native_test.py",
+      "bytes": 2928,
+      "git_blob": "277137b9e6ced74e9ec81061040ebfbb3949ffaf",
+      "sha256": "6f211d1a23521e9960df94ebd6de63c6c9733489d795eb7d2d4eaac1b790db28"
+    },
+    {
+      "path": "scripts/ci/ci_observation.py",
+      "bytes": 8837,
+      "git_blob": "9ee54850767a1fce3848483660860dd8d976c777",
+      "sha256": "389154c792fd3c734621278fb4188e9863ff599efb0c9b863316f540a94eab4a"
+    },
+    {
+      "path": "scripts/ci/integration_push_source.py",
+      "bytes": 14458,
+      "git_blob": "54d44ae6f63d1fb45be9495ca1cbbdd73b9939e7",
+      "sha256": "d72d6106fa4bad0f82d88d2c98b06f5cad0c8823e98a7dbda72d4977d0e610d3"
+    },
+    {
+      "path": "scripts/ci/public_host_ci_observation.py",
+      "bytes": 5452,
+      "git_blob": "245b5b905e32446ed20f39398619553c4dccead0",
+      "sha256": "27f0c506592f26f3a218a6d1723c4694e4d7a59f0786e16dbf853e2d5cdb60de"
+    },
+    {
+      "path": "scripts/ci/replay_pinned_native.py",
+      "bytes": 18571,
+      "git_blob": "2e633556e2b6f5cc4278491d5c4c8edf437fab81",
+      "sha256": "d14d2f61ab98bb30b5932530437064dce5d3a330c05a9530988fe776cefea44a"
+    },
+    {
+      "path": "scripts/ci/run_from_zero_native.py",
+      "bytes": 110854,
+      "git_blob": "9d97dfadd5bad55383475b7583f384ea572f180c",
+      "sha256": "baa7cba8096a3908c9b7ebe0705949b95061191ec78846006527fd80e6a5a0c8"
+    },
+    {
+      "path": "scripts/ci/run_history_native.py",
+      "bytes": 21380,
+      "git_blob": "fd305e7735a9bf4969bdf7166b435dfeed46b0f2",
+      "sha256": "35ca32bbf23d33242b88a2edf994739ff804fbd7b33b5b7ac2e090b4ffce4797"
+    },
+    {
+      "path": "scripts/ci/run_w1_fresh_service_v1.py",
+      "bytes": 28537,
+      "git_blob": "e3f68e023a9f958cb5fbf43e4584377a86cbcd03",
+      "sha256": "143b0f26f914798fc6650afc08d2f73379bcf82b7fd84cc318ca2fb83299d324"
+    },
+    {
+      "path": "scripts/ci/verify_ci_source.py",
+      "bytes": 11231,
+      "git_blob": "c775290c138c3b41a32e654f56ed5cbe9acec3ee",
+      "sha256": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946"
+    },
+    {
+      "path": "scripts/pon_public_v3_phase_read.py",
+      "bytes": 69313,
+      "git_blob": "a463677ca5119c360b4974e1c771c64968d601ff",
+      "sha256": "deeadace0e557298728aa10f7636b340a86fe2bd705b2d0ebd0c9b17773f3482"
+    },
+    {
+      "path": "scripts/pon_public_v3_policy_read.py",
+      "bytes": 7277,
+      "git_blob": "6b2ea6dc2205e5cab740cef2f14b11df409e348a",
+      "sha256": "c7e4bc5450ac1c721cdc9dc5975d2c102bcf4ab5c58fe3b2dc52bcd65b4e6a7b"
+    }
+  ],
+  "local_import_edges": [
+    {
+      "source": "scripts/ci/ci_observation.py",
+      "line": 20,
+      "module": "bounded_process",
+      "target": "formal/pon-nakamoto-v1/bounded_process.py"
+    },
+    {
+      "source": "scripts/ci/ci_observation.py",
+      "line": 45,
+      "module": "verify_ci_source",
+      "target": "scripts/ci/verify_ci_source.py"
+    },
+    {
+      "source": "scripts/ci/ci_observation.py",
+      "line": 148,
+      "module": "verify_ci_source",
+      "target": "scripts/ci/verify_ci_source.py"
+    },
+    {
+      "source": "scripts/ci/integration_push_source.py",
+      "line": 24,
+      "module": "verify_ci_source",
+      "target": "scripts/ci/verify_ci_source.py"
+    },
+    {
+      "source": "scripts/ci/run_from_zero_native.py",
+      "line": 21,
+      "module": "check_required_native_test",
+      "target": "scripts/ci/check_required_native_test.py"
+    },
+    {
+      "source": "scripts/ci/run_from_zero_native.py",
+      "line": 22,
+      "module": "replay_pinned_native",
+      "target": "scripts/ci/replay_pinned_native.py"
+    },
+    {
+      "source": "scripts/ci/run_from_zero_native.py",
+      "line": 23,
+      "module": "verify_ci_source",
+      "target": "scripts/ci/verify_ci_source.py"
+    },
+    {
+      "source": "scripts/ci/run_from_zero_native.py",
+      "line": 27,
+      "module": "pon_public_v3_phase_read",
+      "target": "scripts/pon_public_v3_phase_read.py"
+    },
+    {
+      "source": "scripts/ci/run_from_zero_native.py",
+      "line": 33,
+      "module": "contract_wire",
+      "target": "formal/pon-nakamoto-v1/contract_wire.py"
+    },
+    {
+      "source": "scripts/ci/run_history_native.py",
+      "line": 22,
+      "module": "check_required_native_test",
+      "target": "scripts/ci/check_required_native_test.py"
+    },
+    {
+      "source": "scripts/ci/run_history_native.py",
+      "line": 23,
+      "module": "public_host_ci_observation",
+      "target": "scripts/ci/public_host_ci_observation.py"
+    },
+    {
+      "source": "scripts/ci/run_history_native.py",
+      "line": 24,
+      "module": "replay_pinned_native",
+      "target": "scripts/ci/replay_pinned_native.py"
+    },
+    {
+      "source": "scripts/ci/run_history_native.py",
+      "line": 25,
+      "module": "verify_ci_source",
+      "target": "scripts/ci/verify_ci_source.py"
+    },
+    {
+      "source": "scripts/ci/run_w1_fresh_service_v1.py",
+      "line": 21,
+      "module": "ci_observation",
+      "target": "scripts/ci/ci_observation.py"
+    },
+    {
+      "source": "scripts/ci/run_w1_fresh_service_v1.py",
+      "line": 22,
+      "module": "run_from_zero_native",
+      "target": "scripts/ci/run_from_zero_native.py"
+    },
+    {
+      "source": "scripts/ci/run_w1_fresh_service_v1.py",
+      "line": 23,
+      "module": "check_required_native_test",
+      "target": "scripts/ci/check_required_native_test.py"
+    },
+    {
+      "source": "scripts/pon_public_v3_phase_read.py",
+      "line": 24,
+      "module": "pon_public_v3_policy_read",
+      "target": "scripts/pon_public_v3_policy_read.py"
+    }
+  ],
+  "unresolved_local_candidates": [],
+  "newly_added_paths": [
+    "formal/pon-nakamoto-v1/bounded_process.py",
+    "formal/pon-nakamoto-v1/contract_wire.py"
+  ],
+  "all_original_and_added_blob_bytes_verified": true,
+  "repository_mutated": false,
+  "native_executed": false,
+  "github_calls": 0
+}

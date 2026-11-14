@@ -1,0 +1,16 @@
+{
+  "label": "native-01-pgh2-growth-reader",
+  "argv": [
+    "python3",
+    "scripts/pon_branch_work_schedule_reader.py",
+    "--raw-dir",
+    "/home/qian-qi/pon-fixed-probability-contract-20261108-63b38-evidence/native-schedule/pgh2-growth",
+    "--report-sha256",
+    "5a80454acc7f899d3440bdfdda2a7856df5030c3bf7ba089e96abe8a405add04"
+  ],
+  "exit": 0,
+  "source_head": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+  "native_stdout_digest": "5a80454acc7f899d3440bdfdda2a7856df5030c3bf7ba089e96abe8a405add04",
+  "duration_seconds": 1.346654152031988,
+  "unittest_count": []
+}

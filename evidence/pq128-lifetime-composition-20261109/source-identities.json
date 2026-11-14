@@ -1,0 +1,12 @@
+{
+  "schema": "trnm-source-publication-identity-v1",
+  "recorded_utc": "2026-11-09T14:04:29.019615+00:00",
+  "base_commit": "44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0",
+  "tested_local_commit": "cb56a6c37fe29235c1cc2376cd8d7978b028212d",
+  "publication_source_commit": "1ab303e38b9cf7292bba8ab5026aa4bc46e5db0f",
+  "source_tree": "25b45e6a3b6c58923e699b6e5dfaddb31b9d6aff",
+  "same_source_tree": true,
+  "source_change_patch_sha256": "63b13f3bcc64e81084ff393be2d04f179860773eb55129f5bdde51791bb60f5d",
+  "source_change_patch_bytes": 90548,
+  "commit_identity_note": "GitHub connector uses its connection author metadata and timezone; the source trees are byte-identical. Runs state their original execution identity; no run is relabeled as the other commit."
+}

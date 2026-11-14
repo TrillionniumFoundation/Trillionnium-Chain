@@ -1,0 +1,41 @@
+{
+  "package": "trnm-data-availability",
+  "test": "tests::schema_drift_and_sidecar_are_fail_closed_without_migration",
+  "argv": [
+    "/workspace/scratch/3069292387f3/sqlite-target/debug/deps/trnm_data_availability-8a3d1b05ab724693",
+    "--exact",
+    "tests::schema_drift_and_sidecar_are_fail_closed_without_migration",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "source_commit": "9021d15ffe1dfdfb1358a2372b5a472babbf80ac",
+  "source_scope": "selected actual crate sources, manifests and workspace lock; partial checkout, not complete repository source qualification",
+  "build_receipt": "positive-owners-trnm-data-availability.json",
+  "binary": {
+    "path": "/workspace/scratch/3069292387f3/sqlite-target/debug/deps/trnm_data_availability-8a3d1b05ab724693",
+    "bytes": 124768592,
+    "sha256": "43dcf7d8ac6d6b8935a761db57cd21a48304c9bc639b097bd08dd0f61fd7db25"
+  },
+  "elapsed_seconds": 1.1444530487060547,
+  "exit_code": 0,
+  "native_summaries": [
+    [
+      "ok",
+      "1",
+      "0",
+      "0"
+    ]
+  ],
+  "selected_source_and_binary_unchanged": true,
+  "passed": true,
+  "stdout": {
+    "path": "retained-trnm-data-availability-1.stdout",
+    "bytes": 192,
+    "sha256": "6cfbdaa166824d9c6fca395af3f04d52f18edb8c176c0d032dd866141d3e292f"
+  },
+  "stderr": {
+    "path": "retained-trnm-data-availability-1.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

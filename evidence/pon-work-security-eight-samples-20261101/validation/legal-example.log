@@ -1,0 +1,16 @@
+   Compiling trnm-pon-node v0.1.0 (/tmp/trnm-pon-security-final/trillionnium/crates/trnm-pon-node)
+    Finished `release` profile [optimized] target(s) in 2m 44s
+     Running unittests examples/pon_w1_legal_strategy_v1.rs (/tmp/trnm-pon-security-target/release/examples/pon_w1_legal_strategy_v1-029343bb15ea1ba1)
+
+running 8 tests
+test tests::exact_shards_reject_unfrozen_targets_horizons_and_extra_arguments ... ok
+test tests::last_product_mutation_wraps_canonically_and_changes_only_that_word ... ok
+test tests::public_dispatch_keeps_complete_bytes_and_all_misses ... ok
+test tests::v2_final_sample_keeps_both_legal_producers_and_complete_negative_verification ... ok
+test tests::valid_acquisition_and_late_product_refusal_keep_full_statement_identity ... ok
+test tests::versions_keep_exact_namespaces_and_eight_new_sample_streams ... ok
+test w1_material::tests::default_materials_include_exact_continuity_fixture_and_reported_ranks ... ok
+test w1_material::tests::material_bytes_require_exact_length_and_canonical_field_values ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+

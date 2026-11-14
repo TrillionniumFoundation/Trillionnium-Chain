@@ -1,0 +1,7 @@
+
+running 2 tests
+test account_archive_prototype::native_store::apply_reader_tests::sqlite_hook_trace_failed_observation_and_unwind_keep_cleanup_fail_closed ... ok
+test account_archive_prototype::native_store::apply_reader_tests::sqlite_hook_trace_interval_excludes_transaction_setup_and_teardown ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 1391 filtered out; finished in 0.00s
+

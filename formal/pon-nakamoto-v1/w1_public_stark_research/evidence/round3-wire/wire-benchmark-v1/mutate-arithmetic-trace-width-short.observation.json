@@ -1,0 +1,30 @@
+{
+  "label": "mutate-arithmetic-trace-width-short",
+  "command": [
+    "/home/qian-qi/work/chain-w1-bounded-verifier-20261108-f16ac5/formal/pon-nakamoto-v1/w1_public_stark_research/target/release/examples/mutate_structure",
+    "arithmetic",
+    "trace-width-short",
+    "/home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-02/arith.proof.bin",
+    "/home/qian-qi/work/w1-r3-evidence-f16ac5/wire-benchmark-v1/arithmetic-trace-width-short/arith.proof.bin"
+  ],
+  "exit_code": 0,
+  "outer_wall_seconds": 0.02088544610887766,
+  "expected_success": true,
+  "matched_exit_expectation": true,
+  "final": {
+    "component": "arithmetic",
+    "cryptographic_rejection_not_executed": true,
+    "input_bytes": 530885,
+    "input_sha256": "cfce6e90bd1f171ab6d202e70f2e442f8a88e490a22c806275dde2af1d6cf204",
+    "mode": "trace-width-short",
+    "output_bytes": 530869,
+    "output_sha256": "ff185524746a315bc63392227eb1aa69b3e5b1a1d94af91cd0fb5ed01593ca31",
+    "qualification": "HOLD_NO_GO",
+    "schema": "w1-fixed-wire-mutation-v1",
+    "wire_refusal_offset": 97,
+    "wire_refusal_reason": "fixed vector length"
+  },
+  "phase_events": [],
+  "resource_text": "\tCommand being timed: \"/home/qian-qi/work/chain-w1-bounded-verifier-20261108-f16ac5/formal/pon-nakamoto-v1/w1_public_stark_research/target/release/examples/mutate_structure arithmetic trace-width-short /home/qian-qi/work/chain-w1-stark-selected-20261107-89f4dd/formal/pon-nakamoto-v1/w1_public_stark_research/results/retained-native-02/arith.proof.bin /home/qian-qi/work/w1-r3-evidence-f16ac5/wire-benchmark-v1/arithmetic-trace-width-short/arith.proof.bin\"\n\tUser time (seconds): 0.00\n\tSystem time (seconds): 0.00\n\tPercent of CPU this job got: 61%\n\tElapsed (wall clock) time (h:mm:ss or m:ss): 0:00.01\n\tAverage shared text size (kbytes): 0\n\tAverage unshared data size (kbytes): 0\n\tAverage stack size (kbytes): 0\n\tAverage total size (kbytes): 0\n\tMaximum resident set size (kbytes): 3536\n\tAverage resident set size (kbytes): 0\n\tMajor (requiring I/O) page faults: 0\n\tMinor (reclaiming a frame) page faults: 621\n\tVoluntary context switches: 3\n\tInvoluntary context switches: 0\n\tSwaps: 0\n\tFile system inputs: 0\n\tFile system outputs: 1040\n\tSocket messages sent: 0\n\tSocket messages received: 0\n\tSignals delivered: 0\n\tPage size (bytes): 4096\n\tExit status: 0\n",
+  "combined_log_sha256": "1aefc95b44f8f58828034a5206f6959214d380f0b19f193eb53ec62da6d484e1"
+}

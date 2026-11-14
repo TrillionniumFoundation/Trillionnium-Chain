@@ -1,0 +1,20 @@
+{
+  "artifact_sha256": "1b97c712cd455b2fb351403fc1c8af7739584c55124162a2c6794ab617764a1d",
+  "component_validation_passed": false,
+  "executable": "/tmp/chain-pq-fa62381e-s3-negative-target/debug/deps/trnm_pon_node-b6143d13a87d0597",
+  "executable_sha256": "522c2bfaec2c04bf25caee9a6990e68bdf1c384245ed628ad27d5ad8fb69ee18",
+  "expected_outcomes_matched": 7,
+  "named_tests_required": 7,
+  "native_batch_exit_code": 1,
+  "native_tests_failed": 5,
+  "native_tests_passed": 2,
+  "negative_control_expectations_met": true,
+  "negative_source": "f7c51532cc6657360b97226d9f396158253cea78",
+  "original_business_budgets_changed": false,
+  "phase_error": null,
+  "positive_source": "454ae116159867ff6cddd91b964523df7f7e16f0",
+  "production_activation": false,
+  "retained_pnq2_roster_executed_in_full": false,
+  "runner_sha256": "58e2fa946a7dc34cf58e8b357e04c2789da98f8b6218768d8e29651c6cf6b6f7",
+  "whole_chain_quantum_security_qualified": false
+}

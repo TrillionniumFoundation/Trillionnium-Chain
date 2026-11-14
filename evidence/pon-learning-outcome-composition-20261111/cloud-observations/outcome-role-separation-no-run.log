@@ -1,0 +1,4 @@
+error: failed to download `rustix v1.1.4`
+
+Caused by:
+  attempting to make an HTTP request, but --offline was specified

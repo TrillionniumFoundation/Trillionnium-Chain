@@ -1,0 +1,88 @@
+{
+  "schema": "trnm-closure-evidence-final-static-review-v1",
+  "recorded_at_utc": "2026-11-09T16:50:43.638336+00:00",
+  "review_kind": "READ_ONLY_PUBLICATION_SCOPE_REVIEW",
+  "result": "No unsupported production/canonical qualification upgrade observed in the reviewed snapshot; two wording corrections were requested and then observed.",
+  "source_identity": {
+    "chain_execution_source": "3ad605ecdac4b3b123dff83c1cb7458430acd776",
+    "chain_tree": "fbbb4dca143775bae75ea825ff502f368e122ebb",
+    "hepta_source": "71738345326b98d88b738250d2b84ecbcb466eb8",
+    "hepta_tree": "bfd8384241bf09fcf79daa94f2ef9c9438f92ee4",
+    "proof_descriptor_sha256": "da0c97f1c549e10ecfc066f6b0a9721147dc3d430eab6f53d502cbc7b91dd48c"
+  },
+  "reviewed_input_identities": {
+    "README_before_two_corrections": {
+      "bytes": 17193,
+      "sha256": "b877476b7b99fcedb3cec4f084b30a73aec371f784d4fb1f16cdf0be14c46d2b"
+    },
+    "README_after_two_corrections": {
+      "bytes": 17538,
+      "sha256": "0ab2cedc69db4047ad48a12c7d224b104fdcee8bade2bab1a637c60495180155",
+      "scope": "Only the two corrected lines were additionally reread for this record; the full prior review is not rerun."
+    },
+    "candidate-profile.json": "5e046ca20f6faece5c7bc0a189ecf5e5d82462a30fe60e5a69ff1b5371751f88",
+    "qualification-plan.json": "9cd7c3cbd2c785458a3764f3d6dba6bca148b5f88a140f322a00510236e7ea92",
+    "qualification-packet.json": "cd0c52abc544bee2794cba92d0010294d0170830a2179734add1a5bbe8f92ce8",
+    "qualification-review.json": "9bba26b27c26973e6a4521727d8b4d726a385dbefdda112cd002f8e94fc10844",
+    "qualification-identities.json": "73b3c3500905b598b917d7c0190d97207a6ff68d1ca78c568b62e4c36fef6214",
+    "execution-status.json_at_review": "dfc4d356af8d99836dd72da108e46fa3b7a570f17d8dc2d7ee51f2142024ebcf",
+    "research-publication-transform.json": "aa445fa05e98b03f76926b3077cee566e98184e62a27b0a3015423e03196b2b4",
+    "history-import-review/snapshot-followup.md": "4dca78e2e7ab2a0d0af4c2ed6c280f6c5455d76515dd3eb3c5368a6abdd96258",
+    "history-import-review/snapshot-followup.json": "3ccb98f01bc3a8d6fbc1b8d504e5d5cd733948d2eabaff4cd33f56442bbf2e8c",
+    "original-history-snapshots/extraction-manifest.json": "93d025ac399fe868856cbd21f34b11157c362cb212f9ca70c5eeaa76b11eb5be",
+    "original-history-snapshots/baseline-history-snapshots.json": "453c1d085a4a689110e931235464cd471f68e9b59311bbbdd1172ae70d4c78ec",
+    "validation/provider-fixture-static-review/README.md": "d32fd9adae40a3150c5865269d44a430b57008bc7edd2f66cbb5d9263babf1c9",
+    "validation/provider-fixture-static-review/review.json": "4f6eeff85679becabc9c601d0f79b33cb84e93947f3e96b5a3be955559b51026",
+    "separate_original_provider_probe_summary": {
+      "bytes": 6439,
+      "sha256": "f94ec28e4ccaea13ef114486387f3d06e38dc74baf9cdf3f52a48bb86c455b98",
+      "test_elf_sha256": "c9f232976cfe5c28f421b2858eea3991f68b07239858e16304383a212c880dd9",
+      "linked_version": "OpenSSL 3.5.5 27 Jan 2026",
+      "scope": "Original dynamic backend observation, not the pending canonical static backend."
+    }
+  },
+  "checks_already_completed": [
+    "Raw SHA-256 of profile/plan/packet/review equals qualification-identities and the forward references; source_pair is equal through profile, plan and review.",
+    "M5 Chain tree, all 14 selected Chain lock bytes, and proof-profile manifest match fixed Git objects. Both Hepta locks match the retained exact-source lock observations; no full two-worktree collector is claimed.",
+    "Seven frozen History/provider review files match their delivered hashes. Five published snapshot input hashes and all three report identities match the original extraction manifest.",
+    "Both research-original manuscripts, both derived display manuscripts, and both original source registers match the preserved publication transformation hashes.",
+    "Thirteen display Markdown files have 37 valid local file destinations and no sandbox links. 120 external destinations were checked at syntax/fixed-source-reference scope, not by HTTP retrieval. Intentionally preserved research-originals were excluded from display-link rewriting.",
+    "The original provider probe summary was independently read and byte-hash checked; original ELF and 3.5.5 library/environment fields agree with the native owner report. No test was executed by this review."
+  ],
+  "sample_and_qualification_boundaries_observed": [
+    "0746 original failed campaign stays distinct from M4 and M5; 0/3 campaigns and 0/9 phases remain failures.",
+    "First-round 21 imports / 360 entered spans remain distinct from complete-baseline 30 imports / 498 entered spans and separate confirmations. Nested native/Host/SQL costs are not added as independent costs.",
+    "M4 compilation/Clippy and earlier library failures remain historical; they are not renamed as M5 canonical results.",
+    "The original M5 release fixture 56-pass/11-environment-failure attempt and dynamic OpenSSL 3.5.5 are not promoted to canonical OpenSSL 3.5.9 static success.",
+    "M5 native status at this review is pending/null, with no claim that all five libraries or zero ignored cases passed. The final 41-ignored roster/count reconciliation is outside this snapshot review and must remain distinct from passed cases.",
+    "Ordinary daemon build/load/model/loader/evaluator and source-observation gaps remain null/false. Qualification stays HOLD_NO_GO and authority DENY_ALL.",
+    "Original Host 4 seconds, independent campaign 30 seconds, three independent administrative failure domains and 72 hours remain requirements, not achieved results. PQ proof obligations/security bounds remain open."
+  ],
+  "wording_corrections": [
+    {
+      "line": 67,
+      "current_text": "M5 的首次统一五包构建后的库测试暴露 fixture 环境缺项：release-bundle 67项中56通过、11项在要求显式`TRNM_PQ_OPENSSL`时拒绝，尚未进入双quorum断言。实际ELF动态链接系统OpenSSL3.5.5；它满足源码最低版本条件，但不能记为仓库原定的static3.5.9环境。[提供者依赖静态审阅](validation/provider-fixture-static-review/README.md)确认CLI生成DER之后，Rust进程内PKey/Signer及SLH验证仍依赖自己的链接库。原失败、动态库身份和后续canonical准备／重新编译／实际测试按不同环境组分别记录；ML-DSA-65 CLI smoke不能替代ML-DSA-87／SLH原测试。完成static3.5.9重新编译后，完整release-bundle实际67/67通过、无忽略／筛除；原11个fixture场景实际进入并通过，单独原执行记录保留其8.68秒耗时与新ELF身份。其他库及同环境check/Clippy的结果另列于最终原生记录，不由这一release成功推导。",
+      "original_issue": "M5 的首次统一五包构建还暴露 fixture 环境缺项",
+      "root_correction_observed": true
+    },
+    {
+      "line": 87,
+      "current_text": "这里的 RPC 区间是原 `network_call_wall_ns` 对应的完整受保护调用区间，含部分客户端结果序列化；它不是纯 RTT，也不包含整个 round 的其他 Submit RPC、独立的本地 confirmation 及其余工作。",
+      "original_issue": "也不包含整个 round 的其他 Submit/confirmation 网络调用",
+      "root_correction_observed": true
+    }
+  ],
+  "not_in_scope": [
+    "Final canonical OpenSSL 3.5.9 preparation, recompilation, test/Clippy terminal results and subsequent native count/environment reconciliation.",
+    "Any later edits to qualification, execution-status or evidence fields after the reviewed hashes.",
+    "New native execution, test rerun, online retrieval, new research, full remote library reprobe or public HTTP link availability."
+  ],
+  "actions_performed": {
+    "repository_modified": false,
+    "evidence_content_modified": false,
+    "new_tests_run": false,
+    "network_access": false,
+    "only_this_review_record_created": true
+  },
+  "qualification_change": false
+}

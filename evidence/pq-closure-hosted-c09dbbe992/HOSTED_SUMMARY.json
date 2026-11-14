@@ -1,0 +1,179 @@
+{
+  "api_codeql_export": {
+    "complete": false,
+    "each_analyses_result_empty": true,
+    "each_exact_source_filtered_CodeQL_check_result_empty": true,
+    "job_id": 130309764088,
+    "local_sarif_substituted_for_API_result": false,
+    "polls": 39,
+    "run_id": 42955582970,
+    "target_pr_gate_authenticated": false
+  },
+  "api_snapshot_time_bounds": {
+    "additional_log_and_artifact_metadata_observed_before_utc": "2026-11-11T05:08:32Z",
+    "first_batch_exact_started_utc": null,
+    "first_batch_observed_before_utc": "2026-11-11T05:07:03Z",
+    "note": "No timestamp is invented for the first API batch; raw API update timestamps and retained download times are separate.",
+    "second_batch_finished_utc": "2026-11-11T05:07:04Z",
+    "second_batch_started_utc": "2026-11-11T05:07:03Z"
+  },
+  "assembled_utc": "2026-11-11T05:14:04.287509+00:00",
+  "campaign": {
+    "attack_confirmed_rounds_per_phase": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "attack_phases_with_deadline_error": 6,
+    "attack_phases_with_observed_paid_depletion": 0,
+    "baseline_confirmed_rounds_per_run": [
+      1,
+      1,
+      1
+    ],
+    "baseline_verifier_error_count": 0,
+    "build_success": true,
+    "failed_finite_phases": 9,
+    "job_id": 130309763995,
+    "original_process_returncodes": [
+      101,
+      101,
+      101
+    ],
+    "run_id": 42955583039
+  },
+  "cross_arch_from_zero": {
+    "business_acceptance_error": "CONFIRMATION_TARGET",
+    "jobs": [
+      130309764639,
+      130309764652
+    ],
+    "named_native_tests_passed_per_architecture": 5,
+    "original_4s_pressure_confirmations_per_architecture": 0,
+    "run_id": 42955583052
+  },
+  "external_readiness_C1_failure": {
+    "C2_fix_outcome": null,
+    "cause": "stale durable selected-body source binding after account guard addition",
+    "errors": 22,
+    "failures": 46,
+    "head_job_id": 130309764822,
+    "prospective_job_id": 130309764799,
+    "suite_top_level_tests": 71
+  },
+  "fresh_challenge": {
+    "baseline_confirmed_transactions_per_lane": 1,
+    "fresh_selector_native_exit": 101,
+    "jobs": [
+      130309765098,
+      130309765213
+    ],
+    "native_assertion": "fresh challenges failed the original four-second/six-depth business target",
+    "original_selector_native_exit": 0,
+    "pressure_confirmed_transactions_per_lane": 0,
+    "pressure_error": "PUBLIC_REQUEST_DEADLINE",
+    "run_id": 42955582893,
+    "source_build_and_host_success": true,
+    "source_kinds": [
+      "head",
+      "prospective-merge"
+    ]
+  },
+  "local_codeql": {
+    "exact_source_receipts_verified": true,
+    "head_merge_duplicate_findings_are_not_added_as_unique_findings": true,
+    "individual_rust_findings_triaged": false,
+    "python_result_rule": "py/redos",
+    "run_id": 42955582992,
+    "rust_result_rule": "rust/hard-coded-cryptographic-value",
+    "sarif_results_per_source": {
+      "actions": 0,
+      "python": 2,
+      "rust": 857
+    },
+    "six_cells_success": true,
+    "upload": "never"
+  },
+  "remaining_jobs_monitored_after_snapshot": false,
+  "required_baseline_unfinished_at_snapshot": [
+    {
+      "completed_at": null,
+      "conclusion": null,
+      "id": 130309764643,
+      "name": "rust-baseline shard (runtime)",
+      "started_at": "2026-11-11T04:27:25Z",
+      "status": "in_progress"
+    },
+    {
+      "completed_at": null,
+      "conclusion": null,
+      "id": 130309764698,
+      "name": "prospective Rust shard (quality)",
+      "started_at": "2026-11-11T04:35:45Z",
+      "status": "in_progress"
+    },
+    {
+      "completed_at": null,
+      "conclusion": null,
+      "id": 130309764723,
+      "name": "protocol-contract",
+      "started_at": "2026-11-11T04:49:39Z",
+      "status": "in_progress"
+    },
+    {
+      "completed_at": null,
+      "conclusion": null,
+      "id": 130309764733,
+      "name": "rust-baseline shard (quality)",
+      "started_at": "2026-11-11T04:37:12Z",
+      "status": "in_progress"
+    },
+    {
+      "completed_at": null,
+      "conclusion": null,
+      "id": 130309764859,
+      "name": "prospective Rust shard (runtime)",
+      "started_at": "2026-11-11T04:45:24Z",
+      "status": "in_progress"
+    },
+    {
+      "completed_at": null,
+      "conclusion": null,
+      "id": 130309764883,
+      "name": "prospective-merge (protocol-contract)",
+      "started_at": "2026-11-11T04:44:27Z",
+      "status": "in_progress"
+    },
+    {
+      "completed_at": null,
+      "conclusion": null,
+      "id": 130324511811,
+      "name": "cross-arch-cost-consistency",
+      "started_at": "2026-11-11T04:34:48Z",
+      "status": "queued"
+    }
+  ],
+  "schema": "c1-hosted-evidence-summary-v1",
+  "scope": {
+    "C2_or_later_commits_qualified": false,
+    "WAN_or_independent_operator_qualification": false,
+    "base": "31543fb6dde565b62b47436e0b1d399b6d0bd772",
+    "fresh_challenge_4s_6depth_qualified": false,
+    "head": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+    "native_tests_started_by_collection": 0,
+    "old315_results_cover_C1": false,
+    "original_from_zero_4s_qualified": false,
+    "original_native_30s_qualified": false,
+    "original_zip_hashes_are_integrity_references_not_security_verdicts": true,
+    "production_activation": false,
+    "prospective_merge": "61589dddd13e7495369aaecad9212668049417c1",
+    "schema": "c1-hosted-evidence-scope-v1",
+    "source_identities_remain_distinct_despite_equal_tree": true,
+    "temporary_download_urls_retained": false,
+    "tree": "f15a7ee4a0f5455eaf965db01dcd49e02a5f22b6",
+    "whole_chain_pq_qualified": false
+  }
+}

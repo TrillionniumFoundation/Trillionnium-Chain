@@ -1,0 +1,27 @@
+{
+  "schema": "pon-six-axis-measurement-execution-v1",
+  "declared_utc": "2026-11-05T01:38:41.024891+00:00",
+  "source_checkpoint": "38cf428103f48879fcc6b7dc0fc523d5c58ff2e0",
+  "measurement_plan_sha256": "e2714a9b9976bfb83658af5e8aab7efa2d16017c7a726d68042ed1cc8342efeb",
+  "analysis_helper_sha256": "1044cb7eb885dc0837b4008c97345f70b8234243ac5dba17a1e91472222a936d",
+  "whole_command_resource_observer": [
+    "/usr/bin/time",
+    "-v"
+  ],
+  "whole_command_resource_scope": "includes cargo startup, test setup, warmup, assertions, all native returns and output/journal writes; compilation if any must be disclosed; not per-stage CPU or ordinary-binary performance",
+  "maximum_rss_scope": "GNU time getrusage maximum; not a simultaneous aggregate of all system processes",
+  "profile": "unchanged workspace test package profiles with all features, locked/offline, one Cargo build job",
+  "source_or_workload_changes_for_measurement": false,
+  "hardware": {
+    "kernel": "6.18.57",
+    "machine": "x86_64",
+    "logical_cpus": 9,
+    "affinity_count": 9,
+    "cgroup_cpu_max": "800000 100000",
+    "cgroup_memory_max_bytes": 8589934592,
+    "original_acceptance_host": false,
+    "shared_with_other_sessions": true
+  },
+  "sample_storage": "original overlay filesystem; no tmpfs database substitution",
+  "result": null
+}

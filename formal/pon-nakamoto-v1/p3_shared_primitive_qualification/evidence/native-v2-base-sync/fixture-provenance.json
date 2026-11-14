@@ -1,0 +1,42 @@
+{
+  "retained.input.bin": {
+    "source": "/home/qian-qi/work/chain-p3-shared-profile-20261108-3acf89/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.input.bin",
+    "sha256": "67b74fa2f417c0240d974e5ecea410d2b68d97d6dde667603aeb4d7ce59036cb",
+    "bytes": 49506
+  },
+  "retained.prefix.bin": {
+    "source": "/home/qian-qi/work/chain-p3-shared-profile-20261108-3acf89/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.prefix.bin",
+    "sha256": "2d3876ae3aeaff654b373acf3ad71720428890fe4373a51ca93c9126b9fd5f96",
+    "bytes": 131072
+  },
+  "retained.expected-header.bin": {
+    "source": "/home/qian-qi/work/chain-p3-shared-profile-20261108-3acf89/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.expected-header.bin",
+    "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+    "bytes": 318
+  },
+  "retained.artifacts.bin": {
+    "source": "/home/qian-qi/work/chain-p3-shared-profile-20261108-3acf89/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/retained.artifacts.bin",
+    "sha256": "802adcdd951cfb4cd7271df22c3bca6af66fee9f40454c74f8b5ff2c98a1b683",
+    "bytes": 64
+  },
+  "dense.input.bin": {
+    "source": "/home/qian-qi/work/chain-w1-compact-backend-20261108-f16ac-r4/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/round4-schedule/dense.input.bin",
+    "sha256": "1f6c92383d39d90ac5cfcfcee3871ada270cf8a05c32ef05eb955386e2aba971",
+    "bytes": 49506
+  },
+  "dense.prefix.bin": {
+    "source": "/home/qian-qi/work/chain-w1-compact-backend-20261108-f16ac-r4/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/round4-schedule/dense.prefix.bin",
+    "sha256": "2af29f39eb7f1ad9f3e10511a374551ce8d801462ad17bad35bb4f8836ef7289",
+    "bytes": 131072
+  },
+  "dense.expected-header.bin": {
+    "source": "/home/qian-qi/work/chain-w1-compact-backend-20261108-f16ac-r4/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/round4-schedule/dense.expected-header.bin",
+    "sha256": "0d8e0233fbbd7b8d96bf2f8ab27b534cd953929bcb1fb2e40a9b19f91f3489fa",
+    "bytes": 318
+  },
+  "dense.artifacts.bin": {
+    "source": "/home/qian-qi/work/chain-w1-compact-backend-20261108-f16ac-r4/formal/pon-nakamoto-v1/w1_public_stark_research/fixtures/round4-schedule/dense.artifacts.bin",
+    "sha256": "e431f11e08196768fe6521d1e42b21cb337b3a33df3a1d7c83eeba18206813eb",
+    "bytes": 64
+  }
+}

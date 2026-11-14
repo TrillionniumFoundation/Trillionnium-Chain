@@ -1,0 +1,20 @@
+{
+  "label": "final-13-pgh2-growth-controls",
+  "argv": [
+    "python3",
+    "scripts/ci/test_pon_branch_work_schedule_reader.py",
+    "--raw-dir",
+    "/home/qian-qi/pon-fixed-probability-contract-20261108-63b38-evidence/native-final/pgh2-growth",
+    "--report-sha256",
+    "5a80454acc7f899d3440bdfdda2a7856df5030c3bf7ba089e96abe8a405add04",
+    "-v"
+  ],
+  "exit": 0,
+  "duration_seconds": 2.540155066177249,
+  "source_head_before": "103cdf67108a667d8570388f9dd402210c160157",
+  "source_head_after": "103cdf67108a667d8570388f9dd402210c160157",
+  "native_passed_counts": [],
+  "unittest_counts": [
+    "9"
+  ]
+}

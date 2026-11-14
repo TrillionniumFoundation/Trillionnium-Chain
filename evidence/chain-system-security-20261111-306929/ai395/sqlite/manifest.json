@@ -1,0 +1,1000 @@
+{
+  "excluded_non_evidence_files": [],
+  "files": [
+    {
+      "bytes": 2975,
+      "path": "README.md",
+      "sha256": "1bb2b7105fd6ba8b9c94ade61d2fc0d254a0e48a6e16c61498addfedfc2297fe",
+      "source": "curated evidence scope and observations"
+    },
+    {
+      "bytes": 14728,
+      "path": "inputs/driver.py",
+      "sha256": "7fe40feffcc9553b310d2a8adc8ce2b1e67eb283d7bdda6667bd3e6f6d60001a",
+      "source": "/home/qq/chain-system-security-sqlite-fixed-driver-20261112-306929.py"
+    },
+    {
+      "bytes": 2741,
+      "path": "inputs/launch-input.json",
+      "sha256": "2de84ffe0d960f4b6d0f20604090f86fa173bac3e4ebf0f7626875214bf7f63a",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765.launch-input.json"
+    },
+    {
+      "bytes": 1251,
+      "path": "inputs/launcher.py",
+      "sha256": "1d18d8c97f3c622b275ee105d200fb9f4a8b4d966748df864d393f2bbecd6611",
+      "source": "exact Python -c launcher retained by controller"
+    },
+    {
+      "bytes": 3742,
+      "path": "inputs/plan.json",
+      "sha256": "b6cba7eba2f5403202237860a39bc8b846d2f082849448728424a372b1964bd3",
+      "source": "/home/qq/chain-system-security-sqlite-fixed-plan-20261112-306929.json"
+    },
+    {
+      "bytes": 534,
+      "path": "inputs/provider.env",
+      "sha256": "6de317bdd1826065aefeae7335a552dfae7b87e421a8f1aa66d32aa31adab2ed",
+      "source": "/home/qq/chain-system-security-root-provider-20261112-306929/provider.env"
+    },
+    {
+      "bytes": 21309,
+      "path": "native-records.tar.gz",
+      "sha256": "0cc4684b089e7f451b348d8512c42d961334e0105f34ec3755faf7f524489f76",
+      "source": "curated exact original records and execution inputs"
+    },
+    {
+      "bytes": 7085,
+      "path": "owner-observations.json",
+      "sha256": "f8a1812b68ad3442f263dea83154c22ee837433f3b4c5358c495d01c4d1c9f98",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765.owner-observations.json"
+    },
+    {
+      "bytes": 7425,
+      "path": "owner-output.log",
+      "sha256": "691e8cb64315e537eaa4d3b5542674d9c2d33681ee74359b69e64a7c9f89777a",
+      "source": "/home/qq/.local/state/hepta-runtime-mac-worker/terminals/dpty-094440708f8767c28d20b6a2a0ed3493146b50e5e8ecb16e60611607d97d2d22/output.log"
+    },
+    {
+      "bytes": 37586,
+      "path": "records/driver-summary.json",
+      "sha256": "0bad8ea4862b187fc21ec0b6f1d71d8e60eff74f6d2ddbfc2de891883d176f63",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/driver-summary.json"
+    },
+    {
+      "bytes": 2611,
+      "path": "records/sqlite-focused-trnm-data-availability.json",
+      "sha256": "6202f34ea805aba031bf51e666e9715f1f8bf4427422811925139f879701b94d",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-focused-trnm-data-availability.json"
+    },
+    {
+      "bytes": 1537,
+      "path": "records/sqlite-focused-trnm-data-availability.log",
+      "sha256": "17fff50ba55e5fa9f18dcab1660105a132dc33d26db71721edc0c69ccdd348b2",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-focused-trnm-data-availability.log"
+    },
+    {
+      "bytes": 172,
+      "path": "records/sqlite-focused-trnm-data-availability.preflight.log",
+      "sha256": "f0944278df1c153c8bfdf4e5dcdfe29996a30d88f1f40c65879b38dc00479127",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-focused-trnm-data-availability.preflight.log"
+    },
+    {
+      "bytes": 0,
+      "path": "records/sqlite-focused-trnm-data-availability.recorder.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-focused-trnm-data-availability.recorder.stderr"
+    },
+    {
+      "bytes": 190,
+      "path": "records/sqlite-focused-trnm-data-availability.recorder.stdout",
+      "sha256": "44e42ba637fbe879167a09f53bd3338f64adbfe60abdd736179bb5850592719a",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-focused-trnm-data-availability.recorder.stdout"
+    },
+    {
+      "bytes": 2592,
+      "path": "records/sqlite-focused-trnm-mvcc-fee.json",
+      "sha256": "8b572565c69fa44d5b3cafe02a574ab4e9d0d9f767696bdd62321b4563292f9a",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-focused-trnm-mvcc-fee.json"
+    },
+    {
+      "bytes": 567,
+      "path": "records/sqlite-focused-trnm-mvcc-fee.log",
+      "sha256": "70aa6e74b8fad7569cd955ef9344679a7869a41a3fa062c94d2016b00509c172",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-focused-trnm-mvcc-fee.log"
+    },
+    {
+      "bytes": 172,
+      "path": "records/sqlite-focused-trnm-mvcc-fee.preflight.log",
+      "sha256": "f0944278df1c153c8bfdf4e5dcdfe29996a30d88f1f40c65879b38dc00479127",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-focused-trnm-mvcc-fee.preflight.log"
+    },
+    {
+      "bytes": 0,
+      "path": "records/sqlite-focused-trnm-mvcc-fee.recorder.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-focused-trnm-mvcc-fee.recorder.stderr"
+    },
+    {
+      "bytes": 181,
+      "path": "records/sqlite-focused-trnm-mvcc-fee.recorder.stdout",
+      "sha256": "2a77c90b070ee62e348576ca61d696f935434ec1d2d8550b3a17c4c0db07b6b1",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-focused-trnm-mvcc-fee.recorder.stdout"
+    },
+    {
+      "bytes": 2613,
+      "path": "records/sqlite-focused-trnm-service-settlement.json",
+      "sha256": "4bbcdde361382195ff2a012703b91f4be4fd3e725295dbeaa8f252442aa5bb70",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-focused-trnm-service-settlement.json"
+    },
+    {
+      "bytes": 1141,
+      "path": "records/sqlite-focused-trnm-service-settlement.log",
+      "sha256": "2dbfff0061057783a46e03bbcf37043702bd1ca7219694cfaec36ae98cd90a14",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-focused-trnm-service-settlement.log"
+    },
+    {
+      "bytes": 172,
+      "path": "records/sqlite-focused-trnm-service-settlement.preflight.log",
+      "sha256": "f0944278df1c153c8bfdf4e5dcdfe29996a30d88f1f40c65879b38dc00479127",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-focused-trnm-service-settlement.preflight.log"
+    },
+    {
+      "bytes": 0,
+      "path": "records/sqlite-focused-trnm-service-settlement.recorder.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-focused-trnm-service-settlement.recorder.stderr"
+    },
+    {
+      "bytes": 191,
+      "path": "records/sqlite-focused-trnm-service-settlement.recorder.stdout",
+      "sha256": "280d4cdb1621372980830828d256a41cac15252ef99caf51c7ff243f6b01868c",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-focused-trnm-service-settlement.recorder.stdout"
+    },
+    {
+      "bytes": 2598,
+      "path": "records/sqlite-focused-trnm-task-kernel.json",
+      "sha256": "40e96601a02a697d9f700ed231d0c5b9b62210b1f68e63f1ef4110ff3f31e9ad",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-focused-trnm-task-kernel.json"
+    },
+    {
+      "bytes": 790,
+      "path": "records/sqlite-focused-trnm-task-kernel.log",
+      "sha256": "27625b3e6d927445853c9674a4c8841dd95d444155884e1751027159455d17a3",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-focused-trnm-task-kernel.log"
+    },
+    {
+      "bytes": 172,
+      "path": "records/sqlite-focused-trnm-task-kernel.preflight.log",
+      "sha256": "f0944278df1c153c8bfdf4e5dcdfe29996a30d88f1f40c65879b38dc00479127",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-focused-trnm-task-kernel.preflight.log"
+    },
+    {
+      "bytes": 0,
+      "path": "records/sqlite-focused-trnm-task-kernel.recorder.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-focused-trnm-task-kernel.recorder.stderr"
+    },
+    {
+      "bytes": 184,
+      "path": "records/sqlite-focused-trnm-task-kernel.recorder.stdout",
+      "sha256": "6dfc1cbcbae67777b5f0a18aca81f79aaab01b9799a6db94eb1ce27d992064fe",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-focused-trnm-task-kernel.recorder.stdout"
+    },
+    {
+      "bytes": 4272,
+      "path": "records/sqlite-retained-trnm-data-availability-1.json",
+      "sha256": "01ddc7e9210593f13578b3a9a6ece904a39da51a5ac7ef4db1e0b6ce32ed3cfd",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-data-availability-1.json"
+    },
+    {
+      "bytes": 192,
+      "path": "records/sqlite-retained-trnm-data-availability-1.log",
+      "sha256": "bb661d365f4b9a59306e43beb0e16f5badd8790e56fec5835556e0bd191881c9",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-data-availability-1.log"
+    },
+    {
+      "bytes": 0,
+      "path": "records/sqlite-retained-trnm-data-availability-1.named.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-data-availability-1.named.stderr"
+    },
+    {
+      "bytes": 158,
+      "path": "records/sqlite-retained-trnm-data-availability-1.named.stdout",
+      "sha256": "7565ef37f2c067b98b8462b867e708c10062b0ac332343a8f59c5803d857a3a9",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-data-availability-1.named.stdout"
+    },
+    {
+      "bytes": 172,
+      "path": "records/sqlite-retained-trnm-data-availability-1.preflight.log",
+      "sha256": "f0944278df1c153c8bfdf4e5dcdfe29996a30d88f1f40c65879b38dc00479127",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-data-availability-1.preflight.log"
+    },
+    {
+      "bytes": 0,
+      "path": "records/sqlite-retained-trnm-data-availability-1.recorder.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-data-availability-1.recorder.stderr"
+    },
+    {
+      "bytes": 193,
+      "path": "records/sqlite-retained-trnm-data-availability-1.recorder.stdout",
+      "sha256": "2839888dbdc770c04e41633e7602aa5d2e343e5e740535fcd09afbeb5e2b65b4",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-data-availability-1.recorder.stdout"
+    },
+    {
+      "bytes": 4246,
+      "path": "records/sqlite-retained-trnm-data-availability-2.json",
+      "sha256": "a3ae4ed8ec0f3f5bea82154b47e59782519297dbc7e36c9cb3c35798a2118e98",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-data-availability-2.json"
+    },
+    {
+      "bytes": 166,
+      "path": "records/sqlite-retained-trnm-data-availability-2.log",
+      "sha256": "30478d0a123c1b28a1913c4b92e53477eb0abce94dfcbe95be928c55ca6c84a2",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-data-availability-2.log"
+    },
+    {
+      "bytes": 0,
+      "path": "records/sqlite-retained-trnm-data-availability-2.named.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-data-availability-2.named.stderr"
+    },
+    {
+      "bytes": 132,
+      "path": "records/sqlite-retained-trnm-data-availability-2.named.stdout",
+      "sha256": "0b648dbb554e32c33cb0f5a55750bf29671dc1247bb504851af2370af728310c",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-data-availability-2.named.stdout"
+    },
+    {
+      "bytes": 172,
+      "path": "records/sqlite-retained-trnm-data-availability-2.preflight.log",
+      "sha256": "f0944278df1c153c8bfdf4e5dcdfe29996a30d88f1f40c65879b38dc00479127",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-data-availability-2.preflight.log"
+    },
+    {
+      "bytes": 0,
+      "path": "records/sqlite-retained-trnm-data-availability-2.recorder.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-data-availability-2.recorder.stderr"
+    },
+    {
+      "bytes": 193,
+      "path": "records/sqlite-retained-trnm-data-availability-2.recorder.stdout",
+      "sha256": "24b68b5112c1ef59700e91bb7fda112a7b7cbea274d7d51776b64f857cd28a5b",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-data-availability-2.recorder.stdout"
+    },
+    {
+      "bytes": 4272,
+      "path": "records/sqlite-retained-trnm-data-availability-3.json",
+      "sha256": "0341c5caec87a579cb6e76b0e8dd07c9fc86ff528bfa8e80752c73ac55a888e3",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-data-availability-3.json"
+    },
+    {
+      "bytes": 192,
+      "path": "records/sqlite-retained-trnm-data-availability-3.log",
+      "sha256": "8f3c9834da72cf1f9669d14b9c61519623aae56624364d85e10a672912e3d092",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-data-availability-3.log"
+    },
+    {
+      "bytes": 0,
+      "path": "records/sqlite-retained-trnm-data-availability-3.named.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-data-availability-3.named.stderr"
+    },
+    {
+      "bytes": 158,
+      "path": "records/sqlite-retained-trnm-data-availability-3.named.stdout",
+      "sha256": "2c2b2808003e1faaadf1c0185834cc5a21439c2ad5e5e8b093f1c28c85110f0f",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-data-availability-3.named.stdout"
+    },
+    {
+      "bytes": 172,
+      "path": "records/sqlite-retained-trnm-data-availability-3.preflight.log",
+      "sha256": "f0944278df1c153c8bfdf4e5dcdfe29996a30d88f1f40c65879b38dc00479127",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-data-availability-3.preflight.log"
+    },
+    {
+      "bytes": 0,
+      "path": "records/sqlite-retained-trnm-data-availability-3.recorder.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-data-availability-3.recorder.stderr"
+    },
+    {
+      "bytes": 193,
+      "path": "records/sqlite-retained-trnm-data-availability-3.recorder.stdout",
+      "sha256": "74f54ed9140299bedd25b2095efc5b36fae91f39b8994308fa3c4b5e123858b4",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-data-availability-3.recorder.stdout"
+    },
+    {
+      "bytes": 4233,
+      "path": "records/sqlite-retained-trnm-mvcc-fee-1.json",
+      "sha256": "d47839b2eaef4ab20dc23199b670c31debc232fb4e04c16022b19f8604bd5b0d",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-mvcc-fee-1.json"
+    },
+    {
+      "bytes": 191,
+      "path": "records/sqlite-retained-trnm-mvcc-fee-1.log",
+      "sha256": "68722f7659c45eea779c996de4d917d33250f91fae1e1ed4e3e2a87a62770697",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-mvcc-fee-1.log"
+    },
+    {
+      "bytes": 0,
+      "path": "records/sqlite-retained-trnm-mvcc-fee-1.named.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-mvcc-fee-1.named.stderr"
+    },
+    {
+      "bytes": 157,
+      "path": "records/sqlite-retained-trnm-mvcc-fee-1.named.stdout",
+      "sha256": "c3080d6da18775f74c04f6b49adfaf63e1d41dfcbf6f94e95921c28d554754d5",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-mvcc-fee-1.named.stdout"
+    },
+    {
+      "bytes": 172,
+      "path": "records/sqlite-retained-trnm-mvcc-fee-1.preflight.log",
+      "sha256": "f0944278df1c153c8bfdf4e5dcdfe29996a30d88f1f40c65879b38dc00479127",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-mvcc-fee-1.preflight.log"
+    },
+    {
+      "bytes": 0,
+      "path": "records/sqlite-retained-trnm-mvcc-fee-1.recorder.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-mvcc-fee-1.recorder.stderr"
+    },
+    {
+      "bytes": 184,
+      "path": "records/sqlite-retained-trnm-mvcc-fee-1.recorder.stdout",
+      "sha256": "0d1dc3611e35d9ce9631f25ff46c525f45d0eb87b03cdecef5489bae6ce62869",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-mvcc-fee-1.recorder.stdout"
+    },
+    {
+      "bytes": 4234,
+      "path": "records/sqlite-retained-trnm-mvcc-fee-2.json",
+      "sha256": "eb3df25f5390a8021baee85e7bc2e72b334a35d9ce78f42fe19840893da9560a",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-mvcc-fee-2.json"
+    },
+    {
+      "bytes": 192,
+      "path": "records/sqlite-retained-trnm-mvcc-fee-2.log",
+      "sha256": "91b95e998df72f23727f0e9ecc956dc9699cfb9cff0ae4b7fe06499243632465",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-mvcc-fee-2.log"
+    },
+    {
+      "bytes": 0,
+      "path": "records/sqlite-retained-trnm-mvcc-fee-2.named.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-mvcc-fee-2.named.stderr"
+    },
+    {
+      "bytes": 158,
+      "path": "records/sqlite-retained-trnm-mvcc-fee-2.named.stdout",
+      "sha256": "2c2b2808003e1faaadf1c0185834cc5a21439c2ad5e5e8b093f1c28c85110f0f",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-mvcc-fee-2.named.stdout"
+    },
+    {
+      "bytes": 172,
+      "path": "records/sqlite-retained-trnm-mvcc-fee-2.preflight.log",
+      "sha256": "f0944278df1c153c8bfdf4e5dcdfe29996a30d88f1f40c65879b38dc00479127",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-mvcc-fee-2.preflight.log"
+    },
+    {
+      "bytes": 0,
+      "path": "records/sqlite-retained-trnm-mvcc-fee-2.recorder.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-mvcc-fee-2.recorder.stderr"
+    },
+    {
+      "bytes": 184,
+      "path": "records/sqlite-retained-trnm-mvcc-fee-2.recorder.stdout",
+      "sha256": "bf16af4a7fedcb7e0a3dfadb79a38c743f497b0f87f78095b556b29a63c3b669",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-mvcc-fee-2.recorder.stdout"
+    },
+    {
+      "bytes": 4229,
+      "path": "records/sqlite-retained-trnm-mvcc-fee-3.json",
+      "sha256": "a0d9ea6b36bbb378d898c55c0744d49529cde418a19300339be41f152056f7cf",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-mvcc-fee-3.json"
+    },
+    {
+      "bytes": 187,
+      "path": "records/sqlite-retained-trnm-mvcc-fee-3.log",
+      "sha256": "e0aa3d051cf49486f2fb152e4a46480890c265af1cbfb14ef709e666c50df162",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-mvcc-fee-3.log"
+    },
+    {
+      "bytes": 0,
+      "path": "records/sqlite-retained-trnm-mvcc-fee-3.named.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-mvcc-fee-3.named.stderr"
+    },
+    {
+      "bytes": 153,
+      "path": "records/sqlite-retained-trnm-mvcc-fee-3.named.stdout",
+      "sha256": "92cd29ad74a5264e88635c4432026a7b8c3e0e7dd32497f6352d4d6ef06d8284",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-mvcc-fee-3.named.stdout"
+    },
+    {
+      "bytes": 172,
+      "path": "records/sqlite-retained-trnm-mvcc-fee-3.preflight.log",
+      "sha256": "f0944278df1c153c8bfdf4e5dcdfe29996a30d88f1f40c65879b38dc00479127",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-mvcc-fee-3.preflight.log"
+    },
+    {
+      "bytes": 0,
+      "path": "records/sqlite-retained-trnm-mvcc-fee-3.recorder.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-mvcc-fee-3.recorder.stderr"
+    },
+    {
+      "bytes": 184,
+      "path": "records/sqlite-retained-trnm-mvcc-fee-3.recorder.stdout",
+      "sha256": "fa2e64343358a4031afee9de6ab7cc90309d92408c857ea497c7e6a82edecb47",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-mvcc-fee-3.recorder.stdout"
+    },
+    {
+      "bytes": 4285,
+      "path": "records/sqlite-retained-trnm-service-settlement-1.json",
+      "sha256": "b34889b25700cb4e93eb79319144814f7d3ffff5655b6644efd343613296f723",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-service-settlement-1.json"
+    },
+    {
+      "bytes": 202,
+      "path": "records/sqlite-retained-trnm-service-settlement-1.log",
+      "sha256": "d0848ee2b2a2e9a4a8bc051c8db748ac9aa91ef5007f96bb1d8c5abb685a7d82",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-service-settlement-1.log"
+    },
+    {
+      "bytes": 0,
+      "path": "records/sqlite-retained-trnm-service-settlement-1.named.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-service-settlement-1.named.stderr"
+    },
+    {
+      "bytes": 169,
+      "path": "records/sqlite-retained-trnm-service-settlement-1.named.stdout",
+      "sha256": "8e969c98e94a8c29b4557753fd05b6baa796ddf30aac2fb2e879e8c1eb98cfd8",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-service-settlement-1.named.stdout"
+    },
+    {
+      "bytes": 172,
+      "path": "records/sqlite-retained-trnm-service-settlement-1.preflight.log",
+      "sha256": "f0944278df1c153c8bfdf4e5dcdfe29996a30d88f1f40c65879b38dc00479127",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-service-settlement-1.preflight.log"
+    },
+    {
+      "bytes": 0,
+      "path": "records/sqlite-retained-trnm-service-settlement-1.recorder.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-service-settlement-1.recorder.stderr"
+    },
+    {
+      "bytes": 194,
+      "path": "records/sqlite-retained-trnm-service-settlement-1.recorder.stdout",
+      "sha256": "b64b9e0d7a3b1d9547569446d8771fd24783a5ce3e13ca4a4f7e9fabbefdb980",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-service-settlement-1.recorder.stdout"
+    },
+    {
+      "bytes": 4274,
+      "path": "records/sqlite-retained-trnm-service-settlement-2.json",
+      "sha256": "1ec07e6b34b8d4fa5614c4d31c5bafeef3aa0937bb232bdd36026cf11c02abe8",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-service-settlement-2.json"
+    },
+    {
+      "bytes": 191,
+      "path": "records/sqlite-retained-trnm-service-settlement-2.log",
+      "sha256": "1cddd88dc52ea7c60f1d37ea5902d0b746c3069d1e72659b2e1a9d173f4d109e",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-service-settlement-2.log"
+    },
+    {
+      "bytes": 0,
+      "path": "records/sqlite-retained-trnm-service-settlement-2.named.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-service-settlement-2.named.stderr"
+    },
+    {
+      "bytes": 158,
+      "path": "records/sqlite-retained-trnm-service-settlement-2.named.stdout",
+      "sha256": "2c2b2808003e1faaadf1c0185834cc5a21439c2ad5e5e8b093f1c28c85110f0f",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-service-settlement-2.named.stdout"
+    },
+    {
+      "bytes": 172,
+      "path": "records/sqlite-retained-trnm-service-settlement-2.preflight.log",
+      "sha256": "f0944278df1c153c8bfdf4e5dcdfe29996a30d88f1f40c65879b38dc00479127",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-service-settlement-2.preflight.log"
+    },
+    {
+      "bytes": 0,
+      "path": "records/sqlite-retained-trnm-service-settlement-2.recorder.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-service-settlement-2.recorder.stderr"
+    },
+    {
+      "bytes": 194,
+      "path": "records/sqlite-retained-trnm-service-settlement-2.recorder.stdout",
+      "sha256": "1176a8ab41656bf1f9166267ccff4a7ad5786deb1fc95bdd72101a583d3ca110",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-service-settlement-2.recorder.stdout"
+    },
+    {
+      "bytes": 4284,
+      "path": "records/sqlite-retained-trnm-service-settlement-3.json",
+      "sha256": "a93315d82b5dbca09c203d6934955216e5635830d8346a74463376300308f9b9",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-service-settlement-3.json"
+    },
+    {
+      "bytes": 201,
+      "path": "records/sqlite-retained-trnm-service-settlement-3.log",
+      "sha256": "ff5b843d4b18d5ff0711c8e16074d79849c20769a338790aceebb068acad170a",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-service-settlement-3.log"
+    },
+    {
+      "bytes": 0,
+      "path": "records/sqlite-retained-trnm-service-settlement-3.named.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-service-settlement-3.named.stderr"
+    },
+    {
+      "bytes": 168,
+      "path": "records/sqlite-retained-trnm-service-settlement-3.named.stdout",
+      "sha256": "fcc19f4c10b13b6c82062b4d851273f697055cbbd6a9c90627e59e99f47856db",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-service-settlement-3.named.stdout"
+    },
+    {
+      "bytes": 172,
+      "path": "records/sqlite-retained-trnm-service-settlement-3.preflight.log",
+      "sha256": "f0944278df1c153c8bfdf4e5dcdfe29996a30d88f1f40c65879b38dc00479127",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-service-settlement-3.preflight.log"
+    },
+    {
+      "bytes": 0,
+      "path": "records/sqlite-retained-trnm-service-settlement-3.recorder.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-service-settlement-3.recorder.stderr"
+    },
+    {
+      "bytes": 194,
+      "path": "records/sqlite-retained-trnm-service-settlement-3.recorder.stdout",
+      "sha256": "edee71190d0baa9dc2af7d2463a74947c95716172f10bf9e189c5cef6b7b1670",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-service-settlement-3.recorder.stdout"
+    },
+    {
+      "bytes": 4255,
+      "path": "records/sqlite-retained-trnm-task-kernel-1.json",
+      "sha256": "c5072a84e1a8fecee9a86428a99492deba647bb09a25252a1eff8cbd6d21a3c6",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-task-kernel-1.json"
+    },
+    {
+      "bytes": 200,
+      "path": "records/sqlite-retained-trnm-task-kernel-1.log",
+      "sha256": "d622c580b7cd565b552bfd3aa842331ecc12ba7502bdc0181253a717c6cd3d76",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-task-kernel-1.log"
+    },
+    {
+      "bytes": 0,
+      "path": "records/sqlite-retained-trnm-task-kernel-1.named.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-task-kernel-1.named.stderr"
+    },
+    {
+      "bytes": 167,
+      "path": "records/sqlite-retained-trnm-task-kernel-1.named.stdout",
+      "sha256": "bd249d5cdf55e8501ae42145911eabd0f02d9b404cd36695f1250954e48bbb27",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-task-kernel-1.named.stdout"
+    },
+    {
+      "bytes": 172,
+      "path": "records/sqlite-retained-trnm-task-kernel-1.preflight.log",
+      "sha256": "f0944278df1c153c8bfdf4e5dcdfe29996a30d88f1f40c65879b38dc00479127",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-task-kernel-1.preflight.log"
+    },
+    {
+      "bytes": 0,
+      "path": "records/sqlite-retained-trnm-task-kernel-1.recorder.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-task-kernel-1.recorder.stderr"
+    },
+    {
+      "bytes": 187,
+      "path": "records/sqlite-retained-trnm-task-kernel-1.recorder.stdout",
+      "sha256": "ae557ce431f8b104878c1c47e093a8569ef64fb1ddf66ce14f33a32316c43ba6",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-task-kernel-1.recorder.stdout"
+    },
+    {
+      "bytes": 4246,
+      "path": "records/sqlite-retained-trnm-task-kernel-2.json",
+      "sha256": "de87879fd723dfd58ef8300066f0e3f1fc886e5db9f6acc470ac88274572929e",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-task-kernel-2.json"
+    },
+    {
+      "bytes": 191,
+      "path": "records/sqlite-retained-trnm-task-kernel-2.log",
+      "sha256": "db08b01c1ef24d6488cea7ab6c88475c9eed9c27453baf736ed6fcadeca987a4",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-task-kernel-2.log"
+    },
+    {
+      "bytes": 0,
+      "path": "records/sqlite-retained-trnm-task-kernel-2.named.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-task-kernel-2.named.stderr"
+    },
+    {
+      "bytes": 158,
+      "path": "records/sqlite-retained-trnm-task-kernel-2.named.stdout",
+      "sha256": "2c2b2808003e1faaadf1c0185834cc5a21439c2ad5e5e8b093f1c28c85110f0f",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-task-kernel-2.named.stdout"
+    },
+    {
+      "bytes": 172,
+      "path": "records/sqlite-retained-trnm-task-kernel-2.preflight.log",
+      "sha256": "f0944278df1c153c8bfdf4e5dcdfe29996a30d88f1f40c65879b38dc00479127",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-task-kernel-2.preflight.log"
+    },
+    {
+      "bytes": 0,
+      "path": "records/sqlite-retained-trnm-task-kernel-2.recorder.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-task-kernel-2.recorder.stderr"
+    },
+    {
+      "bytes": 187,
+      "path": "records/sqlite-retained-trnm-task-kernel-2.recorder.stdout",
+      "sha256": "57138768744f84000f8e9f72140fafd0350f7897debb4b442d8960bfa93ed444",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-task-kernel-2.recorder.stdout"
+    },
+    {
+      "bytes": 4250,
+      "path": "records/sqlite-retained-trnm-task-kernel-3.json",
+      "sha256": "a99a26e672175b71991245ecc467e2a0933c92455a93a3fc65929708e716ca20",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-task-kernel-3.json"
+    },
+    {
+      "bytes": 195,
+      "path": "records/sqlite-retained-trnm-task-kernel-3.log",
+      "sha256": "af72545829ac0ac1e2b4a50bee06350c396985638087f67735ce428d2993ee89",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-task-kernel-3.log"
+    },
+    {
+      "bytes": 0,
+      "path": "records/sqlite-retained-trnm-task-kernel-3.named.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-task-kernel-3.named.stderr"
+    },
+    {
+      "bytes": 162,
+      "path": "records/sqlite-retained-trnm-task-kernel-3.named.stdout",
+      "sha256": "97ac068aa8280b7f9220e39ed7be270ee2f04a3728949c4ee413c2f9411128ba",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-task-kernel-3.named.stdout"
+    },
+    {
+      "bytes": 172,
+      "path": "records/sqlite-retained-trnm-task-kernel-3.preflight.log",
+      "sha256": "f0944278df1c153c8bfdf4e5dcdfe29996a30d88f1f40c65879b38dc00479127",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-task-kernel-3.preflight.log"
+    },
+    {
+      "bytes": 0,
+      "path": "records/sqlite-retained-trnm-task-kernel-3.recorder.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-task-kernel-3.recorder.stderr"
+    },
+    {
+      "bytes": 187,
+      "path": "records/sqlite-retained-trnm-task-kernel-3.recorder.stdout",
+      "sha256": "4a997b1301cbb8ba087544583f7e7be49edc0ae0cf951596c657d2a22369de4c",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-task-kernel-3.recorder.stdout"
+    },
+    {
+      "bytes": 4268,
+      "path": "records/sqlite-retained-trnm-task-kernel-4.json",
+      "sha256": "d64a78d3be4d7608a579ca6d8a2cdd26b0cdd2dd746f9256bae02ad63b9c5de6",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-task-kernel-4.json"
+    },
+    {
+      "bytes": 213,
+      "path": "records/sqlite-retained-trnm-task-kernel-4.log",
+      "sha256": "91ee71be5d5128f8ef8751d1df72e36dde2a5153296c7979152dfd84513538e7",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-task-kernel-4.log"
+    },
+    {
+      "bytes": 0,
+      "path": "records/sqlite-retained-trnm-task-kernel-4.named.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-task-kernel-4.named.stderr"
+    },
+    {
+      "bytes": 180,
+      "path": "records/sqlite-retained-trnm-task-kernel-4.named.stdout",
+      "sha256": "b8a3377504ee18f15e446217a660c54b28a3eb82a1ef0132f640ede9b5628944",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-task-kernel-4.named.stdout"
+    },
+    {
+      "bytes": 172,
+      "path": "records/sqlite-retained-trnm-task-kernel-4.preflight.log",
+      "sha256": "f0944278df1c153c8bfdf4e5dcdfe29996a30d88f1f40c65879b38dc00479127",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-task-kernel-4.preflight.log"
+    },
+    {
+      "bytes": 0,
+      "path": "records/sqlite-retained-trnm-task-kernel-4.recorder.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-task-kernel-4.recorder.stderr"
+    },
+    {
+      "bytes": 187,
+      "path": "records/sqlite-retained-trnm-task-kernel-4.recorder.stdout",
+      "sha256": "1a7e1ca79284b48458d0167318e8cda89641084eaded30ec3251a6cac0697c50",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-task-kernel-4.recorder.stdout"
+    },
+    {
+      "bytes": 4255,
+      "path": "records/sqlite-retained-trnm-task-kernel-5.json",
+      "sha256": "93f110ac0426d76e1656fc615767366a7f6dd9013ce8636285f6a9f57a571228",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-task-kernel-5.json"
+    },
+    {
+      "bytes": 200,
+      "path": "records/sqlite-retained-trnm-task-kernel-5.log",
+      "sha256": "3468549d0f6cb0745a923b97898e116f6230ecd71909ef4c9ce90fd75aa66656",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-task-kernel-5.log"
+    },
+    {
+      "bytes": 0,
+      "path": "records/sqlite-retained-trnm-task-kernel-5.named.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-task-kernel-5.named.stderr"
+    },
+    {
+      "bytes": 167,
+      "path": "records/sqlite-retained-trnm-task-kernel-5.named.stdout",
+      "sha256": "c929a22ff5f50963716791c73722a837065cbcc14a30ecb096dd0425072636e3",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-task-kernel-5.named.stdout"
+    },
+    {
+      "bytes": 172,
+      "path": "records/sqlite-retained-trnm-task-kernel-5.preflight.log",
+      "sha256": "f0944278df1c153c8bfdf4e5dcdfe29996a30d88f1f40c65879b38dc00479127",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-task-kernel-5.preflight.log"
+    },
+    {
+      "bytes": 0,
+      "path": "records/sqlite-retained-trnm-task-kernel-5.recorder.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-task-kernel-5.recorder.stderr"
+    },
+    {
+      "bytes": 187,
+      "path": "records/sqlite-retained-trnm-task-kernel-5.recorder.stdout",
+      "sha256": "17fffcf722d8ea93d9c1b1e9ae86c3a0e46b4ab4c5e84eb739dd31b2afe7ebcc",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-task-kernel-5.recorder.stdout"
+    },
+    {
+      "bytes": 4267,
+      "path": "records/sqlite-retained-trnm-task-kernel-6.json",
+      "sha256": "0ed99cc009317b3feb97cb59cdd3034f5ee9917ec3a9189081dd5e0b734b3e60",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-task-kernel-6.json"
+    },
+    {
+      "bytes": 212,
+      "path": "records/sqlite-retained-trnm-task-kernel-6.log",
+      "sha256": "10ec6cdfe8891a7e9eb57d70900627a45c64c257b5cbcd201822a22fbccc5392",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-task-kernel-6.log"
+    },
+    {
+      "bytes": 0,
+      "path": "records/sqlite-retained-trnm-task-kernel-6.named.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-task-kernel-6.named.stderr"
+    },
+    {
+      "bytes": 179,
+      "path": "records/sqlite-retained-trnm-task-kernel-6.named.stdout",
+      "sha256": "a1d775959087a8bac398d60b74564e2a0024541ac4c9108f2d5b157581fe6b6f",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-task-kernel-6.named.stdout"
+    },
+    {
+      "bytes": 172,
+      "path": "records/sqlite-retained-trnm-task-kernel-6.preflight.log",
+      "sha256": "f0944278df1c153c8bfdf4e5dcdfe29996a30d88f1f40c65879b38dc00479127",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-task-kernel-6.preflight.log"
+    },
+    {
+      "bytes": 0,
+      "path": "records/sqlite-retained-trnm-task-kernel-6.recorder.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-task-kernel-6.recorder.stderr"
+    },
+    {
+      "bytes": 187,
+      "path": "records/sqlite-retained-trnm-task-kernel-6.recorder.stdout",
+      "sha256": "50f5e71956f87b7fd13ace698a3ef1aa0bd7c9121a6a38ad7457d89a995d56a5",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-retained-trnm-task-kernel-6.recorder.stdout"
+    },
+    {
+      "bytes": 2691,
+      "path": "records/sqlite-strict-four-package-clippy.json",
+      "sha256": "f4e673201fba41fbe5bd129aa94b4308ef2fb9ff02a7ff81db27ff28feda00c4",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-strict-four-package-clippy.json"
+    },
+    {
+      "bytes": 1064,
+      "path": "records/sqlite-strict-four-package-clippy.log",
+      "sha256": "d95c965e4d2a25f213f3adfa283d6043ce0d717f3163bb2eeae6c7bd784ee77d",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-strict-four-package-clippy.log"
+    },
+    {
+      "bytes": 172,
+      "path": "records/sqlite-strict-four-package-clippy.preflight.log",
+      "sha256": "f0944278df1c153c8bfdf4e5dcdfe29996a30d88f1f40c65879b38dc00479127",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-strict-four-package-clippy.preflight.log"
+    },
+    {
+      "bytes": 0,
+      "path": "records/sqlite-strict-four-package-clippy.recorder.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-strict-four-package-clippy.recorder.stderr"
+    },
+    {
+      "bytes": 186,
+      "path": "records/sqlite-strict-four-package-clippy.recorder.stdout",
+      "sha256": "37352bc8d903c8708fb644ea56a8e972c9e54dee1174e36933f93df5f1de9fb5",
+      "source": "/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-strict-four-package-clippy.recorder.stdout"
+    },
+    {
+      "bytes": 19317,
+      "path": "stage-builder.py",
+      "sha256": "6088458cfd0e084e64aa226e1461bcfc3272eed262afe10dfb76b8a5900bdb15",
+      "source": "/home/qq/chain-system-security-sqlite-stage-builder-20261112-306929.py"
+    },
+    {
+      "bytes": 19731,
+      "path": "verification.json",
+      "sha256": "45435c9b09385f8d0f3e66067c1a652bd45f55586ca874efeb90752dc437dc3f",
+      "source": "independent readback of original observations"
+    }
+  ],
+  "production_activation": false,
+  "raw_archive_members": [
+    "inputs/driver.py",
+    "inputs/launch-input.json",
+    "inputs/launcher.py",
+    "inputs/plan.json",
+    "inputs/provider.env",
+    "owner-observations.json",
+    "owner-output.log",
+    "records/driver-summary.json",
+    "records/sqlite-focused-trnm-data-availability.json",
+    "records/sqlite-focused-trnm-data-availability.log",
+    "records/sqlite-focused-trnm-data-availability.preflight.log",
+    "records/sqlite-focused-trnm-data-availability.recorder.stderr",
+    "records/sqlite-focused-trnm-data-availability.recorder.stdout",
+    "records/sqlite-focused-trnm-mvcc-fee.json",
+    "records/sqlite-focused-trnm-mvcc-fee.log",
+    "records/sqlite-focused-trnm-mvcc-fee.preflight.log",
+    "records/sqlite-focused-trnm-mvcc-fee.recorder.stderr",
+    "records/sqlite-focused-trnm-mvcc-fee.recorder.stdout",
+    "records/sqlite-focused-trnm-service-settlement.json",
+    "records/sqlite-focused-trnm-service-settlement.log",
+    "records/sqlite-focused-trnm-service-settlement.preflight.log",
+    "records/sqlite-focused-trnm-service-settlement.recorder.stderr",
+    "records/sqlite-focused-trnm-service-settlement.recorder.stdout",
+    "records/sqlite-focused-trnm-task-kernel.json",
+    "records/sqlite-focused-trnm-task-kernel.log",
+    "records/sqlite-focused-trnm-task-kernel.preflight.log",
+    "records/sqlite-focused-trnm-task-kernel.recorder.stderr",
+    "records/sqlite-focused-trnm-task-kernel.recorder.stdout",
+    "records/sqlite-retained-trnm-data-availability-1.json",
+    "records/sqlite-retained-trnm-data-availability-1.log",
+    "records/sqlite-retained-trnm-data-availability-1.named.stderr",
+    "records/sqlite-retained-trnm-data-availability-1.named.stdout",
+    "records/sqlite-retained-trnm-data-availability-1.preflight.log",
+    "records/sqlite-retained-trnm-data-availability-1.recorder.stderr",
+    "records/sqlite-retained-trnm-data-availability-1.recorder.stdout",
+    "records/sqlite-retained-trnm-data-availability-2.json",
+    "records/sqlite-retained-trnm-data-availability-2.log",
+    "records/sqlite-retained-trnm-data-availability-2.named.stderr",
+    "records/sqlite-retained-trnm-data-availability-2.named.stdout",
+    "records/sqlite-retained-trnm-data-availability-2.preflight.log",
+    "records/sqlite-retained-trnm-data-availability-2.recorder.stderr",
+    "records/sqlite-retained-trnm-data-availability-2.recorder.stdout",
+    "records/sqlite-retained-trnm-data-availability-3.json",
+    "records/sqlite-retained-trnm-data-availability-3.log",
+    "records/sqlite-retained-trnm-data-availability-3.named.stderr",
+    "records/sqlite-retained-trnm-data-availability-3.named.stdout",
+    "records/sqlite-retained-trnm-data-availability-3.preflight.log",
+    "records/sqlite-retained-trnm-data-availability-3.recorder.stderr",
+    "records/sqlite-retained-trnm-data-availability-3.recorder.stdout",
+    "records/sqlite-retained-trnm-mvcc-fee-1.json",
+    "records/sqlite-retained-trnm-mvcc-fee-1.log",
+    "records/sqlite-retained-trnm-mvcc-fee-1.named.stderr",
+    "records/sqlite-retained-trnm-mvcc-fee-1.named.stdout",
+    "records/sqlite-retained-trnm-mvcc-fee-1.preflight.log",
+    "records/sqlite-retained-trnm-mvcc-fee-1.recorder.stderr",
+    "records/sqlite-retained-trnm-mvcc-fee-1.recorder.stdout",
+    "records/sqlite-retained-trnm-mvcc-fee-2.json",
+    "records/sqlite-retained-trnm-mvcc-fee-2.log",
+    "records/sqlite-retained-trnm-mvcc-fee-2.named.stderr",
+    "records/sqlite-retained-trnm-mvcc-fee-2.named.stdout",
+    "records/sqlite-retained-trnm-mvcc-fee-2.preflight.log",
+    "records/sqlite-retained-trnm-mvcc-fee-2.recorder.stderr",
+    "records/sqlite-retained-trnm-mvcc-fee-2.recorder.stdout",
+    "records/sqlite-retained-trnm-mvcc-fee-3.json",
+    "records/sqlite-retained-trnm-mvcc-fee-3.log",
+    "records/sqlite-retained-trnm-mvcc-fee-3.named.stderr",
+    "records/sqlite-retained-trnm-mvcc-fee-3.named.stdout",
+    "records/sqlite-retained-trnm-mvcc-fee-3.preflight.log",
+    "records/sqlite-retained-trnm-mvcc-fee-3.recorder.stderr",
+    "records/sqlite-retained-trnm-mvcc-fee-3.recorder.stdout",
+    "records/sqlite-retained-trnm-service-settlement-1.json",
+    "records/sqlite-retained-trnm-service-settlement-1.log",
+    "records/sqlite-retained-trnm-service-settlement-1.named.stderr",
+    "records/sqlite-retained-trnm-service-settlement-1.named.stdout",
+    "records/sqlite-retained-trnm-service-settlement-1.preflight.log",
+    "records/sqlite-retained-trnm-service-settlement-1.recorder.stderr",
+    "records/sqlite-retained-trnm-service-settlement-1.recorder.stdout",
+    "records/sqlite-retained-trnm-service-settlement-2.json",
+    "records/sqlite-retained-trnm-service-settlement-2.log",
+    "records/sqlite-retained-trnm-service-settlement-2.named.stderr",
+    "records/sqlite-retained-trnm-service-settlement-2.named.stdout",
+    "records/sqlite-retained-trnm-service-settlement-2.preflight.log",
+    "records/sqlite-retained-trnm-service-settlement-2.recorder.stderr",
+    "records/sqlite-retained-trnm-service-settlement-2.recorder.stdout",
+    "records/sqlite-retained-trnm-service-settlement-3.json",
+    "records/sqlite-retained-trnm-service-settlement-3.log",
+    "records/sqlite-retained-trnm-service-settlement-3.named.stderr",
+    "records/sqlite-retained-trnm-service-settlement-3.named.stdout",
+    "records/sqlite-retained-trnm-service-settlement-3.preflight.log",
+    "records/sqlite-retained-trnm-service-settlement-3.recorder.stderr",
+    "records/sqlite-retained-trnm-service-settlement-3.recorder.stdout",
+    "records/sqlite-retained-trnm-task-kernel-1.json",
+    "records/sqlite-retained-trnm-task-kernel-1.log",
+    "records/sqlite-retained-trnm-task-kernel-1.named.stderr",
+    "records/sqlite-retained-trnm-task-kernel-1.named.stdout",
+    "records/sqlite-retained-trnm-task-kernel-1.preflight.log",
+    "records/sqlite-retained-trnm-task-kernel-1.recorder.stderr",
+    "records/sqlite-retained-trnm-task-kernel-1.recorder.stdout",
+    "records/sqlite-retained-trnm-task-kernel-2.json",
+    "records/sqlite-retained-trnm-task-kernel-2.log",
+    "records/sqlite-retained-trnm-task-kernel-2.named.stderr",
+    "records/sqlite-retained-trnm-task-kernel-2.named.stdout",
+    "records/sqlite-retained-trnm-task-kernel-2.preflight.log",
+    "records/sqlite-retained-trnm-task-kernel-2.recorder.stderr",
+    "records/sqlite-retained-trnm-task-kernel-2.recorder.stdout",
+    "records/sqlite-retained-trnm-task-kernel-3.json",
+    "records/sqlite-retained-trnm-task-kernel-3.log",
+    "records/sqlite-retained-trnm-task-kernel-3.named.stderr",
+    "records/sqlite-retained-trnm-task-kernel-3.named.stdout",
+    "records/sqlite-retained-trnm-task-kernel-3.preflight.log",
+    "records/sqlite-retained-trnm-task-kernel-3.recorder.stderr",
+    "records/sqlite-retained-trnm-task-kernel-3.recorder.stdout",
+    "records/sqlite-retained-trnm-task-kernel-4.json",
+    "records/sqlite-retained-trnm-task-kernel-4.log",
+    "records/sqlite-retained-trnm-task-kernel-4.named.stderr",
+    "records/sqlite-retained-trnm-task-kernel-4.named.stdout",
+    "records/sqlite-retained-trnm-task-kernel-4.preflight.log",
+    "records/sqlite-retained-trnm-task-kernel-4.recorder.stderr",
+    "records/sqlite-retained-trnm-task-kernel-4.recorder.stdout",
+    "records/sqlite-retained-trnm-task-kernel-5.json",
+    "records/sqlite-retained-trnm-task-kernel-5.log",
+    "records/sqlite-retained-trnm-task-kernel-5.named.stderr",
+    "records/sqlite-retained-trnm-task-kernel-5.named.stdout",
+    "records/sqlite-retained-trnm-task-kernel-5.preflight.log",
+    "records/sqlite-retained-trnm-task-kernel-5.recorder.stderr",
+    "records/sqlite-retained-trnm-task-kernel-5.recorder.stdout",
+    "records/sqlite-retained-trnm-task-kernel-6.json",
+    "records/sqlite-retained-trnm-task-kernel-6.log",
+    "records/sqlite-retained-trnm-task-kernel-6.named.stderr",
+    "records/sqlite-retained-trnm-task-kernel-6.named.stdout",
+    "records/sqlite-retained-trnm-task-kernel-6.preflight.log",
+    "records/sqlite-retained-trnm-task-kernel-6.recorder.stderr",
+    "records/sqlite-retained-trnm-task-kernel-6.recorder.stdout",
+    "records/sqlite-strict-four-package-clippy.json",
+    "records/sqlite-strict-four-package-clippy.log",
+    "records/sqlite-strict-four-package-clippy.preflight.log",
+    "records/sqlite-strict-four-package-clippy.recorder.stderr",
+    "records/sqlite-strict-four-package-clippy.recorder.stdout"
+  ],
+  "schema": "sqlite-ai395-curated-payload-manifest-v1",
+  "tested_source": "bac6b7659bd7e2d633e25c2da0add60f6a10c7fb"
+}

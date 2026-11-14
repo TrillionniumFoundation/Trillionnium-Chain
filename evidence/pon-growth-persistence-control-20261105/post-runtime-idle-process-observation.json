@@ -1,0 +1,74 @@
+{
+  "observed_at_unix": 1793852319.7132158,
+  "memory": {
+    "host_available": 1655955456,
+    "cgroup_limit": "8589934592",
+    "cgroup_current": 8079687680,
+    "events": "low 0\nhigh 0\nmax 998872\noom 1\noom_kill 1\noom_group_kill 0\n",
+    "event_counters": {
+      "low": 0,
+      "high": 0,
+      "max": 998872,
+      "oom": 1,
+      "oom_kill": 1,
+      "oom_group_kill": 0
+    },
+    "effective_available": 732192768,
+    "hard_cgroup_headroom": 510246912,
+    "reclaimable_inactive_file_estimate": 221945856,
+    "memory_stat_inputs": {
+      "file": 228286464,
+      "shmem": 147456,
+      "file_dirty": 0,
+      "file_writeback": 0,
+      "inactive_file": 221945856
+    }
+  },
+  "processes_by_rss": [
+    {
+      "pid": 101701,
+      "ppid": "85074",
+      "name": "rustc",
+      "rss_bytes": 2317729792,
+      "rss_anon": "2259460 kB",
+      "state": "S (sleeping)",
+      "selected_arguments": {
+        "--crate-name": "trnm_pon_node",
+        "--out-dir": "/workspace/scratch/188afcb2a4b3/target/debug/deps"
+      }
+    },
+    {
+      "pid": 118016,
+      "ppid": "100632",
+      "name": "rustc",
+      "rss_bytes": 2311299072,
+      "rss_anon": "2254528 kB",
+      "state": "S (sleeping)",
+      "selected_arguments": {
+        "--crate-name": "trnm_pon_node",
+        "--out-dir": "/workspace/scratch/7318042bb6cb/target/debug/deps"
+      }
+    },
+    {
+      "pid": 120086,
+      "ppid": "79928",
+      "name": "rustc",
+      "rss_bytes": 454508544,
+      "rss_anon": "441256 kB",
+      "state": "S (sleeping)",
+      "selected_arguments": {
+        "--crate-name": "lsp_types",
+        "--out-dir": "/workspace/scratch/48266f5bd43f/hepta-effects-target/debug/deps"
+      }
+    },
+    {
+      "pid": 79928,
+      "ppid": "79875",
+      "name": "cargo",
+      "rss_bytes": 200798208,
+      "rss_anon": "194360 kB",
+      "state": "S (sleeping)",
+      "selected_arguments": {}
+    }
+  ]
+}

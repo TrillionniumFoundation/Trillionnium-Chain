@@ -1,0 +1,15 @@
+{
+  "schema": "service-material-before-fix-observation-v1",
+  "capture": "original stdout and stderr shell redirection; log bytes not rewritten",
+  "scope": "review negative control before snapshot fix; not final-source failure",
+  "tool_chunk_id": "052536",
+  "exit_code": 1,
+  "tool_wall_time_seconds": 0.203530343,
+  "command": "python3 -m unittest -v test_service_work_settlement_v1.ServiceWorkSettlementTests.test_material_binding_and_execution_use_the_same_private_snapshot > /workspace/scratch/68dd104c2e6a/validation-setup/service-material-before-fix.log 2>&1",
+  "cwd": "/workspace/scratch/68dd104c2e6a/chain-lifecycle/formal/pon-nakamoto-v1",
+  "source_sha256": {
+    "formal/pon-nakamoto-v1/service_work_settlement_v1.py": "9e3fa6a1f44f2b59b027304fa3736c185f6b6a984606f0f99efa64bc3ae030a0",
+    "formal/pon-nakamoto-v1/test_service_work_settlement_v1.py": "bf51ff532d996962f44b574435020f83bef0566186dacc7d6fe191889f5c77a6"
+  },
+  "log_sha256": "b64a56ec1607e830d5fe1dd72fbd8f950066934f510da1ed54a2f1c41d91cebe"
+}

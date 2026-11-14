@@ -1,0 +1,516 @@
+{
+  "archive_sha256": "7d28c2424017998db6dd91637ebc612b13ea04db989c12148b5ff7566f30ae3e",
+  "files": [
+    {
+      "bytes": 0,
+      "path": "fc5-native/clippy-launcher.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 126,
+      "path": "fc5-native/clippy-launcher.stdout",
+      "sha256": "cacdcb1bea09c4d453cfc4402b0076a29a669613dc7876905f2032be10a25d49"
+    },
+    {
+      "bytes": 2334,
+      "path": "fc5-native/clippy.json",
+      "sha256": "873cd5d96e8242f7282faec210e2eaf6704dc88627a46217955d782041c4bb42"
+    },
+    {
+      "bytes": 7484,
+      "path": "fc5-native/clippy.log",
+      "sha256": "894fe718b8c456ac3259a3ba5c881a14053898c6cc7b45e7c15861dc812f6966"
+    },
+    {
+      "bytes": 2740,
+      "path": "fc5-native/environment.json",
+      "sha256": "e4ddef0addfee29a3635abd0e7902d971676980661ebeb8cea8e77bb020c6a48"
+    },
+    {
+      "bytes": 0,
+      "path": "fc5-native/example-tests-launcher.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 134,
+      "path": "fc5-native/example-tests-launcher.stdout",
+      "sha256": "aca725e54aed16d557e674d5e95c38dfe8b0267db38e93da6ea9eb53a6e7a31f"
+    },
+    {
+      "bytes": 2459,
+      "path": "fc5-native/example-tests.json",
+      "sha256": "9a9e50ace2711b015872cd658e64be10e7007bf725e0e3ddfb88d76ebaecbc49"
+    },
+    {
+      "bytes": 3884,
+      "path": "fc5-native/example-tests.log",
+      "sha256": "ffef9c8c8222d76035daf7df56177813ede09acc02ddd13f36fe51c884263aee"
+    },
+    {
+      "bytes": 0,
+      "path": "fc5-native/launcher.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 132,
+      "path": "fc5-native/launcher.stdout",
+      "sha256": "025838ce9f3929807f3416f43fb06457d63ea3d9b3ac5ccdc0056b2824f21f65"
+    },
+    {
+      "bytes": 2537,
+      "path": "fc5-native/native-build-serial.json",
+      "sha256": "37b957ecc1e04dd2833437ba21f4c0f8538294688fb3e1bfccd15250e0991899"
+    },
+    {
+      "bytes": 121388,
+      "path": "fc5-native/native-build-serial.log",
+      "sha256": "dfd62a97b072958f214ccb195c7f725ee692b6affe90dac8cd2e3b6e51ad0c46"
+    },
+    {
+      "bytes": 2530,
+      "path": "fc5-native/native-build.json",
+      "sha256": "5e52782489e61971a2e480dd975db75771dce27f55561be619111034972e169e"
+    },
+    {
+      "bytes": 117161,
+      "path": "fc5-native/native-build.log",
+      "sha256": "dfb1e35cfae7fe03f0faccc7a1e2ea53132f351192847934531569ad8a58402d"
+    },
+    {
+      "bytes": 3948,
+      "path": "fc5-native/run-actual-v4.py",
+      "sha256": "d6236da2ccf0b63caf0ea52edfecdfc3b83175804842277ac23dd0fe66c392e1"
+    },
+    {
+      "bytes": 1267,
+      "path": "fc5-native/run-selection.py",
+      "sha256": "f01dba5d9a4ad47b2ffc0cb1656ee2d16ea36b95749e2818945d541074af83c9"
+    },
+    {
+      "bytes": 1747,
+      "path": "fc5-native/run-small-native.py",
+      "sha256": "b80c254e340eb16d245d83df4ef5b9da437500767f4143ac05c4c6d91e0e0a97"
+    },
+    {
+      "bytes": 2957,
+      "path": "fc5-native/serial-environment.json",
+      "sha256": "afa183f0af381a60fb06c93e44a1f62bee95cf05209a3cbcf1843e0e82f86664"
+    },
+    {
+      "bytes": 1014,
+      "path": "fc5-native/serial-launch-argv.json",
+      "sha256": "4042491a7ca02e10797d64244d89926e2215b95e4b19771d50d7907b64a7dc46"
+    },
+    {
+      "bytes": 0,
+      "path": "fc5-native/serial-launcher.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 139,
+      "path": "fc5-native/serial-launcher.stdout",
+      "sha256": "81f84ae3b7f99ffa143cb2d82225e150c0f407875c72b8fee8be5ad4244c1812"
+    },
+    {
+      "bytes": 428,
+      "path": "fc5-native/small-native-summary.json",
+      "sha256": "aef3522bf0cba23ee89ea7aeeaab2d11df29e1948d1ead9befb8f378d33e14e6"
+    },
+    {
+      "bytes": 0,
+      "path": "fc5-native/v4-build-launcher.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 129,
+      "path": "fc5-native/v4-build-launcher.stdout",
+      "sha256": "5ece0e55d3b4de8c98d817ae3c831a10808752139265da1c73a51d0c8f05174d"
+    },
+    {
+      "bytes": 2365,
+      "path": "fc5-native/v4-build.json",
+      "sha256": "4c663af6c964789639b49d792b6644e4fcda9a0f06e4e980394210a08dae1c4b"
+    },
+    {
+      "bytes": 117040,
+      "path": "fc5-native/v4-build.log",
+      "sha256": "6860c40550615fe96ce9d2fe4abec14a20502c58f63f6c3c27950854475cf30e"
+    },
+    {
+      "bytes": 903,
+      "path": "fc5-native/v4-observation/complete-readback.json",
+      "sha256": "38f3a0a668729f671044931ed7a5c108034ecb0898a4272c80dee9a46c9c24af"
+    },
+    {
+      "bytes": 0,
+      "path": "fc5-native/v4-observation/complete-readback.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2374,
+      "path": "fc5-native/v4-observation/complete-receipt.json",
+      "sha256": "0d376d230c6eae9a1e6d942dcb7d136bea12733efbb81faf926542d1696f82ca"
+    },
+    {
+      "bytes": 40705511,
+      "path": "fc5-native/v4-observation/complete.jsonl",
+      "sha256": "f5bde4116b6fa39da9b4926a6b5421e605c32816c4300485cf3f192def409ed1"
+    },
+    {
+      "bytes": 0,
+      "path": "fc5-native/v4-observation/complete.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 423,
+      "path": "fc5-native/v4-observation/source-after.json",
+      "sha256": "f95e8e16d13b668d74570b29a2d9259f98157996505fdc1235c6922b0b91399e"
+    },
+    {
+      "bytes": 423,
+      "path": "fc5-native/v4-observation/source-before.json",
+      "sha256": "f95e8e16d13b668d74570b29a2d9259f98157996505fdc1235c6922b0b91399e"
+    },
+    {
+      "bytes": 1459,
+      "path": "fc5-native/v4-observation/terminated-readback.json",
+      "sha256": "1d3648726dd5e5abc07a362f29a36051099b9c6b65e64215f0cae788c7830387"
+    },
+    {
+      "bytes": 0,
+      "path": "fc5-native/v4-observation/terminated-readback.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2493,
+      "path": "fc5-native/v4-observation/terminated-receipt.json",
+      "sha256": "d35fdb33f7392790e4deec240e96611f5fcb98838deff0ae8e2ed61b8e8657c0"
+    },
+    {
+      "bytes": 69094,
+      "path": "fc5-native/v4-observation/terminated.jsonl",
+      "sha256": "76b377ae0dabdff09b18908c89c8eac420ad01c8b67fc69c7bec7a128b7e8e1c"
+    },
+    {
+      "bytes": 0,
+      "path": "fc5-native/v4-observation/terminated.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2080,
+      "path": "fc5-static/01-preflight.json",
+      "sha256": "b53ed8e2dc06d3c7643404754688388df7ecb7ace1525aa79ce559ec86377f3a"
+    },
+    {
+      "bytes": 184,
+      "path": "fc5-static/01-preflight.log",
+      "sha256": "c4fe93f9b5cff22c3d1c052bf88b67910a40d74e0cff205216eba13960ee2bdb"
+    },
+    {
+      "bytes": 0,
+      "path": "fc5-static/01-preflight.recorder.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 133,
+      "path": "fc5-static/01-preflight.recorder.stdout",
+      "sha256": "842c7a6a81f58865cf9551e220d606d6049703abb84b42895146f69cc0d2f530"
+    },
+    {
+      "bytes": 2111,
+      "path": "fc5-static/02-source-integrity.json",
+      "sha256": "caf8284a2ff897ac93d9431b032dd75a2ab092ca17b855c7077b7afa6336a292"
+    },
+    {
+      "bytes": 6898,
+      "path": "fc5-static/02-source-integrity.log",
+      "sha256": "7db3e96b81c2ac05ae31ee0ec31aaf799a4c1eb37b81cc9b4be4229dd0db0119"
+    },
+    {
+      "bytes": 0,
+      "path": "fc5-static/02-source-integrity.recorder.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 140,
+      "path": "fc5-static/02-source-integrity.recorder.stdout",
+      "sha256": "a4ac8dd8aa9a281ad7299572c301a66e862d2b3df165a45b695bb3f4b6308703"
+    },
+    {
+      "bytes": 2106,
+      "path": "fc5-static/03-ci-contract-tests.json",
+      "sha256": "aa2ad7446a3600737e3440868dc01af2aa31b7665cede09e81c1d585f62746cd"
+    },
+    {
+      "bytes": 28359,
+      "path": "fc5-static/03-ci-contract-tests.log",
+      "sha256": "f6f1e503a22ad178620a8c91dcc097555a6b010594d361c0107359c1622de5be"
+    },
+    {
+      "bytes": 0,
+      "path": "fc5-static/03-ci-contract-tests.recorder.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 141,
+      "path": "fc5-static/03-ci-contract-tests.recorder.stdout",
+      "sha256": "a164b9ec6232defa1db90ed59f76428eb83602f567ebb3cdf40c28e34c67f62d"
+    },
+    {
+      "bytes": 2112,
+      "path": "fc5-static/04-corpus-tests.json",
+      "sha256": "fa7fbb0d2dc06cb13236b460be2ce9c402717859421dff9c6d8d09074700e958"
+    },
+    {
+      "bytes": 8084,
+      "path": "fc5-static/04-corpus-tests.log",
+      "sha256": "d98a9c2be8702d7003859eb901e3c7a30f90307dcbc4a9763e1769b76e0047fe"
+    },
+    {
+      "bytes": 0,
+      "path": "fc5-static/04-corpus-tests.recorder.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 136,
+      "path": "fc5-static/04-corpus-tests.recorder.stdout",
+      "sha256": "3c92f30876dc3a8dac274d945b0f6b44da011ba4ebad294386d547f959138fe4"
+    },
+    {
+      "bytes": 2114,
+      "path": "fc5-static/05-project-boundary-tests.json",
+      "sha256": "d66ecefed74553573b38a9bc479b7cb58ab698fe3d54fa9d9c1fb05f888fc032"
+    },
+    {
+      "bytes": 2425,
+      "path": "fc5-static/05-project-boundary-tests.log",
+      "sha256": "bf35dae8afe27582dec3eac90630827b525a16ee709c2b6d02c9d1b7f1a7af66"
+    },
+    {
+      "bytes": 0,
+      "path": "fc5-static/05-project-boundary-tests.recorder.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 146,
+      "path": "fc5-static/05-project-boundary-tests.recorder.stdout",
+      "sha256": "fb3feae9c333d0d3727d1f2e2fb85da80fe90943ca3ab7a089ccddddfc20c58b"
+    },
+    {
+      "bytes": 2103,
+      "path": "fc5-static/06-repository-tests.json",
+      "sha256": "b67bb4e2754984e737815bf2a6ca539d9773945f22af84f67ee31a85227ae52e"
+    },
+    {
+      "bytes": 5345,
+      "path": "fc5-static/06-repository-tests.log",
+      "sha256": "9dbc66a55f7b5d80f5dfdc120d3319e294c3d0c17c3bc5cc952a44f276d20115"
+    },
+    {
+      "bytes": 0,
+      "path": "fc5-static/06-repository-tests.recorder.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 140,
+      "path": "fc5-static/06-repository-tests.recorder.stdout",
+      "sha256": "61ffaf4b483fb864bbe6a2ff09132d8dd047354964c4ecafc8b8efc98bfecad2"
+    },
+    {
+      "bytes": 2094,
+      "path": "fc5-static/07-ci-contract-check.json",
+      "sha256": "af38fe024ad04fe12f4670aa26a33b644cdddc3692aae63e0abeca00c24d6874"
+    },
+    {
+      "bytes": 431,
+      "path": "fc5-static/07-ci-contract-check.log",
+      "sha256": "334cc2b26ed99ad5f867ee9b65f3047e23afcfae056d4ba9c852b0a201e2dbeb"
+    },
+    {
+      "bytes": 0,
+      "path": "fc5-static/07-ci-contract-check.recorder.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 141,
+      "path": "fc5-static/07-ci-contract-check.recorder.stdout",
+      "sha256": "ef65176c101f58b02b775ed54968d45690b915990b24b5b94691ee40d78958aa"
+    },
+    {
+      "bytes": 2092,
+      "path": "fc5-static/08-repository-check.json",
+      "sha256": "847b87ac656906f46c36c9ae114c2988f06716aa750c69b8231b13f3daeeb765"
+    },
+    {
+      "bytes": 307,
+      "path": "fc5-static/08-repository-check.log",
+      "sha256": "5a0524449b8f0fc17b6cddd8c0a507afeb43c47165e35592b45c4dd77c37693b"
+    },
+    {
+      "bytes": 0,
+      "path": "fc5-static/08-repository-check.recorder.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 140,
+      "path": "fc5-static/08-repository-check.recorder.stdout",
+      "sha256": "d1999723ecb5fda8e0d39fe338ab236cc3d2935ff81ade9a1338f5297611b3d8"
+    },
+    {
+      "bytes": 2101,
+      "path": "fc5-static/09-corpus-check.json",
+      "sha256": "0bdc9923195df6b5bc6e4b845ec6380bde334924a8a9b490eb13e523ed5b6e2f"
+    },
+    {
+      "bytes": 557,
+      "path": "fc5-static/09-corpus-check.log",
+      "sha256": "2a6a8367eb6323fce6a1c0a1664660410772b4cf4f88a252a6de6702edc18f0c"
+    },
+    {
+      "bytes": 0,
+      "path": "fc5-static/09-corpus-check.recorder.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 136,
+      "path": "fc5-static/09-corpus-check.recorder.stdout",
+      "sha256": "30475af801d878d5cf29ce59ff0902096324ad446fb264b5db796ce4dd1b477c"
+    },
+    {
+      "bytes": 2124,
+      "path": "fc5-static/10-distributed-check.json",
+      "sha256": "24c5d3d7c1a5362165f6cdccd937c6af64c829f97685ed0fc2dda5655c1efe72"
+    },
+    {
+      "bytes": 35,
+      "path": "fc5-static/10-distributed-check.log",
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    },
+    {
+      "bytes": 0,
+      "path": "fc5-static/10-distributed-check.recorder.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 141,
+      "path": "fc5-static/10-distributed-check.recorder.stdout",
+      "sha256": "2ec48f54b58985b2733d7c7d1f15889a5b2fc6235fd8807081af3b684b87ffce"
+    },
+    {
+      "bytes": 2118,
+      "path": "fc5-static/11-lifecycle-reader-tests.json",
+      "sha256": "505bc492294ab222e0ce945ec2ff6e469f05494ceba7ab4cf923fb82d6a8487b"
+    },
+    {
+      "bytes": 1592,
+      "path": "fc5-static/11-lifecycle-reader-tests.log",
+      "sha256": "903d892c2e59d3f6dc80cc719f6fee0783f74e6e497fbfa49f16899321789750"
+    },
+    {
+      "bytes": 0,
+      "path": "fc5-static/11-lifecycle-reader-tests.recorder.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 146,
+      "path": "fc5-static/11-lifecycle-reader-tests.recorder.stdout",
+      "sha256": "29f93fdf453aaaecdd9ad4f7354a9d4e41fa858226b66fe0a2dabc1934976f9c"
+    },
+    {
+      "bytes": 2287,
+      "path": "fc5-static/12-metadata-default.json",
+      "sha256": "99b20e837a0aea1e4d47ce91012a683e6e907d86588303f02b551e3e7c919888"
+    },
+    {
+      "bytes": 859786,
+      "path": "fc5-static/12-metadata-default.log",
+      "sha256": "3721030e7a4b78d1a6ad6cc12b3c7ddf877017b8f755dd3b169e667a2aa4710c"
+    },
+    {
+      "bytes": 0,
+      "path": "fc5-static/12-metadata-default.recorder.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 140,
+      "path": "fc5-static/12-metadata-default.recorder.stdout",
+      "sha256": "a2a20201c0cf4c75e1055d6adef71a1508834e91724c14ac5387447eef7ac6e5"
+    },
+    {
+      "bytes": 2314,
+      "path": "fc5-static/13-metadata-all-features.json",
+      "sha256": "ecc9e035797b27126b8c78ad132af67f9f7068840529a8929bc3e290c1a5a3ff"
+    },
+    {
+      "bytes": 874936,
+      "path": "fc5-static/13-metadata-all-features.log",
+      "sha256": "38e75c255ac9904057e85cc2ca595d8c1a6fd148ff643cc6456ef2f79ec5c18d"
+    },
+    {
+      "bytes": 0,
+      "path": "fc5-static/13-metadata-all-features.recorder.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 145,
+      "path": "fc5-static/13-metadata-all-features.recorder.stdout",
+      "sha256": "22bef29fa358fc24081820dafe4f5a14af110cda93327bb48c9f9f4634d08391"
+    },
+    {
+      "bytes": 2282,
+      "path": "fc5-static/14-metadata-fuzz.json",
+      "sha256": "d6774c510d40b42c08b3dce37ac678485ecf0a6180783f2426b24d3dc437dcce"
+    },
+    {
+      "bytes": 744148,
+      "path": "fc5-static/14-metadata-fuzz.log",
+      "sha256": "1a7c0a6b99736ac9cd5596dd2b0309e4dc9e12f8d54acf1a26ed0d0fbc69d038"
+    },
+    {
+      "bytes": 0,
+      "path": "fc5-static/14-metadata-fuzz.recorder.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 137,
+      "path": "fc5-static/14-metadata-fuzz.recorder.stdout",
+      "sha256": "67d7ddfa58d5dd0821dd6b5141f03c7139880afb8943a27bfcc542aaeaa86d5b"
+    },
+    {
+      "bytes": 2242,
+      "path": "fc5-static/15-fmt-check.json",
+      "sha256": "40a9535b7b503789fd343e5f1cc76404fd43db9ec856a0d46d498c750fa082b6"
+    },
+    {
+      "bytes": 0,
+      "path": "fc5-static/15-fmt-check.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "fc5-static/15-fmt-check.recorder.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 133,
+      "path": "fc5-static/15-fmt-check.recorder.stdout",
+      "sha256": "afaaffb13bc6058116b15e1b3dfd7744afb9b6b294696d7c9783fa49cb0f9f2d"
+    },
+    {
+      "bytes": 4399,
+      "path": "fc5-static/orchestration.json",
+      "sha256": "bfa3b4720b17af07cb92dcb011e2188cd97c559a0130ee4cefc8a521bf2e33f6"
+    },
+    {
+      "bytes": 16248,
+      "path": "fc5-static/readonly-boundary-review.json",
+      "sha256": "c67c946cd96df08704985f3ecba0ed57b988306c0d4c78839a27f3ec4f7520eb"
+    },
+    {
+      "bytes": 13926,
+      "path": "fc5-static/validation-summary.json",
+      "sha256": "bc88254bcde8c03b2f565b4afef94448a6c47400bc8cb3b2eca8f54a2822073e"
+    }
+  ],
+  "schema": "independent-archive-member-hashes-v1"
+}

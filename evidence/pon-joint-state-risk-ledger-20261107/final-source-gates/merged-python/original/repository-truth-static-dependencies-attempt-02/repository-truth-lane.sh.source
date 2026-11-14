@@ -1,0 +1,80 @@
+  repository-truth)
+    bash scripts/project-preflight.sh --audit
+    python3 scripts/ci/test_project_boundary.py
+    # A passing HOLD check does not certify whole-chain PQ or PQ-128.
+    python3 scripts/ci/test_pq_chain_claim_guard.py
+    python3 -m unittest discover -s scripts/ci -p 'test_pq_authority_surface_scan.py' -v
+    python3 scripts/ci/pq_authority_surface_scan.py --summary-only
+    python3 -m unittest discover -s scripts/ci -p 'test_pq_external_rollback_oracle.py' -v
+    python3 -m unittest discover -s scripts/ci -p 'test_pq_quantum_daa_scenarios.py' -v
+    # Public-input framing only: no seed proof or signature qualification.
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_seed_recovery_v1.py' -v
+
+    # Conditional resource/event models retain unknown W1 hardware and protocol gates.
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_work_scale_contract.py' -v
+    python3 formal/pon-nakamoto-v1/stateful_tail.py
+    python3 formal/pon-nakamoto-v1/residual_grover.py
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_native_fork_witness.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_native_execution_certificate.py' -v
+    python3 formal/pon-nakamoto-v1/mandatory_units_tests.py ContextContractTests QueryCertificateTests -v
+    python3 formal/pon-nakamoto-v1/certificate_observability_tests.py -v
+    python3 formal/pon-nakamoto-v1/lifecycle_query_tests.py -v
+    python3 formal/pon-nakamoto-v1/finite_joint_state_tests.py -v
+    python3 formal/pon-nakamoto-v1/certificate_event_coverage_tests.py -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_oracle_resources.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_network_sim.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_candidate_check_clock.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_adversarial_search.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_resource_clock.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_quantum_oracle.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_marked_domain.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_quantum_restricted_oracle.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_fast_daa_reference_component.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_parallel_variable_ohie.py' -v
+    # Finite ordering and report consistency do not qualify a successor protocol.
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_ghostdag_order_reference.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1/experiments -p 'test_architecture_compare.py' -v
+    python3 scripts/ci/pq_chain_claim_guard.py
+    python3 scripts/ci/check_repository.py
+    python3 scripts/refresh_distributed_source_inventory.py --check
+    python3 scripts/ci/test_repository.py
+    python3 scripts/ci/test_invariants_registry.py
+    python3 scripts/ci/test_responsibility_evidence.py
+    python3 scripts/ci/test_applicability.py
+    python3 scripts/ci/test_ci_contract.py
+    python3 scripts/ci/test_ci_execution.py
+    python3 -B scripts/ci/test_llm_hosted_once.py
+    python3 scripts/test_llm_runtime_release.py
+    python3 scripts/ci/test_replay_pinned_native.py
+    python3 scripts/ci/test_cross_arch_cost.py
+    python3 scripts/ci/test_zero_locality_cost.py
+    python3 scripts/ci/test_zero_paired_cost.py
+    python3 scripts/ci/test_one_zero_locality_cost.py
+    python3 scripts/ci/test_maintenance_cost.py
+    python3 scripts/ci/test_work_rejection_report.py
+    python3 scripts/ci/test_six_workpackage_native_rosters.py
+    python3 scripts/ci/test_w1_full_v2_disposition.py
+    python3 scripts/ci/test_pon_w1_preparation_strategy_reader_v4.py
+    python3 scripts/ci/test_pon_w1_rank_batch_reader_v5.py
+    python3 scripts/ci/test_run_w1_rank_batch_v5.py
+    python3 scripts/ci/test_run_legacy_reorg_root_abba.py
+    # These in-memory counterexamples use unchanged retained inputs, not a new hardware observation.
+    python3 scripts/ci/test_pon_w1_budget_readers.py --raw-dir evidence/pon-upgrade-implementation-20261018/native-rounds/chain-p0-native-54
+    python3 scripts/ci/test_pon_public_v3_phase_read.py
+    python3 scripts/ci/test_pon_public_v3_policy_read.py
+    python3 scripts/ci/test_pon_v3_cookie_cpu_study.py
+    python3 scripts/ci/test_run_pon_w1_native_campaign.py
+    python3 scripts/ci/test_pon_w1_cost_matrix_reader.py
+    python3 scripts/ci/test_pon_w1_reused_cost_reader_v3.py
+    python3 scripts/ci/test_run_w1_reused_cost_v3.py
+    python3 scripts/ci/test_llm_cell_handoff_deadline.py
+    python3 scripts/ci/test_read_original_native_campaign.py \
+      --artifact-dir evidence/pon-upgrade-implementation-20261018/native-rounds/chain-pr327-original-campaign-39694587963 \
+      --expected-manifest-sha256 12406cc156e57c130fa14af2b50b386031ec3640ce7f0234ed5bc9f0a700aac3 \
+      --expected-head 9e705ccf75b7318dcc4bda4815956f58beb10e72 \
+      --expected-tree 521ae87a28060d545979069b189eebbc74a71fd8 --retained-subset
+    python3 scripts/ci/test_account_archive_conformance.py
+    python3 scripts/ci/test_run_account_execution_conformance.py
+    python3 scripts/ci/report_current_implementation.py --check
+    python3 scripts/ci/test_work_cost_report.py
+    python3 scripts/test_qualification_runtime.py

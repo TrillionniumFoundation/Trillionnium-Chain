@@ -1,0 +1,28 @@
+{
+  "id": "rust-baseline",
+  "argv": [
+    "env",
+    "CARGO_HOME=/home/qian-qi/chain-pq-a418-final-cargo-home",
+    "TRNM_CI_TOOL_ROOT=/home/qian-qi/chain-pq-a418-final-ci-tools",
+    "bash",
+    "scripts/ci/ci_job.sh",
+    "rust-baseline"
+  ],
+  "returncode": 101,
+  "launch_error": null,
+  "elapsed_seconds": 2841.481356428005,
+  "finished_utc": "2026-11-11T03:03:21.945206+00:00",
+  "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_status_after": "",
+  "stdout_sha256": "91f4595a10c116306297e2acf061a1449e45ce26d524fe05645b21a13cf19d92",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "pass": false,
+  "qualification_granted": false,
+  "child_resources": {
+    "user_cpu_seconds": 4184.074726,
+    "system_cpu_seconds": 339.372881,
+    "maximum_rss_kib": 4303520,
+    "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis"
+  }
+}

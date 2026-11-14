@@ -1,0 +1,1818 @@
+{
+  "all_requested_lanes_present": true,
+  "capture_count": 12,
+  "cross_host_legal_search_fingerprints_match": true,
+  "false_trace_lanes": [
+    {
+      "actual_inclusive_attacker_cohort_cpu_ns": 8834768,
+      "actual_receiver_cpu_ns": {
+        "column-limb-experimental": 205389080,
+        "limb": 204177432,
+        "production": 218181800,
+        "reference": 296360552
+      },
+      "all_attempts": 573,
+      "architecture": "arm64",
+      "artifact_id": 13079889154,
+      "complete_record_counts": {
+        "campaign": 1,
+        "candidate": 288,
+        "cohort": 72,
+        "end": 1,
+        "material": 9,
+        "search": 288,
+        "verifier": 1152
+      },
+      "exhausted_searches": 0,
+      "mode": "original",
+      "per_material_receiver_over_attacker_range": {
+        "column-limb-experimental": {
+          "maximum": 25.559413172257422,
+          "minimum": 21.424601240335654
+        },
+        "limb": {
+          "maximum": 25.396574747049282,
+          "minimum": 21.248404586392304
+        },
+        "production": {
+          "maximum": 27.152666624844287,
+          "minimum": 22.746383604172447
+        },
+        "reference": {
+          "maximum": 36.912898918294005,
+          "minimum": 30.841830957398145
+        }
+      },
+      "receiver_over_complete_attacker_cpu": {
+        "column-limb-experimental": 23.24781816568358,
+        "limb": 23.11067274205729,
+        "production": 24.69581544189955,
+        "reference": 33.54480298746951
+      },
+      "reported_cpu_fields": {
+        "CPU architecture": [
+          "8"
+        ],
+        "CPU implementer": [
+          "0x41"
+        ],
+        "CPU part": [
+          "0xd49"
+        ],
+        "model name": []
+      },
+      "semantic_alerts": [],
+      "source_commit": "48b7a10a9950278815cfa002a3369a5763329944",
+      "source_kind": "prospective-merge"
+    },
+    {
+      "actual_inclusive_attacker_cohort_cpu_ns": 9314808,
+      "actual_receiver_cpu_ns": {
+        "column-limb-experimental": 204860792,
+        "full-limb-experimental": 197569856,
+        "limb": 203950296,
+        "production": 217682472,
+        "reference": 295616040
+      },
+      "all_attempts": 573,
+      "architecture": "arm64",
+      "artifact_id": 13079889154,
+      "complete_record_counts": {
+        "campaign": 1,
+        "candidate": 288,
+        "cohort": 72,
+        "end": 1,
+        "material": 9,
+        "search": 288,
+        "verifier": 1440
+      },
+      "exhausted_searches": 0,
+      "full_limb_comparison": {
+        "cpu_cohort_distribution": {
+          "limb": {
+            "cohort_count": 72,
+            "full_limb_faster": 72,
+            "full_limb_slower": 0,
+            "maximum": 1.0397038421659828,
+            "median": 1.0326013130534322,
+            "minimum": 1.0189386631498016,
+            "ties": 0
+          },
+          "production": {
+            "cohort_count": 72,
+            "full_limb_faster": 72,
+            "full_limb_slower": 0,
+            "maximum": 1.109851055834399,
+            "median": 1.101736206405488,
+            "minimum": 1.091969281183141,
+            "ties": 0
+          }
+        },
+        "ratios": {
+          "limb": {
+            "cpu_ns": {
+              "baseline_ns": 203950296,
+              "baseline_over_full_limb": 1.0322946026746105,
+              "full_limb_ns": 197569856,
+              "full_limb_over_baseline": 0.9687157110083331,
+              "full_limb_saved_fraction": 0.03128428899166691
+            },
+            "wall_ns": {
+              "baseline_ns": 203973524,
+              "baseline_over_full_limb": 1.0323506544224312,
+              "full_limb_ns": 197581629,
+              "full_limb_over_baseline": 0.9686631143363489,
+              "full_limb_saved_fraction": 0.031336885663651115
+            }
+          },
+          "production": {
+            "cpu_ns": {
+              "baseline_ns": 217682472,
+              "baseline_over_full_limb": 1.101800023582545,
+              "full_limb_ns": 197569856,
+              "full_limb_over_baseline": 0.9076057166421742,
+              "full_limb_saved_fraction": 0.09239428335782585
+            },
+            "wall_ns": {
+              "baseline_ns": 217683098,
+              "baseline_over_full_limb": 1.101737540588857,
+              "full_limb_ns": 197581629,
+              "full_limb_over_baseline": 0.9076571898108506,
+              "full_limb_saved_fraction": 0.09234281018914936
+            }
+          }
+        }
+      },
+      "mode": "full-limb",
+      "per_material_receiver_over_attacker_range": {
+        "column-limb-experimental": {
+          "maximum": 24.063527103262203,
+          "minimum": 21.146257694251986
+        },
+        "full-limb-experimental": {
+          "maximum": 23.200434734803313,
+          "minimum": 20.426596092658123
+        },
+        "limb": {
+          "maximum": 23.94466857814654,
+          "minimum": 21.055837223824675
+        },
+        "production": {
+          "maximum": 25.606362013989326,
+          "minimum": 22.47783163341164
+        },
+        "reference": {
+          "maximum": 34.72288616545296,
+          "minimum": 30.500386571114216
+        }
+      },
+      "receiver_over_complete_attacker_cpu": {
+        "column-limb-experimental": 21.993023581377095,
+        "full-limb-experimental": 21.21029826916454,
+        "limb": 21.895276424377187,
+        "production": 23.3695071331583,
+        "reference": 31.736138844729812
+      },
+      "reported_cpu_fields": {
+        "CPU architecture": [
+          "8"
+        ],
+        "CPU implementer": [
+          "0x41"
+        ],
+        "CPU part": [
+          "0xd49"
+        ],
+        "model name": []
+      },
+      "semantic_alerts": [],
+      "source_commit": "48b7a10a9950278815cfa002a3369a5763329944",
+      "source_kind": "prospective-merge"
+    },
+    {
+      "actual_inclusive_attacker_cohort_cpu_ns": 5264027,
+      "actual_receiver_cpu_ns": {
+        "column-limb-experimental": 133451363,
+        "limb": 116970460,
+        "production": 139701940,
+        "reference": 156414172
+      },
+      "all_attempts": 573,
+      "architecture": "x64",
+      "artifact_id": 13079889166,
+      "complete_record_counts": {
+        "campaign": 1,
+        "candidate": 288,
+        "cohort": 72,
+        "end": 1,
+        "material": 9,
+        "search": 288,
+        "verifier": 1152
+      },
+      "exhausted_searches": 0,
+      "mode": "original",
+      "per_material_receiver_over_attacker_range": {
+        "column-limb-experimental": {
+          "maximum": 34.36942968276653,
+          "minimum": 20.283160762495363
+        },
+        "limb": {
+          "maximum": 30.20939998982485,
+          "minimum": 17.702523634701723
+        },
+        "production": {
+          "maximum": 35.840173810085425,
+          "minimum": 21.14632100502045
+        },
+        "reference": {
+          "maximum": 40.18252371504026,
+          "minimum": 23.754363303234353
+        }
+      },
+      "receiver_over_complete_attacker_cpu": {
+        "column-limb-experimental": 25.35157266480586,
+        "limb": 22.220718092821333,
+        "production": 26.538986217205952,
+        "reference": 29.7137860425108
+      },
+      "reported_cpu_fields": {
+        "CPU architecture": [],
+        "CPU implementer": [],
+        "CPU part": [],
+        "model name": [
+          "AMD EPYC 7763 64-Core Processor"
+        ]
+      },
+      "semantic_alerts": [],
+      "source_commit": "e885a4a284d83019077c9b8f3420d39988a11eef",
+      "source_kind": "head"
+    },
+    {
+      "actual_inclusive_attacker_cohort_cpu_ns": 6072584,
+      "actual_receiver_cpu_ns": {
+        "column-limb-experimental": 133711247,
+        "full-limb-experimental": 114121360,
+        "limb": 117255660,
+        "production": 140128991,
+        "reference": 156024686
+      },
+      "all_attempts": 573,
+      "architecture": "x64",
+      "artifact_id": 13079889166,
+      "complete_record_counts": {
+        "campaign": 1,
+        "candidate": 288,
+        "cohort": 72,
+        "end": 1,
+        "material": 9,
+        "search": 288,
+        "verifier": 1440
+      },
+      "exhausted_searches": 0,
+      "full_limb_comparison": {
+        "cpu_cohort_distribution": {
+          "limb": {
+            "cohort_count": 72,
+            "full_limb_faster": 71,
+            "full_limb_slower": 1,
+            "maximum": 1.065777779999925,
+            "median": 1.0275673944110464,
+            "minimum": 0.9593004834940596,
+            "ties": 0
+          },
+          "production": {
+            "cohort_count": 72,
+            "full_limb_faster": 72,
+            "full_limb_slower": 0,
+            "maximum": 1.2985155897822385,
+            "median": 1.2270849873217202,
+            "minimum": 1.1912750956734657,
+            "ties": 0
+          }
+        },
+        "ratios": {
+          "limb": {
+            "cpu_ns": {
+              "baseline_ns": 117255660,
+              "baseline_over_full_limb": 1.0274646218727153,
+              "full_limb_ns": 114121360,
+              "full_limb_over_baseline": 0.9732695206355071,
+              "full_limb_saved_fraction": 0.02673047936449291
+            },
+            "wall_ns": {
+              "baseline_ns": 117240010,
+              "baseline_over_full_limb": 1.0275657729684946,
+              "full_limb_ns": 114094896,
+              "full_limb_over_baseline": 0.9731737143318224,
+              "full_limb_saved_fraction": 0.026826285668177574
+            }
+          },
+          "production": {
+            "cpu_ns": {
+              "baseline_ns": 140128991,
+              "baseline_over_full_limb": 1.227894506339567,
+              "full_limb_ns": 114121360,
+              "full_limb_over_baseline": 0.8144022103177778,
+              "full_limb_saved_fraction": 0.18559778968222218
+            },
+            "wall_ns": {
+              "baseline_ns": 140106106,
+              "baseline_over_full_limb": 1.2279787344738016,
+              "full_limb_ns": 114094896,
+              "full_limb_over_baseline": 0.8143463497586607,
+              "full_limb_saved_fraction": 0.18565365024133929
+            }
+          }
+        }
+      },
+      "mode": "full-limb",
+      "per_material_receiver_over_attacker_range": {
+        "column-limb-experimental": {
+          "maximum": 29.272414625078117,
+          "minimum": 19.847994984633118
+        },
+        "full-limb-experimental": {
+          "maximum": 24.98865820762105,
+          "minimum": 16.8892120363481
+        },
+        "limb": {
+          "maximum": 25.570813523925544,
+          "minimum": 17.508707012329445
+        },
+        "production": {
+          "maximum": 30.55203183216916,
+          "minimum": 20.794373950972393
+        },
+        "reference": {
+          "maximum": 34.20054306123579,
+          "minimum": 23.038923666062818
+        }
+      },
+      "receiver_over_complete_attacker_cpu": {
+        "column-limb-experimental": 22.018838603138303,
+        "full-limb-experimental": 18.792882897955796,
+        "limb": 19.309022320646367,
+        "production": 23.075677668682722,
+        "reference": 25.693293991486986
+      },
+      "reported_cpu_fields": {
+        "CPU architecture": [],
+        "CPU implementer": [],
+        "CPU part": [],
+        "model name": [
+          "AMD EPYC 7763 64-Core Processor"
+        ]
+      },
+      "semantic_alerts": [],
+      "source_commit": "e885a4a284d83019077c9b8f3420d39988a11eef",
+      "source_kind": "head"
+    },
+    {
+      "actual_inclusive_attacker_cohort_cpu_ns": 3226604,
+      "actual_receiver_cpu_ns": {
+        "column-limb-experimental": 86648551,
+        "limb": 73160911,
+        "production": 86823842,
+        "reference": 89017343
+      },
+      "all_attempts": 573,
+      "architecture": "x64",
+      "artifact_id": 13080425580,
+      "complete_record_counts": {
+        "campaign": 1,
+        "candidate": 288,
+        "cohort": 72,
+        "end": 1,
+        "material": 9,
+        "search": 288,
+        "verifier": 1152
+      },
+      "exhausted_searches": 0,
+      "mode": "original",
+      "per_material_receiver_over_attacker_range": {
+        "column-limb-experimental": {
+          "maximum": 37.116643151201224,
+          "minimum": 21.67154988475395
+        },
+        "limb": {
+          "maximum": 31.360084269120005,
+          "minimum": 18.355202053350112
+        },
+        "production": {
+          "maximum": 37.19620015848779,
+          "minimum": 21.744599883289435
+        },
+        "reference": {
+          "maximum": 38.20646707512708,
+          "minimum": 22.25488640997853
+        }
+      },
+      "receiver_over_complete_attacker_cpu": {
+        "column-limb-experimental": 26.85441132534392,
+        "limb": 22.67427642189745,
+        "production": 26.90873810359127,
+        "reference": 27.58855533557883
+      },
+      "reported_cpu_fields": {
+        "CPU architecture": [],
+        "CPU implementer": [],
+        "CPU part": [],
+        "model name": [
+          "AMD EPYC 9V45 96-Core Processor"
+        ]
+      },
+      "semantic_alerts": [],
+      "source_commit": "48b7a10a9950278815cfa002a3369a5763329944",
+      "source_kind": "prospective-merge"
+    },
+    {
+      "actual_inclusive_attacker_cohort_cpu_ns": 3776554,
+      "actual_receiver_cpu_ns": {
+        "column-limb-experimental": 86896397,
+        "full-limb-experimental": 70938440,
+        "limb": 73695111,
+        "production": 87567587,
+        "reference": 89713067
+      },
+      "all_attempts": 573,
+      "architecture": "x64",
+      "artifact_id": 13080425580,
+      "complete_record_counts": {
+        "campaign": 1,
+        "candidate": 288,
+        "cohort": 72,
+        "end": 1,
+        "material": 9,
+        "search": 288,
+        "verifier": 1440
+      },
+      "exhausted_searches": 0,
+      "full_limb_comparison": {
+        "cpu_cohort_distribution": {
+          "limb": {
+            "cohort_count": 72,
+            "full_limb_faster": 70,
+            "full_limb_slower": 2,
+            "maximum": 1.1555098616134436,
+            "median": 1.0377163315385562,
+            "minimum": 0.9647794902539957,
+            "ties": 0
+          },
+          "production": {
+            "cohort_count": 72,
+            "full_limb_faster": 72,
+            "full_limb_slower": 0,
+            "maximum": 1.300079563738947,
+            "median": 1.2354752765436299,
+            "minimum": 1.205272855531326,
+            "ties": 0
+          }
+        },
+        "ratios": {
+          "limb": {
+            "cpu_ns": {
+              "baseline_ns": 73695111,
+              "baseline_over_full_limb": 1.0388600454140238,
+              "full_limb_ns": 70938440,
+              "full_limb_over_baseline": 0.9625935701487714,
+              "full_limb_saved_fraction": 0.03740642985122855
+            },
+            "wall_ns": {
+              "baseline_ns": 73688374,
+              "baseline_over_full_limb": 1.0387773029551814,
+              "full_limb_ns": 70937605,
+              "full_limb_over_baseline": 0.9626702442911822,
+              "full_limb_saved_fraction": 0.0373297557088178
+            }
+          },
+          "production": {
+            "cpu_ns": {
+              "baseline_ns": 87567587,
+              "baseline_over_full_limb": 1.2344165871141233,
+              "full_limb_ns": 70938440,
+              "full_limb_over_baseline": 0.8100992893637688,
+              "full_limb_saved_fraction": 0.18990071063623115
+            },
+            "wall_ns": {
+              "baseline_ns": 87559366,
+              "baseline_over_full_limb": 1.2343152267404573,
+              "full_limb_ns": 70937605,
+              "full_limb_over_baseline": 0.8101658136720634,
+              "full_limb_saved_fraction": 0.18983418632793658
+            }
+          }
+        }
+      },
+      "mode": "full-limb",
+      "per_material_receiver_over_attacker_range": {
+        "column-limb-experimental": {
+          "maximum": 31.28501273074475,
+          "minimum": 21.391387789108993
+        },
+        "full-limb-experimental": {
+          "maximum": 25.703236791852323,
+          "minimum": 17.43360907825865
+        },
+        "limb": {
+          "maximum": 26.930894334818586,
+          "minimum": 18.33396718759961
+        },
+        "production": {
+          "maximum": 32.10491406747295,
+          "minimum": 21.538014768438014
+        },
+        "reference": {
+          "maximum": 32.64147040101846,
+          "minimum": 22.33275824252853
+        }
+      },
+      "receiver_over_complete_attacker_cpu": {
+        "column-limb-experimental": 23.009441146611433,
+        "full-limb-experimental": 18.783907233949257,
+        "limb": 19.513850722113332,
+        "production": 23.18716666039993,
+        "reference": 23.755271869540326
+      },
+      "reported_cpu_fields": {
+        "CPU architecture": [],
+        "CPU implementer": [],
+        "CPU part": [],
+        "model name": [
+          "AMD EPYC 9V45 96-Core Processor"
+        ]
+      },
+      "semantic_alerts": [],
+      "source_commit": "48b7a10a9950278815cfa002a3369a5763329944",
+      "source_kind": "prospective-merge"
+    },
+    {
+      "actual_inclusive_attacker_cohort_cpu_ns": 8841248,
+      "actual_receiver_cpu_ns": {
+        "column-limb-experimental": 205231976,
+        "limb": 204157360,
+        "production": 218007608,
+        "reference": 296083816
+      },
+      "all_attempts": 573,
+      "architecture": "arm64",
+      "artifact_id": 13080440964,
+      "complete_record_counts": {
+        "campaign": 1,
+        "candidate": 288,
+        "cohort": 72,
+        "end": 1,
+        "material": 9,
+        "search": 288,
+        "verifier": 1152
+      },
+      "exhausted_searches": 0,
+      "mode": "original",
+      "per_material_receiver_over_attacker_range": {
+        "column-limb-experimental": {
+          "maximum": 25.35045142714961,
+          "minimum": 21.49078815393549
+        },
+        "limb": {
+          "maximum": 25.23285820922049,
+          "minimum": 21.381362131507302
+        },
+        "production": {
+          "maximum": 26.9431184018768,
+          "minimum": 22.809383036327027
+        },
+        "reference": {
+          "maximum": 36.572823730138985,
+          "minimum": 30.983665281558963
+        }
+      },
+      "receiver_over_complete_attacker_cpu": {
+        "column-limb-experimental": 23.213009747040235,
+        "limb": 23.091464010510734,
+        "production": 24.65801298640192,
+        "reference": 33.488916496856554
+      },
+      "reported_cpu_fields": {
+        "CPU architecture": [
+          "8"
+        ],
+        "CPU implementer": [
+          "0x41"
+        ],
+        "CPU part": [
+          "0xd49"
+        ],
+        "model name": []
+      },
+      "semantic_alerts": [],
+      "source_commit": "e885a4a284d83019077c9b8f3420d39988a11eef",
+      "source_kind": "head"
+    },
+    {
+      "actual_inclusive_attacker_cohort_cpu_ns": 9404496,
+      "actual_receiver_cpu_ns": {
+        "column-limb-experimental": 205140104,
+        "full-limb-experimental": 197839824,
+        "limb": 204106360,
+        "production": 217863008,
+        "reference": 296056536
+      },
+      "all_attempts": 573,
+      "architecture": "arm64",
+      "artifact_id": 13080440964,
+      "complete_record_counts": {
+        "campaign": 1,
+        "candidate": 288,
+        "cohort": 72,
+        "end": 1,
+        "material": 9,
+        "search": 288,
+        "verifier": 1440
+      },
+      "exhausted_searches": 0,
+      "full_limb_comparison": {
+        "cpu_cohort_distribution": {
+          "limb": {
+            "cohort_count": 72,
+            "full_limb_faster": 72,
+            "full_limb_slower": 0,
+            "maximum": 1.0580923862067357,
+            "median": 1.031108443791558,
+            "minimum": 1.0179749533554103,
+            "ties": 0
+          },
+          "production": {
+            "cohort_count": 72,
+            "full_limb_faster": 72,
+            "full_limb_slower": 0,
+            "maximum": 1.1098696734086384,
+            "median": 1.101464682736563,
+            "minimum": 1.0815487432390345,
+            "ties": 0
+          }
+        },
+        "ratios": {
+          "limb": {
+            "cpu_ns": {
+              "baseline_ns": 204106360,
+              "baseline_over_full_limb": 1.031674795667024,
+              "full_limb_ns": 197839824,
+              "full_limb_over_baseline": 0.9692976936142509,
+              "full_limb_saved_fraction": 0.030702306385749112
+            },
+            "wall_ns": {
+              "baseline_ns": 204121949,
+              "baseline_over_full_limb": 1.0316645255906765,
+              "full_limb_ns": 197856904,
+              "full_limb_over_baseline": 0.9693073428374918,
+              "full_limb_saved_fraction": 0.03069265716250824
+            }
+          },
+          "production": {
+            "cpu_ns": {
+              "baseline_ns": 217863008,
+              "baseline_over_full_limb": 1.1012090669874433,
+              "full_limb_ns": 197839824,
+              "full_limb_over_baseline": 0.9080927772740566,
+              "full_limb_saved_fraction": 0.09190722272594343
+            },
+            "wall_ns": {
+              "baseline_ns": 217855838,
+              "baseline_over_full_limb": 1.1010777667884666,
+              "full_limb_ns": 197856904,
+              "full_limb_over_baseline": 0.9082010645957534,
+              "full_limb_saved_fraction": 0.09179893540424655
+            }
+          }
+        }
+      },
+      "mode": "full-limb",
+      "per_material_receiver_over_attacker_range": {
+        "column-limb-experimental": {
+          "maximum": 24.421187101863044,
+          "minimum": 21.043201525803376
+        },
+        "full-limb-experimental": {
+          "maximum": 23.541200476692644,
+          "minimum": 20.30296511498969
+        },
+        "limb": {
+          "maximum": 24.267488018381815,
+          "minimum": 20.936166123320987
+        },
+        "production": {
+          "maximum": 25.934814852919743,
+          "minimum": 22.373104758525354
+        },
+        "reference": {
+          "maximum": 35.236794499172646,
+          "minimum": 30.37467195966675
+        }
+      },
+      "receiver_over_complete_attacker_cpu": {
+        "column-limb-experimental": 21.812982216165544,
+        "full-limb-experimental": 21.036727965007376,
+        "limb": 21.703062024801753,
+        "production": 23.16583557481443,
+        "reference": 31.48031920051856
+      },
+      "reported_cpu_fields": {
+        "CPU architecture": [
+          "8"
+        ],
+        "CPU implementer": [
+          "0x41"
+        ],
+        "CPU part": [
+          "0xd49"
+        ],
+        "model name": []
+      },
+      "semantic_alerts": [],
+      "source_commit": "e885a4a284d83019077c9b8f3420d39988a11eef",
+      "source_kind": "head"
+    }
+  ],
+  "inputs": {
+    "performance_report_sha256": "2abd12bc1bc1aa4d0654ce6b5806502c4978cb8da2b8e88f7865b7d3269a182a",
+    "provenance_report_sha256": "b426f8a0c4b40d2c67664f07d9322c0f045abaa214ef669a62d4e884e83a7432",
+    "source_manifest_sha256": "c8da1e78c7f021c94e7c560fed04341404a4fefed48f9926c8e835b8f2c22bcb"
+  },
+  "legal_lanes": [
+    {
+      "architecture": "x64",
+      "artifact_id": 13079543361,
+      "cases": {
+        "legal": {
+          "cpu_cohort_distribution": {
+            "limb": {
+              "cohort_count": 120,
+              "full_limb_faster": 119,
+              "full_limb_slower": 1,
+              "maximum": 1.156052330750667,
+              "median": 1.0701965058532497,
+              "minimum": 0.955003382358793,
+              "ties": 0
+            },
+            "production": {
+              "cohort_count": 120,
+              "full_limb_faster": 120,
+              "full_limb_slower": 0,
+              "maximum": 1.2852214078399042,
+              "median": 1.2339050673647773,
+              "minimum": 1.129238977922107,
+              "ties": 0
+            }
+          },
+          "ratios": {
+            "limb": {
+              "cpu_ns": {
+                "baseline_ns": 1628000742,
+                "baseline_over_full_limb": 1.0697045502478746,
+                "full_limb_ns": 1521916254,
+                "full_limb_over_baseline": 0.9348375677828776,
+                "full_limb_saved_fraction": 0.06516243221712237
+              },
+              "wall_ns": {
+                "baseline_ns": 1627741493,
+                "baseline_over_full_limb": 1.0696974363569876,
+                "full_limb_ns": 1521684018,
+                "full_limb_over_baseline": 0.9348437848048394,
+                "full_limb_saved_fraction": 0.06515621519516057
+              }
+            },
+            "production": {
+              "cpu_ns": {
+                "baseline_ns": 1878950509,
+                "baseline_over_full_limb": 1.234595204605785,
+                "full_limb_ns": 1521916254,
+                "full_limb_over_baseline": 0.8099820866543112,
+                "full_limb_saved_fraction": 0.19001791334568885
+              },
+              "wall_ns": {
+                "baseline_ns": 1878690952,
+                "baseline_over_full_limb": 1.2346130535492028,
+                "full_limb_ns": 1521684018,
+                "full_limb_over_baseline": 0.809970376649794,
+                "full_limb_saved_fraction": 0.190029623350206
+              }
+            }
+          },
+          "sums_ns": {
+            "full-limb-experimental": {
+              "cpu_ns": 1521916254,
+              "wall_ns": 1521684018
+            },
+            "limb": {
+              "cpu_ns": 1628000742,
+              "wall_ns": 1627741493
+            },
+            "production": {
+              "cpu_ns": 1878950509,
+              "wall_ns": 1878690952
+            },
+            "reference": {
+              "cpu_ns": 2003207619,
+              "wall_ns": 2003017802
+            }
+          }
+        },
+        "product-last": {
+          "cpu_cohort_distribution": {
+            "limb": {
+              "cohort_count": 120,
+              "full_limb_faster": 120,
+              "full_limb_slower": 0,
+              "maximum": 1.154340673049933,
+              "median": 1.0691288705590654,
+              "minimum": 1.0396124828791742,
+              "ties": 0
+            },
+            "production": {
+              "cohort_count": 120,
+              "full_limb_faster": 120,
+              "full_limb_slower": 0,
+              "maximum": 1.4006718654398498,
+              "median": 1.2335538300084075,
+              "minimum": 1.197700717600762,
+              "ties": 0
+            }
+          },
+          "ratios": {
+            "limb": {
+              "cpu_ns": {
+                "baseline_ns": 1623948506,
+                "baseline_over_full_limb": 1.0689492770545463,
+                "full_limb_ns": 1519200715,
+                "full_limb_over_baseline": 0.9354980834595503,
+                "full_limb_saved_fraction": 0.06450191654044968
+              },
+              "wall_ns": {
+                "baseline_ns": 1623796275,
+                "baseline_over_full_limb": 1.0689719182572401,
+                "full_limb_ns": 1519026129,
+                "full_limb_over_baseline": 0.9354782692798085,
+                "full_limb_saved_fraction": 0.06452173072019152
+              }
+            },
+            "production": {
+              "cpu_ns": {
+                "baseline_ns": 1875317449,
+                "baseline_over_full_limb": 1.2344105887285606,
+                "full_limb_ns": 1519200715,
+                "full_limb_over_baseline": 0.8101032258885573,
+                "full_limb_saved_fraction": 0.18989677411144268
+              },
+              "wall_ns": {
+                "baseline_ns": 1875111036,
+                "baseline_over_full_limb": 1.234416577965263,
+                "full_limb_ns": 1519026129,
+                "full_limb_over_baseline": 0.8100992953678078,
+                "full_limb_saved_fraction": 0.18990070463219222
+              }
+            }
+          },
+          "sums_ns": {
+            "full-limb-experimental": {
+              "cpu_ns": 1519200715,
+              "wall_ns": 1519026129
+            },
+            "limb": {
+              "cpu_ns": 1623948506,
+              "wall_ns": 1623796275
+            },
+            "production": {
+              "cpu_ns": 1875317449,
+              "wall_ns": 1875111036
+            },
+            "reference": {
+              "cpu_ns": 1997822295,
+              "wall_ns": 1997539817
+            }
+          }
+        }
+      },
+      "complete_record_counts": {
+        "campaign": 30,
+        "candidate": 1460,
+        "cohort": 120,
+        "end": 30,
+        "material": 30,
+        "product_mutation": 2920,
+        "search": 2920,
+        "verifier": 23360
+      },
+      "complete_strategy_attempts": 50034,
+      "dispatcher": {
+        "class_cpu_ratios": {
+          "continuity-maintenance-v1": {
+            "dispatch_over_generic": 0.8883571815276083,
+            "generic_over_dispatch": 1.1256733449043683
+          },
+          "full-rank-field": {
+            "dispatch_over_generic": 1.064768433112506,
+            "generic_over_dispatch": 0.9391713436477671
+          },
+          "one-zero-left-rank-one": {
+            "dispatch_over_generic": 1.0464822177694322,
+            "generic_over_dispatch": 0.9555824103074503
+          },
+          "one-zero-right-rank-one": {
+            "dispatch_over_generic": 1.0419393824206846,
+            "generic_over_dispatch": 0.9597487309451256
+          },
+          "zero": {
+            "dispatch_over_generic": 1.0689119442024888,
+            "generic_over_dispatch": 0.935530756694927
+          }
+        },
+        "dispatch_over_generic_cpu": 1.017960071546275,
+        "generic_over_dispatch": {
+          "cpu_ns": 0.9823568015600123,
+          "wall_ns": 0.9823511447409935
+        },
+        "inclusive_total_costs_ns": {
+          "frozen-public-dispatch-v1": {
+            "cpu_ns": 10634854595,
+            "wall_ns": 10635538580
+          },
+          "prepared-generic": {
+            "cpu_ns": 10447221745,
+            "wall_ns": 10447833499
+          }
+        },
+        "slower_aggregate_cpu": true,
+        "strategy": "frozen-public-dispatch-v1"
+      },
+      "exhausted_searches": 0,
+      "reported_cpu_fields": {
+        "CPU architecture": [],
+        "CPU implementer": [],
+        "CPU part": [],
+        "model name": [
+          "AMD EPYC 7763 64-Core Processor"
+        ]
+      },
+      "semantic_alerts": [],
+      "source_commit": "e885a4a284d83019077c9b8f3420d39988a11eef",
+      "source_kind": "head"
+    },
+    {
+      "architecture": "x64",
+      "artifact_id": 13079658045,
+      "cases": {
+        "legal": {
+          "cpu_cohort_distribution": {
+            "limb": {
+              "cohort_count": 120,
+              "full_limb_faster": 120,
+              "full_limb_slower": 0,
+              "maximum": 1.1792079015418118,
+              "median": 1.0702568111529005,
+              "minimum": 1.000261610546694,
+              "ties": 0
+            },
+            "production": {
+              "cohort_count": 120,
+              "full_limb_faster": 120,
+              "full_limb_slower": 0,
+              "maximum": 1.3651711894644274,
+              "median": 1.2331728472553423,
+              "minimum": 1.1421573668627845,
+              "ties": 0
+            }
+          },
+          "ratios": {
+            "limb": {
+              "cpu_ns": {
+                "baseline_ns": 1629912246,
+                "baseline_over_full_limb": 1.0689234385584878,
+                "full_limb_ns": 1524816640,
+                "full_limb_over_baseline": 0.9355206967381727,
+                "full_limb_saved_fraction": 0.06447930326182727
+              },
+              "wall_ns": {
+                "baseline_ns": 1629772115,
+                "baseline_over_full_limb": 1.0690002251157005,
+                "full_limb_ns": 1524576026,
+                "full_limb_over_baseline": 0.935453498049327,
+                "full_limb_saved_fraction": 0.06454650195067302
+              }
+            },
+            "production": {
+              "cpu_ns": {
+                "baseline_ns": 1882418561,
+                "baseline_over_full_limb": 1.2345212608645195,
+                "full_limb_ns": 1524816640,
+                "full_limb_over_baseline": 0.8100306019028889,
+                "full_limb_saved_fraction": 0.1899693980971111
+              },
+              "wall_ns": {
+                "baseline_ns": 1882174975,
+                "baseline_over_full_limb": 1.2345563244479354,
+                "full_limb_ns": 1524576026,
+                "full_limb_over_baseline": 0.810007595600935,
+                "full_limb_saved_fraction": 0.18999240439906495
+              }
+            }
+          },
+          "sums_ns": {
+            "full-limb-experimental": {
+              "cpu_ns": 1524816640,
+              "wall_ns": 1524576026
+            },
+            "limb": {
+              "cpu_ns": 1629912246,
+              "wall_ns": 1629772115
+            },
+            "production": {
+              "cpu_ns": 1882418561,
+              "wall_ns": 1882174975
+            },
+            "reference": {
+              "cpu_ns": 2004377888,
+              "wall_ns": 2004176433
+            }
+          }
+        },
+        "product-last": {
+          "cpu_cohort_distribution": {
+            "limb": {
+              "cohort_count": 120,
+              "full_limb_faster": 120,
+              "full_limb_slower": 0,
+              "maximum": 1.2130120622341356,
+              "median": 1.0687567509795848,
+              "minimum": 1.0301570778824964,
+              "ties": 0
+            },
+            "production": {
+              "cohort_count": 120,
+              "full_limb_faster": 120,
+              "full_limb_slower": 0,
+              "maximum": 1.3709135284420562,
+              "median": 1.234064054441273,
+              "minimum": 1.187248089276504,
+              "ties": 0
+            }
+          },
+          "ratios": {
+            "limb": {
+              "cpu_ns": {
+                "baseline_ns": 1626421958,
+                "baseline_over_full_limb": 1.0684002380892268,
+                "full_limb_ns": 1522296514,
+                "full_limb_over_baseline": 0.9359788254900085,
+                "full_limb_saved_fraction": 0.06402117450999145
+              },
+              "wall_ns": {
+                "baseline_ns": 1626217813,
+                "baseline_over_full_limb": 1.0684505202978056,
+                "full_limb_ns": 1522033807,
+                "full_limb_over_baseline": 0.9359347775143328,
+                "full_limb_saved_fraction": 0.06406522248566715
+              }
+            },
+            "production": {
+              "cpu_ns": {
+                "baseline_ns": 1878615580,
+                "baseline_over_full_limb": 1.2340667949529311,
+                "full_limb_ns": 1522296514,
+                "full_limb_over_baseline": 0.810328909334394,
+                "full_limb_saved_fraction": 0.18967109066560595
+              },
+              "wall_ns": {
+                "baseline_ns": 1878429473,
+                "baseline_over_full_limb": 1.2341575228887147,
+                "full_limb_ns": 1522033807,
+                "full_limb_over_baseline": 0.8102693387626589,
+                "full_limb_saved_fraction": 0.18973066123734106
+              }
+            }
+          },
+          "sums_ns": {
+            "full-limb-experimental": {
+              "cpu_ns": 1522296514,
+              "wall_ns": 1522033807
+            },
+            "limb": {
+              "cpu_ns": 1626421958,
+              "wall_ns": 1626217813
+            },
+            "production": {
+              "cpu_ns": 1878615580,
+              "wall_ns": 1878429473
+            },
+            "reference": {
+              "cpu_ns": 1999138359,
+              "wall_ns": 1998865854
+            }
+          }
+        }
+      },
+      "complete_record_counts": {
+        "campaign": 30,
+        "candidate": 1460,
+        "cohort": 120,
+        "end": 30,
+        "material": 30,
+        "product_mutation": 2920,
+        "search": 2920,
+        "verifier": 23360
+      },
+      "complete_strategy_attempts": 50034,
+      "dispatcher": {
+        "class_cpu_ratios": {
+          "continuity-maintenance-v1": {
+            "dispatch_over_generic": 0.8895918260361512,
+            "generic_over_dispatch": 1.1241110481599255
+          },
+          "full-rank-field": {
+            "dispatch_over_generic": 1.0670660319848457,
+            "generic_over_dispatch": 0.9371491266945341
+          },
+          "one-zero-left-rank-one": {
+            "dispatch_over_generic": 1.0423222754659687,
+            "generic_over_dispatch": 0.9593961709711628
+          },
+          "one-zero-right-rank-one": {
+            "dispatch_over_generic": 1.0374979535881523,
+            "generic_over_dispatch": 0.9638573228424528
+          },
+          "zero": {
+            "dispatch_over_generic": 1.0689633206827291,
+            "generic_over_dispatch": 0.9354857932462234
+          }
+        },
+        "dispatch_over_generic_cpu": 1.016930973866258,
+        "generic_over_dispatch": {
+          "cpu_ns": 0.9833509114174305,
+          "wall_ns": 0.9833390927666571
+        },
+        "inclusive_total_costs_ns": {
+          "frozen-public-dispatch-v1": {
+            "cpu_ns": 10623146734,
+            "wall_ns": 10623811388
+          },
+          "prepared-generic": {
+            "cpu_ns": 10446281023,
+            "wall_ns": 10446809052
+          }
+        },
+        "slower_aggregate_cpu": true,
+        "strategy": "frozen-public-dispatch-v1"
+      },
+      "exhausted_searches": 0,
+      "reported_cpu_fields": {
+        "CPU architecture": [],
+        "CPU implementer": [],
+        "CPU part": [],
+        "model name": [
+          "AMD EPYC 7763 64-Core Processor"
+        ]
+      },
+      "semantic_alerts": [],
+      "source_commit": "48b7a10a9950278815cfa002a3369a5763329944",
+      "source_kind": "prospective-merge"
+    },
+    {
+      "architecture": "arm64",
+      "artifact_id": 13079689496,
+      "cases": {
+        "legal": {
+          "cpu_cohort_distribution": {
+            "limb": {
+              "cohort_count": 120,
+              "full_limb_faster": 120,
+              "full_limb_slower": 0,
+              "maximum": 1.0806606668030272,
+              "median": 1.0504822075926876,
+              "minimum": 1.0358181818181817,
+              "ties": 0
+            },
+            "production": {
+              "cohort_count": 120,
+              "full_limb_faster": 120,
+              "full_limb_slower": 0,
+              "maximum": 1.1449324358934956,
+              "median": 1.1112904740831913,
+              "minimum": 1.1002703989143534,
+              "ties": 0
+            }
+          },
+          "ratios": {
+            "limb": {
+              "cpu_ns": {
+                "baseline_ns": 2397098096,
+                "baseline_over_full_limb": 1.0501588251813117,
+                "full_limb_ns": 2282605296,
+                "full_limb_over_baseline": 0.9522369150469677,
+                "full_limb_saved_fraction": 0.047763084953032275
+              },
+              "wall_ns": {
+                "baseline_ns": 2397132656,
+                "baseline_over_full_limb": 1.0501761851909404,
+                "full_limb_ns": 2282600472,
+                "full_limb_over_baseline": 0.9522211740291773,
+                "full_limb_saved_fraction": 0.047778825970822725
+              }
+            },
+            "production": {
+              "cpu_ns": {
+                "baseline_ns": 2537179392,
+                "baseline_over_full_limb": 1.111527865306416,
+                "full_limb_ns": 2282605296,
+                "full_limb_over_baseline": 0.8996625556700092,
+                "full_limb_saved_fraction": 0.10033744432999081
+              },
+              "wall_ns": {
+                "baseline_ns": 2537272964,
+                "baseline_over_full_limb": 1.1115712079814202,
+                "full_limb_ns": 2282600472,
+                "full_limb_over_baseline": 0.8996274757925494,
+                "full_limb_saved_fraction": 0.10037252420745058
+              }
+            }
+          },
+          "sums_ns": {
+            "full-limb-experimental": {
+              "cpu_ns": 2282605296,
+              "wall_ns": 2282600472
+            },
+            "limb": {
+              "cpu_ns": 2397098096,
+              "wall_ns": 2397132656
+            },
+            "production": {
+              "cpu_ns": 2537179392,
+              "wall_ns": 2537272964
+            },
+            "reference": {
+              "cpu_ns": 3514743424,
+              "wall_ns": 3514994490
+            }
+          }
+        },
+        "product-last": {
+          "cpu_cohort_distribution": {
+            "limb": {
+              "cohort_count": 120,
+              "full_limb_faster": 120,
+              "full_limb_slower": 0,
+              "maximum": 1.0622115088727049,
+              "median": 1.0502113697075928,
+              "minimum": 1.0256582460695334,
+              "ties": 0
+            },
+            "production": {
+              "cohort_count": 120,
+              "full_limb_faster": 120,
+              "full_limb_slower": 0,
+              "maximum": 1.1221703677111647,
+              "median": 1.111991727259189,
+              "minimum": 1.0859606271737785,
+              "ties": 0
+            }
+          },
+          "ratios": {
+            "limb": {
+              "cpu_ns": {
+                "baseline_ns": 2392835192,
+                "baseline_over_full_limb": 1.0499689624823032,
+                "full_limb_ns": 2278958024,
+                "full_limb_over_baseline": 0.9524091051566246,
+                "full_limb_saved_fraction": 0.04759089484337542
+              },
+              "wall_ns": {
+                "baseline_ns": 2392951974,
+                "baseline_over_full_limb": 1.0499689400185888,
+                "full_limb_ns": 2279069297,
+                "full_limb_over_baseline": 0.952409125533081,
+                "full_limb_saved_fraction": 0.04759087446691901
+              }
+            },
+            "production": {
+              "cpu_ns": {
+                "baseline_ns": 2533906296,
+                "baseline_over_full_limb": 1.1118705431671434,
+                "full_limb_ns": 2278958024,
+                "full_limb_over_baseline": 0.8993852801887509,
+                "full_limb_saved_fraction": 0.10061471981124914
+              },
+              "wall_ns": {
+                "baseline_ns": 2534005661,
+                "baseline_over_full_limb": 1.1118598562736024,
+                "full_limb_ns": 2279069297,
+                "full_limb_over_baseline": 0.8993939248346454,
+                "full_limb_saved_fraction": 0.10060607516535458
+              }
+            }
+          },
+          "sums_ns": {
+            "full-limb-experimental": {
+              "cpu_ns": 2278958024,
+              "wall_ns": 2279069297
+            },
+            "limb": {
+              "cpu_ns": 2392835192,
+              "wall_ns": 2392951974
+            },
+            "production": {
+              "cpu_ns": 2533906296,
+              "wall_ns": 2534005661
+            },
+            "reference": {
+              "cpu_ns": 3507049464,
+              "wall_ns": 3507175905
+            }
+          }
+        }
+      },
+      "complete_record_counts": {
+        "campaign": 30,
+        "candidate": 1460,
+        "cohort": 120,
+        "end": 30,
+        "material": 30,
+        "product_mutation": 2920,
+        "search": 2920,
+        "verifier": 23360
+      },
+      "complete_strategy_attempts": 50034,
+      "dispatcher": {
+        "class_cpu_ratios": {
+          "continuity-maintenance-v1": {
+            "dispatch_over_generic": 0.9777160376284603,
+            "generic_over_dispatch": 1.0227918552155404
+          },
+          "full-rank-field": {
+            "dispatch_over_generic": 1.0826348579356442,
+            "generic_over_dispatch": 0.9236724576805042
+          },
+          "one-zero-left-rank-one": {
+            "dispatch_over_generic": 1.0100045571703238,
+            "generic_over_dispatch": 0.9900945425450821
+          },
+          "one-zero-right-rank-one": {
+            "dispatch_over_generic": 1.0105130401330709,
+            "generic_over_dispatch": 0.9895963340248569
+          },
+          "zero": {
+            "dispatch_over_generic": 1.1164388432480514,
+            "generic_over_dispatch": 0.8957051306909958
+          }
+        },
+        "dispatch_over_generic_cpu": 1.0366701336158073,
+        "generic_over_dispatch": {
+          "cpu_ns": 0.9646269990552295,
+          "wall_ns": 0.964626834842157
+        },
+        "inclusive_total_costs_ns": {
+          "frozen-public-dispatch-v1": {
+            "cpu_ns": 18387323400,
+            "wall_ns": 18388977014
+          },
+          "prepared-generic": {
+            "cpu_ns": 17736908592,
+            "wall_ns": 17738500693
+          }
+        },
+        "slower_aggregate_cpu": true,
+        "strategy": "frozen-public-dispatch-v1"
+      },
+      "exhausted_searches": 0,
+      "reported_cpu_fields": {
+        "CPU architecture": [
+          "8"
+        ],
+        "CPU implementer": [
+          "0x41"
+        ],
+        "CPU part": [
+          "0xd49"
+        ],
+        "model name": []
+      },
+      "semantic_alerts": [],
+      "source_commit": "e885a4a284d83019077c9b8f3420d39988a11eef",
+      "source_kind": "head"
+    },
+    {
+      "architecture": "arm64",
+      "artifact_id": 13080058569,
+      "cases": {
+        "legal": {
+          "cpu_cohort_distribution": {
+            "limb": {
+              "cohort_count": 120,
+              "full_limb_faster": 120,
+              "full_limb_slower": 0,
+              "maximum": 1.0859492620776534,
+              "median": 1.0506249605337574,
+              "minimum": 1.038615193227676,
+              "ties": 0
+            },
+            "production": {
+              "cohort_count": 120,
+              "full_limb_faster": 120,
+              "full_limb_slower": 0,
+              "maximum": 1.140368357798071,
+              "median": 1.111365410052015,
+              "minimum": 1.0979134849756758,
+              "ties": 0
+            }
+          },
+          "ratios": {
+            "limb": {
+              "cpu_ns": {
+                "baseline_ns": 2397965008,
+                "baseline_over_full_limb": 1.0503860271410184,
+                "full_limb_ns": 2282936888,
+                "full_limb_over_baseline": 0.952030943063703,
+                "full_limb_saved_fraction": 0.04796905693629705
+              },
+              "wall_ns": {
+                "baseline_ns": 2397662836,
+                "baseline_over_full_limb": 1.0503304886078815,
+                "full_limb_ns": 2282769911,
+                "full_limb_over_baseline": 0.9520812837923138,
+                "full_limb_saved_fraction": 0.047918716207686174
+              }
+            },
+            "production": {
+              "cpu_ns": {
+                "baseline_ns": 2537504696,
+                "baseline_over_full_limb": 1.1115089117610333,
+                "full_limb_ns": 2282936888,
+                "full_limb_over_baseline": 0.8996778967931416,
+                "full_limb_saved_fraction": 0.10032210320685842
+              },
+              "wall_ns": {
+                "baseline_ns": 2537195029,
+                "baseline_over_full_limb": 1.1114545608709838,
+                "full_limb_ns": 2282769911,
+                "full_limb_over_baseline": 0.8997218916591216,
+                "full_limb_saved_fraction": 0.10027810834087836
+              }
+            }
+          },
+          "sums_ns": {
+            "full-limb-experimental": {
+              "cpu_ns": 2282936888,
+              "wall_ns": 2282769911
+            },
+            "limb": {
+              "cpu_ns": 2397965008,
+              "wall_ns": 2397662836
+            },
+            "production": {
+              "cpu_ns": 2537504696,
+              "wall_ns": 2537195029
+            },
+            "reference": {
+              "cpu_ns": 3514786416,
+              "wall_ns": 3514759988
+            }
+          }
+        },
+        "product-last": {
+          "cpu_cohort_distribution": {
+            "limb": {
+              "cohort_count": 120,
+              "full_limb_faster": 120,
+              "full_limb_slower": 0,
+              "maximum": 1.0587465895504848,
+              "median": 1.0502387599225074,
+              "minimum": 1.0360584458263815,
+              "ties": 0
+            },
+            "production": {
+              "cohort_count": 120,
+              "full_limb_faster": 120,
+              "full_limb_slower": 0,
+              "maximum": 1.1299639359042661,
+              "median": 1.1115098899861837,
+              "minimum": 1.09680974771222,
+              "ties": 0
+            }
+          },
+          "ratios": {
+            "limb": {
+              "cpu_ns": {
+                "baseline_ns": 2393217344,
+                "baseline_over_full_limb": 1.0500489286259764,
+                "full_limb_ns": 2279148408,
+                "full_limb_over_baseline": 0.9523365747427911,
+                "full_limb_saved_fraction": 0.0476634252572089
+              },
+              "wall_ns": {
+                "baseline_ns": 2393191895,
+                "baseline_over_full_limb": 1.0501294349246704,
+                "full_limb_ns": 2278949447,
+                "full_limb_over_baseline": 0.9522635655591671,
+                "full_limb_saved_fraction": 0.047736434440832864
+              }
+            },
+            "production": {
+              "cpu_ns": {
+                "baseline_ns": 2533613752,
+                "baseline_over_full_limb": 1.1116493086219421,
+                "full_limb_ns": 2279148408,
+                "full_limb_over_baseline": 0.8995642710736281,
+                "full_limb_saved_fraction": 0.10043572892637187
+              },
+              "wall_ns": {
+                "baseline_ns": 2533391672,
+                "baseline_over_full_limb": 1.1116489114468715,
+                "full_limb_ns": 2278949447,
+                "full_limb_over_baseline": 0.8995645924741162,
+                "full_limb_saved_fraction": 0.10043540752588376
+              }
+            }
+          },
+          "sums_ns": {
+            "full-limb-experimental": {
+              "cpu_ns": 2279148408,
+              "wall_ns": 2278949447
+            },
+            "limb": {
+              "cpu_ns": 2393217344,
+              "wall_ns": 2393191895
+            },
+            "production": {
+              "cpu_ns": 2533613752,
+              "wall_ns": 2533391672
+            },
+            "reference": {
+              "cpu_ns": 3506698672,
+              "wall_ns": 3506390810
+            }
+          }
+        }
+      },
+      "complete_record_counts": {
+        "campaign": 30,
+        "candidate": 1460,
+        "cohort": 120,
+        "end": 30,
+        "material": 30,
+        "product_mutation": 2920,
+        "search": 2920,
+        "verifier": 23360
+      },
+      "complete_strategy_attempts": 50034,
+      "dispatcher": {
+        "class_cpu_ratios": {
+          "continuity-maintenance-v1": {
+            "dispatch_over_generic": 0.9783849186648303,
+            "generic_over_dispatch": 1.0220926150054184
+          },
+          "full-rank-field": {
+            "dispatch_over_generic": 1.082759268587234,
+            "generic_over_dispatch": 0.9235663263402798
+          },
+          "one-zero-left-rank-one": {
+            "dispatch_over_generic": 1.0098121553489945,
+            "generic_over_dispatch": 0.9902831875245119
+          },
+          "one-zero-right-rank-one": {
+            "dispatch_over_generic": 1.0107734076674801,
+            "generic_over_dispatch": 0.9893414215433887
+          },
+          "zero": {
+            "dispatch_over_generic": 1.1162699724194771,
+            "generic_over_dispatch": 0.8958406341725148
+          }
+        },
+        "dispatch_over_generic_cpu": 1.0368231254367615,
+        "generic_over_dispatch": {
+          "cpu_ns": 0.9644846603693858,
+          "wall_ns": 0.9644972754275924
+        },
+        "inclusive_total_costs_ns": {
+          "frozen-public-dispatch-v1": {
+            "cpu_ns": 18388165080,
+            "wall_ns": 18388427983
+          },
+          "prepared-generic": {
+            "cpu_ns": 17735103152,
+            "wall_ns": 17735588689
+          }
+        },
+        "slower_aggregate_cpu": true,
+        "strategy": "frozen-public-dispatch-v1"
+      },
+      "exhausted_searches": 0,
+      "reported_cpu_fields": {
+        "CPU architecture": [
+          "8"
+        ],
+        "CPU implementer": [
+          "0x41"
+        ],
+        "CPU part": [
+          "0xd49"
+        ],
+        "model name": []
+      },
+      "semantic_alerts": [],
+      "source_commit": "48b7a10a9950278815cfa002a3369a5763329944",
+      "source_kind": "prospective-merge"
+    }
+  ],
+  "limitations": [
+    "No new native execution was performed by this readback.",
+    "Reported ratios are ratios of complete sums, not pooled independent samples or universal speed bounds.",
+    "Legal data have two samples per class, below unchanged eight-sample qualification policy.",
+    "Cross-horizon search prefixes and cross-source/cross-host proof identities repeat intentionally.",
+    "These primitive timings cannot close the separately failed native service campaign.",
+    "Member hashes and immutable-source reader equality authenticate consistency, not host independence or honest clock measurement.",
+    "All rows in this report use the e885 head or its same-tree 48b7 merge; production still selects Transposed on those sources. Later 8327 default/full-limb entries are the same kernel and must not reuse this baseline interpretation.",
+    "These AMD and ARM observations do not erase the earlier Intel head run where complete-limb legal/Product aggregate CPU was about 3.8% higher than transcript-only limb."
+  ],
+  "new_native_execution": false,
+  "production_kernel_in_this_run": "Transposed",
+  "provenance": {
+    "all_captured_binary_sha_and_ELF_architecture_match": true,
+    "all_manifest_reader_fields_match": true,
+    "all_original_zip_digests_and_members_match": true,
+    "cargo_limits": "Four false-trace job artifacts retain cargo metadata graphs; the four legal-strategy jobs do not retain separate metadata graphs. Their locked command, exact tree, configuration, compiler identity and reported build output are checked; missing graphs are not reconstructed as original evidence.",
+    "cost_captures": 12,
+    "distinct_metadata_graph_count": 1,
+    "legal_jobs_have_separate_metadata_graph": false,
+    "metadata_graph_count": 4,
+    "original_cost_zip_artifacts": 8
+  },
+  "qualification": {
+    "hardness_accepted": false,
+    "independent_hardware_qualified": false,
+    "legal_samples_per_class": 2,
+    "production_activation": false,
+    "public_service_accepted": false,
+    "resource_fairness_qualified": false,
+    "unchanged_required_samples_per_class": 8,
+    "work_profile_qualified": false
+  },
+  "reader_source_commit": "e885a4a284d83019077c9b8f3420d39988a11eef",
+  "result": "PASS_RETAINED_READER_AND_PROVENANCE_CONSISTENCY",
+  "retained_full_limb_slower_cpu_cohorts": [
+    {
+      "all_path_cpu_ns": {
+        "full-limb-experimental": 577999,
+        "limb": 551991,
+        "production": 652699,
+        "reference": 749840
+      },
+      "architecture": "x64",
+      "artifact_id": 13079543361,
+      "comparison": {
+        "baseline_ns": 551991,
+        "baseline_over_full_limb": 0.955003382358793,
+        "full_limb_ns": 577999,
+        "full_limb_over_baseline": 1.0471167102362176,
+        "full_limb_saved_fraction": -0.04711671023621755
+      },
+      "family": "legal-strategy",
+      "key": [
+        "legal",
+        "zero",
+        0,
+        1,
+        0,
+        "prepared-generic"
+      ],
+      "key_fields": [
+        "case",
+        "class",
+        "target_index",
+        "reuse_winners",
+        "sample",
+        "strategy"
+      ],
+      "source_commit": "e885a4a284d83019077c9b8f3420d39988a11eef"
+    },
+    {
+      "all_path_cpu_ns": {
+        "column-limb-experimental": 2030299,
+        "full-limb-experimental": 1748522,
+        "limb": 1677358,
+        "production": 2090400,
+        "reference": 2282007
+      },
+      "architecture": "x64",
+      "artifact_id": 13079889166,
+      "comparison": {
+        "baseline_ns": 1677358,
+        "baseline_over_full_limb": 0.9593004834940596,
+        "full_limb_ns": 1748522,
+        "full_limb_over_baseline": 1.0424262441291603,
+        "full_limb_saved_fraction": -0.042426244129160295
+      },
+      "family": "false-trace",
+      "key": [
+        "Transcript",
+        "one-zero-right-rank-one",
+        1
+      ],
+      "key_fields": [
+        "case",
+        "class",
+        "sample"
+      ],
+      "source_commit": "e885a4a284d83019077c9b8f3420d39988a11eef"
+    },
+    {
+      "all_path_cpu_ns": {
+        "column-limb-experimental": 1413598,
+        "full-limb-experimental": 1239258,
+        "limb": 1230895,
+        "production": 1611134,
+        "reference": 1491515
+      },
+      "architecture": "x64",
+      "artifact_id": 13080425580,
+      "comparison": {
+        "baseline_ns": 1230895,
+        "baseline_over_full_limb": 0.9932516070100011,
+        "full_limb_ns": 1239258,
+        "full_limb_over_baseline": 1.0067942432132717,
+        "full_limb_saved_fraction": -0.006794243213271711
+      },
+      "family": "false-trace",
+      "key": [
+        "Transcript",
+        "full-rank-field",
+        6
+      ],
+      "key_fields": [
+        "case",
+        "class",
+        "sample"
+      ],
+      "source_commit": "48b7a10a9950278815cfa002a3369a5763329944"
+    },
+    {
+      "all_path_cpu_ns": {
+        "column-limb-experimental": 1290535,
+        "full-limb-experimental": 1094192,
+        "limb": 1055654,
+        "production": 1321120,
+        "reference": 1288492
+      },
+      "architecture": "x64",
+      "artifact_id": 13080425580,
+      "comparison": {
+        "baseline_ns": 1055654,
+        "baseline_over_full_limb": 0.9647794902539957,
+        "full_limb_ns": 1094192,
+        "full_limb_over_baseline": 1.0365062795196154,
+        "full_limb_saved_fraction": -0.03650627951961538
+      },
+      "family": "false-trace",
+      "key": [
+        "Transcript",
+        "periodic-dense-fixture",
+        0
+      ],
+      "key_fields": [
+        "case",
+        "class",
+        "sample"
+      ],
+      "source_commit": "48b7a10a9950278815cfa002a3369a5763329944"
+    }
+  ],
+  "run_id": 41297714882,
+  "schema": "pon-w1-independent-ci-performance-summary-v1",
+  "totals": {
+    "all_semantic_alerts": 0,
+    "all_verifier_calls": 103808,
+    "false_trace_attempts": 4584,
+    "false_trace_record_counts": {
+      "campaign": 8,
+      "candidate": 2304,
+      "cohort": 576,
+      "end": 8,
+      "material": 72,
+      "search": 2304,
+      "verifier": 10368
+    },
+    "full_limb_faster_than_production_cpu_cohorts": {
+      "legal": 480,
+      "product_last": 480,
+      "transcript": 288
+    },
+    "full_limb_slower_than_old_limb_cpu_cohorts": 4,
+    "legal_record_counts": {
+      "campaign": 120,
+      "candidate": 5840,
+      "cohort": 480,
+      "end": 120,
+      "material": 120,
+      "product_mutation": 11680,
+      "search": 11680,
+      "verifier": 93440
+    },
+    "legal_strategy_attempts": 200136,
+    "slower_dispatcher_aggregate_lanes": 4
+  }
+}

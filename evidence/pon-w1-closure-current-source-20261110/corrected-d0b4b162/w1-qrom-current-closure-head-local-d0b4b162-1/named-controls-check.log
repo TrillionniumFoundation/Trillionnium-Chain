@@ -1,0 +1,1 @@
+{"named_completion_validated": true, "qualification": {"complete_w1_soundness_qualified": false, "consensus_admission": false, "post_quantum_soundness_qualified": false, "pq_signature_qualification_inferred": false, "production_qualified": false, "quantum_work_qualified": false, "unconditional_project_security_bits": null}, "required_tests": 110}

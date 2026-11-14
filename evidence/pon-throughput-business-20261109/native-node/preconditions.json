@@ -1,0 +1,15 @@
+{
+  "diagnostic_profile": "shared-cloud-development",
+  "disk": {
+    "free_bytes": 7146786816,
+    "total_bytes": 67586535424,
+    "used_bytes": 56987000832
+  },
+  "meminfo": "MemTotal:       10206468 kB\nMemFree:         1356872 kB\nMemAvailable:    3377772 kB\nBuffers:          248376 kB\nCached:          5571072 kB\nSwapCached:            0 kB\nActive:          2391236 kB\nInactive:        4874976 kB\nActive(anon):    1436300 kB\nInactive(anon):  4319360 kB\nActive(file):     954936 kB\nInactive(file):   555616 kB\nUnevictable:       29944 kB\nMlocked:               0 kB\nSwapTotal:             0 kB\nSwapFree:              0 kB\nDirty:              1184 kB\nWriteback:             0 kB\nAnonPages:       1477472 kB\nMapped:           484168 kB\nShmem:           4279016 kB\nKReclaimable:    1037480 kB\nSlab:            1207516 kB\nSReclaimable:    1037480 kB\nSUnreclaim:       170036 kB\nKernelStack:        9772 kB\nPageTables:        28728 kB\nSecPageTables:         0 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:     5103232 kB\nCommitted_AS:   12619840 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:       11204 kB\nVmallocChunk:          0 kB\nPercpu:             6384 kB\nAnonHugePages:         0 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:     36864 kB\nFilePmdMapped:         0 kB\nBalloon:               0 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nDirectMap4k:      862208 kB\nDirectMap2M:    11526144 kB\nDirectMap1G:    14680064 kB\n",
+  "original_025_cpu_profile_qualified": false,
+  "recorded_unix_ns": 1794231962924532848,
+  "resource_limits_changed": false,
+  "schema": "trnm-node-native-diagnostic-preconditions-v1",
+  "self_cgroup": "0::/\n",
+  "sys_cgroup_exists": false
+}

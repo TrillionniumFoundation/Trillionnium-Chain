@@ -1,0 +1,57 @@
+{
+  "actual_native_started": false,
+  "binary": "/home/qq/work/chain-cell-capacity-dc0357-20261109-target/debug/examples/cell_sealed_research_next_use_v2",
+  "binary_sha256": "734d4e5f9fcd8b3c9c742cde9f770771219922bebee4343fcd163a3ef7de6a6a",
+  "command": [
+    "/home/qq/work/chain-cell-capacity-dc0357-20261109-target/debug/examples/cell_sealed_research_next_use_v2",
+    "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/source-inputs.v2.json",
+    "488b838dfdf05ab9768fff18ee81c0874b7bb471cbceeefdf15ab42c5dde6d48"
+  ],
+  "environment": {
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_HOME": "/home/qq/.cargo",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_TARGET_DIR": "/home/qq/work/chain-cell-capacity-dc0357-20261109-target",
+    "LD_LIBRARY_PATH": "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib",
+    "OPENSSL_CONF": "/dev/null",
+    "OPENSSL_DIR": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install",
+    "OPENSSL_MODULES": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/lib/ossl-modules",
+    "OPENSSL_STATIC": "1",
+    "RUSTC": "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+    "RUSTDOC": "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustdoc",
+    "RUST_TEST_THREADS": "1",
+    "TMPDIR": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/tmp",
+    "TRNM_PQ_OPENSSL": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/bin/openssl",
+    "TRNM_PQ_OPENSSL_SHA256": "ed29dfe14c0686c876833e39fbeedb277846987f3728acc279c256b32259cf62",
+    "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+  },
+  "example_gate_sha256": "168723e97a9e5725050f7345cf06e3b033cf1cbc846ce9c49facda3f9c735840",
+  "final_gate_sha256": "a33cc2c239d4e0c86a50edd4d1846b6a3852dbb7e0f672eca6c21db11fc9a0cf",
+  "input_count": 31,
+  "max_snapshot_bytes": 536870912,
+  "memory_start": {
+    "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+    "memory.max": "8589934592",
+    "memory.peak": "320028672",
+    "scope": "Hepta systemd job cgroup, wrapper plus native process and descendants"
+  },
+  "native_erasure_shard_recovery": false,
+  "operation": "fad809b14a2ef0814d5cb125ac4c2713ca81d962797e038857416a838c0c5cc2",
+  "original_seconds": 300,
+  "outer_timeout_seconds": 450,
+  "output": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/real-v2-fad809b14a2e-attempt-01",
+  "passed": false,
+  "recovery_profile": "TCA3 complete-copy catalog anchored cold restore",
+  "runtime_rss_bytes": 8589934592,
+  "schema": "trnm.cell-sealed-research-real-v2-observation.v1",
+  "source": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/source-inputs.v2.json",
+  "source_sha256": "488b838dfdf05ab9768fff18ee81c0874b7bb471cbceeefdf15ab42c5dde6d48",
+  "start_identity": {
+    "commit": "6ea3bf3fe13d66333bba3a8c7b97e14b4319b39f",
+    "status": "",
+    "tree": "6c4401a94defeecb9696c2da1442dcbd27b56352"
+  },
+  "started_at_utc": "2026-11-09T15:18:07.951586+00:00",
+  "worker_sha256": "e93bfc47f8055786f2088fc65f61c1f0d2482a0b8b4e5b8b9e30e8707fbb8c1b",
+  "wrapper_sha256": "4858f75a39ea3d942d723587123f75b6f10f3e27045e628e9dd07284ce20a7ea"
+}

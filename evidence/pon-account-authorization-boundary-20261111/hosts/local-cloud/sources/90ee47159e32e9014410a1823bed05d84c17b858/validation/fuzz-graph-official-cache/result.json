@@ -1,0 +1,26 @@
+{
+  "id": "fuzz-graph-official-cache",
+  "argv": [
+    "env",
+    "CARGO_HOME=/workspace/scratch/a4188f5c86b5/fuzz-cargo-home",
+    "cargo",
+    "metadata",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "tests/fuzz/Cargo.toml",
+    "--format-version",
+    "1"
+  ],
+  "returncode": 0,
+  "launch_error": null,
+  "elapsed_seconds": 6.624458149999555,
+  "finished_utc": "2026-11-11T01:17:42.022663+00:00",
+  "source_head_before": "90ee47159e32e9014410a1823bed05d84c17b858",
+  "source_head_after": "90ee47159e32e9014410a1823bed05d84c17b858",
+  "source_status_after": "",
+  "stdout_sha256": "8f785790788434c46288e4c1be0716d7fb80c560eec6f69dee20b523bedc9cfd",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "pass": true,
+  "qualification_granted": false
+}

@@ -1,0 +1,14 @@
+{
+  "archive_bytes": 4993378,
+  "archive_sha256": "6ca719903024582514448e447b84a676919d475eb21c8cd9030aed0eb09108ea",
+  "canonical_archive_transfer_delegated_to": "/root/daa_native_audit",
+  "canonical_archive_upload_id": "work-time-recovery-upload-v1-7f73",
+  "full_archive_delivery_by_this_attempt": false,
+  "no_part_retried_or_used_for_final_artifact": true,
+  "observed_matching_part_write_acknowledgements": 1,
+  "observed_part_write_mcp_timeouts": 5,
+  "point_in_time_post_timeout_absence_observed_only_for_part00": true,
+  "remote_publication_of_timed_out_parts": "UNKNOWN",
+  "retained_raw_receipts": "write-observations.json",
+  "schema": "pon-work-time-large-part-transfer-summary-v1"
+}

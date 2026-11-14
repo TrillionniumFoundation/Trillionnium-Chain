@@ -1,0 +1,43 @@
+test_cancel_after_exact_readout_end_retains_started_check (candidate_before.CandidateCheckClockTests.test_cancel_after_exact_readout_end_retains_started_check) ... FAIL
+test_cancel_before_exact_readout_end_does_not_invent_check (candidate_before.CandidateCheckClockTests.test_cancel_before_exact_readout_end_does_not_invent_check) ... FAIL
+test_completed_failed_trial_pays_full_check_for_every_processor (candidate_before.CandidateCheckClockTests.test_completed_failed_trial_pays_full_check_for_every_processor) ... ok
+test_exact_binary_phase_boundary_has_no_positive_elapsed_check (candidate_before.CandidateCheckClockTests.test_exact_binary_phase_boundary_has_no_positive_elapsed_check) ... ok
+test_horizon_after_readout_retains_censored_check (candidate_before.CandidateCheckClockTests.test_horizon_after_readout_retains_censored_check) ... FAIL
+test_nonzero_search_start_is_included_in_elapsed_accounting (candidate_before.CandidateCheckClockTests.test_nonzero_search_start_is_included_in_elapsed_accounting) ... FAIL
+
+======================================================================
+FAIL: test_cancel_after_exact_readout_end_retains_started_check (candidate_before.CandidateCheckClockTests.test_cancel_after_exact_readout_end_retains_started_check)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/822cc50e24f0/work-proofs/formal/pon-nakamoto-v1/test_quantum_candidate_check_clock.py", line 50, in test_cancel_after_exact_readout_end_retains_started_check
+    self.assertEqual(q["candidate_checks_started"], 3)
+AssertionError: 0 != 3
+
+======================================================================
+FAIL: test_cancel_before_exact_readout_end_does_not_invent_check (candidate_before.CandidateCheckClockTests.test_cancel_before_exact_readout_end_does_not_invent_check)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/822cc50e24f0/work-proofs/formal/pon-nakamoto-v1/test_quantum_candidate_check_clock.py", line 37, in test_cancel_before_exact_readout_end_does_not_invent_check
+    self.assertEqual(q["candidate_checks_started"], 0)
+AssertionError: 1 != 0
+
+======================================================================
+FAIL: test_horizon_after_readout_retains_censored_check (candidate_before.CandidateCheckClockTests.test_horizon_after_readout_retains_censored_check)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/822cc50e24f0/work-proofs/formal/pon-nakamoto-v1/test_quantum_candidate_check_clock.py", line 62, in test_horizon_after_readout_retains_censored_check
+    self.assertEqual(q["candidate_checks_started"], 3)
+AssertionError: 0 != 3
+
+======================================================================
+FAIL: test_nonzero_search_start_is_included_in_elapsed_accounting (candidate_before.CandidateCheckClockTests.test_nonzero_search_start_is_included_in_elapsed_accounting)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/822cc50e24f0/work-proofs/formal/pon-nakamoto-v1/test_quantum_candidate_check_clock.py", line 90, in test_nonzero_search_start_is_included_in_elapsed_accounting
+    self.assertEqual(sim.counts["q"]["candidate_checks_started"], 2)
+AssertionError: 0 != 2
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.009s
+
+FAILED (failures=4)

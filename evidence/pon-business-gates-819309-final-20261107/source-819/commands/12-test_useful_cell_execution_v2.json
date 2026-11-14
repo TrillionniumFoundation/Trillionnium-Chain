@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "formal/pon-nakamoto-v1/test_useful_cell_execution_v2.py",
+    "-v"
+  ],
+  "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/work-final-business-20261107",
+  "end_utc": "2026-11-07T18:36:57.506089+00:00",
+  "exit_code": 0,
+  "log": "logs/12-test_useful_cell_execution_v2.log",
+  "log_bytes": 5873,
+  "log_sha256": "5ae901a14fb2fa665015dfc10fbfd9f4f58a86258c774e86e4d23deae896e232",
+  "name": "12-test_useful_cell_execution_v2",
+  "pid": 1338565,
+  "start_utc": "2026-11-07T18:36:55.017968+00:00",
+  "supervisor_timeout_seconds": 1800,
+  "timed_out": false,
+  "wall_ns": 2488132591
+}

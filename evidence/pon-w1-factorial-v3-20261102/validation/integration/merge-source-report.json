@@ -1,0 +1,18 @@
+{
+  "status": "PASS-source-merge-only",
+  "ours_only_preserved": 12,
+  "upstream_only_preserved": 23,
+  "auto_merged_paths": [
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+  ],
+  "exact_corpus_pins": 346,
+  "work_security_jobs": [
+    "false-trace-reuse",
+    "legal-strategy",
+    "legal-factorial",
+    "fresh-challenge-service"
+  ],
+  "shell_scripts_syntax_checked": 39,
+  "native_build_or_cost_acceptance": false
+}

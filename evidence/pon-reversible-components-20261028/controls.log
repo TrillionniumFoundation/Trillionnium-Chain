@@ -1,0 +1,11 @@
+test_exported_netlist_reopens_exactly_and_rejects_truncation_or_extra_bytes (test_reversible_components.ReversibleTests.test_exported_netlist_reopens_exactly_and_rejects_truncation_or_extra_bytes) ... ok
+test_full_sha256_rounds_against_published_abc_digest (test_reversible_components.ReversibleTests.test_full_sha256_rounds_against_published_abc_digest) ... ok
+test_gate_aliases_and_wrong_input_ranges_fail (test_reversible_components.ReversibleTests.test_gate_aliases_and_wrong_input_ranges_fail) ... ok
+test_modular_multiply_exhaustive_small_width_including_noncanonical_inputs (test_reversible_components.ReversibleTests.test_modular_multiply_exhaustive_small_width_including_noncanonical_inputs) ... ok
+test_reversible_adder_exhaustive_and_nonzero_output_target (test_reversible_components.ReversibleTests.test_reversible_adder_exhaustive_and_nonzero_output_target) ... ok
+test_to_invert_requires_every_computation_gate (test_reversible_components.ReversibleTests.test_to_invert_requires_every_computation_gate) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.375s
+
+OK

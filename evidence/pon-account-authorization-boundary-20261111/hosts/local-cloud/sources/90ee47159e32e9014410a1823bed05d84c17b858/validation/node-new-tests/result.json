@@ -1,0 +1,29 @@
+{
+  "id": "node-new-tests",
+  "argv": [
+    "cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--all-features",
+    "--lib",
+    "store::account_profile_scope_tests::",
+    "--",
+    "--test-threads=1"
+  ],
+  "returncode": 101,
+  "launch_error": null,
+  "elapsed_seconds": 221.30557490499996,
+  "finished_utc": "2026-11-11T01:24:26.031946+00:00",
+  "source_head_before": "90ee47159e32e9014410a1823bed05d84c17b858",
+  "source_head_after": "90ee47159e32e9014410a1823bed05d84c17b858",
+  "source_status_after": "",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "3d58921cc450d5b402a5575c3fb935997c48c1ce3af31b733f900335fb7e3de8",
+  "pass": false,
+  "qualification_granted": false
+}

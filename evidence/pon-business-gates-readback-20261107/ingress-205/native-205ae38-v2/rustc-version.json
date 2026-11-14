@@ -1,0 +1,15 @@
+{
+  "name": "rustc-version",
+  "argv": [
+    "/home/qian-qi/.cargo/bin/rustc",
+    "+1.95.0",
+    "--version",
+    "--verbose"
+  ],
+  "started_unix_ns": 1794068442397224735,
+  "ended_unix_ns": 1794068442466033737,
+  "exit_code": 0,
+  "log": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v2/rustc-version.log",
+  "log_bytes": 196,
+  "log_sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+}

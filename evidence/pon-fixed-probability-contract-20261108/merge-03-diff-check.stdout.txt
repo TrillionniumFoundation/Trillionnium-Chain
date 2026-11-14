@@ -1,0 +1,113 @@
+evidence/pon-joint-consensus-daa-20261108/baseline-cli-serial.stdout.log:19: new blank line at EOF.
+evidence/pon-joint-consensus-daa-20261108/consensus-unit.stdout.log:15: new blank line at EOF.
+evidence/pon-joint-consensus-daa-20261108/final-consensus-unit.stdout.log:15: new blank line at EOF.
+evidence/pon-joint-consensus-daa-20261108/final-legacy-reorg.stdout.log:10: new blank line at EOF.
+evidence/pon-joint-consensus-daa-20261108/final-native-retained.stdout.log:65: new blank line at EOF.
+evidence/pon-joint-consensus-daa-20261108/final-reorg-readback.stdout.log:11: new blank line at EOF.
+evidence/pon-joint-consensus-daa-20261108/native-retained.stdout.log:59: new blank line at EOF.
+evidence/pon-joint-consensus-daa-20261108/native-run-01.stdout:9: new blank line at EOF.
+evidence/pon-joint-consensus-daa-20261108/native-run-02.stdout.log:7: new blank line at EOF.
+evidence/pon-joint-consensus-daa-20261108/native-run-03.stdout.log:7: new blank line at EOF.
+evidence/pon-joint-state-risk-ledger-20261107/final-source-gates/b66-remote/native-complete-source-gates/git-push.log:2: trailing whitespace.
++remote: 
+evidence/pon-joint-state-risk-ledger-20261107/final-source-gates/b66-remote/native-complete-source-gates/git-push.log:3: trailing whitespace.
++remote: GitHub found 7 vulnerabilities on TrillionniumFoundation/Trillionnium-Chain's default branch (4 high, 2 moderate, 1 low). To find out more, visit:        
+evidence/pon-joint-state-risk-ledger-20261107/final-source-gates/b66-remote/native-complete-source-gates/git-push.log:4: trailing whitespace.
++remote:      https://github.com/TrillionniumFoundation/Trillionnium-Chain/security/dependabot        
+evidence/pon-joint-state-risk-ledger-20261107/final-source-gates/b66-remote/native-complete-source-gates/git-push.log:5: trailing whitespace.
++remote: 
+evidence/pon-joint-state-risk-ledger-20261107/final-source-gates/b66-remote/native-complete-source-gates/native-owner-and-risk-tests.log:37: new blank line at EOF.
+evidence/pon-joint-state-risk-ledger-20261107/final-source-gates/merged-native/original/attempt-02/retained-four-native-targets.log:81: new blank line at EOF.
+evidence/pon-joint-state-risk-ledger-20261107/final-source-gates/merged-python/original/attempt-01/current-implementation.stdout.log:93: new blank line at EOF.
+evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/native-tests.log:109: new blank line at EOF.
+evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-02/native-tests.log:20: new blank line at EOF.
+evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-03/remote/native-tests.log:20: new blank line at EOF.
+evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/1-8527ec98-push.stderr:1: trailing whitespace.
++remote: 
+evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/1-8527ec98-push.stderr:2: trailing whitespace.
++remote: GitHub found 7 vulnerabilities on TrillionniumFoundation/Trillionnium-Chain's default branch (4 high, 2 moderate, 1 low). To find out more, visit:        
+evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/1-8527ec98-push.stderr:3: trailing whitespace.
++remote:      https://github.com/TrillionniumFoundation/Trillionnium-Chain/security/dependabot        
+evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/1-8527ec98-push.stderr:4: trailing whitespace.
++remote: 
+evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/2-628ec7f3-push.stderr:1: trailing whitespace.
++remote: 
+evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/2-628ec7f3-push.stderr:2: trailing whitespace.
++remote: GitHub found 7 vulnerabilities on TrillionniumFoundation/Trillionnium-Chain's default branch (4 high, 2 moderate, 1 low). To find out more, visit:        
+evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/2-628ec7f3-push.stderr:3: trailing whitespace.
++remote:      https://github.com/TrillionniumFoundation/Trillionnium-Chain/security/dependabot        
+evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/2-628ec7f3-push.stderr:4: trailing whitespace.
++remote: 
+evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/3-6615ffa3-push.stderr:1: trailing whitespace.
++remote: 
+evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/3-6615ffa3-push.stderr:2: trailing whitespace.
++remote: GitHub found 7 vulnerabilities on TrillionniumFoundation/Trillionnium-Chain's default branch (4 high, 2 moderate, 1 low). To find out more, visit:        
+evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/3-6615ffa3-push.stderr:3: trailing whitespace.
++remote:      https://github.com/TrillionniumFoundation/Trillionnium-Chain/security/dependabot        
+evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/model-publications/3-6615ffa3-push.stderr:4: trailing whitespace.
++remote: 
+evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/native-owner-tests.stdout:31: new blank line at EOF.
+evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/publish-recovered.stderr:1: trailing whitespace.
++remote: 
+evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/publish-recovered.stderr:2: trailing whitespace.
++remote: Create a pull request for 'fix/chain-pon-joint-state-risk-ledger-20261107' on GitHub by visiting:        
+evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/publish-recovered.stderr:3: trailing whitespace.
++remote:      https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/new/fix/chain-pon-joint-state-risk-ledger-20261107        
+evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/publish-recovered.stderr:4: trailing whitespace.
++remote: 
+evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/publish-recovered.stderr:5: trailing whitespace.
++remote: GitHub found 7 vulnerabilities on TrillionniumFoundation/Trillionnium-Chain's default branch (4 high, 2 moderate, 1 low). To find out more, visit:        
+evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/publish-recovered.stderr:6: trailing whitespace.
++remote:      https://github.com/TrillionniumFoundation/Trillionnium-Chain/security/dependabot        
+evidence/pon-joint-state-risk-ledger-20261107/recovered-source-gates/recovered-exact-source-02/publish-recovered.stderr:7: trailing whitespace.
++remote: 
+evidence/pon-lifecycle-closure-20261107/desktop-components/attempt-01/journal-native-tests.stdout:16: new blank line at EOF.
+evidence/pon-lifecycle-closure-20261107/desktop-components/format-01/workspace-format-before.stdout:23: trailing whitespace.
++ 
+evidence/pon-lifecycle-closure-20261107/desktop-components/format-01/workspace-format-before.stdout:34: trailing whitespace.
++ 
+evidence/pon-lifecycle-closure-20261107/desktop-components/format-01/workspace-format-before.stdout:37: trailing whitespace.
++ 
+evidence/pon-lifecycle-closure-20261107/desktop-components/format-01/workspace-format-before.stdout:303: trailing whitespace.
++ 
+evidence/pon-lifecycle-closure-20261107/desktop-components/format-01/workspace-format-before.stdout:393: trailing whitespace.
++ 
+evidence/pon-lifecycle-closure-20261107/desktop-components/format-01/workspace-format-before.stdout:516: trailing whitespace.
++ 
+evidence/pon-lifecycle-closure-20261107/desktop-components/format-01/workspace-format-before.stdout:1006: trailing whitespace.
++ 
+evidence/pon-lifecycle-closure-20261107/desktop-components/format-01/workspace-format-before.stdout:1374: trailing whitespace.
++ 
+evidence/pon-lifecycle-closure-20261107/desktop-components/format-01/workspace-format-before.stdout:1377: trailing whitespace.
++ 
+evidence/pon-lifecycle-closure-20261107/desktop-components/format-01/workspace-format-before.stdout:1703: trailing whitespace.
++ 
+evidence/pon-lifecycle-closure-20261107/desktop-components/format-01/workspace-format-before.stdout:1706: trailing whitespace.
++ 
+evidence/pon-lifecycle-closure-20261107/desktop-components/format-01/workspace-format-before.stdout:1972: trailing whitespace.
++ 
+evidence/pon-lifecycle-closure-20261107/desktop-components/format-01/workspace-format-before.stdout:2062: trailing whitespace.
++ 
+evidence/pon-lifecycle-closure-20261107/desktop-components/format-01/workspace-format-before.stdout:2183: trailing whitespace.
++ 
+evidence/pon-lifecycle-closure-20261107/desktop-components/format-01/workspace-format-before.stdout:2247: trailing whitespace.
++ 
+evidence/pon-lifecycle-closure-20261107/desktop-components/format-01/workspace-format-before.stdout:2384: trailing whitespace.
++ 
+evidence/pon-lifecycle-closure-20261107/desktop-components/format-01/workspace-format-before.stdout:2443: trailing whitespace.
++ 
+evidence/pon-lifecycle-closure-20261107/desktop-components/format-01/workspace-format-before.stdout:2470: trailing whitespace.
++ 
+evidence/pon-lifecycle-closure-20261107/desktop-components/format-01/workspace-format-before.stdout:2495: trailing whitespace.
++ 
+evidence/pon-lifecycle-closure-20261107/desktop-components/format-01/workspace-format-before.stdout:2526: trailing whitespace.
++ 
+evidence/pon-lifecycle-closure-20261107/desktop-components/format-01/workspace-format-before.stdout:2558: trailing whitespace.
++ 
+evidence/pon-lifecycle-closure-20261107/desktop-components/format-01/workspace-format-before.stdout:2604: trailing whitespace.
++ 
+evidence/pon-lifecycle-closure-20261107/desktop-components/format-01/workspace-format-before.stdout:2635: trailing whitespace.
++ 
+evidence/pon-lifecycle-closure-20261107/desktop-components/format-01/workspace-format-before.stdout:2678: trailing whitespace.
++ 
+evidence/pon-lifecycle-closure-20261107/desktop-components/format-01/workspace-format-before.stdout:2678: new blank line at EOF.

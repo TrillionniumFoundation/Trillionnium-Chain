@@ -1,0 +1,199 @@
+Updating dc42ce4d..7d8d4c59
+Fast-forward
+ config/pon/pq-cross-branch-corpus-v1.json          |   16 +-
+ config/pon/pq128-lifetime-budget-v1.json           |    2 +-
+ config/pon/pq128-lifetime-composition-v2.json      |   10 +-
+ config/pon/pq128-source-lock-v1.json               |   18 +-
+ .../BRANCH_CONSOLIDATION_AUDIT_20261114.md         |   42 +
+ .../TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md  |   30 +
+ docs/security/PQ128_LIFETIME_BUDGET_V1.md          |   38 +-
+ docs/security/PQ128_LIFETIME_COMPOSITION_V2.md     |   40 +-
+ .../EVIDENCE_INDEX.json                            |  472 +++++++++
+ .../README.md                                      |   89 ++
+ .../all-21-inputs-review.json                      |  509 +++++++++
+ .../composition-test-ast-adaptation.json           |   26 +
+ .../historical/pq128-lifetime-budget-v1-0f9.json   |  525 +++++++++
+ ...lifetime-composition-v2-before-dc42-review.json |  396 +++++++
+ .../historical/pq128-source-lock-v1-0f9.json       |   27 +
+ .../original-composition-60.stderr                 |  230 ++++
+ .../original-composition-60.stdout                 |    0
+ .../original-composition-baseline/steps.json       |   53 +
+ .../original-full-lane/COPY_INDEX.json             |  232 ++++
+ .../original-full-lane/cargo-version.stderr        |    0
+ .../original-full-lane/cargo-version.stdout        |    1 +
+ .../conformance-environment.stderr                 |    0
+ .../conformance-environment.stdout                 |    1 +
+ .../fast-forward-ancestry.stderr                   |    0
+ .../fast-forward-ancestry.stdout                   |    0
+ .../original-full-lane/fast-forward.stderr         |    0
+ .../original-full-lane/fast-forward.stdout         | 1109 ++++++++++++++++++++
+ .../fetch-exact-published-commit.stderr            |    0
+ .../fetch-exact-published-commit.stdout            |    0
+ .../original-full-lane/fetched-commit.stderr       |    0
+ .../original-full-lane/fetched-commit.stdout       |    1 +
+ .../original-full-lane/fetched-tree.stderr         |    0
+ .../original-full-lane/fetched-tree.stdout         |    1 +
+ .../original-full-lane/initial-head.stderr         |    0
+ .../original-full-lane/initial-head.stdout         |    1 +
+ .../original-full-lane/initial-status.stderr       |    0
+ .../original-full-lane/initial-status.stdout       |    0
+ .../original-full-lane/pre-update-preflight.stderr |    0
+ .../original-full-lane/pre-update-preflight.stdout |    1 +
+ .../original-full-lane/preflight-audit.stderr      |    0
+ .../original-full-lane/preflight-audit.stdout      |    1 +
+ .../published-candidate-readback.stderr            |    0
+ .../published-candidate-readback.stdout            |    1 +
+ .../original-full-lane/repository-truth.stderr     |  320 ++++++
+ .../original-full-lane/repository-truth.stdout     |    1 +
+ .../original-full-lane/runtime-environment.stderr  |    0
+ .../original-full-lane/runtime-environment.stdout  |    1 +
+ .../original-full-lane/rust-version.stderr         |    0
+ .../original-full-lane/rust-version.stdout         |    1 +
+ .../original-full-lane/source-after.json           |   13 +
+ .../original-full-lane/source-before.json          |   13 +
+ .../original-full-lane/summary.json                |  374 +++++++
+ .../original-full-lane/verify-source-after.stderr  |    0
+ .../original-full-lane/verify-source-after.stdout  |   13 +
+ .../original-full-lane/verify-source-before.stderr |    0
+ .../original-full-lane/verify-source-before.stdout |   13 +
+ .../reviewed-source-mapping.json                   |  733 +++++++++++++
+ ...-trnm-crypto-primitives--src--pon_work.rs.patch |   92 ++
+ ...tes--trnm-data-availability--src--cell.rs.patch |   63 ++
+ ...ailability--src--cell--version_content.rs.patch |  110 ++
+ ...rnm-pon-node--src--ingress--pq_network.rs.patch |  178 ++++
+ ...trnm-pon-node--src--ingress--public_v3.rs.patch |  782 ++++++++++++++
+ ...ium--crates--trnm-pon-node--src--store.rs.patch |  223 ++++
+ ...earch-protocol--src--hepta_handoff--pq.rs.patch |   70 ++
+ ...service-settlement--src--native_budget.rs.patch |   57 +
+ .../validation-v1/actual-ci-contract.stderr        |    0
+ .../validation-v1/actual-ci-contract.stdout        |    1 +
+ .../validation-v1/actual-corpus.stderr             |    0
+ .../validation-v1/actual-corpus.stdout             |    1 +
+ .../validation-v1/chain-claim-controls.stderr      |   62 ++
+ .../validation-v1/chain-claim-controls.stdout      |    0
+ .../validation-v1/chain-claim-inspect.stderr       |    0
+ .../validation-v1/chain-claim-inspect.stdout       |    1 +
+ .../validation-v1/composition-60.stderr            |   65 ++
+ .../validation-v1/composition-60.stdout            |    0
+ .../validation-v1/composition-inspect.stderr       |    0
+ .../validation-v1/composition-inspect.stdout       |    1 +
+ .../validation-v1/diff-check.stderr                |    0
+ .../validation-v1/diff-check.stdout                |    0
+ .../validation-v1/environment.json                 |   11 +
+ .../validation-v1/lifetime-58.stderr               |   63 ++
+ .../validation-v1/lifetime-58.stdout               |    0
+ .../validation-v1/lifetime-inspect.stderr          |    0
+ .../validation-v1/lifetime-inspect.stdout          |    1 +
+ .../validation-v1/preflight.stderr                 |    0
+ .../validation-v1/preflight.stdout                 |    1 +
+ .../validation-v1/proof-profile-controls.stderr    |   44 +
+ .../validation-v1/proof-profile-controls.stdout    |    0
+ .../validation-v1/proof-profile-inspect.stderr     |    0
+ .../validation-v1/proof-profile-inspect.stdout     |    1 +
+ .../validation-v1/reviewed-binding-refusals.json   |   88 ++
+ .../validation-v1/root-dependency-controls.stderr  |   56 +
+ .../validation-v1/root-dependency-controls.stdout  |    0
+ .../validation-v1/root-dependency-inspect.stderr   |    0
+ .../validation-v1/root-dependency-inspect.stdout   |    1 +
+ .../validation-v1/source-head.stderr               |    0
+ .../validation-v1/source-head.stdout               |    1 +
+ .../validation-v1/source-inputs-after.json         |  318 ++++++
+ .../validation-v1/source-inputs-before.json        |  318 ++++++
+ .../validation-v1/steps.json                       |  301 ++++++
+ .../validation-v1/summary.json                     |  314 ++++++
+ scripts/ci/pq_lifetime_composition.py              |   10 +-
+ scripts/ci/test_pq_lifetime_composition.py         |    6 +-
+ 103 files changed, 8561 insertions(+), 33 deletions(-)
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/EVIDENCE_INDEX.json
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/README.md
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/all-21-inputs-review.json
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/composition-test-ast-adaptation.json
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/historical/pq128-lifetime-budget-v1-0f9.json
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/historical/pq128-lifetime-composition-v2-before-dc42-review.json
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/historical/pq128-source-lock-v1-0f9.json
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/original-composition-baseline/original-composition-60.stderr
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/original-composition-baseline/original-composition-60.stdout
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/original-composition-baseline/steps.json
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/original-full-lane/COPY_INDEX.json
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/original-full-lane/cargo-version.stderr
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/original-full-lane/cargo-version.stdout
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/original-full-lane/conformance-environment.stderr
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/original-full-lane/conformance-environment.stdout
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/original-full-lane/fast-forward-ancestry.stderr
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/original-full-lane/fast-forward-ancestry.stdout
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/original-full-lane/fast-forward.stderr
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/original-full-lane/fast-forward.stdout
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/original-full-lane/fetch-exact-published-commit.stderr
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/original-full-lane/fetch-exact-published-commit.stdout
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/original-full-lane/fetched-commit.stderr
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/original-full-lane/fetched-commit.stdout
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/original-full-lane/fetched-tree.stderr
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/original-full-lane/fetched-tree.stdout
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/original-full-lane/initial-head.stderr
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/original-full-lane/initial-head.stdout
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/original-full-lane/initial-status.stderr
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/original-full-lane/initial-status.stdout
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/original-full-lane/pre-update-preflight.stderr
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/original-full-lane/pre-update-preflight.stdout
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/original-full-lane/preflight-audit.stderr
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/original-full-lane/preflight-audit.stdout
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/original-full-lane/published-candidate-readback.stderr
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/original-full-lane/published-candidate-readback.stdout
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/original-full-lane/repository-truth.stderr
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/original-full-lane/repository-truth.stdout
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/original-full-lane/runtime-environment.stderr
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/original-full-lane/runtime-environment.stdout
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/original-full-lane/rust-version.stderr
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/original-full-lane/rust-version.stdout
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/original-full-lane/source-after.json
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/original-full-lane/source-before.json
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/original-full-lane/summary.json
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/original-full-lane/verify-source-after.stderr
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/original-full-lane/verify-source-after.stdout
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/original-full-lane/verify-source-before.stderr
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/original-full-lane/verify-source-before.stdout
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/reviewed-source-mapping.json
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/source-diffs/01--trillionnium--crates--trnm-crypto-primitives--src--pon_work.rs.patch
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/source-diffs/04--trillionnium--crates--trnm-data-availability--src--cell.rs.patch
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/source-diffs/10--trillionnium--crates--trnm-data-availability--src--cell--version_content.rs.patch
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/source-diffs/14--trillionnium--crates--trnm-pon-node--src--ingress--pq_network.rs.patch
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/source-diffs/15--trillionnium--crates--trnm-pon-node--src--ingress--public_v3.rs.patch
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/source-diffs/17--trillionnium--crates--trnm-pon-node--src--store.rs.patch
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/source-diffs/20--trillionnium--crates--trnm-research-protocol--src--hepta_handoff--pq.rs.patch
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/source-diffs/21--trillionnium--crates--trnm-service-settlement--src--native_budget.rs.patch
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/validation-v1/actual-ci-contract.stderr
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/validation-v1/actual-ci-contract.stdout
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/validation-v1/actual-corpus.stderr
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/validation-v1/actual-corpus.stdout
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/validation-v1/chain-claim-controls.stderr
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/validation-v1/chain-claim-controls.stdout
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/validation-v1/chain-claim-inspect.stderr
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/validation-v1/chain-claim-inspect.stdout
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/validation-v1/composition-60.stderr
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/validation-v1/composition-60.stdout
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/validation-v1/composition-inspect.stderr
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/validation-v1/composition-inspect.stdout
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/validation-v1/diff-check.stderr
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/validation-v1/diff-check.stdout
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/validation-v1/environment.json
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/validation-v1/lifetime-58.stderr
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/validation-v1/lifetime-58.stdout
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/validation-v1/lifetime-inspect.stderr
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/validation-v1/lifetime-inspect.stdout
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/validation-v1/preflight.stderr
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/validation-v1/preflight.stdout
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/validation-v1/proof-profile-controls.stderr
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/validation-v1/proof-profile-controls.stdout
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/validation-v1/proof-profile-inspect.stderr
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/validation-v1/proof-profile-inspect.stdout
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/validation-v1/reviewed-binding-refusals.json
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/validation-v1/root-dependency-controls.stderr
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/validation-v1/root-dependency-controls.stdout
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/validation-v1/root-dependency-inspect.stderr
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/validation-v1/root-dependency-inspect.stdout
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/validation-v1/source-head.stderr
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/validation-v1/source-head.stdout
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/validation-v1/source-inputs-after.json
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/validation-v1/source-inputs-before.json
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/validation-v1/steps.json
+ create mode 100644 evidence/pq128-lifetime-source-binding-20261114/validation-v1/summary.json

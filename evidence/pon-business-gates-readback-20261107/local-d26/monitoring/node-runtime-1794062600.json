@@ -1,0 +1,98 @@
+{
+  "schema": "native-runtime-observation-v1",
+  "observed_unix": 1794062600.338021,
+  "observed_utc": "2026-11-07T14:43:20.338021+00:00",
+  "source_commit": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+  "source_tree": "cef3563653b982a8043326ad4b53a4b93ab63906",
+  "native_driver_job": "1a1b654d4f0-12894-3ab",
+  "native_driver_wall_seconds": 2215.1540672779083,
+  "node_recorded_command_wall_seconds": 2155.652219772339,
+  "node_recorded_command_state": "running",
+  "node_recorded_command_wall_includes_source_precheck_and_cargo_build": true,
+  "owned_job_descendants": [
+    {
+      "pid": 239463,
+      "comm": "python3",
+      "state": "S",
+      "elapsed_wall_seconds_from_proc_start": 2215.340000000084,
+      "user_cpu_seconds": 1.8,
+      "system_cpu_seconds": 0.89,
+      "waited_child_user_cpu_seconds": 0.0,
+      "waited_child_system_cpu_seconds": 0.0,
+      "rss_bytes": 19664896,
+      "children": [
+        239498
+      ]
+    },
+    {
+      "pid": 239498,
+      "comm": "python3",
+      "state": "S",
+      "elapsed_wall_seconds_from_proc_start": 2215.219999999972,
+      "user_cpu_seconds": 0.7,
+      "system_cpu_seconds": 0.14,
+      "waited_child_user_cpu_seconds": 6.42,
+      "waited_child_system_cpu_seconds": 2.65,
+      "rss_bytes": 18481152,
+      "children": [
+        242462
+      ]
+    },
+    {
+      "pid": 242462,
+      "comm": "python3",
+      "state": "S",
+      "elapsed_wall_seconds_from_proc_start": 2155.660000000149,
+      "user_cpu_seconds": 1.95,
+      "system_cpu_seconds": 0.48,
+      "waited_child_user_cpu_seconds": 0.11,
+      "waited_child_system_cpu_seconds": 0.12,
+      "rss_bytes": 21889024,
+      "children": [
+        242595
+      ]
+    },
+    {
+      "pid": 242595,
+      "comm": "cargo",
+      "state": "S",
+      "elapsed_wall_seconds_from_proc_start": 2153.070000000065,
+      "user_cpu_seconds": 0.3,
+      "system_cpu_seconds": 0.16,
+      "waited_child_user_cpu_seconds": 744.62,
+      "waited_child_system_cpu_seconds": 11.72,
+      "rss_bytes": 48599040,
+      "children": [
+        253144
+      ]
+    },
+    {
+      "pid": 253144,
+      "comm": "trnm_pon_node-3",
+      "state": "S",
+      "elapsed_wall_seconds_from_proc_start": 1953.7700000000186,
+      "user_cpu_seconds": 1533.88,
+      "system_cpu_seconds": 10.65,
+      "waited_child_user_cpu_seconds": 0.91,
+      "waited_child_system_cpu_seconds": 0.14,
+      "rss_bytes": 482369536,
+      "children": []
+    }
+  ],
+  "timeout": {
+    "launch_idempotency_key": "state-growth-native-d26-dense-full-validation-20261107",
+    "requested_whole_job_timeout_seconds": 14400,
+    "scope": "entire Hepta process group including setup, full Node, full crypto and Clippy",
+    "per_command_timeout_seconds": null,
+    "per_command_implementation": "record_pq_native_command.py calls subprocess.run without timeout",
+    "per_command_implementation_sha256": "3cf16e76cae957cb34226a0d2118ac15bbe2d1946d3758efc9426c25612cdc39",
+    "timeout_or_parameters_changed": false,
+    "incomplete_or_timed_out_work_is_not_success": true
+  },
+  "qualification": {
+    "history": false,
+    "attack_pressure": false,
+    "release": false,
+    "performance_ab": false
+  }
+}

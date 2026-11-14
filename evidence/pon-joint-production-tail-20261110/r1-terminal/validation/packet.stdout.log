@@ -1,0 +1,20 @@
+{
+  "actual_joint_obligations_open": 13,
+  "archive_files_verified": 5,
+  "archive_sha256": "f804c99db721cff21206eabb4b54aff4628e9b624a8101a6a2091c43d0bc3000",
+  "binary_identity": null,
+  "commands_executed": 0,
+  "exit_code": 2,
+  "failure_stage": "pre-setup free-space guard",
+  "native_common_prefix_failure_bound": null,
+  "native_probability_qualified": false,
+  "native_six_successor_risk_bound": null,
+  "original_job": "1a1c474c012-cf39-350",
+  "original_request_reused": true,
+  "original_terminal": "FAILED",
+  "packet_consistency": "PASS",
+  "production_activation": false,
+  "qualification": "HOLD_NO_GO",
+  "rust_gates": "NOT_RUN",
+  "tested_source_unchanged": "4716bade250f327b012a098418f4eece6b73fcaa"
+}

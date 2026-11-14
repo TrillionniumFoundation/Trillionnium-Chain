@@ -1,0 +1,13 @@
+    Finished `release` profile [optimized] target(s) in 0.06s
+     Running unittests src/lib.rs (/home/runner/work/_temp/target-priority/release/deps/trnm_pon_node-10ac2862d4ea8e0a)
+
+running 1 test
+test store::authenticated_replay_tests::authenticated_replay_checks_are_operation_local_and_reopen_recovers_full_history ... ok
+
+successes:
+
+successes:
+    store::authenticated_replay_tests::authenticated_replay_checks_are_operation_local_and_reopen_recovers_full_history
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1185 filtered out; finished in 0.03s
+

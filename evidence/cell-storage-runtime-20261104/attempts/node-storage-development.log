@@ -1,0 +1,20 @@
+   Compiling generic-array v0.14.7
+   Compiling rusqlite v0.39.0
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling serde_json v1.0.149
+   Compiling digest v0.10.7
+   Compiling sha2 v0.10.9
+   Compiling linux-raw-sys v0.12.1
+   Compiling rustix v1.1.4
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/workspace/scratch/0c2d131ac5a9/chain-storage/trillionnium/crates/trnm-sqlite-io-boundary)
+warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: RUSTC must be absolute
+   Compiling trnm-task-kernel v0.1.0 (/workspace/scratch/0c2d131ac5a9/chain-storage/trillionnium/crates/trnm-task-kernel)
+   Compiling trnm-verification-profiles v0.1.0 (/workspace/scratch/0c2d131ac5a9/chain-storage/trillionnium/crates/trnm-verification-profiles)
+   Compiling tempfile v3.27.0
+   Compiling trnm-mvcc-fee v0.1.0 (/workspace/scratch/0c2d131ac5a9/chain-storage/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-data-availability v0.1.0 (/workspace/scratch/0c2d131ac5a9/chain-storage/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-service-settlement v0.1.0 (/workspace/scratch/0c2d131ac5a9/chain-storage/trillionnium/crates/trnm-service-settlement)
+   Compiling trnm-mempool v0.1.0 (/workspace/scratch/0c2d131ac5a9/chain-storage/trillionnium/crates/trnm-mempool)
+   Compiling trnm-transport v0.1.0 (/workspace/scratch/0c2d131ac5a9/chain-storage/trillionnium/crates/trnm-transport)
+   Compiling trnm-pon-node v0.1.0 (/workspace/scratch/0c2d131ac5a9/chain-storage/trillionnium/crates/trnm-pon-node)

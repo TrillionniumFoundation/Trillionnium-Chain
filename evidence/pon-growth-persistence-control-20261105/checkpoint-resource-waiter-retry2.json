@@ -1,0 +1,64 @@
+{
+  "schema": "growth-single-wait-window-checkpoint-v1",
+  "source_code_commit": "b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c",
+  "source_code_tree": "8be28a72673ce318d60a464898ab610d9ba39216",
+  "red_source_commit": "ffb43113b2e0065e6a8053bdb25fc5a9d7cf0637",
+  "previous_native_attempt_count": 4,
+  "new_native_attempt_count": 0,
+  "new_native_test_count": 0,
+  "state": "OOM_DURING_WAIT",
+  "actual_native_started": false,
+  "wait_elapsed_seconds": 160.16535,
+  "initial_shared_events": {
+    "oom": 4,
+    "oom_kill": 4
+  },
+  "terminal_shared_events": {
+    "oom": 5,
+    "oom_kill": 5
+  },
+  "previous_attempt_events_are_not_rewritten": true,
+  "previous_checkpoint_manifest_blob": "8c7c047c566e366a13a695341007a3cb9e9f3fad",
+  "previous_resource_checkpoint_manifest_blob": "52935de1c6726ecc9b359800e2feb15ceae784b0",
+  "native_runner_blob": "25426a744175cb9f9d16b78ff4f7df2728a0ee09",
+  "native_runner_sha256": "ae20081596e452c1f0b8a5f7db17acc0fba650e840fed9a9914bdedd24cba52f",
+  "scheduling_controls": {
+    "max_wait_seconds": 600,
+    "continuous_ready_seconds": 30,
+    "min_start_estimated_available_bytes": 2147483648,
+    "original_native_stop_floor_bytes": 536870912,
+    "original_native_timeout_seconds": 600,
+    "original_native_jobs": 1
+  },
+  "component_status": {
+    "qualified_native_red": "NOT_COMPLETED",
+    "frozen_b5bb_green2": "NOT_RUN",
+    "frozen_b5bb_b1_account_prefix": "NOT_RUN"
+  },
+  "qualification": "HOLD",
+  "production_activation": false,
+  "scope": "This independent checkpoint preserves the single finite scheduler window and unchanged source bindings. It is not a fifth native attempt, attributes no shared OOM victim, and does not change production Host or original 4-second/16-hostile-producer conditions.",
+  "files": [
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/wait-canonical-red-retry2.py",
+      "blob_sha": "ba52801029cb36d2e5e14ee99a3ee8e7ccd14875",
+      "bytes": 5679,
+      "sha256": "714d8575adc633dbc2bee7c0ae5c898da493d52ff8967fff30d3bf3cdb8a81da",
+      "readback_verified": true
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/resource-waiter-retry2.json",
+      "blob_sha": "0e6774b241ba95274e01f8d8833e9551353d2bdd",
+      "bytes": 9449,
+      "sha256": "dbbf3a9ef2644e10fc734080fe51a50e81dc8ea63264a70b5f5b3e06bcebd0c2",
+      "readback_verified": true
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/resource-waiter-retry2-outcome.json",
+      "blob_sha": "67299fca917104bbb0ce5fdaedde29fd72097973",
+      "bytes": 1628,
+      "sha256": "e728551ec4c41188ee626b2d0e9aa420e03a4bb2761f1a2e97cbc9dd2fdbbdf6",
+      "readback_verified": true
+    }
+  ]
+}

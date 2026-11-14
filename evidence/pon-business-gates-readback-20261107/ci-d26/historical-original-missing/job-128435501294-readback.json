@@ -1,0 +1,30 @@
+{
+  "argv": [
+    "/usr/bin/gh",
+    "api",
+    "--hostname",
+    "github.com",
+    "--method",
+    "GET",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128435501294/logs"
+  ],
+  "bytes": 4109,
+  "diagnostic_lines": [
+    "2026-11-07T14:49:12.7597680Z Download action repository 'actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0' (SHA:634f93cb2916e3fdff6788551b99b062d0335ce0)",
+    "2026-11-07T14:49:13.1364859Z ##[group]Run actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0",
+    "2026-11-07T14:49:13.1366539Z   artifact-ids: 11531476198",
+    "2026-11-07T14:49:13.1367271Z   run-id: 37730166589",
+    "2026-11-07T14:49:13.4603020Z Downloading artifacts by ID",
+    "2026-11-07T14:49:13.4606005Z Fetching artifact list for workflow run 37730166589 in repository TrillionniumFoundation/Trillionnium-Chain",
+    "2026-11-07T14:49:13.4943373Z (node:2233) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.",
+    "2026-11-07T14:49:13.6704039Z Found 0 artifact(s)",
+    "2026-11-07T14:49:13.6725284Z ##[error]Unable to download artifact(s): None of the provided artifact IDs were found",
+    "2026-11-07T14:49:13.7434176Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/"
+  ],
+  "exit_code": 0,
+  "head": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+  "job_id": 128435501294,
+  "run_id": 42383368690,
+  "scope": "historical artifact retrieval failure, not native business result",
+  "sha256": "34f935af02dff3edf7894df2c21819cf818f9e8ea0a87fe9bcd9023973e4ddfc"
+}

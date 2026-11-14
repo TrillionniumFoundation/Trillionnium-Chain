@@ -1,13 +1,34 @@
 #!/usr/bin/env python3
 """Read-only portable-source integrity. Does not certify a runnable consensus."""
 from __future__ import annotations
-import hashlib,json,pathlib,re,subprocess,sys,tomllib
+import decimal,hashlib,json,math,pathlib,re,subprocess,sys,tomllib
 from urllib.parse import unquote,urlsplit
 ROOT=pathlib.Path(__file__).resolve().parents[2]
 MODULES={f'M{i:02d}' for i in range(18)}
 FORBIDDEN_NAME=re.compile(r'poco|tendermint|cometbft|hotstuff|consensus-(?:core|types|crypto|safety|signer|sim)|order-finality|core-restart',re.I)
 FORBIDDEN_SYMBOL=re.compile(r'PoCO|poco|QuorumCertificate|TimeoutVote|VotingPower|CanonicalSignIntent|ValidatorSetV[0-9]|locked_qc|high_qc|three_chain_finality')
 CLAIMS=('production_candidate','production_consensus_activation','public_testnet_ready','release_ready','runtime_implemented','work_profile_qualified')
+# This is the *current main* research-only claim, not a security certificate.
+# A new field, silent activation alias, or changed scope requires deliberate
+# versioned review rather than passing with all known booleans still false.
+FROZEN_MAINLINE_CONSENSUS_RESEARCH = {
+    "schema": "trnm-consensus-mainline-truth-v2",
+    "development_target": "pon-nakamoto-v1",
+    "stage": "invariant-driven-native-application-candidate",
+    "runtime_implemented": False,
+    "work_profile_qualified": False,
+    "active_consensus_implementation": None,
+    "historical_consensus_sources_present": False,
+    "source_inventory": "config/portability-inventory-v1.json",
+    "production_candidate": False,
+    "production_consensus_activation": False,
+    "public_testnet_ready": False,
+    "release_ready": False,
+    "experimental_contracts": "config/pon/module-contracts-v1.json",
+    "module_maturity": "config/pon/module-maturity-v1.json",
+    "invariant_contract": "config/pon/invariants-v2.json",
+    "native_application_scope": "profile-gated-native-ledger-model-evidence-and-recovery-not-publicly-qualified",
+}
 class Invalid(ValueError):pass
 def require(ok,msg):
     if not ok:raise Invalid(msg)
@@ -16,7 +37,25 @@ def unique(pairs):
     for k,v in pairs:
         require(k not in d,'duplicate key '+k);d[k]=v
     return d
-def load(path):return json.loads(path.read_text(),object_pairs_hook=unique)
+def reject_nonfinite_json_constant(token):
+    # NaN/Infinity are accepted by Python's json decoder but not RFC 8259.
+    # A different policy/authority reader must not see a different document.
+    raise Invalid('nonstandard JSON numeric constant '+token)
+def parse_bounded_json_float(token):
+    # A JSON exponent such as 1e309 is syntactically valid, but Python's
+    # binary64 decoder silently turns it into infinity even with a strict
+    # parse_constant hook. Likewise 1e-99999 silently becomes zero. Refuse
+    # such cross-parser policy ambiguity without changing ordinary floats.
+    value=float(token)
+    require(math.isfinite(value),'nonfinite JSON float '+token)
+    if value == 0.0:
+        require(decimal.Decimal(token).is_zero(),'underflowed JSON float '+token)
+    return value
+def load(path):
+    require(not path.is_symlink(),'aliased JSON policy source '+str(path))
+    return json.loads(path.read_text(),object_pairs_hook=unique,
+                      parse_constant=reject_nonfinite_json_constant,
+                      parse_float=parse_bounded_json_float)
 def no_promotion(value):
     if isinstance(value,dict):
         for key,item in value.items():
@@ -24,11 +63,31 @@ def no_promotion(value):
             no_promotion(item)
     elif isinstance(value,list):
         for item in value:no_promotion(item)
+def check_mainline_consensus_research_claim(profile):
+    """Refuse unknown, missing, type-confused or promoted consensus metadata.
+
+    This asserts a frozen nonproduction declaration, not any cryptographic
+    property of the real native node or its research protocol.
+    """
+    expected = FROZEN_MAINLINE_CONSENSUS_RESEARCH
+    require(isinstance(profile, dict) and set(profile) == set(expected),
+            'unreviewed consensus declaration fields')
+    for field, value in expected.items():
+        observed = profile[field]
+        require(type(observed) is type(value) and observed == value,
+                'unreviewed consensus declaration '+field)
+
 def contained(root,relative):
     path=pathlib.Path(relative)
     require(not path.is_absolute() and '..' not in path.parts,'noncanonical inventory path')
+    root=root.resolve()
+    # A byte-identical in-tree symlink is still a different source/provenance.
+    # Reject it before resolve(), including symlinked ancestor directories.
+    for depth in range(1,len(path.parts)+1):
+        require(not root.joinpath(*path.parts[:depth]).is_symlink(),
+                'aliased inventory path '+relative)
     p=(root/path).resolve()
-    require(p.is_relative_to(root.resolve()) and p.is_file(),'missing/escaping file '+relative)
+    require(p.is_relative_to(root) and p.is_file(),'missing/escaping file '+relative)
     return p
 def graph_acyclic(graph):
     visiting=set();done=set()
@@ -43,7 +102,7 @@ def graph_acyclic(graph):
 def all_files(root):
     return sorted(p for p in root.rglob('*') if p.is_file() and not any(s in {'.git','target','__pycache__','.pytest_cache','node_modules'} for s in p.relative_to(root).parts))
 def check(root=ROOT):
-    inventory=load(root/'config/portability-inventory-v1.json')
+    inventory=load(contained(root,'config/portability-inventory-v1.json'))
     rows=inventory['packages'];names=[r['package'] for r in rows]
     require(len(names)==len(set(names)) and bool(names),'duplicate/empty package inventory')
     require(inventory['runtime_implemented'] is False and inventory['old_protocol_compatibility'] is False,'inventory false claim')
@@ -72,17 +131,19 @@ def check(root=ROOT):
                     if category!='dev-dependencies':normal.add(actual)
         graph[name]=deps;normal_graph[name]=normal
         for p in manifest.parent.rglob('*.rs'):
+            require(not p.is_symlink(),'aliased Rust source '+str(p.relative_to(root)))
             source_count+=1
             require(not FORBIDDEN_SYMBOL.search(p.read_text()),'retired code symbol in '+str(p.relative_to(root)))
     # Normal dependency cycles are forbidden; dev edges are still inventoried and checked.
     graph_acyclic(normal_graph)
     locks=tomllib.loads((root/'trillionnium/Cargo.lock').read_text())
     for package in locks['package']:require(not FORBIDDEN_NAME.search(package['name']),'retired lock package')
-    truth=load(root/'config/consensus-mainline.json')
+    truth=load(contained(root,'config/consensus-mainline.json'))
+    check_mainline_consensus_research_claim(truth)
     require(set(CLAIMS) <= set(truth), 'missing explicit runtime/readiness claim')
     no_promotion(truth)
     require(truth['active_consensus_implementation'] is None and truth['historical_consensus_sources_present'] is False,'active runtime claim')
-    pon=load(root/'config/pon-nakamoto-v1.json');no_promotion(pon)
+    pon=load(contained(root,'config/pon-nakamoto-v1.json'));no_promotion(pon)
     require(pon['selected_development_target']=='pon-nakamoto-v1','selected target drift')
     require(pon['fork_choice']=='maximum-fully-validated-cumulative-required-work','wrong fork choice')
     for key in ['validator_voting','quality_weighted_chainwork','automatic_bft_fallback','automatic_hash_only_fallback']:require(pon[key] is False,'forbidden authority/fallback')
@@ -117,8 +178,11 @@ def check(root=ROOT):
     require('self-hosted' not in text and 'contents: write' not in text,'privileged PR execution')
     require('persist-credentials: false' in text,'checkout credentials retained')
     require(not re.search(r'(?ms)^    env:\n(?:(?:^      [^\n]*\n)|(?:^\s*\n))*?^      [^\n]*\$\{\{\s*runner\.', text), 'runner context is unavailable in job-level env')
-    require(text.count('name: Set isolated Cargo paths after runner allocation') == 5, 'missing per-job runner-stage Cargo isolation')
-    require(text.count('\"$RUNNER_TEMP\" \"$GITHUB_JOB\" >> \"$GITHUB_ENV\"') == 10, 'Cargo paths must use allocated runner and job identity')
+    # The five required head checks and separate prospective-merge matrix all
+    # receive isolated paths after allocation. Check each actual job, not a
+    # fixed count that would accidentally prohibit a merge-verification lane.
+    from check_ci_contract import validate as ci_validate
+    ci_validate(root)
     require('RUST_TEST_THREADS: "1"' in text,'fault-test harness isolation missing')
     for row in specs:
         prose=contained(root,row['technical_spec']).read_text()
@@ -126,8 +190,12 @@ def check(root=ROOT):
     require('pull_request_target' not in text,'privileged pull request event')
     from check_detailed_contracts import validate as detailed_validate
     detailed_validate(root)
+    from check_applicability import validate as applicability_validate
+    applicability_validate(root)
     from check_invariants import validate as invariant_validate
     invariant_validate(root)
+    from report_current_implementation import validate as current_validate
+    current_validate(root)
     return {'result':'PASS','workspace_packages':len(names),'rust_files':source_count,'local_links':links,'runtime_implemented':False,'activation':False,'normal_dependency_edges':sum(map(len,normal_graph.values()))}
 if __name__=='__main__':
     try:

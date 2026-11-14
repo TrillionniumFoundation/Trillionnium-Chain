@@ -1,0 +1,249 @@
+{
+  "schema": "m5-pq-provider-fixture-readonly-review-v1",
+  "reviewed_at_utc": "2026-11-09T16:40:07.811352+00:00",
+  "source_revision": "3ad605ecdac4b3b123dff83c1cb7458430acd776",
+  "scope": "Static review of existing release fixture, linked native crypto, canonical provider preparation and identity requirements. No provider installation/substitution, key generation, build, test execution, repository edit or assertion removal by this reviewer.",
+  "reported_original_failure": {
+    "package": "trnm-release-bundle",
+    "total_tests": 67,
+    "passed": 56,
+    "failed": 11,
+    "first_failure_location": "trillionnium/crates/trnm-release-bundle/src/root_recovery_v3_tests.rs:17",
+    "missing_variable": "TRNM_PQ_OPENSSL",
+    "next_required_variable": "TRNM_PQ_OPENSSL_SHA256",
+    "source": "Root/native-run owner report; complete raw test output not independently read by this reviewer",
+    "historical_failure_preserved": true,
+    "cryptographic_or_business_assertions_proven_passed": false
+  },
+  "reported_current_linked_backend": {
+    "source": "Native-run owner chain_acceptance reported its ROG read-only probe; primary probe result not yet local to this review",
+    "independently_reverified_here": false,
+    "linkage": "dynamic",
+    "version": "OpenSSL 3.5.5",
+    "libcrypto_sha256": "5385f0436ac2e284ba8c5fb1488874057c29c04be72dea32add832694f381e28",
+    "libssl_sha256": "63b47f444efa588e291e9b650a5ba2ab02f856356f2d50f13a2e477db9119e09",
+    "seven_provider_environment_variables_reported_null": true,
+    "owned_3_5_9_receipt_reported_absent": true,
+    "test_elf_sha256_not_yet_available_to_this_review": null
+  },
+  "read_request_identities": [
+    {
+      "file": "provider-probe-request.json",
+      "bytes": 3912,
+      "sha256": "149067fe91d889408b361c73a26d8a037e300df3cf453d323d3320c17a4f706a",
+      "is_execution_receipt": false
+    },
+    {
+      "file": "five-package-build-request.json",
+      "bytes": 9835,
+      "sha256": "d90c59e5e172b149287d3a87166bcfa65914b0deaab82a4a52de6f42917a51ea",
+      "is_execution_receipt": false
+    }
+  ],
+  "source_pins": [
+    {
+      "path": "trillionnium/crates/trnm-release-bundle/src/root_recovery_v3_tests.rs",
+      "bytes": 18409,
+      "sha256": "9b937bd40c87ef92b0c9ae03c9ec91c73d34307b0d44f6998c6369caddd2efa8",
+      "source_revision": "3ad605ecdac4b3b123dff83c1cb7458430acd776",
+      "line_anchors": [
+        15,
+        17,
+        18,
+        25,
+        30,
+        36,
+        55
+      ],
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/3ad605ecdac4b3b123dff83c1cb7458430acd776/trillionnium/crates/trnm-release-bundle/src/root_recovery_v3_tests.rs"
+    },
+    {
+      "path": "trillionnium/crates/trnm-release-bundle/Cargo.toml",
+      "bytes": 673,
+      "sha256": "5fde65e85f21d1325b1868004e63f115ec8f48e966495dab6e3fbf9f79205e5e",
+      "source_revision": "3ad605ecdac4b3b123dff83c1cb7458430acd776",
+      "line_anchors": [
+        12,
+        20
+      ],
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/3ad605ecdac4b3b123dff83c1cb7458430acd776/trillionnium/crates/trnm-release-bundle/Cargo.toml"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3.rs",
+      "bytes": 21524,
+      "sha256": "9b03c4f4a22175fe183e045bc1a2e25282232a4bb156281970f542e7277ebf1b",
+      "source_revision": "3ad605ecdac4b3b123dff83c1cb7458430acd776",
+      "line_anchors": [
+        269,
+        294,
+        513,
+        527,
+        540
+      ],
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/3ad605ecdac4b3b123dff83c1cb7458430acd776/trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3.rs"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/Cargo.toml",
+      "bytes": 924,
+      "sha256": "410cfe7ac27b90887b1e2bac49ed1928b66fd4c70d0747e733df0bfeb9fb27e3",
+      "source_revision": "3ad605ecdac4b3b123dff83c1cb7458430acd776",
+      "line_anchors": [
+        19,
+        27
+      ],
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/3ad605ecdac4b3b123dff83c1cb7458430acd776/trillionnium/crates/trnm-crypto-primitives/Cargo.toml"
+    },
+    {
+      "path": "trillionnium/Cargo.lock",
+      "bytes": 40365,
+      "sha256": "f9e57d73899c5d9fabd4f5b4fedf45256b8db4efb448d15680d070bbcfcb30bd",
+      "source_revision": "3ad605ecdac4b3b123dff83c1cb7458430acd776",
+      "line_anchors": [
+        670,
+        695
+      ],
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/3ad605ecdac4b3b123dff83c1cb7458430acd776/trillionnium/Cargo.lock"
+    },
+    {
+      "path": "scripts/ci/prepare_pq_provider.sh",
+      "bytes": 8110,
+      "sha256": "ccdcf7e8bb9871607c73adc78624a607b616c227b7fe581b96c48761a3805bfa",
+      "source_revision": "3ad605ecdac4b3b123dff83c1cb7458430acd776",
+      "line_anchors": [
+        23,
+        57,
+        110,
+        119,
+        129,
+        157
+      ],
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/3ad605ecdac4b3b123dff83c1cb7458430acd776/scripts/ci/prepare_pq_provider.sh"
+    },
+    {
+      "path": "scripts/ci/test_pq_provider_ci.py",
+      "bytes": 15981,
+      "sha256": "b1d72f37b066bb146a621be6d9ece15f950aba7db2f27be74164255001f9cb7c",
+      "source_revision": "3ad605ecdac4b3b123dff83c1cb7458430acd776",
+      "line_anchors": [
+        50,
+        65,
+        120,
+        139
+      ],
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/3ad605ecdac4b3b123dff83c1cb7458430acd776/scripts/ci/test_pq_provider_ci.py"
+    },
+    {
+      "path": "scripts/ci/record_pq_native_command.py",
+      "bytes": 5545,
+      "sha256": "6f117f6c324828ead80b3110993767bc06abdc435e1d3d452877fbc03a275711",
+      "source_revision": "3ad605ecdac4b3b123dff83c1cb7458430acd776",
+      "line_anchors": [
+        35,
+        41,
+        69
+      ],
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/3ad605ecdac4b3b123dff83c1cb7458430acd776/scripts/ci/record_pq_native_command.py"
+    }
+  ],
+  "fixture_call_chain": [
+    "Read TRNM_PQ_OPENSSL and TRNM_PQ_OPENSSL_SHA256; hash actual CLI bytes and compare to supplied pin. This proves agreement with the supplied pin, not canonical provider provenance by itself.",
+    "Spawn that CLI with genpkey -algorithm ML-DSA-87 or SLH-DSA-SHA2-256s -outform DER; force OPENSSL_CONF=/dev/null for the subprocess.",
+    "Parse returned private DER through linked in-process openssl::PKey::private_key_from_der; derive canonical public DER in that same Rust process.",
+    "Sign fixture messages for both families in-process using openssl::sign::Signer::new_without_digest and sign_oneshot_to_vec.",
+    "Root quorum/possession verification checks linked openssl::version::number >=0x30500000; ML-DSA-87 verification uses the RustCrypto CandidateVerifier, while SLH-DSA-SHA2-256s verification uses in-process OpenSSL PKey/Verifier."
+  ],
+  "canonical_provider": {
+    "version": "3.5.9",
+    "source_archive_sha256": "603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a",
+    "configuration": "no-shared no-tests; isolated prefix; libdir=lib",
+    "smoke_scope": "CLI ML-DSA-65 real key generation, sign, verify and wrong-message rejection",
+    "exports_only_after_smoke": true,
+    "exports": [
+      "OPENSSL_DIR",
+      "OPENSSL_STATIC=1",
+      "TRNM_PQ_OPENSSL",
+      "TRNM_PQ_OPENSSL_SHA256",
+      "TRNM_PQ_OPENSSL_VERSION",
+      "OPENSSL_CONF=/dev/null",
+      "OPENSSL_MODULES"
+    ],
+    "receipt_schema": "trnm-ci-pq-provider-v3",
+    "receipt_identity_paths": [
+      "bin/openssl",
+      "include/openssl/opensslv.h",
+      "include/openssl/configuration.h",
+      "lib/libcrypto.a",
+      "lib/libssl.a"
+    ],
+    "smoke_proves_root_ML_DSA_87_and_SLH_fixture_passed": false,
+    "preparation_runs_native_Rust_PQ_tests": false,
+    "preparation_runs_full_upstream_tests": false
+  },
+  "dependency_binding": {
+    "openssl_rust_crate": "0.10.81",
+    "openssl_sys_rust_crate": "0.9.117",
+    "openssl_src_entry_in_lock": false,
+    "cargo_lock_fixes_native_libcrypto_bytes": false,
+    "provider_must_precede_PQ_compilation_in_existing_CI_controls": true
+  },
+  "conclusions": [
+    "CLI environment variables alone repair only the first fixture precondition. They do not change a static linked backend or relink the already built Rust ELF.",
+    "The owner-reported 3.5.5 satisfies the source minimum >=3.5.0; these eleven failures do not prove unsupported algorithms or a failed crypto assertion. Algorithm operation after fixing fixture inputs remains untested in this review.",
+    "A 3.5.9 CLI plus the old dynamically linked 3.5.5 Rust backend is a mixed-provider run, not the canonical 3.5.9 static provider binding. Do not promote it by setting environment labels.",
+    "Canonical repair requires the verified isolated preparation receipt and compilation under the exported OPENSSL_DIR/OPENSSL_STATIC before producing a new test ELF. An export after compilation cannot prove the previous ELF used that prefix.",
+    "The ML-DSA-65 CLI smoke is necessary preparation evidence but does not substitute for the fixture ML-DSA-87 and SLH-DSA-SHA2-256s Rust parsing/signing/verification scenarios.",
+    "Runtime OPENSSL_CONF and OPENSSL_MODULES must be observed for the Rust process as well as the CLI. The fixture subprocess-only CONF override does not configure the parent Rust process."
+  ],
+  "necessary_identity_evidence": [
+    {
+      "layer": "Provider source and preparation",
+      "required": [
+        "Actual source archive SHA equals canonical pin",
+        "M5 preparation script SHA",
+        "Untouched attempt log and provider.json result/last_stage/exit",
+        "Actual CLI version and CLI SHA",
+        "Hashes of both headers and libcrypto.a/libssl.a",
+        "Smoke outcomes, exported configuration, source transport"
+      ]
+    },
+    {
+      "layer": "Rust compilation and linkage",
+      "required": [
+        "Source M5/tree and Cargo.lock identity",
+        "Exact package/features/profile/toolchain and Cargo executable",
+        "Original compilation environment including OPENSSL_DIR/STATIC and target-specific overrides if present",
+        "openssl-sys build-script output and Cargo fingerprint identifying link search/selection",
+        "Actual linked static archive identities; absence of a dynamic NEEDED entry alone is not provenance",
+        "New compiler-artifact ELF SHA/size tied to this build"
+      ]
+    },
+    {
+      "layer": "Actual runtime",
+      "required": [
+        "Exact test ELF before/after identity",
+        "Recorded execution argv, package cwd and relevant provider environment",
+        "For a dynamic build, resolved libcrypto/libssl paths and file hashes and version from that exact library; SONAME alone is insufficient",
+        "For static canonical build, retained native archive/link evidence plus observable runtime backend identity where available",
+        "Actual module configuration and any external provider modules if used"
+      ]
+    },
+    {
+      "layer": "Retest result",
+      "required": [
+        "Retain original 56-pass/11-fail attempt and raw failure logs",
+        "Separate new attempt for changed build/runtime identity",
+        "Execute original relevant test roster and retain actual counts/failed/ignored/filtered scopes",
+        "A successful preparation or build is not a native test pass or production qualification"
+      ]
+    }
+  ],
+  "qualification": {
+    "original_failed_attempt_changed": false,
+    "new_provider_verified_by_this_review": false,
+    "new_tests_executed": false,
+    "source_modified": false,
+    "provider_substituted": false,
+    "production_or_PQ_qualification_changed": false
+  },
+  "recommended_scope": "Finish the already authorized canonical isolated 3.5.9 preparation, preserve its exact provenance, compile under it and retain distinct artifact/runtime identities for the existing tests. This reviewer performs no such execution and does not replace any source guard or assertion."
+}

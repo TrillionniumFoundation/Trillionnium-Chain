@@ -1,0 +1,505 @@
+{
+  "schema": "ingress-canonical-bench-core-v1",
+  "head": "205ae38ff01bbf968f3fc2ef0297bee986224684",
+  "tree": "0f4b77d3db7ed718195a212b7d805f9334aab2f5",
+  "parent": "6193489c2fb2a1bdab1128ebed2296f19176401b",
+  "source": {
+    "tracked_files": 11019,
+    "before_after_identical": true,
+    "manifest_sha256": "57b81d43099e9fc60e5d673599a55e7103cf9c897ca73b191070874eb186e16f",
+    "status": ""
+  },
+  "plan": {
+    "path": "component-adoption-plan-205ae38.json",
+    "sha256": "82f087389dd27519cb4e1fe2568ba2e1988f200d187d7fd9e922a18d7e63e820",
+    "declared_before_measurement_utc": "2026-11-07 16:38:05 UTC",
+    "thresholds_changed_after_measurement": false
+  },
+  "run": {
+    "attempts": 1,
+    "job_id": "1a1b6eea133-12894-804",
+    "authoritative_exit_code": 0,
+    "supervisor_timeout_seconds": 180,
+    "cargo_exit_code": 0,
+    "required_exact_test_reader_exit_code": 0,
+    "original_service_acceptance": false
+  },
+  "binary": {
+    "cargo_running_unittests_paths": [
+      "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/target/debug/deps/trnm_pon_node-3d075b189916f208"
+    ],
+    "exact_single_path_match": true,
+    "bytes": 77931944,
+    "before_sha256": "60c0bef51679d2eddb570a7f3624c8b709cca540fa3b46f6382655d7807f8b7c",
+    "after_sha256": "60c0bef51679d2eddb570a7f3624c8b709cca540fa3b46f6382655d7807f8b7c",
+    "planned_sha256": "60c0bef51679d2eddb570a7f3624c8b709cca540fa3b46f6382655d7807f8b7c"
+  },
+  "samples": {
+    "fixtures": 6,
+    "exposures": 2,
+    "abba_blocks_per_fixture_exposure": 16,
+    "order": [
+      "owned",
+      "borrowed",
+      "borrowed",
+      "owned"
+    ],
+    "per_method_per_group": 32,
+    "expected": 768,
+    "actual": 768,
+    "codec_accepted": 384,
+    "original_codec_errors_retained": 384,
+    "oracle_mismatches": 0,
+    "missing_cpu": 0,
+    "complete_proof_bytes_on_each_accepted_decode": 49188,
+    "median": "mean of the two central sorted samples; exact rational adoption comparison",
+    "p95": "nearest-rank: sorted index ceil(95*n/100)-1",
+    "new_allocation_is_hardware_cache_flush": false
+  },
+  "scope": {
+    "component": "body digest/canonical grammar/cookie authentication plus full Packet codec and owned proof/transaction copying",
+    "native_profile": "Rust 1.95.0 unoptimized test profile, debug information disabled, same all-features binary",
+    "host": "Desktop coordinated idle window; process snapshots retained; not the original fixed-resource CI harness",
+    "not_measured": [
+      "full native Work per trial",
+      "current Node/State/Host/checkpoint path per trial",
+      "original 0.25 CPU/2 GiB/four-second/16-worker business gate",
+      "4105-block History business gate",
+      "whole-node TPS or production finality"
+    ],
+    "prior_100_226_ms_phase_cost_is_predicted_saving": false,
+    "combined_source_requires_real_ci": true
+  },
+  "raw": {
+    "log": "component-205ae38/component-abba.log",
+    "bytes": 282402,
+    "sha256": "a765a65ba449b7c356d4763a96fc471b9f902ab32dd88064b0d5720b894392b3",
+    "every_trial_jsonl": "component-205ae38/component-records.jsonl",
+    "full_statistics": "component-205ae38/analysis.json",
+    "full_statistics_sha256": "0520ccd505e26aafe90ffa0e743c56a16a182c984a33710fc87418a329262bc3"
+  },
+  "groups": [
+    {
+      "fixture": "native-empty",
+      "exposure": "new-body-allocation",
+      "packet_bytes": 49508,
+      "body_bytes": 99043,
+      "samples_each_method": 32,
+      "cpu_ns": {
+        "owned": {
+          "median_ns": 1042033.0,
+          "p95_ns": 1131247
+        },
+        "borrowed": {
+          "median_ns": 903634.5,
+          "p95_ns": 1026263
+        }
+      },
+      "wall_ns": {
+        "owned": {
+          "median_ns": 1043422.5,
+          "p95_ns": 1132803
+        },
+        "borrowed": {
+          "median_ns": 905009.5,
+          "p95_ns": 1027714
+        }
+      },
+      "candidate_over_original": {
+        "cpu_median": 0.8671841486785927,
+        "cpu_p95": 0.9071962179789206,
+        "wall_median": 0.8673471196950421,
+        "wall_p95": 0.9072310013303284
+      },
+      "predeclared_cpu_median_max": 1.05,
+      "passed": true
+    },
+    {
+      "fixture": "native-empty",
+      "exposure": "reused-body-allocation",
+      "packet_bytes": 49508,
+      "body_bytes": 99043,
+      "samples_each_method": 32,
+      "cpu_ns": {
+        "owned": {
+          "median_ns": 1060794.0,
+          "p95_ns": 1074934
+        },
+        "borrowed": {
+          "median_ns": 921015.5,
+          "p95_ns": 931477
+        }
+      },
+      "wall_ns": {
+        "owned": {
+          "median_ns": 1062170.5,
+          "p95_ns": 1076553
+        },
+        "borrowed": {
+          "median_ns": 922562.5,
+          "p95_ns": 932739
+        }
+      },
+      "candidate_over_original": {
+        "cpu_median": 0.8682321921127005,
+        "cpu_p95": 0.8665434342945706,
+        "wall_median": 0.8685634745080945,
+        "wall_p95": 0.8664125221888751
+      },
+      "predeclared_cpu_median_max": 1.05,
+      "passed": true
+    },
+    {
+      "fixture": "native-transfers-1",
+      "exposure": "new-body-allocation",
+      "packet_bytes": 49709,
+      "body_bytes": 99445,
+      "samples_each_method": 32,
+      "cpu_ns": {
+        "owned": {
+          "median_ns": 1067891.0,
+          "p95_ns": 1095187
+        },
+        "borrowed": {
+          "median_ns": 926448.5,
+          "p95_ns": 935414
+        }
+      },
+      "wall_ns": {
+        "owned": {
+          "median_ns": 1069458.0,
+          "p95_ns": 1096964
+        },
+        "borrowed": {
+          "median_ns": 928041.0,
+          "p95_ns": 937104
+        }
+      },
+      "candidate_over_original": {
+        "cpu_median": 0.8675496843779,
+        "cpu_p95": 0.8541134984253831,
+        "wall_median": 0.8677675981665479,
+        "wall_p95": 0.8542705138910666
+      },
+      "predeclared_cpu_median_max": 1.05,
+      "passed": true
+    },
+    {
+      "fixture": "native-transfers-1",
+      "exposure": "reused-body-allocation",
+      "packet_bytes": 49709,
+      "body_bytes": 99445,
+      "samples_each_method": 32,
+      "cpu_ns": {
+        "owned": {
+          "median_ns": 1044219.0,
+          "p95_ns": 1068648
+        },
+        "borrowed": {
+          "median_ns": 907428.5,
+          "p95_ns": 917704
+        }
+      },
+      "wall_ns": {
+        "owned": {
+          "median_ns": 1045447.5,
+          "p95_ns": 1070008
+        },
+        "borrowed": {
+          "median_ns": 908703.5,
+          "p95_ns": 918898
+        }
+      },
+      "candidate_over_original": {
+        "cpu_median": 0.8690020963035532,
+        "cpu_p95": 0.8587523674774107,
+        "wall_median": 0.8692005098295228,
+        "wall_p95": 0.8587767568092949
+      },
+      "predeclared_cpu_median_max": 1.05,
+      "passed": true
+    },
+    {
+      "fixture": "native-transfers-64",
+      "exposure": "new-body-allocation",
+      "packet_bytes": 62372,
+      "body_bytes": 124771,
+      "samples_each_method": 32,
+      "cpu_ns": {
+        "owned": {
+          "median_ns": 1318978.0,
+          "p95_ns": 1353528
+        },
+        "borrowed": {
+          "median_ns": 1142128.0,
+          "p95_ns": 1172355
+        }
+      },
+      "wall_ns": {
+        "owned": {
+          "median_ns": 1320462.5,
+          "p95_ns": 1355267
+        },
+        "borrowed": {
+          "median_ns": 1143543.0,
+          "p95_ns": 1174089
+        }
+      },
+      "candidate_over_original": {
+        "cpu_median": 0.8659189160092132,
+        "cpu_p95": 0.8661475787719205,
+        "wall_median": 0.8660170205515113,
+        "wall_p95": 0.8663156411245903
+      },
+      "predeclared_cpu_median_max": 0.9,
+      "passed": true
+    },
+    {
+      "fixture": "native-transfers-64",
+      "exposure": "reused-body-allocation",
+      "packet_bytes": 62372,
+      "body_bytes": 124771,
+      "samples_each_method": 32,
+      "cpu_ns": {
+        "owned": {
+          "median_ns": 1353587.5,
+          "p95_ns": 1374937
+        },
+        "borrowed": {
+          "median_ns": 1172344.5,
+          "p95_ns": 1198810
+        }
+      },
+      "wall_ns": {
+        "owned": {
+          "median_ns": 1354998.0,
+          "p95_ns": 1376312
+        },
+        "borrowed": {
+          "median_ns": 1173946.0,
+          "p95_ns": 1200343
+        }
+      },
+      "candidate_over_original": {
+        "cpu_median": 0.8661017481322781,
+        "cpu_p95": 0.8719017671355124,
+        "wall_median": 0.8663820906008718,
+        "wall_p95": 0.8721445428071541
+      },
+      "predeclared_cpu_median_max": 0.9,
+      "passed": true
+    },
+    {
+      "fixture": "malformed-header",
+      "exposure": "new-body-allocation",
+      "packet_bytes": 49508,
+      "body_bytes": 99043,
+      "samples_each_method": 32,
+      "cpu_ns": {
+        "owned": {
+          "median_ns": 943350.0,
+          "p95_ns": 972179
+        },
+        "borrowed": {
+          "median_ns": 816186.5,
+          "p95_ns": 841279
+        }
+      },
+      "wall_ns": {
+        "owned": {
+          "median_ns": 944834.5,
+          "p95_ns": 973810
+        },
+        "borrowed": {
+          "median_ns": 817634.0,
+          "p95_ns": 842788
+        }
+      },
+      "candidate_over_original": {
+        "cpu_median": 0.8652000848041554,
+        "cpu_p95": 0.8653540140241663,
+        "wall_median": 0.8653727187142298,
+        "wall_p95": 0.8654542467216397
+      },
+      "predeclared_cpu_median_max": 1.05,
+      "passed": true
+    },
+    {
+      "fixture": "malformed-header",
+      "exposure": "reused-body-allocation",
+      "packet_bytes": 49508,
+      "body_bytes": 99043,
+      "samples_each_method": 32,
+      "cpu_ns": {
+        "owned": {
+          "median_ns": 921014.0,
+          "p95_ns": 945151
+        },
+        "borrowed": {
+          "median_ns": 802635.5,
+          "p95_ns": 842592
+        }
+      },
+      "wall_ns": {
+        "owned": {
+          "median_ns": 922054.0,
+          "p95_ns": 946146
+        },
+        "borrowed": {
+          "median_ns": 803721.5,
+          "p95_ns": 843678
+        }
+      },
+      "candidate_over_original": {
+        "cpu_median": 0.8714693804871587,
+        "cpu_p95": 0.8914892964193023,
+        "wall_median": 0.8716642409229828,
+        "wall_p95": 0.8916995897039146
+      },
+      "predeclared_cpu_median_max": 1.05,
+      "passed": true
+    },
+    {
+      "fixture": "malformed-count",
+      "exposure": "new-body-allocation",
+      "packet_bytes": 49508,
+      "body_bytes": 99043,
+      "samples_each_method": 32,
+      "cpu_ns": {
+        "owned": {
+          "median_ns": 924841.5,
+          "p95_ns": 964288
+        },
+        "borrowed": {
+          "median_ns": 803376.5,
+          "p95_ns": 827659
+        }
+      },
+      "wall_ns": {
+        "owned": {
+          "median_ns": 926199.5,
+          "p95_ns": 965596
+        },
+        "borrowed": {
+          "median_ns": 805102.0,
+          "p95_ns": 829002
+        }
+      },
+      "candidate_over_original": {
+        "cpu_median": 0.8686639818823009,
+        "cpu_p95": 0.858311002522068,
+        "wall_median": 0.8692533304109967,
+        "wall_p95": 0.8585391820181525
+      },
+      "predeclared_cpu_median_max": 1.05,
+      "passed": true
+    },
+    {
+      "fixture": "malformed-count",
+      "exposure": "reused-body-allocation",
+      "packet_bytes": 49508,
+      "body_bytes": 99043,
+      "samples_each_method": 32,
+      "cpu_ns": {
+        "owned": {
+          "median_ns": 943476.0,
+          "p95_ns": 962846
+        },
+        "borrowed": {
+          "median_ns": 819451.5,
+          "p95_ns": 841615
+        }
+      },
+      "wall_ns": {
+        "owned": {
+          "median_ns": 944577.0,
+          "p95_ns": 963987
+        },
+        "borrowed": {
+          "median_ns": 820536.5,
+          "p95_ns": 842795
+        }
+      },
+      "candidate_over_original": {
+        "cpu_median": 0.8685451458224692,
+        "cpu_p95": 0.8740909761270235,
+        "wall_median": 0.8686814309473976,
+        "wall_p95": 0.8742804622883918
+      },
+      "predeclared_cpu_median_max": 1.05,
+      "passed": true
+    },
+    {
+      "fixture": "truncated-proof",
+      "exposure": "new-body-allocation",
+      "packet_bytes": 49507,
+      "body_bytes": 99041,
+      "samples_each_method": 32,
+      "cpu_ns": {
+        "owned": {
+          "median_ns": 940704.0,
+          "p95_ns": 966173
+        },
+        "borrowed": {
+          "median_ns": 818061.5,
+          "p95_ns": 840391
+        }
+      },
+      "wall_ns": {
+        "owned": {
+          "median_ns": 942793.5,
+          "p95_ns": 967922
+        },
+        "borrowed": {
+          "median_ns": 819631.0,
+          "p95_ns": 841788
+        }
+      },
+      "candidate_over_original": {
+        "cpu_median": 0.869626896452019,
+        "cpu_p95": 0.869814205116475,
+        "wall_median": 0.8693642881500562,
+        "wall_p95": 0.8696857804657814
+      },
+      "predeclared_cpu_median_max": 1.05,
+      "passed": true
+    },
+    {
+      "fixture": "truncated-proof",
+      "exposure": "reused-body-allocation",
+      "packet_bytes": 49507,
+      "body_bytes": 99041,
+      "samples_each_method": 32,
+      "cpu_ns": {
+        "owned": {
+          "median_ns": 933009.5,
+          "p95_ns": 952136
+        },
+        "borrowed": {
+          "median_ns": 812834.5,
+          "p95_ns": 838389
+        }
+      },
+      "wall_ns": {
+        "owned": {
+          "median_ns": 934107.5,
+          "p95_ns": 953345
+        },
+        "borrowed": {
+          "median_ns": 813829.5,
+          "p95_ns": 839500
+        }
+      },
+      "candidate_over_original": {
+        "cpu_median": 0.8711963811729677,
+        "cpu_p95": 0.8805349235823454,
+        "wall_median": 0.8712375181657357,
+        "wall_p95": 0.8805836292213207
+      },
+      "predeclared_cpu_median_max": 1.05,
+      "passed": true
+    }
+  ],
+  "all_predeclared_component_criteria_passed": true,
+  "whole_node_or_original_business_qualified": false
+}

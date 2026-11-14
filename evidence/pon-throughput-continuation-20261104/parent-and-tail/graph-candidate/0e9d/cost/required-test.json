@@ -1,0 +1,1 @@
+{"executed_tests": 1, "result": "PASS", "scope": "named-libtest-execution-only", "test": "store::native_authenticated::post_write_readback::tests::frontier::pre_write::native_publish_continuation_paired_real_sql_cost_observation"}

@@ -1,0 +1,14 @@
+{
+  "checker_sha256": "0d7040ac82a54a97a2db0a3d94db30822a047af5a8f4946ff4d4fc29ae9a190f",
+  "command": [
+    "python3",
+    "-B",
+    "scripts/ci/check_repository.py"
+  ],
+  "cwd": "/workspace/scratch/d570ecfded92/chain-throughput",
+  "elapsed_ns": 1984438785,
+  "outcome": "completed",
+  "returncode": 2,
+  "stderr_sha256": "e9d6779920685ac8631f9cfe3fc344fa5a64886cd36ed304305284c108a90361",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

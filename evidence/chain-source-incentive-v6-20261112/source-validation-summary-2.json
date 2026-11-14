@@ -1,0 +1,236 @@
+{
+  "all_commands_succeeded": true,
+  "checks": [
+    {
+      "command_exit_code": 0,
+      "elapsed_seconds": 4.89,
+      "label": "source-identity",
+      "log_file": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/source-identity.log",
+      "log_sha256": "9aea3e2bb60e3e45f6e1d10d27369062438f19d0ad5eb019f7eb9d326bd65340",
+      "runner_exit_code": 0,
+      "status": "command_succeeded",
+      "stderr": "",
+      "stdout": "{\"exit_code\": 0, \"receipt\": \"/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/source-identity.json\", \"status\": \"command_succeeded\"}\n"
+    },
+    {
+      "command_exit_code": 0,
+      "elapsed_seconds": 10.33,
+      "label": "fmt",
+      "log_file": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/fmt.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "runner_exit_code": 0,
+      "status": "command_succeeded",
+      "stderr": "",
+      "stdout": "{\"exit_code\": 0, \"receipt\": \"/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/fmt.json\", \"status\": \"command_succeeded\"}\n"
+    },
+    {
+      "command_exit_code": 0,
+      "elapsed_seconds": 3.295,
+      "label": "metadata",
+      "log_file": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/metadata.log",
+      "log_sha256": "07f9c6bf25c157d84a6370ebb909d402b47d1db385a1fa89e5f552897ac2937d",
+      "runner_exit_code": 0,
+      "status": "command_succeeded",
+      "stderr": "",
+      "stdout": "{\"exit_code\": 0, \"receipt\": \"/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/metadata.json\", \"status\": \"command_succeeded\"}\n"
+    },
+    {
+      "command_exit_code": 0,
+      "elapsed_seconds": 3.284,
+      "label": "metadata-all-features",
+      "log_file": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/metadata-all-features.log",
+      "log_sha256": "c8618b543fe3860d6820618d8c922d1305d41d917b7fdc9705ad0f24dabd5219",
+      "runner_exit_code": 0,
+      "status": "command_succeeded",
+      "stderr": "",
+      "stdout": "{\"exit_code\": 0, \"receipt\": \"/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/metadata-all-features.json\", \"status\": \"command_succeeded\"}\n"
+    },
+    {
+      "command_exit_code": 0,
+      "elapsed_seconds": 5.976,
+      "label": "build-native-v6",
+      "log_file": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/build-native-v6.log",
+      "log_sha256": "196a0294561e367dd65200efc297fddbe3956ee6a656af56f66f2584f31b9977",
+      "runner_exit_code": 0,
+      "status": "command_succeeded",
+      "stderr": "",
+      "stdout": "{\"exit_code\": 0, \"receipt\": \"/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/build-native-v6.json\", \"status\": \"command_succeeded\"}\n"
+    },
+    {
+      "command_exit_code": 0,
+      "elapsed_seconds": 24.245,
+      "label": "native-v6",
+      "log_file": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/native-v6.log",
+      "log_sha256": "a9cffa09ecde14f4cf9d2645c15c7c47acbcfbd7420309a50934bcc93b8fe80c",
+      "runner_exit_code": 0,
+      "status": "command_succeeded",
+      "stderr": "",
+      "stdout": "{\"exit_code\": 0, \"receipt\": \"/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/native-v6.json\", \"status\": \"command_succeeded\"}\n"
+    },
+    {
+      "command_exit_code": 0,
+      "elapsed_seconds": 3.357,
+      "label": "independent-native-readback",
+      "log_file": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/independent-native-readback.log",
+      "log_sha256": "10c65b732603f7021f1cc5561e35ff230232856b09435770896294d566d50cc8",
+      "runner_exit_code": 0,
+      "status": "command_succeeded",
+      "stderr": "",
+      "stdout": "{\"exit_code\": 0, \"receipt\": \"/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/independent-native-readback.json\", \"status\": \"command_succeeded\"}\n"
+    },
+    {
+      "command_exit_code": 0,
+      "elapsed_seconds": 21.922,
+      "label": "mvcc-fee-retained",
+      "log_file": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/mvcc-fee-retained.log",
+      "log_sha256": "12198da07b1e36e4ab9f3d6cf9069c7323380c483a00c495052f366bc01d9763",
+      "runner_exit_code": 0,
+      "status": "command_succeeded",
+      "stderr": "",
+      "stdout": "{\"exit_code\": 0, \"receipt\": \"/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/mvcc-fee-retained.json\", \"status\": \"command_succeeded\"}\n"
+    },
+    {
+      "command_exit_code": 0,
+      "elapsed_seconds": 87.562,
+      "label": "native-v4-retained",
+      "log_file": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/native-v4-retained.log",
+      "log_sha256": "865bb808c66692d26480323ee4d0c31193eace8f4358a9843bdd19e9b3fa6f85",
+      "runner_exit_code": 0,
+      "status": "command_succeeded",
+      "stderr": "",
+      "stdout": "{\"exit_code\": 0, \"receipt\": \"/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/native-v4-retained.json\", \"status\": \"command_succeeded\"}\n"
+    },
+    {
+      "command_exit_code": 0,
+      "elapsed_seconds": 4.352,
+      "label": "task-kernel-retained",
+      "log_file": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/task-kernel-retained.log",
+      "log_sha256": "0d1cd6c22fc120bc070865e2b1f7f99dacb042469bb459ac2946f159c68f323e",
+      "runner_exit_code": 0,
+      "status": "command_succeeded",
+      "stderr": "",
+      "stdout": "{\"exit_code\": 0, \"receipt\": \"/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/task-kernel-retained.json\", \"status\": \"command_succeeded\"}\n"
+    },
+    {
+      "command_exit_code": 0,
+      "elapsed_seconds": 171.258,
+      "label": "native-error-registry",
+      "log_file": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/native-error-registry.log",
+      "log_sha256": "5c126838be42de1316f3efc487d38d08152083d1a6f37d520e37e6a819a81bf8",
+      "runner_exit_code": 0,
+      "status": "command_succeeded",
+      "stderr": "",
+      "stdout": "{\"exit_code\": 0, \"receipt\": \"/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/native-error-registry.json\", \"status\": \"command_succeeded\"}\n"
+    },
+    {
+      "command_exit_code": 0,
+      "elapsed_seconds": 29.567,
+      "label": "strict-clippy",
+      "log_file": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/strict-clippy.log",
+      "log_sha256": "92e26dc8770de87f5ce13690582bdb57d8ee1765b106366ece491423db678597",
+      "runner_exit_code": 0,
+      "status": "command_succeeded",
+      "stderr": "",
+      "stdout": "{\"exit_code\": 0, \"receipt\": \"/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/strict-clippy.json\", \"status\": \"command_succeeded\"}\n"
+    },
+    {
+      "command_exit_code": 0,
+      "elapsed_seconds": 3.227,
+      "label": "source-inventory",
+      "log_file": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/source-inventory.log",
+      "log_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "runner_exit_code": 0,
+      "status": "command_succeeded",
+      "stderr": "",
+      "stdout": "{\"exit_code\": 0, \"receipt\": \"/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/source-inventory.json\", \"status\": \"command_succeeded\"}\n"
+    },
+    {
+      "command_exit_code": 0,
+      "elapsed_seconds": 3.426,
+      "label": "authority-source-negatives",
+      "log_file": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/authority-source-negatives.log",
+      "log_sha256": "f10ec9ad7e06e8c5f41a75ab1f59b65505def0a0a9d05a795a2c958278cdb60e",
+      "runner_exit_code": 0,
+      "status": "command_succeeded",
+      "stderr": "",
+      "stdout": "{\"exit_code\": 0, \"receipt\": \"/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/authority-source-negatives.json\", \"status\": \"command_succeeded\"}\n"
+    },
+    {
+      "command_exit_code": 0,
+      "elapsed_seconds": 3.245,
+      "label": "authority-source-register",
+      "log_file": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/authority-source-register.log",
+      "log_sha256": "4aa9ec014905b173dc48afb5f0b18633c17544eedc49b02f655888d20d10d68c",
+      "runner_exit_code": 0,
+      "status": "command_succeeded",
+      "stderr": "",
+      "stdout": "{\"exit_code\": 0, \"receipt\": \"/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/authority-source-register.json\", \"status\": \"command_succeeded\"}\n"
+    },
+    {
+      "command_exit_code": 0,
+      "elapsed_seconds": 10.217,
+      "label": "repository-links",
+      "log_file": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/repository-links.log",
+      "log_sha256": "2fd37015c03889ce7d85fc4eff0998eb8449dbd86616c8eaecec1b2f17243bc7",
+      "runner_exit_code": 0,
+      "status": "command_succeeded",
+      "stderr": "",
+      "stdout": "{\"exit_code\": 0, \"receipt\": \"/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/repository-links.json\", \"status\": \"command_succeeded\"}\n"
+    },
+    {
+      "command_exit_code": 0,
+      "elapsed_seconds": 3.381,
+      "label": "source-corpus",
+      "log_file": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/source-corpus.log",
+      "log_sha256": "70a3627ac685637eededb38820de96eeb008528d380d07d71ff8d8b297edaff6",
+      "runner_exit_code": 0,
+      "status": "command_succeeded",
+      "stderr": "",
+      "stdout": "{\"exit_code\": 0, \"receipt\": \"/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/source-corpus.json\", \"status\": \"command_succeeded\"}\n"
+    },
+    {
+      "command_exit_code": 0,
+      "elapsed_seconds": 5.009,
+      "label": "source-integrity-negatives",
+      "log_file": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/source-integrity-negatives.log",
+      "log_sha256": "7fd62a14dccecda081d45cb2c3dade350e9d52d358847ccb357f8b962e12518f",
+      "runner_exit_code": 0,
+      "status": "command_succeeded",
+      "stderr": "",
+      "stdout": "{\"exit_code\": 0, \"receipt\": \"/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/source-integrity-negatives.json\", \"status\": \"command_succeeded\"}\n"
+    },
+    {
+      "command_exit_code": 0,
+      "elapsed_seconds": 3.281,
+      "label": "independent-math-self-tests",
+      "log_file": "/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/independent-math-self-tests.log",
+      "log_sha256": "c006440cc5d9bee18a8b829e72449e4ce41f6c80c3ce138c54071047aee98fdc",
+      "runner_exit_code": 0,
+      "status": "command_succeeded",
+      "stderr": "",
+      "stdout": "{\"exit_code\": 0, \"receipt\": \"/home/qq/chain-source-incentive-receipts-eb070ca2/frozen-source-2/independent-math-self-tests.json\", \"status\": \"command_succeeded\"}\n"
+    }
+  ],
+  "diff_stat": " config/pon/pq-authority-effects-v1.json            |   4 +-\n config/pon/pq-cross-branch-corpus-v1.json          |  20 +-\n .../SOURCE_INCENTIVE_RESEARCH_CONTRACT_20261112.md |  21 +\n .../TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md  |  20 +\n docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md   |  35 +-\n scripts/ci/pq_authority_effect_register.py         |   4 +-\n scripts/ci/test_pq_authority_effect_register.py    |   3 +-\n .../experiments/read_source_incentive_native_v6.py | 907 +++++++++++++++++++++\n .../support/distributed_source_inventory.rs        |  28 +\n .../trnm-pon-node/tests/model_composition_v6.rs    |  22 +-\n 10 files changed, 1047 insertions(+), 17 deletions(-)\n",
+  "economic_security_qualified": false,
+  "native_binary": {
+    "path": "/home/qq/chain-source-incentive-target-eb070ca2/debug/deps/model_composition_v6-6c36542fb60e1463",
+    "sha256": "f374c315f104569850e7164af5627abfb86c5ee33efd05c2241d8b5a578bab7b"
+  },
+  "phase": "completed",
+  "post_status": "",
+  "preflight": {
+    "branch": "fix/chain-source-settlement-20261112-eb070ca2",
+    "mode": "--dev",
+    "packages": 26,
+    "project": "trillionnium-chain",
+    "remote_policy_mutated": false,
+    "result": "PASS"
+  },
+  "prior_failed_source": "8cb8b743bccd93a5fac49a072990d18e0d4b4a21",
+  "production_activation": false,
+  "reader_sha512": "ed7dc94dcf64d53a1ac8b17a25aba34f51293af15a56c62efeed49ce2f03838e2dabbd084ddda2e52605f959669cf822fe65a97bd5d5c481990fd7113f6153eb",
+  "schema": "source-incentive-validation-run-v1",
+  "tested_commit": "214e2224fd4d18134aa9b50dc1467041651112eb",
+  "tested_tree": "b4b02cca0aff2af5603618ffea510743d54a2f2d"
+}

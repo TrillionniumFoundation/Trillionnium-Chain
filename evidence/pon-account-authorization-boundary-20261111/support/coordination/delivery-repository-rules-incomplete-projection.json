@@ -1,0 +1,52 @@
+{
+  "counts": {
+    "explicit_empty_result_projection": 1,
+    "files": 425,
+    "json": 197,
+    "markdown": 5,
+    "toml": 0
+  },
+  "created_utc": "2026-11-11T04:12:24.664467+00:00",
+  "findings": [],
+  "full_ci_acceptance_granted": false,
+  "helper_sha256": "82b643284a2eb4ac66cfa052fb84912695c2cf06fec42a96504f607a7e8804a5",
+  "incomplete_record_count": 1,
+  "inspection": {
+    "path": "/workspace/scratch/a4188f5c86b5/coordination/delivery-evidence-inspection-incomplete-reviewed.json",
+    "sha256": "f4492580cabf0ce0491c5743ffe1129e6c1846ec13a229b1f4abbfdc1c621390"
+  },
+  "missing_data_retry_blockers_preserved": [
+    {
+      "code": "MISSING_INPUT",
+      "detail": "desktop-node-retained-data: /workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-evidence-v1"
+    },
+    {
+      "code": "REQUIRED_RECORD_NOT_TERMINAL",
+      "detail": "('desktop', 'cdd984808a088e6c2e13b1e1ae6630a94d500c89', 'node-retained-data-preflight')"
+    },
+    {
+      "code": "REQUIRED_RECORD_NOT_TERMINAL",
+      "detail": "('desktop', 'cdd984808a088e6c2e13b1e1ae6630a94d500c89', 'node-retained-data-source-before')"
+    },
+    {
+      "code": "REQUIRED_RECORD_NOT_TERMINAL",
+      "detail": "('desktop', 'cdd984808a088e6c2e13b1e1ae6630a94d500c89', 'node-retained-data-all-targets')"
+    },
+    {
+      "code": "REQUIRED_RECORD_NOT_TERMINAL",
+      "detail": "('desktop', 'cdd984808a088e6c2e13b1e1ae6630a94d500c89', 'node-retained-data-source-after')"
+    }
+  ],
+  "native_tests_executed": false,
+  "plan_sha256": "dd113245a56029843c0dbaf6d96996918f73702a27184a2aeeb618a0465adaa0",
+  "production_qualification_granted": false,
+  "project_tests_executed": false,
+  "readme_is_final_input": false,
+  "schema": "trnm-incomplete-projection-repository-rules-review-v1",
+  "scope": "Read-only data parsing by intended staged filenames under existing check_repository rules; no project checker/test executed.",
+  "source_empty_result_unchanged": true,
+  "stage_executed": false,
+  "terminal_fail_count": 12,
+  "terminal_pass_count": 47,
+  "terminal_record_count": 59
+}

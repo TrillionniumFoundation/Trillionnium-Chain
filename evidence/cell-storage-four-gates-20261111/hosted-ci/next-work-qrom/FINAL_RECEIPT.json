@@ -1,0 +1,17 @@
+{
+  "schema": "cell-ci-recovered-final-receipt-v1",
+  "root": "/home/qian-qi/work/chain-cell-four-gates-discovery-ci-recovery-2bfb",
+  "archive": "/home/qian-qi/work/chain-cell-four-gates-discovery-ci-recovery-2bfb/recovered-ci-records.tar.gz",
+  "archive_bytes": 1530054,
+  "archive_sha256": "7438a1a3b4206d305a93e2af9f23ad66e548e330f7d796ea04c9fa3f91f5a6d5",
+  "archive_members": 186,
+  "manifest_sha256": "ab87e5187eb73978a9f20dfe527720589e53f5946dadb242fc297117b1b4c6c4",
+  "original_payloads_prior_sha_verified": 65,
+  "full_job_logs": 10,
+  "qrom_zips_verified": 4,
+  "qrom_members_verified": 84,
+  "fresh_18_original_members_restored": false,
+  "fresh_complete_extraction_stdout_results_retained": 4,
+  "native_or_workflow_reruns": false,
+  "source_mutations": false
+}

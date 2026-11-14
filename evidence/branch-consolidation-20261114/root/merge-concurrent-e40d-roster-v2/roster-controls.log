@@ -1,0 +1,11 @@
+test_complete_rosters_and_observer_output (__main__.RosterTests.test_complete_rosters_and_observer_output) ... ok
+test_failed_outcome_cannot_use_success_summary (__main__.RosterTests.test_failed_outcome_cannot_use_success_summary) ... ok
+test_fixed_ignored_child_identity_cannot_move (__main__.RosterTests.test_fixed_ignored_child_identity_cannot_move) ... ok
+test_missing_duplicate_and_substitution_refuse_even_with_success_summary (__main__.RosterTests.test_missing_duplicate_and_substitution_refuse_even_with_success_summary) ... ok
+test_missing_duplicate_failed_and_wrong_count_summary_refuse (__main__.RosterTests.test_missing_duplicate_failed_and_wrong_count_summary_refuse) ... ok
+test_unknown_name_and_ignore_conversion_refuse (__main__.RosterTests.test_unknown_name_and_ignore_conversion_refuse) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.005s
+
+OK
