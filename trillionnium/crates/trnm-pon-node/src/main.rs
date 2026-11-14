@@ -1433,6 +1433,9 @@ fn run() -> Result<Value> {
             "EXPLICIT_DEVELOPMENT_REQUIRED: public test identities; no monetary value".into(),
         );
     }
+    if command == "resource-owner-init" {
+        return packet_observer_cli::initialize(&args);
+    }
     if args.contains_key("--pq-application-config")
         || args.contains_key("--pq-application-config-sha256")
     {
@@ -1477,7 +1480,7 @@ fn run() -> Result<Value> {
         "mine" | "make" => "--transactions --timestamp --output --parent --miner --task-bootstrap --task-manifest --task-model --task-input --consensus-maintenance",
         "task-fixture" => "--task-model --task-input --demand-index --purpose --not-before --expires --demand-nonce --output",
         "submit" => "--packet --packet-stdin --peer",
-        "packet-status" => "--packet --packet-stdin --peer --observation-cpu-seconds --observation-wall-seconds --observation-snapshot-bytes --packet-observer-worker",
+        "packet-status" => "--packet --packet-stdin --peer --observation-cpu-seconds --observation-wall-seconds --observation-snapshot-bytes --observation-resource-profile-sha256 --observation-operation-id --observation-parent-state --observation-deadline-unix-ms --observation-packet-sha256 --packet-observer-worker",
         "push" => "--packet --packet-stdin --peer --reliable-submit --submit-deadline-ms --submit-attempts --submit-call-cap --submit-parent-depth",
         "export" => "--block --output",
         "confirm" => "--transaction --block",

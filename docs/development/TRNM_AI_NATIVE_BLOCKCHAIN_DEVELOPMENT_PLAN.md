@@ -14362,3 +14362,44 @@ test passed 1/1 on aarch64-apple-darwin; the restored five owner controls passed
 ### 2026-11-14 consolidation: explicit pinned TLS endpoint component
 
 Preserve the bounded endpoint capability from e42f85ed5b1d0b4c9ebcfd8d5bd3247becb74959 under its new signed/stored namespace and mandatory PqWitnessV4 boundary. Adapt the newer absolute-deadline client and shared-owner listeners to the same exact address and 64-connection cap. Preserve current complete-SPKI checks, retained-reply APIs, original deadlines, witness state and legacy loopback bytes. The 16 KiB charged ciphertext buffer and redacted refusal diagnostics retain original limits and errors. The original six library/three CLI controls plus two current integration controls are explicit in the required roster. See [the component contract](../security/PQ_TLS_PINNED_ENDPOINT_V1.md). This source integration is not a successful runtime observation, WAN acceptance or production activation; the audit records the exact subsequent validation outcome. All existing qualification flags remain false.
+
+
+### 2026-11-14: preserve the BB3 local resource owner
+
+Branch audit found that `bb3f13ed78edd367381275a3ae4752f1f4da4c22` supplied an
+explicit local resource journal and an owned packet observer that were absent
+from the fixed integration candidate `332d7f723d71707d88a2cffa52b3754579a46926`.
+This port restores only that capability and its original controls. Current
+generation owners, root recovery, research schedules, Cell services and exports
+remain in place.
+
+The journal binds the canonical original Node directory and fixed profile.
+Opening or retrying never initializes, replenishes or redispatches an account.
+Reservation includes execution and cleanup principal before dispatch; claim is
+once-only across processes. Drop, cancellation, timeout, unknown child status
+and incomplete cleanup keep the original hold. A measured overrun remains debt
+and fences admission. Conservative settlement consumes the full reservation.
+The observer freezes its absolute deadline before admission and retains the
+original parent-state, packet, context and parameter bindings through native
+readback, authoritative child wait, pipe joins and private-directory cleanup.
+
+The original 23 resource-owner controls and five added native observer controls
+are retained, including real process exit without destructors and competing
+process claims. This is a trusted local owner component; its journal is not an
+external rollback anchor and its CPU/I/O units are declared principal. The
+adapter still reports no physical-resource or honest-service qualification.
+Provisioning remains explicit and development-gated. Existing stores without
+this journal retain their prior observer path; an adopted store cannot fall
+back to the unowned path. Production activation and whole-entry qualification
+remain false. Current source pins are refreshed without changing historical
+source-revision locks or treating source identity as execution acceptance.
+
+
+Fresh validation of the fixed Linux base plus this selected ten-path source
+patch passed all 23 owner controls and the complete 15-test native packet
+observer suite (ten existing and five owner-specific controls), with no ignored
+tests. Node library and CLI strict Clippy also passed. The current corpus
+checker, repository checker, formatting check and all 67 corpus negative
+controls passed. These are the named current component results; they do not
+promote historical campaigns, whole-workspace acceptance, macOS native observer
+coverage, physical resource bounds or production activation.

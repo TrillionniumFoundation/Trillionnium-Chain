@@ -571,3 +571,305 @@ fn packet_status_budget_and_worker_options_refuse_before_touching_source() {
         assert_eq!(image(&store), before);
     }
 }
+
+fn resource_profile() -> trnm_pon_node::resource_owner_v1::ResourceProfileV1 {
+    use trnm_pon_node::resource_owner_v1::{ResourceProfileV1, ResourcesV1};
+    ResourceProfileV1 {
+        owner_id: [71; 32],
+        grants: [ResourcesV1 {
+            cpu_ns: 60_000_000_000,
+            io_bytes: 4 * 1024 * 1024 * 1024,
+        }; 3],
+        max_operations: [16; 3],
+        max_inflight: [4; 3],
+        overshoot: ResourcesV1 {
+            cpu_ns: 1_000_000_000,
+            io_bytes: 131_072,
+        },
+    }
+}
+
+fn wall_ms() -> u64 {
+    std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap()
+        .as_millis()
+        .try_into()
+        .unwrap()
+}
+
+fn resource_contract(
+    packet: &Packet,
+    backend: PacketObservationBackend,
+    operation: u8,
+    parent: [u8; 32],
+) -> trnm_pon_node::PacketObservationResourceContractV1 {
+    use sha2::{Digest, Sha256};
+    trnm_pon_node::PacketObservationResourceContractV1 {
+        profile_id: resource_profile().id().unwrap(),
+        operation_id: [operation; 32],
+        packet_sha256: Sha256::digest(packet.encode().unwrap()).into(),
+        parent_state: parent,
+        deadline_unix_ms: wall_ms() + 30_000,
+        backend,
+        workers: 1,
+        snapshot_byte_limit: 64 * 1024 * 1024,
+        cpu_seconds: 5,
+        wall_seconds: 30,
+        logical_now: Some(CLOCK),
+    }
+}
+
+fn owned_command(
+    store: &Path,
+    input: &Path,
+    contract: &trnm_pon_node::PacketObservationResourceContractV1,
+) -> Command {
+    let mut call = command(store, input, contract.backend);
+    call.args([
+        "--observation-resource-profile-sha256",
+        &hex::encode(contract.profile_id),
+        "--observation-operation-id",
+        &hex::encode(contract.operation_id),
+        "--observation-parent-state",
+        &hex::encode(contract.parent_state),
+        "--observation-deadline-unix-ms",
+        &contract.deadline_unix_ms.to_string(),
+        "--observation-packet-sha256",
+        &hex::encode(contract.packet_sha256),
+        "--observation-cpu-seconds",
+        &contract.cpu_seconds.to_string(),
+        "--observation-wall-seconds",
+        &contract.wall_seconds.to_string(),
+        "--observation-snapshot-bytes",
+        &contract.snapshot_byte_limit.to_string(),
+        "--workers",
+        &contract.workers.to_string(),
+    ]);
+    call
+}
+
+fn source_without_resource_journal(store: &Path) -> NamespaceImage {
+    let mut state = image(store);
+    state.files.remove(&OsString::from(
+        trnm_pon_node::resource_owner_v1::JOURNAL_NAME,
+    ));
+    state
+}
+
+#[test]
+fn explicit_resource_owner_initialization_is_pinned_and_never_replaces_an_account() {
+    use sha2::{Digest, Sha256};
+    use trnm_pon_node::resource_owner_v1::ResourceOwnerV1;
+    let temp = tempfile::tempdir().unwrap();
+    let store = temp.path().join("store");
+    drop(writer(&store, PacketObservationBackend::LegacyV2));
+    let profile = resource_profile();
+    let raw = serde_json::to_vec(&profile).unwrap();
+    let profile_path = temp.path().join("resource-profile.json");
+    fs::write(&profile_path, &raw).unwrap();
+    let invoke = |pin: &str| {
+        Command::new(env!("CARGO_BIN_EXE_trnm-pon-node"))
+            .args(["resource-owner-init", "--development", "--store"])
+            .arg(&store)
+            .arg("--resource-profile")
+            .arg(&profile_path)
+            .args(["--resource-profile-sha256", pin])
+            .output()
+            .unwrap()
+    };
+    rejected(
+        invoke(&hex::encode([0; 32])),
+        "RESOURCE_OWNER_PROFILE_FILE_HASH",
+    );
+    assert!(!ResourceOwnerV1::is_present(&store).unwrap());
+    let pin = hex::encode(Sha256::digest(&raw));
+    let output = invoke(&pin);
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let initialized: Value = serde_json::from_slice(&output.stdout).unwrap();
+    assert_eq!(
+        initialized["resource_profile"],
+        hex::encode(profile.id().unwrap())
+    );
+    let before = image(&store);
+    assert!(!invoke(&pin).status.success());
+    assert_eq!(image(&store), before);
+}
+
+#[test]
+fn adopted_observer_settles_original_principal_and_retry_only_reads_original_status() {
+    use trnm_pon_node::resource_owner_v1::{ChargeV1, OperationStateV1, ResourceOwnerV1};
+    for backend in BACKENDS {
+        let temp = tempfile::tempdir().unwrap();
+        let store = temp.path().join("store");
+        let node = writer(&store, backend);
+        let parent = node.active().unwrap().0;
+        drop(node);
+        let owner = ResourceOwnerV1::initialize(&store, &resource_profile()).unwrap();
+        let packet = golden();
+        let input = packet_file(temp.path(), &packet);
+        let contract = resource_contract(&packet, backend, 72, parent);
+        let before = source_without_resource_journal(&store);
+        let output = owned_command(&store, &input, &contract).output().unwrap();
+        assert!(
+            output.status.success(),
+            "{}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+        let value: Value = serde_json::from_slice(&output.stdout).unwrap();
+        assert_eq!(value["result"]["native_source_unchanged"], true);
+        assert_eq!(
+            value["result"]["source_scope"],
+            serde_json::json!(["native.sqlite", "owner.lock"])
+        );
+        assert_eq!(value["resource_settlement"]["actual_cpu_measured"], false);
+        let record = owner.observe(contract.operation_id).unwrap().unwrap();
+        assert_eq!(record.state, OperationStateV1::Settled);
+        assert_eq!(record.charge, Some(ChargeV1::Conservative));
+        let snapshot = owner.snapshot().unwrap();
+        assert_eq!(snapshot.lanes[0].unresolved_operations, 0);
+        assert_eq!(snapshot.lanes[0].retained_operations, 1);
+        let retry = owned_command(&store, &input, &contract).output().unwrap();
+        assert!(retry.status.success());
+        let retry: Value = serde_json::from_slice(&retry.stdout).unwrap();
+        assert_eq!(retry["dispatched"], false);
+        assert_eq!(retry["safe_retry_authorized"], false);
+        assert_eq!(owner.snapshot().unwrap().record_hash, snapshot.record_hash);
+        assert_eq!(source_without_resource_journal(&store), before);
+    }
+}
+
+#[test]
+fn adopted_store_requires_claimed_profile_for_cli_internal_worker_and_library() {
+    use trnm_pon_node::resource_owner_v1::{AdmissionV1, OperationStateV1, ResourceOwnerV1};
+    for backend in BACKENDS {
+        let temp = tempfile::tempdir().unwrap();
+        let store = temp.path().join("store");
+        let node = writer(&store, backend);
+        let parent = node.active().unwrap().0;
+        drop(node);
+        let owner = ResourceOwnerV1::initialize(&store, &resource_profile()).unwrap();
+        let packet = golden();
+        let input = packet_file(temp.path(), &packet);
+        let before = source_without_resource_journal(&store);
+        rejected(
+            command(&store, &input, backend).output().unwrap(),
+            "PACKET_OBSERVATION_RESOURCE_PROFILE_REQUIRED",
+        );
+        rejected(
+            command(&store, &input, backend)
+                .args(["--packet-observer-worker", "v1"])
+                .output()
+                .unwrap(),
+            "PACKET_OBSERVATION_RESOURCE_PROFILE_REQUIRED",
+        );
+        assert!(observe_existing_packet(
+            &store,
+            Settings::development(None).unwrap(),
+            &packet,
+            backend,
+            1,
+            DEFAULT_PACKET_OBSERVATION_SNAPSHOT_BYTE_LIMIT
+        )
+        .unwrap_err()
+        .to_string()
+        .contains("PACKET_OBSERVATION_RESOURCE_PROFILE_REQUIRED"));
+        let contract = resource_contract(&packet, backend, 73, parent);
+        let request = contract
+            .request(&Settings::development(None).unwrap())
+            .unwrap();
+        let guard = match owner.reserve(&request, wall_ms()).unwrap() {
+            AdmissionV1::Fresh(guard) => guard,
+            AdmissionV1::Existing(_) => panic!("new operation required"),
+        };
+        assert!(trnm_pon_node::observe_existing_packet_owned(
+            &store,
+            Settings::development(None).unwrap(),
+            &packet.encode().unwrap(),
+            &contract,
+            guard
+        )
+        .unwrap_err()
+        .to_string()
+        .contains("RESOURCE_OWNER_NATIVE_CLAIM_REQUIRED"));
+        assert_eq!(
+            owner.observe(contract.operation_id).unwrap().unwrap().state,
+            OperationStateV1::Reserved
+        );
+        assert_eq!(source_without_resource_journal(&store), before);
+    }
+}
+
+#[test]
+fn owned_packet_byte_mismatch_keeps_reservation_and_never_dispatches() {
+    use trnm_pon_node::resource_owner_v1::{OperationStateV1, ResourceOwnerV1};
+    let temp = tempfile::tempdir().unwrap();
+    let store = temp.path().join("store");
+    let node = writer(&store, PacketObservationBackend::LegacyV2);
+    let parent = node.active().unwrap().0;
+    drop(node);
+    let owner = ResourceOwnerV1::initialize(&store, &resource_profile()).unwrap();
+    let packet = golden();
+    let input = packet_file(temp.path(), &packet);
+    let mut contract = resource_contract(&packet, PacketObservationBackend::LegacyV2, 74, parent);
+    contract.packet_sha256 = [75; 32];
+    let before = source_without_resource_journal(&store);
+    rejected(
+        owned_command(&store, &input, &contract).output().unwrap(),
+        "PACKET_OBSERVATION_PACKET_BINDING",
+    );
+    let record = owner.observe(contract.operation_id).unwrap().unwrap();
+    assert_eq!(record.state, OperationStateV1::Reserved);
+    assert!(record.charge.is_none());
+    assert_eq!(owner.snapshot().unwrap().lanes[0].unresolved_operations, 1);
+    assert_eq!(source_without_resource_journal(&store), before);
+}
+
+#[test]
+fn owned_worker_claim_is_once_only_and_parent_mismatch_keeps_original_hold() {
+    use trnm_pon_node::resource_owner_v1::{OperationStateV1, ResourceOwnerV1};
+    let temp = tempfile::tempdir().unwrap();
+    let store = temp.path().join("store");
+    drop(writer(&store, PacketObservationBackend::LegacyV2));
+    let owner = ResourceOwnerV1::initialize(&store, &resource_profile()).unwrap();
+    let packet = golden();
+    let input = packet_file(temp.path(), &packet);
+    let contract = resource_contract(&packet, PacketObservationBackend::LegacyV2, 76, [77; 32]);
+    let request = contract
+        .request(&Settings::development(None).unwrap())
+        .unwrap();
+    let before = source_without_resource_journal(&store);
+    rejected(
+        owned_command(&store, &input, &contract)
+            .args(["--packet-observer-worker", "resource-owner-v1"])
+            .output()
+            .unwrap(),
+        "RESOURCE_OWNER_OPERATION",
+    );
+    assert_eq!(owner.snapshot().unwrap().lanes[0].retained_operations, 0);
+    drop(owner.reserve(&request, wall_ms()).unwrap());
+    rejected(
+        owned_command(&store, &input, &contract)
+            .args(["--packet-observer-worker", "resource-owner-v1"])
+            .output()
+            .unwrap(),
+        "PACKET_OBSERVATION_PARENT_STATE",
+    );
+    assert_eq!(
+        owner.observe(contract.operation_id).unwrap().unwrap().state,
+        OperationStateV1::Running
+    );
+    rejected(
+        owned_command(&store, &input, &contract)
+            .args(["--packet-observer-worker", "resource-owner-v1"])
+            .output()
+            .unwrap(),
+        "RESOURCE_OWNER_ALREADY_CLAIMED",
+    );
+    assert_eq!(owner.snapshot().unwrap().lanes[0].unresolved_operations, 1);
+    assert_eq!(source_without_resource_journal(&store), before);
+}
