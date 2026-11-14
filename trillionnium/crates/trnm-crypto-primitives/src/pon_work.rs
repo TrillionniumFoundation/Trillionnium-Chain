@@ -16,6 +16,7 @@ pub mod maintenance_prefix;
 pub mod paired_product;
 pub mod rejection_cache;
 pub mod structured;
+pub mod task_product_facts;
 
 pub const PROFILE: &str = "pon-matmul-transcript-64-v1";
 pub const N: usize = 64;
