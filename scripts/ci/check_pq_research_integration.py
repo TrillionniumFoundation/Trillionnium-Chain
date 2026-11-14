@@ -1317,6 +1317,15 @@ SP27_RESEARCH_REQUIRED_PATHS = frozenset((
 NATIVE_REQUIRED_PATHS |= SP27_RESEARCH_REQUIRED_PATHS
 
 
+
+# Audited reusable components; source integrity never implies activation.
+NATIVE_REQUIRED_PATHS |= frozenset((
+    'trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs',
+    'trillionnium/crates/trnm-mvcc-fee/src/checkpoint_tile_material_v1.rs',
+    'trillionnium/crates/trnm-mvcc-fee/tests/checkpoint_tile_material_v1.rs',
+    'trillionnium/crates/trnm-pon-node/tests/public_v3_paid_cpu_debt_recovery.rs',
+))
+
 class IntegrityError(ValueError):
     pass
 
