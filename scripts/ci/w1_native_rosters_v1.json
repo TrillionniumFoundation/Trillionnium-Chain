@@ -58,6 +58,7 @@
       "ingress::history_import::tests::history_decode_cannot_renew_the_original_w1_deadline",
       "ingress::history_import::tests::history_host_rejection_keeps_native_boundaries_nonce_and_original_paid_account",
       "ingress::history_import::tests::history_kill_cut_child",
+      "ingress::history_import::tests::history_page_cannot_decode_past_fixed_tip_before_native_admission",
       "ingress::history_import::tests::history_shared_owner_busy_retry_keeps_fresh_host_refusal",
       "ingress::history_import::tests::history_shared_owner_checks_host_once_before_each_uncontended_action",
       "ingress::history_import::tests::history_w1_checks_host_once_at_every_native_boundary_without_refill",
