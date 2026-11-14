@@ -15148,6 +15148,73 @@ all 67 actually observed absolute project inputs match this checkpoint, with
 60 modules loaded before and 61 afterward. This selected-input comparison
 does not claim a complete checkout or resolve the 7,331 relative open events.
 
-### 2026-11-14 complete branch-disposition audit and integration record
+### 2026-11-14 frozen branch-disposition inventory and integration record
 
 The [branch consolidation audit](BRANCH_CONSOLIDATION_AUDIT_20261114.md) records all 908 frozen branch names, 892 distinct tips, 296 terminal dispositions and the selected current implementation. Its evidence index preserves original successful and failed controls, source identities, dependency findings and unselected historical alternatives. The original hosted four-second confirmation gate, protected main requirements and legacy deletion protection remain independent conditions. This audit does not activate a production profile or declare the one-branch remote result before a verified protected merge and reference cleanup. This file remains the sole development plan.
+
+### Corrective audit checkpoint and remaining consolidation work — 2026-11-14
+
+The active local corrective source is
+`fc39da5f35298ce8a4c34aa5bdb25849648612f9`, tree
+`20ef410a1ea847a3585de91d5f0a0380009cf874`. The source identity is an
+audited local checkpoint, not a claim that the protected main branch or remote
+candidate has advanced. The earlier branch-disposition record describes its
+frozen inventory; it does not close later semantic review, native validation
+or branch cleanup. At this checkpoint 28 of the original 325 maximal historical
+heads remain outside the H229 integration graph and are under separate review.
+
+Retain the reviewed current PQ128 correspondence and composition namespaces.
+Their explicit 21-input correspondence and 66-path composition union preserve
+the frozen V1 source lock, original numeric assumptions and every null/false
+qualification field. The current observation, claim-guard and composition
+suites ran 25, 57 and 60 methods successfully. The budget suite originally
+ran 57 passes and one error after its old fixture expected a direct V1 report.
+The narrow adapter now checks the separate current outer record and retains
+the original V1 helper; its full 58-method rerun passed. The original error
+remains evidence and is not replaced by that result.
+
+Retain the durable-witness readback validation and explicit SQLite connection
+closure. The complete 77-method readiness suite passed after the closure fix
+with zero ResourceWarnings; the earlier passing run's warnings remain recorded.
+SP27 receiver and strata readers now bind the exact prepared child command,
+integer-zero exit and false timeout fields after the original readback guard.
+All 36 original methods remain and four controls are added: the complete
+40-method finite candidate passed, while the original readers failed all
+40 added tamper subcases. This does not execute a native SP27 campaign or
+establish the four-second confirmation target.
+
+Cost-source receipt equality now requires identical exact JSON value types
+as well as equal values and the original closed field set. All 27 existing
+methods remain unchanged and three controls are added. The actual complete
+30-method suite passed on `fc39da5f`; its 18 reviewed imported-module/data
+inputs and the full 41,378-entry / 3,992,046,497-byte checkout matched before
+and after. Earlier Boolean/integer/float substitution failures remain retained.
+Known timing scopes, original failure denominators, unknown cost values,
+resource budgets and qualification flags are unchanged.
+
+The authority44 and current-lifetime20 maps now bind `fc39da5f`; only the
+already reviewed Node store bytes differ within either selected inventory
+from their preceding `5c04c60e` map. The authority lock is
+`f90e400347b1a1431b845cc41eb89a904a629f6095ae9f2967d69b35809c5f56` and the lifetime contract digest is
+`ed9d948a4815aa2fdd858acdcda104341ab96fb504a15e761c86ae04d6547c63`. The six-crate QROM145 mapping retains its
+`5c04c60e` checkpoint and `77f3901f137119ce245bf361990990b51ecb9affdc87f273404c4330a2870ee5`
+digest because those selected input bytes are unchanged. The current proof
+descriptor remains `8e95754db175bf8f2c4b3ffc0afe46f7b1eff476479d15fb2c005bf6d79dd0f1`.
+Its upstream approval list is still empty. Current corpus pins follow only
+these reviewed source changes and add the four explicit PQ current reader,
+test and contract paths; all existing required paths remain.
+
+Hosted required checks on the unchanged remote `dc42ce4d` candidate still
+include original failures. The retained four-second service observations
+confirm the baseline but do not complete independent pressure replay before
+the existing deadline. Exit-zero native processes do not override that
+business rejection. Fresh Host checks, deadlines, CPU quota, caller work,
+test rosters and protected-main requirements remain unchanged. No speculative
+optimization, archived workload execution, skipped gate, forced update or
+protection change is authorized by this record.
+
+Complete the remaining historical review and current required checks, retain
+a newly verified full-history archive, merge through the existing protected
+main process, then verify reference cleanup. These outcomes remain pending;
+no one-branch remote result, complete-repository qualification or production
+activation is claimed. This file remains the sole development plan.

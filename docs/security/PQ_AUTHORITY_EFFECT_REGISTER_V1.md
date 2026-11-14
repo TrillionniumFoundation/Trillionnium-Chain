@@ -4,7 +4,7 @@
 
 The [register](../../config/pon/pq-authority-effects-v1.json) binds seven reviewed
 routes to the current listed source checkpoint
-`332d7f723d71707d88a2cffa52b3754579a46926`. The
+`fc39da5f35298ce8a4c34aa5bdb25849648612f9`. The
 [checker](../../scripts/ci/pq_authority_effect_register.py) enforces their exact
 effect scopes and source sets, and compares 44 actual regular files with a fixed
 reviewed SHA-256 lock. Successful checking reports `source_consistency: PASS`
@@ -18,7 +18,30 @@ a signature, context comparison, downloaded artifact or certificate observation
 must not be recorded as a different downstream permission. That original source
 inventory did not itself establish a classical bypass of a PQ owner.
 
-## Current combined-source binding, 2026-11-13
+## Active corrective source binding, 2026-11-14
+
+The selected checkpoint is `fc39da5f35298ce8a4c34aa5bdb25849648612f9`,
+tree `20ef410a1ea847a3585de91d5f0a0380009cf874`. All 44 selected
+regular Git blobs were read independently and matched to the checkout.
+The canonical revision-plus-file lock is `f90e400347b1a1431b845cc41eb89a904a629f6095ae9f2967d69b35809c5f56`.
+
+Only `trillionnium/crates/trnm-pon-node/src/store.rs` differs in this
+inventory from the preceding `5c04c60e463462d9df8884786e0d5bb32af08a64`
+map: 391,470 bytes / `5918270368c61b420d26910dc5934714e1423f71c686b2d01f8d2e3ccceb990c`
+become 391,556 bytes /
+`ae54afb15c78e20b5fbb80c89d2a7346aafb2c20e6a1bf665663adc422625da5`.
+The other 43 source digests, seven route definitions, exact effect scopes,
+limits and false qualification fields are unchanged. The manifest, strict
+reader and independent positive assertions bind the same new lock. The old
+`5c04c60e` revision is an additional negative control alongside every
+earlier refusal.
+
+This is a curated source-consistency update. It neither authenticates an
+executor nor establishes a complete call graph, runtime reachability, native
+execution, whole-chain PQ qualification or production activation. Earlier
+review and execution records retain their original source identities.
+
+## Retained combined-source binding, 2026-11-13
 
 The reviewed source checkpoint is `332d7f723d71707d88a2cffa52b3754579a46926`, tree
 `c93086b354d75827ca96a42c7eaa3f8be8954311`. All 44 selected regular Git
@@ -606,9 +629,9 @@ The consolidation preserves commits e35cfb3cd85183a3b5beb47ad1287389cc4d1cd5, 49
 
 The incoming sealed-material fixture contains three corrected fixed expected contract hashes for its exact source pair. The current combination additionally contains the reviewed read-only trial-ledger reconciliation command, changing llm_runtime_pilot.py to SHA-256 13e4c11d51931d902483372a9a05c7180333893202ecb1d663d57a83111eccc7. The first integration attempt refused this real producer difference before changing the repository. The final merge rebinds the neural reader and explicit research preparation entry to that exact current pilot and independently derived complete contract. Both original test suites retain their fixed positive identities and all refusal assertions; the prior pilot is an additional explicit refusal. Historical material plan, target and original runtime identities retain their bytes. Both standalone lock blobs already exactly match the reviewed root. Final combined source mappings remain pending; neither this rebind nor preserved historical executions confer native, model, installation or security qualification.
 
-## Consolidated current source review, 2026-11-14
+## Retained consolidated source review, 2026-11-14
 
-Current source checkpoint 5c04c60e463462d9df8884786e0d5bb32af08a64 keeps the same seven curated routes and 44
+The preceding source checkpoint 5c04c60e463462d9df8884786e0d5bb32af08a64 keeps the same seven curated routes and 44
 selected paths. Seven selected files changed from the preceding 332d7f72
 review: Cell fetch ordering and controlled cache restoration, the per-call PQ
 account configuration and its controls, Node advisory/store integration, and
