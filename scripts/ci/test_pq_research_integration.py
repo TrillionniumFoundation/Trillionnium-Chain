@@ -172,6 +172,10 @@ class CorpusGateTests(unittest.TestCase):
     def test_consolidation_controls_require_each_path_and_pin(self):
         # Independent literals preserve the selected review scope.
         paths = (
+            "scripts/read_failed_native_campaign_zip.py",
+            "scripts/ci/test_read_failed_native_campaign_zip.py",
+            "scripts/pon_public_v3_phase_read.py",
+            "scripts/ci/test_pon_public_v3_phase_read.py",
             "scripts/ci/chain_system_security.py",
             "scripts/ci/test_chain_system_security.py",
             "scripts/ci/pq_external_rollback_oracle.py",
@@ -206,6 +210,10 @@ class CorpusGateTests(unittest.TestCase):
 
     def test_consolidation_control_bytes_are_bound_without_qualification(self):
         paths = (
+            "scripts/read_failed_native_campaign_zip.py",
+            "scripts/ci/test_read_failed_native_campaign_zip.py",
+            "scripts/pon_public_v3_phase_read.py",
+            "scripts/ci/test_pon_public_v3_phase_read.py",
             "scripts/ci/chain_system_security.py",
             "scripts/ci/test_chain_system_security.py",
             "scripts/ci/pq_external_rollback_oracle.py",

@@ -1163,6 +1163,10 @@ NATIVE_REQUIRED_PATHS |= frozenset(('config/pon/pq128-lifetime-composition-v2.js
 # Explicitly retain the reviewed consolidation controls.
 # These source pins do not grant runtime or production qualification.
 CONSOLIDATION_CONTROL_REQUIRED_PATHS = frozenset((
+    "scripts/read_failed_native_campaign_zip.py",
+    "scripts/ci/test_read_failed_native_campaign_zip.py",
+    "scripts/pon_public_v3_phase_read.py",
+    "scripts/ci/test_pon_public_v3_phase_read.py",
     "scripts/ci/chain_system_security.py",
     "scripts/ci/test_chain_system_security.py",
     "scripts/ci/pq_external_rollback_oracle.py",
