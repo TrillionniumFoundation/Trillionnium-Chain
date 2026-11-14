@@ -15019,3 +15019,15 @@ Root integration retained the exact three Cell runtime/test blobs from
 Only independent source-guard and plan conflicts were composed. The selected
 44-control Linux receipt is component evidence and does not replace protected
 exact-head/prospective-merge confirmation or remove the prior Mac failure.
+
+## 2026-11-14 — Explicit authenticated-caller observation V5
+
+The current default PublicRequestObserver::new retains the complete V4 observation schema and all existing cost, wait, lifecycle, error and timing fields. The separately selected new_with_authenticated_callers constructor emits V5 and records a caller only after the real signature check succeeds. Claimed Hello identities and invalid signatures do not bind this field. A second binding retains the first value and records a measurement failure.
+
+This is local observation only. It changes no signed request domain, admission result, r20 resource account, expiry, fresh Host check or production qualification. Existing V4 readers continue to reject V5. The original two branch controls retain their substantive assertions with the explicit schema literals adapted to the current V4/V5 namespace; an exact default V4 serialization control and a V4-reader rejection control cover the compatibility boundary. Native controls require actual Linux execution; source integrity alone does not certify them.
+
+Root integration retained the exact T01 V5 observer, authenticating TCP hook
+and V4-consumer refusal control from eb3a02048eb219558697dffa710e41de8e471899.
+Default V4 output and the existing r20 authorization remain selected. The new
+V5 local observation is opt-in; pending native control execution is not replaced
+by source pins or by the earlier V4 272-control observation.

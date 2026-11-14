@@ -1366,6 +1366,21 @@ class ReaderTests(unittest.TestCase):
             with self.subTest(index=index), self.assertRaises(ValueError):
                 reader.execution_summary([wrong], True, observer_v4=True)
 
+    def test_current_v4_consumer_rejects_opt_in_authenticated_caller_v5(self):
+        phase = attribution_phase([], [], [], [record_v4()])
+        phase['receiver_observation'].update(
+            schema='public-v3-local-request-resource-observation-v4',
+            cpu_includes_reactor_authentication_or_response_signing=True,
+            cpu_includes_reactor_authentication=False, dispatch_cpu_includes_paid_body_decode=True,
+            dispatch_cpu_includes_response_signing=True, phase_parent_links_are_inclusive=True,
+            cpu_wait_is_outside_dispatch=True, monotonic_epoch_is_observer_local=True)
+        summary = reader.phase_summary(phase)
+        self.assertEqual(len(summary['receiver']['all_retained_records']['submit_phases']), 19)
+        phase['receiver_observation']['schema'] = 'public-v3-local-request-resource-observation-v5'
+        phase['receiver_observation']['records'][0]['authenticated_caller'] = '13' * 32
+        with self.assertRaisesRegex(ValueError, 'unknown observer schema'):
+            reader.phase_summary(phase)
+
     def test_v4_scope_is_explicit_and_does_not_relabel_v3(self):
         phase = attribution_phase([], [], [], [record_v4()])
         phase['receiver_observation'].update(

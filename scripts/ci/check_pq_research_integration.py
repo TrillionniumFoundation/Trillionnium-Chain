@@ -1287,6 +1287,15 @@ PARTIAL_CAMPAIGN_READER_REQUIRED_PATHS = frozenset((
 NATIVE_REQUIRED_PATHS |= PARTIAL_CAMPAIGN_READER_REQUIRED_PATHS
 
 
+
+# Authenticated-caller observation is explicitly v5; the default v4 remains unchanged.
+AUTHENTICATED_CALLER_OBSERVATION_REQUIRED_PATHS = frozenset((
+    'trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs',
+    'trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs',
+    'scripts/ci/test_pon_public_v3_phase_read.py',
+))
+NATIVE_REQUIRED_PATHS |= AUTHENTICATED_CALLER_OBSERVATION_REQUIRED_PATHS
+
 def is_pq_source(parts: tuple[str, ...]) -> bool:
     """Recognize versioned pq3 modules, pq.rs, cell_pq and older prefixes."""
     return any(
