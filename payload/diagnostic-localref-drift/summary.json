@@ -1,0 +1,126 @@
+{
+  "delta": {
+    "added": {
+      "refs/heads/fix/chain-audit-publish-5df-20261114": "5df7ae6f482157c5f7fdcbcd52222117a965053f"
+    },
+    "changed": {},
+    "current_count": 1028,
+    "inputs": {
+      "current": {
+        "bytes": 74115,
+        "path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-publish-v1-r1-after-5df-resume-001/local-refs-before.stdout",
+        "sha256": "22ee7c52e09f816489f53153950e6e45671ebce1a2d836b2c99a87ef73bb96a5"
+      },
+      "original": {
+        "bytes": 74026,
+        "path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-publish-v1-r1-001/local-refs-after-publication.stdout",
+        "sha256": "17070169c80905d91aa529186e6171b3747d38862c501d53818b7bc169df6aaf"
+      }
+    },
+    "original_count": 1027,
+    "removed": {},
+    "unchanged_count": 1027
+  },
+  "dispatch_started": false,
+  "new_Git_API_commands": 0,
+  "new_attempt": {
+    "bytes": 24978,
+    "path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-publish-v1-r1-after-5df-resume-001/summary.json",
+    "sha256": "7a6818cb96b460ac56cf317ef1220a8b101f63281dc662c1a0554a8f6632806e"
+  },
+  "new_attempt_errors_preserved": [
+    {
+      "message": "complete local refs differ from closed original",
+      "phase": "verify-existing-or-single-push",
+      "type": "ValueError"
+    },
+    {
+      "message": "original hook/URL after publication",
+      "phase": "publication-source-ref-index-fence",
+      "type": "ValueError"
+    }
+  ],
+  "new_attempt_status": "HOLD",
+  "observations": {
+    "new_local_before_time": "2026-11-14T18:01:26.515048+00:00",
+    "original_local_after_time": "2026-11-14T17:28:51.227784+00:00"
+  },
+  "observed_at": "2026-11-14T18:03:03.958108+00:00",
+  "original_attempt": {
+    "bytes": 342603,
+    "path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-publish-v1-r1-001/summary.json",
+    "sha256": "cabdb51529518374495ffefd5da7d776b65e5836c28c390b03a2837d9a82256b"
+  },
+  "possible_writer_provenance": "Not inferred from ref spelling or identity; requires retained writer/ref-change evidence.",
+  "push_started": false,
+  "read_only": true,
+  "reviewed_driver": {
+    "bytes": 43785,
+    "path": "/private/tmp/chain-consolidation-20261114-root/R1-diagnostic-tag-resume-preparation-v2/resume_diagnostic_stage1_v2.py",
+    "sha256": "e82bdcc48728032ef3a5f8c34740614559e0082d86066f327dba0bb13c1d429e"
+  },
+  "schema": "trnm-diagnostic-resume-local-ref-drift-review-v1",
+  "secondary_error": {
+    "configuration_drift_proven": false,
+    "finally_following_ref_and_index_fences_reached": false,
+    "hook_before_or_after_read_performed": false,
+    "message": "original hook/URL after publication",
+    "reason": "guard remained None because the first local-ref equality check raised before hook_guard was invoked; Python and short-circuits."
+  },
+  "source_after_valid_is_actual": true,
+  "source_identity_before_after": {
+    "head": {
+      "after": {
+        "bytes": 41,
+        "path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-publish-v1-r1-after-5df-resume-001/source-after-publication-head.stdout",
+        "sha256": "3449766f98f211ff0cf1a9903cd2c09ff4a3dd2231a2b5538f3affac31df9c4b"
+      },
+      "before": {
+        "bytes": 41,
+        "path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-publish-v1-r1-after-5df-resume-001/source-initial-head.stdout",
+        "sha256": "3449766f98f211ff0cf1a9903cd2c09ff4a3dd2231a2b5538f3affac31df9c4b"
+      },
+      "value": "2a86462a1ab20c68151719ba4635e3c294391e64\n"
+    },
+    "status": {
+      "after": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-publish-v1-r1-after-5df-resume-001/source-after-publication-status.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "before": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-publish-v1-r1-after-5df-resume-001/source-initial-status.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "value": ""
+    },
+    "symbolic": {
+      "after": {
+        "bytes": 42,
+        "path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-publish-v1-r1-after-5df-resume-001/source-after-publication-symbolic.stdout",
+        "sha256": "7946e07d3d207a6c9159a9dccccf2ef85c05f4ec0a5fa875402e6fd89fb66d1f"
+      },
+      "before": {
+        "bytes": 42,
+        "path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-publish-v1-r1-after-5df-resume-001/source-initial-symbolic.stdout",
+        "sha256": "7946e07d3d207a6c9159a9dccccf2ef85c05f4ec0a5fa875402e6fd89fb66d1f"
+      },
+      "value": "refs/heads/fix/chain-audit-final-20261114\n"
+    },
+    "tree": {
+      "after": {
+        "bytes": 41,
+        "path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-publish-v1-r1-after-5df-resume-001/source-after-publication-tree.stdout",
+        "sha256": "0f9097a88c00d7ab00eb3998da10e930ceef474ae03a5b7a582a5782f7b2213e"
+      },
+      "before": {
+        "bytes": 41,
+        "path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-publish-v1-r1-after-5df-resume-001/source-initial-tree.stdout",
+        "sha256": "0f9097a88c00d7ab00eb3998da10e930ceef474ae03a5b7a582a5782f7b2213e"
+      },
+      "value": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4\n"
+    }
+  },
+  "source_or_refs_changed_by_review": false
+}

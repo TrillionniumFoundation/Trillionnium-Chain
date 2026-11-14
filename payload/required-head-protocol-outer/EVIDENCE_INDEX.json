@@ -1,0 +1,62 @@
+{
+  "coverage": "Only the named required head protocol completed-failure job metadata and original log; no run refresh or artifact contents; actual tested source requires original log evidence",
+  "files": [
+    {
+      "bytes": 14551,
+      "path": "/private/tmp/chain-prci-H5DF-required-head-protocol-original-log-20261114-v1/acquisition-summary.json",
+      "sha256": "d2849e851192fab8acdc5ffb1aedc457d604dd6aeba5d8706214d490daf1a327"
+    },
+    {
+      "bytes": 8561,
+      "path": "/private/tmp/chain-prci-H5DF-required-head-protocol-original-log-20261114-v1/approved-capture-source.py",
+      "sha256": "1f1b31e74c0a63892fb0f7d325b830b0f64e40a379cdaf30b965599fbe9c2604"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-prci-H5DF-required-head-protocol-original-log-20261114-v1/job-132528769008-metadata.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3144,
+      "path": "/private/tmp/chain-prci-H5DF-required-head-protocol-original-log-20261114-v1/job-132528769008-metadata.stdout",
+      "sha256": "d2aa534bbb180b20cc0396c309e2202ad852c56a532b676ad413cb3b94a709a5"
+    },
+    {
+      "bytes": 1421,
+      "path": "/private/tmp/chain-prci-H5DF-required-head-protocol-original-log-20261114-v1/job-132528769008-metadata.step.json",
+      "sha256": "9cfe946126719e48292a9a77077be0553b53405bff5510a0cdd6ed3da4c65b0a"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-prci-H5DF-required-head-protocol-original-log-20261114-v1/job-132528769008-original-log.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 219531,
+      "path": "/private/tmp/chain-prci-H5DF-required-head-protocol-original-log-20261114-v1/job-132528769008-original-log.stdout",
+      "sha256": "83b7dc7a418f9a31563abf92b7702c8969ac1c9fe2ed741b2f9ba4b95ee13a5c"
+    },
+    {
+      "bytes": 1452,
+      "path": "/private/tmp/chain-prci-H5DF-required-head-protocol-original-log-20261114-v1/job-132528769008-original-log.step.json",
+      "sha256": "2a2005ea0e9df40ece24799b7d23461a8d7baa2261cb7d8b928ae0bfc0d95f81"
+    },
+    {
+      "bytes": 959,
+      "path": "/private/tmp/chain-prci-H5DF-required-head-protocol-original-log-20261114-v1/launcher.py",
+      "sha256": "d268b1c0be0cea964c5ae59370e1bcab39fa5b74e2c55e42c52a57307a24c455"
+    },
+    {
+      "bytes": 8321,
+      "path": "/private/tmp/chain-prci-H5DF-required-head-protocol-original-log-20261114-v1/producer.py",
+      "sha256": "b5bfad58b2b4dbed3d4410d46460f9bb3b16d07a8e0dd4a0d55753bed364b9a4"
+    },
+    {
+      "bytes": 7306,
+      "path": "/private/tmp/chain-prci-H5DF-required-head-protocol-original-log-20261114-v1/service-to-required-protocol.patch",
+      "sha256": "f9a8d40df90e1d99a47ec24def0000aaa6b40934afcc960626dfc2fb495e884d"
+    }
+  ],
+  "schema": "trnm-fixed-original-file-index-v1",
+  "self_excluded": true
+}

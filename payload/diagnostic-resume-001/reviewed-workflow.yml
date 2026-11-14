@@ -1,0 +1,574 @@
+# Diagnostic control commit only; checkout below remains the complete immutable R1 subject.
+name: R1 native observation preparation
+"on":
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: r1-native-stage1-${{ github.ref }}
+  cancel-in-progress: false
+env:
+  CI: "true"
+  CARGO_INCREMENTAL: "0"
+  CARGO_BUILD_JOBS: "2"
+  RUST_TEST_THREADS: "1"
+  CARGO_TERM_COLOR: never
+  PYTHONDONTWRITEBYTECODE: "1"
+  TRNM_EXPECTED_SOURCE_SHA: 2a86462a1ab20c68151719ba4635e3c294391e64
+jobs:
+  r1_native_observation_prebuild:
+    name: R1 diagnostic stage 1 (no acceptance)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Checkout immutable R1 subject
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 2a86462a1ab20c68151719ba4635e3c294391e64
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Set original isolated compiler paths
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf 'CARGO_HOME=%s/cargo-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
+          printf 'CARGO_TARGET_DIR=%s/target-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
+          printf 'TRNM_CI_RECEIPT_DIR=%s/r1-native-stage1/ci-observations\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+      - name: Probe existing observation tools and preserve original no-run build
+        shell: bash
+        run: |
+          set -euo pipefail
+          set -o noclobber
+          cat > "$RUNNER_TEMP/r1-stage1-helper.py" <<'R1_STAGE1_PY'
+          #!/usr/bin/env python3
+          """R1 diagnostic stage 1 only: fixed owned probes, original no-run build, ELF evidence."""
+          import csv
+          import hashlib
+          import json
+          import math
+          import os
+          from pathlib import Path
+          import re
+          import selectors
+          import shutil
+          import signal
+          import stat
+          import subprocess
+          import sys
+          import time
+          from datetime import datetime, timezone
+          
+          R1 = "2a86462a1ab20c68151719ba4635e3c294391e64"
+          TREE = "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4"
+          REPO = "TrillionniumFoundation/Trillionnium-Chain"
+          WORKFLOW = ".github/workflows/trnm-required-baseline.yml"
+          JOB = "r1_native_observation_prebuild"
+          TAG_PREFIX = "refs/tags/diagnostic/r1-native-stage1-"
+          LOCAL_BRANCH = "fix/chain-r1-native-stage1-subject"
+          BUILD = ["cargo", "test", "--locked", "--release", "--manifest-path",
+                   "trillionnium/Cargo.toml", "-p", "trnm-pon-node", "--test",
+                   "public_v3_from_zero", "--no-run", "--message-format=json"]
+          PINS = {
+              "scripts/project-preflight.sh": (242, "08645a9c6c8ab5cd9a92aa24e1c19fb71e7330d28e379b805d8e3f81ce8ede1f"),
+              "scripts/ci/project_boundary.py": (4485, "5845b10022c1ce625e864c38a9c69ba1982a1d1efad1dc934cc06f3d8dafda47"),
+              "PROJECT_BOUNDARY.json": (2002, "3ba7894e49ab212718bcf4876affc0db931fa33a0d38d8ba0529c6b164a26ae9"),
+              "rust-toolchain.toml": (86, "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a"),
+              "trillionnium/Cargo.lock": (42127, "86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e"),
+              "trillionnium/Cargo.toml": (2204, "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"),
+              "scripts/ci/run_from_zero_native.py": (115087, "3f497112a01f71f7259a1e12fff48f2a38499e396dae591692d623813bd6b5b0"),
+              "scripts/ci/run_from_zero_host.py": (28366, "2840de7cc19626c32d165bcfd032479db27180f03516ba3cefb0dafdaf61f4eb"),
+              "scripts/ci/verify_ci_source.py": (11231, "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946"),
+          }
+          CANDIDATES = {
+              "test_phase": ("signed_confirmation_phase_with_builder",),
+              "request_observer_epoch": ("PublicRequestObserver", "::new", "::with_caller_mode"),
+              "history_observer_epoch": ("HistoryImportObserver", "::new"),
+              "history_receive": ("receive_public_page_from_before_observed",),
+              "history_work": ("history_import", "verify_history_work"),
+              "client_rpc": ("call_public_authenticated_with_timing",),
+              "host_kernel_budget": ("KernelBudget", "checked_parent"),
+              "host_parent_limits": ("ScopedParentDirectory", "verify_limits"),
+          }
+          MAX_ELF = 64 * 1024 * 1024
+          
+          class Hold(Exception):
+              pass
+          
+          def require(ok, message):
+              if not ok:
+                  raise Hold(message)
+          
+          def now():
+              return datetime.now(timezone.utc).isoformat()
+          
+          def stable(path, limit):
+              path = Path(path)
+              before = path.lstat()
+              require(stat.S_ISREG(before.st_mode) and not path.is_symlink(), "not_regular:" + str(path))
+              require(0 <= before.st_size <= limit, "file_bound:" + str(path))
+              with os.fdopen(os.open(path, os.O_RDONLY | os.O_NOFOLLOW), "rb") as f:
+                  first = os.fstat(f.fileno())
+                  data = f.read(limit + 1)
+                  last = os.fstat(f.fileno())
+              after = path.lstat()
+              def version(s):
+                  return (s.st_dev, s.st_ino, s.st_mode, s.st_nlink, s.st_size, s.st_mtime_ns, s.st_ctime_ns)
+              require(version(before) == version(first) == version(last) == version(after),
+                      "file_changed:" + str(path))
+              require(len(data) == before.st_size, "short_read:" + str(path))
+              return data, {"path": str(path), "bytes": len(data), "sha256": hashlib.sha256(data).hexdigest(),
+                            "dev": before.st_dev, "ino": before.st_ino, "nlink": before.st_nlink,
+                            "mtime_ns": before.st_mtime_ns, "ctime_ns": before.st_ctime_ns}
+          
+          def save(path, data):
+              path = Path(path)
+              path.parent.mkdir(parents=True, exist_ok=True)
+              with path.open("xb") as f:
+                  f.write(data)
+          
+          def write_json(path, value):
+              save(path, (json.dumps(value, sort_keys=True, indent=2, allow_nan=False) + "\n").encode())
+          
+          def captured(out, root, steps, label, argv, timeout, cap=1024 * 1024, required=True):
+              """Bound both streams and always record/clean up only this newly owned group."""
+              started, t0 = now(), time.monotonic()
+              paths = [out / (label + ".stdout"), out / (label + ".stderr")]
+              reason = error = None
+              p = sel = None
+              rc = None
+              stopped = None
+              killed = False
+              cleanup_errors = []
+              signals = []
+              def owned_signal(sig):
+                  try:
+                      os.killpg(p.pid, sig)
+                      signals.append({"signal": sig, "result": "sent"})
+                  except ProcessLookupError:
+                      signals.append({"signal": sig, "result": "owned_group_absent"})
+                  except Exception as exc:
+                      cleanup_errors.append(type(exc).__name__ + ":" + str(exc)[:512])
+              with paths[0].open("xb") as stdout, paths[1].open("xb") as stderr:
+                  try:
+                      p = subprocess.Popen(argv, cwd=root, stdin=subprocess.DEVNULL,
+                                           stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                           start_new_session=True, env=os.environ.copy())
+                      sel = selectors.DefaultSelector()
+                      for stream, target in [(p.stdout, stdout), (p.stderr, stderr)]:
+                          os.set_blocking(stream.fileno(), False)
+                          sel.register(stream, selectors.EVENT_READ, [target, 0])
+                      # EOF does not prove exit: a still-live owned child keeps its original budget.
+                      while sel.get_map() or p.poll() is None:
+                          current = time.monotonic()
+                          if reason is None and current >= t0 + timeout:
+                              reason = "timeout"
+                          if reason is not None and stopped is None:
+                              stopped = current
+                              owned_signal(signal.SIGTERM)
+                          if stopped is not None and current - stopped >= 2 and not killed:
+                              owned_signal(signal.SIGKILL)
+                              killed = True
+                          if stopped is not None and current - stopped >= 5:
+                              break
+                          for key, _ in sel.select(0.1):
+                              block = os.read(key.fd, 65536)
+                              if not block:
+                                  sel.unregister(key.fileobj)
+                                  key.fileobj.close()
+                                  continue
+                              target, size = key.data
+                              remaining = max(0, cap - size)
+                              target.write(block[:remaining])
+                              key.data[1] = size + min(len(block), remaining)
+                              if len(block) > remaining and reason is None:
+                                  reason = "stream_bound"
+                      rc = p.wait(timeout=5)
+                  except BaseException as exc:
+                      error = {"type": type(exc).__name__, "message": str(exc)[:2048]}
+                      reason = reason or "capture_exception"
+                  finally:
+                      # Even a selector/read/wait exception leaves an actual PID and wait result.
+                      if p is not None:
+                          try:
+                              if p.poll() is None:
+                                  if stopped is None:
+                                      stopped = time.monotonic()
+                                      owned_signal(signal.SIGTERM)
+                                  try:
+                                      rc = p.wait(timeout=max(0.01, 2 - (time.monotonic() - stopped)))
+                                  except subprocess.TimeoutExpired:
+                                      owned_signal(signal.SIGKILL)
+                                      killed = True
+                                      rc = p.wait(timeout=5)
+                              else:
+                                  rc = p.returncode
+                          except Exception as exc:
+                              cleanup_errors.append(type(exc).__name__ + ":" + str(exc)[:512])
+                          for stream in (p.stdout, p.stderr):
+                              if stream is not None:
+                                  try:
+                                      stream.close()
+                                  except Exception as exc:
+                                      cleanup_errors.append(type(exc).__name__ + ":" + str(exc)[:512])
+                      if sel is not None:
+                          try:
+                              sel.close()
+                          except Exception as exc:
+                              cleanup_errors.append(type(exc).__name__ + ":" + str(exc)[:512])
+              records = [stable(path, cap)[1] for path in paths]
+              row = {"label": label, "argv": argv, "cwd": str(root), "started_at": started,
+                     "finished_at": now(), "elapsed_seconds": time.monotonic() - t0,
+                     "timeout_seconds": timeout, "stream_cap_bytes": cap,
+                     "pid": p.pid if p is not None else None,
+                     "owned_process_group": p.pid if p is not None else None,
+                     "exit_code": rc, "reaped": p is not None and rc is not None,
+                     "capture_reason": reason, "capture_error": error,
+                     "cleanup_errors": cleanup_errors, "signals": signals,
+                     "group_cleanup_completeness": "not_proven",
+                     "stdout": records[0], "stderr": records[1]}
+              steps.append(row)
+              write_json(out / (label + ".step.json"), row)
+              if required:
+                  require(rc == 0 and reason is None and error is None and not cleanup_errors,
+                          "command_failed:" + label)
+              return row
+          
+          def text_output(step):
+              return Path(step["stdout"]["path"]).read_text(encoding="utf-8")
+          
+          def main():
+              if sys.flags.optimize != 0:
+                  raise SystemExit("optimization is forbidden")
+              root = Path(os.environ["GITHUB_WORKSPACE"]).resolve(strict=True)
+              temp = Path(os.environ["RUNNER_TEMP"]).resolve(strict=True)
+              require(root == Path.cwd().resolve() and not temp.is_relative_to(root), "workspace/temp scope")
+              out = temp / "r1-native-stage1"
+              out.mkdir(mode=0o700)
+              raw = out / "raw"
+              raw.mkdir()
+              steps = []
+              report = {
+                  "schema": "trnm-r1-diagnostic-tag-stage1-v3", "status": "HOLD",
+                  "started_at": now(), "subject_commit": R1, "subject_tree": TREE,
+                  "tests_executed": False, "original_five_controls_executed": False,
+                  "formal_trace_executed": False, "host_provisioning_performed": False,
+                  "required_qualification": False, "pq_qualification": False,
+                  "activation_qualification": False, "future_observation_authorized": False,
+                  "old_failure_elf_reused": False, "original_build_timeout_seconds": 900,
+                  "original_protocol_provider_prepared": True,
+                  "original_protocol_provider_fact": "Preserved R1 protocol job provider-setup evidence; not an action of this helper.",
+                  "this_stage1_provider_prepared": False,
+                  "whole_original_environment_equivalence_claimed": False,
+                  "errors": [], "steps": steps,
+              }
+              source_before = None
+              def run(label, argv, timeout=30, cap=1024 * 1024, required=True):
+                  return captured(raw, root, steps, label, argv, timeout, cap, required)
+              def git(label, *args, cap=256 * 1024):
+                  return text_output(run(label, ["/usr/bin/git", "--no-optional-locks",
+                                                "-c", "protocol.allow=never", *args], cap=cap)).strip()
+              def verify(label, filename):
+                  target = out / "ci-observations" / filename
+                  run(label, ["python3", "scripts/ci/verify_ci_source.py", "--kind", "head",
+                              "--expected-head", R1, "--output", str(target)], timeout=300)
+                  data, pin = stable(target, 4096)
+                  expected = {"schema": "trnm-ci-source-v1", "kind": "head", "tested_commit": R1,
+                              "tested_tree": TREE, "candidate": R1, "base": None,
+                              "prospective_merge": None, "tracked_worktree_verified": True,
+                              "tracked_entries": 41677, "tracked_bytes": 3994964901,
+                              "tests_executed_by_identity_check": False}
+                  require(json.loads(data) == expected, "source_identity_mismatch:" + label)
+                  report[label] = pin
+                  return data
+              try:
+                  require(sys.platform == "linux" and os.getuid() != 0, "real Linux runner account required")
+                  expected_env = {"GITHUB_REPOSITORY": REPO, "GITHUB_EVENT_NAME": "workflow_dispatch",
+                                  "GITHUB_REF_TYPE": "tag", "GITHUB_JOB": JOB,
+                                  "GITHUB_ACTIONS": "true", "CI": "true", "CARGO_INCREMENTAL": "0",
+                                  "CARGO_BUILD_JOBS": "2", "RUST_TEST_THREADS": "1",
+                                  "CARGO_TERM_COLOR": "never", "TRNM_EXPECTED_SOURCE_SHA": R1}
+                  require(all(os.environ.get(k) == v for k, v in expected_env.items()), "fixed environment guard")
+                  ref = os.environ.get("GITHUB_REF", "")
+                  control = os.environ.get("GITHUB_SHA", "")
+                  require(ref.startswith(TAG_PREFIX) and re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]{0,63}",
+                          ref[len(TAG_PREFIX):]) is not None, "diagnostic tag namespace")
+                  require(re.fullmatch(r"[0-9a-f]{40}", control) is not None and control != R1,
+                          "separate actual control commit")
+                  require(os.environ.get("GITHUB_WORKFLOW_SHA") == control, "actual workflow SHA guard")
+                  require(os.environ.get("GITHUB_WORKFLOW_REF") == REPO + "/" + WORKFLOW + "@" + ref,
+                          "actual workflow ref guard")
+                  require(all(re.fullmatch(r"[1-9][0-9]*", os.environ.get(k, "")) for k in
+                              ("GITHUB_RUN_ID", "GITHUB_RUN_ATTEMPT")), "actual run identity")
+                  overrides = [k for k in os.environ if k in
+                               ("RUSTFLAGS", "CARGO_ENCODED_RUSTFLAGS", "RUSTDOCFLAGS", "RUSTC",
+                                "RUSTDOC", "RUSTC_WRAPPER", "RUSTC_WORKSPACE_WRAPPER",
+                                "CARGO_BUILD_TARGET", "RUSTUP_TOOLCHAIN")
+                               or k.startswith("CARGO_PROFILE_")
+                               or (k.startswith("CARGO_TARGET_") and k != "CARGO_TARGET_DIR")]
+                  require(not overrides, "unexpected compiler override keys:" + ",".join(sorted(overrides)))
+                  for key, suffix in (("CARGO_HOME", "cargo-" + JOB), ("CARGO_TARGET_DIR", "target-" + JOB)):
+                      path = temp / suffix
+                      require(os.environ.get(key) == str(path) and not path.exists(), "fresh isolated " + key)
+                      path.mkdir(mode=0o700)
+                  require(os.environ.get("TRNM_CI_RECEIPT_DIR") == str(out / "ci-observations"),
+                          "source receipt path")
+                  report["pinned_source_files"] = []
+                  for path, expected in PINS.items():
+                      _, pin = stable(root / path, 128 * 1024)
+                      require((pin["bytes"], pin["sha256"]) == expected, "pinned source:" + path)
+                      report["pinned_source_files"].append(pin)
+                  producer, producer_pin = stable(Path(__file__), 128 * 1024)
+                  save(out / "producer.py", producer)
+                  report["producer"] = producer_pin
+                  require(git("control-tag-type", "cat-file", "-t", ref) == "tag", "annotated tag required")
+                  tag_oid = git("control-tag-oid", "rev-parse", "--verify", ref)
+                  require(git("control-tag-peeled", "rev-parse", "--verify", ref + "^{}") == control,
+                          "tag/control mismatch")
+                  tag = git("control-tag-object", "cat-file", "tag", tag_oid)
+                  require(tag.split("\n\n", 1)[0].splitlines()[:2] ==
+                          ["object " + control, "type commit"], "direct annotated commit tag required")
+                  commit = git("control-commit", "cat-file", "commit", control)
+                  headers = commit.split("\n\n", 1)[0].splitlines()
+                  require([s[7:] for s in headers if s.startswith("parent ")] == [R1],
+                          "control must be sole-parent R1 child")
+                  changed = git("control-diff-paths", "diff-tree", "--no-commit-id",
+                                "--name-only", "-r", control).splitlines()
+                  require(changed == [WORKFLOW], "control changes only existing workflow path")
+                  workflow = text_output(run("control-workflow", ["/usr/bin/git", "--no-optional-locks",
+                                   "-c", "protocol.allow=never", "cat-file", "blob", control + ":" + WORKFLOW],
+                                   cap=256 * 1024))
+                  begin = '          cat > "$RUNNER_TEMP/r1-stage1-helper.py" <<' + "'R1_STAGE1_PY'\n"
+                  end = "          R1_STAGE1_PY\n"
+                  require(workflow.count(begin) == 1 and workflow.count(end) == 1, "single embedded helper")
+                  body = workflow.split(begin, 1)[1].split(end, 1)[0].splitlines(keepends=True)
+                  require(all(line.startswith("          ") for line in body), "embedded indentation")
+                  require("".join(line[10:] for line in body).encode() == producer, "control/helper bytes differ")
+                  report["control"] = {k: os.environ[k] for k in
+                                       ("GITHUB_REPOSITORY", "GITHUB_EVENT_NAME", "GITHUB_REF",
+                                        "GITHUB_REF_TYPE", "GITHUB_SHA", "GITHUB_WORKFLOW_SHA",
+                                        "GITHUB_WORKFLOW_REF", "GITHUB_RUN_ID", "GITHUB_RUN_ATTEMPT",
+                                        "GITHUB_JOB")}
+                  report["control"]["tag_object"] = tag_oid
+                  report["control"]["tree"] = headers[0].removeprefix("tree ")
+                  report["control"]["parent"] = R1
+                  source_before = verify("source_before", "source.json")
+                  # A local development checkout satisfies the unchanged default preflight.
+                  # This is confined to the fresh hosted runner and never creates a remote ref.
+                  local_ref = "refs/heads/" + LOCAL_BRANCH
+                  require(git("subject-head-before-local", "rev-parse", "HEAD") == R1, "local subject HEAD")
+                  require(git("subject-tree-before-local", "rev-parse", "HEAD^{tree}") == TREE, "local subject tree")
+                  require(git("subject-clean-before-local", "status", "--porcelain=v1", "--untracked-files=all") == "",
+                          "unclean before local checkout")
+                  require(git("subject-branch-before-local", "branch", "--show-current")
+                          == "", "expected detached checkout")
+                  local_before = git("local-ref-before", "for-each-ref", "--format=%(refname) %(objectname)", local_ref)
+                  require(local_before == "", "local diagnostic branch already exists")
+                  boundary = json.loads((root / "PROJECT_BOUNDARY.json").read_bytes())
+                  require(LOCAL_BRANCH not in boundary["branch"]["protected"] and
+                          re.fullmatch(boundary["branch"]["development_regex"], LOCAL_BRANCH),
+                          "local branch violates unchanged development policy")
+                  run("runner-local-development-checkout", ["/usr/bin/git", "--no-optional-locks",
+                      "-c", "protocol.allow=never", "switch", "--create", LOCAL_BRANCH, R1])
+                  local_after = git("local-ref-after", "for-each-ref", "--format=%(refname) %(objectname)", local_ref)
+                  require(local_after == local_ref + " " + R1, "wrong local diagnostic ref")
+                  require(git("subject-head-after-local", "rev-parse", "HEAD") == R1 and
+                          git("subject-tree-after-local", "rev-parse", "HEAD^{tree}") == TREE and
+                          git("subject-branch-after-local", "symbolic-ref", "HEAD") == local_ref and
+                          git("subject-clean-after-local", "status", "--porcelain=v1", "--untracked-files=all") == "",
+                          "local checkout changed subject")
+                  report["runner_local_checkout"] = {"ref": local_ref, "before": local_before,
+                      "after": local_after, "subject": R1, "tree": TREE,
+                      "ephemeral_runner_only": True, "remote_ref_created": False,
+                      "GITHUB_REF_preserved": os.environ["GITHUB_REF"]}
+                  run("default-project-preflight", ["bash", "scripts/project-preflight.sh"], timeout=120)
+                  tools = {}
+                  for name in ("sudo", "timeout", "perf", "true", "readelf", "nm", "objdump"):
+                      invocation = Path("/usr/bin") / name
+                      require(invocation.exists() and os.access(invocation, os.X_OK), "missing existing tool:" + name)
+                      resolved = invocation.resolve(strict=True)
+                      _, pin = stable(resolved, 64 * 1024 * 1024)
+                      tools[name] = {"invocation_path": str(invocation), "resolved": pin}
+                  report["existing_tools"] = tools
+                  build_env_keys = ("CARGO_HOME", "CARGO_TARGET_DIR", "CARGO_BUILD_JOBS",
+                      "CARGO_INCREMENTAL", "RUST_TEST_THREADS", "RUSTFLAGS", "CARGO_ENCODED_RUSTFLAGS")
+                  report["selected_actual_build_environment"] = {k: os.environ.get(k) for k in build_env_keys}
+                  provider_keys = ("OPENSSL_DIR", "OPENSSL_STATIC", "OPENSSL_CONF", "OPENSSL_MODULES",
+                      "TRNM_PQ_OPENSSL", "TRNM_PQ_OPENSSL_SHA256", "TRNM_PQ_OPENSSL_VERSION")
+                  provider_present = [k for k in provider_keys if k in os.environ]
+                  report["stage1_provider_override_keys_present"] = provider_present
+                  require(not provider_present, "unexpected provider overrides; no values dumped")
+                  report["selected_actual_build_environment"].update({k: None for k in provider_keys})
+                  run("kernel-version", ["/usr/bin/uname", "-sr"])
+                  run("perf-version", ["/usr/bin/perf", "--version"])
+                  policy = {}
+                  for name in ("perf_event_paranoid", "kptr_restrict"):
+                      path = Path("/proc/sys/kernel") / name
+                      value = path.read_text().strip()
+                      require(re.fullmatch(r"-?[0-9]{1,10}", value) is not None, "kernel policy scalar")
+                      policy[name] = int(value)
+                  report["observed_kernel_policy"] = policy
+                  report["permission_probes"] = []
+                  for label, event in (("probe-task-clock", "task-clock"), ("probe-sched-switch", "sched:sched_switch")):
+                      argv = ["/usr/bin/sudo", "-n", "--", "/usr/bin/timeout", "--signal=TERM",
+                              "--kill-after=2s", "15s", "/usr/bin/perf", "stat", "-x", ",",
+                              "-e", event, "--", "/usr/bin/true"]
+                      result = run(label, argv, timeout=25, cap=64 * 1024, required=False)
+                      data = Path(result["stderr"]["path"]).read_text(encoding="utf-8", errors="replace")
+                      rows = [r for r in csv.reader(data.splitlines()) if len(r) >= 3 and r[2].strip() == event]
+                      count = None
+                      if len(rows) == 1:
+                          try:
+                              value = float(rows[0][0].strip())
+                              if math.isfinite(value) and value >= 0:
+                                  count = value
+                          except ValueError:
+                              pass
+                      supported = (result["exit_code"] == 0 and result["capture_reason"] is None and
+                                   result["capture_error"] is None and not result["cleanup_errors"] and count is not None)
+                      report["permission_probes"].append({"event": event, "command_completed": supported,
+                          "reported_value": count, "reported_unit": rows[0][1] if len(rows) == 1 else None,
+                          "only_owned_true_process": True, "phase_coverage_proven": False,
+                          "uprobes_supported": None, "uretprobes_supported": None, "stacks_supported": None})
+                      require(supported, "existing observation tool/permission unavailable:" + event)
+                  require(shutil.which("rustup") is not None and shutil.which("cargo") is not None,
+                          "original compiler bootstrap tools unavailable")
+                  run("install-original-compiler", ["rustup", "toolchain", "install", "1.95.0",
+                      "--profile", "minimal", "--component", "rustfmt", "--component", "clippy"], timeout=600)
+                  run("active-toolchain", ["rustup", "show", "active-toolchain"])
+                  version = text_output(run("rustc-version", ["rustc", "-Vv"]))
+                  require("release: 1.95.0\n" in version, "wrong rustc release")
+                  run("cargo-version", ["cargo", "-V"])
+                  build = run("original-native-prebuild", BUILD, timeout=900, cap=16 * 1024 * 1024)
+                  artifacts = []
+                  for line in Path(build["stdout"]["path"]).read_text(encoding="utf-8").splitlines():
+                      try:
+                          row = json.loads(line)
+                      except json.JSONDecodeError:
+                          continue
+                      if (row.get("reason") == "compiler-artifact" and
+                          row.get("target", {}).get("name") == "public_v3_from_zero" and
+                          row.get("profile", {}).get("test") is True and row.get("executable")):
+                          artifacts.append(row)
+                  require(len(artifacts) == 1, "original unique compiler-artifact selection")
+                  write_json(out / "compiler-artifact.json", artifacts[0])
+                  executable = Path(artifacts[0]["executable"])
+                  require(not executable.is_symlink(), "ELF symlink")
+                  executable = executable.resolve(strict=True)
+                  require(executable.is_relative_to(Path(os.environ["CARGO_TARGET_DIR"])), "ELF outside original target")
+                  elf, elf_pin = stable(executable, MAX_ELF)
+                  require(elf[:4] == b"\x7fELF", "selected binary is not ELF")
+                  save(out / "public_v3_from_zero.elf", elf)
+                  report["new_same_source_elf"] = dict(elf_pin, original_failure_elf_identity_claimed=False)
+                  for label, argv in (
+                      ("elf-header", ["/usr/bin/readelf", "-h", str(executable)]),
+                      ("elf-sections", ["/usr/bin/readelf", "-SW", str(executable)]),
+                      ("elf-notes", ["/usr/bin/readelf", "-nW", str(executable)]),
+                      ("elf-symbols", ["/usr/bin/readelf", "-sW", str(executable)]),
+                      ("nm-raw", ["/usr/bin/nm", "--defined-only", "--print-size", "--numeric-sort", str(executable)]),
+                      ("nm-demangled", ["/usr/bin/nm", "--defined-only", "--print-size", "--numeric-sort", "--demangle", str(executable)]),
+                  ):
+                      run(label, argv, cap=8 * 1024 * 1024)
+                  sections = (raw / "elf-sections.stdout").read_text()
+                  notes = (raw / "elf-notes.stdout").read_text()
+                  report["elf_optional_metadata"] = {
+                      "build_ids": re.findall(r"Build ID:\s*([0-9a-fA-F]+)", notes),
+                      "debug_info_section_present": ".debug_info" in sections,
+                      "debug_line_section_present": ".debug_line" in sections,
+                      "dwarf_line_mapping_verified": False}
+                  pattern = re.compile(r"^([0-9a-fA-F]+)\s+([0-9a-fA-F]+)\s+([A-Za-z?])\s+(.+)$")
+                  raw_symbols = {}
+                  for line in (raw / "nm-raw.stdout").read_text().splitlines():
+                      match = pattern.fullmatch(line)
+                      if match:
+                          key = (int(match[1], 16), int(match[2], 16), match[3])
+                          raw_symbols.setdefault(key, []).append(match[4])
+                  matches = {k: [] for k in CANDIDATES}
+                  for line in (raw / "nm-demangled.stdout").read_text().splitlines():
+                      match = pattern.fullmatch(line)
+                      if not match or match[3] not in "tTwW":
+                          continue
+                      address, size, name = int(match[1], 16), int(match[2], 16), match[4]
+                      key = (address, size, match[3])
+                      for group, terms in CANDIDATES.items():
+                          selected = (terms[0] in name and any(term in name for term in terms[1:])) if group == "request_observer_epoch" else all(term in name for term in terms)
+                          if selected:
+                              matches[group].append({"link_time_address": address, "size": size,
+                                  "demangled": name, "raw_names_at_exact_address_size": raw_symbols.get(key, [])})
+                  write_json(out / "candidate-symbols.json", matches)
+                  seen = set()
+                  omitted = []
+                  for group, rows in matches.items():
+                      if not rows:
+                          omitted.append(group + ":missing_or_inlined")
+                      for row in rows:
+                          address, size = row["link_time_address"], row["size"]
+                          key = (address, size)
+                          if key in seen:
+                              continue
+                          if size == 0 or size > 65536 or len(seen) >= 32 or len(row["raw_names_at_exact_address_size"]) != 1:
+                              omitted.append(group + ":bounded_or_ambiguous")
+                              continue
+                          seen.add(key)
+                          run("disassembly-%02d" % len(seen), ["/usr/bin/objdump", "-d",
+                              "--start-address=" + hex(address), "--stop-address=" + hex(address + size),
+                              str(executable)], cap=1024 * 1024)
+                  report["symbol_limitations"] = omitted
+                  _, elf_after = stable(executable, MAX_ELF)
+                  require(elf_after == elf_pin, "ELF changed during read-only inspection")
+                  report["new_same_source_elf_after"] = elf_after
+                  report["phase_offsets_verified"] = False
+                  report["stage1_material_complete"] = True
+                  require(not omitted, "missing/ambiguous symbols: retain evidence and HOLD for review")
+                  report["status"] = "PREBUILD_EVIDENCE_CAPTURED"
+              except Exception as exc:
+                  report["errors"].append({"type": type(exc).__name__, "message": str(exc)[:4096]})
+              finally:
+                  if source_before is not None:
+                      try:
+                          source_after = verify("source_after", "source-after.json")
+                          require(source_after == source_before, "source before/after bytes differ")
+                          report["source_before_after_equal"] = True
+                          if "runner_local_checkout" in report:
+                              final_ref = git("local-ref-final", "for-each-ref", "--format=%(refname) %(objectname)",
+                                              report["runner_local_checkout"]["ref"])
+                              require(final_ref == report["runner_local_checkout"]["after"], "local ref changed")
+                              report["runner_local_checkout"]["final"] = final_ref
+                      except Exception as exc:
+                          report["status"] = "HOLD"
+                          report["source_before_after_equal"] = False
+                          report["errors"].append({"type": type(exc).__name__, "message": str(exc)[:4096]})
+                  report["finished_at"] = now()
+                  write_json(out / "summary.json", report)
+                  entries = []
+                  for path in sorted(out.rglob("*")):
+                      require(not path.is_symlink(), "output symlink")
+                      if path.is_file():
+                          _, pin = stable(path, MAX_ELF)
+                          entries.append({"path": path.relative_to(out).as_posix(),
+                                          "bytes": pin["bytes"], "sha256": pin["sha256"]})
+                      else:
+                          require(path.is_dir(), "output special file")
+                  write_json(out / "EVIDENCE_INDEX.json", {"schema": "trnm-r1-stage1-files-v1",
+                             "files": entries, "count": len(entries),
+                             "total_bytes": sum(row["bytes"] for row in entries),
+                             "index_self_excluded": True})
+                  print(json.dumps({"schema": report["schema"], "status": report["status"],
+                                    "summary": str(out / "summary.json"),
+                                    "tests_executed": False, "formal_trace_executed": False,
+                                    "required_qualification": False}, sort_keys=True))
+              return 0 if report["status"] == "PREBUILD_EVIDENCE_CAPTURED" else 1
+          
+          if __name__ == "__main__":
+              raise SystemExit(main())
+          R1_STAGE1_PY
+          python3 -B "$RUNNER_TEMP/r1-stage1-helper.py"
+      - name: Preserve diagnostic success or HOLD without acceptance claims
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r1-native-stage1-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/r1-native-stage1/
+            ${{ runner.temp }}/r1-stage1-helper.py
+          if-no-files-found: error
+          retention-days: 30

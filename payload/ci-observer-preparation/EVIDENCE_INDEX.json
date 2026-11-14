@@ -1,0 +1,31 @@
+{
+  "files": [
+    {
+      "bytes": 19408,
+      "path": "/private/tmp/chain-prci-head-5df7ae6-ci-progress-preparation-20261114-v1/reviewed-original-R1-reader.py.raw",
+      "sha256": "8d3a5cba653cd53caa4144d71193e4b7ff3faf49f4a10a1ebce45940eb072503"
+    },
+    {
+      "bytes": 19479,
+      "path": "/private/tmp/chain-prci-head-5df7ae6-ci-progress-preparation-20261114-v1/read_head5df_required_ci_progress_v1.py",
+      "sha256": "3f50aa71fa06f37e64c1ed1e669ad1b1b45ebe27acfddb5004957ef3a43c68fb"
+    },
+    {
+      "bytes": 12015,
+      "path": "/private/tmp/chain-prci-head-5df7ae6-ci-progress-preparation-20261114-v1/R1-to-head5df-identity-only.patch",
+      "sha256": "eb689d1e7df18869033dae9c201b6431979d97d7e74dc1815ca460bc3333946a"
+    },
+    {
+      "bytes": 2799,
+      "path": "/private/tmp/chain-prci-head-5df7ae6-ci-progress-preparation-20261114-v1/contract.json",
+      "sha256": "0d0df7040fec3409d1515d2acb8c5f5189c934edcf050a86514c42b5ee14608a"
+    },
+    {
+      "bytes": 2052,
+      "path": "/private/tmp/chain-prci-head-5df7ae6-ci-progress-preparation-20261114-v1/static-identity-proof.json",
+      "sha256": "b69a9b6ff60edab017f5971b2b93497f8e65eb6ddcf24457f0f02bdff0d8048d"
+    }
+  ],
+  "schema": "trnm-prepared-reader-index-v1",
+  "self_excluded": "EVIDENCE_INDEX.json"
+}

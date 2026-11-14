@@ -1,0 +1,143 @@
+{
+  "actual_dispatch_started": false,
+  "actual_push_started": false,
+  "actual_terminal_exit": 1,
+  "creator": "unknown; not inferred from branch name",
+  "current_local_baseline_explicitly_reviewed": true,
+  "delta": {
+    "added": {
+      "refs/heads/fix/chain-audit-publish-5df-20261114": "5df7ae6f482157c5f7fdcbcd52222117a965053f"
+    },
+    "changed": {},
+    "current_count": 1028,
+    "inputs": {
+      "current": {
+        "bytes": 74115,
+        "path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-publish-v1-r1-after-5df-resume-001/local-refs-before.stdout",
+        "sha256": "22ee7c52e09f816489f53153950e6e45671ebce1a2d836b2c99a87ef73bb96a5"
+      },
+      "original": {
+        "bytes": 74026,
+        "path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-publish-v1-r1-001/local-refs-after-publication.stdout",
+        "sha256": "17070169c80905d91aa529186e6171b3747d38862c501d53818b7bc169df6aaf"
+      }
+    },
+    "original_count": 1027,
+    "removed": {},
+    "unchanged_count": 1027
+  },
+  "earlier_identical_ref_observations": {
+    "local-refs-after": "2026-11-14T17:43:32.945840+00:00",
+    "local-refs-before": "2026-11-14T17:43:32.490093+00:00"
+  },
+  "inputs": {
+    "earlier_fetch": {
+      "bytes": 8802,
+      "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/summary.json",
+      "sha256": "7051816f15f23d2e9ce182062e1c2b1d3c84b17c4e597388f56f777154828e65"
+    },
+    "producer": {
+      "bytes": 43785,
+      "path": "/private/tmp/chain-consolidation-20261114-root/R1-diagnostic-tag-resume-preparation-v2/resume_diagnostic_stage1_v2.py",
+      "sha256": "e82bdcc48728032ef3a5f8c34740614559e0082d86066f327dba0bb13c1d429e"
+    },
+    "receipt": {
+      "bytes": 24978,
+      "path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-publish-v1-r1-after-5df-resume-001/summary.json",
+      "sha256": "7a6818cb96b460ac56cf317ef1220a8b101f63281dc662c1a0554a8f6632806e"
+    },
+    "review": {
+      "bytes": 5588,
+      "path": "/private/tmp/chain-consolidation-20261114-root/R1-diagnostic-resume-local-ref-drift-review-v1/summary.json",
+      "sha256": "f856814b61f8b95328462a74f8b1159812511e6613f506bd0631b4a61b49ebeb"
+    },
+    "spec": {
+      "bytes": 3588,
+      "path": "/private/tmp/chain-consolidation-20261114-root/R1-diagnostic-tag-resume-preparation-v2/spec.for-review.json",
+      "sha256": "04a6abeafad22f5b9af14806379bbd1a29f6488bb27d85305ae59107f051dd8a"
+    },
+    "terminal": {
+      "bytes": 4311,
+      "path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-resume-v2-first-actual-terminal.json",
+      "sha256": "4b22c5c75ab74ad8037e2ad0e7b3e8c1bd1de72cee32f1615b457479835f626a"
+    }
+  },
+  "original_errors": [
+    {
+      "message": "complete local refs differ from closed original",
+      "phase": "verify-existing-or-single-push",
+      "type": "ValueError"
+    },
+    {
+      "message": "original hook/URL after publication",
+      "phase": "publication-source-ref-index-fence",
+      "type": "ValueError"
+    }
+  ],
+  "prior_actual_hook_or_URL_check": false,
+  "prior_actual_index_after_check": false,
+  "prior_actual_source_after_valid": true,
+  "raw_files": {
+    "current-local-refs": {
+      "bytes": 74115,
+      "path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-publish-v1-r1-after-5df-resume-001/local-refs-before.stdout",
+      "sha256": "22ee7c52e09f816489f53153950e6e45671ebce1a2d836b2c99a87ef73bb96a5"
+    },
+    "earlier-local-refs-after-stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/local-refs-after.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "earlier-local-refs-after-stdout": {
+      "bytes": 74115,
+      "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/local-refs-after.stdout",
+      "sha256": "22ee7c52e09f816489f53153950e6e45671ebce1a2d836b2c99a87ef73bb96a5"
+    },
+    "earlier-local-refs-before-stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/local-refs-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "earlier-local-refs-before-stdout": {
+      "bytes": 74115,
+      "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/local-refs-before.stdout",
+      "sha256": "22ee7c52e09f816489f53153950e6e45671ebce1a2d836b2c99a87ef73bb96a5"
+    },
+    "earlier_fetch": {
+      "bytes": 8802,
+      "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/summary.json",
+      "sha256": "7051816f15f23d2e9ce182062e1c2b1d3c84b17c4e597388f56f777154828e65"
+    },
+    "historical-local-refs": {
+      "bytes": 74026,
+      "path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-publish-v1-r1-001/local-refs-after-publication.stdout",
+      "sha256": "17070169c80905d91aa529186e6171b3747d38862c501d53818b7bc169df6aaf"
+    },
+    "producer": {
+      "bytes": 43785,
+      "path": "/private/tmp/chain-consolidation-20261114-root/R1-diagnostic-tag-resume-preparation-v2/resume_diagnostic_stage1_v2.py",
+      "sha256": "e82bdcc48728032ef3a5f8c34740614559e0082d86066f327dba0bb13c1d429e"
+    },
+    "receipt": {
+      "bytes": 24978,
+      "path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-publish-v1-r1-after-5df-resume-001/summary.json",
+      "sha256": "7a6818cb96b460ac56cf317ef1220a8b101f63281dc662c1a0554a8f6632806e"
+    },
+    "review": {
+      "bytes": 5588,
+      "path": "/private/tmp/chain-consolidation-20261114-root/R1-diagnostic-resume-local-ref-drift-review-v1/summary.json",
+      "sha256": "f856814b61f8b95328462a74f8b1159812511e6613f506bd0631b4a61b49ebeb"
+    },
+    "spec": {
+      "bytes": 3588,
+      "path": "/private/tmp/chain-consolidation-20261114-root/R1-diagnostic-tag-resume-preparation-v2/spec.for-review.json",
+      "sha256": "04a6abeafad22f5b9af14806379bbd1a29f6488bb27d85305ae59107f051dd8a"
+    },
+    "terminal": {
+      "bytes": 4311,
+      "path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-resume-v2-first-actual-terminal.json",
+      "sha256": "4b22c5c75ab74ad8037e2ad0e7b3e8c1bd1de72cee32f1615b457479835f626a"
+    }
+  },
+  "status": "HOLD"
+}

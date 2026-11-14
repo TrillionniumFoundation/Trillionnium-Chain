@@ -1,0 +1,607 @@
+{
+  "Git_objects_created": false,
+  "Git_push_started": false,
+  "Git_refs_written": false,
+  "automatic_retry": false,
+  "control": {
+    "commit": "78985d9a36761cf3ab370796f72f9b587776880c",
+    "parents": [
+      "2a86462a1ab20c68151719ba4635e3c294391e64"
+    ],
+    "subject_commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "subject_tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+    "tag": "diagnostic/r1-native-stage1-20261114-r1-v3",
+    "tag_oid": "bec22f093723cae0bb4625bd1fcbe9858d61f68b",
+    "tree": "b9999aa69ef7e148ea0760942f9b2bca6a8e6d6e",
+    "workflow_blob": "2f242e4c1dc16fbf912a93d87454ee0ff4474b91",
+    "workflow_path": ".github/workflows/trnm-required-baseline.yml",
+    "workflow_sha256": "85e9ef1d83490fb98d57c653952fe3fff67c496c8074cbf89ee6adacb266041a"
+  },
+  "diagnostic_result_observed": false,
+  "dispatch_attempt_count": 0,
+  "dispatch_exit": null,
+  "dispatch_response": null,
+  "dispatch_started": false,
+  "dispatch_status": "NOT_STARTED",
+  "driver": {
+    "bytes": 30284,
+    "path": "/private/tmp/chain-consolidation-20261114-root/R1-diagnostic-tag-dispatch-only-preparation-v1/dispatch_published_r1_stage1_v1.py",
+    "sha256": "bf25839cb805e1005192125a1de5b916bf3017825465fff866ec6533fdb09dac"
+  },
+  "errors": [
+    {
+      "message": "actor-before failed; original output retained",
+      "phase": "single-dispatch",
+      "type": "ValueError"
+    }
+  ],
+  "finished_at": "2026-11-14T18:30:57.105859+00:00",
+  "installed_hooks_unchanged": true,
+  "local_ref_fence_valid": true,
+  "main_or_PR_or_policy_changed": false,
+  "observations_non_atomic": true,
+  "preserved_archive_tags": {
+    "refs/tags/archive/branches-before-consolidation-20261114-dc42ce4df5cf-v2": "9dafd9192e4040fab530958ef71598aaec9265b9",
+    "refs/tags/archive/branches-before-consolidation-20261114-dc42ce4df5cf-v2^{}": "5f57c4e1e2b7ae95a7b0651d7674979d3f44b90b",
+    "refs/tags/archive/execution-receipts-20261114-2a86462a1ab2-v1": "454761ef276433740453b5b80ce886c1d251c6d3",
+    "refs/tags/archive/execution-receipts-20261114-2a86462a1ab2-v1^{}": "0f4b8b70bde65f84139b4cc7ed9e176ed55cf1d9",
+    "refs/tags/archive/post-publication-diagnostics-20261114-2a86462a1ab2-v1": "894875e2161bea8f0d4a135879e687de78c1f18a",
+    "refs/tags/archive/post-publication-diagnostics-20261114-2a86462a1ab2-v1^{}": "ffc6e0ca4bfa7794ab6031a6e398dcd08b7a1982"
+  },
+  "publication_confirmed": true,
+  "published_but_undispatched_proof": {
+    "actual_hook": {
+      "bytes": 4377,
+      "path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-publish-v1-r1-after-5df-resume-002/hooks/receipt.json",
+      "sha256": "a1316ac1fece7357b3a6eb61ed89bcc305e766c5dd419bfeffc4cc2ea8ee1891"
+    },
+    "installed_hook_guard": {
+      "config_exit": 1,
+      "default_hook_path": "/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git/hooks/pre-push",
+      "origin": "https://github.com/TrillionniumFoundation/Trillionnium-Chain.git"
+    },
+    "original_dispatch_started": false,
+    "original_errors": [
+      {
+        "message": "remote drift before dispatch",
+        "phase": "single-dispatch",
+        "type": "ValueError"
+      },
+      {
+        "message": "final remote refs changed",
+        "phase": "final-dispatch-source-ref-fence",
+        "type": "ValueError"
+      }
+    ],
+    "original_source_after_valid": false,
+    "original_status": "UNKNOWN",
+    "publication_confirmed": true,
+    "publication_phase_source_verified": true,
+    "push_exit": 0,
+    "receipt": {
+      "bytes": 361082,
+      "path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-publish-v1-r1-after-5df-resume-002/summary.json",
+      "sha256": "0d3791feb688b349c3208dcc87b2a1acd5213ea0dd5b8077f879307be04b1992"
+    },
+    "terminal": {
+      "bytes": 4308,
+      "path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-resume-v3-actual-terminal-v1.json",
+      "sha256": "ee22af5d330ea19f55c40c539434311cdd986ea7c9265a14245fac69e76c45df"
+    }
+  },
+  "qualification_granted": false,
+  "remote_before": null,
+  "remote_candidate_head": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+  "remote_final": null,
+  "required_CI_replaced": false,
+  "schema": "trnm-r1-diagnostic-stage1-dispatch-only-receipt-v1",
+  "source_after_valid": true,
+  "source_index_before": {
+    "bytes": 7028051,
+    "path": "/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git/worktrees/chain-consolidation-20261114-mainline/index",
+    "sha256": "0e088a95c519d3bbac14f1b9a48073d3e872d728f6300e225272d4bed78a9be9",
+    "version": [
+      16777233,
+      607039979,
+      33152,
+      1,
+      7028051,
+      1794656364558342792,
+      1794656364559024205
+    ]
+  },
+  "source_index_unchanged": true,
+  "spec": {
+    "bytes": 2356,
+    "path": "/private/tmp/chain-consolidation-20261114-root/R1-diagnostic-tag-dispatch-only-preparation-v1/spec.for-review.json",
+    "sha256": "46f67594e5ebea6efc26eb67fa24b52ff642efd755c7476cfb0e8ffdd8b8794b"
+  },
+  "started_at": "2026-11-14T18:30:19.414391+00:00",
+  "status": "HOLD",
+  "steps": [
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "exit": 0,
+      "finished_at": "2026-11-14T18:30:19.499926+00:00",
+      "label": "project-preflight-before-dispatch",
+      "started_at": "2026-11-14T18:30:19.424536+00:00",
+      "stderr_bytes": 0,
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-dispatch-only-v1-r1-001/project-preflight-before-dispatch.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 161,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-dispatch-only-v1-r1-001/project-preflight-before-dispatch.stdout",
+      "stdout_sha256": "2e0930e3e5b93d19ab63db0fe013c910ee3255283942eeab771e4db4aec002ec",
+      "timeout_seconds": 180
+    },
+    {
+      "argv": [
+        "git",
+        "--no-replace-objects",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "exit": 0,
+      "finished_at": "2026-11-14T18:30:19.511118+00:00",
+      "label": "source-before-head",
+      "started_at": "2026-11-14T18:30:19.501544+00:00",
+      "stderr_bytes": 0,
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-dispatch-only-v1-r1-001/source-before-head.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 41,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-dispatch-only-v1-r1-001/source-before-head.stdout",
+      "stdout_sha256": "3449766f98f211ff0cf1a9903cd2c09ff4a3dd2231a2b5538f3affac31df9c4b",
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "--no-replace-objects",
+        "rev-parse",
+        "HEAD^{tree}"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "exit": 0,
+      "finished_at": "2026-11-14T18:30:19.521703+00:00",
+      "label": "source-before-tree",
+      "started_at": "2026-11-14T18:30:19.512199+00:00",
+      "stderr_bytes": 0,
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-dispatch-only-v1-r1-001/source-before-tree.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 41,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-dispatch-only-v1-r1-001/source-before-tree.stdout",
+      "stdout_sha256": "0f9097a88c00d7ab00eb3998da10e930ceef474ae03a5b7a582a5782f7b2213e",
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "--no-replace-objects",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "exit": 0,
+      "finished_at": "2026-11-14T18:30:19.927842+00:00",
+      "label": "source-before-status",
+      "started_at": "2026-11-14T18:30:19.522113+00:00",
+      "stderr_bytes": 0,
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-dispatch-only-v1-r1-001/source-before-status.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-dispatch-only-v1-r1-001/source-before-status.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "--no-replace-objects",
+        "symbolic-ref",
+        "HEAD"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "exit": 0,
+      "finished_at": "2026-11-14T18:30:19.936776+00:00",
+      "label": "source-before-symbolic",
+      "started_at": "2026-11-14T18:30:19.928370+00:00",
+      "stderr_bytes": 0,
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-dispatch-only-v1-r1-001/source-before-symbolic.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 42,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-dispatch-only-v1-r1-001/source-before-symbolic.stdout",
+      "stdout_sha256": "7946e07d3d207a6c9159a9dccccf2ef85c05f4ec0a5fa875402e6fd89fb66d1f",
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "--no-replace-objects",
+        "for-each-ref",
+        "--format=%(refname) %(objectname)"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "exit": 0,
+      "finished_at": "2026-11-14T18:30:19.948976+00:00",
+      "label": "local-refs-before",
+      "started_at": "2026-11-14T18:30:19.937106+00:00",
+      "stderr_bytes": 0,
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-dispatch-only-v1-r1-001/local-refs-before.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 74115,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-dispatch-only-v1-r1-001/local-refs-before.stdout",
+      "stdout_sha256": "22ee7c52e09f816489f53153950e6e45671ebce1a2d836b2c99a87ef73bb96a5",
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "--no-replace-objects",
+        "rev-parse",
+        "--path-format=absolute",
+        "--git-path",
+        "index"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "exit": 0,
+      "finished_at": "2026-11-14T18:30:19.956711+00:00",
+      "label": "source-index-path",
+      "started_at": "2026-11-14T18:30:19.949915+00:00",
+      "stderr_bytes": 0,
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-dispatch-only-v1-r1-001/source-index-path.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 146,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-dispatch-only-v1-r1-001/source-index-path.stdout",
+      "stdout_sha256": "2eec2465776834c463b99ef3ccb2ee7d330d95244fe27238e1d4c100c7008db6",
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "--no-replace-objects",
+        "config",
+        "--get-all",
+        "core.hooksPath"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "exit": 1,
+      "finished_at": "2026-11-14T18:30:19.966364+00:00",
+      "label": "hook-before-config",
+      "started_at": "2026-11-14T18:30:19.959517+00:00",
+      "stderr_bytes": 0,
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-dispatch-only-v1-r1-001/hook-before-config.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-dispatch-only-v1-r1-001/hook-before-config.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "--no-replace-objects",
+        "rev-parse",
+        "--path-format=absolute",
+        "--git-path",
+        "hooks/pre-push"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "exit": 0,
+      "finished_at": "2026-11-14T18:30:19.972964+00:00",
+      "label": "hook-before-default",
+      "started_at": "2026-11-14T18:30:19.966647+00:00",
+      "stderr_bytes": 0,
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-dispatch-only-v1-r1-001/hook-before-default.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 107,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-dispatch-only-v1-r1-001/hook-before-default.stdout",
+      "stdout_sha256": "0b4863d62d1ffb4cadd13d668b30eb105c74ecaa4d1e0d07e650b9284582875d",
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "--no-replace-objects",
+        "remote",
+        "get-url",
+        "--push",
+        "--all",
+        "origin"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "exit": 0,
+      "finished_at": "2026-11-14T18:30:19.979727+00:00",
+      "label": "hook-before-push",
+      "started_at": "2026-11-14T18:30:19.973284+00:00",
+      "stderr_bytes": 0,
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-dispatch-only-v1-r1-001/hook-before-push.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 65,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-dispatch-only-v1-r1-001/hook-before-push.stdout",
+      "stdout_sha256": "4381bbe444696febc4724724342b7c204fb1ddac075199545272db3c4a3cb1c7",
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "--no-replace-objects",
+        "remote",
+        "get-url",
+        "--all",
+        "origin"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "exit": 0,
+      "finished_at": "2026-11-14T18:30:19.986315+00:00",
+      "label": "hook-before-fetch",
+      "started_at": "2026-11-14T18:30:19.980041+00:00",
+      "stderr_bytes": 0,
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-dispatch-only-v1-r1-001/hook-before-fetch.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 65,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-dispatch-only-v1-r1-001/hook-before-fetch.stdout",
+      "stdout_sha256": "4381bbe444696febc4724724342b7c204fb1ddac075199545272db3c4a3cb1c7",
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "gh",
+        "api",
+        "user",
+        "--jq",
+        "{login,id}"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "exit": 1,
+      "finished_at": "2026-11-14T18:30:50.014661+00:00",
+      "label": "actor-before",
+      "started_at": "2026-11-14T18:30:19.986601+00:00",
+      "stderr_bytes": 74,
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-dispatch-only-v1-r1-001/actor-before.stderr",
+      "stderr_sha256": "898ef89ceebacc842cb15399e43bb7fa319dbb56bb877aa223ad538721130839",
+      "stdout_bytes": 0,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-dispatch-only-v1-r1-001/actor-before.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timeout_seconds": 180
+    },
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "exit": 0,
+      "finished_at": "2026-11-14T18:30:50.099180+00:00",
+      "label": "project-preflight-after-dispatch",
+      "started_at": "2026-11-14T18:30:50.017594+00:00",
+      "stderr_bytes": 0,
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-dispatch-only-v1-r1-001/project-preflight-after-dispatch.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 161,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-dispatch-only-v1-r1-001/project-preflight-after-dispatch.stdout",
+      "stdout_sha256": "2e0930e3e5b93d19ab63db0fe013c910ee3255283942eeab771e4db4aec002ec",
+      "timeout_seconds": 180
+    },
+    {
+      "argv": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "2a86462a1ab20c68151719ba4635e3c294391e64",
+        "--output",
+        "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-dispatch-only-v1-r1-001/source-after.json"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "exit": 0,
+      "finished_at": "2026-11-14T18:30:56.808708+00:00",
+      "label": "verify-source-after",
+      "started_at": "2026-11-14T18:30:50.099799+00:00",
+      "stderr_bytes": 0,
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-dispatch-only-v1-r1-001/verify-source-after.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 423,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-dispatch-only-v1-r1-001/verify-source-after.stdout",
+      "stdout_sha256": "1b8638f7d5e3fb28abc25c06208df4e189ba3b86c7d0d3a12fb2a431607b7e03",
+      "timeout_seconds": 180
+    },
+    {
+      "argv": [
+        "git",
+        "--no-replace-objects",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "exit": 0,
+      "finished_at": "2026-11-14T18:30:56.817262+00:00",
+      "label": "source-after-head",
+      "started_at": "2026-11-14T18:30:56.809380+00:00",
+      "stderr_bytes": 0,
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-dispatch-only-v1-r1-001/source-after-head.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 41,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-dispatch-only-v1-r1-001/source-after-head.stdout",
+      "stdout_sha256": "3449766f98f211ff0cf1a9903cd2c09ff4a3dd2231a2b5538f3affac31df9c4b",
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "--no-replace-objects",
+        "rev-parse",
+        "HEAD^{tree}"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "exit": 0,
+      "finished_at": "2026-11-14T18:30:56.825641+00:00",
+      "label": "source-after-tree",
+      "started_at": "2026-11-14T18:30:56.817633+00:00",
+      "stderr_bytes": 0,
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-dispatch-only-v1-r1-001/source-after-tree.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 41,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-dispatch-only-v1-r1-001/source-after-tree.stdout",
+      "stdout_sha256": "0f9097a88c00d7ab00eb3998da10e930ceef474ae03a5b7a582a5782f7b2213e",
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "--no-replace-objects",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "exit": 0,
+      "finished_at": "2026-11-14T18:30:56.937169+00:00",
+      "label": "source-after-status",
+      "started_at": "2026-11-14T18:30:56.825945+00:00",
+      "stderr_bytes": 0,
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-dispatch-only-v1-r1-001/source-after-status.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-dispatch-only-v1-r1-001/source-after-status.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "--no-replace-objects",
+        "symbolic-ref",
+        "HEAD"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "exit": 0,
+      "finished_at": "2026-11-14T18:30:56.946177+00:00",
+      "label": "source-after-symbolic",
+      "started_at": "2026-11-14T18:30:56.937696+00:00",
+      "stderr_bytes": 0,
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-dispatch-only-v1-r1-001/source-after-symbolic.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 42,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-dispatch-only-v1-r1-001/source-after-symbolic.stdout",
+      "stdout_sha256": "7946e07d3d207a6c9159a9dccccf2ef85c05f4ec0a5fa875402e6fd89fb66d1f",
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "--no-replace-objects",
+        "config",
+        "--get-all",
+        "core.hooksPath"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "exit": 1,
+      "finished_at": "2026-11-14T18:30:56.953351+00:00",
+      "label": "hook-after-config",
+      "started_at": "2026-11-14T18:30:56.946528+00:00",
+      "stderr_bytes": 0,
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-dispatch-only-v1-r1-001/hook-after-config.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-dispatch-only-v1-r1-001/hook-after-config.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "--no-replace-objects",
+        "rev-parse",
+        "--path-format=absolute",
+        "--git-path",
+        "hooks/pre-push"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "exit": 0,
+      "finished_at": "2026-11-14T18:30:56.959950+00:00",
+      "label": "hook-after-default",
+      "started_at": "2026-11-14T18:30:56.953609+00:00",
+      "stderr_bytes": 0,
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-dispatch-only-v1-r1-001/hook-after-default.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 107,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-dispatch-only-v1-r1-001/hook-after-default.stdout",
+      "stdout_sha256": "0b4863d62d1ffb4cadd13d668b30eb105c74ecaa4d1e0d07e650b9284582875d",
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "--no-replace-objects",
+        "remote",
+        "get-url",
+        "--push",
+        "--all",
+        "origin"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "exit": 0,
+      "finished_at": "2026-11-14T18:30:56.966877+00:00",
+      "label": "hook-after-push",
+      "started_at": "2026-11-14T18:30:56.960307+00:00",
+      "stderr_bytes": 0,
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-dispatch-only-v1-r1-001/hook-after-push.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 65,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-dispatch-only-v1-r1-001/hook-after-push.stdout",
+      "stdout_sha256": "4381bbe444696febc4724724342b7c204fb1ddac075199545272db3c4a3cb1c7",
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "--no-replace-objects",
+        "remote",
+        "get-url",
+        "--all",
+        "origin"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "exit": 0,
+      "finished_at": "2026-11-14T18:30:56.973516+00:00",
+      "label": "hook-after-fetch",
+      "started_at": "2026-11-14T18:30:56.967162+00:00",
+      "stderr_bytes": 0,
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-dispatch-only-v1-r1-001/hook-after-fetch.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 65,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-dispatch-only-v1-r1-001/hook-after-fetch.stdout",
+      "stdout_sha256": "4381bbe444696febc4724724342b7c204fb1ddac075199545272db3c4a3cb1c7",
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "--no-replace-objects",
+        "for-each-ref",
+        "--format=%(refname) %(objectname)"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "exit": 0,
+      "finished_at": "2026-11-14T18:30:56.982812+00:00",
+      "label": "local-refs-after",
+      "started_at": "2026-11-14T18:30:56.973819+00:00",
+      "stderr_bytes": 0,
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-dispatch-only-v1-r1-001/local-refs-after.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 74115,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-dispatch-only-v1-r1-001/local-refs-after.stdout",
+      "stdout_sha256": "22ee7c52e09f816489f53153950e6e45671ebce1a2d836b2c99a87ef73bb96a5",
+      "timeout_seconds": 60
+    }
+  ],
+  "subject_commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+  "subject_tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4"
+}

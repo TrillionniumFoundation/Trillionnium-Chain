@@ -1,0 +1,8 @@
+@@ -152,6 +152,7 @@ def test_other_real_settlement_module_is_not_this_bilateral_owner(self):
+ 
+     def test_source_revision_schema_purpose_and_route_context_drift_refuse(self):
+         for field, value in (('source_revision', '0' * 40),
++                             ('source_revision', 'fc39da5f35298ce8a4c34aa5bdb25849648612f9'),
+                              ('source_revision', '332d7f723d71707d88a2cffa52b3754579a46926'),
+                              ('source_revision', 'c82c6eabe8f27e2b918de850d237f6b0b06444bb'),
+                              ('source_revision', '57b069ae1e7ed32ff95e4f2a18a74d5eadcda550'),

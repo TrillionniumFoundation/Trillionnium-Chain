@@ -1,0 +1,21 @@
+{
+  "audit_recorded": true,
+  "automatic_retry": false,
+  "host": "mac",
+  "persistent_across_runtime_restart": true,
+  "reused": false,
+  "session_id": "dpty-9ac55d8c52b397ec4d94916858eb400b03d1f0f19b9789020796194b426b177d",
+  "status": {
+    "boot": "{ sec = 1794536756, usec = 280987 } Fri Nov 13 10:25:56 2026",
+    "bytes_seen": 276,
+    "bytes_stored": 276,
+    "capture_error": null,
+    "closed": false,
+    "created_unix_ms": 1794680620744,
+    "exit_code": 0,
+    "output_complete": true,
+    "owner_pid": 97009,
+    "pid": 97010,
+    "state": "exited"
+  }
+}

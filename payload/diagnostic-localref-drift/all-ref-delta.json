@@ -1,0 +1,22 @@
+{
+  "added": {
+    "refs/heads/fix/chain-audit-publish-5df-20261114": "5df7ae6f482157c5f7fdcbcd52222117a965053f"
+  },
+  "changed": {},
+  "current_count": 1028,
+  "inputs": {
+    "current": {
+      "bytes": 74115,
+      "path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-publish-v1-r1-after-5df-resume-001/local-refs-before.stdout",
+      "sha256": "22ee7c52e09f816489f53153950e6e45671ebce1a2d836b2c99a87ef73bb96a5"
+    },
+    "original": {
+      "bytes": 74026,
+      "path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-publish-v1-r1-001/local-refs-after-publication.stdout",
+      "sha256": "17070169c80905d91aa529186e6171b3747d38862c501d53818b7bc169df6aaf"
+    }
+  },
+  "original_count": 1027,
+  "removed": {},
+  "unchanged_count": 1027
+}

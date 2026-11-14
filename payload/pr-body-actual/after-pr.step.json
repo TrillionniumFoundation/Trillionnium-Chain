@@ -1,0 +1,37 @@
+{
+  "GH_DEBUG_removed": true,
+  "GH_HOST": "github.com",
+  "argv": [
+    "/opt/homebrew/bin/gh",
+    "api",
+    "--hostname",
+    "github.com",
+    "--include",
+    "--method",
+    "GET",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/pulls/847"
+  ],
+  "elapsed_seconds": 2.788938,
+  "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/pulls/847",
+  "exit": 0,
+  "finished_at": "2026-11-14T18:08:27.115770+00:00",
+  "group_cleanup_completeness": "not_proven",
+  "http_status": 200,
+  "label": "after-pr",
+  "method": "GET",
+  "owned_pid": 87970,
+  "parse_error": null,
+  "started_at": "2026-11-14T18:08:24.326838+00:00",
+  "stderr": {
+    "bytes": 0,
+    "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-pr847-body-only-update-v1-actual-001/after-pr.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 32195,
+    "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-pr847-body-only-update-v1-actual-001/after-pr.stdout",
+    "sha256": "1514e78c7a6c929ce0eb08a327082fec0dcba512d005f2810a827b7e9a482931"
+  },
+  "termination_or_error": null,
+  "timeout_seconds": 120
+}

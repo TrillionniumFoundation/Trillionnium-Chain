@@ -1,0 +1,28 @@
+{
+  "automatic_retry": false,
+  "byte_exact_helpers": [
+    "need",
+    "now",
+    "fingerprint",
+    "stable_bytes",
+    "save",
+    "save_json",
+    "pairs",
+    "parse_json",
+    "parsed_headers",
+    "capture",
+    "central_directory",
+    "extract_record"
+  ],
+  "combined_budget_seconds": 900,
+  "combined_max_GETs": 21,
+  "fixed_selected_member_count": 25,
+  "new_metadata_or_tail_GETs": 0,
+  "producer": {
+    "bytes": 26244,
+    "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/selected-producer.py",
+    "sha256": "144a9f3e7af6d3ccf5c1e46c80db9c28e796aeaf22b135d67874a8f3888b3184"
+  },
+  "schema": "trnm-H5DF-cost-selected-launch-v1",
+  "whole_artifact_sha256_verified": false
+}

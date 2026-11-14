@@ -1,0 +1,2293 @@
+{
+  "list_commands": [
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "ls-tree",
+        "-r",
+        "-z",
+        "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+        "--",
+        ".github/workflows"
+      ],
+      "exit": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "ca1fa811d6aa5ebdfc563ae1138974d130500494d466126f9791ee7e0edcbc16"
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "ls-tree",
+        "-r",
+        "-z",
+        "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+        "--",
+        ".github/workflows"
+      ],
+      "exit": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "ced9235a436625ae25857419e31bd7a46e8f9a7e8c153052d12fdf93a22198a0"
+    }
+  ],
+  "network_or_helper_execution": false,
+  "observed_at": "2026-11-14T17:58:11.124149+00:00",
+  "parser": "PyYAML BaseLoader",
+  "producer": {
+    "bytes": 3908,
+    "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/workflow-read-v2/workflow-trigger-inspection-producer.py",
+    "sha256": "8fc47fc78adc14f0ddfd59ecdeb38d11681913f53a96803dfb66db852780ba13"
+  },
+  "pure_readonly_git": true,
+  "revisions": {
+    "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "current": "5df7ae6f482157c5f7fdcbcd52222117a965053f"
+  },
+  "schema": "trnm-H5DF-pr-body-workflow-trigger-source-review-v1",
+  "status": "SOURCE_CAPTURED",
+  "workflow_records": [
+    {
+      "bytes": 3424,
+      "captured_source": {
+        "bytes": 3424,
+        "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/workflow-read-v2/workflow-current-000.yml.raw",
+        "sha256": "2d949cb562ce3358a24a0cfda90602a703eed6c9972b2413efe42a965ab924d8"
+      },
+      "oid": "df1868da3fddd27335e8230be106a2e00b15620b",
+      "on_block": "on:\n  push:\n    branches: [fix/chain-learning-business-closure-20261109-1a404f66]\n  pull_request:\n    paths:\n      - .github/workflows/cell-learning-business-readback.yml\n      - scripts/ci/run_cell_learning_business_readback.py\n      - scripts/ci/verify_ci_source.py\n      - scripts/ci/ci_job.sh\n      - scripts/ci/check_ci_contract.py\n      - scripts/ci/test_ci_contract.py\n      - scripts/cell_adoption_readback.py\n      - scripts/cell_learning_iteration_join.py\n      - scripts/cell_learning_completion_join.py\n      - scripts/cell_learning_scope_join.py\n      - scripts/cell_learning_business_economics.py\n      - scripts/cell_learning_business_join.py\n      - scripts/test_cell_adoption_readback.py\n      - scripts/test_cell_learning_iteration_join.py\n      - scripts/test_cell_learning_completion_join.py\n      - scripts/test_cell_learning_business_economics.py\n      - scripts/test_cell_learning_business_join.py\n      - scripts/test_cell_learning_training_no_update_join.py\n      - evidence/heplcp03-interop-20261111/**\n      - evidence/next-use-provenance-20261110/**\n      - evidence/cell-adoption-20261108/native-readbacks/**\n      - evidence/cell-learning-iteration-20261108/native-readbacks/**\n      - evidence/cell-learning-completion-20261108/native-readbacks/**\n      - evidence/smollm-cell-replica-research-v1/actual/research-result.json\n      - evidence/hepta-real-native-adoption-20261108/chain-reader/**\n      - evidence/cell-learning-business-readback-20261109/**\n",
+      "on_end_line": 32,
+      "on_start_line": 2,
+      "parsed_on": {
+        "pull_request": {
+          "paths": [
+            ".github/workflows/cell-learning-business-readback.yml",
+            "scripts/ci/run_cell_learning_business_readback.py",
+            "scripts/ci/verify_ci_source.py",
+            "scripts/ci/ci_job.sh",
+            "scripts/ci/check_ci_contract.py",
+            "scripts/ci/test_ci_contract.py",
+            "scripts/cell_adoption_readback.py",
+            "scripts/cell_learning_iteration_join.py",
+            "scripts/cell_learning_completion_join.py",
+            "scripts/cell_learning_scope_join.py",
+            "scripts/cell_learning_business_economics.py",
+            "scripts/cell_learning_business_join.py",
+            "scripts/test_cell_adoption_readback.py",
+            "scripts/test_cell_learning_iteration_join.py",
+            "scripts/test_cell_learning_completion_join.py",
+            "scripts/test_cell_learning_business_economics.py",
+            "scripts/test_cell_learning_business_join.py",
+            "scripts/test_cell_learning_training_no_update_join.py",
+            "evidence/heplcp03-interop-20261111/**",
+            "evidence/next-use-provenance-20261110/**",
+            "evidence/cell-adoption-20261108/native-readbacks/**",
+            "evidence/cell-learning-iteration-20261108/native-readbacks/**",
+            "evidence/cell-learning-completion-20261108/native-readbacks/**",
+            "evidence/smollm-cell-replica-research-v1/actual/research-result.json",
+            "evidence/hepta-real-native-adoption-20261108/chain-reader/**",
+            "evidence/cell-learning-business-readback-20261109/**"
+          ]
+        },
+        "push": {
+          "branches": [
+            "fix/chain-learning-business-closure-20261109-1a404f66"
+          ]
+        }
+      },
+      "path": ".github/workflows/cell-learning-business-readback.yml",
+      "pull_request_events": {
+        "pull_request": {
+          "paths": [
+            ".github/workflows/cell-learning-business-readback.yml",
+            "scripts/ci/run_cell_learning_business_readback.py",
+            "scripts/ci/verify_ci_source.py",
+            "scripts/ci/ci_job.sh",
+            "scripts/ci/check_ci_contract.py",
+            "scripts/ci/test_ci_contract.py",
+            "scripts/cell_adoption_readback.py",
+            "scripts/cell_learning_iteration_join.py",
+            "scripts/cell_learning_completion_join.py",
+            "scripts/cell_learning_scope_join.py",
+            "scripts/cell_learning_business_economics.py",
+            "scripts/cell_learning_business_join.py",
+            "scripts/test_cell_adoption_readback.py",
+            "scripts/test_cell_learning_iteration_join.py",
+            "scripts/test_cell_learning_completion_join.py",
+            "scripts/test_cell_learning_business_economics.py",
+            "scripts/test_cell_learning_business_join.py",
+            "scripts/test_cell_learning_training_no_update_join.py",
+            "evidence/heplcp03-interop-20261111/**",
+            "evidence/next-use-provenance-20261110/**",
+            "evidence/cell-adoption-20261108/native-readbacks/**",
+            "evidence/cell-learning-iteration-20261108/native-readbacks/**",
+            "evidence/cell-learning-completion-20261108/native-readbacks/**",
+            "evidence/smollm-cell-replica-research-v1/actual/research-result.json",
+            "evidence/hepta-real-native-adoption-20261108/chain-reader/**",
+            "evidence/cell-learning-business-readback-20261109/**"
+          ]
+        }
+      },
+      "read_command": {
+        "argv": [
+          "/usr/bin/git",
+          "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+          "cat-file",
+          "blob",
+          "df1868da3fddd27335e8230be106a2e00b15620b"
+        ],
+        "exit": 0
+      },
+      "revision": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "revision_label": "current",
+      "sha256": "2d949cb562ce3358a24a0cfda90602a703eed6c9972b2413efe42a965ab924d8",
+      "source_lines": 67
+    },
+    {
+      "bytes": 3133,
+      "captured_source": {
+        "bytes": 3133,
+        "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/workflow-read-v2/workflow-current-001.yml.raw",
+        "sha256": "49cd83d42f7405ad3f79e63ca9345f662db61fecd0003d182517fb44575d8a10"
+      },
+      "oid": "a75e1609ff0a07e8dea5b83990e22d08035f0769",
+      "on_block": "on:\n  pull_request:\n    paths:\n      - .github/workflows/cell-learning-local-decision-readback.yml\n      - scripts/cell_learning_local_decision_join.py\n      - scripts/test_cell_learning_local_decision_join.py\n      - scripts/cell_adoption_readback.py\n      - scripts/cell_learning_iteration_join.py\n      - scripts/cell_learning_scope_join.py\n      - scripts/cell_learning_completion_join.py\n      - scripts/test_cell_learning_iteration_join.py\n      - scripts/test_cell_learning_scope_join.py\n      - scripts/ci/verify_ci_source.py\n      - scripts/project-preflight.sh\n      - scripts/ci/project_boundary.py\n      - PROJECT_BOUNDARY.json\n      - PROJECT_ID\n      - evidence/heplcp04-interop-20261111/**\n",
+      "on_end_line": 19,
+      "on_start_line": 2,
+      "parsed_on": {
+        "pull_request": {
+          "paths": [
+            ".github/workflows/cell-learning-local-decision-readback.yml",
+            "scripts/cell_learning_local_decision_join.py",
+            "scripts/test_cell_learning_local_decision_join.py",
+            "scripts/cell_adoption_readback.py",
+            "scripts/cell_learning_iteration_join.py",
+            "scripts/cell_learning_scope_join.py",
+            "scripts/cell_learning_completion_join.py",
+            "scripts/test_cell_learning_iteration_join.py",
+            "scripts/test_cell_learning_scope_join.py",
+            "scripts/ci/verify_ci_source.py",
+            "scripts/project-preflight.sh",
+            "scripts/ci/project_boundary.py",
+            "PROJECT_BOUNDARY.json",
+            "PROJECT_ID",
+            "evidence/heplcp04-interop-20261111/**"
+          ]
+        }
+      },
+      "path": ".github/workflows/cell-learning-local-decision-readback.yml",
+      "pull_request_events": {
+        "pull_request": {
+          "paths": [
+            ".github/workflows/cell-learning-local-decision-readback.yml",
+            "scripts/cell_learning_local_decision_join.py",
+            "scripts/test_cell_learning_local_decision_join.py",
+            "scripts/cell_adoption_readback.py",
+            "scripts/cell_learning_iteration_join.py",
+            "scripts/cell_learning_scope_join.py",
+            "scripts/cell_learning_completion_join.py",
+            "scripts/test_cell_learning_iteration_join.py",
+            "scripts/test_cell_learning_scope_join.py",
+            "scripts/ci/verify_ci_source.py",
+            "scripts/project-preflight.sh",
+            "scripts/ci/project_boundary.py",
+            "PROJECT_BOUNDARY.json",
+            "PROJECT_ID",
+            "evidence/heplcp04-interop-20261111/**"
+          ]
+        }
+      },
+      "read_command": {
+        "argv": [
+          "/usr/bin/git",
+          "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+          "cat-file",
+          "blob",
+          "a75e1609ff0a07e8dea5b83990e22d08035f0769"
+        ],
+        "exit": 0
+      },
+      "revision": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "revision_label": "current",
+      "sha256": "49cd83d42f7405ad3f79e63ca9345f662db61fecd0003d182517fb44575d8a10",
+      "source_lines": 77
+    },
+    {
+      "bytes": 3683,
+      "captured_source": {
+        "bytes": 3683,
+        "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/workflow-read-v2/workflow-current-002.yml.raw",
+        "sha256": "3f0f780070d728b6b71fb8a2cfde7594705a60608b3b2d6507024bb40ef92582"
+      },
+      "oid": "15454b5322f118b52458adebf54cf00652107240",
+      "on_block": "on:\n  pull_request:\n    paths:\n      - .github/workflows/chain-hepta-closure-candidate.yml\n      - scripts/cell_learning_scope_join.py\n      - scripts/test_cell_learning_scope_join.py\n      - scripts/cell_learning_iteration_join.py\n      - scripts/cell_learning_completion_join.py\n      - scripts/cell_learning_business_join.py\n      - scripts/cell_learning_business_economics.py\n      - scripts/test_cell_learning_business_join.py\n      - scripts/test_cell_learning_business_economics.py\n      - scripts/test_cell_learning_training_no_update_join.py\n      - scripts/ci/pq_proof_profile_binding.py\n      - scripts/ci/test_pq_proof_profile_binding.py\n      - scripts/ci/w1_upstream_security.py\n      - scripts/ci/test_w1_upstream_security.py\n      - scripts/ci/audit_native_campaign_outcomes.py\n      - scripts/ci/test_audit_native_campaign_outcomes.py\n      - config/pon/pq-proof-profile-binding-v1.json\n      - config/pon/w1-upstream-security-v1.json\n      - config/pon/w1-qrom-implementation-current-v2.json\n      - config/pon/pq128-lifetime-budget-v1.json\n      - evidence/**\n      - formal/pon-nakamoto-v1/**\n      - trillionnium/**\n",
+      "on_end_line": 27,
+      "on_start_line": 2,
+      "parsed_on": {
+        "pull_request": {
+          "paths": [
+            ".github/workflows/chain-hepta-closure-candidate.yml",
+            "scripts/cell_learning_scope_join.py",
+            "scripts/test_cell_learning_scope_join.py",
+            "scripts/cell_learning_iteration_join.py",
+            "scripts/cell_learning_completion_join.py",
+            "scripts/cell_learning_business_join.py",
+            "scripts/cell_learning_business_economics.py",
+            "scripts/test_cell_learning_business_join.py",
+            "scripts/test_cell_learning_business_economics.py",
+            "scripts/test_cell_learning_training_no_update_join.py",
+            "scripts/ci/pq_proof_profile_binding.py",
+            "scripts/ci/test_pq_proof_profile_binding.py",
+            "scripts/ci/w1_upstream_security.py",
+            "scripts/ci/test_w1_upstream_security.py",
+            "scripts/ci/audit_native_campaign_outcomes.py",
+            "scripts/ci/test_audit_native_campaign_outcomes.py",
+            "config/pon/pq-proof-profile-binding-v1.json",
+            "config/pon/w1-upstream-security-v1.json",
+            "config/pon/w1-qrom-implementation-current-v2.json",
+            "config/pon/pq128-lifetime-budget-v1.json",
+            "evidence/**",
+            "formal/pon-nakamoto-v1/**",
+            "trillionnium/**"
+          ]
+        }
+      },
+      "path": ".github/workflows/chain-hepta-closure-candidate.yml",
+      "pull_request_events": {
+        "pull_request": {
+          "paths": [
+            ".github/workflows/chain-hepta-closure-candidate.yml",
+            "scripts/cell_learning_scope_join.py",
+            "scripts/test_cell_learning_scope_join.py",
+            "scripts/cell_learning_iteration_join.py",
+            "scripts/cell_learning_completion_join.py",
+            "scripts/cell_learning_business_join.py",
+            "scripts/cell_learning_business_economics.py",
+            "scripts/test_cell_learning_business_join.py",
+            "scripts/test_cell_learning_business_economics.py",
+            "scripts/test_cell_learning_training_no_update_join.py",
+            "scripts/ci/pq_proof_profile_binding.py",
+            "scripts/ci/test_pq_proof_profile_binding.py",
+            "scripts/ci/w1_upstream_security.py",
+            "scripts/ci/test_w1_upstream_security.py",
+            "scripts/ci/audit_native_campaign_outcomes.py",
+            "scripts/ci/test_audit_native_campaign_outcomes.py",
+            "config/pon/pq-proof-profile-binding-v1.json",
+            "config/pon/w1-upstream-security-v1.json",
+            "config/pon/w1-qrom-implementation-current-v2.json",
+            "config/pon/pq128-lifetime-budget-v1.json",
+            "evidence/**",
+            "formal/pon-nakamoto-v1/**",
+            "trillionnium/**"
+          ]
+        }
+      },
+      "read_command": {
+        "argv": [
+          "/usr/bin/git",
+          "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+          "cat-file",
+          "blob",
+          "15454b5322f118b52458adebf54cf00652107240"
+        ],
+        "exit": 0
+      },
+      "revision": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "revision_label": "current",
+      "sha256": "3f0f780070d728b6b71fb8a2cfde7594705a60608b3b2d6507024bb40ef92582",
+      "source_lines": 90
+    },
+    {
+      "bytes": 3293,
+      "captured_source": {
+        "bytes": 3293,
+        "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/workflow-read-v2/workflow-current-003.yml.raw",
+        "sha256": "b49236cd3dc667ea70598a4410b283186265403b6daf303242cfc6bee1e13136"
+      },
+      "oid": "6ff6dcc7adcb9005d1570e1dcf4064f2e1e05edc",
+      "on_block": "on:\n  pull_request:\n  workflow_dispatch:\n    inputs:\n      pr_number:\n        description: Same-repository open PR whose current source should be exported\n        required: true\n        type: string\n",
+      "on_end_line": 9,
+      "on_start_line": 2,
+      "parsed_on": {
+        "pull_request": "",
+        "workflow_dispatch": {
+          "inputs": {
+            "pr_number": {
+              "description": "Same-repository open PR whose current source should be exported",
+              "required": "true",
+              "type": "string"
+            }
+          }
+        }
+      },
+      "path": ".github/workflows/codeql-analysis-export.yml",
+      "pull_request_events": {
+        "pull_request": ""
+      },
+      "read_command": {
+        "argv": [
+          "/usr/bin/git",
+          "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+          "cat-file",
+          "blob",
+          "6ff6dcc7adcb9005d1570e1dcf4064f2e1e05edc"
+        ],
+        "exit": 0
+      },
+      "revision": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "revision_label": "current",
+      "sha256": "b49236cd3dc667ea70598a4410b283186265403b6daf303242cfc6bee1e13136",
+      "source_lines": 81
+    },
+    {
+      "bytes": 10546,
+      "captured_source": {
+        "bytes": 10546,
+        "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/workflow-read-v2/workflow-current-004.yml.raw",
+        "sha256": "9d65b79ee632c3490a84bb55e7015a78d468b6b5ff6ed74d01f2179831c00c32"
+      },
+      "oid": "9cea88c15ec764ed5627c70dcab73416e96d6b6d",
+      "on_block": "on:\n  push:\n    branches:\n      - main\n      - fix/chain-six-axis-performance-20261103\n      - fix/chain-native-codeql-source-scan-20261106-gpt6\n  # Match the read-only export lane's ordinary PR scope, including stacked bases.\n  # This local SARIF lane does not supply the exporter's Code Scanning API results.\n  pull_request:\n",
+      "on_end_line": 13,
+      "on_start_line": 5,
+      "parsed_on": {
+        "pull_request": "",
+        "push": {
+          "branches": [
+            "main",
+            "fix/chain-six-axis-performance-20261103",
+            "fix/chain-native-codeql-source-scan-20261106-gpt6"
+          ]
+        }
+      },
+      "path": ".github/workflows/codeql-real-exact-source.yml",
+      "pull_request_events": {
+        "pull_request": ""
+      },
+      "read_command": {
+        "argv": [
+          "/usr/bin/git",
+          "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+          "cat-file",
+          "blob",
+          "9cea88c15ec764ed5627c70dcab73416e96d6b6d"
+        ],
+        "exit": 0
+      },
+      "revision": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "revision_label": "current",
+      "sha256": "9d65b79ee632c3490a84bb55e7015a78d468b6b5ff6ed74d01f2179831c00c32",
+      "source_lines": 182
+    },
+    {
+      "bytes": 5746,
+      "captured_source": {
+        "bytes": 5746,
+        "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/workflow-read-v2/workflow-current-005.yml.raw",
+        "sha256": "e4c3280253162f9d999845fe94632c7ab16b3dfbfdf74c74ea380cb52ee4488e"
+      },
+      "oid": "d942705a245ed392e1dcb186bd2c1899f04b9d4f",
+      "on_block": "on:\n  push:\n    branches: [feature/chain-cpq1-content-commitments-20261108]\n  pull_request:\n    paths:\n      - trillionnium/crates/trnm-protocol/**\n      - trillionnium/crates/trnm-crypto-primitives/**\n      - trillionnium/crates/trnm-data-availability/**\n      - trillionnium/crates/trnm-mvcc-fee/**\n      - trillionnium/crates/trnm-release-bundle/**\n      - trillionnium/crates/trnm-pon-node/src/store.rs\n      - trillionnium/crates/trnm-pon-node/src/store/migration_history_v2.rs\n      - trillionnium/crates/trnm-pon-node/src/store/migration_history_v2/**\n      - config/pon/cpq1-content-commitments-v1.json\n      - config/pon/hash-use-contract-v1.json\n      - tests/fixtures/cpq1-content-v1/**\n      - tests/fixtures/cell-content-graph-v3/**\n      - scripts/ci/check_content_commitment_vectors.py\n      - scripts/ci/check_cell_content_graph_vectors_v3.py\n      - scripts/ci/hash_use_contract.py\n      - scripts/ci/test_hash_use_contract.py\n      - docs/security/CONTENT_GRAPH_AND_HISTORY_READBACK_V1.md\n      - .github/workflows/cpq1-full-content.yml\n",
+      "on_end_line": 24,
+      "on_start_line": 2,
+      "parsed_on": {
+        "pull_request": {
+          "paths": [
+            "trillionnium/crates/trnm-protocol/**",
+            "trillionnium/crates/trnm-crypto-primitives/**",
+            "trillionnium/crates/trnm-data-availability/**",
+            "trillionnium/crates/trnm-mvcc-fee/**",
+            "trillionnium/crates/trnm-release-bundle/**",
+            "trillionnium/crates/trnm-pon-node/src/store.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/migration_history_v2.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/migration_history_v2/**",
+            "config/pon/cpq1-content-commitments-v1.json",
+            "config/pon/hash-use-contract-v1.json",
+            "tests/fixtures/cpq1-content-v1/**",
+            "tests/fixtures/cell-content-graph-v3/**",
+            "scripts/ci/check_content_commitment_vectors.py",
+            "scripts/ci/check_cell_content_graph_vectors_v3.py",
+            "scripts/ci/hash_use_contract.py",
+            "scripts/ci/test_hash_use_contract.py",
+            "docs/security/CONTENT_GRAPH_AND_HISTORY_READBACK_V1.md",
+            ".github/workflows/cpq1-full-content.yml"
+          ]
+        },
+        "push": {
+          "branches": [
+            "feature/chain-cpq1-content-commitments-20261108"
+          ]
+        }
+      },
+      "path": ".github/workflows/cpq1-full-content.yml",
+      "pull_request_events": {
+        "pull_request": {
+          "paths": [
+            "trillionnium/crates/trnm-protocol/**",
+            "trillionnium/crates/trnm-crypto-primitives/**",
+            "trillionnium/crates/trnm-data-availability/**",
+            "trillionnium/crates/trnm-mvcc-fee/**",
+            "trillionnium/crates/trnm-release-bundle/**",
+            "trillionnium/crates/trnm-pon-node/src/store.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/migration_history_v2.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/migration_history_v2/**",
+            "config/pon/cpq1-content-commitments-v1.json",
+            "config/pon/hash-use-contract-v1.json",
+            "tests/fixtures/cpq1-content-v1/**",
+            "tests/fixtures/cell-content-graph-v3/**",
+            "scripts/ci/check_content_commitment_vectors.py",
+            "scripts/ci/check_cell_content_graph_vectors_v3.py",
+            "scripts/ci/hash_use_contract.py",
+            "scripts/ci/test_hash_use_contract.py",
+            "docs/security/CONTENT_GRAPH_AND_HISTORY_READBACK_V1.md",
+            ".github/workflows/cpq1-full-content.yml"
+          ]
+        }
+      },
+      "read_command": {
+        "argv": [
+          "/usr/bin/git",
+          "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+          "cat-file",
+          "blob",
+          "d942705a245ed392e1dcb186bd2c1899f04b9d4f"
+        ],
+        "exit": 0
+      },
+      "revision": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "revision_label": "current",
+      "sha256": "e4c3280253162f9d999845fe94632c7ab16b3dfbfdf74c74ea380cb52ee4488e",
+      "source_lines": 100
+    },
+    {
+      "bytes": 26186,
+      "captured_source": {
+        "bytes": 26186,
+        "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/workflow-read-v2/workflow-current-006.yml.raw",
+        "sha256": "b4df34292121c03dad051571ad14d09f2e4e7ad6d2b54d45ca905d2c4a7c0bdf"
+      },
+      "oid": "c758f5d0e10be8972e9b9fcc250e07d3a852877d",
+      "on_block": "on:\n  pull_request:\n    paths:\n      - .github/workflows/pon-baseline-diagnostic-readback.yml\n      - trillionnium/**\n",
+      "on_end_line": 6,
+      "on_start_line": 2,
+      "parsed_on": {
+        "pull_request": {
+          "paths": [
+            ".github/workflows/pon-baseline-diagnostic-readback.yml",
+            "trillionnium/**"
+          ]
+        }
+      },
+      "path": ".github/workflows/pon-baseline-diagnostic-readback.yml",
+      "pull_request_events": {
+        "pull_request": {
+          "paths": [
+            ".github/workflows/pon-baseline-diagnostic-readback.yml",
+            "trillionnium/**"
+          ]
+        }
+      },
+      "read_command": {
+        "argv": [
+          "/usr/bin/git",
+          "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+          "cat-file",
+          "blob",
+          "c758f5d0e10be8972e9b9fcc250e07d3a852877d"
+        ],
+        "exit": 0
+      },
+      "revision": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "revision_label": "current",
+      "sha256": "b4df34292121c03dad051571ad14d09f2e4e7ad6d2b54d45ca905d2c4a7c0bdf",
+      "source_lines": 429
+    },
+    {
+      "bytes": 15665,
+      "captured_source": {
+        "bytes": 15665,
+        "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/workflow-read-v2/workflow-current-007.yml.raw",
+        "sha256": "11fa74a841c9db70ccfebd50f414a56a18585a6b1552d029a3c6f61b67542704"
+      },
+      "oid": "45b9594701a408974303c0e4d135e1c7231f51d6",
+      "on_block": "on:\n  pull_request:\n    paths:\n      - trillionnium/crates/trnm-protocol/src/pon_wire.rs\n      - trillionnium/crates/trnm-pon-node/src/consensus.rs\n      - trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs\n      - trillionnium/crates/trnm-pon-node/tests/public_v3_distinct_invalid_work.rs\n      - trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs\n      - trillionnium/crates/trnm-pon-node/src/account_archive_prototype/**\n      - scripts/ci/check_native_constants_roster.py\n      - scripts/ci/test_native_constants_roster.py\n      - scripts/ci/check_consensus_roster.py\n      - scripts/ci/test_consensus_roster.py\n      - scripts/ci/test_branch_migration_count.py\n      - evidence/branch-migration-count-20261106/**\n      - .github/workflows/pon-branch-encoding-acceptance.yml\n",
+      "on_end_line": 17,
+      "on_start_line": 2,
+      "parsed_on": {
+        "pull_request": {
+          "paths": [
+            "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+            "trillionnium/crates/trnm-pon-node/src/consensus.rs",
+            "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs",
+            "trillionnium/crates/trnm-pon-node/tests/public_v3_distinct_invalid_work.rs",
+            "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs",
+            "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/**",
+            "scripts/ci/check_native_constants_roster.py",
+            "scripts/ci/test_native_constants_roster.py",
+            "scripts/ci/check_consensus_roster.py",
+            "scripts/ci/test_consensus_roster.py",
+            "scripts/ci/test_branch_migration_count.py",
+            "evidence/branch-migration-count-20261106/**",
+            ".github/workflows/pon-branch-encoding-acceptance.yml"
+          ]
+        }
+      },
+      "path": ".github/workflows/pon-branch-encoding-acceptance.yml",
+      "pull_request_events": {
+        "pull_request": {
+          "paths": [
+            "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+            "trillionnium/crates/trnm-pon-node/src/consensus.rs",
+            "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs",
+            "trillionnium/crates/trnm-pon-node/tests/public_v3_distinct_invalid_work.rs",
+            "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs",
+            "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/**",
+            "scripts/ci/check_native_constants_roster.py",
+            "scripts/ci/test_native_constants_roster.py",
+            "scripts/ci/check_consensus_roster.py",
+            "scripts/ci/test_consensus_roster.py",
+            "scripts/ci/test_branch_migration_count.py",
+            "evidence/branch-migration-count-20261106/**",
+            ".github/workflows/pon-branch-encoding-acceptance.yml"
+          ]
+        }
+      },
+      "read_command": {
+        "argv": [
+          "/usr/bin/git",
+          "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+          "cat-file",
+          "blob",
+          "45b9594701a408974303c0e4d135e1c7231f51d6"
+        ],
+        "exit": 0
+      },
+      "revision": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "revision_label": "current",
+      "sha256": "11fa74a841c9db70ccfebd50f414a56a18585a6b1552d029a3c6f61b67542704",
+      "source_lines": 206
+    },
+    {
+      "bytes": 3896,
+      "captured_source": {
+        "bytes": 3896,
+        "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/workflow-read-v2/workflow-current-008.yml.raw",
+        "sha256": "c680082edf1bdb53bf8e9e8c5c4157fb4ea794ec33b3e60453a586bd8be25bad"
+      },
+      "oid": "d9e7e2141ef26833deba030cb8b70d80c22274b6",
+      "on_block": "on:\n  pull_request:\n    paths:\n      - trillionnium/**\n      - scripts/ci/run_pon_budget_controls.py\n      - scripts/ci/test_pon_budget_controls.py\n      - scripts/ci/check_required_native_test.py\n      - scripts/ci/replay_pinned_native.py\n      - scripts/ci/verify_ci_source.py\n      - scripts/project-preflight.sh\n      - scripts/ci/project_boundary.py\n      - rust-toolchain.toml\n      - .github/workflows/pon-budget-controls.yml\n  workflow_dispatch:\n",
+      "on_end_line": 15,
+      "on_start_line": 2,
+      "parsed_on": {
+        "pull_request": {
+          "paths": [
+            "trillionnium/**",
+            "scripts/ci/run_pon_budget_controls.py",
+            "scripts/ci/test_pon_budget_controls.py",
+            "scripts/ci/check_required_native_test.py",
+            "scripts/ci/replay_pinned_native.py",
+            "scripts/ci/verify_ci_source.py",
+            "scripts/project-preflight.sh",
+            "scripts/ci/project_boundary.py",
+            "rust-toolchain.toml",
+            ".github/workflows/pon-budget-controls.yml"
+          ]
+        },
+        "workflow_dispatch": ""
+      },
+      "path": ".github/workflows/pon-budget-controls.yml",
+      "pull_request_events": {
+        "pull_request": {
+          "paths": [
+            "trillionnium/**",
+            "scripts/ci/run_pon_budget_controls.py",
+            "scripts/ci/test_pon_budget_controls.py",
+            "scripts/ci/check_required_native_test.py",
+            "scripts/ci/replay_pinned_native.py",
+            "scripts/ci/verify_ci_source.py",
+            "scripts/project-preflight.sh",
+            "scripts/ci/project_boundary.py",
+            "rust-toolchain.toml",
+            ".github/workflows/pon-budget-controls.yml"
+          ]
+        }
+      },
+      "read_command": {
+        "argv": [
+          "/usr/bin/git",
+          "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+          "cat-file",
+          "blob",
+          "d9e7e2141ef26833deba030cb8b70d80c22274b6"
+        ],
+        "exit": 0
+      },
+      "revision": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "revision_label": "current",
+      "sha256": "c680082edf1bdb53bf8e9e8c5c4157fb4ea794ec33b3e60453a586bd8be25bad",
+      "source_lines": 91
+    },
+    {
+      "bytes": 3991,
+      "captured_source": {
+        "bytes": 3991,
+        "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/workflow-read-v2/workflow-current-009.yml.raw",
+        "sha256": "71f7770ee8433aca8ac00f809a978d5813601e42ce128357377d9b58d6b9fc23"
+      },
+      "oid": "36d0cdef797a21aca7e6884082ffb2a8d861b8a6",
+      "on_block": "on:\n  pull_request:\n    paths:\n      - .github/workflows/pon-cloud-build-inputs.yml\n      - rust-toolchain.toml\n      - trillionnium/Cargo.lock\n      - trillionnium/**/Cargo.toml\n  workflow_dispatch:\n",
+      "on_end_line": 9,
+      "on_start_line": 2,
+      "parsed_on": {
+        "pull_request": {
+          "paths": [
+            ".github/workflows/pon-cloud-build-inputs.yml",
+            "rust-toolchain.toml",
+            "trillionnium/Cargo.lock",
+            "trillionnium/**/Cargo.toml"
+          ]
+        },
+        "workflow_dispatch": ""
+      },
+      "path": ".github/workflows/pon-cloud-build-inputs.yml",
+      "pull_request_events": {
+        "pull_request": {
+          "paths": [
+            ".github/workflows/pon-cloud-build-inputs.yml",
+            "rust-toolchain.toml",
+            "trillionnium/Cargo.lock",
+            "trillionnium/**/Cargo.toml"
+          ]
+        }
+      },
+      "read_command": {
+        "argv": [
+          "/usr/bin/git",
+          "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+          "cat-file",
+          "blob",
+          "36d0cdef797a21aca7e6884082ffb2a8d861b8a6"
+        ],
+        "exit": 0
+      },
+      "revision": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "revision_label": "current",
+      "sha256": "71f7770ee8433aca8ac00f809a978d5813601e42ce128357377d9b58d6b9fc23",
+      "source_lines": 77
+    },
+    {
+      "bytes": 5669,
+      "captured_source": {
+        "bytes": 5669,
+        "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/workflow-read-v2/workflow-current-010.yml.raw",
+        "sha256": "a4e9debdf960431ce37e4799543aa658e3b10faa16d083a8e1989911d0e3a55c"
+      },
+      "oid": "a54e2492abbef92685af3ea9c654bb6720511e95",
+      "on_block": "on:\n  pull_request:\n    paths:\n      - formal/pon-nakamoto-v1/**\n      - scripts/ci/**\n      - docs/protocol/pon-nakamoto-v1/details/CLASSICAL_QUANTUM_COST_AUDIT_20261108.md\n      - .github/workflows/pon-credit-envelope.yml\n",
+      "on_end_line": 8,
+      "on_start_line": 2,
+      "parsed_on": {
+        "pull_request": {
+          "paths": [
+            "formal/pon-nakamoto-v1/**",
+            "scripts/ci/**",
+            "docs/protocol/pon-nakamoto-v1/details/CLASSICAL_QUANTUM_COST_AUDIT_20261108.md",
+            ".github/workflows/pon-credit-envelope.yml"
+          ]
+        }
+      },
+      "path": ".github/workflows/pon-credit-envelope.yml",
+      "pull_request_events": {
+        "pull_request": {
+          "paths": [
+            "formal/pon-nakamoto-v1/**",
+            "scripts/ci/**",
+            "docs/protocol/pon-nakamoto-v1/details/CLASSICAL_QUANTUM_COST_AUDIT_20261108.md",
+            ".github/workflows/pon-credit-envelope.yml"
+          ]
+        }
+      },
+      "read_command": {
+        "argv": [
+          "/usr/bin/git",
+          "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+          "cat-file",
+          "blob",
+          "a54e2492abbef92685af3ea9c654bb6720511e95"
+        ],
+        "exit": 0
+      },
+      "revision": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "revision_label": "current",
+      "sha256": "a4e9debdf960431ce37e4799543aa658e3b10faa16d083a8e1989911d0e3a55c",
+      "source_lines": 118
+    },
+    {
+      "bytes": 16082,
+      "captured_source": {
+        "bytes": 16082,
+        "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/workflow-read-v2/workflow-current-011.yml.raw",
+        "sha256": "bcc790adee96acb233385c37c5391e3f18244cce95292fd89e57860d253b199d"
+      },
+      "oid": "19979c73dea632842eb8edf5c7098703e4387e8a",
+      "on_block": "on:\n  workflow_dispatch:\n",
+      "on_end_line": 3,
+      "on_start_line": 2,
+      "parsed_on": {
+        "workflow_dispatch": ""
+      },
+      "path": ".github/workflows/pon-fixed-host-root-f0.yml",
+      "pull_request_events": {},
+      "read_command": {
+        "argv": [
+          "/usr/bin/git",
+          "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+          "cat-file",
+          "blob",
+          "19979c73dea632842eb8edf5c7098703e4387e8a"
+        ],
+        "exit": 0
+      },
+      "revision": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "revision_label": "current",
+      "sha256": "bcc790adee96acb233385c37c5391e3f18244cce95292fd89e57860d253b199d",
+      "source_lines": 282
+    },
+    {
+      "bytes": 4214,
+      "captured_source": {
+        "bytes": 4214,
+        "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/workflow-read-v2/workflow-current-012.yml.raw",
+        "sha256": "bf88e21b12c120f73b09bd1daca562c41b20d8223392430f95950b62f70c71b7"
+      },
+      "oid": "88b0ed45d65aff17d5cf5e0e14f7516efee24746",
+      "on_block": "on:\n  push:\n    branches: [fix/chain-six-axis-performance-20261103]\n    paths:\n      - .github/workflows/pon-history-stage-diagnostic.yml\n      - scripts/ci/run_history_diagnostic.py\n      - scripts/ci/test_history_stage_diagnostic.py\n      - trillionnium/crates/trnm-pon-node/tests/history_stage_diagnostic.rs\n      # Relevant replay/Host changes need stage evidence too. This is not a\n      # complete dependency graph or an additional qualification gate.\n      - trillionnium/crates/trnm-pon-node/src/store.rs\n      - trillionnium/crates/trnm-pon-node/src/store/**\n      - trillionnium/crates/trnm-pon-node/src/ingress.rs\n      - trillionnium/crates/trnm-pon-node/src/ingress/**\n      - trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs\n      - trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs\n      - trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs\n      - trillionnium/crates/trnm-protocol/src/pon_state.rs\n      - trillionnium/crates/trnm-protocol/src/pon_wire.rs\n      - trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs\n      - trillionnium/crates/trnm-pon-node/tests/ancestry_long_sync.rs\n      - scripts/ci/run_from_zero_host.py\n      - scripts/ci/public_host_ci_observation.py\n      - scripts/ci/public_fixture_host_lease.py\n      - config/systemd/trnmponpublic.slice\n",
+      "on_end_line": 26,
+      "on_start_line": 2,
+      "parsed_on": {
+        "push": {
+          "branches": [
+            "fix/chain-six-axis-performance-20261103"
+          ],
+          "paths": [
+            ".github/workflows/pon-history-stage-diagnostic.yml",
+            "scripts/ci/run_history_diagnostic.py",
+            "scripts/ci/test_history_stage_diagnostic.py",
+            "trillionnium/crates/trnm-pon-node/tests/history_stage_diagnostic.rs",
+            "trillionnium/crates/trnm-pon-node/src/store.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/**",
+            "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+            "trillionnium/crates/trnm-pon-node/src/ingress/**",
+            "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+            "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+            "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+            "trillionnium/crates/trnm-protocol/src/pon_state.rs",
+            "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+            "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs",
+            "trillionnium/crates/trnm-pon-node/tests/ancestry_long_sync.rs",
+            "scripts/ci/run_from_zero_host.py",
+            "scripts/ci/public_host_ci_observation.py",
+            "scripts/ci/public_fixture_host_lease.py",
+            "config/systemd/trnmponpublic.slice"
+          ]
+        }
+      },
+      "path": ".github/workflows/pon-history-stage-diagnostic.yml",
+      "pull_request_events": {},
+      "read_command": {
+        "argv": [
+          "/usr/bin/git",
+          "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+          "cat-file",
+          "blob",
+          "88b0ed45d65aff17d5cf5e0e14f7516efee24746"
+        ],
+        "exit": 0
+      },
+      "revision": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "revision_label": "current",
+      "sha256": "bf88e21b12c120f73b09bd1daca562c41b20d8223392430f95950b62f70c71b7",
+      "source_lines": 91
+    },
+    {
+      "bytes": 3431,
+      "captured_source": {
+        "bytes": 3431,
+        "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/workflow-read-v2/workflow-current-013.yml.raw",
+        "sha256": "9d9b9cb19054cf6801ffafc14d4ed9da00f44026bb9bb7c80f62af1f988156a2"
+      },
+      "oid": "6a183a6add41884730b202a402a934c9dbbcca65",
+      "on_block": "on:\n  pull_request:\n    paths:\n      - .github/workflows/pon-learning-outcome-composition.yml\n      - scripts/cell_learning_local_use_join.py\n      - scripts/capture_cell_learning_local_use.py\n      - scripts/test_cell_learning_local_use_join.py\n      - scripts/cell_learning_local_decision_join.py\n      - scripts/test_cell_learning_local_decision_join.py\n      - scripts/cell_adoption_readback.py\n      - scripts/test_cell_adoption_readback.py\n      - scripts/cell_learning_iteration_join.py\n      - scripts/test_cell_learning_iteration_join.py\n      - scripts/cell_learning_completion_join.py\n      - scripts/capture_cell_learning_completion.py\n      - scripts/cell_learning_scope_join.py\n      - scripts/test_cell_learning_scope_join.py\n      - scripts/ci/verify_ci_source.py\n      - scripts/project-preflight.sh\n      - scripts/ci/project_boundary.py\n      - PROJECT_BOUNDARY.json\n      - PROJECT_ID\n      - evidence/heplcp04-completed-use-20261111/**\n",
+      "on_end_line": 24,
+      "on_start_line": 2,
+      "parsed_on": {
+        "pull_request": {
+          "paths": [
+            ".github/workflows/pon-learning-outcome-composition.yml",
+            "scripts/cell_learning_local_use_join.py",
+            "scripts/capture_cell_learning_local_use.py",
+            "scripts/test_cell_learning_local_use_join.py",
+            "scripts/cell_learning_local_decision_join.py",
+            "scripts/test_cell_learning_local_decision_join.py",
+            "scripts/cell_adoption_readback.py",
+            "scripts/test_cell_adoption_readback.py",
+            "scripts/cell_learning_iteration_join.py",
+            "scripts/test_cell_learning_iteration_join.py",
+            "scripts/cell_learning_completion_join.py",
+            "scripts/capture_cell_learning_completion.py",
+            "scripts/cell_learning_scope_join.py",
+            "scripts/test_cell_learning_scope_join.py",
+            "scripts/ci/verify_ci_source.py",
+            "scripts/project-preflight.sh",
+            "scripts/ci/project_boundary.py",
+            "PROJECT_BOUNDARY.json",
+            "PROJECT_ID",
+            "evidence/heplcp04-completed-use-20261111/**"
+          ]
+        }
+      },
+      "path": ".github/workflows/pon-learning-outcome-composition.yml",
+      "pull_request_events": {
+        "pull_request": {
+          "paths": [
+            ".github/workflows/pon-learning-outcome-composition.yml",
+            "scripts/cell_learning_local_use_join.py",
+            "scripts/capture_cell_learning_local_use.py",
+            "scripts/test_cell_learning_local_use_join.py",
+            "scripts/cell_learning_local_decision_join.py",
+            "scripts/test_cell_learning_local_decision_join.py",
+            "scripts/cell_adoption_readback.py",
+            "scripts/test_cell_adoption_readback.py",
+            "scripts/cell_learning_iteration_join.py",
+            "scripts/test_cell_learning_iteration_join.py",
+            "scripts/cell_learning_completion_join.py",
+            "scripts/capture_cell_learning_completion.py",
+            "scripts/cell_learning_scope_join.py",
+            "scripts/test_cell_learning_scope_join.py",
+            "scripts/ci/verify_ci_source.py",
+            "scripts/project-preflight.sh",
+            "scripts/ci/project_boundary.py",
+            "PROJECT_BOUNDARY.json",
+            "PROJECT_ID",
+            "evidence/heplcp04-completed-use-20261111/**"
+          ]
+        }
+      },
+      "read_command": {
+        "argv": [
+          "/usr/bin/git",
+          "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+          "cat-file",
+          "blob",
+          "6a183a6add41884730b202a402a934c9dbbcca65"
+        ],
+        "exit": 0
+      },
+      "revision": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "revision_label": "current",
+      "sha256": "9d9b9cb19054cf6801ffafc14d4ed9da00f44026bb9bb7c80f62af1f988156a2",
+      "source_lines": 82
+    },
+    {
+      "bytes": 30537,
+      "captured_source": {
+        "bytes": 30537,
+        "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/workflow-read-v2/workflow-current-014.yml.raw",
+        "sha256": "ca241d78af9f5cf1c018db78b6688e1b5d57ed124e54b24b573ce17e8fc10469"
+      },
+      "oid": "c58bf49b7be97e747314e2814fa5c4cc9295e891",
+      "on_block": "on:\n  push:\n    branches:\n      - fix/chain-legacy-reorg-cost-20261104\n",
+      "on_end_line": 5,
+      "on_start_line": 2,
+      "parsed_on": {
+        "push": {
+          "branches": [
+            "fix/chain-legacy-reorg-cost-20261104"
+          ]
+        }
+      },
+      "path": ".github/workflows/pon-legacy-reorg-cost-20261104.yml",
+      "pull_request_events": {},
+      "read_command": {
+        "argv": [
+          "/usr/bin/git",
+          "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+          "cat-file",
+          "blob",
+          "c58bf49b7be97e747314e2814fa5c4cc9295e891"
+        ],
+        "exit": 0
+      },
+      "revision": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "revision_label": "current",
+      "sha256": "ca241d78af9f5cf1c018db78b6688e1b5d57ed124e54b24b573ce17e8fc10469",
+      "source_lines": 484
+    },
+    {
+      "bytes": 3948,
+      "captured_source": {
+        "bytes": 3948,
+        "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/workflow-read-v2/workflow-current-015.yml.raw",
+        "sha256": "a2fb71f718810d4365df5c877fd84432553d2788f50f32762a90a08c571f6fea"
+      },
+      "oid": "9305c93f54dfee7d8ad6fd88df6df5e881ca7d0c",
+      "on_block": "on:\n  pull_request:\n    paths:\n      - formal/pon-nakamoto-v1/**\n      - .github/workflows/pon-model-parent-acceptance.yml\n",
+      "on_end_line": 6,
+      "on_start_line": 2,
+      "parsed_on": {
+        "pull_request": {
+          "paths": [
+            "formal/pon-nakamoto-v1/**",
+            ".github/workflows/pon-model-parent-acceptance.yml"
+          ]
+        }
+      },
+      "path": ".github/workflows/pon-model-parent-acceptance.yml",
+      "pull_request_events": {
+        "pull_request": {
+          "paths": [
+            "formal/pon-nakamoto-v1/**",
+            ".github/workflows/pon-model-parent-acceptance.yml"
+          ]
+        }
+      },
+      "read_command": {
+        "argv": [
+          "/usr/bin/git",
+          "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+          "cat-file",
+          "blob",
+          "9305c93f54dfee7d8ad6fd88df6df5e881ca7d0c"
+        ],
+        "exit": 0
+      },
+      "revision": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "revision_label": "current",
+      "sha256": "a2fb71f718810d4365df5c877fd84432553d2788f50f32762a90a08c571f6fea",
+      "source_lines": 79
+    },
+    {
+      "bytes": 22404,
+      "captured_source": {
+        "bytes": 22404,
+        "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/workflow-read-v2/workflow-current-016.yml.raw",
+        "sha256": "65ae89b813cfadda98cc7fedececb1ad5aa05d6d34d660fa2746a10281b1658d"
+      },
+      "oid": "a11dbcd8476d149fa89aeac7979c5ddefad9108c",
+      "on_block": "on:\n  workflow_dispatch:\n",
+      "on_end_line": 3,
+      "on_start_line": 2,
+      "parsed_on": {
+        "workflow_dispatch": ""
+      },
+      "path": ".github/workflows/pon-native-campaign-qualification.yml",
+      "pull_request_events": {},
+      "read_command": {
+        "argv": [
+          "/usr/bin/git",
+          "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+          "cat-file",
+          "blob",
+          "a11dbcd8476d149fa89aeac7979c5ddefad9108c"
+        ],
+        "exit": 0
+      },
+      "revision": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "revision_label": "current",
+      "sha256": "65ae89b813cfadda98cc7fedececb1ad5aa05d6d34d660fa2746a10281b1658d",
+      "source_lines": 391
+    },
+    {
+      "bytes": 5677,
+      "captured_source": {
+        "bytes": 5677,
+        "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/workflow-read-v2/workflow-current-017.yml.raw",
+        "sha256": "8f5dc92659cb6c731a4d53e09b439179e5537851af1572e7db44d51174ca7ec6"
+      },
+      "oid": "f6791e25103f95067d9fe3de46018c41460dd668",
+      "on_block": "on:\n  pull_request:\n    paths:\n      - .github/workflows/pon-native-fullpath.yml\n      - formal/pon-native-fullpath-v1/**\n      - trillionnium/**\n      - config/**\n      - rust-toolchain.toml\n  workflow_dispatch:\n",
+      "on_end_line": 10,
+      "on_start_line": 2,
+      "parsed_on": {
+        "pull_request": {
+          "paths": [
+            ".github/workflows/pon-native-fullpath.yml",
+            "formal/pon-native-fullpath-v1/**",
+            "trillionnium/**",
+            "config/**",
+            "rust-toolchain.toml"
+          ]
+        },
+        "workflow_dispatch": ""
+      },
+      "path": ".github/workflows/pon-native-fullpath.yml",
+      "pull_request_events": {
+        "pull_request": {
+          "paths": [
+            ".github/workflows/pon-native-fullpath.yml",
+            "formal/pon-native-fullpath-v1/**",
+            "trillionnium/**",
+            "config/**",
+            "rust-toolchain.toml"
+          ]
+        }
+      },
+      "read_command": {
+        "argv": [
+          "/usr/bin/git",
+          "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+          "cat-file",
+          "blob",
+          "f6791e25103f95067d9fe3de46018c41460dd668"
+        ],
+        "exit": 0
+      },
+      "revision": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "revision_label": "current",
+      "sha256": "8f5dc92659cb6c731a4d53e09b439179e5537851af1572e7db44d51174ca7ec6",
+      "source_lines": 107
+    },
+    {
+      "bytes": 30885,
+      "captured_source": {
+        "bytes": 30885,
+        "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/workflow-read-v2/workflow-current-018.yml.raw",
+        "sha256": "0bab9026c4498fb2a361edeece98ef8c88b1d8d5ff31e8b340d8906deeb146b2"
+      },
+      "oid": "a2c1d0fc734b10b50fd3a71b0644e24898f35c06",
+      "on_block": "on:\n  pull_request:\n    paths:\n      - formal/next-architecture-security/**\n      - config/**\n      - docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md\n      - docs/development/specs/pon/NEXT_ARCHITECTURE_SECURITY_QUALIFICATION_V1.md\n      - docs/development/specs/pon/NEXT_CONSENSUS_PQ_RESEARCH_V1.md\n      - docs/development/specs/pon/NEXT_HEPTA_OWNER_BINDINGS_V1.md\n      - docs/development/specs/pon/NATIVE_PACKET_STATUS_OBSERVATION_V1.md\n      - docs/development/specs/pon/CELL_BEP52_BINDING_V1.md\n      - docs/development/specs/pon/CELL_RS46_CHUNK_V1.md\n      - docs/development/specs/pon/CELL_COMPLETE_VERSION_V1.md\n      - docs/development/specs/pon/CELL_CUSTODY_CONTINUATION_V1.md\n      - docs/development/specs/pon/CELL_PROVIDER_DISCOVERY_DEV_V1.md\n      - docs/development/specs/pon/CELL_PROVIDER_DISCOVERY_AUTH_PQ_V3.md\n      - docs/development/specs/pon/CELL_STORAGE_NETWORK_ACCEPTANCE_V1.md\n      - scripts/cell_complete_version_vector.py\n      - scripts/cell_discovery_epoch_v3_vector.py\n      - formal/pon-nakamoto-v1/vectors/cell-complete-version-v1.json\n      - formal/pon-nakamoto-v1/vectors/cell-discovery-epoch-v3.json\n      - scripts/cell_version_content_vector.py\n      - docs/development/specs/pon/CELL_STORAGE_CONVERGENCE_DEV_V1.md\n      - scripts/cell_version_retention_v3_vector.py\n      - scripts/cell_storage_descriptor_reference.py\n      - scripts/ci/test_cell_storage_convergence_ci.py\n      - scripts/cell_sealed_bootstrap_v1.py\n      - scripts/llm_cell_sealed_worker_v1.py\n      - scripts/prepare_cell_sealed_research_v1.py\n      - scripts/test_llm_cell_sealed_worker_v1.py\n      - tests/fixtures/llm_material_runtime_bridge_v1/**\n      - formal/pon-nakamoto-v1/vectors/cell-version-retention-v3.json\n      - formal/pon-nakamoto-v1/vectors/cell-storage-owner-vectors-v1.json\n      - docs/development/specs/pon/CELL_FULL_CONTENT_V2.md\n      - docs/development/specs/pon/CELL_SEALED_LOADER_V1.md\n      - docs/development/specs/pon/CELL_RS46_CUSTODY_V1.md\n      - docs/development/specs/pon/CELL_BEP52_PEER_V1.md\n      - formal/pon-nakamoto-v1/vectors/cell-version-content-v2.json\n      - trillionnium/crates/trnm-data-availability/**\n      - trillionnium/crates/trnm-pon-node/**\n      - trillionnium/crates/trnm-crypto-primitives/**\n      - trillionnium/crates/trnm-protocol/**\n      - trillionnium/crates/trnm-research-protocol/**\n      - trillionnium/Cargo.toml\n      - trillionnium/Cargo.lock\n      - .cargo/**\n      - rust-toolchain.toml\n      - scripts/project-preflight.sh\n      - scripts/ci/**\n      - .github/workflows/pon-next-architecture-security.yml\n\n",
+      "on_end_line": 53,
+      "on_start_line": 3,
+      "parsed_on": {
+        "pull_request": {
+          "paths": [
+            "formal/next-architecture-security/**",
+            "config/**",
+            "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+            "docs/development/specs/pon/NEXT_ARCHITECTURE_SECURITY_QUALIFICATION_V1.md",
+            "docs/development/specs/pon/NEXT_CONSENSUS_PQ_RESEARCH_V1.md",
+            "docs/development/specs/pon/NEXT_HEPTA_OWNER_BINDINGS_V1.md",
+            "docs/development/specs/pon/NATIVE_PACKET_STATUS_OBSERVATION_V1.md",
+            "docs/development/specs/pon/CELL_BEP52_BINDING_V1.md",
+            "docs/development/specs/pon/CELL_RS46_CHUNK_V1.md",
+            "docs/development/specs/pon/CELL_COMPLETE_VERSION_V1.md",
+            "docs/development/specs/pon/CELL_CUSTODY_CONTINUATION_V1.md",
+            "docs/development/specs/pon/CELL_PROVIDER_DISCOVERY_DEV_V1.md",
+            "docs/development/specs/pon/CELL_PROVIDER_DISCOVERY_AUTH_PQ_V3.md",
+            "docs/development/specs/pon/CELL_STORAGE_NETWORK_ACCEPTANCE_V1.md",
+            "scripts/cell_complete_version_vector.py",
+            "scripts/cell_discovery_epoch_v3_vector.py",
+            "formal/pon-nakamoto-v1/vectors/cell-complete-version-v1.json",
+            "formal/pon-nakamoto-v1/vectors/cell-discovery-epoch-v3.json",
+            "scripts/cell_version_content_vector.py",
+            "docs/development/specs/pon/CELL_STORAGE_CONVERGENCE_DEV_V1.md",
+            "scripts/cell_version_retention_v3_vector.py",
+            "scripts/cell_storage_descriptor_reference.py",
+            "scripts/ci/test_cell_storage_convergence_ci.py",
+            "scripts/cell_sealed_bootstrap_v1.py",
+            "scripts/llm_cell_sealed_worker_v1.py",
+            "scripts/prepare_cell_sealed_research_v1.py",
+            "scripts/test_llm_cell_sealed_worker_v1.py",
+            "tests/fixtures/llm_material_runtime_bridge_v1/**",
+            "formal/pon-nakamoto-v1/vectors/cell-version-retention-v3.json",
+            "formal/pon-nakamoto-v1/vectors/cell-storage-owner-vectors-v1.json",
+            "docs/development/specs/pon/CELL_FULL_CONTENT_V2.md",
+            "docs/development/specs/pon/CELL_SEALED_LOADER_V1.md",
+            "docs/development/specs/pon/CELL_RS46_CUSTODY_V1.md",
+            "docs/development/specs/pon/CELL_BEP52_PEER_V1.md",
+            "formal/pon-nakamoto-v1/vectors/cell-version-content-v2.json",
+            "trillionnium/crates/trnm-data-availability/**",
+            "trillionnium/crates/trnm-pon-node/**",
+            "trillionnium/crates/trnm-crypto-primitives/**",
+            "trillionnium/crates/trnm-protocol/**",
+            "trillionnium/crates/trnm-research-protocol/**",
+            "trillionnium/Cargo.toml",
+            "trillionnium/Cargo.lock",
+            ".cargo/**",
+            "rust-toolchain.toml",
+            "scripts/project-preflight.sh",
+            "scripts/ci/**",
+            ".github/workflows/pon-next-architecture-security.yml"
+          ]
+        }
+      },
+      "path": ".github/workflows/pon-next-architecture-security.yml",
+      "pull_request_events": {
+        "pull_request": {
+          "paths": [
+            "formal/next-architecture-security/**",
+            "config/**",
+            "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+            "docs/development/specs/pon/NEXT_ARCHITECTURE_SECURITY_QUALIFICATION_V1.md",
+            "docs/development/specs/pon/NEXT_CONSENSUS_PQ_RESEARCH_V1.md",
+            "docs/development/specs/pon/NEXT_HEPTA_OWNER_BINDINGS_V1.md",
+            "docs/development/specs/pon/NATIVE_PACKET_STATUS_OBSERVATION_V1.md",
+            "docs/development/specs/pon/CELL_BEP52_BINDING_V1.md",
+            "docs/development/specs/pon/CELL_RS46_CHUNK_V1.md",
+            "docs/development/specs/pon/CELL_COMPLETE_VERSION_V1.md",
+            "docs/development/specs/pon/CELL_CUSTODY_CONTINUATION_V1.md",
+            "docs/development/specs/pon/CELL_PROVIDER_DISCOVERY_DEV_V1.md",
+            "docs/development/specs/pon/CELL_PROVIDER_DISCOVERY_AUTH_PQ_V3.md",
+            "docs/development/specs/pon/CELL_STORAGE_NETWORK_ACCEPTANCE_V1.md",
+            "scripts/cell_complete_version_vector.py",
+            "scripts/cell_discovery_epoch_v3_vector.py",
+            "formal/pon-nakamoto-v1/vectors/cell-complete-version-v1.json",
+            "formal/pon-nakamoto-v1/vectors/cell-discovery-epoch-v3.json",
+            "scripts/cell_version_content_vector.py",
+            "docs/development/specs/pon/CELL_STORAGE_CONVERGENCE_DEV_V1.md",
+            "scripts/cell_version_retention_v3_vector.py",
+            "scripts/cell_storage_descriptor_reference.py",
+            "scripts/ci/test_cell_storage_convergence_ci.py",
+            "scripts/cell_sealed_bootstrap_v1.py",
+            "scripts/llm_cell_sealed_worker_v1.py",
+            "scripts/prepare_cell_sealed_research_v1.py",
+            "scripts/test_llm_cell_sealed_worker_v1.py",
+            "tests/fixtures/llm_material_runtime_bridge_v1/**",
+            "formal/pon-nakamoto-v1/vectors/cell-version-retention-v3.json",
+            "formal/pon-nakamoto-v1/vectors/cell-storage-owner-vectors-v1.json",
+            "docs/development/specs/pon/CELL_FULL_CONTENT_V2.md",
+            "docs/development/specs/pon/CELL_SEALED_LOADER_V1.md",
+            "docs/development/specs/pon/CELL_RS46_CUSTODY_V1.md",
+            "docs/development/specs/pon/CELL_BEP52_PEER_V1.md",
+            "formal/pon-nakamoto-v1/vectors/cell-version-content-v2.json",
+            "trillionnium/crates/trnm-data-availability/**",
+            "trillionnium/crates/trnm-pon-node/**",
+            "trillionnium/crates/trnm-crypto-primitives/**",
+            "trillionnium/crates/trnm-protocol/**",
+            "trillionnium/crates/trnm-research-protocol/**",
+            "trillionnium/Cargo.toml",
+            "trillionnium/Cargo.lock",
+            ".cargo/**",
+            "rust-toolchain.toml",
+            "scripts/project-preflight.sh",
+            "scripts/ci/**",
+            ".github/workflows/pon-next-architecture-security.yml"
+          ]
+        }
+      },
+      "read_command": {
+        "argv": [
+          "/usr/bin/git",
+          "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+          "cat-file",
+          "blob",
+          "a2c1d0fc734b10b50fd3a71b0644e24898f35c06"
+        ],
+        "exit": 0
+      },
+      "revision": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "revision_label": "current",
+      "sha256": "0bab9026c4498fb2a361edeece98ef8c88b1d8d5ff31e8b340d8906deeb146b2",
+      "source_lines": 498
+    },
+    {
+      "bytes": 11401,
+      "captured_source": {
+        "bytes": 11401,
+        "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/workflow-read-v2/workflow-current-019.yml.raw",
+        "sha256": "b24118d008c44a7c1bafc84683943ef57a39588f674ab3c8687f0369d52a34c2"
+      },
+      "oid": "b304444ad20e6341fae8f977fac8536da78c7eca",
+      "on_block": "\"on\":\n  \"pull_request\": {}\n",
+      "on_end_line": 6,
+      "on_start_line": 5,
+      "parsed_on": {
+        "pull_request": {}
+      },
+      "path": ".github/workflows/pon-original-large-state-cpu.yml",
+      "pull_request_events": {
+        "pull_request": {}
+      },
+      "read_command": {
+        "argv": [
+          "/usr/bin/git",
+          "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+          "cat-file",
+          "blob",
+          "b304444ad20e6341fae8f977fac8536da78c7eca"
+        ],
+        "exit": 0
+      },
+      "revision": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "revision_label": "current",
+      "sha256": "b24118d008c44a7c1bafc84683943ef57a39588f674ab3c8687f0369d52a34c2",
+      "source_lines": 202
+    },
+    {
+      "bytes": 2415,
+      "captured_source": {
+        "bytes": 2415,
+        "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/workflow-read-v2/workflow-current-020.yml.raw",
+        "sha256": "f36624c4cd832f066dc31091f7325852a28ea544182a15c9b3b389293c8ea9c9"
+      },
+      "oid": "3167d5b6a04a72bc7b5b0b8b9bc2e07ccbf55567",
+      "on_block": "on:\n  pull_request:\n    paths:\n      - scripts/ci/host_budget_feasibility.py\n      - scripts/ci/pq_source_reader.py\n      - scripts/ci/test_host_budget_feasibility.py\n      - evidence/pon-original-host-cost-20261110/host-phase-summary.json\n      - .github/workflows/pon-original-quarter-core-feasibility.yml\n  workflow_dispatch:\n",
+      "on_end_line": 10,
+      "on_start_line": 2,
+      "parsed_on": {
+        "pull_request": {
+          "paths": [
+            "scripts/ci/host_budget_feasibility.py",
+            "scripts/ci/pq_source_reader.py",
+            "scripts/ci/test_host_budget_feasibility.py",
+            "evidence/pon-original-host-cost-20261110/host-phase-summary.json",
+            ".github/workflows/pon-original-quarter-core-feasibility.yml"
+          ]
+        },
+        "workflow_dispatch": ""
+      },
+      "path": ".github/workflows/pon-original-quarter-core-feasibility.yml",
+      "pull_request_events": {
+        "pull_request": {
+          "paths": [
+            "scripts/ci/host_budget_feasibility.py",
+            "scripts/ci/pq_source_reader.py",
+            "scripts/ci/test_host_budget_feasibility.py",
+            "evidence/pon-original-host-cost-20261110/host-phase-summary.json",
+            ".github/workflows/pon-original-quarter-core-feasibility.yml"
+          ]
+        }
+      },
+      "read_command": {
+        "argv": [
+          "/usr/bin/git",
+          "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+          "cat-file",
+          "blob",
+          "3167d5b6a04a72bc7b5b0b8b9bc2e07ccbf55567"
+        ],
+        "exit": 0
+      },
+      "revision": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "revision_label": "current",
+      "sha256": "f36624c4cd832f066dc31091f7325852a28ea544182a15c9b3b389293c8ea9c9",
+      "source_lines": 54
+    },
+    {
+      "bytes": 29900,
+      "captured_source": {
+        "bytes": 29900,
+        "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/workflow-read-v2/workflow-current-021.yml.raw",
+        "sha256": "4656a4ba72eb3187e5fef3d648532a12e95d2fc776e5980a0af70fdff39df3c0"
+      },
+      "oid": "5092acc212fd3429d607276a53f0b7d7097e774e",
+      "on_block": "'on':\n  pull_request: {}\n",
+      "on_end_line": 6,
+      "on_start_line": 5,
+      "parsed_on": {
+        "pull_request": {}
+      },
+      "path": ".github/workflows/pon-original-workspace-large-state-cpu.yml",
+      "pull_request_events": {
+        "pull_request": {}
+      },
+      "read_command": {
+        "argv": [
+          "/usr/bin/git",
+          "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+          "cat-file",
+          "blob",
+          "5092acc212fd3429d607276a53f0b7d7097e774e"
+        ],
+        "exit": 0
+      },
+      "revision": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "revision_label": "current",
+      "sha256": "4656a4ba72eb3187e5fef3d648532a12e95d2fc776e5980a0af70fdff39df3c0",
+      "source_lines": 491
+    },
+    {
+      "bytes": 12058,
+      "captured_source": {
+        "bytes": 12058,
+        "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/workflow-read-v2/workflow-current-022.yml.raw",
+        "sha256": "bdfd78e107273525aa743ffb998510c0602c28366f091bd66f07accb4b2682b5"
+      },
+      "oid": "3ed5bff6e3ec2a9451cd3834289a5d83b59eb4f5",
+      "on_block": "on:\n  pull_request:\n    paths:\n      - formal/pon-nakamoto-v1/**\n      - scripts/**\n      - .github/workflows/pon-owned-process-cleanup.yml\n",
+      "on_end_line": 7,
+      "on_start_line": 2,
+      "parsed_on": {
+        "pull_request": {
+          "paths": [
+            "formal/pon-nakamoto-v1/**",
+            "scripts/**",
+            ".github/workflows/pon-owned-process-cleanup.yml"
+          ]
+        }
+      },
+      "path": ".github/workflows/pon-owned-process-cleanup.yml",
+      "pull_request_events": {
+        "pull_request": {
+          "paths": [
+            "formal/pon-nakamoto-v1/**",
+            "scripts/**",
+            ".github/workflows/pon-owned-process-cleanup.yml"
+          ]
+        }
+      },
+      "read_command": {
+        "argv": [
+          "/usr/bin/git",
+          "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+          "cat-file",
+          "blob",
+          "3ed5bff6e3ec2a9451cd3834289a5d83b59eb4f5"
+        ],
+        "exit": 0
+      },
+      "revision": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "revision_label": "current",
+      "sha256": "bdfd78e107273525aa743ffb998510c0602c28366f091bd66f07accb4b2682b5",
+      "source_lines": 219
+    },
+    {
+      "bytes": 53627,
+      "captured_source": {
+        "bytes": 53627,
+        "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/workflow-read-v2/workflow-current-023.yml.raw",
+        "sha256": "80fe3c87a0018e3df86236c1c2f997861b3a6a4c26bb6c7816fd114a8b2e0c32"
+      },
+      "oid": "75a8f1a913f7e9e3ffb2445bed11451d6cb6de1e",
+      "on_block": "on:\n  pull_request:\n    paths:\n      - trillionnium/**\n      - config/pon/pq-cross-branch-corpus-v1.json\n      - config/pon/pq-system-required-tests-v1.json\n      - config/pon/pq-system-supplemental-tests-v1.json\n      - config/pon/pq-native-tls-required-tests-v1.json\n      - config/pon/pq-native-tls-witness-required-tests-v1.json\n      - config/pon/pq-native-tls-endpoint-required-tests-v1.json\n      - config/pon/pq-initial-root-material-required-tests-v1.json\n      - config/pon/pq-release-authority-required-tests-v2.json\n      - formal/pon-nakamoto-v1/pq_root_quorum_research.py\n      - formal/pon-nakamoto-v1/test_pq_root_quorum_research.py\n      - scripts/ci/check_ci_contract.py\n      - scripts/ci/test_ci_contract.py\n      - scripts/ci/check_cell_current_api_readback.py\n      - scripts/ci/record_pq_native_command.py\n      - scripts/ci/pinned_native_process.py\n      - scripts/ci/test_record_pq_native_command.py\n      - scripts/ci/verify_ci_source.py\n      - scripts/ci/check_required_native_test.py\n      - scripts/ci/check_cpq1_parameter_observation.py\n      - scripts/ci/test_cpq1_parameter_observation.py\n      - scripts/ci/check_sqlite_build_requalification.py\n      - .github/workflows/pon-pq-system-continuation.yml\n",
+      "on_end_line": 27,
+      "on_start_line": 2,
+      "parsed_on": {
+        "pull_request": {
+          "paths": [
+            "trillionnium/**",
+            "config/pon/pq-cross-branch-corpus-v1.json",
+            "config/pon/pq-system-required-tests-v1.json",
+            "config/pon/pq-system-supplemental-tests-v1.json",
+            "config/pon/pq-native-tls-required-tests-v1.json",
+            "config/pon/pq-native-tls-witness-required-tests-v1.json",
+            "config/pon/pq-native-tls-endpoint-required-tests-v1.json",
+            "config/pon/pq-initial-root-material-required-tests-v1.json",
+            "config/pon/pq-release-authority-required-tests-v2.json",
+            "formal/pon-nakamoto-v1/pq_root_quorum_research.py",
+            "formal/pon-nakamoto-v1/test_pq_root_quorum_research.py",
+            "scripts/ci/check_ci_contract.py",
+            "scripts/ci/test_ci_contract.py",
+            "scripts/ci/check_cell_current_api_readback.py",
+            "scripts/ci/record_pq_native_command.py",
+            "scripts/ci/pinned_native_process.py",
+            "scripts/ci/test_record_pq_native_command.py",
+            "scripts/ci/verify_ci_source.py",
+            "scripts/ci/check_required_native_test.py",
+            "scripts/ci/check_cpq1_parameter_observation.py",
+            "scripts/ci/test_cpq1_parameter_observation.py",
+            "scripts/ci/check_sqlite_build_requalification.py",
+            ".github/workflows/pon-pq-system-continuation.yml"
+          ]
+        }
+      },
+      "path": ".github/workflows/pon-pq-system-continuation.yml",
+      "pull_request_events": {
+        "pull_request": {
+          "paths": [
+            "trillionnium/**",
+            "config/pon/pq-cross-branch-corpus-v1.json",
+            "config/pon/pq-system-required-tests-v1.json",
+            "config/pon/pq-system-supplemental-tests-v1.json",
+            "config/pon/pq-native-tls-required-tests-v1.json",
+            "config/pon/pq-native-tls-witness-required-tests-v1.json",
+            "config/pon/pq-native-tls-endpoint-required-tests-v1.json",
+            "config/pon/pq-initial-root-material-required-tests-v1.json",
+            "config/pon/pq-release-authority-required-tests-v2.json",
+            "formal/pon-nakamoto-v1/pq_root_quorum_research.py",
+            "formal/pon-nakamoto-v1/test_pq_root_quorum_research.py",
+            "scripts/ci/check_ci_contract.py",
+            "scripts/ci/test_ci_contract.py",
+            "scripts/ci/check_cell_current_api_readback.py",
+            "scripts/ci/record_pq_native_command.py",
+            "scripts/ci/pinned_native_process.py",
+            "scripts/ci/test_record_pq_native_command.py",
+            "scripts/ci/verify_ci_source.py",
+            "scripts/ci/check_required_native_test.py",
+            "scripts/ci/check_cpq1_parameter_observation.py",
+            "scripts/ci/test_cpq1_parameter_observation.py",
+            "scripts/ci/check_sqlite_build_requalification.py",
+            ".github/workflows/pon-pq-system-continuation.yml"
+          ]
+        }
+      },
+      "read_command": {
+        "argv": [
+          "/usr/bin/git",
+          "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+          "cat-file",
+          "blob",
+          "75a8f1a913f7e9e3ffb2445bed11451d6cb6de1e"
+        ],
+        "exit": 0
+      },
+      "revision": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "revision_label": "current",
+      "sha256": "80fe3c87a0018e3df86236c1c2f997861b3a6a4c26bb6c7816fd114a8b2e0c32",
+      "source_lines": 834
+    },
+    {
+      "bytes": 24989,
+      "captured_source": {
+        "bytes": 24989,
+        "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/workflow-read-v2/workflow-current-024.yml.raw",
+        "sha256": "6a7eeb14bc2fe1a005d0ee7403e1c6d2e5ba41e941c51892baf35002ecdd62fb"
+      },
+      "oid": "d44a2288c0ee0a20778df24cd69e9cc300fd8a75",
+      "on_block": "on:\n  push:\n    branches:\n      - fix/chain-six-axis-performance-20261103\n  pull_request:\n",
+      "on_end_line": 6,
+      "on_start_line": 2,
+      "parsed_on": {
+        "pull_request": "",
+        "push": {
+          "branches": [
+            "fix/chain-six-axis-performance-20261103"
+          ]
+        }
+      },
+      "path": ".github/workflows/pon-priority-acceptance.yml",
+      "pull_request_events": {
+        "pull_request": ""
+      },
+      "read_command": {
+        "argv": [
+          "/usr/bin/git",
+          "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+          "cat-file",
+          "blob",
+          "d44a2288c0ee0a20778df24cd69e9cc300fd8a75"
+        ],
+        "exit": 0
+      },
+      "revision": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "revision_label": "current",
+      "sha256": "6a7eeb14bc2fe1a005d0ee7403e1c6d2e5ba41e941c51892baf35002ecdd62fb",
+      "source_lines": 374
+    },
+    {
+      "bytes": 36165,
+      "captured_source": {
+        "bytes": 36165,
+        "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/workflow-read-v2/workflow-current-025.yml.raw",
+        "sha256": "993298ead6b3de0a2157eea6e5060238f8c3459d24c5e15bfcb6889731430c3d"
+      },
+      "oid": "d91b1bd75a91d33106df99a482b9b74b68592dd0",
+      "on_block": "on:\n  pull_request:\n    paths:\n      - trillionnium/crates/trnm-pon-node/src/store.rs\n      - trillionnium/crates/trnm-pon-node/src/store/history_page.rs\n      - trillionnium/crates/trnm-pon-node/src/store/history_page_inline_tests.rs\n      - trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs\n      - trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs\n      - trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs\n      - trillionnium/crates/trnm-pon-node/src/store/native_authenticated/current_accounts_tests.rs\n      - trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs\n      - trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/tests.rs\n      - trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs\n      - trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic.rs\n      - trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs\n      - trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs\n      - trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs\n      - trillionnium/crates/trnm-pon-node/src/store/native_fixed_blob_tests.rs\n      - trillionnium/crates/trnm-pon-node/tests/authenticated_storage_cli.rs\n      - trillionnium/crates/trnm-pon-node/examples/continuous_pipeline.rs\n      - trillionnium/crates/trnm-pon-node/tests/public_v3_service_campaign.rs\n      - formal/pon-nakamoto-v1/work_query_bound.py\n      - formal/pon-nakamoto-v1/test_work_query_bound.py\n      - scripts/ci/read_native_cache_observation.py\n      - scripts/ci/test_read_native_cache_observation.py\n      - scripts/ci/test_recent_batch_suite_count.py\n      - scripts/ci/test_authenticated_suite_count.py\n      - evidence/authenticated-suite-count-20261106/**\n      - evidence/workspace-semantic-registry-20261106/**\n      - evidence/recent-batch-suite-count-20261106/**\n      - .github/workflows/pon-recent-batch-acceptance.yml\n      - .github/workflows/pon-original-workspace-large-state-cpu.yml\n",
+      "on_end_line": 33,
+      "on_start_line": 2,
+      "parsed_on": {
+        "pull_request": {
+          "paths": [
+            "trillionnium/crates/trnm-pon-node/src/store.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/history_page.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/history_page_inline_tests.rs",
+            "trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs",
+            "trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/current_accounts_tests.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/tests.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs",
+            "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+            "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/native_fixed_blob_tests.rs",
+            "trillionnium/crates/trnm-pon-node/tests/authenticated_storage_cli.rs",
+            "trillionnium/crates/trnm-pon-node/examples/continuous_pipeline.rs",
+            "trillionnium/crates/trnm-pon-node/tests/public_v3_service_campaign.rs",
+            "formal/pon-nakamoto-v1/work_query_bound.py",
+            "formal/pon-nakamoto-v1/test_work_query_bound.py",
+            "scripts/ci/read_native_cache_observation.py",
+            "scripts/ci/test_read_native_cache_observation.py",
+            "scripts/ci/test_recent_batch_suite_count.py",
+            "scripts/ci/test_authenticated_suite_count.py",
+            "evidence/authenticated-suite-count-20261106/**",
+            "evidence/workspace-semantic-registry-20261106/**",
+            "evidence/recent-batch-suite-count-20261106/**",
+            ".github/workflows/pon-recent-batch-acceptance.yml",
+            ".github/workflows/pon-original-workspace-large-state-cpu.yml"
+          ]
+        }
+      },
+      "path": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "pull_request_events": {
+        "pull_request": {
+          "paths": [
+            "trillionnium/crates/trnm-pon-node/src/store.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/history_page.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/history_page_inline_tests.rs",
+            "trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs",
+            "trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/current_accounts_tests.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/tests.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs",
+            "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+            "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/native_fixed_blob_tests.rs",
+            "trillionnium/crates/trnm-pon-node/tests/authenticated_storage_cli.rs",
+            "trillionnium/crates/trnm-pon-node/examples/continuous_pipeline.rs",
+            "trillionnium/crates/trnm-pon-node/tests/public_v3_service_campaign.rs",
+            "formal/pon-nakamoto-v1/work_query_bound.py",
+            "formal/pon-nakamoto-v1/test_work_query_bound.py",
+            "scripts/ci/read_native_cache_observation.py",
+            "scripts/ci/test_read_native_cache_observation.py",
+            "scripts/ci/test_recent_batch_suite_count.py",
+            "scripts/ci/test_authenticated_suite_count.py",
+            "evidence/authenticated-suite-count-20261106/**",
+            "evidence/workspace-semantic-registry-20261106/**",
+            "evidence/recent-batch-suite-count-20261106/**",
+            ".github/workflows/pon-recent-batch-acceptance.yml",
+            ".github/workflows/pon-original-workspace-large-state-cpu.yml"
+          ]
+        }
+      },
+      "read_command": {
+        "argv": [
+          "/usr/bin/git",
+          "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+          "cat-file",
+          "blob",
+          "d91b1bd75a91d33106df99a482b9b74b68592dd0"
+        ],
+        "exit": 0
+      },
+      "revision": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "revision_label": "current",
+      "sha256": "993298ead6b3de0a2157eea6e5060238f8c3459d24c5e15bfcb6889731430c3d",
+      "source_lines": 434
+    },
+    {
+      "bytes": 1988,
+      "captured_source": {
+        "bytes": 1988,
+        "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/workflow-read-v2/workflow-current-026.yml.raw",
+        "sha256": "f9bd0275cfae5cd0e644b3a2142ba60b049f8da4ade1432c13f39890bb8215ff"
+      },
+      "oid": "15638b7be5eb2448f56a434fd99fe944febb71aa",
+      "on_block": "on:\n  push:\n    branches:\n      - fix/chain-model-owner-hosted-once-20261105\n    paths:\n      - config/pon/hosted-model-intents-v1/*.json\n",
+      "on_end_line": 7,
+      "on_start_line": 2,
+      "parsed_on": {
+        "push": {
+          "branches": [
+            "fix/chain-model-owner-hosted-once-20261105"
+          ],
+          "paths": [
+            "config/pon/hosted-model-intents-v1/*.json"
+          ]
+        }
+      },
+      "path": ".github/workflows/pon-smollm-hosted-once.yml",
+      "pull_request_events": {},
+      "read_command": {
+        "argv": [
+          "/usr/bin/git",
+          "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+          "cat-file",
+          "blob",
+          "15638b7be5eb2448f56a434fd99fe944febb71aa"
+        ],
+        "exit": 0
+      },
+      "revision": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "revision_label": "current",
+      "sha256": "f9bd0275cfae5cd0e644b3a2142ba60b049f8da4ade1432c13f39890bb8215ff",
+      "source_lines": 52
+    },
+    {
+      "bytes": 8964,
+      "captured_source": {
+        "bytes": 8964,
+        "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/workflow-read-v2/workflow-current-027.yml.raw",
+        "sha256": "dc2e58b148804dd668b9798d5c3bddd722b775bff9614d76d799f164d8e5cb3b"
+      },
+      "oid": "069392f0ab0d7607fc72da1d3689ccbe47813274",
+      "on_block": "on:\n  pull_request:\n    paths:\n      - .github/workflows/pon-throughput-evidence.yml\n      - formal/throughput-v1/**\n      - formal/pon-native-fullpath-v1/**\n      - scripts/run_smollm_cell_replica_research.py\n      - scripts/ci/test_smollm_command_receipts.py\n      - scripts/pon_public_v3_phase_read.py\n      - scripts/ci/test_pon_public_v3_phase_read.py\n      - scripts/ci/prepare_pq_provider.sh\n      - trillionnium/crates/trnm-mvcc-fee/**\n      - trillionnium/crates/trnm-pon-node/src/ingress/public_v3/**\n      - trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs\n      - trillionnium/crates/trnm-pon-node/src/peer_polling.rs\n      - evidence/pon-throughput-engineering-20261108/**\n      - evidence/pon-throughput-business-20261109/**\n      - evidence/pon-throughput-20261108/**\n      - config/pon/pq-cross-branch-corpus-v1.json\n  workflow_dispatch:\n",
+      "on_end_line": 21,
+      "on_start_line": 2,
+      "parsed_on": {
+        "pull_request": {
+          "paths": [
+            ".github/workflows/pon-throughput-evidence.yml",
+            "formal/throughput-v1/**",
+            "formal/pon-native-fullpath-v1/**",
+            "scripts/run_smollm_cell_replica_research.py",
+            "scripts/ci/test_smollm_command_receipts.py",
+            "scripts/pon_public_v3_phase_read.py",
+            "scripts/ci/test_pon_public_v3_phase_read.py",
+            "scripts/ci/prepare_pq_provider.sh",
+            "trillionnium/crates/trnm-mvcc-fee/**",
+            "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/**",
+            "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+            "trillionnium/crates/trnm-pon-node/src/peer_polling.rs",
+            "evidence/pon-throughput-engineering-20261108/**",
+            "evidence/pon-throughput-business-20261109/**",
+            "evidence/pon-throughput-20261108/**",
+            "config/pon/pq-cross-branch-corpus-v1.json"
+          ]
+        },
+        "workflow_dispatch": ""
+      },
+      "path": ".github/workflows/pon-throughput-evidence.yml",
+      "pull_request_events": {
+        "pull_request": {
+          "paths": [
+            ".github/workflows/pon-throughput-evidence.yml",
+            "formal/throughput-v1/**",
+            "formal/pon-native-fullpath-v1/**",
+            "scripts/run_smollm_cell_replica_research.py",
+            "scripts/ci/test_smollm_command_receipts.py",
+            "scripts/pon_public_v3_phase_read.py",
+            "scripts/ci/test_pon_public_v3_phase_read.py",
+            "scripts/ci/prepare_pq_provider.sh",
+            "trillionnium/crates/trnm-mvcc-fee/**",
+            "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/**",
+            "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+            "trillionnium/crates/trnm-pon-node/src/peer_polling.rs",
+            "evidence/pon-throughput-engineering-20261108/**",
+            "evidence/pon-throughput-business-20261109/**",
+            "evidence/pon-throughput-20261108/**",
+            "config/pon/pq-cross-branch-corpus-v1.json"
+          ]
+        }
+      },
+      "read_command": {
+        "argv": [
+          "/usr/bin/git",
+          "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+          "cat-file",
+          "blob",
+          "069392f0ab0d7607fc72da1d3689ccbe47813274"
+        ],
+        "exit": 0
+      },
+      "revision": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "revision_label": "current",
+      "sha256": "dc2e58b148804dd668b9798d5c3bddd722b775bff9614d76d799f164d8e5cb3b",
+      "source_lines": 160
+    },
+    {
+      "bytes": 22579,
+      "captured_source": {
+        "bytes": 22579,
+        "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/workflow-read-v2/workflow-current-028.yml.raw",
+        "sha256": "6e101deb0b31ea1d0b79fcffd3133fbcb0f30efb38edd79a623ed012bbf77921"
+      },
+      "oid": "fe0a830ee9b120bdc1928f044bfe8384243b2f38",
+      "on_block": "on:\n  pull_request:\n    paths:\n      - formal/pon-nakamoto-v1/**\n      - trillionnium/**\n      - scripts/w1_*.py\n      - scripts/w1_*.c\n      - scripts/ci/**\n      - scripts/project-preflight.sh\n      - evidence/pon-w1-*/**\n      - evidence/pq-live-retry-20261111-fa62381e/**\n      - evidence/pon-quantum-lifetime-20261111-e464/**\n      - config/**\n      - .cargo/**\n      - rust-toolchain.toml\n      - AGENTS.md\n      - PROJECT_ID\n      - PROJECT_BOUNDARY.json\n      - .github/workflows/pon-w1-qrom-closure.yml\n",
+      "on_end_line": 20,
+      "on_start_line": 2,
+      "parsed_on": {
+        "pull_request": {
+          "paths": [
+            "formal/pon-nakamoto-v1/**",
+            "trillionnium/**",
+            "scripts/w1_*.py",
+            "scripts/w1_*.c",
+            "scripts/ci/**",
+            "scripts/project-preflight.sh",
+            "evidence/pon-w1-*/**",
+            "evidence/pq-live-retry-20261111-fa62381e/**",
+            "evidence/pon-quantum-lifetime-20261111-e464/**",
+            "config/**",
+            ".cargo/**",
+            "rust-toolchain.toml",
+            "AGENTS.md",
+            "PROJECT_ID",
+            "PROJECT_BOUNDARY.json",
+            ".github/workflows/pon-w1-qrom-closure.yml"
+          ]
+        }
+      },
+      "path": ".github/workflows/pon-w1-qrom-closure.yml",
+      "pull_request_events": {
+        "pull_request": {
+          "paths": [
+            "formal/pon-nakamoto-v1/**",
+            "trillionnium/**",
+            "scripts/w1_*.py",
+            "scripts/w1_*.c",
+            "scripts/ci/**",
+            "scripts/project-preflight.sh",
+            "evidence/pon-w1-*/**",
+            "evidence/pq-live-retry-20261111-fa62381e/**",
+            "evidence/pon-quantum-lifetime-20261111-e464/**",
+            "config/**",
+            ".cargo/**",
+            "rust-toolchain.toml",
+            "AGENTS.md",
+            "PROJECT_ID",
+            "PROJECT_BOUNDARY.json",
+            ".github/workflows/pon-w1-qrom-closure.yml"
+          ]
+        }
+      },
+      "read_command": {
+        "argv": [
+          "/usr/bin/git",
+          "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+          "cat-file",
+          "blob",
+          "fe0a830ee9b120bdc1928f044bfe8384243b2f38"
+        ],
+        "exit": 0
+      },
+      "revision": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "revision_label": "current",
+      "sha256": "6e101deb0b31ea1d0b79fcffd3133fbcb0f30efb38edd79a623ed012bbf77921",
+      "source_lines": 375
+    },
+    {
+      "bytes": 70342,
+      "captured_source": {
+        "bytes": 70342,
+        "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/workflow-read-v2/workflow-current-029.yml.raw",
+        "sha256": "8863db7c7c997cf8f5aa2cfc382bc27ac4b97ba31f56e7c1b1a6b10cbab7d38a"
+      },
+      "oid": "eca8b1d4733f452a685894e8e942461f64f74a1e",
+      "on_block": "on:\n  pull_request:\n    paths:\n      - formal/pon-nakamoto-v1/**\n      - trillionnium/**\n      - scripts/w1_*.py\n      - scripts/ci/**\n      - scripts/project-preflight.sh\n      - evidence/pon-w1-*/**\n      - config/**\n      - .cargo/**\n      - rust-toolchain.toml\n      - AGENTS.md\n      - PROJECT_ID\n      - PROJECT_BOUNDARY.json\n      - .github/workflows/pon-w1-qrom-implementation.yml\n",
+      "on_end_line": 17,
+      "on_start_line": 2,
+      "parsed_on": {
+        "pull_request": {
+          "paths": [
+            "formal/pon-nakamoto-v1/**",
+            "trillionnium/**",
+            "scripts/w1_*.py",
+            "scripts/ci/**",
+            "scripts/project-preflight.sh",
+            "evidence/pon-w1-*/**",
+            "config/**",
+            ".cargo/**",
+            "rust-toolchain.toml",
+            "AGENTS.md",
+            "PROJECT_ID",
+            "PROJECT_BOUNDARY.json",
+            ".github/workflows/pon-w1-qrom-implementation.yml"
+          ]
+        }
+      },
+      "path": ".github/workflows/pon-w1-qrom-implementation.yml",
+      "pull_request_events": {
+        "pull_request": {
+          "paths": [
+            "formal/pon-nakamoto-v1/**",
+            "trillionnium/**",
+            "scripts/w1_*.py",
+            "scripts/ci/**",
+            "scripts/project-preflight.sh",
+            "evidence/pon-w1-*/**",
+            "config/**",
+            ".cargo/**",
+            "rust-toolchain.toml",
+            "AGENTS.md",
+            "PROJECT_ID",
+            "PROJECT_BOUNDARY.json",
+            ".github/workflows/pon-w1-qrom-implementation.yml"
+          ]
+        }
+      },
+      "read_command": {
+        "argv": [
+          "/usr/bin/git",
+          "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+          "cat-file",
+          "blob",
+          "eca8b1d4733f452a685894e8e942461f64f74a1e"
+        ],
+        "exit": 0
+      },
+      "revision": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "revision_label": "current",
+      "sha256": "8863db7c7c997cf8f5aa2cfc382bc27ac4b97ba31f56e7c1b1a6b10cbab7d38a",
+      "source_lines": 1181
+    },
+    {
+      "bytes": 18199,
+      "captured_source": {
+        "bytes": 18199,
+        "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/workflow-read-v2/workflow-current-030.yml.raw",
+        "sha256": "028b76e835ef3e381e0c4bc9e04a753584f4e783bf6a26f6fe2aeacbfcf1759c"
+      },
+      "oid": "11db1f8c113d24d711531b4340972af79da0f186",
+      "on_block": "on:\n  pull_request:\n    paths:\n      - scripts/w1_*.py\n      - scripts/ci/**\n      - scripts/project-preflight.sh\n      - formal/pon-nakamoto-v1/**\n      - config/pon/w1-*.json\n      - evidence/pon-w1-*/**\n      - docs/security/W1_*.md\n      - .github/workflows/pon-w1-qrom-proof-chain.yml\n      - PROJECT_ID\n      - PROJECT_BOUNDARY.json\n      - AGENTS.md\n",
+      "on_end_line": 15,
+      "on_start_line": 2,
+      "parsed_on": {
+        "pull_request": {
+          "paths": [
+            "scripts/w1_*.py",
+            "scripts/ci/**",
+            "scripts/project-preflight.sh",
+            "formal/pon-nakamoto-v1/**",
+            "config/pon/w1-*.json",
+            "evidence/pon-w1-*/**",
+            "docs/security/W1_*.md",
+            ".github/workflows/pon-w1-qrom-proof-chain.yml",
+            "PROJECT_ID",
+            "PROJECT_BOUNDARY.json",
+            "AGENTS.md"
+          ]
+        }
+      },
+      "path": ".github/workflows/pon-w1-qrom-proof-chain.yml",
+      "pull_request_events": {
+        "pull_request": {
+          "paths": [
+            "scripts/w1_*.py",
+            "scripts/ci/**",
+            "scripts/project-preflight.sh",
+            "formal/pon-nakamoto-v1/**",
+            "config/pon/w1-*.json",
+            "evidence/pon-w1-*/**",
+            "docs/security/W1_*.md",
+            ".github/workflows/pon-w1-qrom-proof-chain.yml",
+            "PROJECT_ID",
+            "PROJECT_BOUNDARY.json",
+            "AGENTS.md"
+          ]
+        }
+      },
+      "read_command": {
+        "argv": [
+          "/usr/bin/git",
+          "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+          "cat-file",
+          "blob",
+          "11db1f8c113d24d711531b4340972af79da0f186"
+        ],
+        "exit": 0
+      },
+      "revision": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "revision_label": "current",
+      "sha256": "028b76e835ef3e381e0c4bc9e04a753584f4e783bf6a26f6fe2aeacbfcf1759c",
+      "source_lines": 319
+    },
+    {
+      "bytes": 36890,
+      "captured_source": {
+        "bytes": 36890,
+        "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/workflow-read-v2/workflow-current-031.yml.raw",
+        "sha256": "71d85b406625bb49f5cb6df6fe486b53733aebf9434fe94f4d62c7aa9bce2581"
+      },
+      "oid": "6b0ea0fcceb61c245cb516ba4a8bb2e9c0570ad8",
+      "on_block": "on:\n  pull_request:\n    paths:\n      - formal/pon-nakamoto-v1/w1_hardened_verifier/**\n      - formal/pon-nakamoto-v1/w1_v2_verifier/**\n      - formal/pon-nakamoto-v1/w1_native_cost/**\n      - formal/pon-nakamoto-v1/w1_zkvm/**\n      - formal/pon-nakamoto-v1/experiments/w1_full_staged_run.py\n      - formal/pon-nakamoto-v1/experiments/w1_stage_measure.py\n      - formal/pon-nakamoto-v1/experiments/w1_local_payload.py\n      - trillionnium/**\n      - scripts/w1_transparent_compare.py\n      - scripts/w1_profile_source_map.py\n      - scripts/w1_security_budget.py\n      - scripts/w1_v2_receipt_controls.py\n      - scripts/run_w1_receiver.py\n      - scripts/run_w1_postwin_proof.py\n      - scripts/run_w1_deployment_comparison.py\n      - scripts/audit_w1_deployment_comparison.py\n      - scripts/build_w1_kaggle_source.py\n      - scripts/kaggle_generation_contract_v2.py\n      - scripts/test_kaggle_generation_contract_v2.py\n      - scripts/w1_generation_target_v2.py\n      - scripts/test_w1_generation_target_v2.py\n      - scripts/w1_owner_cancellation_v1.py\n      - scripts/test_w1_owner_cancellation_v1.py\n      - scripts/w1_owned_generation_runtime_v2.py\n      - scripts/test_w1_owned_generation_runtime_v2.py\n      - scripts/w1_owned_process_collector_v1.py\n      - scripts/test_w1_owned_process_collector_v1.py\n      - evidence/pon-w1-full-v2-20261105/**\n      - evidence/seven-gates-followup-20261108/research-ci-fix/transparent-bb-controls.tar.xz\n      - evidence/pon-w1-fresh-runtime-20261107/**\n      - evidence/pon-w1-backend-sdk-20261107/**\n      - scripts/w1_kaggle_worker_template.py\n      - scripts/ci/**\n      - scripts/project-preflight.sh\n      - evidence/pon-w1-complete-succinct-20261028/**\n      - evidence/pon-w1-full-v2-20261105/**\n      - evidence/seven-gates-followup-20261108/research-ci-fix/transparent-bb-controls.tar.xz\n      - evidence/pon-w1-verifier-hardening-20261028/**\n      - evidence/pon-w1-transparent-profile-20261104/**\n      - evidence/pon-w1-stark-review-20261106/**\n      - evidence/pon-w1-source-snapshot-20261106/**\n      - evidence/pon-w1-statement-v2-20261105/**\n      - evidence/pon-w1-qrom-budget-20261105/**\n      - config/**\n      - .cargo/**\n      - rust-toolchain.toml\n      - AGENTS.md\n      - PROJECT_ID\n      - PROJECT_BOUNDARY.json\n      - .github/workflows/pon-w1-transparent-profile.yml\n",
+      "on_end_line": 54,
+      "on_start_line": 2,
+      "parsed_on": {
+        "pull_request": {
+          "paths": [
+            "formal/pon-nakamoto-v1/w1_hardened_verifier/**",
+            "formal/pon-nakamoto-v1/w1_v2_verifier/**",
+            "formal/pon-nakamoto-v1/w1_native_cost/**",
+            "formal/pon-nakamoto-v1/w1_zkvm/**",
+            "formal/pon-nakamoto-v1/experiments/w1_full_staged_run.py",
+            "formal/pon-nakamoto-v1/experiments/w1_stage_measure.py",
+            "formal/pon-nakamoto-v1/experiments/w1_local_payload.py",
+            "trillionnium/**",
+            "scripts/w1_transparent_compare.py",
+            "scripts/w1_profile_source_map.py",
+            "scripts/w1_security_budget.py",
+            "scripts/w1_v2_receipt_controls.py",
+            "scripts/run_w1_receiver.py",
+            "scripts/run_w1_postwin_proof.py",
+            "scripts/run_w1_deployment_comparison.py",
+            "scripts/audit_w1_deployment_comparison.py",
+            "scripts/build_w1_kaggle_source.py",
+            "scripts/kaggle_generation_contract_v2.py",
+            "scripts/test_kaggle_generation_contract_v2.py",
+            "scripts/w1_generation_target_v2.py",
+            "scripts/test_w1_generation_target_v2.py",
+            "scripts/w1_owner_cancellation_v1.py",
+            "scripts/test_w1_owner_cancellation_v1.py",
+            "scripts/w1_owned_generation_runtime_v2.py",
+            "scripts/test_w1_owned_generation_runtime_v2.py",
+            "scripts/w1_owned_process_collector_v1.py",
+            "scripts/test_w1_owned_process_collector_v1.py",
+            "evidence/pon-w1-full-v2-20261105/**",
+            "evidence/seven-gates-followup-20261108/research-ci-fix/transparent-bb-controls.tar.xz",
+            "evidence/pon-w1-fresh-runtime-20261107/**",
+            "evidence/pon-w1-backend-sdk-20261107/**",
+            "scripts/w1_kaggle_worker_template.py",
+            "scripts/ci/**",
+            "scripts/project-preflight.sh",
+            "evidence/pon-w1-complete-succinct-20261028/**",
+            "evidence/pon-w1-full-v2-20261105/**",
+            "evidence/seven-gates-followup-20261108/research-ci-fix/transparent-bb-controls.tar.xz",
+            "evidence/pon-w1-verifier-hardening-20261028/**",
+            "evidence/pon-w1-transparent-profile-20261104/**",
+            "evidence/pon-w1-stark-review-20261106/**",
+            "evidence/pon-w1-source-snapshot-20261106/**",
+            "evidence/pon-w1-statement-v2-20261105/**",
+            "evidence/pon-w1-qrom-budget-20261105/**",
+            "config/**",
+            ".cargo/**",
+            "rust-toolchain.toml",
+            "AGENTS.md",
+            "PROJECT_ID",
+            "PROJECT_BOUNDARY.json",
+            ".github/workflows/pon-w1-transparent-profile.yml"
+          ]
+        }
+      },
+      "path": ".github/workflows/pon-w1-transparent-profile.yml",
+      "pull_request_events": {
+        "pull_request": {
+          "paths": [
+            "formal/pon-nakamoto-v1/w1_hardened_verifier/**",
+            "formal/pon-nakamoto-v1/w1_v2_verifier/**",
+            "formal/pon-nakamoto-v1/w1_native_cost/**",
+            "formal/pon-nakamoto-v1/w1_zkvm/**",
+            "formal/pon-nakamoto-v1/experiments/w1_full_staged_run.py",
+            "formal/pon-nakamoto-v1/experiments/w1_stage_measure.py",
+            "formal/pon-nakamoto-v1/experiments/w1_local_payload.py",
+            "trillionnium/**",
+            "scripts/w1_transparent_compare.py",
+            "scripts/w1_profile_source_map.py",
+            "scripts/w1_security_budget.py",
+            "scripts/w1_v2_receipt_controls.py",
+            "scripts/run_w1_receiver.py",
+            "scripts/run_w1_postwin_proof.py",
+            "scripts/run_w1_deployment_comparison.py",
+            "scripts/audit_w1_deployment_comparison.py",
+            "scripts/build_w1_kaggle_source.py",
+            "scripts/kaggle_generation_contract_v2.py",
+            "scripts/test_kaggle_generation_contract_v2.py",
+            "scripts/w1_generation_target_v2.py",
+            "scripts/test_w1_generation_target_v2.py",
+            "scripts/w1_owner_cancellation_v1.py",
+            "scripts/test_w1_owner_cancellation_v1.py",
+            "scripts/w1_owned_generation_runtime_v2.py",
+            "scripts/test_w1_owned_generation_runtime_v2.py",
+            "scripts/w1_owned_process_collector_v1.py",
+            "scripts/test_w1_owned_process_collector_v1.py",
+            "evidence/pon-w1-full-v2-20261105/**",
+            "evidence/seven-gates-followup-20261108/research-ci-fix/transparent-bb-controls.tar.xz",
+            "evidence/pon-w1-fresh-runtime-20261107/**",
+            "evidence/pon-w1-backend-sdk-20261107/**",
+            "scripts/w1_kaggle_worker_template.py",
+            "scripts/ci/**",
+            "scripts/project-preflight.sh",
+            "evidence/pon-w1-complete-succinct-20261028/**",
+            "evidence/pon-w1-full-v2-20261105/**",
+            "evidence/seven-gates-followup-20261108/research-ci-fix/transparent-bb-controls.tar.xz",
+            "evidence/pon-w1-verifier-hardening-20261028/**",
+            "evidence/pon-w1-transparent-profile-20261104/**",
+            "evidence/pon-w1-stark-review-20261106/**",
+            "evidence/pon-w1-source-snapshot-20261106/**",
+            "evidence/pon-w1-statement-v2-20261105/**",
+            "evidence/pon-w1-qrom-budget-20261105/**",
+            "config/**",
+            ".cargo/**",
+            "rust-toolchain.toml",
+            "AGENTS.md",
+            "PROJECT_ID",
+            "PROJECT_BOUNDARY.json",
+            ".github/workflows/pon-w1-transparent-profile.yml"
+          ]
+        }
+      },
+      "read_command": {
+        "argv": [
+          "/usr/bin/git",
+          "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+          "cat-file",
+          "blob",
+          "6b0ea0fcceb61c245cb516ba4a8bb2e9c0570ad8"
+        ],
+        "exit": 0
+      },
+      "revision": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "revision_label": "current",
+      "sha256": "71d85b406625bb49f5cb6df6fe486b53733aebf9434fe94f4d62c7aa9bce2581",
+      "source_lines": 599
+    },
+    {
+      "bytes": 40413,
+      "captured_source": {
+        "bytes": 40413,
+        "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/workflow-read-v2/workflow-current-032.yml.raw",
+        "sha256": "d0aecad58f736b02a3a7225934ce385c75e1e2047bce12b8531b73d0797931df"
+      },
+      "oid": "ce94e0a5423d91840849d91579ec541081117274",
+      "on_block": "on:\n  push:\n    branches:\n      - fix/chain-six-axis-performance-20261103\n  pull_request:\n    paths:\n      - trillionnium/**\n      - tests/fuzz/**\n      - scripts/ci/**\n      - scripts/pon_w1_*.py\n      - formal/pon-nakamoto-v1/work_query_bound.py\n      - formal/pon-nakamoto-v1/test_work_query_bound.py\n      - config/**\n      - .cargo/**\n      - rust-toolchain.toml\n      - .github/workflows/pon-w1-work-security.yml\n      - .github/workflows/pon-recent-batch-acceptance.yml\n",
+      "on_end_line": 18,
+      "on_start_line": 2,
+      "parsed_on": {
+        "pull_request": {
+          "paths": [
+            "trillionnium/**",
+            "tests/fuzz/**",
+            "scripts/ci/**",
+            "scripts/pon_w1_*.py",
+            "formal/pon-nakamoto-v1/work_query_bound.py",
+            "formal/pon-nakamoto-v1/test_work_query_bound.py",
+            "config/**",
+            ".cargo/**",
+            "rust-toolchain.toml",
+            ".github/workflows/pon-w1-work-security.yml",
+            ".github/workflows/pon-recent-batch-acceptance.yml"
+          ]
+        },
+        "push": {
+          "branches": [
+            "fix/chain-six-axis-performance-20261103"
+          ]
+        }
+      },
+      "path": ".github/workflows/pon-w1-work-security.yml",
+      "pull_request_events": {
+        "pull_request": {
+          "paths": [
+            "trillionnium/**",
+            "tests/fuzz/**",
+            "scripts/ci/**",
+            "scripts/pon_w1_*.py",
+            "formal/pon-nakamoto-v1/work_query_bound.py",
+            "formal/pon-nakamoto-v1/test_work_query_bound.py",
+            "config/**",
+            ".cargo/**",
+            "rust-toolchain.toml",
+            ".github/workflows/pon-w1-work-security.yml",
+            ".github/workflows/pon-recent-batch-acceptance.yml"
+          ]
+        }
+      },
+      "read_command": {
+        "argv": [
+          "/usr/bin/git",
+          "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+          "cat-file",
+          "blob",
+          "ce94e0a5423d91840849d91579ec541081117274"
+        ],
+        "exit": 0
+      },
+      "revision": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "revision_label": "current",
+      "sha256": "d0aecad58f736b02a3a7225934ce385c75e1e2047bce12b8531b73d0797931df",
+      "source_lines": 655
+    },
+    {
+      "bytes": 3515,
+      "captured_source": {
+        "bytes": 3515,
+        "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/workflow-read-v2/workflow-current-033.yml.raw",
+        "sha256": "46ef9667b09d695d0dd247c39c3fc0a6411a70abecbe6c757b7162ddd102570e"
+      },
+      "oid": "edf52aa66d2b46cd8795420ef7c508ea0a3357e9",
+      "on_block": "on:\n  pull_request:\n\n",
+      "on_end_line": 5,
+      "on_start_line": 3,
+      "parsed_on": {
+        "pull_request": ""
+      },
+      "path": ".github/workflows/pon-work-time-contract-v1.yml",
+      "pull_request_events": {
+        "pull_request": ""
+      },
+      "read_command": {
+        "argv": [
+          "/usr/bin/git",
+          "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+          "cat-file",
+          "blob",
+          "edf52aa66d2b46cd8795420ef7c508ea0a3357e9"
+        ],
+        "exit": 0
+      },
+      "revision": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "revision_label": "current",
+      "sha256": "46ef9667b09d695d0dd247c39c3fc0a6411a70abecbe6c757b7162ddd102570e",
+      "source_lines": 78
+    },
+    {
+      "bytes": 9375,
+      "captured_source": {
+        "bytes": 9375,
+        "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/workflow-read-v2/workflow-current-034.yml.raw",
+        "sha256": "5a6557916152305febe25d83d3927d9e7a5920ecc6d2213cfc85577505794b0f"
+      },
+      "oid": "53be8e4d1ee721831662e64d483a1a958d5de041",
+      "on_block": "on:\n  pull_request:\n    paths:\n      - formal/release-finality-v2/**\n      - config/finality-profile-v1.json\n      - config/release-finality-v2.json\n      - scripts/ci/test_finality_profile.py\n      - scripts/ci/check_required_native_test.py\n      - scripts/cell_adoption_readback.py\n      - scripts/test_cell_adoption_readback.py\n      - scripts/cell_learning_iteration_join.py\n      - scripts/test_cell_learning_iteration_join.py\n      - scripts/cell_learning_completion_join.py\n      - scripts/capture_cell_learning_completion.py\n      - scripts/test_cell_learning_completion_join.py\n      - scripts/cell_learning_scope_join.py\n      - scripts/test_cell_learning_scope_join.py\n      - scripts/cell_learning_business_join.py\n      - scripts/cell_learning_business_economics.py\n      - scripts/test_cell_learning_business_join.py\n      - scripts/test_cell_learning_business_economics.py\n      - scripts/test_cell_learning_training_no_update_join.py\n      - evidence/heplcp03-interop-20261111/**\n      - evidence/next-use-provenance-20261110/**\n      - evidence/cell-learning-business-readback-20261109/bindings/**\n      - evidence/cell-learning-completion-20261108/**\n      - evidence/hepta-real-native-adoption-20261108/chain-reader/**\n      - evidence/cell-learning-iteration-20261108/native-readbacks/**\n      - evidence/cell-adoption-20261108/native-readbacks/**\n      - evidence/smollm-cell-replica-research-v1/actual/research-result.json\n      - docs/protocol/release-finality-v2/**\n      - trillionnium/crates/trnm-pon-node/**\n      - trillionnium/crates/trnm-crypto-primitives/**\n      - trillionnium/Cargo.toml\n      - trillionnium/Cargo.lock\n      - .github/workflows/release-finality-reference.yml\n",
+      "on_end_line": 37,
+      "on_start_line": 2,
+      "parsed_on": {
+        "pull_request": {
+          "paths": [
+            "formal/release-finality-v2/**",
+            "config/finality-profile-v1.json",
+            "config/release-finality-v2.json",
+            "scripts/ci/test_finality_profile.py",
+            "scripts/ci/check_required_native_test.py",
+            "scripts/cell_adoption_readback.py",
+            "scripts/test_cell_adoption_readback.py",
+            "scripts/cell_learning_iteration_join.py",
+            "scripts/test_cell_learning_iteration_join.py",
+            "scripts/cell_learning_completion_join.py",
+            "scripts/capture_cell_learning_completion.py",
+            "scripts/test_cell_learning_completion_join.py",
+            "scripts/cell_learning_scope_join.py",
+            "scripts/test_cell_learning_scope_join.py",
+            "scripts/cell_learning_business_join.py",
+            "scripts/cell_learning_business_economics.py",
+            "scripts/test_cell_learning_business_join.py",
+            "scripts/test_cell_learning_business_economics.py",
+            "scripts/test_cell_learning_training_no_update_join.py",
+            "evidence/heplcp03-interop-20261111/**",
+            "evidence/next-use-provenance-20261110/**",
+            "evidence/cell-learning-business-readback-20261109/bindings/**",
+            "evidence/cell-learning-completion-20261108/**",
+            "evidence/hepta-real-native-adoption-20261108/chain-reader/**",
+            "evidence/cell-learning-iteration-20261108/native-readbacks/**",
+            "evidence/cell-adoption-20261108/native-readbacks/**",
+            "evidence/smollm-cell-replica-research-v1/actual/research-result.json",
+            "docs/protocol/release-finality-v2/**",
+            "trillionnium/crates/trnm-pon-node/**",
+            "trillionnium/crates/trnm-crypto-primitives/**",
+            "trillionnium/Cargo.toml",
+            "trillionnium/Cargo.lock",
+            ".github/workflows/release-finality-reference.yml"
+          ]
+        }
+      },
+      "path": ".github/workflows/release-finality-reference.yml",
+      "pull_request_events": {
+        "pull_request": {
+          "paths": [
+            "formal/release-finality-v2/**",
+            "config/finality-profile-v1.json",
+            "config/release-finality-v2.json",
+            "scripts/ci/test_finality_profile.py",
+            "scripts/ci/check_required_native_test.py",
+            "scripts/cell_adoption_readback.py",
+            "scripts/test_cell_adoption_readback.py",
+            "scripts/cell_learning_iteration_join.py",
+            "scripts/test_cell_learning_iteration_join.py",
+            "scripts/cell_learning_completion_join.py",
+            "scripts/capture_cell_learning_completion.py",
+            "scripts/test_cell_learning_completion_join.py",
+            "scripts/cell_learning_scope_join.py",
+            "scripts/test_cell_learning_scope_join.py",
+            "scripts/cell_learning_business_join.py",
+            "scripts/cell_learning_business_economics.py",
+            "scripts/test_cell_learning_business_join.py",
+            "scripts/test_cell_learning_business_economics.py",
+            "scripts/test_cell_learning_training_no_update_join.py",
+            "evidence/heplcp03-interop-20261111/**",
+            "evidence/next-use-provenance-20261110/**",
+            "evidence/cell-learning-business-readback-20261109/bindings/**",
+            "evidence/cell-learning-completion-20261108/**",
+            "evidence/hepta-real-native-adoption-20261108/chain-reader/**",
+            "evidence/cell-learning-iteration-20261108/native-readbacks/**",
+            "evidence/cell-adoption-20261108/native-readbacks/**",
+            "evidence/smollm-cell-replica-research-v1/actual/research-result.json",
+            "docs/protocol/release-finality-v2/**",
+            "trillionnium/crates/trnm-pon-node/**",
+            "trillionnium/crates/trnm-crypto-primitives/**",
+            "trillionnium/Cargo.toml",
+            "trillionnium/Cargo.lock",
+            ".github/workflows/release-finality-reference.yml"
+          ]
+        }
+      },
+      "read_command": {
+        "argv": [
+          "/usr/bin/git",
+          "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+          "cat-file",
+          "blob",
+          "53be8e4d1ee721831662e64d483a1a958d5de041"
+        ],
+        "exit": 0
+      },
+      "revision": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "revision_label": "current",
+      "sha256": "5a6557916152305febe25d83d3927d9e7a5920ecc6d2213cfc85577505794b0f",
+      "source_lines": 181
+    },
+    {
+      "bytes": 35462,
+      "captured_source": {
+        "bytes": 35462,
+        "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/workflow-read-v2/workflow-current-035.yml.raw",
+        "sha256": "a93a36bf4a93f078b162403825ea45d92dc4a34989f678125bdbc928662da844"
+      },
+      "oid": "7837ff18f48b3cb9b0d38f161fc8f27a9fdbf919",
+      "on_block": "on:\n  pull_request:\n  push:\n    branches: [main]\n  workflow_dispatch:\n",
+      "on_end_line": 6,
+      "on_start_line": 2,
+      "parsed_on": {
+        "pull_request": "",
+        "push": {
+          "branches": [
+            "main"
+          ]
+        },
+        "workflow_dispatch": ""
+      },
+      "path": ".github/workflows/trnm-required-baseline.yml",
+      "pull_request_events": {
+        "pull_request": ""
+      },
+      "read_command": {
+        "argv": [
+          "/usr/bin/git",
+          "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+          "cat-file",
+          "blob",
+          "7837ff18f48b3cb9b0d38f161fc8f27a9fdbf919"
+        ],
+        "exit": 0
+      },
+      "revision": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "revision_label": "current",
+      "sha256": "a93a36bf4a93f078b162403825ea45d92dc4a34989f678125bdbc928662da844",
+      "source_lines": 638
+    },
+    {
+      "bytes": 6341,
+      "captured_source": {
+        "bytes": 6341,
+        "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/workflow-read-v2/workflow-base-036.yml.raw",
+        "sha256": "bb407ebb197fc7eae9bbf24d165732f5b16937241d3430745506568cec1fe1c9"
+      },
+      "oid": "80dbd94aa41328b95b893074706cb3ab1bac137f",
+      "on_block": "on:\n  pull_request:\n  push:\n    branches: [main]\n  workflow_dispatch:\n",
+      "on_end_line": 6,
+      "on_start_line": 2,
+      "parsed_on": {
+        "pull_request": "",
+        "push": {
+          "branches": [
+            "main"
+          ]
+        },
+        "workflow_dispatch": ""
+      },
+      "path": ".github/workflows/trnm-required-baseline.yml",
+      "pull_request_events": {
+        "pull_request": ""
+      },
+      "read_command": {
+        "argv": [
+          "/usr/bin/git",
+          "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+          "cat-file",
+          "blob",
+          "80dbd94aa41328b95b893074706cb3ab1bac137f"
+        ],
+        "exit": 0
+      },
+      "revision": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+      "revision_label": "base",
+      "sha256": "bb407ebb197fc7eae9bbf24d165732f5b16937241d3430745506568cec1fe1c9",
+      "source_lines": 149
+    }
+  ]
+}

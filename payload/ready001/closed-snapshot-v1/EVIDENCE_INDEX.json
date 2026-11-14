@@ -1,0 +1,36 @@
+{
+  "files": [
+    {
+      "bytes": 8060,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-001/closed-snapshot-v1/closure-producer.py",
+      "sha256": "660ffda3ef72e52baeb230a2c8ae5c495f6ff8d95fcc6c8308252019567efb90"
+    },
+    {
+      "bytes": 4809,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-001/closed-snapshot-v1/actual-pty-read-tool-response.json",
+      "sha256": "a0bd8551d413eadeaaab520a9207951b029a3a3c28a7ca5c1d49f5d8f802d0b1"
+    },
+    {
+      "bytes": 9490,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-001/closed-snapshot-v1/actual-terminal-pages.json",
+      "sha256": "8a5c47d82a39577ba20e223095fe85f26b55353b17499ee22266918882e9ed0f"
+    },
+    {
+      "bytes": 1142,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-001/closed-snapshot-v1/actual-terminal.log",
+      "sha256": "152137a850cd3a3e9b0af54ccd972e3ba0c7e43998d887400ce4eb2eeab3a588"
+    },
+    {
+      "bytes": 20609,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-001/closed-snapshot-v1/progress-delta.json",
+      "sha256": "c243aadb84c997b525bab9afe76bb46e4d182cf7c475a2b91a61ffe690f80660"
+    },
+    {
+      "bytes": 4799,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-001/closed-snapshot-v1/original-source-pins.json",
+      "sha256": "957274ba67a3214d38263f2f3291cbc37f837ab7652c8a10157e7b521a217b3a"
+    }
+  ],
+  "schema": "trnm-H5DF-closed-progress-index-v1",
+  "self_excluded": "EVIDENCE_INDEX.json"
+}

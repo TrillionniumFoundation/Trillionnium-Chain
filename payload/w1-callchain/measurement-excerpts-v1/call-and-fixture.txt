@@ -1,0 +1,111 @@
+
+0-ingress.rs.raw lines 1320-1345
+1320: mod execution_observation;
+1321: 
+1322: #[cfg(test)]
+1323: #[path = "ingress/submit_activation_history_tests.rs"]
+1324: mod submit_activation_history_tests;
+1325: 
+1326: fn observe_submit_phase<T>(
+1327:     observation: Option<&public_v3::request_observation::TaskObservation>,
+1328:     phase: public_v3::SubmitPhase,
+1329:     action: impl FnOnce() -> Result<T>,
+1330: ) -> Result<T> {
+1331:     let measurement = observation.map(|record| record.phase(phase));
+1332:     let result = action();
+1333:     if let Some(measurement) = measurement {
+1334:         measurement.finish_result(&result);
+1335:     }
+1336:     result
+1337: }
+1338: 
+1339: /// Reuse the caller's original CPU operation, worker accounting and absolute
+1340: /// cancellation control. This creates no new account, reservation or refill
+1341: /// source. One bounded snapshot slot keeps M06 memory concurrency at one owner.
+1342: struct SharedAdmissionExecution<'a, 'b> {
+1343:     held: &'a trnm_mvcc_fee::pon_executor::ExecutionControl<'b, Error>,
+1344:     // Selected only after dropping the original Node writer. Preparation,
+1345:     // capacity fallback, reacquisition and commit always use `held`.
+
+0-ingress.rs.raw lines 2670-2750
+2670: pub fn receive_public_page_from_before_observed(
+2671:     node: &mut Node,
+2672:     source: SocketAddr,
+2673:     page: Page,
+2674:     tip: Hash,
+2675:     after: Hash,
+2676:     clock: u64,
+2677:     deadline: Instant,
+2678:     observation: Option<&HistoryImportObserver>,
+2679: ) -> Result<Hash> {
+2680:     use history_import::{observe_host, HistoryHostPhase};
+2681:     // The ORIGINAL fixed administrator-owned Host parent is required even
+2682:     // for a loopback source: a caller's socket address is not provenance.
+2683:     let kernel = observe_host(observation, HistoryHostPhase::Resolve, || {
+2684:         crate::host_kernel_parent::require_host_kernel_budget(
+2685:             source,
+2686:             Some(crate::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT),
+2687:         )?
+2688:         .ok_or_else(|| crate::Error::from("PUBLIC_HOST_KERNEL_REQUIRED"))
+2689:     })?;
+2690:     observe_host(observation, HistoryHostPhase::Initial, || kernel.verify())?;
+2691:     let native = history_import::receive_observed(
+2692:         history_import::Owner::Exclusive(node),
+2693:         page,
+2694:         tip,
+2695:         after,
+2696:         clock,
+2697:         history_import::Control {
+2698:             deadline,
+2699:             resource: &|| {
+2700:                 observe_host(observation, HistoryHostPhase::Checkpoint, || {
+2701:                     kernel.verify()
+2702:                 })
+2703:             },
+2704:         },
+2705:         observation,
+2706:     );
+2707:     // Do not convert an already committed block into an invalid work proof
+2708:     // when the last local Host owner observation fails.
+2709:     history_import::finish_with_resource(native, deadline, || {
+2710:         observe_host(observation, HistoryHostPhase::Final, || kernel.verify())
+2711:     })
+2712: }
+2713: 
+2714: /// Shared public History import: refill and full W1 never hold the Node mutex.
+2715: /// It uses the same Host parent, original CPU account and durable epoch as the
+2716: /// exclusive compatibility API; continuous imports stay denied by #498.
+2717: pub fn receive_public_page_from_shared(
+2718:     node: &Mutex<Node>,
+2719:     source: SocketAddr,
+2720:     page: Page,
+2721:     tip: Hash,
+2722:     after: Hash,
+2723:     clock: u64,
+2724:     deadline: Instant,
+2725: ) -> Result<Hash> {
+2726:     let kernel = crate::host_kernel_parent::require_host_kernel_budget(
+2727:         source,
+2728:         Some(crate::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT),
+2729:     )?
+2730:     .ok_or("PUBLIC_HOST_KERNEL_REQUIRED")?;
+2731:     kernel.verify()?;
+2732:     let result = history_import::receive(
+2733:         history_import::Owner::Shared(node),
+2734:         page,
+2735:         tip,
+2736:         after,
+2737:         clock,
+2738:         history_import::Control {
+2739:             deadline,
+2740:             resource: &|| kernel.verify(),
+2741:         },
+2742:     );
+2743:     history_import::finish_with_resource(result, deadline, || kernel.verify())
+2744: }
+2745: 
+2746: pub fn sync_from(
+2747:     node: &mut Node,
+2748:     address: SocketAddr,
+2749:     tip: Hash,
+2750:     mut after: Hash,

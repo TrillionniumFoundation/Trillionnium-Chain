@@ -1,0 +1,4 @@
+    #[cfg(test)]
+    tests::before_client_return(total_deadline);
+    // Response decoding and signature verification spend the original call time too.
+    ensure(Instant::now() < total_deadline, "PUBLIC_CLIENT_DEADLINE")?;

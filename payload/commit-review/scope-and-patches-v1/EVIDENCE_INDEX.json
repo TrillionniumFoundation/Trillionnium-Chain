@@ -1,0 +1,171 @@
+{
+  "files": [
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/R1-compare-new.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 175282,
+      "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/R1-compare-new.stdout",
+      "sha256": "fc777c5004b2995f8154b34a36966d88c91d7edd461fc9fcd6fe866494ef917d"
+    },
+    {
+      "bytes": 1573,
+      "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/R1-compare-new.step.json",
+      "sha256": "6f7797c7d89cba016eab6d73fd9f104efc9b67b8d28089789d18c74eb4f317b5"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/new-commit.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1355264,
+      "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/new-commit.stdout",
+      "sha256": "f2ca4cecadb5a4b465b5b5eb4d7348b02f41fe21a9059d56fa47e0c08f7e6611"
+    },
+    {
+      "bytes": 1433,
+      "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/new-commit.step.json",
+      "sha256": "1fd75a181de3c235bb8e0846e86a9943466ded4845e810998bc5492edf5d45da"
+    },
+    {
+      "bytes": 1380671,
+      "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/summary.json",
+      "sha256": "3a6c6a8ded04c094d23b1d2218f2222041766602c47b86e0a6aef09913576c95"
+    },
+    {
+      "bytes": 1762,
+      "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/EVIDENCE_INDEX.json",
+      "sha256": "9133f1661263b7701e99b6655582e6fffa8af40a5dedf9d55ee59e8c87aedc82"
+    },
+    {
+      "bytes": 9036,
+      "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/scope-and-patches-v1/scope-producer.py",
+      "sha256": "4b72428c405adfcb2cfe25db63981286f161ec81b651d1227a769958027e9f55"
+    },
+    {
+      "bytes": 7564,
+      "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/scope-and-patches-v1/original-acquisition-producer.py",
+      "sha256": "965398adfaaed7a64ee211c3d05935ced280a0a9e70e49470918924535f0ef9b"
+    },
+    {
+      "bytes": 772,
+      "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/scope-and-patches-v1/original-acquisition-launcher.py",
+      "sha256": "a818d44a563d72529b79f14e29d0581ca55dcb6c76c2fdcd8c3578474f445690"
+    },
+    {
+      "bytes": 530,
+      "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/scope-and-patches-v1/actual-acquisition-launch.json",
+      "sha256": "98fac4124c60df43bcfa5ba253dae6b49e988f1af678d6d8f2e94d93ad7d8624"
+    },
+    {
+      "bytes": 51425,
+      "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/scope-and-patches-v1/terminal/page-000.json",
+      "sha256": "714f9f7146832987db71f740ecd33d25fe9ab58271eb16de9e3d3e30a09d9877"
+    },
+    {
+      "bytes": 51413,
+      "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/scope-and-patches-v1/terminal/page-001.json",
+      "sha256": "f9a570c08c3ffcfa1de6672ba5c4d83e7e6150312fda0ab341fe72deb37a0063"
+    },
+    {
+      "bytes": 51461,
+      "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/scope-and-patches-v1/terminal/page-002.json",
+      "sha256": "167dee8ecedb0586074cd53c2503195e82bd43a7089be25b947299f8ece251ba"
+    },
+    {
+      "bytes": 51437,
+      "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/scope-and-patches-v1/terminal/page-003.json",
+      "sha256": "8d7530bd44663082fad3e4b493360dea53e91f686685a176cde75d635b598489"
+    },
+    {
+      "bytes": 40391,
+      "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/scope-and-patches-v1/terminal/page-004.json",
+      "sha256": "14fb506b33959c27c69078befbde8e5c3bb3ae7d9b2fd285a9e12e3e77af1225"
+    },
+    {
+      "bytes": 78331,
+      "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/scope-and-patches-v1/terminal/actual-complete-output.log",
+      "sha256": "22ccd2aa89dcc6ff38435eb97dab9582b0727fa020f10d1038b5e6ea1b8d48a2"
+    },
+    {
+      "bytes": 2213,
+      "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/scope-and-patches-v1/terminal/actual-terminal-index.json",
+      "sha256": "87a2773a35effbc5e8c31cecd2d1679c8850a8efc1cf541b77416326f5ae7836"
+    },
+    {
+      "bytes": 5167,
+      "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/scope-and-patches-v1/patches/01-part-01.patch",
+      "sha256": "24254644e9732664e315ed076eb80608f40a8f59044369448b34abfd194a610e"
+    },
+    {
+      "bytes": 3270,
+      "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/scope-and-patches-v1/patches/02-part-01.patch",
+      "sha256": "880d276a6d556d985be17209c81c1723d962701ce9d69f044277511b117958d6"
+    },
+    {
+      "bytes": 9397,
+      "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/scope-and-patches-v1/patches/03-part-01.patch",
+      "sha256": "7804aab1744bca359cc901a92901e5aeebb5574e31fc676fad4dd4e7b7c334f6"
+    },
+    {
+      "bytes": 5090,
+      "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/scope-and-patches-v1/patches/04-part-01.patch",
+      "sha256": "e63cdada405f4ae55f414f8cc24af71dd9afef38f325fc809e1926f87ff4b1b4"
+    },
+    {
+      "bytes": 6352,
+      "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/scope-and-patches-v1/patches/05-part-01.patch",
+      "sha256": "42081dac22d8243ae7a2b655197de8296eec48dd6c36ed676a7563f3d05e0378"
+    },
+    {
+      "bytes": 1104,
+      "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/scope-and-patches-v1/patches/06-part-01.patch",
+      "sha256": "2ae35952468fb78a68bb4f73f6c9a2ef092106053f7b9087114f40101cf4e1db"
+    },
+    {
+      "bytes": 15472,
+      "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/scope-and-patches-v1/patches/07-part-01.patch",
+      "sha256": "5970c71ce80951844565dfca4bc097923c88fc69a41ad62df25202c43f47cca9"
+    },
+    {
+      "bytes": 26991,
+      "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/scope-and-patches-v1/patches/08-part-01.patch",
+      "sha256": "8db8b3e71c0c4539394e24bad1de0d8615cdeecdb42189105f38799f897fa0fb"
+    },
+    {
+      "bytes": 43213,
+      "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/scope-and-patches-v1/patches/09-part-01.patch",
+      "sha256": "2a2bcdaf3dedd8907754f4462b233c7d4145d4d2a3c622d7401ecd75043df57b"
+    },
+    {
+      "bytes": 618,
+      "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/scope-and-patches-v1/patches/10-part-01.patch",
+      "sha256": "9af4abcea97fbfedd465f47811efa42f55b312309c49dda86b93519cf0535fab"
+    },
+    {
+      "bytes": 3072,
+      "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/scope-and-patches-v1/patches/11-part-01.patch",
+      "sha256": "fd920f2318abc62d4daf3c451366904f3273ad6b5047fda2d794193cf841a660"
+    },
+    {
+      "bytes": 4681,
+      "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/scope-and-patches-v1/patches/12-part-01.patch",
+      "sha256": "e81cccfa2244091530ff3e99fce5f326e90bdc8d8a428114953e7d406be54a8d"
+    },
+    {
+      "bytes": 6093,
+      "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/scope-and-patches-v1/six-returned-commit-metadata.json",
+      "sha256": "1e596fde82b27d2a38130c7350de8bc0620c8671129f4268ce508796fa161ead"
+    },
+    {
+      "bytes": 15508,
+      "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/scope-and-patches-v1/scope-summary.json",
+      "sha256": "ee27851678dc860bccd3630eab4ce69a3640199365aa78c7ec96ed4caa754e1e"
+    }
+  ],
+  "scope": "Original two GETs plus exact compare patch parts and actual terminal; no source acceptance",
+  "self_excluded": true
+}

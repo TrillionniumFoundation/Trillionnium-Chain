@@ -1,0 +1,36 @@
+[
+  {
+    "end_line": 1182,
+    "object": {
+      "base": null,
+      "candidate": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "tested_tree": "6be4940d38cc88782657f2684cbefe48866f8b9f",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 3995072357,
+      "tracked_entries": 41681,
+      "tracked_worktree_verified": true
+    },
+    "start_line": 1170
+  },
+  {
+    "end_line": 1386,
+    "object": {
+      "base": null,
+      "candidate": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "tested_tree": "6be4940d38cc88782657f2684cbefe48866f8b9f",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 3995072357,
+      "tracked_entries": 41681,
+      "tracked_worktree_verified": true
+    },
+    "start_line": 1374
+  }
+]

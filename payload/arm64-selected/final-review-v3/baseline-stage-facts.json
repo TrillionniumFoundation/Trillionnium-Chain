@@ -1,0 +1,280 @@
+{
+  "attack_workers": [],
+  "clock_limit": "Replay started/ended are original traffic phase clock. Native phase and Host timestamps have their own observer-local epoch; no invented exact cross-epoch absolute conversion. CPU/wall intervals overlap/nest and must not be added.",
+  "head_calls_count": 75,
+  "head_successes_in_window": 75,
+  "history_calls": [
+    {
+      "client_thread_cpu_ns": 724712,
+      "deadline_ms": 2000,
+      "elapsed_wall_ns": 4446164,
+      "ended_ns": 201490576,
+      "error": null,
+      "returned_after_deadline": false,
+      "returned_after_window": false,
+      "started_ns": 197045020,
+      "status": "ok"
+    },
+    {
+      "client_thread_cpu_ns": 851544,
+      "deadline_ms": 2000,
+      "elapsed_wall_ns": 3659350,
+      "ended_ns": 754437200,
+      "error": null,
+      "returned_after_deadline": false,
+      "returned_after_window": false,
+      "started_ns": 750779114,
+      "status": "ok"
+    },
+    {
+      "client_thread_cpu_ns": 791096,
+      "deadline_ms": 2000,
+      "elapsed_wall_ns": 4099994,
+      "ended_ns": 899562367,
+      "error": null,
+      "returned_after_deadline": false,
+      "returned_after_window": false,
+      "started_ns": 895463733,
+      "status": "ok"
+    },
+    {
+      "client_thread_cpu_ns": 732688,
+      "deadline_ms": 2000,
+      "elapsed_wall_ns": 3174269,
+      "ended_ns": 1092280640,
+      "error": null,
+      "returned_after_deadline": false,
+      "returned_after_window": false,
+      "started_ns": 1089107659,
+      "status": "ok"
+    },
+    {
+      "client_thread_cpu_ns": 801272,
+      "deadline_ms": 2000,
+      "elapsed_wall_ns": 3763159,
+      "ended_ns": 1208426470,
+      "error": null,
+      "returned_after_deadline": false,
+      "returned_after_window": false,
+      "started_ns": 1204664559,
+      "status": "ok"
+    },
+    {
+      "client_thread_cpu_ns": 751024,
+      "deadline_ms": 2000,
+      "elapsed_wall_ns": 4452411,
+      "ended_ns": 1403332075,
+      "error": null,
+      "returned_after_deadline": false,
+      "returned_after_window": false,
+      "started_ns": 1398880984,
+      "status": "ok"
+    },
+    {
+      "client_thread_cpu_ns": 775000,
+      "deadline_ms": 2000,
+      "elapsed_wall_ns": 3833163,
+      "ended_ns": 1598544044,
+      "error": null,
+      "returned_after_deadline": false,
+      "returned_after_window": false,
+      "started_ns": 1594712081,
+      "status": "ok"
+    }
+  ],
+  "host_bucket_scope": "actual Host checkpoint calls classified once at entry by the innermost open owner phase; worker calls use the current owner phase context; absent or ambiguous contexts remain unattributed; the same existing call clocks feed aggregate and bucket records, which overlap; summed call wall intervals are not elapsed runtime and may overlap across threads; Host CPU includes each invoking thread, while native phase CPU excludes scoped workers; observer overhead remains in outer measured work",
+  "native_clock_scope": "one observer-local monotonic epoch; page import includes packet and checkpoint Host spans; phase CPU is importer thread only; Host CPU sums each actual invoking thread's Host intervals, not complete worker CPU; resolve/initial/final Host spans are outside native import but inside client replay; network fetch is outside client replay",
+  "receiver_observations": {
+    "cpu_includes_reactor_authentication": false,
+    "cpu_includes_reactor_authentication_or_response_signing": true,
+    "cpu_intervals_are_nested_not_additive": true,
+    "dispatch_thread_cpu_known_sum_ns": 50233608,
+    "full_work_thread_cpu_known_sum_ns": 7244672,
+    "measurement_failures": 0,
+    "records_not_retained": 0,
+    "retained_records": 89,
+    "scope": "Retained receiver records only; full-work nested in dispatch; not total process or full service CPU"
+  },
+  "replay_detail_files": [
+    {
+      "bytes": 7402,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/final-review-v3/baseline-replay-0-stage.json",
+      "sha256": "8a009971ade0ab132d658691b5aa968eca1c76dabdf270a75bd4708de4e2a5c5"
+    },
+    {
+      "bytes": 7362,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/final-review-v3/baseline-replay-1-stage.json",
+      "sha256": "88cbbb33e5b1a954de8d1b3771f906d1f3c6c0ee7fdd1f190f9c11ddbe7824e7"
+    },
+    {
+      "bytes": 7360,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/final-review-v3/baseline-replay-2-stage.json",
+      "sha256": "f94ca75347f42eafff7b93bac3c2e40b0498cfe8188bb4bf8d5b86865248b205"
+    },
+    {
+      "bytes": 7364,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/final-review-v3/baseline-replay-3-stage.json",
+      "sha256": "6e718d1e133826bd62a0e75d0bb4b846419a120bea48cd6b13f1eeaee2d91502"
+    },
+    {
+      "bytes": 7366,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/final-review-v3/baseline-replay-4-stage.json",
+      "sha256": "013bf4d8293421685a7e31faa045c14efa97d182f202660c072aa761dcee1510"
+    },
+    {
+      "bytes": 7361,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/final-review-v3/baseline-replay-5-stage.json",
+      "sha256": "c0b00c5b5bd419214199b51c717673cfaee21c5f928a6de956dfc755190fe8d3"
+    },
+    {
+      "bytes": 7367,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/final-review-v3/baseline-replay-6-stage.json",
+      "sha256": "0e35db3d4b00c6acffbfaf3e23e83d85f702ee70e2539bf623814a91ac61e43e"
+    }
+  ],
+  "report_pointer": "/phases/0",
+  "reported": {
+    "attacker_workers_cpu_ns": 0,
+    "attacker_workers_cpu_scope": "disjoint joined client threads; includes every failed negotiation, resource-ticket search, encoding and output record; excludes receiver and separately recorded from-zero setup",
+    "business_started_ns": 157310,
+    "client_confirmation_latency_ns": 1805452089,
+    "client_confirmed_before_original_window_end": true,
+    "client_confirmed_transactions": 1,
+    "confirmation_ended_ns": 1805609399,
+    "final_meter": {
+      "accounting_unavailable": false,
+      "burst_ns": 2000000000,
+      "in_flight": 0,
+      "refill_ns_per_second": 250000000,
+      "schema": "public-v3-local-stored-cpu-budget-v1",
+      "start_reserve_ns": 100000000,
+      "stored_credit_ns": 1996232796,
+      "worker_limit": 2
+    },
+    "finite_business_target_met": true,
+    "full_native_state_equal": true,
+    "independent_replay_and_confirmation_cpu_ns": 291609096,
+    "independent_replay_and_confirmation_wall_ns": 1608570274,
+    "initial_meter": {
+      "accounting_unavailable": false,
+      "burst_ns": 2000000000,
+      "in_flight": 0,
+      "refill_ns_per_second": 250000000,
+      "schema": "public-v3-local-stored-cpu-budget-v1",
+      "start_reserve_ns": 100000000,
+      "stored_credit_ns": 2000000000,
+      "worker_limit": 2
+    },
+    "invariant_target_met": true,
+    "mode": "attack-free-baseline",
+    "no_attack_accepted": true,
+    "reader_cpu_ns": 41646904,
+    "receiver_matches_valid_honest_prefix": true,
+    "requested_window_ns": 4000000000,
+    "verification_errors": [],
+    "workers": 0
+  },
+  "service_metrics_selected": {
+    "completed_read": 82,
+    "completed_submit": 7,
+    "mutation_body_decode_cpu_ns": 884536,
+    "mutation_cpu_charged_ns": 33685408,
+    "mutation_cpu_clock_failures": 0,
+    "mutation_cpu_credit_ns_after_shutdown": 1996232796,
+    "mutation_cpu_debt_ns_after_shutdown": 0,
+    "mutation_cpu_in_flight_after_shutdown": 0,
+    "mutation_cpu_refusals": 0,
+    "mutation_cpu_reservations": 7,
+    "mutation_cpu_unavailable_after_shutdown": false,
+    "mutation_dispatch_excluding_work_cpu_ns": 26440736,
+    "mutation_full_work_cpu_ns": 7244672,
+    "mutation_response_cpu_ns": 272264,
+    "pq_authentication_thread_cpu_ns": 0,
+    "queue_wait_ns": 460460,
+    "tasks_dequeued": 89,
+    "tasks_enqueued": 89,
+    "work_failed": 0,
+    "work_finished": 7,
+    "work_ns": 74738712,
+    "work_started": 7
+  },
+  "submit_calls": [
+    {
+      "client_thread_cpu_ns": 730440,
+      "deadline_ms": 2000,
+      "elapsed_wall_ns": 7534998,
+      "ended_ns": 7952803,
+      "error": null,
+      "returned_after_deadline": false,
+      "returned_after_window": false,
+      "started_ns": 420181,
+      "status": "ok"
+    },
+    {
+      "client_thread_cpu_ns": 664936,
+      "deadline_ms": 2000,
+      "elapsed_wall_ns": 7434220,
+      "ended_ns": 15792653,
+      "error": null,
+      "returned_after_deadline": false,
+      "returned_after_window": false,
+      "started_ns": 8360081,
+      "status": "ok"
+    },
+    {
+      "client_thread_cpu_ns": 731080,
+      "deadline_ms": 2000,
+      "elapsed_wall_ns": 76501416,
+      "ended_ns": 92682764,
+      "error": null,
+      "returned_after_deadline": false,
+      "returned_after_window": false,
+      "started_ns": 16182828,
+      "status": "ok"
+    },
+    {
+      "client_thread_cpu_ns": 748232,
+      "deadline_ms": 2000,
+      "elapsed_wall_ns": 8652422,
+      "ended_ns": 101763375,
+      "error": null,
+      "returned_after_deadline": false,
+      "returned_after_window": false,
+      "started_ns": 93113264,
+      "status": "ok"
+    },
+    {
+      "client_thread_cpu_ns": 678344,
+      "deadline_ms": 2000,
+      "elapsed_wall_ns": 8690692,
+      "ended_ns": 110848817,
+      "error": null,
+      "returned_after_deadline": false,
+      "returned_after_window": false,
+      "started_ns": 102160053,
+      "status": "ok"
+    },
+    {
+      "client_thread_cpu_ns": 725440,
+      "deadline_ms": 2000,
+      "elapsed_wall_ns": 8823563,
+      "ended_ns": 120069763,
+      "error": null,
+      "returned_after_deadline": false,
+      "returned_after_window": false,
+      "started_ns": 111248032,
+      "status": "ok"
+    },
+    {
+      "client_thread_cpu_ns": 764056,
+      "deadline_ms": 2000,
+      "elapsed_wall_ns": 76383415,
+      "ended_ns": 196854672,
+      "error": null,
+      "returned_after_deadline": false,
+      "returned_after_window": false,
+      "started_ns": 187716185,
+      "status": "ok"
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "count": 9,
+  "files": [
+    {
+      "bytes": 606,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-original-evidence-20261114-v1/actual-tool-records-v1/h5df-arm-outer-prepare-start.json",
+      "role": "actual_tool_return",
+      "sha256": "2427a26fc8aa096834334fd2b20294f36a59d37a11404563b24a4d33c60365b4"
+    },
+    {
+      "bytes": 3023,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-original-evidence-20261114-v1/actual-tool-records-v1/h5df-arm-outer-prepare-terminal.json",
+      "role": "actual_tool_return",
+      "sha256": "c6e33c60f4e8ecad4ae39a3225ad70d021c974e197d72200982dc2d4d0b3756a"
+    },
+    {
+      "bytes": 602,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-original-evidence-20261114-v1/actual-tool-records-v1/h5df-arm-outer-start.json",
+      "role": "actual_tool_return",
+      "sha256": "4775d1575f258812ab5b4fa0ded15120e510c7cc4db709e0e062acda73ef7b1a"
+    },
+    {
+      "bytes": 6966,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-original-evidence-20261114-v1/actual-tool-records-v1/h5df-arm-outer-terminal.json",
+      "role": "actual_tool_return",
+      "sha256": "ce9e85ff16401c252c8dee06f564014a0525994b519f7f4591a36b19ba344ba1"
+    },
+    {
+      "bytes": 639,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-original-evidence-20261114-v1/actual-tool-records-v1/h5df-arm-outer-analysis-start.json",
+      "role": "actual_tool_return",
+      "sha256": "3797d0432221bd6b4bcc76c313a1cda34b3460529888651bd2dce52b2e147f54"
+    },
+    {
+      "bytes": 25792,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-original-evidence-20261114-v1/actual-tool-records-v1/h5df-arm-outer-analysis-terminal.json",
+      "role": "actual_tool_return",
+      "sha256": "82680d444a90486c4875ce96540f66ae8fa477d1255df01578463b34a2d0e001"
+    },
+    {
+      "bytes": 830,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-original-evidence-20261114-v1/actual-tool-records-v1/outer-sha-pinned-launcher.py",
+      "role": "exact_invoked_outer_producer_or_launcher",
+      "sha256": "ac4ead4146d493a0e894f2dcc52822590b4ac9e40fd49b53ed5e53e33c91bead"
+    },
+    {
+      "bytes": 1790,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-original-evidence-20261114-v1/actual-tool-records-v1/outer-preparation.py",
+      "role": "exact_invoked_outer_producer_or_launcher",
+      "sha256": "644d831611ab5bf8f9859c2c3a4da99c06e72a7921797fa64a2e4d7338510de0"
+    },
+    {
+      "bytes": 4131,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-original-evidence-20261114-v1/actual-tool-records-v1/outer-analysis-source.py",
+      "role": "exact_invoked_outer_producer_or_launcher",
+      "sha256": "305d543112f68962ab935efa1356c255d32002215177d7f62e86a0344314a6e5"
+    }
+  ],
+  "schema": "trnm-actual-tool-record-index-v1",
+  "self_excluded": true,
+  "source": "existing in-session original tool responses; no GET or producer re-execution"
+}

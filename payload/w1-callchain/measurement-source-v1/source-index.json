@@ -1,0 +1,533 @@
+{
+  "sites": {
+    "trillionnium/crates/trnm-pon-node/src/ingress.rs": [
+      {
+        "line": 55,
+        "text": "    pub fn new(bits: u8, lifetime: Duration) -> Result<Self> {"
+      },
+      {
+        "line": 245,
+        "text": "    pub fn new("
+      },
+      {
+        "line": 283,
+        "text": "    pub fn new("
+      },
+      {
+        "line": 1326,
+        "text": "fn observe_submit_phase<T>("
+      },
+      {
+        "line": 1397,
+        "text": "        observe_submit_phase(observation, SubmitPhase::AdmissionOwnerWait, || loop {"
+      },
+      {
+        "line": 1425,
+        "text": "    observe_submit_phase(observation, SubmitPhase::Admission, || {"
+      },
+      {
+        "line": 1445,
+        "text": "        match observe_submit_phase(observation, SubmitPhase::AdmissionPrepare, || {"
+      },
+      {
+        "line": 1476,
+        "text": "                let executed = observe_submit_phase(observation, SubmitPhase::Execution, || {"
+      },
+      {
+        "line": 1487,
+        "text": "                    observe_submit_phase(observation, SubmitPhase::CommitOwnerWait, || {"
+      },
+      {
+        "line": 1497,
+        "text": "                let id = observe_submit_phase(observation, SubmitPhase::Commit, || {"
+      },
+      {
+        "line": 1554,
+        "text": "    let packet = observe_submit_phase(observation, SubmitPhase::Decode, decode)?;"
+      },
+      {
+        "line": 1557,
+        "text": "        let mut owner = observe_submit_phase(observation, SubmitPhase::ContextOwnerWait, || {"
+      },
+      {
+        "line": 1560,
+        "text": "        let (existing, permit) = observe_submit_phase(observation, SubmitPhase::Context, || {"
+      },
+      {
+        "line": 1588,
+        "text": "            return observe_submit_phase(observation, SubmitPhase::SubmitResult, || {"
+      },
+      {
+        "line": 1607,
+        "text": "    let checked = observe_submit_phase(observation, SubmitPhase::Work, || verify(packet))?;"
+      },
+      {
+        "line": 1629,
+        "text": "    observe_submit_phase(observation, SubmitPhase::SubmitResult, || {"
+      },
+      {
+        "line": 2664,
+        "text": "    receive_public_page_from_before_observed(node, source, page, tip, after, clock, deadline, None)"
+      },
+      {
+        "line": 2670,
+        "text": "pub fn receive_public_page_from_before_observed("
+      },
+      {
+        "line": 2915,
+        "text": "pub fn sync_from_public_history_pq_v4("
+      },
+      {
+        "line": 3124,
+        "text": "    fn history_paid_epoch_crash_cut_refuses_new_cold_credit() {"
+      },
+      {
+        "line": 3131,
+        "text": "        let account = original.remote_history_cpu_domain().unwrap();"
+      },
+      {
+        "line": 3133,
+        "text": "        assert!(original.begin_remote_history_cpu_epoch().unwrap());"
+      },
+      {
+        "line": 3138,
+        "text": "                .remote_history_cpu_domain()"
+      },
+      {
+        "line": 3147,
+        "text": "                .begin_remote_history_cpu_epoch()"
+      },
+      {
+        "line": 3156,
+        "text": "    fn malformed_paid_history_rejection_closes_known_epoch_without_poisoning_cold_reopen() {"
+      },
+      {
+        "line": 3200,
+        "text": "        let fresh = reopened.remote_history_cpu_domain().unwrap();"
+      },
+      {
+        "line": 3207,
+        "text": "    fn standalone_history_does_not_steal_live_v3_listener_epoch() {"
+      },
+      {
+        "line": 3214,
+        "text": "        assert!(node.begin_remote_history_cpu_epoch().unwrap());"
+      },
+      {
+        "line": 3221,
+        "text": "        node.finish_remote_history_cpu_epoch(&public).unwrap();"
+      },
+      {
+        "line": 3238,
+        "text": "    fn malformed_remote_history_decode_pays_original_cpu_and_preserves_state() {"
+      },
+      {
+        "line": 3274,
+        "text": "    fn mixed_false_then_valid_history_across_source_ports_reuses_one_cpu_owner() {"
+      },
+      {
+        "line": 3360,
+        "text": "    fn four_distinct_ticket_valid_false_history_traces_never_obtain_work() {"
+      },
+      {
+        "line": 3477,
+        "text": "    fn loopback_history_false_product_charges_one_cold_node_cpu_domain() {"
+      },
+      {
+        "line": 3516,
+        "text": "        let reloaded = node.remote_history_cpu_domain().unwrap();"
+      },
+      {
+        "line": 3532,
+        "text": "    fn loopback_history_valid_work_still_accepts_under_cold_cpu_meter() {"
+      },
+      {
+        "line": 3571,
+        "text": "    fn cold_reopen_with_durable_active_v3_epoch_cannot_mint_history_cpu() {"
+      },
+      {
+        "line": 3584,
+        "text": "                .remote_history_cpu_domain()"
+      },
+      {
+        "line": 3596,
+        "text": "    fn clean_v3_epoch_close_permits_only_one_cold_history_owner() {"
+      },
+      {
+        "line": 3605,
+        "text": "        let first = reopened.remote_history_cpu_domain().unwrap();"
+      },
+      {
+        "line": 3606,
+        "text": "        let next = reopened.remote_history_cpu_domain().unwrap();"
+      },
+      {
+        "line": 3615,
+        "text": "    fn unclean_public_epoch_cannot_mint_fresh_remote_history_credit() {"
+      },
+      {
+        "line": 3622,
+        "text": "            node.remote_history_cpu_domain().err().unwrap().to_string(),"
+      },
+      {
+        "line": 3628,
+        "text": "    fn history_valid_w1_cannot_commit_after_m06_host_owner_rejection() {"
+      },
+      {
+        "line": 3718,
+        "text": "    fn public_loopback_history_requires_real_fixed_host_parent() {"
+      },
+      {
+        "line": 3819,
+        "text": "        let proof = thread::spawn(move || {"
+      },
+      {
+        "line": 3864,
+        "text": "        let client = thread::spawn(move || call_protected(address, &request, &settings).unwrap());"
+      },
+      {
+        "line": 3965,
+        "text": "        let server = thread::spawn(move || -> Result<Metrics> {"
+      },
+      {
+        "line": 4046,
+        "text": "        let proof = thread::spawn(move || {"
+      },
+      {
+        "line": 4151,
+        "text": "        let sender = thread::spawn(move || {"
+      },
+      {
+        "line": 4838,
+        "text": "    fn existing_replay_cancel_stops_active_history_spam() {"
+      },
+      {
+        "line": 5341,
+        "text": "        let server = thread::spawn(move || {"
+      },
+      {
+        "line": 5395,
+        "text": "        let server = thread::spawn(move || {"
+      },
+      {
+        "line": 5486,
+        "text": "        let server = thread::spawn(move || {"
+      }
+    ],
+    "trillionnium/crates/trnm-pon-node/src/ingress/history_import/observation.rs": [
+      {
+        "line": 4,
+        "text": "    request_observation::{TaskObservation, ThreadCpuStamp},"
+      },
+      {
+        "line": 46,
+        "text": "    fn new(phase: HistoryHostPhase) -> Self {"
+      },
+      {
+        "line": 83,
+        "text": "    fn new() -> Self {"
+      },
+      {
+        "line": 122,
+        "text": "pub struct HistoryImportObserver {"
+      },
+      {
+        "line": 186,
+        "text": "    pub fn new() -> Self {"
+      },
+      {
+        "line": 253,
+        "text": "    fn checkpoint_phase(&self) -> usize {"
+      },
+      {
+        "line": 381,
+        "text": "    cpu: Option<ThreadCpuStamp>,"
+      },
+      {
+        "line": 387,
+        "text": "    fn new(observer: &'a HistoryImportObserver, phase: HistoryHostPhase) -> Self {"
+      },
+      {
+        "line": 438,
+        "text": "            cpu: ThreadCpuStamp::start(),"
+      },
+      {
+        "line": 465,
+        "text": "        let cpu = self.cpu.take().and_then(ThreadCpuStamp::finish);"
+      },
+      {
+        "line": 543,
+        "text": "        let observer = HistoryImportObserver::new();"
+      },
+      {
+        "line": 633,
+        "text": "        let observer = HistoryImportObserver::new();"
+      },
+      {
+        "line": 677,
+        "text": "        let observer = HistoryImportObserver::new();"
+      },
+      {
+        "line": 707,
+        "text": "    fn worker_checkpoint_uses_owner_phase_without_relabeling_worker_cpu() {"
+      },
+      {
+        "line": 708,
+        "text": "        let observer = HistoryImportObserver::new();"
+      },
+      {
+        "line": 741,
+        "text": "        let observer = HistoryImportObserver::new();"
+      },
+      {
+        "line": 788,
+        "text": "        let observer = HistoryImportObserver::new();"
+      },
+      {
+        "line": 810,
+        "text": "        let observer = HistoryImportObserver::new();"
+      }
+    ],
+    "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs": [
+      {
+        "line": 44,
+        "text": "struct ThreadCpuStamp {"
+      },
+      {
+        "line": 48,
+        "text": "impl ThreadCpuStamp {"
+      },
+      {
+        "line": 62,
+        "text": "fn cpu_elapsed(stamp: Option<ThreadCpuStamp>) -> Option<u64> {"
+      },
+      {
+        "line": 63,
+        "text": "    stamp.and_then(ThreadCpuStamp::finish)"
+      },
+      {
+        "line": 111,
+        "text": "    let total_cpu = ThreadCpuStamp::start();"
+      },
+      {
+        "line": 113,
+        "text": "    let setup_cpu = ThreadCpuStamp::start();"
+      },
+      {
+        "line": 122,
+        "text": "    let search_cpu = ThreadCpuStamp::start();"
+      },
+      {
+        "line": 145,
+        "text": "    let encoding_cpu = ThreadCpuStamp::start();"
+      },
+      {
+        "line": 208,
+        "text": "        let client_cpu = ThreadCpuStamp::start();"
+      },
+      {
+        "line": 270,
+        "text": "fn phase("
+      },
+      {
+        "line": 281,
+        "text": "    let preparation_cpu = ThreadCpuStamp::start();"
+      },
+      {
+        "line": 303,
+        "text": "    let worker = thread::spawn(move || {"
+      },
+      {
+        "line": 326,
+        "text": "    let attack = thread::spawn(move || {"
+      },
+      {
+        "line": 327,
+        "text": "        let worker_cpu = ThreadCpuStamp::start();"
+      },
+      {
+        "line": 346,
+        "text": "    let reads = thread::spawn(move || {"
+      },
+      {
+        "line": 354,
+        "text": "    let honest_cpu = ThreadCpuStamp::start();"
+      },
+      {
+        "line": 405,
+        "text": "        && metrics[\"mutation_full_work_cpu_ns\"]"
+      },
+      {
+        "line": 410,
+        "text": "            .zip(metrics[\"mutation_full_work_cpu_ns\"].as_u64())"
+      },
+      {
+        "line": 684,
+        "text": "    let construction_cpu = ThreadCpuStamp::start();"
+      },
+      {
+        "line": 708,
+        "text": "        let full_cpu = ThreadCpuStamp::start();"
+      },
+      {
+        "line": 756,
+        "text": "        let admission_cpu = ThreadCpuStamp::start();"
+      },
+      {
+        "line": 824,
+        "text": "    let wrong_owner = ThreadCpuStamp {"
+      },
+      {
+        "line": 829,
+        "text": "        thread::spawn(move || wrong_owner.finish()).join().unwrap(),"
+      },
+      {
+        "line": 834,
+        "text": "        let actual = ThreadCpuStamp::start().expect(\"Linux thread CPU clock required\");"
+      },
+      {
+        "line": 841,
+        "text": "        let reversed = ThreadCpuStamp {"
+      },
+      {
+        "line": 869,
+        "text": "fn sustained_phase("
+      },
+      {
+        "line": 883,
+        "text": "    let prep_cpu = ThreadCpuStamp::start();"
+      },
+      {
+        "line": 922,
+        "text": "    let build_cpu = ThreadCpuStamp::start();"
+      },
+      {
+        "line": 949,
+        "text": "        worker: Some(thread::spawn(move || {"
+      },
+      {
+        "line": 977,
+        "text": "        attacks.push(thread::spawn(move || {"
+      },
+      {
+        "line": 979,
+        "text": "            let cpu = ThreadCpuStamp::start();"
+      },
+      {
+        "line": 1009,
+        "text": "    let reads = thread::spawn(move || {"
+      },
+      {
+        "line": 1011,
+        "text": "        let cpu = ThreadCpuStamp::start();"
+      },
+      {
+        "line": 1077,
+        "text": "    let work = m[\"mutation_full_work_cpu_ns\"].as_u64();"
+      },
+      {
+        "line": 1078,
+        "text": "    let rest = m[\"mutation_dispatch_excluding_work_cpu_ns\"].as_u64();"
+      },
+      {
+        "line": 1257,
+        "text": "fn signed_confirmation_phase("
+      },
+      {
+        "line": 1277,
+        "text": "fn signed_confirmation_phase_with_builder("
+      },
+      {
+        "line": 1285,
+        "text": "    let mut verifier = Node::open(&path.join(\"independent-client\"), settings.clone(), 1).unwrap();"
+      },
+      {
+        "line": 1312,
+        "text": "        worker: Some(thread::spawn(move || {"
+      },
+      {
+        "line": 1345,
+        "text": "        attacks.push(thread::spawn(move || {"
+      },
+      {
+        "line": 1347,
+        "text": "            let cpu = ThreadCpuStamp::start();"
+      },
+      {
+        "line": 1379,
+        "text": "    let reads = thread::spawn(move || {"
+      },
+      {
+        "line": 1381,
+        "text": "        let cpu = ThreadCpuStamp::start();"
+      },
+      {
+        "line": 1431,
+        "text": "    let replay_cpu = ThreadCpuStamp::start();"
+      },
+      {
+        "line": 1446,
+        "text": "            let page_cpu = ThreadCpuStamp::start();"
+      },
+      {
+        "line": 1447,
+        "text": "            let import_observer = ingress::HistoryImportObserver::new();"
+      },
+      {
+        "line": 1452,
+        "text": "                        ingress::receive_public_page_from_before_observed("
+      },
+      {
+        "line": 1487,
+        "text": "                        let final_cpu = ThreadCpuStamp::start();"
+      },
+      {
+        "line": 1592,
+        "text": "            m[\"mutation_full_work_cpu_ns\"]"
+      },
+      {
+        "line": 1594,
+        "text": "                .zip(m[\"mutation_dispatch_excluding_work_cpu_ns\"].as_u64()),"
+      },
+      {
+        "line": 1696,
+        "text": "    let construction_cpu = ThreadCpuStamp::start();"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "H5DF_oid": "a9aef9689af378bd115a54c25a076941ef2cbb96",
+      "R1_oid": "a9aef9689af378bd115a54c25a076941ef2cbb96",
+      "captured": {
+        "bytes": 221433,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/measurement-source-v1/0-ingress.rs.raw",
+        "sha256": "b04d1c8a2812fb17f8fd7b58c42cd3c430c42babd6889ac89f5d558cd7d07f2f"
+      },
+      "same_R1_H5DF": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/ingress.rs"
+    },
+    {
+      "H5DF_oid": "e1634d90de8a0d23eb4ddfba4187e64e7a8e372b",
+      "R1_oid": "e1634d90de8a0d23eb4ddfba4187e64e7a8e372b",
+      "captured": {
+        "bytes": 32240,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/measurement-source-v1/1-observation.rs.raw",
+        "sha256": "719ef0802c1ab4ddefc86f268859c36a8aaf875cca329a2220cae5321d7c30ed"
+      },
+      "same_R1_H5DF": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/ingress/history_import/observation.rs"
+    },
+    {
+      "H5DF_oid": "dededee2bfae0f6d9ba20b7a68c15d1ad2826933",
+      "R1_oid": "dededee2bfae0f6d9ba20b7a68c15d1ad2826933",
+      "captured": {
+        "bytes": 79324,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/measurement-source-v1/2-public_v3_from_zero.rs.raw",
+        "sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f"
+      },
+      "same_R1_H5DF": true,
+      "source": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs"
+    }
+  ]
+}

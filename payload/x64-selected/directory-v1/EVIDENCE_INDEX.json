@@ -1,0 +1,36 @@
+{
+  "count": 6,
+  "files": [
+    {
+      "bytes": 808,
+      "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/directory-v1/artifact-metadata.json",
+      "sha256": "d3b8269b4d31e100de4107b612add1a35a43b7bdeb95f7f3e4e664bfd3ce2351"
+    },
+    {
+      "bytes": 1111,
+      "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/directory-v1/artifact-metadata.step.json",
+      "sha256": "4de261f20d238229602cd24bf2ee594d7cc026f9985577b12547763afa39a34c"
+    },
+    {
+      "bytes": 67501,
+      "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/directory-v1/central-directory.json",
+      "sha256": "25ab09b70c08ff82a8433326ebadd3b24b11035858e7b98ad141cacc864628d6"
+    },
+    {
+      "bytes": 6080,
+      "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/directory-v1/summary.json",
+      "sha256": "69938b857b69003bb8e45a9fc71fd5d9ab3fcec87f222170dbce822d9cbbba61"
+    },
+    {
+      "bytes": 65557,
+      "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/directory-v1/tail.body",
+      "sha256": "e135cfe08fbc9125fe5a8cd832a62ea4d89f10efc1105e9b2dafe4250b1d2ded"
+    },
+    {
+      "bytes": 1401,
+      "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/directory-v1/tail.step.json",
+      "sha256": "f8af5aba945fde07c68ae89f93bfe1c4a5a149e8c3693f66d631c14c5ddf0c7e"
+    }
+  ],
+  "self_excluded": true
+}

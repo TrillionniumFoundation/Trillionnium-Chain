@@ -1,0 +1,30 @@
+{
+  "archive_path": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/terminals/dpty-16f2d4bbe16a54d4190903f17b31a9012a8b24167f8ebb09a919b783c12499ac/output.log",
+  "available_end": 328,
+  "bytes_hex": "202046696c65201b5b33356d223c737472696e673e221b5b306d2c206c696e65201b5b33356d3131331b5b306d0d0a202020206e65656428705b277265717565737465645f77696e646f775f6e73275d3d3d3430303030303030303020616e6420705b27776f726b657273275d3d3d281b5b313b33316d3020696620693d3d301b5b306d20656c73653136292c274f524947494e414c5f57494e444f575f574f524b45525327290d0a20202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020202020201b5b313b33316d5e5e5e5e5e5e5e5e5e1b5b306d0d0a1b5b313b33356d53796e7461784572726f721b5b306d3a201b5b33356d65787065637465642027656c73652720616674657220276966272065787072657373696f6e1b5b306d0d0a",
+  "chunk_sha256": "c8ac216c8c4bbe720694787d1532deae5a683bd4ea40a7332742054586502541",
+  "host": "mac",
+  "next_offset": 328,
+  "offset": 0,
+  "output_complete": true,
+  "persistent_across_runtime_restart": true,
+  "session_id": "dpty-16f2d4bbe16a54d4190903f17b31a9012a8b24167f8ebb09a919b783c12499ac",
+  "status": {
+    "boot": "{ sec = 1794536756, usec = 280987 } Fri Nov 13 10:25:56 2026",
+    "bytes_seen": 328,
+    "bytes_stored": 328,
+    "capture_error": null,
+    "closed": false,
+    "created_unix_ms": 1794680444530,
+    "exit_code": 1,
+    "output_complete": true,
+    "owner_pid": 95729,
+    "pid": 95730,
+    "state": "exited"
+  },
+  "storage": "target_archive",
+  "text": "  File \u001b[35m\"<string>\"\u001b[0m, line \u001b[35m113\u001b[0m\r\n    need(p['requested_window_ns']==4000000000 and p['workers']==(\u001b[1;31m0 if i==0\u001b[0m else16),'ORIGINAL_WINDOW_WORKERS')\r\n                                                                 \u001b[1;31m^^^^^^^^^\u001b[0m\r\n\u001b[1;35mSyntaxError\u001b[0m: \u001b[35mexpected 'else' after 'if' expression\u001b[0m\r\n",
+  "text_is_lossy": false,
+  "truncated_before_offset": false,
+  "utf8_pending": false
+}

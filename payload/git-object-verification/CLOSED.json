@@ -1,0 +1,34 @@
+{
+  "schema": "trnm-5df-new-object-verification-seal-v1",
+  "status": "CLOSED_VERIFIED",
+  "root": "/private/tmp/chain-new-head-5df7-git-object-verification-20261114-v1",
+  "summary": {
+    "path": "/private/tmp/chain-new-head-5df7-git-object-verification-20261114-v1/summary.json",
+    "bytes": 37042,
+    "sha256": "16d043ab396df60fe793efb8059731c5b8b70c369d7f341c94988265161261ac"
+  },
+  "index": {
+    "path": "/private/tmp/chain-new-head-5df7-git-object-verification-20261114-v1/EVIDENCE_INDEX.json",
+    "bytes": 7194,
+    "sha256": "0f4eb8d3556ba7c1d2c178fc4f0bb125b06fd8fd54e5faabf6adfc8c70156771",
+    "indexed_file_count": 40,
+    "indexed_total_bytes": 2657672
+  },
+  "terminal": {
+    "path": "/private/tmp/chain-new-head-5df7-git-object-verification-20261114-v1/actual-terminal.json",
+    "bytes": 2669,
+    "sha256": "49f3059645842cfce8e92f5ed9db7887cefb6b9414be00666ac704404c9bec1c",
+    "session_id": "dpty-dc985f3a1c4ea4b4fb9aba153d58c55379d96f1e02a3e8e4aa298c7e551ea134",
+    "natural_exit": 0,
+    "output_complete": true
+  },
+  "all_file_count_excluding_this_seal": 42,
+  "all_bytes_excluding_this_seal": 2667535,
+  "git_commands_read_only": 17,
+  "new_blobs": 12,
+  "new_blob_bytes": 2044691,
+  "corpus_updates": 6,
+  "source_index_refs_stage_changes": false,
+  "network_fetch_or_tests": false,
+  "live_writer": false
+}

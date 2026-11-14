@@ -1,0 +1,51 @@
+{
+  "actual_status": {
+    "boot": "{ sec = 1794536756, usec = 190229 } Fri Nov 13 10:25:56 2026",
+    "bytes_seen": 78331,
+    "bytes_stored": 78331,
+    "capture_error": null,
+    "closed": false,
+    "created_unix_ms": 1794677745399,
+    "exit_code": 0,
+    "output_complete": true,
+    "owner_pid": 68013,
+    "pid": 68014,
+    "state": "exited"
+  },
+  "archive_path": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/terminals/dpty-44ec992b219f78fcef5007a92553936b21ae70fd3d4a6053941efc7a96b2e69a/output.log",
+  "available_end": 78331,
+  "complete_output": {
+    "bytes": 78331,
+    "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/scope-and-patches-v1/terminal/actual-complete-output.log",
+    "sha256": "22ccd2aa89dcc6ff38435eb97dab9582b0727fa020f10d1038b5e6ea1b8d48a2"
+  },
+  "pages": [
+    {
+      "bytes": 51425,
+      "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/scope-and-patches-v1/terminal/page-000.json",
+      "sha256": "714f9f7146832987db71f740ecd33d25fe9ab58271eb16de9e3d3e30a09d9877"
+    },
+    {
+      "bytes": 51413,
+      "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/scope-and-patches-v1/terminal/page-001.json",
+      "sha256": "f9a570c08c3ffcfa1de6672ba5c4d83e7e6150312fda0ab341fe72deb37a0063"
+    },
+    {
+      "bytes": 51461,
+      "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/scope-and-patches-v1/terminal/page-002.json",
+      "sha256": "167dee8ecedb0586074cd53c2503195e82bd43a7089be25b947299f8ece251ba"
+    },
+    {
+      "bytes": 51437,
+      "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/scope-and-patches-v1/terminal/page-003.json",
+      "sha256": "8d7530bd44663082fad3e4b493360dea53e91f686685a176cde75d635b598489"
+    },
+    {
+      "bytes": 40391,
+      "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/scope-and-patches-v1/terminal/page-004.json",
+      "sha256": "14fb506b33959c27c69078befbde8e5c3bb3ae7d9b2fd285a9e12e3e77af1225"
+    }
+  ],
+  "schema": "trnm-actual-pty-page-index-v1",
+  "session_id": "dpty-44ec992b219f78fcef5007a92553936b21ae70fd3d4a6053941efc7a96b2e69a"
+}

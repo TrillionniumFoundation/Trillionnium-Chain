@@ -1,0 +1,26 @@
+{
+  "actor": {
+    "id": 102159240,
+    "login": "ProfHepta"
+  },
+  "not_a_replacement_for_original_raw_bytes": true,
+  "original_headers_and_other_user_fields_copied": false,
+  "original_private_raw": {
+    "bytes": 2660,
+    "excluded_from_public_archive": true,
+    "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-pr847-body-only-update-v1-actual-001/before-actor.stdout",
+    "retained_privately": true,
+    "sha256": "a8a2ad68fba0473e330471420f46ade969ac817a21448e34bc0e8c5967684815"
+  },
+  "projected_fields": [
+    "login",
+    "id"
+  ],
+  "schema": "trnm-github-public-actor-projection-v1",
+  "scope": "Original H5DF PR847 body-update actor GET, not a new or fresh actor check",
+  "source_writer_summary": {
+    "bytes": 12505,
+    "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-pr847-body-only-update-v1-actual-001/summary.json",
+    "sha256": "654eb260e2ea158c7c29feea32c04f60c02d4bb1beb396068b74d5bbdebc18e7"
+  }
+}

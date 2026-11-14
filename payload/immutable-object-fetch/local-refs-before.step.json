@@ -1,0 +1,23 @@
+{
+  "argv": [
+    "/usr/bin/git",
+    "for-each-ref",
+    "--format=%(refname) %(objectname)"
+  ],
+  "automatic_retry": false,
+  "exit": 0,
+  "finished_at": "2026-11-14T17:43:32.490093+00:00",
+  "label": "local-refs-before",
+  "started_at": "2026-11-14T17:43:32.378451+00:00",
+  "stderr": {
+    "bytes": 0,
+    "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/local-refs-before.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 74115,
+    "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/local-refs-before.stdout",
+    "sha256": "22ee7c52e09f816489f53153950e6e45671ebce1a2d836b2c99a87ef73bb96a5"
+  },
+  "timeout_seconds": 30
+}

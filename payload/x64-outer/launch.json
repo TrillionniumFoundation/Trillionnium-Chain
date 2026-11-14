@@ -1,0 +1,23 @@
+{
+  "GH_DEBUG_removed": true,
+  "GH_HOST": "github.com",
+  "byte_exact_approved_helpers": [
+    "utc",
+    "need",
+    "fp",
+    "pin",
+    "write",
+    "unique_pairs",
+    "read_json",
+    "capture",
+    "one"
+  ],
+  "fixed_GET_maximum": 3,
+  "no_retries": true,
+  "overall_seconds": 300,
+  "producer": {
+    "bytes": 9427,
+    "path": "/private/tmp/chain-prci-H5DF-cross-arch-cost-x64-original-log-20261114-v1/producer.py",
+    "sha256": "54a584717bb86071cfa2afe7a03ca5ad9aa6de4cd7ac968d636f1b228cd9b0b2"
+  }
+}

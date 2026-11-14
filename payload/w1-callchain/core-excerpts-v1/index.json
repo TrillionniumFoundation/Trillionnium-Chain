@@ -1,0 +1,72 @@
+[
+  {
+    "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/core-excerpts-v1/pon-work-active-core1.txt",
+    "bytes": 27453,
+    "sha256": "66bfe6ec74d5d9020fa9281f3e05190864ba1031ad34d46c71c30e95d046dbbb",
+    "source": "04-pon_work.rs.raw",
+    "ranges": [
+      [
+        164,
+        447
+      ],
+      [
+        464,
+        911
+      ]
+    ]
+  },
+  {
+    "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/core-excerpts-v1/pon-work-active-core2.txt",
+    "bytes": 16400,
+    "sha256": "383245dfef81703db8112b58503ed382c8ff99e25418ac80a3f1827ff7f6b627",
+    "source": "04-pon_work.rs.raw",
+    "ranges": [
+      [
+        912,
+        1295
+      ]
+    ]
+  },
+  {
+    "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/core-excerpts-v1/scalar-checkpoint-paths.txt",
+    "bytes": 16471,
+    "sha256": "a80bb283a2ffe50497b017cbca50482fff4bf6816a6a314f498b3bd7e0a8f834",
+    "source": "32-scalar_cpu.rs.raw",
+    "ranges": [
+      [
+        635,
+        884
+      ],
+      [
+        1108,
+        1148
+      ],
+      [
+        1220,
+        1284
+      ]
+    ]
+  },
+  {
+    "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/core-excerpts-v1/history-observer-setup.txt",
+    "bytes": 6714,
+    "sha256": "6d47c8c6ccf3eda041760bc7ddb9e75e6a2eeb987c61b10a98e75f9c467abaac",
+    "source": "30-history_import.rs.raw",
+    "ranges": [
+      [
+        105,
+        265
+      ]
+    ]
+  },
+  {
+    "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/core-excerpts-v1/31-request_observation.rs.raw.sites.json",
+    "bytes": 6351,
+    "sha256": "5f16c9cd955663ca2d7f5f31e225a8a3e67bb5ed21e850786d37c4d858785bc5"
+  },
+  {
+    "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/core-excerpts-v1/32-scalar_cpu.rs.raw.sites.json",
+    "bytes": 8378,
+    "sha256": "c98944ca440597382adc8dcae2f33caecbabe790eb19e41eaa34111ac183e54a"
+  }
+]

@@ -1,0 +1,374 @@
+[
+  {
+    "line": 176,
+    "text": "    verified_completions: usize,"
+  },
+  {
+    "line": 192,
+    "text": "            verified_completions: 0,"
+  },
+  {
+    "line": 298,
+    "text": "            self.verified_completions == 0"
+  },
+  {
+    "line": 314,
+    "text": "        self.verified_completions != 0"
+  },
+  {
+    "line": 483,
+    "text": "    verified_completion: bool,"
+  },
+  {
+    "line": 509,
+    "text": "                verified_completion: false,"
+  },
+  {
+    "line": 528,
+    "text": "            .lock()"
+  },
+  {
+    "line": 532,
+    "text": "                && !state.verified_completion"
+  },
+  {
+    "line": 564,
+    "text": "            .lock()"
+  },
+  {
+    "line": 576,
+    "text": "            !state.verified_completion,"
+  },
+  {
+    "line": 581,
+    "text": "            .lock()"
+  },
+  {
+    "line": 585,
+    "text": "                && budget.in_flight > budget.verified_completions"
+  },
+  {
+    "line": 604,
+    "text": "        budget.verified_completions += 1;"
+  },
+  {
+    "line": 605,
+    "text": "        state.verified_completion = true;"
+  },
+  {
+    "line": 612,
+    "text": "        let mut state = match self.state.lock() {"
+  },
+  {
+    "line": 620,
+    "text": "        if !state.verified_completion {"
+  },
+  {
+    "line": 623,
+    "text": "        state.verified_completion = false;"
+  },
+  {
+    "line": 624,
+    "text": "        let Ok(mut budget) = self.budget.lock() else {"
+  },
+  {
+    "line": 628,
+    "text": "        if budget.verified_completions == 0 {"
+  },
+  {
+    "line": 632,
+    "text": "            budget.verified_completions -= 1;"
+  },
+  {
+    "line": 636,
+    "text": "        if let Ok(mut state) = self.state.lock() {"
+  },
+  {
+    "line": 639,
+    "text": "        if let Ok(mut budget) = self.budget.lock() {"
+  },
+  {
+    "line": 648,
+    "text": "        let mut state = match self.state.lock() {"
+  },
+  {
+    "line": 665,
+    "text": "        let wait = match self.state.lock() {"
+  },
+  {
+    "line": 668,
+    "text": "                // This policy read precedes observe_sample, so it must retain"
+  },
+  {
+    "line": 687,
+    "text": "            let Some(request) = self.observe_sample(remove, enforce)? else {"
+  },
+  {
+    "line": 694,
+    "text": "                    .lock()"
+  },
+  {
+    "line": 705,
+    "text": "            thread::sleep("
+  },
+  {
+    "line": 718,
+    "text": "    fn prepare_history_writer(&self, resource: &dyn Fn() -> Result<()>) -> Result<()> {"
+  },
+  {
+    "line": 723,
+    "text": "            self.observe_sample(false, true)?;"
+  },
+  {
+    "line": 725,
+    "text": "                let mut state = match self.state.lock() {"
+  },
+  {
+    "line": 733,
+    "text": "                let mut budget = match self.budget.lock() {"
+  },
+  {
+    "line": 750,
+    "text": "                    || (state.verified_completion"
+  },
+  {
+    "line": 751,
+    "text": "                        && (budget.verified_completions == 0"
+  },
+  {
+    "line": 752,
+    "text": "                            || budget.verified_completions > budget.in_flight))"
+  },
+  {
+    "line": 770,
+    "text": "                let ready = !state.verified_completion || budget.credit_ns >= 0;"
+  },
+  {
+    "line": 774,
+    "text": "            // resource observation, original deadline check or actual sleep."
+  },
+  {
+    "line": 781,
+    "text": "            thread::sleep("
+  },
+  {
+    "line": 787,
+    "text": "    fn observe_sample(&self, remove: bool, enforce: bool) -> Result<Option<PublicRequestDeadline>> {"
+  },
+  {
+    "line": 790,
+    "text": "        let mut state = match self.state.lock() {"
+  },
+  {
+    "line": 800,
+    "text": "        if enforce && state.verified_completion {"
+  },
+  {
+    "line": 835,
+    "text": "                .lock()"
+  },
+  {
+    "line": 843,
+    "text": "                    state.verified_completion"
+  },
+  {
+    "line": 855,
+    "text": "                if enforce && state.verified_completion && !state.refused {"
+  },
+  {
+    "line": 881,
+    "text": "    pub(super) fn checkpoint(&self) -> Result<()> {"
+  },
+  {
+    "line": 888,
+    "text": "        let state = match self.state.lock() {"
+  },
+  {
+    "line": 905,
+    "text": "        self.state.lock().is_ok_and(|state| state.refused)"
+  },
+  {
+    "line": 925,
+    "text": "    pub(super) fn checkpoint(&self) -> Result<()> {"
+  },
+  {
+    "line": 936,
+    "text": "            if let Ok(mut budget) = budget.lock() {"
+  },
+  {
+    "line": 1037,
+    "text": "    pub(crate) fn cold_remote_history_epoch() -> Self {"
+  },
+  {
+    "line": 1058,
+    "text": "            .lock()"
+  },
+  {
+    "line": 1109,
+    "text": "    pub fn checkpoint(&self) -> Result<()> {"
+  },
+  {
+    "line": 1116,
+    "text": "    pub(crate) fn bind_history_request(&self, deadline: Instant) -> Result<()> {"
+  },
+  {
+    "line": 1124,
+    "text": "            .lock()"
+  },
+  {
+    "line": 1130,
+    "text": "    pub(crate) fn history_checkpoint("
+  },
+  {
+    "line": 1140,
+    "text": "    pub(crate) fn test_legacy_history_w1_only_priority("
+  },
+  {
+    "line": 1164,
+    "text": "        let budget_settled = if let Ok(mut budget) = self.budget.lock() {"
+  },
+  {
+    "line": 1193,
+    "text": "            if let Ok(mut budget) = self.budget.lock() {"
+  },
+  {
+    "line": 1220,
+    "text": "    pub fn checkpoint(&self) -> Result<()> {"
+  },
+  {
+    "line": 1234,
+    "text": "        let bound_request = match self.live.state.lock() {"
+  },
+  {
+    "line": 1252,
+    "text": "    pub(crate) fn history_checkpoint("
+  },
+  {
+    "line": 1266,
+    "text": "    pub(crate) fn history_prepare_writer(&self, resource: &dyn Fn() -> Result<()>) -> Result<()> {"
+  },
+  {
+    "line": 1283,
+    "text": "            .lock()"
+  },
+  {
+    "line": 1296,
+    "text": "            .lock()"
+  },
+  {
+    "line": 1347,
+    "text": "        let mut state = match self.live.state.lock() {"
+  },
+  {
+    "line": 1355,
+    "text": "        let Ok(mut budget) = self.live.budget.lock() else {"
+  },
+  {
+    "line": 1387,
+    "text": "    pub fn checkpoint_handle(&self) -> ServiceMutationCpuCheckpoint {"
+  },
+  {
+    "line": 1397,
+    "text": "        self.budget.lock().is_ok_and(|budget| !budget.unavailable)"
+  },
+  {
+    "line": 1406,
+    "text": "            let Ok(budget) = self.budget.lock() else {"
+  },
+  {
+    "line": 1420,
+    "text": "    pub(crate) fn abandon_history_epoch(&self) {"
+  },
+  {
+    "line": 1421,
+    "text": "        if let Ok(mut budget) = self.budget.lock() {"
+  },
+  {
+    "line": 1450,
+    "text": "            .lock()"
+  },
+  {
+    "line": 1460,
+    "text": "            .lock()"
+  },
+  {
+    "line": 1497,
+    "text": "                    .lock()"
+  },
+  {
+    "line": 1506,
+    "text": "            thread::sleep("
+  },
+  {
+    "line": 1534,
+    "text": "            .lock()"
+  },
+  {
+    "line": 1554,
+    "text": "            .lock()"
+  },
+  {
+    "line": 1575,
+    "text": "            .lock()"
+  },
+  {
+    "line": 1598,
+    "text": "            let mut budget = domain.budget.lock().unwrap();"
+  },
+  {
+    "line": 1610,
+    "text": "            domain.budget.lock().unwrap().termination_reserved_ns,"
+  },
+  {
+    "line": 1617,
+    "text": "        let budget = domain.budget.lock().unwrap();"
+  },
+  {
+    "line": 1635,
+    "text": "            let mut budget = domain.budget.lock().unwrap();"
+  },
+  {
+    "line": 1648,
+    "text": "        assert_eq!(domain.budget.lock().unwrap().termination_reserved_ns, 0);"
+  },
+  {
+    "line": 1652,
+    "text": "        let budget = domain.budget.lock().unwrap();"
+  },
+  {
+    "line": 1726,
+    "text": "            let mut budget = domain.budget.lock().unwrap();"
+  },
+  {
+    "line": 1739,
+    "text": "            let paid = operation.live.state.lock().unwrap().charged_ns;"
+  },
+  {
+    "line": 1760,
+    "text": "        let budget = domain.budget.lock().unwrap();"
+  },
+  {
+    "line": 1929,
+    "text": "            let mut budget = domain.budget.lock().unwrap();"
+  },
+  {
+    "line": 1943,
+    "text": "            let budget = domain.budget.lock().unwrap();"
+  },
+  {
+    "line": 1962,
+    "text": "    fn continuing_checkpoint_still_requires_a_live_reservation() {"
+  },
+  {
+    "line": 1965,
+    "text": "        domain.budget.lock().unwrap().in_flight = 0;"
+  },
+  {
+    "line": 2009,
+    "text": "            .lock()"
+  },
+  {
+    "line": 2017,
+    "text": "            live_completions: budget.verified_completions,"
+  }
+]

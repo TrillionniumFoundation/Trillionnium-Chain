@@ -1,0 +1,40 @@
+{
+  "GH_DEBUG_removed": true,
+  "GH_HOST": "github.com",
+  "HTTP_status_unparsed": true,
+  "argv": [
+    "/opt/homebrew/bin/gh",
+    "api",
+    "--hostname",
+    "github.com",
+    "--method",
+    "GET",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/132528768001/logs"
+  ],
+  "automatic_retry": false,
+  "complete_transport": true,
+  "cwd": "/private/tmp",
+  "elapsed_seconds": 11.49591,
+  "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/132528768001/logs",
+  "exit": 0,
+  "finished_at": "2026-11-14T18:21:41.978403+00:00",
+  "label": "job-132528768001-original-log",
+  "method": "GET",
+  "origin": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/132528768001/logs",
+  "overall_deadline_seconds": 600,
+  "started_at": "2026-11-14T18:21:30.482420+00:00",
+  "stderr": {
+    "bytes": 0,
+    "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/job-132528768001-original-log.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr_cap_bytes": 2097152,
+  "stdout": {
+    "bytes": 2224013,
+    "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/job-132528768001-original-log.stdout",
+    "sha256": "c080ace114a9617b17fb24b68eb9f0b462783111b967a9865e2c879633bf8c1a"
+  },
+  "stdout_cap_bytes": 20971520,
+  "termination_reason": null,
+  "timeout_seconds": 120
+}

@@ -1,0 +1,146 @@
+{
+  "lines": [
+    {
+      "line": 1167,
+      "text": "2026-11-14T17:34:38.7265502Z {"
+    },
+    {
+      "line": 1168,
+      "text": "2026-11-14T17:34:38.7265828Z   \"base\": null,"
+    },
+    {
+      "line": 1169,
+      "text": "2026-11-14T17:34:38.7266259Z   \"candidate\": \"5df7ae6f482157c5f7fdcbcd52222117a965053f\","
+    },
+    {
+      "line": 1170,
+      "text": "2026-11-14T17:34:38.7266554Z   \"kind\": \"head\","
+    },
+    {
+      "line": 1171,
+      "text": "2026-11-14T17:34:38.7266742Z   \"prospective_merge\": null,"
+    },
+    {
+      "line": 1172,
+      "text": "2026-11-14T17:34:38.7266962Z   \"schema\": \"trnm-ci-source-v1\","
+    },
+    {
+      "line": 1173,
+      "text": "2026-11-14T17:34:38.7267217Z   \"tested_commit\": \"5df7ae6f482157c5f7fdcbcd52222117a965053f\","
+    },
+    {
+      "line": 1174,
+      "text": "2026-11-14T17:34:38.7267520Z   \"tested_tree\": \"6be4940d38cc88782657f2684cbefe48866f8b9f\","
+    },
+    {
+      "line": 1175,
+      "text": "2026-11-14T17:34:38.7267791Z   \"tests_executed_by_identity_check\": false,"
+    },
+    {
+      "line": 1176,
+      "text": "2026-11-14T17:34:38.7268017Z   \"tracked_bytes\": 3995072357,"
+    },
+    {
+      "line": 1177,
+      "text": "2026-11-14T17:34:38.7268229Z   \"tracked_entries\": 41681,"
+    },
+    {
+      "line": 1178,
+      "text": "2026-11-14T17:34:38.7268429Z   \"tracked_worktree_verified\": true"
+    },
+    {
+      "line": 1179,
+      "text": "2026-11-14T17:34:38.7268631Z }"
+    },
+    {
+      "line": 1269,
+      "text": "2026-11-14T17:36:25.4248724Z ##[group]Run bash scripts/ci/ci_job.sh protocol-contract"
+    },
+    {
+      "line": 1270,
+      "text": "2026-11-14T17:36:25.4249049Z \u001b[36;1mbash scripts/ci/ci_job.sh protocol-contract\u001b[0m"
+    },
+    {
+      "line": 1408,
+      "text": "2026-11-14T18:28:54.3923848Z {\"cleanup\": \"already-collected\", \"command_argv\": [\"python3\", \"scripts/ci/run_from_zero_native.py\", \"--out\", \"/home/runner/work/_temp/ci-observations/from-zero-native\"], \"consensus_or_model_authority\": false, \"cwd\": \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\", \"failure\": null, \"final_host_errors\": [], \"final_parent_lease\": {\"consensus_or_model_authority\": false, \"creator_service\": \"trnm-from-zero-43621754143-1-protocol-contract-21345.service\", \"current_service\": \"trnm-from-zero-43621754143-1-protocol-contract-21345.service\", \"host_readiness_only\": true, \"parent_identity\": {\"boot_id\": \"b2d72e71-77c6-485f-82af-e25e4bf0ec63\", \"installed_unit_sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"limits\": {\"cpu.max\": \"25000 100000\", \"cpu.max.burst\": \"0\", \"memory.max\": \"2147483648\", \"memory.swap.max\": \"0\", \"pids.max\": \"256\"}, \"parent\": {\"canonical_path\": \"/sys/fs/cgroup/trnmponpublic.slice\", \"device\": 31, \"directory\": true, \"gid\": 0, \"inode\": 7591, \"mode\": 493, \"symlink\": false, \"uid\": 0}, \"unit_file\": {\"ctime_ns\": 1794680863882347162, \"device\": 29, \"inode\": 1495, \"mtime_ns\": 1794680863882347162, \"path\": \"/run/systemd/system/trnmponpublic.slice\", \"sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"size_bytes\": 325}}, \"schema\": \"trnm-ci-public-fixture-parent-binding-v1\", \"seal_file\": {\"ctime_ns\": 1794680868233585359, \"device\": 29, \"inode\": 1541, \"mtime_ns\": 1794680868233585359, \"path\": \"/run/trnm-public-fixture-43621754143-1-protocol-contract/parent.json\", \"sha256\": \"fd933abd2d9c1d783e02a18be38959ed4dad617ddbd69f36d7ca831a55fd8792\", \"size_bytes\": 3206}, \"seal_sha256\": \"fd933abd2d9c1d783e02a18be38959ed4dad617ddbd69f36d7ca831a55fd8792\"}, \"gid\": 1001, \"host_readiness_only\": true, \"parent_lease\": {\"consensus_or_model_authority\": false, \"creator_service\": \"trnm-from-zero-43621754143-1-protocol-contract-21345.service\", \"current_service\": \"trnm-from-zero-43621754143-1-protocol-contract-21345.service\", \"host_readiness_only\": true, \"parent_identity\": {\"boot_id\": \"b2d72e71-77c6-485f-82af-e25e4bf0ec63\", \"installed_unit_sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"limits\": {\"cpu.max\": \"25000 100000\", \"cpu.max.burst\": \"0\", \"memory.max\": \"2147483648\", \"memory.swap.max\": \"0\", \"pids.max\": \"256\"}, \"parent\": {\"canonical_path\": \"/sys/fs/cgroup/trnmponpublic.slice\", \"device\": 31, \"directory\": true, \"gid\": 0, \"inode\": 7591, \"mode\": 493, \"symlink\": false, \"uid\": 0}, \"unit_file\": {\"ctime_ns\": 1794680863882347162, \"device\": 29, \"inode\": 1495, \"mtime_ns\": 1794680863882347162, \"path\": \"/run/systemd/system/trnmponpublic.slice\", \"sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"size_bytes\": 325}}, \"schema\": \"trnm-ci-public-fixture-parent-binding-v1\", \"seal_file\": {\"ctime_ns\": 1794680868233585359, \"device\": 29, \"inode\": 1541, \"mtime_ns\": 1794680868233585359, \"path\": \"/run/trnm-public-fixture-43621754143-1-protocol-contract/parent.json\", \"sha256\": \"fd933abd2d9c1d783e02a18be38959ed4dad617ddbd69f36d7ca831a55fd8792\", \"size_bytes\": 3206}, \"seal_sha256\": \"fd933abd2d9c1d783e02a18be38959ed4dad617ddbd69f36d7ca831a55fd8792\"}, \"parent_reused\": false, \"passed\": false, \"preparation\": {\"binary_path\": \"/home/runner/work/_temp/target-protocol-contract/release/deps/public_v3_from_zero-e1ce94b852e44392\", \"binary_sha256\": \"c4832c084fa89afbe75470dd28ac52e489495e02173eba2a31cb8bc69713d2d0\", \"build_env\": {\"CARGO_BUILD_JOBS\": \"2\", \"CARGO_ENCODED_RUSTFLAGS\": null, \"CARGO_HOME\": \"/home/runner/work/_temp/cargo-protocol-contract\", \"CARGO_INCREMENTAL\": \"0\", \"CARGO_TARGET_DIR\": \"/home/runner/work/_temp/target-protocol-contract\", \"OPENSSL_CONF\": \"/dev/null\", \"OPENSSL_DIR\": \"/home/runner/work/_temp/trnm-pq-provider-3.5.9.G29GLI49/install\", \"OPENSSL_MODULES\": \"/home/runner/work/_temp/trnm-pq-provider-3.5.9.G29GLI49/install/lib/ossl-modules\", \"OPENSSL_STATIC\": \"1\", \"RUSTFLAGS\": null, \"RUSTUP_TOOLCHAIN\": null, \"TRNM_PQ_OPENSSL\": \"/home/runner/work/_temp/trnm-pq-provider-3.5.9.G29GLI49/install/bin/openssl\", \"TRNM_PQ_OPENSSL_SHA256\": \"a76a9ded391a1df03b87de7ff9214a64df5f8a56719177cf72ca8dd56d67727a\", \"TRNM_PQ_OPENSSL_VERSION\": \"3.5.9\"}, \"completed\": true, \"consensus_or_model_authority\": false, \"failure_type\": null, \"format_preparation\": {\"process\": {\"command\": [\"cargo\", \"fmt\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"--all\", \"--\", \"--check\"], \"cpu_ns\": 12161615000, \"cpu_scope\": \"entire child, not apportioned to nested wall intervals\", \"exit_code\": 0, \"involuntary_switches\": 84, \"major_faults\": 0, \"max_rss_kib\": 271788, \"minor_faults\": 55022, \"rss_scope\": \"whole waited child including pre-exec image; no Rust-only RSS attribution\", \"stderr_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"stdout_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"system_cpu_ns\": 214271000, \"timed_out\": false, \"user_cpu_ns\": 11947344000, \"voluntary_switches\": 59, \"wait4_cpu_resolution_ns\": 1000, \"wall_ns\": 12166418043}, \"timeout_seconds\": 60, \"tool_versions\": {\"cargo\": \"cargo 1.95.0 (f2d3ce0bd 2026-03-21)\", \"rustc\": \"rustc 1.95.0 (59807616e 2026-04-14)\\nbinary: rustc\\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\\ncommit-date: 2026-04-14\\nhost: x86_64-unknown-linux-gnu\\nrelease: 1.95.0\\nLLVM version: 22.1.2\\n\", \"rustfmt\": \"rustfmt 1.9.0-stable (59807616e1 2026-04-14)\"}}, \"native_tests_executed\": false, \"process\": {\"command\": [\"cargo\", \"test\", \"--locked\", \"--release\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"-p\", \"trnm-pon-node\", \"--test\", \"public_v3_from_zero\", \"--no-run\", \"--message-format=json\"], \"cpu_ns\": 377881317000, \"cpu_scope\": \"entire child, not apportioned to nested wall intervals\", \"exit_code\": 0, \"involuntary_switches\": 3317, \"major_faults\": 282, \"max_rss_kib\": 1955444, \"minor_faults\": 4714085, \"rss_scope\": \"whole waited child including pre-exec image; no Rust-only RSS attribution\", \"stderr_sha256\": \"3663945faadc08cd3addf28f1b5346590150b3e5d110592db85d3c5d8f12c9c6\", \"stdout_sha256\": \"6aed6c0d4d9c6d364826bc1d4a70749b1bc665975631d6bd1dd19efbdb815a35\", \"system_cpu_ns\": 13368358000, \"timed_out\": false, \"user_cpu_ns\": 364512959000, \"voluntary_switches\": 14923, \"wait4_cpu_resolution_ns\": 1000, \"wall_ns\": 197288175883}, \"schema\": \"trnm-ci-original-native-build-preparation-v1\", \"service_resource_observation\": false, \"source_after\": {\"commit\": \"5df7ae6f482157c5f7fdcbcd52222117a965053f\", \"test_sha256\": \"c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f\", \"tracked_source_identity\": {\"base\": null, \"candidate\": \"5df7ae6f482157c5f7fdcbcd52222117a965053f\", \"kind\": \"head\", \"prospective_merge\": null, \"schema\": \"trnm-ci-source-v1\", \"tested_commit\": \"5df7ae6f482157c5f7fdcbcd52222117a965053f\", \"tested_tree\": \"6be4940d38cc88782657f2684cbefe48866f8b9f\", \"tests_executed_by_identity_check\": false, \"tracked_bytes\": 3995072357, \"tracked_entries\": 41681, \"tracked_worktree_verified\": true}, \"tree\": \"6be4940d38cc88782657f2684cbefe48866f8b9f\"}, \"source_before\": {\"commit\": \"5df7ae6f482157c5f7fdcbcd52222117a965053f\", \"test_sha256\": \"c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f\", \"tracked_source_identity\": {\"base\": null, \"candidate\": \"5df7ae6f482157c5f7fdcbcd52222117a965053f\", \"kind\": \"head\", \"prospective_merge\": null, \"schema\": \"trnm-ci-source-v1\", \"tested_commit\": \"5df7ae6f482157c5f7fdcbcd52222117a965053f\", \"tested_tree\": \"6be4940d38cc88782657f2684cbefe48866f8b9f\", \"tests_executed_by_identity_check\": false, \"tracked_bytes\": 3995072357, \"tracked_entries\": 41681, \"tracked_worktree_verified\": true}, \"tree\": \"6be4940d38cc88782657f2684cbefe48866f8b9f\"}, \"source_error\": null}, \"schema\": \"trnm-ci-original-public-host-controller-v2\", \"service\": \"trnm-from-zero-43621754143-1-protocol-contract-21345.service\", \"systemd_run_exit\": 1, \"uid\": 1001}"
+    },
+    {
+      "line": 1409,
+      "text": "2026-11-14T18:28:54.4392994Z ##[error]Process completed with exit code 1."
+    },
+    {
+      "line": 1432,
+      "text": "2026-11-14T18:28:58.5364179Z {"
+    },
+    {
+      "line": 1433,
+      "text": "2026-11-14T18:28:58.5364483Z   \"base\": null,"
+    },
+    {
+      "line": 1434,
+      "text": "2026-11-14T18:28:58.5364823Z   \"candidate\": \"5df7ae6f482157c5f7fdcbcd52222117a965053f\","
+    },
+    {
+      "line": 1435,
+      "text": "2026-11-14T18:28:58.5365190Z   \"kind\": \"head\","
+    },
+    {
+      "line": 1436,
+      "text": "2026-11-14T18:28:58.5365435Z   \"prospective_merge\": null,"
+    },
+    {
+      "line": 1437,
+      "text": "2026-11-14T18:28:58.5365754Z   \"schema\": \"trnm-ci-source-v1\","
+    },
+    {
+      "line": 1438,
+      "text": "2026-11-14T18:28:58.5366458Z   \"tested_commit\": \"5df7ae6f482157c5f7fdcbcd52222117a965053f\","
+    },
+    {
+      "line": 1439,
+      "text": "2026-11-14T18:28:58.5366889Z   \"tested_tree\": \"6be4940d38cc88782657f2684cbefe48866f8b9f\","
+    },
+    {
+      "line": 1440,
+      "text": "2026-11-14T18:28:58.5367277Z   \"tests_executed_by_identity_check\": false,"
+    },
+    {
+      "line": 1441,
+      "text": "2026-11-14T18:28:58.5367598Z   \"tracked_bytes\": 3995072357,"
+    },
+    {
+      "line": 1442,
+      "text": "2026-11-14T18:28:58.5367863Z   \"tracked_entries\": 41681,"
+    },
+    {
+      "line": 1443,
+      "text": "2026-11-14T18:28:58.5368137Z   \"tracked_worktree_verified\": true"
+    },
+    {
+      "line": 1444,
+      "text": "2026-11-14T18:28:58.5368409Z }"
+    },
+    {
+      "line": 1482,
+      "text": "2026-11-14T18:29:01.1703272Z SHA256 digest of uploaded artifact zip is 2ccebd8388401d327834f437675c782a69393ec8444ffa9bdcfae1469bd7d1a0"
+    },
+    {
+      "line": 1484,
+      "text": "2026-11-14T18:29:01.5556783Z Artifact head-protocol-contract-5df7ae6f482157c5f7fdcbcd52222117a965053f-1.zip successfully finalized. Artifact ID 14126950344"
+    },
+    {
+      "line": 1485,
+      "text": "2026-11-14T18:29:01.5558130Z Artifact head-protocol-contract-5df7ae6f482157c5f7fdcbcd52222117a965053f-1 has been successfully uploaded! Final size is 7258904 bytes. Artifact ID is 14126950344"
+    },
+    {
+      "line": 1486,
+      "text": "2026-11-14T18:29:01.5562924Z Artifact download URL: https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621754143/artifacts/14126950344"
+    }
+  ],
+  "original_log": {
+    "bytes": 219531,
+    "path": "/private/tmp/chain-prci-H5DF-required-head-protocol-original-log-20261114-v1/job-132528769008-original-log.stdout",
+    "sha256": "83b7dc7a418f9a31563abf92b7702c8969ac1c9fe2ed741b2f9ba4b95ee13a5c"
+  },
+  "total_lines": 1500
+}

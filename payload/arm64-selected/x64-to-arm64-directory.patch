@@ -1,0 +1,50 @@
+--- reviewed-x64/directory-producer.py
++++ arm64/directory-producer.py
+@@ -1,19 +1,19 @@
+ #!/usr/bin/env python3
+-"""One fixed H5DF x64 cost artifact; original directory discovery before selected records."""
++"""One fixed H5DF ARM64 cost artifact; original directory discovery before selected records."""
+ import datetime,hashlib,json,os,re,selectors,stat,struct,subprocess,sys,time,zlib
+ from pathlib import Path,PurePosixPath
+-BASE=Path("/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1")
++BASE=Path("/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1")
+ OUT=BASE/"directory-v1"
+ GH="/opt/homebrew/bin/gh"
+ REPO="TrillionniumFoundation/Trillionnium-Chain"
+-ARTIFACT=14124189121
++ARTIFACT=14124468052
+ RUN=43621754143
+ HEAD="5df7ae6f482157c5f7fdcbcd52222117a965053f"
+ SUBJECT=HEAD
+ TREE="6be4940d38cc88782657f2684cbefe48866f8b9f"
+-NAME="cost-x64-"+HEAD+"-1"
+-SIZE=10127368
+-DIGEST="9899447cdb5c5045d0f70ffdba9aa0f271f350c823be80fbdb1c266ba541530e"
++NAME="cost-arm64-"+HEAD+"-1"
++SIZE=9909858
++DIGEST="3b093c989b92fb7d657195826ae6faed9e641840dbe8f48c7721aebcf7804d7d"
+ TAIL=65557
+ START=SIZE-TAIL
+ END=SIZE-1
+@@ -21,9 +21,9 @@
+ TOTAL_BUDGET=900
+ MAX_GETS=21
+ SAFE_HEADERS={"content-range","content-length","content-type","accept-ranges","content-encoding"}
+-SOURCE_LOG=Path("/private/tmp/chain-prci-H5DF-cross-arch-cost-x64-original-log-20261114-v1/job-132528768933-original-log.stdout")
+-SOURCE_BYTES=185104
+-SOURCE_SHA="db7a975f8a17e1e3854a86805e44b6cabee36d03c1fb2a280b6a840538a41a66"
++SOURCE_LOG=Path("/private/tmp/chain-H5DF-arm64-cross-cost-original-evidence-20261114-v1/job-132528769087-original-log.stdout")
++SOURCE_BYTES=184757
++SOURCE_SHA="b5f690a2a7cb61c16b6b459e1af5a7ca36430557c99ab51f4c66a7db09b32145"
+ SELECTORS=[
+  "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+  "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+@@ -300,7 +300,7 @@
+     began=time.monotonic();deadline=began+TOTAL_BUDGET
+     result={"schema":"trnm-H5DF-cost-selected-directory-v1","status":"HOLD","started_at":now(),
+       "artifact_id":ARTIFACT,"artifact_name":NAME,"run_id":RUN,"run_attempt":1,
+-      "job_id":132528768933,"workflow_head":HEAD,"expected_subject":SUBJECT,"expected_tree":TREE,
++      "job_id":132528769087,"workflow_head":HEAD,"expected_subject":SUBJECT,"expected_tree":TREE,
+       "declared_archive_bytes":SIZE,"declared_archive_sha256":DIGEST,
+       "directory_stage_max_GETs":2,"combined_directory_and_selected_max_GETs":MAX_GETS,
+       "combined_budget_seconds":TOTAL_BUDGET,"per_GET_max_seconds":BUDGET,

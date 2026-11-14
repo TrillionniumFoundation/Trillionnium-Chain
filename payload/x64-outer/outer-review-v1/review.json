@@ -1,0 +1,127 @@
+{
+  "acquisition_interval": [
+    "2026-11-14T17:44:21.226775+00:00",
+    "2026-11-14T17:44:37.321282+00:00"
+  ],
+  "actual_native_runner_argv": [
+    "python3",
+    "scripts/ci/run_from_zero_native.py",
+    "--out",
+    "/home/runner/work/_temp/ci-observations/from-zero-native"
+  ],
+  "actual_terminal": {
+    "bytes": 13676,
+    "path": "/private/tmp/chain-prci-H5DF-cross-arch-cost-x64-original-log-20261114-v1/outer-review-v1/actual-terminal-pages.json",
+    "sha256": "3a481a9f975b5b4b2beab46e58ad1fc53cf22fdb7df625f14cdcbbf93e04a58d"
+  },
+  "all_three_GETs_exit_zero": true,
+  "artifact_candidate": {
+    "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14124189121/zip",
+    "created_at": "2026-11-14T17:41:19Z",
+    "digest": "sha256:9899447cdb5c5045d0f70ffdba9aa0f271f350c823be80fbdb1c266ba541530e",
+    "expired": false,
+    "expires_at": "2026-12-14T17:41:18Z",
+    "id": 14124189121,
+    "name": "cost-x64-5df7ae6f482157c5f7fdcbcd52222117a965053f-1",
+    "size_in_bytes": 10127368,
+    "updated_at": "2026-11-14T17:41:19Z",
+    "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14124189121",
+    "workflow_run": {
+      "head_branch": "fix/chain-hepta-closure-candidate-20261109-481716",
+      "head_repository_id": 1323087357,
+      "head_sha": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "id": 43621754143,
+      "repository_id": 1323087357
+    }
+  },
+  "artifact_downloaded": false,
+  "attempt": 1,
+  "binary_not_downloaded_or_verified": true,
+  "controller": {
+    "bytes": 9054,
+    "path": "/private/tmp/chain-prci-H5DF-cross-arch-cost-x64-original-log-20261114-v1/outer-review-v1/controller-parsed-from-log.json",
+    "sha256": "7f718e146c05acee9ca19f953c1a9dd9fe9028a5fe380b9d68f5e0249c3615bd"
+  },
+  "controller_log_line": 1356,
+  "created_at": "2026-11-14T17:47:09.429625+00:00",
+  "exact_excerpts": {
+    "bytes": 12002,
+    "path": "/private/tmp/chain-prci-H5DF-cross-arch-cost-x64-original-log-20261114-v1/outer-review-v1/exact-numbered-log-excerpts.json",
+    "sha256": "bc7f461396fa3c291c2a1fa58c93511900c6a5d8fc5a79396644aa5bd6d64f81"
+  },
+  "exact_inner_failure": "UNKNOWN",
+  "final_host_errors": [],
+  "format_exit_code": 0,
+  "four_second_and_sixteen_worker_actual_inner_run_verified": false,
+  "job_id": 132528768933,
+  "job_name": "cross-arch-cost (x64)",
+  "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621754143/job/132528768933",
+  "native_build": {
+    "argv": [
+      "cargo",
+      "test",
+      "--locked",
+      "--release",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--test",
+      "public_v3_from_zero",
+      "--no-run",
+      "--message-format=json"
+    ],
+    "exit_code": 0,
+    "timed_out": false,
+    "timeout_scope": "unchanged original producer build contract"
+  },
+  "new_native_tests_or_CI_actions": false,
+  "no_additional_GETs_in_this_review": true,
+  "observed_controller_schema": "trnm-ci-original-public-host-controller-v2",
+  "observed_outer_failure": null,
+  "observed_outer_passed": false,
+  "observed_systemd_run_exit": 1,
+  "old_R1_cause_inherited": false,
+  "original_acquisition": {
+    "bytes": 15593,
+    "path": "/private/tmp/chain-prci-H5DF-cross-arch-cost-x64-original-log-20261114-v1/acquisition-summary.json",
+    "sha256": "f3ae1259df3d33fd8ba3ff9a68a270e5470ff5aace57d3d618218e063c773ffc"
+  },
+  "original_final_parent_limits": {
+    "cpu.max": "25000 100000",
+    "cpu.max.burst": "0",
+    "memory.max": "2147483648",
+    "memory.swap.max": "0",
+    "pids.max": "256"
+  },
+  "original_log": {
+    "bytes": 185104,
+    "path": "/private/tmp/chain-prci-H5DF-cross-arch-cost-x64-original-log-20261114-v1/job-132528768933-original-log.stdout",
+    "sha256": "db7a975f8a17e1e3854a86805e44b6cabee36d03c1fb2a280b6a840538a41a66"
+  },
+  "original_log_lines": 1437,
+  "outer_command_lines": [
+    1340,
+    1341
+  ],
+  "preparation_flag_does_not_prove_no_later_native_tests": true,
+  "preparation_native_tests_executed_flag": false,
+  "preparation_source_before_after_equal": true,
+  "qualification": false,
+  "recorded_binary_sha256": "bb788ecebc740db3e54cdb1a2942db4af9f19f592404f73026dfeb6ad9f26507",
+  "run_id": 43621754143,
+  "schema": "trnm-H5DF-cross-cost-x64-original-outer-review-v1",
+  "smallest_next_diagnostic_scope": "Own artifact metadata plus bounded positive-range ZIP tail/CD and selected native manifest/source/controller/confirmation report and necessary five selector process/stdout; no ELF/SQLite/full-ZIP requirement.",
+  "source_head": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+  "source_objects": {
+    "bytes": 1083,
+    "path": "/private/tmp/chain-prci-H5DF-cross-arch-cost-x64-original-log-20261114-v1/outer-review-v1/source-identities-parsed-from-log.json",
+    "sha256": "eeb8c2f3d8ffd5cb053155db6111573dde8d4fdf45a18223140dccc5d370e9f1"
+  },
+  "source_refs_stage_changes": false,
+  "source_top_level_before_after_equal": true,
+  "source_tree": "6be4940d38cc88782657f2684cbefe48866f8b9f",
+  "status": "CLOSED_OUTER_FAILURE_INNER_UNKNOWN",
+  "tracked_bytes": 3995072357,
+  "tracked_entries": 41681
+}

@@ -1,0 +1,68 @@
+{
+  "actual_directory_count": "UNKNOWN_UNTIL_DIRECTORY_READ",
+  "artifact_bytes": 9909858,
+  "artifact_declared_sha256": "3b093c989b92fb7d657195826ae6faed9e641840dbe8f48c7721aebcf7804d7d",
+  "artifact_id": 14124468052,
+  "automatic_retry": false,
+  "combined_deadline_will_not_be_reset_implicitly": true,
+  "diff": {
+    "bytes": 2604,
+    "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/x64-to-arm64-directory.patch",
+    "sha256": "a001c767b6b2a19270158e2048f08fc8a83db1fcaaffc1125018086f062ad49f"
+  },
+  "executed_target_or_helpers": false,
+  "execution_requires_root_confirmation": true,
+  "existing_combined_deadline_seconds": 900,
+  "head": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+  "job_id": 132528769087,
+  "member_requests_currently_authorized": false,
+  "per_get_max_seconds": 180,
+  "reference": {
+    "bytes": 21134,
+    "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/directory-producer.py",
+    "sha256": "b5378e5bab78f3c41ecd0379107d7bf9effaeac3de60577ef4bae6a30335e256"
+  },
+  "refuse_200_or_incomplete_directory": true,
+  "requests": [
+    {
+      "body_cap": 65536,
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14124468052",
+      "method": "GET"
+    },
+    {
+      "body_cap": 65557,
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14124468052/zip",
+      "method": "GET",
+      "range": "bytes=9844301-9909857",
+      "required_content_range": "bytes 9844301-9909857/9909858",
+      "required_status": 206
+    }
+  ],
+  "run_id": 43621754143,
+  "save_signed_url_headers_auth_cookies": false,
+  "schema": "trnm-H5DF-arm-directory-acquisition-plan-v1",
+  "selected_records_require_actual_directory_and_explicit_plan": "pending",
+  "source": {
+    "bytes": 21135,
+    "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/directory-producer.py",
+    "sha256": "a956dd358a6859a6b508846c63abb9122976267c0fee18cc73060d830370e1c5"
+  },
+  "static_compile_only": true,
+  "status": "PREPARED_NOT_EXECUTED",
+  "tree": "6be4940d38cc88782657f2684cbefe48866f8b9f",
+  "unchanged_helper_names": [
+    "need",
+    "now",
+    "fingerprint",
+    "stable_bytes",
+    "save",
+    "save_json",
+    "pairs",
+    "parse_json",
+    "parsed_headers",
+    "capture",
+    "central_directory",
+    "extract_record"
+  ],
+  "whole_zip_download": false
+}

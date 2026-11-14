@@ -1,0 +1,7 @@
+5df7ae6f482157c5f7fdcbcd52222117a965053f:trillionnium/crates/trnm-pon-node/src/account_archive_prototype/multiproof.rs:297:    pub fn verify_with_progress<E: From<ArchiveError>>(
+5df7ae6f482157c5f7fdcbcd52222117a965053f:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs:1562:pub(in crate::ingress) struct ThreadCpuStamp {
+5df7ae6f482157c5f7fdcbcd52222117a965053f:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs:1566:impl ThreadCpuStamp {
+5df7ae6f482157c5f7fdcbcd52222117a965053f:trillionnium/crates/trnm-pon-node/src/store.rs:1030:pub(crate) struct WorkCheckedPacket {
+5df7ae6f482157c5f7fdcbcd52222117a965053f:trillionnium/crates/trnm-pon-node/src/store.rs:1052:impl WorkCheckedPacket {
+5df7ae6f482157c5f7fdcbcd52222117a965053f:trillionnium/crates/trnm-pon-node/src/store.rs:1200:    pub(crate) fn verify_with_progress(
+5df7ae6f482157c5f7fdcbcd52222117a965053f:trillionnium/crates/trnm-pon-node/src/store/growth/work_checked.rs:15:    pub(crate) fn verify_with_progress(

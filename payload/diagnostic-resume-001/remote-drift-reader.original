@@ -1,0 +1,40 @@
+import pathlib,os,stat,hashlib,json,sys,time
+if sys.flags.optimize:raise RuntimeError("optimized reader")
+ROOT=pathlib.Path("/private/tmp/chain-consolidation-20261114-root")
+SRC=ROOT/"R1-diagnostic-stage1-observer-preparation-v1/read_stage1_original_run_v1.py"
+OUT=ROOT/"candidate-drift-github-refs-20261114-v2"
+def fp(s):return(s.st_dev,s.st_ino,s.st_mode,s.st_nlink,s.st_size,s.st_mtime_ns,s.st_ctime_ns)
+a=SRC.lstat()
+if SRC.resolve(strict=True)!=SRC or not stat.S_ISREG(a.st_mode)or a.st_nlink!=1 or a.st_size!=9261:raise RuntimeError("reader scope")
+with os.fdopen(os.open(SRC,os.O_RDONLY|os.O_NOFOLLOW|os.O_CLOEXEC),"rb")as f:
+ if fp(a)!=fp(os.fstat(f.fileno())):raise RuntimeError("reader replaced")
+ raw=f.read(9262)
+ if fp(a)!=fp(os.fstat(f.fileno())):raise RuntimeError("reader changed")
+if fp(a)!=fp(SRC.lstat())or len(raw)!=9261 or hashlib.sha256(raw).hexdigest()!="95afd7e8f8db70d6290678c781f58dfd73f0f8085c71a5b4bc0a5e23adfcd69c":raise RuntimeError("reader pin")
+if ROOT.resolve(strict=True)!=ROOT:raise RuntimeError("root")
+os.umask(0o077);OUT.mkdir(mode=0o700,exist_ok=False)
+(OUT/"reader.py").write_text(sys.argv[1])
+ns={"__name__":"readonly_helpers","__file__":str(SRC)}
+exec(compile(raw,str(SRC),"exec",optimize=0),ns)
+ns["OUT"]=OUT;ns["START"]=time.monotonic();ns["DEADLINE"]=ns["START"]+300
+r={"schema":"trnm-complete-remote-refs-API-observation-v1","started_at":ns["utc"](),"network_readonly":True,"steps":[],"refs":{},"errors":[],"automatic_retry":False,"qualification":False,"all_refs_from_nonpaginated_documented_matching_prefix_endpoint":True,"HEAD_and_TAG_reads_not_atomic":True}
+try:
+ for label,prefix in [("remote-heads","heads/"),("remote-tags","tags/")]:
+  s=ns["capture"](label,"repos/TrillionniumFoundation/Trillionnium-Chain/git/matching-refs/"+prefix,4194304);r["steps"].append(s)
+  ns["need"](s["complete_transport"],"incomplete "+label)
+  v=ns["read_json"](pathlib.Path(s["stdout"]["path"]));ns["need"](isinstance(v,list),"array required")
+  refmap={}
+  for x in v:
+   ref=x.get("ref");obj=x.get("object",{});oid=obj.get("sha")
+   ns["need"](isinstance(ref,str)and ref.startswith("refs/"+prefix)and ref not in refmap,"ref prefix/duplicate")
+   ns["need"](isinstance(oid,str)and len(oid)==40 and all(c in "0123456789abcdef"for c in oid),"oid")
+   ns["need"](obj.get("type")in (["commit"]if label=="remote-heads"else["commit","tag"]),"object type")
+   ns["need"](x.get("url")=="https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/refs/"+ref[5:],"ref URL")
+   refmap[ref]={"oid":oid,"type":obj["type"]}
+  r["refs"][label]=refmap
+except Exception as e:r["errors"].append(type(e).__name__+": "+str(e))
+r["finished_at"]=ns["utc"]();r["complete"]=not r["errors"]and len(r["refs"])==2
+sp=ns["write"]("summary.json",r);ip=ns["write"]("EVIDENCE_INDEX.json",{"files":[ns["pin"](p)for p in sorted(OUT.iterdir())if p.is_file()],"self_excluded":True})
+heads=r["refs"].get("remote-heads",{});tags=r["refs"].get("remote-tags",{})
+print(json.dumps({"complete":r["complete"],"summary":sp,"index":ip,"heads":len(heads),"tags":len(tags),"main":heads.get("refs/heads/main"),"candidate":heads.get("refs/heads/fix/chain-hepta-closure-candidate-20261109-481716"),"owned_tags":{k:v for k,v in tags.items()if k.startswith("refs/tags/archive/")or k=="refs/tags/diagnostic/r1-native-stage1-20261114-r1-v3"},"errors":r["errors"]}),flush=True)
+raise SystemExit(0 if r["complete"]else 1)

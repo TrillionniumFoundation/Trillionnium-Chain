@@ -1,0 +1,23 @@
+{
+  "Host_preparation": "bb788ecebc740db3e54cdb1a2942db4af9f19f592404f73026dfeb6ad9f26507",
+  "actual_original_keys": {
+    "binary_sha256_after": "bb788ecebc740db3e54cdb1a2942db4af9f19f592404f73026dfeb6ad9f26507",
+    "binary_sha256_before": "bb788ecebc740db3e54cdb1a2942db4af9f19f592404f73026dfeb6ad9f26507"
+  },
+  "binary_bytes_verified": false,
+  "original_acquisition": {
+    "bytes": 21253,
+    "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/selected-v1/summary.json",
+    "sha256": "20937bc9c0db42441b4a974a9ec70c339146965540e38e141f4dd2ddbbb67f2a"
+  },
+  "original_manifest": {
+    "bytes": 73928,
+    "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/selected-v1/members/from-zero-native/manifest.json",
+    "sha256": "0175936e91c642e4ea0df3b7d19961ad99919a407518382e24cb4a4945bf59f4"
+  },
+  "prior_projection": {
+    "binary_after": null,
+    "binary_before": null
+  },
+  "scope": "Correct only derived summary field lookup; do not modify original acquisition receipt"
+}

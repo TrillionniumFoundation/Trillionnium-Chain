@@ -1,0 +1,31 @@
+{
+  "bounds": {
+    "initial_each_seconds": 120,
+    "initial_max_GETs": 4,
+    "initial_total_seconds": 300,
+    "selected_member_uncompressed_cap_bytes": 4194304
+  },
+  "first_candidate_artifact": {
+    "bytes": 9277482,
+    "digest_line": 3625,
+    "downloaded": false,
+    "id": 14125551425,
+    "id_size_line": 3628,
+    "name": "priority-ubuntu-24.04-head-service-model-5df7ae6f482157c5f7fdcbcd52222117a965053f-1",
+    "name_line": 3593,
+    "origin": "original upload-action lines; not fresh artifact API",
+    "sha256": "ad83e8315ec1525be714881fcac3809b50de6f4f75f124bf21a2bcd0ea5ab066",
+    "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753847/artifacts/14125551425",
+    "whole_zip_sha256_verified": false
+  },
+  "initial_requests": "Fresh metadata, one exact positive tail range, central-directory range only if not wholly in that tail, and the exact local-header+compressed member range for from-zero-native/manifest.json if the actual CD contains it",
+  "not_downloaded": [
+    "ELF",
+    "SQLite",
+    "unrelated artifacts"
+  ],
+  "purpose": "Read this job's own native failure manifest, then only evidence named by it if needed; no cause inheritance across jobs",
+  "required_checks": "metadata exact run/head/name/size/digest against the original upload; range status 206 and exact Content-Range/length; central-directory safe names/duplicates/symlinks; selected record filename/size/CRC; ignored Range stops without whole-download fallback",
+  "scope_limit": "Selected-member CRC is not whole ZIP digest or all-member validation. Other two jobs stay inner UNKNOWN until their own manifest is acquired.",
+  "status": "PROPOSED_NOT_EXECUTED"
+}

@@ -1,0 +1,95 @@
+{
+  "actual_selected_terminal": {
+    "bytes": 1082,
+    "exit_code": 1,
+    "output_complete": true,
+    "session_id": "dpty-6c8a5d24a6ed6b321d48fdf0c0fd04db36d0762c12ff239ba6f0b67b5b6426d9",
+    "sha256": "fe3017f2c61a1915ae9d38164f125d96eaaf6928e59c83ab776732c6dde6fa74"
+  },
+  "artifact_declared_bytes": 9909858,
+  "artifact_declared_sha256": "3b093c989b92fb7d657195826ae6faed9e641840dbe8f48c7721aebcf7804d7d",
+  "artifact_id": 14124468052,
+  "boundaries": [
+    "Do not inherit x64 failure cause",
+    "No whole ZIP, ELF or SQLite acquired",
+    "No native, build, probe, source/ref/config/stage mutation",
+    "Original failed attempt kept; no retry was started"
+  ],
+  "directory": {
+    "actual_entries": 161,
+    "central_directory_bytes": 15189,
+    "central_directory_offset": 9894647,
+    "metadata_GET_exit": 0,
+    "range": "bytes 9844301-9909857/9909858",
+    "status": 206,
+    "tail_GET_exit": 0,
+    "tail_bytes": 65557
+  },
+  "facts_not_established": {
+    "baseline_pressure_timing": "UNKNOWN",
+    "confirmation_error": "UNKNOWN",
+    "five_native_selectors_exits": "UNKNOWN",
+    "manifest_failure": "UNKNOWN",
+    "per_phase_CPU_Host_checkpoints": "UNKNOWN",
+    "selected_member_CRC_verified": false,
+    "whole_artifact_SHA_verified": false,
+    "whole_artifact_member_CRC_verified": false
+  },
+  "head": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+  "host_controller": {
+    "failure": null,
+    "final_host_errors": [],
+    "native_build_exit": 0,
+    "native_build_wall_seconds": 236.352278583,
+    "systemd_run_exit": 1
+  },
+  "job_id": 132528769087,
+  "outer_job_status": "failure",
+  "references": {
+    "actual_tool_records": {
+      "bytes": 3859,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/actual-tool-records-v1/EVIDENCE_INDEX.json",
+      "sha256": "55d14cba99671843e26fc3bcec07ed5096c78ff657e838c1d4d37deef4516615"
+    },
+    "directory_summary": {
+      "bytes": 6078,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/directory-v1/summary.json",
+      "sha256": "71d2ba7895fd2c00303255fbddcd665de79a861aa96b5e4e5646ad6a478587c3"
+    },
+    "outer_summary": {
+      "bytes": 9393,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-original-evidence-20261114-v1/outer-analysis-v1/summary.json",
+      "sha256": "696ac99d76571c92097e068f696d0095a0f00cadd51a0a3824fec22c37b1a414"
+    },
+    "selected_summary": {
+      "bytes": 3669,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-v1/summary.json",
+      "sha256": "c90c5d78f244e73c7e513186bced2fc1475a5905ce994c2e339cbac6bb5c522b"
+    }
+  },
+  "run_attempt": 1,
+  "run_id": 43621754143,
+  "schema": "trnm-H5DF-arm-cost-attempt1-bounded-review-v1",
+  "selected_attempt": {
+    "actual_GETs": 1,
+    "automatic_retry": false,
+    "combined_elapsed_seconds": 134.283419,
+    "deadline_reset": false,
+    "error": "GH_GET_NONZERO",
+    "gh_exit": 1,
+    "http_status": null,
+    "original_combined_budget_seconds": 900,
+    "per_GET_seconds": 180,
+    "range": "bytes=1390399-1391464",
+    "remaining_ranges_not_requested": 7,
+    "selected_members_obtained": 0,
+    "stderr_bytes": 151,
+    "stderr_raw_policy": "reviewed original helper preserves count/hash only to avoid signed URL/auth/header disclosure",
+    "stderr_raw_preserved": false,
+    "stderr_sha256": "6a34549a398e4e1f1561ae0ef4974af1f30ee9e14bea907a56f6b70c88860859",
+    "stdout_bytes": 0
+  },
+  "source_before_after_exact": true,
+  "status": "INNER_CAUSE_UNKNOWN_ACQUISITION_HOLD",
+  "tree": "6be4940d38cc88782657f2684cbefe48866f8b9f"
+}

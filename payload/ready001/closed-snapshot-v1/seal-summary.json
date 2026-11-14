@@ -1,0 +1,24 @@
+{
+  "actual_session_id": "dpty-3c013c2d6a1045532dd050a5be3d160407a30e2a131ed6ab53ecb2b6eca8f6b2",
+  "facts": {
+    "bytes": 20609,
+    "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-001/closed-snapshot-v1/progress-delta.json",
+    "sha256": "c243aadb84c997b525bab9afe76bb46e4d182cf7c475a2b91a61ffe690f80660"
+  },
+  "index": {
+    "bytes": 1695,
+    "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-001/closed-snapshot-v1/EVIDENCE_INDEX.json",
+    "sha256": "fd44d333a6264db0bd646a2011b7d7ef621e34a5584c133d29d1924f49db61c8"
+  },
+  "new_GETs": 0,
+  "no_qualification": true,
+  "original_reader_exit": 0,
+  "original_reader_status": "OBSERVED",
+  "original_sources_version_unchanged": true,
+  "original_summary": {
+    "bytes": 14290,
+    "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-001/summary.json",
+    "sha256": "c5fa45d344541a3c2a12b3fd7132ec354d49f0c0b4e6b75f08ff6c85d5a9443b"
+  },
+  "status": "CLOSED"
+}

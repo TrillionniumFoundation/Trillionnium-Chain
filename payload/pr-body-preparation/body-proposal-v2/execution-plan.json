@@ -1,0 +1,45 @@
+{
+  "budgets": {
+    "each_request_seconds": 120,
+    "maximum_requests": 8,
+    "normal_PATCH_maximum": 1,
+    "owned_TERM_then_KILL_reap_grace_seconds": [
+      5,
+      5
+    ],
+    "total_seconds": 600
+  },
+  "edited_trigger_finding": "Captured H5DF36/baseB1 repository workflows have default pull_request activities only; no edited subscription. External apps/future workflows are outside this finding.",
+  "future_launch": {
+    "args": [
+      "-B",
+      "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/body-proposal-v2/execute_pr847_body_only_v1.py",
+      "--spec-sha256",
+      "ac2aa670f550cd0b3362fb156032fd15ed4c06da9468d977240de0972e1ebf05"
+    ],
+    "cwd": "/private/tmp",
+    "executable": "/opt/homebrew/bin/python3"
+  },
+  "guards": [
+    "Stable reviewed spec/producer/body/evidence hashes before any GET",
+    "Four concurrent bounded GETs: actual actor ProfHepta id102159240; PR847 open/ready/no-auto/headH5DF/baseB/same title; candidate refH5DF/main refB",
+    "Exact old body or already exact desired body; concurrent different body is HOLD",
+    "At most one ordinary body-only PATCH, no retry; actual exit and HTTP kept separately",
+    "Three bounded post-GETs require exact desired body/title/ready/noauto/head/base/refs; UNKNOWN/HOLD on mismatch or incomplete evidence",
+    "Final input identities/hashes unchanged"
+  ],
+  "normal_API_CAS_limit": "Normal PR PATCH has no expected-head/body CAS. Before/after checks detect observed drift and cannot lock refs; no atomic CAS claim.",
+  "not_run": true,
+  "producer": {
+    "bytes": 10663,
+    "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/body-proposal-v2/execute_pr847_body_only_v1.py",
+    "sha256": "568d5f3a1e59b0cd599f4586da09d39d2e213a6c07b57ebf4f9ec59b3c003bc6"
+  },
+  "scope": "Only PR847 body. Fixed H5DF/B. No title/ready/auto-merge, CI, merge, protection, source or ref mutation.",
+  "spec": {
+    "bytes": 3345,
+    "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/body-proposal-v2/execution-spec.json",
+    "sha256": "ac2aa670f550cd0b3362fb156032fd15ed4c06da9468d977240de0972e1ebf05"
+  },
+  "status": "PREPARED_ONLY_NOT_EXECUTED"
+}

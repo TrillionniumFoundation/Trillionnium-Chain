@@ -1,0 +1,65 @@
+{
+  "byte_exact_unchanged_helpers": [
+    "need",
+    "now",
+    "sha",
+    "encode",
+    "counts",
+    "run_view",
+    "save",
+    "info",
+    "api",
+    "run",
+    "execute",
+    "paginate"
+  ],
+  "compile_only_optimize": 0,
+  "exact_reverse_reconstruction": true,
+  "no_Git_API_or_tests_executed": true,
+  "no_target_helpers_or_main_executed": true,
+  "normalized_AST_equal": true,
+  "patch": {
+    "bytes": 12015,
+    "path": "/private/tmp/chain-prci-head-5df7ae6-ci-progress-preparation-20261114-v1/R1-to-head5df-identity-only.patch",
+    "sha256": "eb689d1e7df18869033dae9c201b6431979d97d7e74dc1815ca460bc3333946a"
+  },
+  "prepared": {
+    "bytes": 19479,
+    "path": "/private/tmp/chain-prci-head-5df7ae6-ci-progress-preparation-20261114-v1/read_head5df_required_ci_progress_v1.py",
+    "sha256": "3f50aa71fa06f37e64c1ed1e669ad1b1b45ebe27acfddb5004957ef3a43c68fb"
+  },
+  "replacements": [
+    {
+      "new": "/private/tmp/chain-prci-head-5df7ae6-ci-progress-preparation-20261114-v1/read_head5df_required_ci_progress_v1.py",
+      "occurrences": 1,
+      "old": "/private/tmp/chain-prci-R1-ci-progress-reader-preparation-20261114-v1/read_R1_required_ci_progress_v1.py"
+    },
+    {
+      "new": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "occurrences": 1,
+      "old": "2a86462a1ab20c68151719ba4635e3c294391e64"
+    },
+    {
+      "new": "6be4940d38cc88782657f2684cbefe48866f8b9f",
+      "occurrences": 1,
+      "old": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4"
+    },
+    {
+      "new": "H5DF",
+      "occurrences": 30,
+      "old": "R1"
+    },
+    {
+      "new": "older_R1_N_N2_results_inherited",
+      "occurrences": 1,
+      "old": "older_N_N2_results_inherited"
+    }
+  ],
+  "schema": "trnm-head5df-ci-progress-static-identity-proof-v1",
+  "source_original": {
+    "bytes": 19408,
+    "path": "/private/tmp/chain-prci-R1-ci-progress-reader-preparation-20261114-v1/read_R1_required_ci_progress_v1.py",
+    "sha256": "8d3a5cba653cd53caa4144d71193e4b7ff3faf49f4a10a1ebce45940eb072503"
+  },
+  "source_version_before_after_equal": true
+}

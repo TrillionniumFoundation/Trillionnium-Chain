@@ -1,0 +1,172 @@
+[
+  {
+    "command": [
+      "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-e1ce94b852e44392",
+      "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+      "--exact",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "exit_code": 0,
+    "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+    "named_execution": {
+      "executed_tests": 1,
+      "result": "PASS",
+      "scope": "named-libtest-execution-only",
+      "test": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct"
+    },
+    "process": {
+      "bytes": 885,
+      "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/selected-v1/members/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json",
+      "sha256": "e4bb6654f678405a53a039b23c093d6a69cebe3c1a70270a9a9e1eee58134ce3"
+    },
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/selected-v1/members/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 190,
+      "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/selected-v1/members/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+      "sha256": "5d8b4712794f101cd8aa20d17a5d273df8bc32d74d62764afa09ba1040dc2f4e"
+    },
+    "timed_out": false,
+    "wall_ns": 5522735
+  },
+  {
+    "command": [
+      "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-e1ce94b852e44392",
+      "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+      "--exact",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "exit_code": 0,
+    "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+    "named_execution": {
+      "executed_tests": 1,
+      "result": "PASS",
+      "scope": "named-libtest-execution-only",
+      "test": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection"
+    },
+    "process": {
+      "bytes": 897,
+      "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/selected-v1/members/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json",
+      "sha256": "dbd4bd9dffa7d1fba30c0295594a8671a8c9c6a4cf9dce13d0218b46b922dca1"
+    },
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/selected-v1/members/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 196,
+      "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/selected-v1/members/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+      "sha256": "44f862344565edbda264faab3ec54cba2e86aeb489e94a5598272158ca964bda"
+    },
+    "timed_out": false,
+    "wall_ns": 5354827
+  },
+  {
+    "command": [
+      "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-e1ce94b852e44392",
+      "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+      "--exact",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "exit_code": 0,
+    "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+    "named_execution": {
+      "executed_tests": 1,
+      "result": "PASS",
+      "scope": "named-libtest-execution-only",
+      "test": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged"
+    },
+    "process": {
+      "bytes": 897,
+      "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/selected-v1/members/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json",
+      "sha256": "6a187f2f87b10e31fc0d2a87b114f8905d08ad8fc77c323f20f01addec034992"
+    },
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/selected-v1/members/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 3364,
+      "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/selected-v1/members/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout",
+      "sha256": "227af3022fcdd07f4ade758ab869a0e8379b3d527722e6f4be42b38450b10bf9"
+    },
+    "timed_out": false,
+    "wall_ns": 96537902
+  },
+  {
+    "command": [
+      "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-e1ce94b852e44392",
+      "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+      "--exact",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "exit_code": 0,
+    "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+    "named_execution": {
+      "executed_tests": 1,
+      "result": "PASS",
+      "scope": "named-libtest-execution-only",
+      "test": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner"
+    },
+    "process": {
+      "bytes": 913,
+      "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/selected-v1/members/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json",
+      "sha256": "efe43ecb7bb618cc2974c89b5cf1e854f12b0f8951ded5e0cf07bf9ad44d0d19"
+    },
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/selected-v1/members/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 917,
+      "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/selected-v1/members/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout",
+      "sha256": "253de89f1f7f9681635277ef259fd16adf4e8df513e983e5cf4446065fd82359"
+    },
+    "timed_out": false,
+    "wall_ns": 10096141905
+  },
+  {
+    "command": [
+      "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-e1ce94b852e44392",
+      "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+      "--exact",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "exit_code": 0,
+    "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+    "named_execution": {
+      "executed_tests": 1,
+      "result": "PASS",
+      "scope": "named-libtest-execution-only",
+      "test": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline"
+    },
+    "process": {
+      "bytes": 949,
+      "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/selected-v1/members/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json",
+      "sha256": "1f05099413f440eeee40db9c3f421d60d66cc66b3ded085b13cdf07728299a18"
+    },
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/selected-v1/members/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 408,
+      "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/selected-v1/members/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+      "sha256": "ba72c651965a638b1c12bf7e6606d1b86336931d2fd166ae5b15a02bc82feda6"
+    },
+    "timed_out": false,
+    "wall_ns": 9002857352
+  }
+]

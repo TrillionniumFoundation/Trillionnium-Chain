@@ -1,0 +1,378 @@
+{
+  "CI_dispatch_rerun_cancel_PR_writes": false,
+  "PR_prospective_SHA_is_not_tested_source_proof": true,
+  "actual_tested_source_verified": false,
+  "artifacts_or_job_logs_downloaded": false,
+  "errors": [],
+  "expected_candidate": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+  "expected_candidate_tree": "6be4940d38cc88782657f2684cbefe48866f8b9f",
+  "expected_check_app_id": 15368,
+  "expected_main": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+  "final_observer_or_collector_substituted": false,
+  "finished_at": "2026-11-14T18:11:45.333112+00:00",
+  "hosted_qualification_granted": false,
+  "job_name_source_kind_is_only_a_hint": true,
+  "latest_checks": {
+    "all_returned_head_sha_equal_H5DF": true,
+    "app15368_status_counts": {
+      "completed/cancelled": 1,
+      "completed/failure": 12,
+      "completed/skipped": 3,
+      "completed/success": 129,
+      "in_progress/None": 19
+    },
+    "filter": "latest",
+    "normalized": {
+      "bytes": 134758,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-003/H5DF-latest-checks-normalized.json",
+      "sha256": "f2654bd33244f97c7c3444ae99cc9e88e7df2c57d3b1906cda095e6ffe6ea0dd"
+    },
+    "pagination": {
+      "actual_rows": 165,
+      "complete": true,
+      "failed_pages": [],
+      "maximum_pages": 5,
+      "observations_non_atomic": true,
+      "page_total_counts": [
+        165,
+        165
+      ],
+      "reported_total": 165,
+      "required_pages": 2,
+      "unique_ids": 165
+    },
+    "status_counts": {
+      "completed/cancelled": 1,
+      "completed/failure": 12,
+      "completed/skipped": 3,
+      "completed/success": 130,
+      "in_progress/None": 19
+    }
+  },
+  "metadata_pages_complete": true,
+  "network_readonly": true,
+  "no_source_refs_stage_or_config_changes": true,
+  "observations_non_atomic": true,
+  "older_R1_N_N2_results_inherited": false,
+  "pending_or_in_progress_is_not_pass": true,
+  "policy_data_collected": false,
+  "pr": {
+    "auto_merge": null,
+    "base": {
+      "label": "TrillionniumFoundation:main",
+      "ref": "main",
+      "repo_full_name": "TrillionniumFoundation/Trillionnium-Chain",
+      "sha": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0"
+    },
+    "created_at": "2026-11-09T14:37:45Z",
+    "draft": false,
+    "head": {
+      "label": "TrillionniumFoundation:fix/chain-hepta-closure-candidate-20261109-481716",
+      "ref": "fix/chain-hepta-closure-candidate-20261109-481716",
+      "repo_full_name": "TrillionniumFoundation/Trillionnium-Chain",
+      "sha": "5df7ae6f482157c5f7fdcbcd52222117a965053f"
+    },
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/847",
+    "identity_matches_H5DF_and_main": true,
+    "merge_commit_sha": "a590178fa1ba11fc1419ea60de1f7f5633a70cfd",
+    "mergeable": true,
+    "mergeable_state": "blocked",
+    "number": 847,
+    "open_ready_without_auto_merge": true,
+    "state": "open",
+    "updated_at": "2026-11-14T18:08:16Z"
+  },
+  "producer": {
+    "bytes": 19479,
+    "path": "/private/tmp/chain-prci-head-5df7ae6-ci-progress-preparation-20261114-v1/read_head5df_required_ci_progress_v1.py",
+    "sha256": "3f50aa71fa06f37e64c1ed1e669ad1b1b45ebe27acfddb5004957ef3a43c68fb"
+  },
+  "required_run_event": "pull_request",
+  "required_runs": {
+    "eligible_pull_request_runs": 1,
+    "excluded_run_metadata": [],
+    "no_required_run_observed_yet": false,
+    "normalized": {
+      "bytes": 1499,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-003/H5DF-required-runs-normalized.json",
+      "sha256": "ce5f03ddab657747b9c06ed20c55d2aa3b33fd679272a2adeab27bb05ac39229"
+    },
+    "pagination": {
+      "actual_rows": 1,
+      "complete": true,
+      "failed_pages": [],
+      "maximum_pages": 3,
+      "observations_non_atomic": true,
+      "page_total_counts": [
+        1
+      ],
+      "reported_total": 1,
+      "required_pages": 1,
+      "unique_ids": 1
+    },
+    "run_jobs": [
+      {
+        "all_attempt_job_counts": {
+          "completed/failure": 2,
+          "completed/success": 11,
+          "in_progress/None": 6
+        },
+        "all_returned_jobs_match_run_and_H5DF": true,
+        "attempt_changed_during_snapshot": false,
+        "jobs": {
+          "bytes": 82193,
+          "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-003/H5DF-run-43621754143-jobs-normalized.json",
+          "sha256": "490d14db72f6c253421c514ee1674bc3f880c94f827d5c786b86b79a62028b84"
+        },
+        "jobs_pagination": {
+          "actual_rows": 19,
+          "complete": true,
+          "failed_pages": [],
+          "maximum_pages": 3,
+          "observations_non_atomic": true,
+          "page_total_counts": [
+            19
+          ],
+          "reported_total": 19,
+          "required_pages": 1,
+          "unique_ids": 19
+        },
+        "listed_attempt": 1,
+        "metadata": {
+          "check_suite_id": 118111198406,
+          "conclusion": null,
+          "created_at": "2026-11-14T17:33:29Z",
+          "event": "pull_request",
+          "head_branch": "fix/chain-hepta-closure-candidate-20261109-481716",
+          "head_sha": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621754143",
+          "id": 43621754143,
+          "name": "trnm-required-baseline",
+          "path": ".github/workflows/trnm-required-baseline.yml",
+          "pull_requests": [
+            {
+              "base": {
+                "ref": "main",
+                "repo": {
+                  "id": 1323087357,
+                  "name": "Trillionnium-Chain",
+                  "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain"
+                },
+                "sha": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0"
+              },
+              "head": {
+                "ref": "fix/chain-hepta-closure-candidate-20261109-481716",
+                "repo": {
+                  "id": 1323087357,
+                  "name": "Trillionnium-Chain",
+                  "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain"
+                },
+                "sha": "5df7ae6f482157c5f7fdcbcd52222117a965053f"
+              },
+              "id": 5225636007,
+              "number": 847,
+              "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/pulls/847"
+            }
+          ],
+          "run_attempt": 1,
+          "run_started_at": "2026-11-14T17:33:29Z",
+          "status": "in_progress",
+          "updated_at": "2026-11-14T17:42:28Z"
+        },
+        "metadata_matches_H5DF_pull_request_workflow": true,
+        "observed_attempt": 1,
+        "observed_attempt_job_count": 19,
+        "observed_attempt_job_counts": {
+          "completed/failure": 2,
+          "completed/success": 11,
+          "in_progress/None": 6
+        },
+        "run_id": 43621754143
+      }
+    ],
+    "selected_cap": 20,
+    "unobserved_due_to_deadline": [],
+    "unselected_due_to_cap": []
+  },
+  "required_workflow": ".github/workflows/trnm-required-baseline.yml",
+  "schema": "trnm-H5DF-required-ci-progress-v1",
+  "started_at": "2026-11-14T18:11:33.879008+00:00",
+  "status": "OBSERVED",
+  "steps": [
+    {
+      "argv": [
+        "/opt/homebrew/bin/gh",
+        "api",
+        "--method",
+        "GET",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/commits/5df7ae6f482157c5f7fdcbcd52222117a965053f/check-runs?filter=latest&per_page=100&page=1"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "elapsed_seconds": 4.39,
+      "exit": 0,
+      "finished_at": "2026-11-14T18:11:38.270756+00:00",
+      "label": "H5DF-latest-checks-page-001",
+      "launched": true,
+      "spawn_error": null,
+      "started_at": "2026-11-14T18:11:33.880687+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-003/H5DF-latest-checks-page-001.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 373896,
+        "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-003/H5DF-latest-checks-page-001.stdout",
+        "sha256": "64cb4ccae7fe1e805a9f219a43e4055d7cec653b72ce32383fccc692f47a61d2"
+      },
+      "timed_out": false,
+      "timeout_seconds": 120
+    },
+    {
+      "argv": [
+        "/opt/homebrew/bin/gh",
+        "api",
+        "--method",
+        "GET",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/commits/5df7ae6f482157c5f7fdcbcd52222117a965053f/check-runs?filter=latest&per_page=100&page=2"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "elapsed_seconds": 3.968,
+      "exit": 0,
+      "finished_at": "2026-11-14T18:11:42.246396+00:00",
+      "label": "H5DF-latest-checks-page-002",
+      "launched": true,
+      "spawn_error": null,
+      "started_at": "2026-11-14T18:11:38.278660+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-003/H5DF-latest-checks-page-002.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 241672,
+        "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-003/H5DF-latest-checks-page-002.stdout",
+        "sha256": "cb2800953d2cc4f9e7f9f48580700b48a9f1a642408b06daf59806434111b44b"
+      },
+      "timed_out": false,
+      "timeout_seconds": 120
+    },
+    {
+      "argv": [
+        "/opt/homebrew/bin/gh",
+        "api",
+        "--method",
+        "GET",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/workflows/trnm-required-baseline.yml/runs?head_sha=5df7ae6f482157c5f7fdcbcd52222117a965053f&per_page=100&page=1"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "elapsed_seconds": 1.293,
+      "exit": 0,
+      "finished_at": "2026-11-14T18:11:35.173685+00:00",
+      "label": "H5DF-required-runs-page-001",
+      "launched": true,
+      "spawn_error": null,
+      "started_at": "2026-11-14T18:11:33.880755+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-003/H5DF-required-runs-page-001.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 15904,
+        "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-003/H5DF-required-runs-page-001.stdout",
+        "sha256": "540cb6ce0cefebb91058898bd35de993253e5cc10e065932def2e0da13189e6c"
+      },
+      "timed_out": false,
+      "timeout_seconds": 120
+    },
+    {
+      "argv": [
+        "/opt/homebrew/bin/gh",
+        "api",
+        "--method",
+        "GET",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621754143/jobs?filter=all&per_page=100&page=1"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "elapsed_seconds": 1.745,
+      "exit": 0,
+      "finished_at": "2026-11-14T18:11:45.326110+00:00",
+      "label": "H5DF-run-43621754143-jobs-page-001",
+      "launched": true,
+      "spawn_error": null,
+      "started_at": "2026-11-14T18:11:43.581491+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-003/H5DF-run-43621754143-jobs-page-001.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 63939,
+        "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-003/H5DF-run-43621754143-jobs-page-001.stdout",
+        "sha256": "b1ba69e671190549e541a8ab98f996a171533e2783b3938417d8a0b75d09767f"
+      },
+      "timed_out": false,
+      "timeout_seconds": 120
+    },
+    {
+      "argv": [
+        "/opt/homebrew/bin/gh",
+        "api",
+        "--method",
+        "GET",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621754143"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "elapsed_seconds": 1.322,
+      "exit": 0,
+      "finished_at": "2026-11-14T18:11:43.579451+00:00",
+      "label": "H5DF-run-43621754143-metadata",
+      "launched": true,
+      "spawn_error": null,
+      "started_at": "2026-11-14T18:11:42.257437+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-003/H5DF-run-43621754143-metadata.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 15868,
+        "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-003/H5DF-run-43621754143-metadata.stdout",
+        "sha256": "b783ccc4ed1bc91c77f50d72cee0e9c58d28d23ef0f72815d190a38d68757a9c"
+      },
+      "timed_out": false,
+      "timeout_seconds": 120
+    },
+    {
+      "argv": [
+        "/opt/homebrew/bin/gh",
+        "api",
+        "--method",
+        "GET",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/pulls/847"
+      ],
+      "cwd": "/private/tmp/chain-consolidation-20261114-mainline",
+      "elapsed_seconds": 3.046,
+      "exit": 0,
+      "finished_at": "2026-11-14T18:11:36.926403+00:00",
+      "label": "pr847",
+      "launched": true,
+      "spawn_error": null,
+      "started_at": "2026-11-14T18:11:33.880622+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-003/pr847.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 30707,
+        "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-003/pr847.stdout",
+        "sha256": "368868d5aaf71d64f51b3eb6dcae2bd5b0a916a4a4e85d6e1a5130113b650c5d"
+      },
+      "timed_out": false,
+      "timeout_seconds": 120
+    }
+  ],
+  "unknown_reads": []
+}

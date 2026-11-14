@@ -1,0 +1,18 @@
+tree 6be4940d38cc88782657f2684cbefe48866f8b9f
+parent abfcff23d4e2aab7dfd92dfb34937ec7d6021ead
+parent 2a86462a1ab20c68151719ba4635e3c294391e64
+author Tomasrgbsf <tomasbraynt@gmail.com> 1794670639 -0500
+committer Tomasrgbsf <tomasbraynt@gmail.com> 1794670639 -0500
+
+Merge reviewed concurrent source with local deadline and ownership fixes
+
+Reconcile ABFC and 2a by explicit source and evidence dispositions.
+Keep the local public_v2 completion deadline check, select the reviewed
+immutable PublicPolicy prefix cache and epoch-before-readiness store,
+and compose all sixteen owned-collector controls with causal raw status.
+Restore four byte-exact metadata files missing from a retained index,
+correct current versus historical source labels, and preserve the old
+FC39 observations with the withdrawn ordering recommendation explicit.
+Original business failures and qualification boundaries remain open.
+Proposal SHA256: 21e5299e01eec57f7c72fb7ae76c287f00389be64cb3bd3c3493b2d783b8f1e6
+Resolution SHA256: 5f10655e03bd7c801eb99cc445990e98ba675c998b3dcb941235e2858fc08cb5

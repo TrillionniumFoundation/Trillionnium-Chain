@@ -1,0 +1,328 @@
+{
+  "Host": {
+    "all_selected_observations_read_errors_empty": true,
+    "before_after_limits_parent_boot_equal": true,
+    "counter_scope": "Only whole native lane before/after snapshots; cannot phase-align throttling to this four-second pressure window",
+    "inside_after": {
+      "bytes": 1695,
+      "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/selected-v1/members/from-zero-native-host/inside-after.json",
+      "sha256": "0b3349375718df6e23cb3b3ae0af959dafd95afb21148c9eff9175397493adba"
+    },
+    "inside_before": {
+      "bytes": 1684,
+      "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/selected-v1/members/from-zero-native-host/inside-before.json",
+      "sha256": "2ddfd5af3722a6cd18ebf2267348fd362d02e9cea48290535ae09cabc46d1b1a"
+    },
+    "original_limits": {
+      "cpu.max": "25000 100000",
+      "cpu.max.burst": "0",
+      "memory.max": "2147483648",
+      "memory.swap.max": "0",
+      "pids.max": "256"
+    }
+  },
+  "artifact_id": 14124189121,
+  "baseline": {
+    "confirmed_depth": 6,
+    "facts": {
+      "accounting_closed": true,
+      "attacker_workers_cpu_ns": 0,
+      "attacker_workers_cpu_scope": "disjoint joined client threads; includes every failed negotiation, resource-ticket search, encoding and output record; excludes receiver and separately recorded from-zero setup",
+      "business_started_ns": 113308,
+      "client_confirmation_latency_ns": 2874738772,
+      "client_confirmed_before_original_window_end": true,
+      "client_confirmed_transactions": 1,
+      "confirmation_ended_ns": 2874852080,
+      "finite_business_target_met": true,
+      "history_calls": 7,
+      "independent_replay_and_confirmation_cpu_ns": 493509466,
+      "independent_replay_and_confirmation_wall_ns": 2673268214,
+      "invariant_target_met": true,
+      "mode": "attack-free-baseline",
+      "production_activation": false,
+      "public_network_ready": false,
+      "replay_accepted": 7,
+      "replay_calls": 7,
+      "requested_window_ns": 4000000000,
+      "resource_fairness_qualified": false,
+      "submit_calls": 7,
+      "successful_history": 7,
+      "successful_submits": 7,
+      "verification_errors": [],
+      "work_profile_qualified": false,
+      "workers": 0
+    },
+    "pointer": "/phases/0"
+  },
+  "binary_evidence": {
+    "acquisition_summary_null_projection": "binary_before/binary_after were absent key projections; original binary_sha256_before/after are present and equal; prior summary unchanged",
+    "binary_bytes_downloaded_or_independently_hashed": false,
+    "both_equal_Host_preparation": true,
+    "original_keys": [
+      "/binary_sha256_before",
+      "/binary_sha256_after"
+    ]
+  },
+  "causal_limits": [
+    "Second replay rejects in packet work with PUBLIC_REQUEST_DEADLINE; both History calls succeeded",
+    "No inherited explanation from R1 head challenge IO11 or R1 prospective third-replay failure",
+    "Wall minus calling-thread CPU does not distinguish runnable wait, cgroup throttling, synchronous blocking, or work on other threads",
+    "All Host checks in failed replay accepted; this is not proof of low Host cost or whole process CPU",
+    "No sampler, scheduler state/wakeup, phase-aligned cgroup counters, or new execution was obtained"
+  ],
+  "controller": {
+    "bytes": 9054,
+    "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/selected-v1/members/from-zero-native-host/controller-result.json",
+    "sha256": "7f718e146c05acee9ca19f953c1a9dd9fe9028a5fe380b9d68f5e0249c3615bd"
+  },
+  "coverage": {
+    "CD_members": 161,
+    "all_ZIP_member_CRC_verified": false,
+    "binary_independently_hashed": false,
+    "native_manifest_contents_actually_hashed": 16,
+    "native_manifest_name_map_equals_CD": 54,
+    "selected_member_CRC_SHA": true,
+    "selected_members": 25,
+    "whole_ZIP_SHA_verified": false
+  },
+  "job_id": 132528768933,
+  "manifest": {
+    "bytes": 73928,
+    "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/selected-v1/members/from-zero-native/manifest.json",
+    "sha256": "0175936e91c642e4ea0df3b7d19961ad99919a407518382e24cb4a4945bf59f4"
+  },
+  "native_original_result": {
+    "acceptance_passed": false,
+    "each_exit_code": 0,
+    "each_named_pass": 1,
+    "each_timed_out": false,
+    "final_host_errors": [],
+    "finalization_completed": true,
+    "host_exit": 1,
+    "host_failure": null,
+    "legacy_execution_finished": false,
+    "legacy_execution_finished_scope": "original native execution and report validation sequence reached its end; not process liveness or overall acceptance",
+    "native_execution_completed": true,
+    "original_failure_codes": [
+      "CONFIRMATION_TARGET"
+    ],
+    "selectors": 5
+  },
+  "observed_at": "2026-11-14T17:56:41.673816+00:00",
+  "pressure": {
+    "facts": {
+      "accounting_closed": true,
+      "attacker_workers_cpu_ns": 373412951,
+      "attacker_workers_cpu_scope": "disjoint joined client threads; includes every failed negotiation, resource-ticket search, encoding and output record; excludes receiver and separately recorded from-zero setup",
+      "business_started_ns": 93777613,
+      "client_confirmation_latency_ns": null,
+      "client_confirmed_before_original_window_end": false,
+      "client_confirmed_transactions": 0,
+      "confirmation_ended_ns": null,
+      "finite_business_target_met": false,
+      "history_calls": 2,
+      "independent_replay_and_confirmation_cpu_ns": 101584162,
+      "independent_replay_and_confirmation_wall_ns": 2492670494,
+      "invariant_target_met": true,
+      "mode": "from-zero-pressure",
+      "production_activation": false,
+      "public_network_ready": false,
+      "replay_accepted": 1,
+      "replay_calls": 2,
+      "requested_window_ns": 4000000000,
+      "resource_fairness_qualified": false,
+      "submit_calls": 7,
+      "successful_history": 2,
+      "successful_submits": 7,
+      "verification_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ],
+      "work_profile_qualified": false,
+      "workers": 16
+    },
+    "failed_work": {
+      "pointer": "/phases/1/independent_history_page_replay/1/native_import_observation/packets/0/phases/3",
+      "value": {
+        "accepted": false,
+        "completed": true,
+        "ended_ns": 495181944,
+        "error_code": "PUBLIC_REQUEST_DEADLINE",
+        "parent_phase": null,
+        "phase": "work",
+        "started": true,
+        "started_ns": 94698825,
+        "thread_cpu_ns": 19988815,
+        "wall_ns": 400483119
+      }
+    },
+    "honest_history": [
+      {
+        "client_thread_cpu_ns": 792833,
+        "deadline_ms": 2000,
+        "elapsed_wall_ns": 94501762,
+        "ended_ns": 1698337583,
+        "error": null,
+        "metrics": {
+          "challenge_ns": 777188,
+          "construction_ns": 17967,
+          "failed_stage": null,
+          "solution_body_response_ns": 4520567,
+          "solution_found": true,
+          "solution_search_ns": 89124728,
+          "solution_search_thread_cpu_ns": 30226,
+          "solution_trials": 22,
+          "total_elapsed_ns": 94463285
+        },
+        "pointer": "/phases/1/honest_history/0",
+        "returned_after_deadline": false,
+        "returned_after_window": false,
+        "started_ns": 1603836613,
+        "status": "ok"
+      },
+      {
+        "client_thread_cpu_ns": 710564,
+        "deadline_ms": 2000,
+        "elapsed_wall_ns": 5440789,
+        "ended_ns": 3600564695,
+        "error": null,
+        "metrics": {
+          "challenge_ns": 2114436,
+          "construction_ns": 20140,
+          "failed_stage": null,
+          "solution_body_response_ns": 3205174,
+          "solution_found": true,
+          "solution_search_ns": 26699,
+          "solution_search_thread_cpu_ns": 25558,
+          "solution_trials": 175,
+          "total_elapsed_ns": 5388682
+        },
+        "pointer": "/phases/1/honest_history/1",
+        "returned_after_deadline": false,
+        "returned_after_window": false,
+        "started_ns": 3595125208,
+        "status": "ok"
+      }
+    ],
+    "native_observation_clock_scope": "one observer-local monotonic epoch; page import includes packet and checkpoint Host spans; phase CPU is importer thread only; Host CPU sums each actual invoking thread's Host intervals, not complete worker CPU; resolve/initial/final Host spans are outside native import but inside client replay; network fetch is outside client replay",
+    "pointer": "/phases/1",
+    "replays": [
+      {
+        "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+        "history_call_index": 0,
+        "history_request_ended_ns": 1698337583,
+        "next_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+        "pointer": "/phases/1/independent_history_page_replay/0",
+        "prior_after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+        "replay_accepted": true,
+        "replay_ended_ns": 3594980834,
+        "replay_error": null,
+        "replay_started_ns": 1698363652,
+        "replay_thread_cpu_ns": 77704249,
+        "replay_wall_ns": 1896617182
+      },
+      {
+        "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+        "history_call_index": 1,
+        "history_request_ended_ns": 3600564695,
+        "next_after": null,
+        "pointer": "/phases/1/independent_history_page_replay/1",
+        "prior_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+        "replay_accepted": false,
+        "replay_ended_ns": 4096388092,
+        "replay_error": "PUBLIC_REQUEST_DEADLINE",
+        "replay_started_ns": 3600580038,
+        "replay_thread_cpu_ns": 22072637,
+        "replay_wall_ns": 495808054
+      }
+    ],
+    "second_replay_Host_checks": {
+      "pointer": "/phases/1/independent_history_page_replay/1/native_import_observation/host_checks",
+      "value": [
+        {
+          "calls_accepted": 1,
+          "calls_completed": 1,
+          "calls_rejected": 0,
+          "calls_started": 1,
+          "calls_unfinished": 0,
+          "cpu_clock_unknown_calls": 0,
+          "first_started_ns": 10976,
+          "last_ended_ns": 152386,
+          "last_error_code": null,
+          "phase": "resolve",
+          "thread_cpu_ns": 141499,
+          "wall_clock_unknown_calls": 0,
+          "wall_ns": 141410
+        },
+        {
+          "calls_accepted": 1,
+          "calls_completed": 1,
+          "calls_rejected": 0,
+          "calls_started": 1,
+          "calls_unfinished": 0,
+          "cpu_clock_unknown_calls": 0,
+          "first_started_ns": 153828,
+          "last_ended_ns": 214338,
+          "last_error_code": null,
+          "phase": "initial",
+          "thread_cpu_ns": 60480,
+          "wall_clock_unknown_calls": 0,
+          "wall_ns": 60510
+        },
+        {
+          "calls_accepted": 350,
+          "calls_completed": 350,
+          "calls_rejected": 0,
+          "calls_started": 350,
+          "calls_unfinished": 0,
+          "cpu_clock_unknown_calls": 0,
+          "first_started_ns": 218103,
+          "last_ended_ns": 398209377,
+          "last_error_code": null,
+          "phase": "checkpoint",
+          "thread_cpu_ns": 19851140,
+          "wall_clock_unknown_calls": 0,
+          "wall_ns": 22968489
+        },
+        {
+          "calls_accepted": 1,
+          "calls_completed": 1,
+          "calls_rejected": 0,
+          "calls_started": 1,
+          "calls_unfinished": 0,
+          "cpu_clock_unknown_calls": 0,
+          "first_started_ns": 495702987,
+          "last_ended_ns": 495804939,
+          "last_error_code": null,
+          "phase": "final",
+          "thread_cpu_ns": 101791,
+          "wall_clock_unknown_calls": 0,
+          "wall_ns": 101952
+        }
+      ]
+    }
+  },
+  "qualification": false,
+  "recorded_native_binary_sha256": "bb788ecebc740db3e54cdb1a2942db4af9f19f592404f73026dfeb6ad9f26507",
+  "report": {
+    "bytes": 13555781,
+    "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/selected-v1/members/from-zero-native/confirmation/report.json",
+    "sha256": "8b222dc0c57d1995dc2b33332d42cd7686078e5defa7e847abdd62816b40aaee"
+  },
+  "run_attempt": 1,
+  "run_id": 43621754143,
+  "schema": "trnm-H5DF-x64-cost-exact-facts-v1",
+  "scope": "Original H5DF cross-arch-cost x64 selected evidence; no tests or report validator rerun",
+  "source_identity": {
+    "base": null,
+    "candidate": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+    "tested_tree": "6be4940d38cc88782657f2684cbefe48866f8b9f",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 3995072357,
+    "tracked_entries": 41681,
+    "tracked_worktree_verified": true
+  }
+}

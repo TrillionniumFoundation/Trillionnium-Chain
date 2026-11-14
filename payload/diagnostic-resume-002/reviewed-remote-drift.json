@@ -1,0 +1,111 @@
+{
+  "actual_session": "dpty-3482d23c5f5a55da85d36bb95ee81b4b21e5f88683085e5f3a0bf6e5e3196ff1",
+  "actual_terminal_exit": 0,
+  "added": [],
+  "archive_tag_objects": {
+    "refs/tags/archive/branches-before-consolidation-20261114-dc42ce4df5cf-v2": "9dafd9192e4040fab530958ef71598aaec9265b9",
+    "refs/tags/archive/execution-receipts-20261114-2a86462a1ab2-v1": "454761ef276433740453b5b80ce886c1d251c6d3",
+    "refs/tags/archive/post-publication-diagnostics-20261114-2a86462a1ab2-v1": "894875e2161bea8f0d4a135879e687de78c1f18a"
+  },
+  "changed": {
+    "fix/chain-hepta-closure-candidate-20261109-481716": {
+      "new": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "old": "2a86462a1ab20c68151719ba4635e3c294391e64"
+    }
+  },
+  "diagnostic_tag_absent": true,
+  "fresh_Git_six_archive_refs_still_required": true,
+  "fresh_peeled_tag_observation": false,
+  "inputs": {
+    "comparison": {
+      "bytes": 2126,
+      "path": "/private/tmp/chain-consolidation-20261114-root/candidate-drift-independent-comparison-20261114-v1/summary.json",
+      "sha256": "7c138916112981f8486d88b65590149875df137b5ff5892fdea65f9aaaf6bf5f"
+    },
+    "heads": {
+      "bytes": 466336,
+      "path": "/private/tmp/chain-consolidation-20261114-root/candidate-drift-github-refs-20261114-v2/remote-heads.stdout",
+      "sha256": "321f442db08954c924707a0bdf321f5bdf6b9352ed00f0fdddfdd244425526b5"
+    },
+    "summary": {
+      "bytes": 149335,
+      "path": "/private/tmp/chain-consolidation-20261114-root/candidate-drift-github-refs-20261114-v2/summary.json",
+      "sha256": "05fbce0a63427adc24ddc2e605ccee01734eb697ad9af1e35849cdc14665bc78"
+    },
+    "tags": {
+      "bytes": 2712,
+      "path": "/private/tmp/chain-consolidation-20261114-root/candidate-drift-github-refs-20261114-v2/remote-tags.stdout",
+      "sha256": "6d6914509667f91c458e4dc952572a77d0ef842e06189b89a2eb9464297165e0"
+    },
+    "terminal": {
+      "bytes": 5863,
+      "path": "/private/tmp/chain-consolidation-20261114-root/candidate-drift-github-refs-v2-actual-terminal.json",
+      "sha256": "410db2a3e3daabaf49396b09f9f995d9686dbed303bd6278043a1230a2a7bf24"
+    }
+  },
+  "new_source_acceptance": false,
+  "observed_from": "2026-11-14T17:46:56.536690+00:00",
+  "observed_to": "2026-11-14T17:47:06.201181+00:00",
+  "qualification": false,
+  "raw_files": {
+    "comparison": {
+      "bytes": 2126,
+      "path": "/private/tmp/chain-consolidation-20261114-root/candidate-drift-independent-comparison-20261114-v1/summary.json",
+      "sha256": "7c138916112981f8486d88b65590149875df137b5ff5892fdea65f9aaaf6bf5f"
+    },
+    "heads": {
+      "bytes": 466336,
+      "path": "/private/tmp/chain-consolidation-20261114-root/candidate-drift-github-refs-20261114-v2/remote-heads.stdout",
+      "sha256": "321f442db08954c924707a0bdf321f5bdf6b9352ed00f0fdddfdd244425526b5"
+    },
+    "heads_stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/candidate-drift-github-refs-20261114-v2/remote-heads.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "heads_step": {
+      "bytes": 1401,
+      "path": "/private/tmp/chain-consolidation-20261114-root/candidate-drift-github-refs-20261114-v2/remote-heads.step.json",
+      "sha256": "46a9707ddb1e38cbcc8335bf2f3205a25108d740f4f67382e6f15dec77920b59"
+    },
+    "index": {
+      "bytes": 1957,
+      "path": "/private/tmp/chain-consolidation-20261114-root/candidate-drift-github-refs-20261114-v2/EVIDENCE_INDEX.json",
+      "sha256": "ba7947510273260216c8e7a54958c8dc2aec03a44b0f28b8d1e1bd01e2450bd8"
+    },
+    "reader": {
+      "bytes": 3417,
+      "path": "/private/tmp/chain-consolidation-20261114-root/candidate-drift-github-refs-20261114-v2/reader.py",
+      "sha256": "90905300a25b4fa8f2e49a3f90dcdc57438709123f9e3b40646e48e347d8c286"
+    },
+    "summary": {
+      "bytes": 149335,
+      "path": "/private/tmp/chain-consolidation-20261114-root/candidate-drift-github-refs-20261114-v2/summary.json",
+      "sha256": "05fbce0a63427adc24ddc2e605ccee01734eb697ad9af1e35849cdc14665bc78"
+    },
+    "tags": {
+      "bytes": 2712,
+      "path": "/private/tmp/chain-consolidation-20261114-root/candidate-drift-github-refs-20261114-v2/remote-tags.stdout",
+      "sha256": "6d6914509667f91c458e4dc952572a77d0ef842e06189b89a2eb9464297165e0"
+    },
+    "tags_stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/candidate-drift-github-refs-20261114-v2/remote-tags.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "tags_step": {
+      "bytes": 1393,
+      "path": "/private/tmp/chain-consolidation-20261114-root/candidate-drift-github-refs-20261114-v2/remote-tags.step.json",
+      "sha256": "33e6fefd18952ac3f29b64962d029fd92081fa8c8aaa4b0ba341cce7234a4866"
+    },
+    "terminal": {
+      "bytes": 5863,
+      "path": "/private/tmp/chain-consolidation-20261114-root/candidate-drift-github-refs-v2-actual-terminal.json",
+      "sha256": "410db2a3e3daabaf49396b09f9f995d9686dbed303bd6278043a1230a2a7bf24"
+    }
+  },
+  "removed": [],
+  "subject_commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+  "subject_tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+  "unchanged_heads": 907
+}

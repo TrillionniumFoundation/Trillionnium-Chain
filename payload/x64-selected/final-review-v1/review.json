@@ -1,0 +1,81 @@
+{
+  "acquisition_finished_at": "2026-11-14T17:51:26.320846+00:00",
+  "acquisition_started_at": "2026-11-14T17:49:07.280578+00:00",
+  "actual_GETs": 10,
+  "actual_directory_terminal": {
+    "bytes": 12479,
+    "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/final-review-v1/directory-actual-terminal-pages.json",
+    "sha256": "95d18fce3cc82b2a3740721e40068b66029ea8e60e03860ee6891a7d94582960"
+  },
+  "actual_selected_terminal": {
+    "bytes": 16976,
+    "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/final-review-v1/selected-actual-terminal-pages.json",
+    "sha256": "bda5d23e9e57c10fa6a9c6ec725865d214d4c1945c3237b0336d649f56b4fbc8"
+  },
+  "actual_terminal_logs": [
+    {
+      "bytes": 1621,
+      "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/final-review-v1/directory-actual-terminal.log",
+      "sha256": "5ef20a4d67c2760e6b061b5f552e14b4f488ac84b651266cd3d49045f9cefe05"
+    },
+    {
+      "bytes": 2856,
+      "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/final-review-v1/selected-actual-terminal.log",
+      "sha256": "26b173b8c0466c1b52a110ab2bf9af1104357836823ec6bf7ed007db26717dad"
+    }
+  ],
+  "all_ZIP_member_CRC_verified": false,
+  "artifact_id": 14124189121,
+  "binary_projection_overlay": {
+    "bytes": 1042,
+    "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/final-review-v1/binary-projection-correction-overlay.json",
+    "sha256": "e446775a5c1e411c13ca276561d2e6712d9a4568e1d4436ca7d619b882aac604"
+  },
+  "closed_at": "2026-11-14T17:56:41.675317+00:00",
+  "combined_elapsed_seconds": 139.040082,
+  "conclusion": "The five original native selectors each passed. The attack-free 4-second baseline confirms depth 6; the original 16-worker pressure phase confirms none. Both History requests succeeded; replay 1 accepted and replay 2 failed in packet work with PUBLIC_REQUEST_DEADLINE, ending at 4.096388092 seconds. The report validator rejected CONFIRMATION_TARGET. No microcausal scheduler attribution is claimed.",
+  "declared_whole_ZIP_SHA256": "9899447cdb5c5045d0f70ffdba9aa0f271f350c823be80fbdb1c266ba541530e",
+  "declared_whole_ZIP_bytes": 10127368,
+  "directory_acquisition": {
+    "bytes": 6080,
+    "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/directory-v1/summary.json",
+    "sha256": "69938b857b69003bb8e45a9fc71fd5d9ab3fcec87f222170dbce822d9cbbba61"
+  },
+  "facts": {
+    "bytes": 12884,
+    "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/final-review-v1/exact-confirmation-facts.json",
+    "sha256": "9da174ec8a4b5afe3ac151e4b7b81974addd1d4893f802500bc6fb9652bb9c6c"
+  },
+  "job_id": 132528768933,
+  "manifest_bindings": {
+    "bytes": 11023,
+    "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/final-review-v1/selected-manifest-bindings.json",
+    "sha256": "ea6369d20ed0056f51d362c6f3f829ddddc2936dc2703651d45d715bd7612b8f"
+  },
+  "no_new_GET_test_or_source_ref_stage_mutation_during_review": true,
+  "original_acquisition": {
+    "bytes": 21253,
+    "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/selected-v1/summary.json",
+    "sha256": "20937bc9c0db42441b4a974a9ec70c339146965540e38e141f4dd2ddbbb67f2a"
+  },
+  "original_five_results": {
+    "bytes": 8319,
+    "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/final-review-v1/original-five-native-results.json",
+    "sha256": "2b9203ce128523b30df899e795a82247826aebbe29ec80228f286166f7ad929d"
+  },
+  "outer_review_preserved": "/private/tmp/chain-prci-H5DF-cross-arch-cost-x64-original-log-20261114-v1/outer-review-v1/review.json",
+  "pressure_native_observations": {
+    "bytes": 21199,
+    "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/final-review-v1/pressure-native-observations.json",
+    "sha256": "73cb8ca6549fe7ed99e724b041c555731cce94d058e01baebcedb5c9484f3df5"
+  },
+  "qualification": false,
+  "run_attempt": 1,
+  "run_id": 43621754143,
+  "schema": "trnm-H5DF-x64-selected-originals-review-v1",
+  "selected_member_CRC_SHA_verified": true,
+  "source": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+  "status": "ORIGINAL_FIVE_NATIVE_PASS_BUSINESS_CONFIRMATION_FAILURE",
+  "tree": "6be4940d38cc88782657f2684cbefe48866f8b9f",
+  "whole_ZIP_SHA_verified": false
+}

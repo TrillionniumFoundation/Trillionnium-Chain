@@ -1,0 +1,184 @@
+{
+  "collector": {
+    "existing_runtime": {
+      "child_gate_eof_exit125": [
+        494,
+        495
+      ],
+      "launch": [
+        438,
+        518
+      ],
+      "launch_failure_cause": [
+        898,
+        905
+      ],
+      "same_deadline_KILL_escalation": [
+        394,
+        414
+      ],
+      "waitid_WNOWAIT_wait4_identity_binding": [
+        344,
+        391
+      ],
+      "wrapper_and_qualification": [
+        568,
+        622
+      ]
+    },
+    "legal_raw_outcomes": "A never-released root can consume exec-gate EOF and exit125, or remain unscheduled until the existing KILL escalation reaches min(250ms, grace/2). The new test accepts only these two preserved raw outcomes.",
+    "limits": "The event ordering is an internal causal consistency proof under the original owned-process test model. It does not establish protection against an external ptracer/signaller, new performance qualification, or actual execution of either branch in this static review.",
+    "new_causal_requirements": [
+      "Exact launch-error cause and injected error text",
+      "One actual child and final wait4 ECHILD, same birth identity and collector parent",
+      "No truncated records, no root-exec-released event, and no TERM event for this root",
+      "wait4 status translates to root returncode and agrees with waitid code/status",
+      "For SIGKILL, require same-root sent event from this collector between cleanup-start and actual reap",
+      "Wrapper exit125, no marker execution, command_success=false and collector_wait_domain_reaped=false remain required"
+    ],
+    "original_mock_controls": "The two unchanged deterministic controls still require the precise original KILL boundary, TERM deferral only for a confirmed closed/unreleased root, no deadline extension, and normal TERM for released/unconfirmed cases.",
+    "runtime_changed": false,
+    "test_count": 16,
+    "test_method": "CollectorControls.test_actual_post_fork_identity_failure_reaps_gated_root_without_exec",
+    "unchanged_other_tests": 15
+  },
+  "derived_sources": [
+    {
+      "bytes": 29308,
+      "git_oid": "530169ab9de7079958ada8f2f4d66702ea54cca0",
+      "hunks": [
+        {
+          "new_count": 44,
+          "new_start": 303,
+          "old_count": 7,
+          "old_start": 303
+        }
+      ],
+      "mode": "100644",
+      "path": "/private/tmp/chain-new-head-5df7-deadline-controller-review-20261114-v1/5df-derived/scripts/test_w1_owned_process_collector_v1.py",
+      "repo_path": "scripts/test_w1_owned_process_collector_v1.py",
+      "sha256": "e3148f32e4d09994b72cbfe3613cf4baf6427a45247c6119287e744f1f6144e2",
+      "source_kind": "derived exact Git blob"
+    },
+    {
+      "bytes": 113603,
+      "git_oid": "3a9fbe26283920a77ae4883a46153440abbe7e12",
+      "hunks": [
+        {
+          "new_count": 10,
+          "new_start": 1540,
+          "old_count": 6,
+          "old_start": 1540
+        },
+        {
+          "new_count": 100,
+          "new_start": 1584,
+          "old_count": 6,
+          "old_start": 1580
+        }
+      ],
+      "mode": "100644",
+      "path": "/private/tmp/chain-new-head-5df7-deadline-controller-review-20261114-v1/5df-derived/trillionnium/crates/trnm-pon-node/src/ingress/public_v2.rs",
+      "repo_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v2.rs",
+      "sha256": "925473c9eef8a32eee6fa29bc5b58a52168f83995578c2ef3ca4384a354295b9",
+      "source_kind": "derived exact Git blob"
+    }
+  ],
+  "input_summary": {
+    "bytes": 8467,
+    "path": "/private/tmp/chain-new-head-5df7-deadline-controller-review-20261114-v1/input-summary.json",
+    "sha256": "593207e1148e34a1a11ba2e6bee82b288e1b2c385143a7e609e25201cd1669c3"
+  },
+  "new_head": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+  "new_tree": "6be4940d38cc88782657f2684cbefe48866f8b9f",
+  "old_head": "2a86462a1ab20c68151719ba4635e3c294391e64",
+  "public_v2": {
+    "deadline_context": {
+      "default_overall_ms_unchanged": 30000,
+      "entry_lines": [
+        1419,
+        1425
+      ],
+      "new_check_line": 1546,
+      "nonce_deadline_check_cadence_unchanged": 256,
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v2.rs",
+      "response_checks_lines": [
+        1528,
+        1542
+      ]
+    },
+    "failure_priority": "Malformed-context/signature errors remain before the new deadline rejection. The production check only converts a would-be valid late response into an error.",
+    "new_tests": {
+      "count": 2,
+      "meaning": "One actual signed loopback Head on-time result, then a thread-local test-only delay after successful verification until the same 2s caller deadline; require exact deadline error, the verification hook reached, and two server reads. A second case supplies an already elapsed caller deadline and requires no accepted TCP connection.",
+      "names": [
+        "original_v2_client_rejects_expiry_after_signed_response_verification",
+        "expired_v2_client_deadline_refuses_before_tcp"
+      ],
+      "not_measured": "Tests were not run in this review; the 2s test is not a hosted 4s performance observation."
+    },
+    "production_change": "After canonical response context and signature checks, reject when Instant::now() is not less than the same total_deadline constructed at client entry. No phase or nonce budget is rebased.",
+    "test_injection": "Both state cells and the helper are cfg(test); thread-local state is consumed with replace(false) and reset by the test, with no cross-thread armed flag.",
+    "unchanged": [
+      "Classical-profile rejection before TCP",
+      "All signed context/profile/network/genesis/body identities and verification",
+      "Policy framing/serialization and server fields",
+      "Server reactor and Host verification calls",
+      "Existing phase limits and per-caller outer deadline minimum",
+      "public_network_ready=false and identity_authority=false"
+    ]
+  },
+  "qualification": {
+    "git_read_only_commands": 5,
+    "hosted_4s_fixed_asserted": false,
+    "native_or_repo_tests_run": false,
+    "network_calls": 0,
+    "new_head_CI_success_asserted": false,
+    "old_R1_failure_reclassified": false,
+    "performance_improvement_claimed": false,
+    "source_or_refs_or_stage_mutated": false
+  },
+  "remaining": "Any use of this new source as a final candidate requires its own exact-source original gates. The response-boundary correction is stricter acceptance, and the collector change is a test correction for existing cleanup behavior; neither is evidence that the separate W1/PQ deadline failures have been resolved.",
+  "schema": "trnm-5df-deadline-controller-review-v1",
+  "source_basis": "strict reconstruction of pinned complete API patch and immutable R1 blob; no new network/blob request",
+  "sources": [
+    {
+      "bytes": 26879,
+      "git_oid": "0c683b183d64d71e8ae6c6f44dca857b4f6e77b3",
+      "mode": "100644",
+      "path": "/private/tmp/chain-new-head-5df7-deadline-controller-review-20261114-v1/R1/scripts/test_w1_owned_process_collector_v1.py",
+      "repo_path": "scripts/test_w1_owned_process_collector_v1.py",
+      "sha256": "31b2e67e25653fdb025150c6ba5fef1ba23b20efe7c6c05fe429cca853a3e8aa"
+    },
+    {
+      "bytes": 48204,
+      "git_oid": "7049001ace23192d6d32e4f438ca85e4b0ac16cc",
+      "mode": "100644",
+      "path": "/private/tmp/chain-new-head-5df7-deadline-controller-review-20261114-v1/R1/scripts/w1_owned_process_collector_v1.py",
+      "repo_path": "scripts/w1_owned_process_collector_v1.py",
+      "sha256": "01accf26eecd5b0bdecd94909d328cafc028d7d2bcf387ec9ecbcab533b146cc"
+    },
+    {
+      "bytes": 46605,
+      "git_oid": "bbe1c63b258cb59042d1b389f598d54290cd5d9f",
+      "mode": "100644",
+      "path": "/private/tmp/chain-new-head-5df7-deadline-controller-review-20261114-v1/R1/scripts/ci/ci_job.sh",
+      "repo_path": "scripts/ci/ci_job.sh",
+      "sha256": "a3789f3e81a97abe8d85b3f5394d7b8c31b962027b381ac9b1bb953a6fdc610b"
+    },
+    {
+      "bytes": 109568,
+      "git_oid": "e359ba90bb714c6e04233f32cdd12e817a09ed8b",
+      "mode": "100644",
+      "path": "/private/tmp/chain-new-head-5df7-deadline-controller-review-20261114-v1/R1/trillionnium/crates/trnm-pon-node/src/ingress/public_v2.rs",
+      "repo_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v2.rs",
+      "sha256": "8d58828533019c97f4e7061704cf40caa86cb6b180846397d4b50e3169b25ae5"
+    }
+  ],
+  "static_proof": {
+    "bytes": 10559,
+    "path": "/private/tmp/chain-new-head-5df7-deadline-controller-review-20261114-v1/final-review-v2/static-continuity.json",
+    "sha256": "5dfbafd3a84f272ea7acafa35309dd81a66ce4d7cfde32e13782f29ae72454c5"
+  },
+  "status": "STATIC_REVIEW_NO_BLOCKER"
+}

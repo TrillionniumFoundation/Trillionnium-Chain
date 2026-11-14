@@ -1,0 +1,163 @@
+
+30-history_import.rs.raw lines 105-265
+105:                             "PUBLIC_MUTATION_CPU_UNAVAILABLE",
+106:                         )?;
+107:                         thread::sleep(
+108:                             Duration::from_millis(1)
+109:                                 .min(control.deadline.saturating_duration_since(Instant::now())),
+110:                         );
+111:                     }
+112:                 }
+113:             },
+114:         }
+115:     }
+116: }
+117: 
+118: struct EpochGuard {
+119:     cpu: public_v3::ServiceMutationCpuDomain,
+120:     closed: bool,
+121: }
+122: impl Drop for EpochGuard {
+123:     fn drop(&mut self) {
+124:         if !self.closed {
+125:             self.cpu.abandon_history_epoch();
+126:         }
+127:     }
+128: }
+129: 
+130: fn scoped<T>(
+131:     owner: &mut Owner<'_>,
+132:     control: &Control<'_>,
+133:     native: impl FnOnce(&mut Owner<'_>, &public_v3::ServiceMutationCpuDomain) -> Result<T>,
+134: ) -> Result<T> {
+135:     scoped_observed(owner, control, None, None, native)
+136: }
+137: 
+138: fn scoped_observed<T>(
+139:     owner: &mut Owner<'_>,
+140:     control: &Control<'_>,
+141:     observation: Option<&TaskObservation>,
+142:     attribution: Option<&NativeAttribution>,
+143:     native: impl FnOnce(&mut Owner<'_>, &public_v3::ServiceMutationCpuDomain) -> Result<T>,
+144: ) -> Result<T> {
+145:     if let Some(record) = attribution {
+146:         record.owner(match owner {
+147:             Owner::Exclusive(_) => "exclusive",
+148:             Owner::Shared(_) => "shared",
+149:         });
+150:     }
+151:     let cpu = super::observe_submit_phase(observation, SubmitPhase::HistoryEpochOpen, || {
+152:         owner.with(control, |node| {
+153:             // #498's continuous-mode deny gate remains before any paid work.
+154:             // Generic scalar begin is not the continuous durable-operation journal.
+155:             let cpu = observe_epoch(attribution, HistoryEpochSubstep::DomainLookup, || {
+156:                 node.remote_history_cpu_domain()
+157:             })?;
+158:             observe_epoch(attribution, HistoryEpochSubstep::DurableBegin, || {
+159:                 node.begin_remote_history_cpu_epoch()
+160:             })?;
+161:             Ok(cpu)
+162:         })
+163:     })?;
+164:     let mut guard = EpochGuard { cpu, closed: false };
+165:     cut("epoch");
+166:     let result = native(owner, &guard.cpu);
+167:     // Test-only observation after all native CPU scopes have settled, before
+168:     // an unclean last-epoch close deliberately fences this original account.
+169:     #[cfg(all(test, target_os = "linux"))]
+170:     cut("before_epoch_close");
+171:     let close = super::observe_submit_phase(observation, SubmitPhase::HistoryEpochClose, || {
+172:         owner.finish(control, &guard.cpu)
+173:     });
+174:     if close.is_ok() {
+175:         guard.closed = true;
+176:     }
+177:     close?;
+178:     // Cleanup is mandatory even after expiry. Only a successful outward result
+179:     // receives this final time fence: an existing native/cleanup error keeps
+180:     // its original precedence, and already committed facts remain committed.
+181:     result.and_then(|value| {
+182:         control.alive()?;
+183:         Ok(value)
+184:     })
+185: }
+186: 
+187: fn begin_cpu(
+188:     cpu: &public_v3::ServiceMutationCpuDomain,
+189:     control: &Control<'_>,
+190: ) -> Result<public_v3::ServiceMutationCpuOperation> {
+191:     begin_cpu_observed(cpu, control, None)
+192: }
+193: 
+194: fn begin_cpu_observed(
+195:     cpu: &public_v3::ServiceMutationCpuDomain,
+196:     control: &Control<'_>,
+197:     attribution: Option<&NativeAttribution>,
+198: ) -> Result<public_v3::ServiceMutationCpuOperation> {
+199:     // Keep a depleted peer from owning the poller's entire (possibly long)
+200:     // runtime. This local wait ceiling can only shorten the original end.
+201:     let wait_end = control
+202:         .deadline
+203:         .min(Instant::now() + Duration::from_secs(2));
+204:     let mut diagnostic =
+205:         attribution.map(|record| CpuWaitGuard::new(record, control.deadline, wait_end));
+206:     let result = (|| loop {
+207:         control.check()?;
+208:         ensure(Instant::now() < wait_end, "PUBLIC_MUTATION_CPU_BUDGET")?;
+209:         if let Some(record) = &mut diagnostic {
+210:             record.reserve_started();
+211:         }
+212:         let reservation = cpu.begin();
+213:         if let Some(record) = &mut diagnostic {
+214:             record.reserve_returned(&reservation);
+215:         }
+216:         match reservation {
+217:             Ok(operation) => return Ok(operation),
+218:             Err(error) if error.is(crate::ErrorCode::PublicMutationCpuBudget) => {
+219:                 // No Node guard; the fixed business deadline never advances.
+220:                 cut("cpu_wait");
+221:                 let duration = Duration::from_millis(2)
+222:                     .min(wait_end.saturating_duration_since(Instant::now()));
+223:                 let start = diagnostic
+224:                     .as_mut()
+225:                     .map(|record| record.sleep_started(duration));
+226:                 thread::sleep(duration);
+227:                 if let (Some(record), Some(start)) = (&mut diagnostic, start) {
+228:                     record.sleep_completed(start);
+229:                 }
+230:             }
+231:             Err(error) => return Err(error),
+232:         }
+233:     })();
+234:     if let Some(record) = diagnostic {
+235:         record.finish(&result);
+236:     }
+237:     result
+238: }
+239: 
+240: fn metered<T>(
+241:     cpu: &public_v3::ServiceMutationCpuDomain,
+242:     control: &Control<'_>,
+243:     native: impl FnOnce(&public_v3::ServiceMutationCpuOperation) -> Result<T>,
+244: ) -> Result<T> {
+245:     metered_observed(cpu, control, None, None, native)
+246: }
+247: 
+248: fn metered_observed<T>(
+249:     cpu: &public_v3::ServiceMutationCpuDomain,
+250:     control: &Control<'_>,
+251:     observation: Option<&TaskObservation>,
+252:     attribution: Option<&NativeAttribution>,
+253:     native: impl FnOnce(&public_v3::ServiceMutationCpuOperation) -> Result<T>,
+254: ) -> Result<T> {
+255:     let operation =
+256:         super::observe_submit_phase(observation, SubmitPhase::CpuWait, || match attribution {
+257:             Some(record) => begin_cpu_observed(cpu, control, Some(record)),
+258:             None => begin_cpu(cpu, control),
+259:         })?;
+260:     let result = operation
+261:         .bind_history_request(control.deadline)
+262:         .and_then(|()| native(&operation));
+263:     super::observe_submit_phase(observation, SubmitPhase::CpuSettle, || {
+264:         let receipt = operation.finish();
+265:         ensure(

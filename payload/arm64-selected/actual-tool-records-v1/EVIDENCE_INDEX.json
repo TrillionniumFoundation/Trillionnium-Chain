@@ -1,0 +1,79 @@
+{
+  "count": 14,
+  "files": [
+    {
+      "bytes": 530,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/actual-tool-records-v1/h5df-arm-directory-preparation-start.json",
+      "sha256": "238f70dd82f84478e728cfac55a5032790cf25adda435b76d08dceab292eca36"
+    },
+    {
+      "bytes": 3123,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/actual-tool-records-v1/h5df-arm-directory-preparation-terminal.json",
+      "sha256": "085d05637c6640736c748c40c04c840d3aceebb4978507c2ff0c9e1b0f2098cf"
+    },
+    {
+      "bytes": 526,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/actual-tool-records-v1/h5df-arm-directory-start.json",
+      "sha256": "c0970f201c7f42230fe8470fcf662d8eedbed6762e51b21e6da7c3197eb80445"
+    },
+    {
+      "bytes": 3564,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/actual-tool-records-v1/h5df-arm-directory-read-001.json",
+      "sha256": "3a30c9c71dbb7b80813fe68b54133cc345d8379e443cce7c92740bc3874eb223"
+    },
+    {
+      "bytes": 532,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/actual-tool-records-v1/h5df-arm-selected-preparation-start.json",
+      "sha256": "4994accbffae56f23c65b42df8ae77679e986d668fc6b7091fd6bd10eb9eb649"
+    },
+    {
+      "bytes": 5298,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/actual-tool-records-v1/h5df-arm-selected-preparation-terminal.json",
+      "sha256": "dcb9a0a1c0f0f04988a9493e2b835c982bcbebdded5ce6f9e5cf03e7c400f23a"
+    },
+    {
+      "bytes": 530,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/actual-tool-records-v1/h5df-arm-selected-start.json",
+      "sha256": "dc267fc7b3d22ae61f93d3e7f99dd610d39cbba32bfebb8d2688d2c7bff7d1ef"
+    },
+    {
+      "bytes": 2134,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/actual-tool-records-v1/h5df-arm-selected-read-001.json",
+      "sha256": "82071c9755a38df98bb8133c5a21e50055263832d7e9494eca732358bfc0b3fd"
+    },
+    {
+      "bytes": 3132,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/actual-tool-records-v1/h5df-arm-selected-read-002.json",
+      "sha256": "80f5f93ddc6cf2fd3dccb253bb98bbbec4c85a14c72196e4946620bd7f8c4533"
+    },
+    {
+      "bytes": 4317,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/actual-tool-records-v1/h5df-arm-selected-terminal.json",
+      "sha256": "f01c8a5d3abd2d28f2631ed1e8e44f75c88bb3e71d4916af3cc2f99ea08448c1"
+    },
+    {
+      "bytes": 874,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/actual-tool-records-v1/directory-sha-pinned-launcher.py",
+      "sha256": "9dd7346313f7da3cb003de427dff0c4f3d550694bc6ffba4ee85e81cf061724b"
+    },
+    {
+      "bytes": 873,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/actual-tool-records-v1/selected-sha-pinned-launcher.py",
+      "sha256": "741b754b753c41e33d7d8c0b6176d0dbe22ea62425d3b18f5f76f6b7a1a8dfc4"
+    },
+    {
+      "bytes": 3131,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/actual-tool-records-v1/directory-preparation.py",
+      "sha256": "d823fbe61af765460022daa8fa1ca782dc8be23f0c9cafa8f67a8e807bac7dca"
+    },
+    {
+      "bytes": 6366,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/actual-tool-records-v1/selected-preparation.py",
+      "sha256": "86c40675d4da93f5f40c118d8158f0249b8ddc33477bad2822d8c8d8392a5c2a"
+    }
+  ],
+  "original_tool_responses_not_synthesized": true,
+  "schema": "trnm-H5DF-arm-actual-tool-record-index-v1",
+  "self_excluded": true,
+  "target_reexecution": false
+}

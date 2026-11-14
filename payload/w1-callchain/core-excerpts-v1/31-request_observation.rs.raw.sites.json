@@ -1,0 +1,262 @@
+[
+  {
+    "line": 166,
+    "text": "impl PublicCpuSettlementObservation {"
+  },
+  {
+    "line": 230,
+    "text": "impl SubmitPhase {"
+  },
+  {
+    "line": 281,
+    "text": "impl SubmitPhaseObservation {"
+  },
+  {
+    "line": 282,
+    "text": "    fn new(phase: SubmitPhase) -> Self {"
+  },
+  {
+    "line": 298,
+    "text": "fn submit_phases() -> [SubmitPhaseObservation; 19] {"
+  },
+  {
+    "line": 338,
+    "text": "impl ReactorFrameIoObservation {"
+  },
+  {
+    "line": 339,
+    "text": "    fn new(phase: ApplicationFramePhase) -> Self {"
+  },
+  {
+    "line": 394,
+    "text": "impl Default for ReactorIoObservation {"
+  },
+  {
+    "line": 455,
+    "text": "impl RequestWaitObservation {"
+  },
+  {
+    "line": 519,
+    "text": "impl Default for RequestCancellationObservation {"
+  },
+  {
+    "line": 593,
+    "text": "impl PublicRequestObservation {"
+  },
+  {
+    "line": 657,
+    "text": "// Sharing one try_lock made a normal frame/worker overlap look like lost data."
+  },
+  {
+    "line": 750,
+    "text": "impl PublicRequestObservationSnapshot {"
+  },
+  {
+    "line": 806,
+    "text": "            if let Ok(row) = cell.row.lock() {"
+  },
+  {
+    "line": 808,
+    "text": "                match cell.task.lock() {"
+  },
+  {
+    "line": 996,
+    "text": "        match self.cell.task.try_lock() {"
+  },
+  {
+    "line": 1004,
+    "text": "    fn update(&self, change: impl FnOnce(&mut PublicRequestObservation) -> bool) {"
+  },
+  {
+    "line": 1008,
+    "text": "            .try_lock()"
+  },
+  {
+    "line": 1023,
+    "text": "impl ConnectionObservation {"
+  },
+  {
+    "line": 1085,
+    "text": "    pub(super) fn frame(&self, phase: usize, read: usize, written: usize, complete: bool) {"
+  },
+  {
+    "line": 1137,
+    "text": "    pub(super) fn terminal(&self, phase: &'static str) {"
+  },
+  {
+    "line": 1143,
+    "text": "    pub(super) fn terminal_error(&self, phase: &'static str, error: &crate::Error) {"
+  },
+  {
+    "line": 1205,
+    "text": "impl Drop for ConnectionObservation {"
+  },
+  {
+    "line": 1233,
+    "text": "impl TaskObservation {"
+  },
+  {
+    "line": 1240,
+    "text": "    pub(in crate::ingress) fn phase_snapshot(&self) -> ([SubmitPhaseObservation; 19], u64) {"
+  },
+  {
+    "line": 1246,
+    "text": "    pub(in crate::ingress) fn phase(&self, phase: SubmitPhase) -> SubmitPhaseGuard<'_> {"
+  },
+  {
+    "line": 1253,
+    "text": "    pub(in crate::ingress) fn active_phase(&self) -> std::result::Result<Option<SubmitPhase>, ()> {"
+  },
+  {
+    "line": 1362,
+    "text": "impl PhaseRecorder {"
+  },
+  {
+    "line": 1383,
+    "text": "    fn update(&self, change: impl FnOnce(&mut [SubmitPhaseObservation; 19])) {"
+  },
+  {
+    "line": 1384,
+    "text": "        match self.0.rows.try_lock() {"
+  },
+  {
+    "line": 1390,
+    "text": "        let rows = match self.0.rows.lock() {"
+  },
+  {
+    "line": 1399,
+    "text": "    fn active_phase(&self) -> std::result::Result<Option<SubmitPhase>, ()> {"
+  },
+  {
+    "line": 1430,
+    "text": "    fn phase(&self, phase: SubmitPhase) -> SubmitPhaseGuard<'_> {"
+  },
+  {
+    "line": 1465,
+    "text": "pub(in crate::ingress) struct SubmitPhaseGuard<'a> {"
+  },
+  {
+    "line": 1474,
+    "text": "impl SubmitPhaseGuard<'_> {"
+  },
+  {
+    "line": 1487,
+    "text": "impl Drop for SubmitPhaseGuard<'_> {"
+  },
+  {
+    "line": 1519,
+    "text": "impl Drop for TaskObservation {"
+  },
+  {
+    "line": 1541,
+    "text": "impl Drop for RequestWorkerObservation {"
+  },
+  {
+    "line": 1581,
+    "text": "    pub(super) fn checkpoint(&mut self) -> Option<u64> {"
+  },
+  {
+    "line": 1660,
+    "text": "    fn active_phase_context_is_lock_free_and_uses_declared_nested_spans() {"
+  },
+  {
+    "line": 1666,
+    "text": "        let rows = observation.phases.0.rows.lock().unwrap();"
+  },
+  {
+    "line": 1687,
+    "text": "    fn active_phase_context_keeps_sibling_overlap_and_unwind_explicit() {"
+  },
+  {
+    "line": 1769,
+    "text": "        let row_lock = connection.cell.row.lock().unwrap();"
+  },
+  {
+    "line": 1770,
+    "text": "        let task_lock = connection.cell.task.lock().unwrap();"
+  },
+  {
+    "line": 1929,
+    "text": "        let held = cell.row.lock().unwrap();"
+  },
+  {
+    "line": 2108,
+    "text": "        let held = connection.cell.task.lock().unwrap();"
+  },
+  {
+    "line": 2131,
+    "text": "    fn first_error_time_keeps_original_cause_phase_and_owner_clock() {"
+  },
+  {
+    "line": 2178,
+    "text": "        let held = connection.cell.row.lock().unwrap();"
+  },
+  {
+    "line": 2250,
+    "text": "        let held = connection.cell.row.lock().unwrap();"
+  },
+  {
+    "line": 2255,
+    "text": "        overflow.cell.row.lock().unwrap().reactor_io.frames[0].calls_returned = u64::MAX;"
+  },
+  {
+    "line": 2283,
+    "text": "    fn fixed_phase_slots_never_overwrite_a_previous_failure_with_a_retry() {"
+  },
+  {
+    "line": 2306,
+    "text": "    fn submit_phase_outcomes_are_bounded_and_keep_abandoned_measurements_unknown() {"
+  },
+  {
+    "line": 2361,
+    "text": "    fn submit_phase_capture_contention_is_optional_and_does_not_block_dispatch() {"
+  },
+  {
+    "line": 2365,
+    "text": "        let guard = connection.cell.phases.0.rows.lock().unwrap();"
+  },
+  {
+    "line": 2366,
+    "text": "        let result = crate::ingress::observe_submit_phase(Some(&task), SubmitPhase::Work, || {"
+  },
+  {
+    "line": 2385,
+    "text": "    fn observed_native_submit_keeps_rejection_success_and_duplicate_phase_boundaries() {"
+  },
+  {
+    "line": 2515,
+    "text": "        let guard = connection.cell.task.lock().unwrap();"
+  },
+  {
+    "line": 2546,
+    "text": "        let guard = connection.cell.task.lock().unwrap();"
+  },
+  {
+    "line": 2564,
+    "text": "        let guard = connection.cell.row.lock().unwrap();"
+  },
+  {
+    "line": 2628,
+    "text": "        let task_guard = cell.task.lock().unwrap();"
+  },
+  {
+    "line": 2633,
+    "text": "            match cell.row.try_lock() {"
+  },
+  {
+    "line": 2729,
+    "text": "            let _guard = cell.row.lock().unwrap();"
+  },
+  {
+    "line": 2780,
+    "text": "        let guard = connection.cell.row.lock().unwrap();"
+  },
+  {
+    "line": 2781,
+    "text": "        connection.frame(0, 1, 0, false); // try_lock fails; no wait or propagated error."
+  },
+  {
+    "line": 2786,
+    "text": "        overflow.cell.row.lock().unwrap().frames[0].bytes_read = u64::MAX;"
+  }
+]

@@ -1,0 +1,70 @@
+530:         let clean = known
+531:             && observation
+532:                 .as_ref()
+533:                 .is_ok_and(|state| state.in_flight == 0 && state.stored_credit_ns >= 0);
+534:         self.finish_ordinary_public_service_epoch(clean)?;
+535:         ensure(known && (!last || clean), "PUBLIC_MUTATION_CPU_UNAVAILABLE")
+536:     }
+537: 
+538:     /// Use one existing Node-owned budget for all remotely sourced History
+539:     /// proof imports, including loopback and nonloopback sources. A standalone
+540:     /// sync Node receives a COLD original CPU epoch, not the 2s diagnostic
+541:     /// warm burst; a V3/continuous Node keeps its already bound owner.
+542:     /// Never issue fresh credit on every peer, page or new signing identity.
+543:     pub(crate) fn remote_history_cpu_domain(&mut self) -> Result<ServiceMutationCpuDomain> {
+544:         // Once an ordinary public service is marked unclean, even its
+545:         // previously bound account cannot authorize new History mutations.
+546:         ensure(
+547:             !self.public_service_epoch_unknown,
+548:             "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH",
+549:         )?;
+550:         if let Ok(domain) = self.public_service_cpu_domain() {
+551:             return Ok(domain);
+552:         }
+553:         // No live listener can create an unrelated budget behind its owner.
+554:         ensure(
+555:             self.public_service_epoch_listeners == 0,
+556:             "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH",
+557:         )?;
+558:         // A process may have died with outstanding public W1 CPU. The
+559:         // volatile marker then resets on Node::open, but the original SQLite
+560:         // active-epoch row survives. Refuse a cold History budget BEFORE
+561:         // attempting any new verification. The existing V3 service uses the
+562:         // same canonical durable key and exact unknown-debt semantics.
+563:         let prior_epoch: Option<Vec<u8>> = self
+564:             .db
+565:             .query_row(
+566:                 "SELECT value FROM metadata WHERE key=?1",
+567:                 [ORDINARY_PUBLIC_EPOCH_KEY],
+568:                 |row| row.get(0),
+569:             )
+570:             .optional()?;
+571:         ensure(prior_epoch.is_none(), "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH")?;
+572:         let cold = ServiceMutationCpuDomain::cold_remote_history_epoch();
+573:         self.bind_public_service_cpu_domain(&cold)?;
+574:         Ok(cold)
+575:     }
+576:     #[cfg(test)]
+577:     pub(crate) fn continuous_domain_matches(&self, cpu: &ServiceMutationCpuDomain) -> bool {
+578:         self.continuous_owner
+579:             .as_ref()
+580:             .is_none_or(|o| o.cpu.shares_domain_with(cpu))
+581:             && self
+582:                 .public_service_cpu
+583:                 .as_ref()
+584:                 .is_none_or(|original| original.shares_domain_with(cpu))
+585:     }
+586:     pub(crate) fn is_continuous(&self) -> bool {
+587:         self.continuous_owner.is_some()
+588:     }
+589:     /// A listener cannot substitute classical authentication after the original
+590:     /// continuous owner selected its protected PQ identity (or vice versa).
+591:     pub(crate) fn require_continuous_public_authentication(&self, pq: bool) -> Result<()> {
+592:         if let Some(owner) = &self.continuous_owner {
+593:             let expected = owner
+594:                 .view
+595:                 .body
+596:                 .identity
+597:                 .profile()
+598:                 .map_err(continuous_error)?;
+599:             ensure(

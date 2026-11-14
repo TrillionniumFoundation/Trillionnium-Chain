@@ -1,0 +1,3126 @@
+{
+  "schema": "trnm-head5df-connector-progress-and-branch-names-v1",
+  "observed_at": "2026-11-14T17:40:34Z",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "queried_commit": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+  "workflow_scope": "Connector first page of pull_request workflow runs only; not an exhaustive required CI gate and not checkout source proof",
+  "workflow_response": {
+    "status": "fulfilled",
+    "value": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Action completed."
+        }
+      ],
+      "structuredContent": {
+        "workflow_runs": [
+          {
+            "id": 43621754036,
+            "name": "PoN next architecture exact-source observations",
+            "status": "in_progress",
+            "conclusion": null,
+            "run_number": 227,
+            "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621754036/jobs",
+            "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621754036/logs",
+            "workflow_id": 410936856
+          },
+          {
+            "id": 43621754008,
+            "name": "PoN PQ network and rollback witness",
+            "status": "in_progress",
+            "conclusion": null,
+            "run_number": 530,
+            "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621754008/jobs",
+            "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621754008/logs",
+            "workflow_id": 403755130
+          },
+          {
+            "id": 43621753847,
+            "name": "PoN priority acceptance",
+            "status": "in_progress",
+            "conclusion": null,
+            "run_number": 1781,
+            "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753847/jobs",
+            "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753847/logs",
+            "workflow_id": 378180520
+          },
+          {
+            "id": 43621753776,
+            "name": "PoN original budget component controls",
+            "status": "in_progress",
+            "conclusion": null,
+            "run_number": 21,
+            "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753776/jobs",
+            "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753776/logs",
+            "workflow_id": 414061964
+          },
+          {
+            "id": 43621753801,
+            "name": "PoN four-axis throughput evidence controls",
+            "status": "in_progress",
+            "conclusion": null,
+            "run_number": 149,
+            "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753801/jobs",
+            "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753801/logs",
+            "workflow_id": 411106656
+          },
+          {
+            "id": 43621754017,
+            "name": "CodeQL exact-source analysis export",
+            "status": "in_progress",
+            "conclusion": null,
+            "run_number": 1622,
+            "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621754017/jobs",
+            "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621754017/logs",
+            "workflow_id": 391170411
+          },
+          {
+            "id": 43621753940,
+            "name": "CPQ1 complete content bindings",
+            "status": "in_progress",
+            "conclusion": null,
+            "run_number": 95,
+            "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753940/jobs",
+            "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753940/logs",
+            "workflow_id": 410926617
+          },
+          {
+            "id": 43621753890,
+            "name": "PoN baseline diagnostic readback",
+            "status": "in_progress",
+            "conclusion": null,
+            "run_number": 1307,
+            "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753890/jobs",
+            "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753890/logs",
+            "workflow_id": 379262275
+          },
+          {
+            "id": 43621753829,
+            "name": "PoN recent batch exact-source acceptance",
+            "status": "in_progress",
+            "conclusion": null,
+            "run_number": 590,
+            "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753829/jobs",
+            "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753829/logs",
+            "workflow_id": 379339707
+          },
+          {
+            "id": 43621753824,
+            "name": "PoN original workspace test-profile CPU acceptance",
+            "status": "in_progress",
+            "conclusion": null,
+            "run_number": 643,
+            "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753824/jobs",
+            "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753824/logs",
+            "workflow_id": 403747290
+          },
+          {
+            "id": 43621753887,
+            "name": "PoN original large-state CPU acceptance",
+            "status": "in_progress",
+            "conclusion": null,
+            "run_number": 645,
+            "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753887/jobs",
+            "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753887/logs",
+            "workflow_id": 403449877
+          },
+          {
+            "id": 43621753928,
+            "name": "PoN branch encoding exact-source acceptance",
+            "status": "in_progress",
+            "conclusion": null,
+            "run_number": 527,
+            "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753928/jobs",
+            "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753928/logs",
+            "workflow_id": 379587106
+          },
+          {
+            "id": 43621753943,
+            "name": "CodeQL exact-source analysis and SARIF retention",
+            "status": "in_progress",
+            "conclusion": null,
+            "run_number": 124,
+            "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753943/jobs",
+            "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753943/logs",
+            "workflow_id": 408972293
+          },
+          {
+            "id": 43621753981,
+            "name": "PoN W1 work security observations",
+            "status": "in_progress",
+            "conclusion": null,
+            "run_number": 608,
+            "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753981/jobs",
+            "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753981/logs",
+            "workflow_id": 403419146
+          },
+          {
+            "id": 43621753789,
+            "name": "PoN original quarter-core feasibility evidence",
+            "status": "completed",
+            "conclusion": "success",
+            "run_number": 16,
+            "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753789/jobs",
+            "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753789/logs",
+            "workflow_id": 413044936
+          },
+          {
+            "id": 43621754143,
+            "name": "trnm-required-baseline",
+            "status": "in_progress",
+            "conclusion": null,
+            "run_number": 3167,
+            "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621754143/jobs",
+            "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621754143/logs",
+            "workflow_id": 345677268
+          },
+          {
+            "id": 43621753894,
+            "name": "W1 QROM proof-chain observations",
+            "status": "completed",
+            "conclusion": "success",
+            "run_number": 191,
+            "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753894/jobs",
+            "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753894/logs",
+            "workflow_id": 410941053
+          },
+          {
+            "id": 43621753954,
+            "name": "Cell learning business readback controls",
+            "status": "completed",
+            "conclusion": "success",
+            "run_number": 24,
+            "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753954/jobs",
+            "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753954/logs",
+            "workflow_id": 412128694
+          },
+          {
+            "id": 43621753787,
+            "name": "PoN W1 QROM implementation observations",
+            "status": "completed",
+            "conclusion": "success",
+            "run_number": 224,
+            "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753787/jobs",
+            "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753787/logs",
+            "workflow_id": 410335087
+          },
+          {
+            "id": 43621753947,
+            "name": "PoN learning outcome composition",
+            "status": "completed",
+            "conclusion": "success",
+            "run_number": 15,
+            "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753947/jobs",
+            "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753947/logs",
+            "workflow_id": 415400047
+          },
+          {
+            "id": 43621754070,
+            "name": "PoN parent-bound model evidence",
+            "status": "completed",
+            "conclusion": "success",
+            "run_number": 871,
+            "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621754070/jobs",
+            "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621754070/logs",
+            "workflow_id": 381968354
+          },
+          {
+            "id": 43621753707,
+            "name": "PoN isolated cloud build inputs",
+            "status": "completed",
+            "conclusion": "success",
+            "run_number": 349,
+            "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753707/jobs",
+            "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753707/logs",
+            "workflow_id": 394876294
+          },
+          {
+            "id": 43621754012,
+            "name": "PoN W1 QROM closure observations",
+            "status": "completed",
+            "conclusion": "success",
+            "run_number": 223,
+            "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621754012/jobs",
+            "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621754012/logs",
+            "workflow_id": 410372663
+          },
+          {
+            "id": 43621753986,
+            "name": "HEPLCP04 structural readback",
+            "status": "completed",
+            "conclusion": "success",
+            "run_number": 17,
+            "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753986/jobs",
+            "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753986/logs",
+            "workflow_id": 414705710
+          },
+          {
+            "id": 43621754001,
+            "name": "PoN work and time contract V1",
+            "status": "completed",
+            "conclusion": "success",
+            "run_number": 216,
+            "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621754001/jobs",
+            "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621754001/logs",
+            "workflow_id": 411117895
+          },
+          {
+            "id": 43621753994,
+            "name": "PoN owned process cleanup",
+            "status": "completed",
+            "conclusion": "success",
+            "run_number": 1286,
+            "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753994/jobs",
+            "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753994/logs",
+            "workflow_id": 381802523
+          },
+          {
+            "id": 43621753948,
+            "name": "PoN classical and quantum credit contract",
+            "status": "completed",
+            "conclusion": "success",
+            "run_number": 158,
+            "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753948/jobs",
+            "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753948/logs",
+            "workflow_id": 411157687
+          },
+          {
+            "id": 43621753771,
+            "name": "Chain Hepta closure evidence contracts",
+            "status": "completed",
+            "conclusion": "success",
+            "run_number": 125,
+            "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753771/jobs",
+            "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753771/logs",
+            "workflow_id": 412185855
+          },
+          {
+            "id": 43621754116,
+            "name": "PoN W1 transparent candidate observations",
+            "status": "completed",
+            "conclusion": "success",
+            "run_number": 503,
+            "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621754116/jobs",
+            "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621754116/logs",
+            "workflow_id": 406945301
+          },
+          {
+            "id": 43621753915,
+            "name": "PoN native full relation and path controls",
+            "status": "completed",
+            "conclusion": "success",
+            "run_number": 194,
+            "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753915/jobs",
+            "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753915/logs",
+            "workflow_id": 410954075
+          },
+          {
+            "id": 43621753980,
+            "name": "Release finality reference and native baseline",
+            "status": "completed",
+            "conclusion": "success",
+            "run_number": 1140,
+            "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753980/jobs",
+            "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753980/logs",
+            "workflow_id": 384076239
+          }
+        ]
+      },
+      "isError": false
+    }
+  },
+  "branch_summary": {
+    "pages": 11,
+    "rows": 908,
+    "unique": 908,
+    "complete": true,
+    "cursor": null,
+    "includes_main": true,
+    "includes_candidate": true,
+    "object_ids_provided": false,
+    "observations_non_atomic": true
+  },
+  "branch_pages": [
+    {
+      "branches": [
+        {
+          "branch": "archive/chain-initial-root-borrow-ecb54-20261103"
+        },
+        {
+          "branch": "archive/chain-initial-root-cloud-evidence-20261104"
+        },
+        {
+          "branch": "archive/chain-initial-root-evidence-20261104"
+        },
+        {
+          "branch": "archive/chain-initial-root-source-0878-20261103"
+        },
+        {
+          "branch": "archive/chain-pon-v1-inspector-20261105-gpt6-01"
+        },
+        {
+          "branch": "archive/chain-pon-v2-source-recovery-20261105-gpt6"
+        },
+        {
+          "branch": "archive/chain-pon-v2-summarizer-20261105-gpt6"
+        },
+        {
+          "branch": "archive/chain-state-json-failed-d55daefd-20261103"
+        },
+        {
+          "branch": "archive/host-source-custody-20261103-desktop-v2"
+        },
+        {
+          "branch": "archive/library-bundle-source-20261103-gpt6"
+        },
+        {
+          "branch": "archive/library-chain-pql3-pcs1-source-20261104"
+        },
+        {
+          "branch": "audit/cell-swarm-605-on-p0-ci-610-rustfmt-20261030"
+        },
+        {
+          "branch": "audit/cell-swarm-cross-release-content-dedup-20261030"
+        },
+        {
+          "branch": "audit/cell-swarm-owner-pinned-xor-repair-20261030"
+        },
+        {
+          "branch": "audit/cell-swarm-pinned-chunk-reassembly-20261030"
+        },
+        {
+          "branch": "audit/chain-506-from-zero-five-tests-20261027"
+        },
+        {
+          "branch": "audit/chain-cell-discovery-slow-bootstrap-original-6985aca-20261112-hold"
+        },
+        {
+          "branch": "audit/chain-cell-paged-storage-original-749cf47-20261112-hold"
+        },
+        {
+          "branch": "audit/chain-checkpoint-copied-lease-original-c63b705-20261111-hold"
+        },
+        {
+          "branch": "audit/chain-checkpoint-copied-lease-parent-83bb1c4-20261111-hold"
+        },
+        {
+          "branch": "audit/chain-native-collector-bottleneck-original-2878e91-20261111-hold"
+        },
+        {
+          "branch": "audit/chain-original-native-zip-readback-20261110"
+        },
+        {
+          "branch": "audit/chain-pq-all-crate-rust-authority-indicators-20261031"
+        },
+        {
+          "branch": "audit/chain-pq-authority-surfaces-20261031"
+        },
+        {
+          "branch": "audit/chain-pq-authority-surfaces-stack-20261031"
+        },
+        {
+          "branch": "audit/chain-pq-lifetime-tail-parent-f0b9c98-20261112-hold"
+        },
+        {
+          "branch": "audit/daa-asert-c-extreme-differential-20261027"
+        },
+        {
+          "branch": "audit/p0-mainline-604-ci-reconciled-20261030"
+        },
+        {
+          "branch": "audit/p0-w1-608-on-610-reconciled-20261030"
+        },
+        {
+          "branch": "audit/p0-w1-frozen-evidence-runtime-isolation-20261031"
+        },
+        {
+          "branch": "audit/pon-w1-exact-source-cost-provenance-20261030"
+        },
+        {
+          "branch": "audit/pon-w1-legal-source-bound-reconcile-20261030"
+        },
+        {
+          "branch": "audit/pon-w1-structured-valid-invalid-cost-20261030"
+        },
+        {
+          "branch": "audit/pq-a17-sha256-source-freeze-20261030"
+        },
+        {
+          "branch": "audit/pq-chain-claim-failclosed-20261030"
+        },
+        {
+          "branch": "audit/pq-claim-checkout-source-symlink-guard-20261030"
+        },
+        {
+          "branch": "audit/pq-claim-json-exponent-boundary-20261030"
+        },
+        {
+          "branch": "audit/pq-classical-auth-boundaries-20261030"
+        },
+        {
+          "branch": "audit/pq-classical-boundary-drift-refusal-20261030"
+        },
+        {
+          "branch": "audit/pq-consensus-unqualified-schema-and-null-provenance-20261030"
+        },
+        {
+          "branch": "audit/pq-da-classical-auth-default-deny-20261030"
+        },
+        {
+          "branch": "audit/pq-governance-plan-delegated-authority-20261030"
+        },
+        {
+          "branch": "audit/pq-json-duplicate-member-refusal-20261030"
+        },
+        {
+          "branch": "audit/pq-mainline-source-provenance-20261030"
+        },
+        {
+          "branch": "audit/pq-native-m06-research-state-authority-20261030"
+        },
+        {
+          "branch": "audit/pq-pcp2-verify-deadline-checkpoints-20261030"
+        },
+        {
+          "branch": "audit/pq-policy-json-finite-float-20261030"
+        },
+        {
+          "branch": "audit/pq-relay-callback-trust-root-20261030"
+        },
+        {
+          "branch": "audit/pq-release-migration-identity-roots-20261030"
+        },
+        {
+          "branch": "audit/pq-root-common-restore-contrast-20261110-1200"
+        },
+        {
+          "branch": "audit/pq-root-final-page-submit-result-20261111-r11"
+        },
+        {
+          "branch": "audit/pq-root-original-campaign-artifact-20261109-cc4576"
+        },
+        {
+          "branch": "audit/pq-root-postwindow-native-confirmation-20261110"
+        },
+        {
+          "branch": "audit/pq-root-terminal-affirmative-fail-closed-20261110-a11"
+        },
+        {
+          "branch": "audit/pq-root-terminal-import-boundary-20261110"
+        },
+        {
+          "branch": "audit/pq-root-triage-result-member-bound-20261110"
+        },
+        {
+          "branch": "audit/pq-w1-closed-manifest-schema-20261030"
+        },
+        {
+          "branch": "audit/pq-w1-guest-source-ci-coverage-20261030"
+        },
+        {
+          "branch": "audit/pq-w1-pinned-research-parameters-20261030"
+        },
+        {
+          "branch": "audit/pq-w1-proof-profile-failclosed-20261030"
+        },
+        {
+          "branch": "audit/pq-w1-provenance-strict-json-20261030"
+        },
+        {
+          "branch": "audit/pq-witness-common-rollback-20261110"
+        },
+        {
+          "branch": "audit/q4-observation-generation-coherence-20261027"
+        },
+        {
+          "branch": "audit/recovery-release-anti-rollback-v1"
+        },
+        {
+          "branch": "automation/chain506-five-native-tests-20261027-1117"
+        },
+        {
+          "branch": "chore/chain-clear-readme-20260929"
+        },
+        {
+          "branch": "chore/chain-development-overhead-20261002"
+        },
+        {
+          "branch": "chore/chain-library-small-source-20261103-gpt6"
+        },
+        {
+          "branch": "chore/chain-p0-base-a3e9002-e0c10"
+        },
+        {
+          "branch": "chore/chain-pon-pr784-hosted-observations-20261108"
+        },
+        {
+          "branch": "chore/chain-pure-pon-model-inputs-20261027"
+        },
+        {
+          "branch": "chore/chain-rust-199-20261004"
+        },
+        {
+          "branch": "chore/chain-work-collector-stage-20261011"
+        },
+        {
+          "branch": "ci/chain328-main-pair-8caf538-20261022"
+        },
+        {
+          "branch": "ci/chain328-main-pair-6724ed1-20261022"
+        },
+        {
+          "branch": "ci/chain328-prospective-main-20261022"
+        },
+        {
+          "branch": "ci/pon-architecture-source-check-20261008"
+        },
+        {
+          "branch": "ci/pon-baseline-source-repair-20261012"
+        },
+        {
+          "branch": "ci/pon-chain316-main-target-merge-20261015"
+        },
+        {
+          "branch": "ci/pon-five-track-native-export-20261011"
+        },
+        {
+          "branch": "ci/pon-five-track-source-repair-20261012-r2"
+        },
+        {
+          "branch": "ci/pon-fixed-blob-bounds-stage-20261010"
+        },
+        {
+          "branch": "ci/pon-fixed-blob-inventory-stage-20261010"
+        },
+        {
+          "branch": "ci/pon-local-toolchain-export-20261011"
+        },
+        {
+          "branch": "ci/pon-native-growth-delivery-20261008"
+        },
+        {
+          "branch": "ci/pon-native-snapshot-qualification-20261009"
+        },
+        {
+          "branch": "ci/pon-native-workbench-20261012-r1"
+        },
+        {
+          "branch": "ci/pon-packed-branch-qualification-20261009"
+        },
+        {
+          "branch": "ci/pon-pressure-window-source-20261010"
+        },
+        {
+          "branch": "ci/pon-priority-long-history-20261008"
+        },
+        {
+          "branch": "ci/pon-source-bundle-20261011"
+        },
+        {
+          "branch": "codex/freeze-pon-experimental-20261014"
+        },
+        {
+          "branch": "codex/heplcp04-ci-evidence-20261112-af52"
+        },
+        {
+          "branch": "codex/native-node-hardening-20261014"
+        },
+        {
+          "branch": "codex/pon-safety-20261014"
+        },
+        {
+          "branch": "dependabot/cargo/trillionnium/borsh-1.8.1"
+        },
+        {
+          "branch": "dependabot/cargo/trillionnium/clap-4.6.7"
+        },
+        {
+          "branch": "dependabot/cargo/trillionnium/ed25519-dalek-3.0.0"
+        },
+        {
+          "branch": "dependabot/cargo/trillionnium/rusqlite-0.40.2"
+        },
+        {
+          "branch": "dependabot/cargo/trillionnium/serde-1.0.229"
+        }
+      ],
+      "cursor": "MTAw"
+    },
+    {
+      "branches": [
+        {
+          "branch": "dev/chain-directed-delivery-20261006"
+        },
+        {
+          "branch": "dev/chain-exact-source-20261005"
+        },
+        {
+          "branch": "dev/chain-native-delivery-20261005"
+        },
+        {
+          "branch": "dev/chain-observation-delivery-20261007"
+        },
+        {
+          "branch": "dev/chain-readonly-build-export-20261006"
+        },
+        {
+          "branch": "dev/pon-five-axis-native-work-20261010"
+        },
+        {
+          "branch": "dev/pon-five-axis-offline-export-20261010"
+        },
+        {
+          "branch": "dev/pon-five-axis-source-export-20261011"
+        },
+        {
+          "branch": "dev/pon-snapshot-verified-delivery-20261010"
+        },
+        {
+          "branch": "diagnostic/chain-da-sequence-1bac-20261104-gpt6"
+        },
+        {
+          "branch": "diagnostic/chain-fuzz-asm-lock-20261104-gpt6"
+        },
+        {
+          "branch": "diagnostic/pon-five-native-lab-20261009"
+        },
+        {
+          "branch": "docs/chain-audit-remediation-20261022"
+        },
+        {
+          "branch": "docs/chain-hepta-accounting-evidence-20261109-d9bb"
+        },
+        {
+          "branch": "docs/chain-joint-gates-20261106-93bfc-01"
+        },
+        {
+          "branch": "docs/chain-pon-eight-sample-evidence-20261101"
+        },
+        {
+          "branch": "docs/chain-pon-w1-evidence-7c5-20261101"
+        },
+        {
+          "branch": "docs/chain-pon-w1-run-41293327123"
+        },
+        {
+          "branch": "docs/chain-pq-acceptance-recovery-20261101"
+        },
+        {
+          "branch": "docs/chain-pure-pon-readback-20261027"
+        },
+        {
+          "branch": "docs/chain-quantum-daa-evidence-20261111-a0cf721c"
+        },
+        {
+          "branch": "docs/chain-sp27-06-confirmed-goodput-20261111"
+        },
+        {
+          "branch": "docs/chain-sp2027"
+        },
+        {
+          "branch": "docs/chain-throughput-native-receipts-20261111-0b5320"
+        },
+        {
+          "branch": "docs/chain-w1-base62-qualification-20261108-ec265b"
+        },
+        {
+          "branch": "docs/chain-w1-base96-qualification-20261108-ec265b"
+        },
+        {
+          "branch": "docs/chain-w1-base9417-qualification-20261108-ec265b"
+        },
+        {
+          "branch": "docs/chain-w1-four-gates-qualification-20261108-ec265b"
+        },
+        {
+          "branch": "docs/chain-w1-history-outcomes-20261107-a66f"
+        },
+        {
+          "branch": "docs/chain-w1-ingress-r17-evidence-20261107"
+        },
+        {
+          "branch": "docs/chain-w1-runtime-qualification-20261107"
+        },
+        {
+          "branch": "dot/p0-p1-fixed-integrated-admission-20261027"
+        },
+        {
+          "branch": "dot/p0-p6-admission-integrated-20261026"
+        },
+        {
+          "branch": "dot/p0-p6-chain-security-integration-20261026"
+        },
+        {
+          "branch": "dot/p0-p6-security-integration-20261026"
+        },
+        {
+          "branch": "dot/p1-consolidated-host-origin-20261026"
+        },
+        {
+          "branch": "dot/p1-continuous-history-durable-only-20261027"
+        },
+        {
+          "branch": "dot/p1-history-crash-epoch-fence-20261027"
+        },
+        {
+          "branch": "dot/p1-history-import-original-cpu-20261025"
+        },
+        {
+          "branch": "dot/p1-history-m06-host-checkpoints-20261027"
+        },
+        {
+          "branch": "dot/p1-history-m06-host-checkpoints-r2-20261027"
+        },
+        {
+          "branch": "dot/p1-history-page-shared-cpu-20261026"
+        },
+        {
+          "branch": "dot/p1-history-public-proxy-metered-20261026"
+        },
+        {
+          "branch": "dot/p1-history-replay-cpu-20261026"
+        },
+        {
+          "branch": "dot/p1-history-shared-cpu-and-host-20261027"
+        },
+        {
+          "branch": "dot/p1-integrated-private-history-guard-20261026"
+        },
+        {
+          "branch": "dot/p1-integrated-w1-resource-20261026"
+        },
+        {
+          "branch": "dot/p1-loopback-public-history-guard-20261026"
+        },
+        {
+          "branch": "dot/p1-loopback-public-sync-guard-20261026"
+        },
+        {
+          "branch": "dot/p1-metered-history-import-20261025"
+        },
+        {
+          "branch": "dot/p1-metered-history-import-20261026"
+        },
+        {
+          "branch": "dot/p1-outbound-peer-host-guard-20261026"
+        },
+        {
+          "branch": "dot/p1-p5-integrated-shadow-20261025"
+        },
+        {
+          "branch": "dot/p1-peer-context-cpu-owner-20261026"
+        },
+        {
+          "branch": "dot/p1-peer-polling-meter-20261025"
+        },
+        {
+          "branch": "dot/p1-pinned-peer-loopback-host-parent-20261027"
+        },
+        {
+          "branch": "dot/p1-pinned-remote-host-owner-20261026"
+        },
+        {
+          "branch": "dot/p1-public-sync-loopback-budget-20261027"
+        },
+        {
+          "branch": "dot/p1-public-sync-loopback-proxy-20261026"
+        },
+        {
+          "branch": "dot/p1-remote-peer-host-owner-20261026"
+        },
+        {
+          "branch": "dot/p1-remote-sync-host-guard-20261025"
+        },
+        {
+          "branch": "dot/p1-sync-m06-precommit-fence-20261026"
+        },
+        {
+          "branch": "dot/p1-sync-owned-cpu-20261026"
+        },
+        {
+          "branch": "dot/p1-sync-packet-fence-20261026"
+        },
+        {
+          "branch": "dot/p1-sync-w1-cooperative-fence-20261026"
+        },
+        {
+          "branch": "dot/p1-unified-cost-owner-20261025"
+        },
+        {
+          "branch": "dot/p1-unified-host-and-peer-meter-20261026"
+        },
+        {
+          "branch": "dot/p1-w1-negative-singleflight-20261027"
+        },
+        {
+          "branch": "dot/p2-admission-cost-verdict-20261026"
+        },
+        {
+          "branch": "dot/p2-false-work-cost-envelope-20261026"
+        },
+        {
+          "branch": "dot/p2-native-v3-cookie-cpu-20261025"
+        },
+        {
+          "branch": "dot/p2-v3-economic-feasibility-20261026"
+        },
+        {
+          "branch": "dot/p2-w1-v3-go-cost-20261025"
+        },
+        {
+          "branch": "dot/p3-pinned-peer-invalid-work-backoff-20261026"
+        },
+        {
+          "branch": "dot/p3-w2c-durable-epoch-owner-20261026"
+        },
+        {
+          "branch": "dot/p5-single-host-epoch-exclusivity-20261026"
+        },
+        {
+          "branch": "dot/pon-admission-p1-w2c-integration-20261027"
+        },
+        {
+          "branch": "dot/pon-next-p1-p3-w2c-20261025"
+        },
+        {
+          "branch": "dot/pon-p0-four-trace-python-syntax-20261027"
+        },
+        {
+          "branch": "dot/pon-p0-p6-evidence-failclosed-20261026"
+        },
+        {
+          "branch": "dot/pon-p0-p6-integrated-research-20261026"
+        },
+        {
+          "branch": "dot/pon-p0-p6-unified-preview-20261027"
+        },
+        {
+          "branch": "dot/pon-p1-p2-integrated-20261025"
+        },
+        {
+          "branch": "dot/pon-p1-p5-integrated-20261025"
+        },
+        {
+          "branch": "dot/pon-p1-p5-integration-20261026"
+        },
+        {
+          "branch": "dot/pon-p1-unified-host-cpu-20261027"
+        },
+        {
+          "branch": "dot/pon-p1-w2c-integration-20261025"
+        },
+        {
+          "branch": "dot/pon-p1-w2c-integration-preview-20261025"
+        },
+        {
+          "branch": "dot/pon-p1-w2c-integration-preview-20261026"
+        },
+        {
+          "branch": "dot/pon-p2-economics-integrated-20261026"
+        },
+        {
+          "branch": "dot/pon-w1-p1-w2c-integration-20261026"
+        },
+        {
+          "branch": "dot/pq-fix-branch-native-count-20261105"
+        },
+        {
+          "branch": "dot/pq-fix-exact-inventory-link-20261105"
+        },
+        {
+          "branch": "dot/pq-fix-growth-receipt-root-import-20261105"
+        },
+        {
+          "branch": "dot/w1-four-trace-admission-research-20261025"
+        },
+        {
+          "branch": "dot/w1-p1-integrated-preview-20261027"
+        },
+        {
+          "branch": "dot/w2c-durable-consume-20261026"
+        },
+        {
+          "branch": "dot/w2c-durable-crossprocess-spend-20261026"
+        },
+        {
+          "branch": "dot/w2c-durable-epoch-fence-20261026"
+        },
+        {
+          "branch": "dot/w2c-durable-negative-tests-repair-20261027-0758"
+        }
+      ],
+      "cursor": "MjAw"
+    },
+    {
+      "branches": [
+        {
+          "branch": "dot/w2c-durable-paid-claims-20261027"
+        },
+        {
+          "branch": "dot/w2c-durable-paid-owner-20261027"
+        },
+        {
+          "branch": "dot/w2c-durable-paid-replay-20261026"
+        },
+        {
+          "branch": "dot/w2c-durable-paid-spend-20261026"
+        },
+        {
+          "branch": "dot/w2c-durable-paid-spend-20261027"
+        },
+        {
+          "branch": "dot/w2c-durable-spend-20261026"
+        },
+        {
+          "branch": "dot/w2c-durable-spend-owner-20261026"
+        },
+        {
+          "branch": "dot/w2c-fixed-cost-policy-20261026"
+        },
+        {
+          "branch": "dot/w2c-issuer-epoch-quota-20261025"
+        },
+        {
+          "branch": "dot/w2c-receiver-cost-bound-20261025"
+        },
+        {
+          "branch": "dot/w2c-server-price-floor-20261026"
+        },
+        {
+          "branch": "dot/w2c-stateless-issuance-20261026"
+        },
+        {
+          "branch": "dot/w2c-stateless-paid-offers-20261025"
+        },
+        {
+          "branch": "dot/w2c-stateless-receiver-20261025"
+        },
+        {
+          "branch": "dot/w2d-freivalds-cost-research-20261026"
+        },
+        {
+          "branch": "dot/w2d-fs-prefix-full-tape-20261025"
+        },
+        {
+          "branch": "dot/w2d-full-tile-freivalds-20261026"
+        },
+        {
+          "branch": "dot/w2e-global-polynomial-research-20261026"
+        },
+        {
+          "branch": "draft/dot-peer-owner-candidate-20261103"
+        },
+        {
+          "branch": "evidence/chain-completed-w1-and-ticket-costs-20261028"
+        },
+        {
+          "branch": "evidence/chain-pq-composition-20261108-663507"
+        },
+        {
+          "branch": "evidence/chain-six-risk-readback-20261108"
+        },
+        {
+          "branch": "evidence/chain-sixline-native-20261007"
+        },
+        {
+          "branch": "evidence/nextuse-final-9d4-20261111-b4d6"
+        },
+        {
+          "branch": "evidence/owned-runtime-handoff-059fd76-20261022"
+        },
+        {
+          "branch": "evidence/pon-five-track-715a-1064-20261012"
+        },
+        {
+          "branch": "evidence/pon-root-supplement-c61e211-20261022"
+        },
+        {
+          "branch": "evidence/runtime-decode-54467f9-20261022"
+        },
+        {
+          "branch": "evidence/smollm2-1p7-source9-roster-20261004-4b5fece4"
+        },
+        {
+          "branch": "feat/chain-exact-packet-reconcile-20261007"
+        },
+        {
+          "branch": "feat/chain-growth-profile-lineage-v2-20261007"
+        },
+        {
+          "branch": "feat/chain-growth-storage-reservation-20261008"
+        },
+        {
+          "branch": "feat/chain-hepta-packet-reconcile-v2-20261007"
+        },
+        {
+          "branch": "feat/chain-permanent-account-growth-relation-v2-20261007"
+        },
+        {
+          "branch": "feat/chain-signed-consumer-benefit-20261008"
+        },
+        {
+          "branch": "feat/pon-five-axis-snapshot-delivery-20261010"
+        },
+        {
+          "branch": "feat/pon-parent-bound-evolution-20261012"
+        },
+        {
+          "branch": "feat/pon-priority-generation-sequence-20261008"
+        },
+        {
+          "branch": "feat/pon-snapshot-read-verified-20261010"
+        },
+        {
+          "branch": "feat/release-finality-state-machine-20261014"
+        },
+        {
+          "branch": "feature/chain-cell-network-sealed-repair-20261108-277c"
+        },
+        {
+          "branch": "feature/chain-cell-six-capabilities-20261108"
+        },
+        {
+          "branch": "feature/chain-cpq1-content-commitments-20261108"
+        },
+        {
+          "branch": "feature/chain-full-pq-20261028-r2"
+        },
+        {
+          "branch": "feature/chain-hepta-frozen-iteration-20261108"
+        },
+        {
+          "branch": "feature/chain-m02-branch-core"
+        },
+        {
+          "branch": "feature/chain-next-architecture-security-20261108"
+        },
+        {
+          "branch": "feature/chain-pure-pon-evidence-20261027"
+        },
+        {
+          "branch": "feature/chain-pure-pon-integration-20261027"
+        },
+        {
+          "branch": "feature/chain-pure-pon-measured-source-20261027"
+        },
+        {
+          "branch": "feature/chain-pure-pon-w1-observed-source-20261027"
+        },
+        {
+          "branch": "feature/chain-pure-pon-workpackages-20261027"
+        },
+        {
+          "branch": "feature/chain-real-iteration-20261108-8b4f"
+        },
+        {
+          "branch": "feature/chain-w1-cell-proof-20261106"
+        },
+        {
+          "branch": "feature/chain-w1-cost-research-20261025"
+        },
+        {
+          "branch": "fix/cell-accept-readiness-channel-order-20261107"
+        },
+        {
+          "branch": "fix/chain-a620-main-pair-20261025"
+        },
+        {
+          "branch": "fix/chain-all-strategy-cost-20261109-cf19"
+        },
+        {
+          "branch": "fix/chain-answer-eos-research-v3-20261027"
+        },
+        {
+          "branch": "fix/chain-architecture-boundaries-20261108-736a"
+        },
+        {
+          "branch": "fix/chain-architecture-native-host-20261104"
+        },
+        {
+          "branch": "fix/chain-atomic-cpu-refill-reserve-20261007"
+        },
+        {
+          "branch": "fix/chain-binary-answer-observed-v2-20261029"
+        },
+        {
+          "branch": "fix/chain-branch-roster-20261105"
+        },
+        {
+          "branch": "fix/chain-bulk-state-tree-20261017"
+        },
+        {
+          "branch": "fix/chain-campaign-qrom-readback-20261109-1b1370"
+        },
+        {
+          "branch": "fix/chain-canonical-hex-20261105"
+        },
+        {
+          "branch": "fix/chain-capacity-cancel-work-fuzz-20261005"
+        },
+        {
+          "branch": "fix/chain-capacity-work-continuation-20261005"
+        },
+        {
+          "branch": "fix/chain-cargo-loader-optional-toolchain-lib-20261107-gpt6"
+        },
+        {
+          "branch": "fix/chain-cell-adoption-evidence-20261108"
+        },
+        {
+          "branch": "fix/chain-cell-capacity-release-dc0357-20261109"
+        },
+        {
+          "branch": "fix/chain-cell-inventory-20261104"
+        },
+        {
+          "branch": "fix/chain-cell-native-shard-674c72-20261110"
+        },
+        {
+          "branch": "fix/chain-cell-paged-consumer-34e09-20261109"
+        },
+        {
+          "branch": "fix/chain-cell-paged-model-34e09-20261110"
+        },
+        {
+          "branch": "fix/chain-cell-paged-release-34e09-20261110"
+        },
+        {
+          "branch": "fix/chain-cell-provider-observability-20261027"
+        },
+        {
+          "branch": "fix/chain-cell-rendezvous-accept-loop-readiness-20261107"
+        },
+        {
+          "branch": "fix/chain-cell-rendezvous-readiness-20261103-gpt6"
+        },
+        {
+          "branch": "fix/chain-cell-retained-closure-20261108-2b54"
+        },
+        {
+          "branch": "fix/chain-cell-storage-convergence-f2568-20261109"
+        },
+        {
+          "branch": "fix/chain-cell-storage-discovery-f2568-20261108"
+        },
+        {
+          "branch": "fix/chain-cell-storage-four-gates-20261111-2bfb"
+        },
+        {
+          "branch": "fix/chain-cell-storage-network-v3-20261108"
+        },
+        {
+          "branch": "fix/chain-cell-storage-validation-349a"
+        },
+        {
+          "branch": "fix/chain-ci-canonical-checkout-origin-20261030"
+        },
+        {
+          "branch": "fix/chain-ci-empty-readme-contract-20261030"
+        },
+        {
+          "branch": "fix/chain-ci-hardening-20261015"
+        },
+        {
+          "branch": "fix/chain-ci-identities-20261104"
+        },
+        {
+          "branch": "fix/chain-cleanup-snapshot-stop-order-20261029"
+        },
+        {
+          "branch": "fix/chain-clippy-growth-reservation"
+        },
+        {
+          "branch": "fix/chain-codeql-local-sarif-no-upload-20261107"
+        },
+        {
+          "branch": "fix/chain-control-domain-evidence-20261106"
+        },
+        {
+          "branch": "fix/chain-control-domain-join-20261108"
+        },
+        {
+          "branch": "fix/chain-controller-main-pair-20261024"
+        },
+        {
+          "branch": "fix/chain-controller-owner-candidate-20261024"
+        },
+        {
+          "branch": "fix/chain-cost-tail-transfer-20261109-0238"
+        },
+        {
+          "branch": "fix/chain-cpu-evidence-boundaries-20261006"
+        },
+        {
+          "branch": "fix/chain-cpu-observer-budget-20261108"
+        }
+      ],
+      "cursor": "MzAw"
+    },
+    {
+      "branches": [
+        {
+          "branch": "fix/chain-cpu-start-fifo-20261007"
+        },
+        {
+          "branch": "fix/chain-credit-envelope-20261108-f7e62"
+        },
+        {
+          "branch": "fix/chain-cross-repo-gates-20261106-5edd"
+        },
+        {
+          "branch": "fix/chain-crossrepo-evidence-e0c10"
+        },
+        {
+          "branch": "fix/chain-crossrepo-p0-e0c10"
+        },
+        {
+          "branch": "fix/chain-daa-monotone-witness-20261111-7f73"
+        },
+        {
+          "branch": "fix/chain-daa-resource-competition-20261112-600e"
+        },
+        {
+          "branch": "fix/chain-decode-pages-20261105"
+        },
+        {
+          "branch": "fix/chain-demand-evaluation-20261107"
+        },
+        {
+          "branch": "fix/chain-directed-owner-convergence-20261006"
+        },
+        {
+          "branch": "fix/chain-diverse60-neural-profile-20261029"
+        },
+        {
+          "branch": "fix/chain-diverse-inventory-20261029"
+        },
+        {
+          "branch": "fix/chain-durable-schema-parser-mode-20261107"
+        },
+        {
+          "branch": "fix/chain-dynamic-input-bound-20261110-685a"
+        },
+        {
+          "branch": "fix/chain-economic-security-20261015"
+        },
+        {
+          "branch": "fix/chain-effects-recovery-20261108"
+        },
+        {
+          "branch": "fix/chain-evaluation-native-host-20261104"
+        },
+        {
+          "branch": "fix/chain-evaluation-phase-observer-20261104"
+        },
+        {
+          "branch": "fix/chain-exit-subset-observer-20261022"
+        },
+        {
+          "branch": "fix/chain-exit-worker-count-boundary-20261029"
+        },
+        {
+          "branch": "fix/chain-experimental-activation-20261014"
+        },
+        {
+          "branch": "fix/chain-final-page-nesting-20261111-48c53a"
+        },
+        {
+          "branch": "fix/chain-finality-byte-binding-20261014"
+        },
+        {
+          "branch": "fix/chain-finality-profile-20261014"
+        },
+        {
+          "branch": "fix/chain-finite-rate-boundary-20261028"
+        },
+        {
+          "branch": "fix/chain-five-track-source-fence-20261011"
+        },
+        {
+          "branch": "fix/chain-fixed-probability-contract-20261108-63b38"
+        },
+        {
+          "branch": "fix/chain-four-propositions-20261109-9bf819"
+        },
+        {
+          "branch": "fix/chain-four-qrom-composed-20261110"
+        },
+        {
+          "branch": "fix/chain-fresh-work-floor-20261107"
+        },
+        {
+          "branch": "fix/chain-from-zero-execution-owner-20261006"
+        },
+        {
+          "branch": "fix/chain-from-zero-native-20261006-round7"
+        },
+        {
+          "branch": "fix/chain-from-zero-native-20261006"
+        },
+        {
+          "branch": "fix/chain-from-zero-native-closure-20261006"
+        },
+        {
+          "branch": "fix/chain-from-zero-service-cost-20261006"
+        },
+        {
+          "branch": "fix/chain-fuzz-lock-20261105"
+        },
+        {
+          "branch": "fix/chain-fuzz-locked-graph-20261103-gpt6"
+        },
+        {
+          "branch": "fix/chain-growth-packet-copies-20261105"
+        },
+        {
+          "branch": "fix/chain-growth-parse-20261105"
+        },
+        {
+          "branch": "fix/chain-hepta-accounting-convergence-20261109-d9bb"
+        },
+        {
+          "branch": "fix/chain-hepta-closure-candidate-20261109-481716"
+        },
+        {
+          "branch": "fix/chain-hepta-fixed-pressure-20261103"
+        },
+        {
+          "branch": "fix/chain-hepta-preservation-ac851-20261108"
+        },
+        {
+          "branch": "fix/chain-hepta-task-bound-objective-20261027"
+        },
+        {
+          "branch": "fix/chain-hex-decode-20261104"
+        },
+        {
+          "branch": "fix/chain-history-first-startup-20261028"
+        },
+        {
+          "branch": "fix/chain-history-host-20261104"
+        },
+        {
+          "branch": "fix/chain-history-journal-operation-20261027"
+        },
+        {
+          "branch": "fix/chain-history-m06-detach-20261027"
+        },
+        {
+          "branch": "fix/chain-history-publication-native-20261028"
+        },
+        {
+          "branch": "fix/chain-history-replay-20261105"
+        },
+        {
+          "branch": "fix/chain-history-startup-seal-20261028"
+        },
+        {
+          "branch": "fix/chain-init-marker-read-20261105"
+        },
+        {
+          "branch": "fix/chain-integrated-main-pair-20261025"
+        },
+        {
+          "branch": "fix/chain-joint-consensus-daa-20261108"
+        },
+        {
+          "branch": "fix/chain-joint-daa-qualification-20261109-b6ec"
+        },
+        {
+          "branch": "fix/chain-joint-production-tail-20261110-8e76"
+        },
+        {
+          "branch": "fix/chain-joint-v12-20261105-93bfc-frozen"
+        },
+        {
+          "branch": "fix/chain-joint-v12-c2-20261105-93bfc-frozen"
+        },
+        {
+          "branch": "fix/chain-joint-v12-c3-20261105-93bfc-frozen"
+        },
+        {
+          "branch": "fix/chain-joint-v12-c4-20261105-93bfc-frozen"
+        },
+        {
+          "branch": "fix/chain-learning-business-closure-20261109-1a404f66"
+        },
+        {
+          "branch": "fix/chain-learning-query-exit-20261109-70ae"
+        },
+        {
+          "branch": "fix/chain-legacy-reorg-cost-20261104"
+        },
+        {
+          "branch": "fix/chain-legal-work-fairness-20261107"
+        },
+        {
+          "branch": "fix/chain-lifecycle-cost-game-20261108"
+        },
+        {
+          "branch": "fix/chain-lift-pages-20261105"
+        },
+        {
+          "branch": "fix/chain-loader-closure-20261108"
+        },
+        {
+          "branch": "fix/chain-m10-durable-unpredictable-salt-20261014"
+        },
+        {
+          "branch": "fix/chain-main-pair-4c8c2ee-20261026"
+        },
+        {
+          "branch": "fix/chain-main-pair-53fb654-20261026"
+        },
+        {
+          "branch": "fix/chain-main-pair-189c0ae-20261023"
+        },
+        {
+          "branch": "fix/chain-main-pair-873d5cb-20261023"
+        },
+        {
+          "branch": "fix/chain-main-pair-a60f1b4-20261023"
+        },
+        {
+          "branch": "fix/chain-main-pair-app-shards-20261024"
+        },
+        {
+          "branch": "fix/chain-main-pair-catalog-20261023"
+        },
+        {
+          "branch": "fix/chain-main-pair-concurrent-20261024"
+        },
+        {
+          "branch": "fix/chain-main-pair-source-repair-20261024"
+        },
+        {
+          "branch": "fix/chain-main-pair-tcl2-20261023"
+        },
+        {
+          "branch": "fix/chain-model-owner-hosted-once-20261105"
+        },
+        {
+          "branch": "fix/chain-model-package-pinned-read-20261007"
+        },
+        {
+          "branch": "fix/chain-model-runtime-diagnostic-20261027"
+        },
+        {
+          "branch": "fix/chain-native-apply-rejected-20261105"
+        },
+        {
+          "branch": "fix/chain-native-codeql-source-scan-20261106-gpt6"
+        },
+        {
+          "branch": "fix/chain-native-completion-20261108-70ae"
+        },
+        {
+          "branch": "fix/chain-native-convergence-20261029"
+        },
+        {
+          "branch": "fix/chain-native-demand-acceptance-20261107"
+        },
+        {
+          "branch": "fix/chain-native-full-verification-20261108"
+        },
+        {
+          "branch": "fix/chain-native-history-fixed-host-20261103-gpt6"
+        },
+        {
+          "branch": "fix/chain-native-profile-closure-20261107"
+        },
+        {
+          "branch": "fix/chain-native-sql-reuse-qualified-20261104"
+        },
+        {
+          "branch": "fix/chain-next-use-provenance-20261110-e1f236"
+        },
+        {
+          "branch": "fix/chain-node-full-evidence-20261105"
+        },
+        {
+          "branch": "fix/chain-obligation-lifecycle-20261005"
+        },
+        {
+          "branch": "fix/chain-observation-convergence-20261007"
+        },
+        {
+          "branch": "fix/chain-observed-neural-live-release-20261028"
+        },
+        {
+          "branch": "fix/chain-owned-validation-20261007"
+        },
+        {
+          "branch": "fix/chain-owner-boundaries-20261007"
+        },
+        {
+          "branch": "fix/chain-owner-hotpath-20261006"
+        },
+        {
+          "branch": "fix/chain-owner-hotpath-delivery-20261006"
+        }
+      ],
+      "cursor": "NDAw"
+    },
+    {
+      "branches": [
+        {
+          "branch": "fix/chain-owner-hotpath-review-20261006"
+        },
+        {
+          "branch": "fix/chain-owner-packet-reads-20261105"
+        },
+        {
+          "branch": "fix/chain-owner-transfer-20261007"
+        },
+        {
+          "branch": "fix/chain-p0-ci-drift-20261015"
+        },
+        {
+          "branch": "fix/chain-p0-mixed-campaign-receipts-20261015"
+        },
+        {
+          "branch": "fix/chain-p0-security-liveness-convergence-20261016"
+        },
+        {
+          "branch": "fix/chain-p0-unified-qualification-20261108-99b5"
+        },
+        {
+          "branch": "fix/chain-p3-mmcs-binding-20261108-dded"
+        },
+        {
+          "branch": "fix/chain-p3-shared-profile-20261108-3acf89"
+        },
+        {
+          "branch": "fix/chain-parent-binding-20261017"
+        },
+        {
+          "branch": "fix/chain-pn-blocker-continuation-20261101"
+        },
+        {
+          "branch": "fix/chain-pn-convergence-20261101"
+        },
+        {
+          "branch": "fix/chain-pon-capacity-progress-20261004"
+        },
+        {
+          "branch": "fix/chain-pon-contract-authority-20260929"
+        },
+        {
+          "branch": "fix/chain-pon-false-trace-source-inventory-20261101"
+        },
+        {
+          "branch": "fix/chain-pon-five-claims-evidence-20261111-d6cb"
+        },
+        {
+          "branch": "fix/chain-pon-followthrough-20261110-685a"
+        },
+        {
+          "branch": "fix/chain-pon-history-correct-product-evidence-20261101"
+        },
+        {
+          "branch": "fix/chain-pon-joint-resource-contract-20261109-58fd59"
+        },
+        {
+          "branch": "fix/chain-pon-joint-resource-evidence-20261109-58fd59"
+        },
+        {
+          "branch": "fix/chain-pon-joint-state-risk-ledger-20261107"
+        },
+        {
+          "branch": "fix/chain-pon-next-cost-20261101"
+        },
+        {
+          "branch": "fix/chain-pon-priority-refactor-20261004"
+        },
+        {
+          "branch": "fix/chain-pon-recent-store-fingerprint-20261017"
+        },
+        {
+          "branch": "fix/chain-pon-restricted-owner-pool-v2"
+        },
+        {
+          "branch": "fix/chain-pon-verification-cost-20261028"
+        },
+        {
+          "branch": "fix/chain-pon-w1-from-zero-cost-20261005"
+        },
+        {
+          "branch": "fix/chain-pon-work-safety-20261103"
+        },
+        {
+          "branch": "fix/chain-pon-work-scale-contract-20261107"
+        },
+        {
+          "branch": "fix/chain-pon-work-security-20261101"
+        },
+        {
+          "branch": "fix/chain-pq128-lifetime-budget-20261108"
+        },
+        {
+          "branch": "fix/chain-pq-account-transport-20261106-47df"
+        },
+        {
+          "branch": "fix/chain-pq-active-tip-test-query-20261031"
+        },
+        {
+          "branch": "fix/chain-pq-archive-pq-profile-no-classical-write-20261031"
+        },
+        {
+          "branch": "fix/chain-pq-audit-walk-failclosed-20261031"
+        },
+        {
+          "branch": "fix/chain-pq-authority-effects-20261108-43ede"
+        },
+        {
+          "branch": "fix/chain-pq-authority-preflight-20261108-9d315"
+        },
+        {
+          "branch": "fix/chain-pq-cell-readiness-rustfmt-20261107"
+        },
+        {
+          "branch": "fix/chain-pq-cell-readiness-rustfmt-source-pin-20261107"
+        },
+        {
+          "branch": "fix/chain-pq-cell-readiness-source-pins-20261107"
+        },
+        {
+          "branch": "fix/chain-pq-cell-rendezvous-readiness-on-768-20261107"
+        },
+        {
+          "branch": "fix/chain-pq-charge-before-payload-binding-20261031"
+        },
+        {
+          "branch": "fix/chain-pq-ci-clippy-borrow-20261031"
+        },
+        {
+          "branch": "fix/chain-pq-claim-root-symlink-refusal-20261031"
+        },
+        {
+          "branch": "fix/chain-pq-claimed-nonce-20261029"
+        },
+        {
+          "branch": "fix/chain-pq-client-loopback-only-20261031"
+        },
+        {
+          "branch": "fix/chain-pq-composition-20261108-663507"
+        },
+        {
+          "branch": "fix/chain-pq-discovery-test-clock-order-20261031"
+        },
+        {
+          "branch": "fix/chain-pq-distributed-source-inventory-20261031"
+        },
+        {
+          "branch": "fix/chain-pq-durable-outbound-20261106"
+        },
+        {
+          "branch": "fix/chain-pq-durable-schema-evidence-v2-v3-20261031"
+        },
+        {
+          "branch": "fix/chain-pq-execution-contract-callable-20261031"
+        },
+        {
+          "branch": "fix/chain-pq-execution-request-clippy-20261031"
+        },
+        {
+          "branch": "fix/chain-pq-fixture-v5-relative-path-20261107"
+        },
+        {
+          "branch": "fix/chain-pq-format-copy-child-module-20261031"
+        },
+        {
+          "branch": "fix/chain-pq-format-copy-relative-module-20261107"
+        },
+        {
+          "branch": "fix/chain-pq-hepta-handoff-v2-20261031"
+        },
+        {
+          "branch": "fix/chain-pq-hepta-unique-roster-keys-20261031"
+        },
+        {
+          "branch": "fix/chain-pq-history-stage-rustfmt-20261031"
+        },
+        {
+          "branch": "fix/chain-pq-integrated-20261105-df8969"
+        },
+        {
+          "branch": "fix/chain-pq-integrated-closure-20261103"
+        },
+        {
+          "branch": "fix/chain-pq-lifetime-composition-20261109-678905"
+        },
+        {
+          "branch": "fix/chain-pq-long-history-fixed-parent-ci-20261031"
+        },
+        {
+          "branch": "fix/chain-pq-native-ci-regressions-20261031"
+        },
+        {
+          "branch": "fix/chain-pq-native-clippy-atomic-borrow-20261031"
+        },
+        {
+          "branch": "fix/chain-pq-native-evidence-20261101"
+        },
+        {
+          "branch": "fix/chain-pq-observation-clippy-exact-20261104-gpt6"
+        },
+        {
+          "branch": "fix/chain-pq-observation-fnonce-followup-20261104-gpt6"
+        },
+        {
+          "branch": "fix/chain-pq-pnq2-err-expect-clippy-20261031"
+        },
+        {
+          "branch": "fix/chain-pq-pnq2-overlong-test-exact-rustfmt-20261031"
+        },
+        {
+          "branch": "fix/chain-pq-pnq2-presign-payload-limit-20261031"
+        },
+        {
+          "branch": "fix/chain-pq-presign-sequence-limit-20261031"
+        },
+        {
+          "branch": "fix/chain-pq-preverify-lifetime-bounded-20261031"
+        },
+        {
+          "branch": "fix/chain-pq-public-v2-client-classical-downgrade-20261031"
+        },
+        {
+          "branch": "fix/chain-pq-public-v3-client-classical-downgrade-20261031"
+        },
+        {
+          "branch": "fix/chain-pq-quota-closure-20261028"
+        },
+        {
+          "branch": "fix/chain-pq-recursive-source-coverage-20261027"
+        },
+        {
+          "branch": "fix/chain-pq-reject-nonfinite-security-json-20261031"
+        },
+        {
+          "branch": "fix/chain-pq-retain-dag-failure-receipt-20261102"
+        },
+        {
+          "branch": "fix/chain-pq-roster-52-current-head-20261106-gpt6"
+        },
+        {
+          "branch": "fix/chain-pq-roster-harness-20261107-6f8b"
+        },
+        {
+          "branch": "fix/chain-pq-rust-gates-exec-request-clock-20261031"
+        },
+        {
+          "branch": "fix/chain-pq-send-expiry-recheck-20261031"
+        },
+        {
+          "branch": "fix/chain-pq-seven-layer-composition-20261108-21690"
+        },
+        {
+          "branch": "fix/chain-pq-shared-npq5-test-fixture-clippy-20261031"
+        },
+        {
+          "branch": "fix/chain-pq-shared-test-fixture-v5-20261031"
+        },
+        {
+          "branch": "fix/chain-pq-shared-v5-fixture-clippy-20261031"
+        },
+        {
+          "branch": "fix/chain-pq-signature-20261109"
+        },
+        {
+          "branch": "fix/chain-pq-source-pin-sqlite-requalification-20261107"
+        },
+        {
+          "branch": "fix/chain-pq-startup-fixture-consensus-authority-window-20261031"
+        },
+        {
+          "branch": "fix/chain-pq-startup-fixture-endian-active-tip-20261107"
+        },
+        {
+          "branch": "fix/chain-pq-system-continuation-20261101"
+        },
+        {
+          "branch": "fix/chain-pq-system-roster-52-20261106-gpt6"
+        },
+        {
+          "branch": "fix/chain-pq-task-v5-rustfmt-exact-20261107"
+        },
+        {
+          "branch": "fix/chain-pq-task-v5-shared-fixture-rustfmt-20261031"
+        },
+        {
+          "branch": "fix/chain-pq-transport-custody-gates-20261106-a864cf"
+        },
+        {
+          "branch": "fix/chain-priority-native-acceptance-20261005"
+        },
+        {
+          "branch": "fix/chain-problem-one-20261108-6050776"
+        },
+        {
+          "branch": "fix/chain-pure-history-lifeline-binding-20261029"
+        },
+        {
+          "branch": "fix/chain-pure-history-source-pin-20261029"
+        }
+      ],
+      "cursor": "NTAw"
+    },
+    {
+      "branches": [
+        {
+          "branch": "fix/chain-pure-pon-admission-daa-20261028"
+        },
+        {
+          "branch": "fix/chain-pure-pon-history-20261027"
+        },
+        {
+          "branch": "fix/chain-pure-pon-pq-hardening-20261027"
+        },
+        {
+          "branch": "fix/chain-qrom-closure-current-20261110-a1"
+        },
+        {
+          "branch": "fix/chain-quantum-closure-api-20261107-c9b4"
+        },
+        {
+          "branch": "fix/chain-quantum-competing-review-20261107-c9b4"
+        },
+        {
+          "branch": "fix/chain-quantum-cost-closure-20261106-c201"
+        },
+        {
+          "branch": "fix/chain-quantum-daa-20261111-qdaa"
+        },
+        {
+          "branch": "fix/chain-quantum-daa-followthrough-20261106-47c9"
+        },
+        {
+          "branch": "fix/chain-quantum-proof-owner-20261106-28de"
+        },
+        {
+          "branch": "fix/chain-quantum-tail-preservation-20261029"
+        },
+        {
+          "branch": "fix/chain-readback-schema-20261105"
+        },
+        {
+          "branch": "fix/chain-recent-batch-exact-source-pin-20261107-22ff7a"
+        },
+        {
+          "branch": "fix/chain-recent-roster-97-20261106-gpt6"
+        },
+        {
+          "branch": "fix/chain-recent-store-pin-20261104-gpt6"
+        },
+        {
+          "branch": "fix/chain-rejection-cost-v2-20261104"
+        },
+        {
+          "branch": "fix/chain-rejection-resource-owner-20261108-956149"
+        },
+        {
+          "branch": "fix/chain-report-bounded-read-20261105"
+        },
+        {
+          "branch": "fix/chain-reservation-settlement"
+        },
+        {
+          "branch": "fix/chain-retained-failure-readback-20261104"
+        },
+        {
+          "branch": "fix/chain-retained-meter-refill-20261007"
+        },
+        {
+          "branch": "fix/chain-retained-owner-candidate-20261024"
+        },
+        {
+          "branch": "fix/chain-retained-owner-main-pair-20261024"
+        },
+        {
+          "branch": "fix/chain-retirement-preparation-candidate-20261024"
+        },
+        {
+          "branch": "fix/chain-retirement-preparation-main-pair-20261024"
+        },
+        {
+          "branch": "fix/chain-root-effects-v4-20261109-e12ecc"
+        },
+        {
+          "branch": "fix/chain-root-journal-cleanup-ab60-20261109"
+        },
+        {
+          "branch": "fix/chain-root-owner-v3-20261109-5faaca"
+        },
+        {
+          "branch": "fix/chain-root-recovery-native-20261108-5faaca"
+        },
+        {
+          "branch": "fix/chain-rss-mm-detached-v5-20261027"
+        },
+        {
+          "branch": "fix/chain-runtime-marker-metadata-compat-20261106"
+        },
+        {
+          "branch": "fix/chain-rustsec-inputs-20261104"
+        },
+        {
+          "branch": "fix/chain-security-ci-source-lock-20261110"
+        },
+        {
+          "branch": "fix/chain-seven-gates-followup-20261108-3a20"
+        },
+        {
+          "branch": "fix/chain-seven-source-convergence-20261109-9fe3"
+        },
+        {
+          "branch": "fix/chain-six-axis-performance-20261103"
+        },
+        {
+          "branch": "fix/chain-six-experiments-20261105"
+        },
+        {
+          "branch": "fix/chain-six-full-d9fb-20261108"
+        },
+        {
+          "branch": "fix/chain-six-line-continuation-20261007"
+        },
+        {
+          "branch": "fix/chain-six-runtime-5176-20261108"
+        },
+        {
+          "branch": "fix/chain-six-workstream-ci-convergence-20261008"
+        },
+        {
+          "branch": "fix/chain-six-workstream-convergence-20261008-r2"
+        },
+        {
+          "branch": "fix/chain-six-workstream-convergence-20261008"
+        },
+        {
+          "branch": "fix/chain-source-aggregation-20261112-6478"
+        },
+        {
+          "branch": "fix/chain-sparse-root-quadrant-20261014"
+        },
+        {
+          "branch": "fix/chain-sqlite-advisory-20261110"
+        },
+        {
+          "branch": "fix/chain-sqlite-loader-observed-cargo-paths-20261107"
+        },
+        {
+          "branch": "fix/chain-stark-domain-sampler-recovered-20261110-a1"
+        },
+        {
+          "branch": "fix/chain-stark-qrom-integrated-20261110-a1"
+        },
+        {
+          "branch": "fix/chain-state-difference-from-zero-20261006"
+        },
+        {
+          "branch": "fix/chain-stored-packet-bounds-20261105"
+        },
+        {
+          "branch": "fix/chain-streaming-delta-root-20261006"
+        },
+        {
+          "branch": "fix/chain-supply-audit-20261105"
+        },
+        {
+          "branch": "fix/chain-sustained-owner-convergence-20261006"
+        },
+        {
+          "branch": "fix/chain-system-safety-20261030"
+        },
+        {
+          "branch": "fix/chain-system-security-20261111-4aa779"
+        },
+        {
+          "branch": "fix/chain-system-security-ab60-20261109"
+        },
+        {
+          "branch": "fix/chain-system-service-20261101"
+        },
+        {
+          "branch": "fix/chain-tcl4-integration-20261024"
+        },
+        {
+          "branch": "fix/chain-terminal-integrity-20261110-48c53a"
+        },
+        {
+          "branch": "fix/chain-throughput-architecture-20261108-d947"
+        },
+        {
+          "branch": "fix/chain-throughput-business-20261109-a0d4"
+        },
+        {
+          "branch": "fix/chain-throughput-engineering-20261108-86a09d93"
+        },
+        {
+          "branch": "fix/chain-throughput-evidence-20261108-d570"
+        },
+        {
+          "branch": "fix/chain-throughput-identity-20261109-48c53a"
+        },
+        {
+          "branch": "fix/chain-throughput-publish-20261106-1eed"
+        },
+        {
+          "branch": "fix/chain-throughput-six-axis-20261106-bf693"
+        },
+        {
+          "branch": "fix/chain-tls-endpoint-20261106-47615"
+        },
+        {
+          "branch": "fix/chain-tls-validation-20261106-47615"
+        },
+        {
+          "branch": "fix/chain-tx-adapter-timeout-20261018"
+        },
+        {
+          "branch": "fix/chain-w1-borrowed-product-20261006"
+        },
+        {
+          "branch": "fix/chain-w1-debt-native-recovery-20261017"
+        },
+        {
+          "branch": "fix/chain-w1-exact-native-rosters-20261110"
+        },
+        {
+          "branch": "fix/chain-w1-exact-release-env-scope-20261101"
+        },
+        {
+          "branch": "fix/chain-w1-fri-algebra-20261108"
+        },
+        {
+          "branch": "fix/chain-w1-frozen-inventory-20261028"
+        },
+        {
+          "branch": "fix/chain-w1-frozen-witness-integration-20261028"
+        },
+        {
+          "branch": "fix/chain-w1-history-confirmation-20261106-a66f"
+        },
+        {
+          "branch": "fix/chain-w1-ingress-integrated-20261107"
+        },
+        {
+          "branch": "fix/chain-w1-invalid-product-tcp-20261017"
+        },
+        {
+          "branch": "fix/chain-w1-native-budget-20261006"
+        },
+        {
+          "branch": "fix/chain-w1-native-control-inputs-20261103-gpt6"
+        },
+        {
+          "branch": "fix/chain-w1-native-failure-classification-20261106"
+        },
+        {
+          "branch": "fix/chain-w1-paired-cost-accounting-20261005"
+        },
+        {
+          "branch": "fix/chain-w1-postwin-runtime-recovery-20261107"
+        },
+        {
+          "branch": "fix/chain-w1-preprocess-diag-20261110-1017-035f"
+        },
+        {
+          "branch": "fix/chain-w1-proof-prerequisites-20261105"
+        },
+        {
+          "branch": "fix/chain-w1-proof-publication-latency-20261107"
+        },
+        {
+          "branch": "fix/chain-w1-proof-validation-20261106"
+        },
+        {
+          "branch": "fix/chain-w1-qrom-implementation-map-20261107"
+        },
+        {
+          "branch": "fix/chain-w1-qrom-proof-chain-20261108"
+        },
+        {
+          "branch": "fix/chain-w1-receiver-cost-20261109"
+        },
+        {
+          "branch": "fix/chain-w1-receiver-dft-20261110-035f-ai395"
+        },
+        {
+          "branch": "fix/chain-w1-receiver-layout-bound-20261031"
+        },
+        {
+          "branch": "fix/chain-w1-refusal-cost-20261106-6677"
+        },
+        {
+          "branch": "fix/chain-w1-rejection-admission-20261106-47e98"
+        },
+        {
+          "branch": "fix/chain-w1-relation-accounting-20261109"
+        },
+        {
+          "branch": "fix/chain-w1-runtime-integrated-20261107"
+        },
+        {
+          "branch": "fix/chain-w1-stage-diag-20261110-1138-035f"
+        },
+        {
+          "branch": "fix/chain-w1-stark-route-contracts-20261109-7e8b"
+        }
+      ],
+      "cursor": "NjAw"
+    },
+    {
+      "branches": [
+        {
+          "branch": "fix/chain-w1-stark-selected-20261107-89f4dd"
+        },
+        {
+          "branch": "fix/chain-w1-v2-proof-ci-20261106"
+        },
+        {
+          "branch": "fix/chain-work-collector-owner-20261011"
+        },
+        {
+          "branch": "fix/chain-work-knowledge-boundary-20261106-51e4"
+        },
+        {
+          "branch": "fix/chain-work-time-contract-20261108"
+        },
+        {
+          "branch": "fix/chain-work-value-20261105"
+        },
+        {
+          "branch": "fix/checkpoint-live-socket-lease-guard-20261111-pqroot"
+        },
+        {
+          "branch": "fix/ci-owner-cleared-readme-origin-20261103-gpt6"
+        },
+        {
+          "branch": "fix/pcp2-combined-fetch-server-expiry-20261030"
+        },
+        {
+          "branch": "fix/pcp2-consolidated-expiry-581-20261030"
+        },
+        {
+          "branch": "fix/pcp2-fetch-expiry-anchor-571-20261030"
+        },
+        {
+          "branch": "fix/pcp2-server-expiry-latch-574-20261030"
+        },
+        {
+          "branch": "fix/pcp2-shared-fetch-expiry-count-577-20261030"
+        },
+        {
+          "branch": "fix/pon-architecture-boundaries-20261008"
+        },
+        {
+          "branch": "fix/pon-authenticated-sql-reuse-20261010"
+        },
+        {
+          "branch": "fix/pon-bounded-history-fields-20261011"
+        },
+        {
+          "branch": "fix/pon-ci-owned-group-exit-20261012"
+        },
+        {
+          "branch": "fix/pon-current-source-fmt-gate-evidence-20261008"
+        },
+        {
+          "branch": "fix/pon-daa-equal-work-heal-20261025"
+        },
+        {
+          "branch": "fix/pon-five-axis-confirmation-ownership-20261010"
+        },
+        {
+          "branch": "fix/pon-five-axis-pipeline-delivery-20261010"
+        },
+        {
+          "branch": "fix/pon-five-axis-pipeline-native-20261010"
+        },
+        {
+          "branch": "fix/pon-five-axis-pipeline-serialization-20261010"
+        },
+        {
+          "branch": "fix/pon-five-axis-singleton-delivery-20261011"
+        },
+        {
+          "branch": "fix/pon-five-priority-closure-20261009"
+        },
+        {
+          "branch": "fix/pon-five-track-baseline-20261012"
+        },
+        {
+          "branch": "fix/pon-five-track-convergence-20261012-r2"
+        },
+        {
+          "branch": "fix/pon-five-track-darwin-convergence-20261012"
+        },
+        {
+          "branch": "fix/pon-five-track-observer-fixture-20261012-r2"
+        },
+        {
+          "branch": "fix/pon-five-track-source-fence-20261011"
+        },
+        {
+          "branch": "fix/pon-growth-readback-fence-20261008"
+        },
+        {
+          "branch": "fix/pon-historical-cost-diagnostic-convergence-20261008"
+        },
+        {
+          "branch": "fix/pon-history-epoch-accounting-baseline-20261015"
+        },
+        {
+          "branch": "fix/pon-lease-daa-research-schema-fence-20261026"
+        },
+        {
+          "branch": "fix/pon-m10-flush-preview-secret-20261016"
+        },
+        {
+          "branch": "fix/pon-m10-history-integrated-20261015"
+        },
+        {
+          "branch": "fix/pon-m10-manual-private-submit-20261015"
+        },
+        {
+          "branch": "fix/pon-m10-private-salt-stdio-20261016"
+        },
+        {
+          "branch": "fix/pon-native-campaign-diagnostics-20261110"
+        },
+        {
+          "branch": "fix/pon-native-fixed-blob-bounds-20261010"
+        },
+        {
+          "branch": "fix/pon-native-fixed-blob-delivery-20261010"
+        },
+        {
+          "branch": "fix/pon-nullable-blob-integrity-20261010"
+        },
+        {
+          "branch": "fix/pon-original-workspace-25-on-new-head-20261106-gpt6"
+        },
+        {
+          "branch": "fix/pon-original-workspace-postwrite-25-20261106-gpt6"
+        },
+        {
+          "branch": "fix/pon-owned-cpu-extension-20261011"
+        },
+        {
+          "branch": "fix/pon-owned-group-cleanup-945895e-20261012"
+        },
+        {
+          "branch": "fix/pon-pressure-window-native-20261010"
+        },
+        {
+          "branch": "fix/pon-priority-acceptance-20261008"
+        },
+        {
+          "branch": "fix/pon-priority-consumer-context-20261008"
+        },
+        {
+          "branch": "fix/pon-q4-outbox-semantic-cold-audit-20261026"
+        },
+        {
+          "branch": "fix/pon-q4-outbox-snapshot-status-20261026"
+        },
+        {
+          "branch": "fix/pon-quarter-core-source-digest-20261110"
+        },
+        {
+          "branch": "fix/pon-receipt-input-owner-20261010"
+        },
+        {
+          "branch": "fix/pon-reserve-suite-count-20261011"
+        },
+        {
+          "branch": "fix/pon-seven-chain-observation-converged-20261008"
+        },
+        {
+          "branch": "fix/pon-two-native-rosters-exact-base-20261106-gpt6"
+        },
+        {
+          "branch": "fix/pon-unified-m10-history-source-20261015"
+        },
+        {
+          "branch": "fix/pon-w1-from-zero-cost-20261005"
+        },
+        {
+          "branch": "fix/pon-work-admission-cooffered-service-20261008"
+        },
+        {
+          "branch": "fix/pon-worker-cli-shell-argument-20261015"
+        },
+        {
+          "branch": "fix/pon-worker-procfs-reaper-retry-20261016"
+        },
+        {
+          "branch": "fix/pq-cell-provider-framed-probe-20261030"
+        },
+        {
+          "branch": "fix/pq-cell-provider-pinned-v2-20261030"
+        },
+        {
+          "branch": "fix/pq-cell-provider-readonly-rendezvous-20261030"
+        },
+        {
+          "branch": "fix/pq-cell-provider-reply-pcp2-20261030"
+        },
+        {
+          "branch": "fix/pq-cell-provider-v2-pinned-20261030"
+        },
+        {
+          "branch": "fix/pq-claim-exact-bools-560-20261030"
+        },
+        {
+          "branch": "fix/pq-claim-required-ci-contract-20261030"
+        },
+        {
+          "branch": "fix/pq-consensus-scope-freeze-20261030"
+        },
+        {
+          "branch": "fix/pq-external-rollback-witness-v1-20261030"
+        },
+        {
+          "branch": "fix/pq-hepta-context-postverify-20261030"
+        },
+        {
+          "branch": "fix/pq-hepta-handoff-mldsa-v2-20261030"
+        },
+        {
+          "branch": "fix/pq-m09-offpolicy-preflight-20261030"
+        },
+        {
+          "branch": "fix/pq-m09-pcp2-authenticated-fetch-20261030"
+        },
+        {
+          "branch": "fix/pq-m09-pcp2-preflight-authenticated-fetch-20261030"
+        },
+        {
+          "branch": "fix/pq-m09-pcp2-verified-boundary-20261030"
+        },
+        {
+          "branch": "fix/pq-mainline-consensus-research-only-20261030"
+        },
+        {
+          "branch": "fix/pq-pcp2-batch-cheap-replay-expiry-preflight-20261030"
+        },
+        {
+          "branch": "fix/pq-pcp2-one-budget-discovery-fetch-20261030"
+        },
+        {
+          "branch": "fix/pq-pcp2-pinned-roster-integrity-before-tcp-20261030"
+        },
+        {
+          "branch": "fix/pq-pcp2-postverify-lease-freshness-20261030"
+        },
+        {
+          "branch": "fix/pq-pcp2-publish-deadline-result-20261030"
+        },
+        {
+          "branch": "fix/pq-pcp2-roster-preflight-verified-cost-20261030"
+        },
+        {
+          "branch": "fix/pq-production-claim-guard-20261030"
+        },
+        {
+          "branch": "fix/pq-recovery-postverify-trusted-clock-20261030"
+        },
+        {
+          "branch": "fix/pq-recovery-quorum-batch-preflight-20261030"
+        },
+        {
+          "branch": "fix/pq-recovery-quorum-failclosed-20261030"
+        },
+        {
+          "branch": "fix/pq-recovery-witness-expiry-exclusive-20261030"
+        },
+        {
+          "branch": "fix/pq-relay-cheap-replay-preflight-20261030"
+        },
+        {
+          "branch": "fix/pq-relay-mldsa65-wire-preflight-20261030"
+        },
+        {
+          "branch": "fix/pq-relay-postverify-clock-freshness-20261030"
+        },
+        {
+          "branch": "fix/pq-relay-replay-before-payload-digest-20261030"
+        },
+        {
+          "branch": "fix/pq-required-controls-52-20261106-gpt6"
+        },
+        {
+          "branch": "fix/pq-root-877-inventory-source-pin-20261110"
+        },
+        {
+          "branch": "fix/pq-root-878-recovery-source-pin-20261110"
+        },
+        {
+          "branch": "fix/pq-root-908-native-inventory-20261111-gpt6-1415"
+        },
+        {
+          "branch": "fix/pq-root-930-pq-system-source-pin-20261112-r11"
+        },
+        {
+          "branch": "fix/pq-root-copied-lease-probe-nonconsuming-20261112-r11"
+        },
+        {
+          "branch": "fix/pq-root-copied-lease-required-ci-20261112-r11"
+        },
+        {
+          "branch": "fix/pq-root-hash-use-reviewed-source-20261111-r11"
+        }
+      ],
+      "cursor": "NzAw"
+    },
+    {
+      "branches": [
+        {
+          "branch": "fix/pq-root-lifetime-native-inventory-20261110-f7be5b9"
+        },
+        {
+          "branch": "fix/pq-root-register-repin-881-20261110"
+        },
+        {
+          "branch": "fix/pq-root-reviewed-source-snapshot-20261111-r11"
+        },
+        {
+          "branch": "fix/pq-root-v4-floor-nine-test-roster-20261110"
+        },
+        {
+          "branch": "fix/pq-source-pin-sqlite-loader-20261107"
+        },
+        {
+          "branch": "fix/pq-system-ci-job-source-pin-20261104"
+        },
+        {
+          "branch": "fix/pqroot-proof-descriptor-bind-20261111-r13"
+        },
+        {
+          "branch": "fix/w1-staged-observer-budget-test-20261107"
+        },
+        {
+          "branch": "integration/pon-architecture-convergence-20261011"
+        },
+        {
+          "branch": "integration/pon-cached-live-owner-20261010"
+        },
+        {
+          "branch": "integration/pon-five-axis-continuation-20261011"
+        },
+        {
+          "branch": "integration/pon-five-axis-convergence-20261010"
+        },
+        {
+          "branch": "integration/pon-five-boundaries-20261011"
+        },
+        {
+          "branch": "integration/pon-five-exits-native-20261009"
+        },
+        {
+          "branch": "integration/pon-five-track-qualification-20261011"
+        },
+        {
+          "branch": "integration/pon-owner-receipts-20261010"
+        },
+        {
+          "branch": "integration/pon-parent-and-owned-exit-20261012"
+        },
+        {
+          "branch": "main"
+        },
+        {
+          "branch": "maintenance/actions-storage-reclaim-20261022"
+        },
+        {
+          "branch": "ops/github-storage-audit-20261022"
+        },
+        {
+          "branch": "ops/recover-qian-qi-20260925"
+        },
+        {
+          "branch": "perf/pon-architecture-batched-confirmation-20261011"
+        },
+        {
+          "branch": "perf/pon-authenticated-sql-reuse-20261009"
+        },
+        {
+          "branch": "perf/pon-branch-encoding-20261009"
+        },
+        {
+          "branch": "perf/pon-branch-encoding-stage-20261009"
+        },
+        {
+          "branch": "perf/pon-canonical-branch-kernel-20261011"
+        },
+        {
+          "branch": "perf/pon-complete-state-root-20261011"
+        },
+        {
+          "branch": "perf/pon-exact-work-division-20261011"
+        },
+        {
+          "branch": "perf/pon-immutable-empty-tree-20261011"
+        },
+        {
+          "branch": "perf/pon-native-bounded-snapshots-20261009"
+        },
+        {
+          "branch": "perf/pon-recent-header-batching-20261009"
+        },
+        {
+          "branch": "perf/pon-v3-native-test-node-opt-20261016"
+        },
+        {
+          "branch": "qualification/chain-owner-056303b5-20261104-gpt6"
+        },
+        {
+          "branch": "qualification/chain-owner-be0d5f97-20261104-gpt6"
+        },
+        {
+          "branch": "recovery/chain-pq-canonical-cell-x230-20261111-0354"
+        },
+        {
+          "branch": "recovery/chain-pq-exact-inputs-x230-20261111"
+        },
+        {
+          "branch": "recovery/chain-pq-x230-original-three-tests-hold-20261111-0900"
+        },
+        {
+          "branch": "recovery/git-bundle-source-20261103"
+        },
+        {
+          "branch": "recovery/host-source-20261103/a1f6cd341168"
+        },
+        {
+          "branch": "recovery/host-source-20261103/1c7e8ab7cd6a"
+        },
+        {
+          "branch": "recovery/host-source-20261103/47a7e36ee21b"
+        },
+        {
+          "branch": "recovery/library-bundle-bases-20261103/bd4be15a6684"
+        },
+        {
+          "branch": "recovery/library-bundle-bases-20261103/be8600b2ab0a"
+        },
+        {
+          "branch": "recovery/library-bundle-bases-20261103/e87f92fd66d9"
+        },
+        {
+          "branch": "recovery/library-bundle-bases-20261103/eee8db836b98"
+        },
+        {
+          "branch": "recovery/library-bundle-bases-20261103/fecfcf93a51a"
+        },
+        {
+          "branch": "recovery/library-bundle-bases-20261103/1b63ead7184d"
+        },
+        {
+          "branch": "recovery/library-bundle-bases-20261103/5a2549eef8e7"
+        },
+        {
+          "branch": "recovery/library-bundle-bases-20261103/5c25ed9eadbb"
+        },
+        {
+          "branch": "recovery/library-bundle-bases-20261103/228b156dc14e"
+        },
+        {
+          "branch": "recovery/library-bundle-bases-20261103/7837d7d65acb"
+        },
+        {
+          "branch": "recovery/library-offline-pq-20261103"
+        },
+        {
+          "branch": "recovery/library-pon-standalone-code-20261103"
+        },
+        {
+          "branch": "recovery/library-pqn4-w1-native-20261103-gpt6"
+        },
+        {
+          "branch": "recovery/library-w1-daa-20261103"
+        },
+        {
+          "branch": "refactor/pon-campaign-process-owner-20261011"
+        },
+        {
+          "branch": "repair/pon-history-cost-20261009"
+        },
+        {
+          "branch": "research/cell-three-domain-rs46-evidence-20261110"
+        },
+        {
+          "branch": "research/chain-binary-answer-observed-v2-20261028"
+        },
+        {
+          "branch": "research/chain-da-sequence-readback-20261104-gpt6"
+        },
+        {
+          "branch": "research/chain-native-pq-renewal-v5-20261028"
+        },
+        {
+          "branch": "research/chain-native-pq-tasks-v4-20261028"
+        },
+        {
+          "branch": "research/chain-original-cpu-readback-20261103-gpt6"
+        },
+        {
+          "branch": "research/chain-pon-original-four-second-replay-stages-20261031"
+        },
+        {
+          "branch": "research/chain-pq-external-rollback-witness-20261031"
+        },
+        {
+          "branch": "research/chain-pq-history-service-exit-evidence-20261101"
+        },
+        {
+          "branch": "research/chain-pq-large-parent-readback-error-evidence-20261031"
+        },
+        {
+          "branch": "research/chain-pq-original-large-parent-cpu-refusal-evidence-20261031"
+        },
+        {
+          "branch": "research/chain-quantum-daa-sensitivity-20261031"
+        },
+        {
+          "branch": "research/chain-w1-full-cost-profile-20261029"
+        },
+        {
+          "branch": "research/chain-w1-preflight-boundaries-20261029"
+        },
+        {
+          "branch": "research/chain-w1-receipt-loopback-20261029"
+        },
+        {
+          "branch": "research/chain-w1-transparent-succinct-20261028"
+        },
+        {
+          "branch": "research/pon-asert-c-reference-20261026"
+        },
+        {
+          "branch": "research/pon-asert-cpp-oracle-20261026"
+        },
+        {
+          "branch": "research/pon-asert-indexed-anchor-20261026"
+        },
+        {
+          "branch": "research/pon-confirmation-risk-bound-20261026"
+        },
+        {
+          "branch": "research/pon-daa-bounded-summary-20261025"
+        },
+        {
+          "branch": "research/pon-daa-c-oracle-20261026"
+        },
+        {
+          "branch": "research/pon-daa-confirmation-dual-gate-20261026"
+        },
+        {
+          "branch": "research/pon-daa-go-error-parity-20261026"
+        },
+        {
+          "branch": "research/pon-daa-go-independent-20261026"
+        },
+        {
+          "branch": "research/pon-daa-indexed-ancestry-20261025"
+        },
+        {
+          "branch": "research/pon-daa-indexed-shadow-20261025"
+        },
+        {
+          "branch": "research/pon-daa-timewarp-go-differential-20261026"
+        },
+        {
+          "branch": "research/pon-durable-fault-fences-20261026"
+        },
+        {
+          "branch": "research/pon-equal-work-fork-heal-20261026"
+        },
+        {
+          "branch": "research/pon-fast-retention-reentry-20261026"
+        },
+        {
+          "branch": "research/pon-fork-local-asert-w1-20261026"
+        },
+        {
+          "branch": "research/pon-lease-daa-adversarial-20261027"
+        },
+        {
+          "branch": "research/pon-lease-daa-asert-20261025"
+        },
+        {
+          "branch": "research/pon-lease-daa-integrated-hardening-20261026"
+        },
+        {
+          "branch": "research/pon-lease-daa-network-campaign-20261026"
+        },
+        {
+          "branch": "research/pon-lease-daa-outbox-fence-20261026"
+        },
+        {
+          "branch": "research/pon-lease-edge-q4-immutability-20261026"
+        },
+        {
+          "branch": "research/pon-native-retention-signed-reentry-20261026"
+        },
+        {
+          "branch": "research/pon-original-quarter-core-budget-20261110"
+        },
+        {
+          "branch": "research/pon-q4-daa-durable-read-bounds-20261027"
+        },
+        {
+          "branch": "research/pon-q4-dualsig-packet-recovery-20261026"
+        },
+        {
+          "branch": "research/pon-q4-full-slot-registration-20261026"
+        }
+      ],
+      "cursor": "ODAw"
+    },
+    {
+      "branches": [
+        {
+          "branch": "research/pon-q4-observation-generation-fence-20261026"
+        },
+        {
+          "branch": "research/pon-q4-outbox-cold-audit-20261026"
+        },
+        {
+          "branch": "research/pon-q4-postwrite-fence-20261026"
+        },
+        {
+          "branch": "research/pon-q4-schema-receiver-followup-20261026"
+        },
+        {
+          "branch": "research/pon-q4-signed-wire-20261026"
+        },
+        {
+          "branch": "research/pon-real-w1-fork-replay-20261026"
+        },
+        {
+          "branch": "research/pon-real-w1-lease-daa-20261026"
+        },
+        {
+          "branch": "research/pon-v1-inspector-custody-20261105-gpt6-01"
+        },
+        {
+          "branch": "research/pon-w1-algebraic-valid-cost-20261030"
+        },
+        {
+          "branch": "research/pon-w1-go-scalar-audit-20261026"
+        },
+        {
+          "branch": "research/pon-w1-numpy-exact-valid-cost-20261030"
+        },
+        {
+          "branch": "research/pon-w1-prepared-cost-20261025"
+        },
+        {
+          "branch": "research/pon-w1-third-verifier-20261026"
+        },
+        {
+          "branch": "research/pon-work-security-ideal-risk-20261026"
+        },
+        {
+          "branch": "research/pq-cell-atomic-bundle-20261027"
+        },
+        {
+          "branch": "research/pq-cell-custody-canonical-retrieval-20261026"
+        },
+        {
+          "branch": "research/pq-cell-journal-postopen-guard-20261027"
+        },
+        {
+          "branch": "research/pq-cell-native-openssl-20261026"
+        },
+        {
+          "branch": "research/pq-cell-provenance-verified-release-20261026"
+        },
+        {
+          "branch": "research/pq-cell-release-attestations-20261026"
+        },
+        {
+          "branch": "research/pq-cell-swarmed-retrieval-20261026"
+        },
+        {
+          "branch": "research/pq-cell-temp-schema-ack-fence-20261027"
+        },
+        {
+          "branch": "research/pq-full-corpus-integration-20261027"
+        },
+        {
+          "branch": "research/pq-genesis-liability-handoff-20261026"
+        },
+        {
+          "branch": "research/pq-genesis-native-dual-verify-20261026"
+        },
+        {
+          "branch": "research/pq-genesis-nonce-liability-bridge-20261026"
+        },
+        {
+          "branch": "research/pq-migration-strict-journal-20261027"
+        },
+        {
+          "branch": "research/pq-ml-dsa-65-conformance-20261026"
+        },
+        {
+          "branch": "research/pq-peer-durable-replay-20261026"
+        },
+        {
+          "branch": "research/pq-peer-hybrid-mtls-binding-20261026"
+        },
+        {
+          "branch": "research/pq-pql3-fork-recovery-20261026"
+        },
+        {
+          "branch": "research/pq-pql3-native-state-parity-20261026"
+        },
+        {
+          "branch": "research/pq-pql4-signed-external-frontier-20261026"
+        },
+        {
+          "branch": "research/pq-pql5-fresh-witness-quorum-20261026"
+        },
+        {
+          "branch": "research/pq-pql5-native-oracle-20261027"
+        },
+        {
+          "branch": "research/pq-pql5-temp-schema-ack-fence-20261027"
+        },
+        {
+          "branch": "research/pq-pql6-equivocation-evidence-20261027"
+        },
+        {
+          "branch": "research/pq-pql8-native-spki-binding-20261027"
+        },
+        {
+          "branch": "research/pq-pql9-general-tpq1-verifier-20261027"
+        },
+        {
+          "branch": "research/pq-pql9-native-tpq1-crypto-20261027"
+        },
+        {
+          "branch": "research/pq-pql10-canonical-pem-20261027"
+        },
+        {
+          "branch": "research/pq-pql10-complete-source-pins-20261027"
+        },
+        {
+          "branch": "research/pq-pql11-recursive-source-guard-20261027"
+        },
+        {
+          "branch": "research/pq-pqs1-whole-roster-native-20261026"
+        },
+        {
+          "branch": "research/pq-preserved-liability-native-import-20261026"
+        },
+        {
+          "branch": "research/pq-qtx1-fork-state-replay-20261026"
+        },
+        {
+          "branch": "research/pq-qtx1-native-boundary-20261026"
+        },
+        {
+          "branch": "research/pq-qtx1-native-crypto-conformance-20261026"
+        },
+        {
+          "branch": "research/pq-root-original-campaign-triage-20261110"
+        },
+        {
+          "branch": "research/q4-outbox-canonical-observation-20261026"
+        },
+        {
+          "branch": "research/q4-signed-wire-go-parity-20261026"
+        },
+        {
+          "branch": "research/work-value-separation-20261105"
+        },
+        {
+          "branch": "review/chain-pq-r3-baseline-20261030"
+        },
+        {
+          "branch": "staging/pon-sql-reuse-20261009"
+        },
+        {
+          "branch": "test/chain-cache-recovery-20261104"
+        },
+        {
+          "branch": "test/chain-cached-owner-stage-20261009"
+        },
+        {
+          "branch": "test/chain-canonical-ascii-probes-20261103-gpt6"
+        },
+        {
+          "branch": "test/chain-capacity-phase-20261009"
+        },
+        {
+          "branch": "test/chain-evidence-integrity-20261104"
+        },
+        {
+          "branch": "test/chain-finite-nonce-stopping-ci-20261027"
+        },
+        {
+          "branch": "test/chain-frozen-replay-20261103"
+        },
+        {
+          "branch": "test/chain-full-w1-quantum-oracle-20261027"
+        },
+        {
+          "branch": "test/chain-history-effect-v6-source-20261027"
+        },
+        {
+          "branch": "test/chain-history-initial-root-merge-20261103"
+        },
+        {
+          "branch": "test/chain-history-initial-root-normal-20261103"
+        },
+        {
+          "branch": "test/chain-history-known-epoch-ci-20261028"
+        },
+        {
+          "branch": "test/chain-history-pair-interruption-20261029"
+        },
+        {
+          "branch": "test/chain-history-publication-ci-20261028"
+        },
+        {
+          "branch": "test/chain-legal-producer-horizons-v5-20261028"
+        },
+        {
+          "branch": "test/chain-legal-ticket-batch-v4-ci-20261028"
+        },
+        {
+          "branch": "test/chain-legal-ticket-cost-v3-20261027"
+        },
+        {
+          "branch": "test/chain-native-pq-quota-v3-ci-20261028"
+        },
+        {
+          "branch": "test/chain-native-pq-source-20261027"
+        },
+        {
+          "branch": "test/chain-parent-observed-execution-v1-20261028"
+        },
+        {
+          "branch": "test/chain-pq-normal-source-20261103"
+        },
+        {
+          "branch": "test/chain-pq-normal-source-merge-20261103"
+        },
+        {
+          "branch": "test/chain-pure-history-raw-20261029"
+        },
+        {
+          "branch": "test/chain-pure-pon-arm64-evidence-20261027"
+        },
+        {
+          "branch": "test/chain-pure-pon-arm64-v2-20261027"
+        },
+        {
+          "branch": "test/chain-pure-pon-work-costs-20261027"
+        },
+        {
+          "branch": "test/chain-quantization-dev-20261103"
+        },
+        {
+          "branch": "test/chain-real-cpu-depletion-pressure-20261008"
+        },
+        {
+          "branch": "test/chain-seed-final-quantization-20261103"
+        },
+        {
+          "branch": "test/chain-source-development-freeze-20261103"
+        },
+        {
+          "branch": "test/chain-sp27-01-node-credit-20261111-0be2"
+        },
+        {
+          "branch": "test/chain-sp27-02-native-mechanism-20261111-e815"
+        },
+        {
+          "branch": "test/chain-sp27-03-recovery-effects-20261111-297a"
+        },
+        {
+          "branch": "test/chain-sp27-05-observation-controls-20261111-32f4"
+        },
+        {
+          "branch": "test/chain-training-corpus-audit-20261103"
+        },
+        {
+          "branch": "test/chain-w1-continuation-ci-20261027"
+        },
+        {
+          "branch": "test/chain-w1-segmented-run-20261027"
+        },
+        {
+          "branch": "test/pon-cached-owner-native-20261009"
+        },
+        {
+          "branch": "test/pon-chain-hepta-observation-convergence-seven-20261008"
+        },
+        {
+          "branch": "test/pon-live-sql-owner-20261009"
+        },
+        {
+          "branch": "test/pq-claim-cli-isolation-578-20261030"
+        },
+        {
+          "branch": "test/pq-claim-isolation-with-duplicates-582-20261030"
+        },
+        {
+          "branch": "test/sp27-05-payload-observation-20261111-58170"
+        },
+        {
+          "branch": "tooling/pon-canonical-kernel-stage-20261011"
+        },
+        {
+          "branch": "tooling/pon-cpu-conservation-publication-20261011"
+        },
+        {
+          "branch": "tooling/pon-fixed-native-source-stage-20261011"
+        }
+      ],
+      "cursor": "OTAw"
+    },
+    {
+      "branches": [
+        {
+          "branch": "tooling/pon-offline-native-kit-20261011"
+        },
+        {
+          "branch": "tools/pon-audit-source-transport-20261011"
+        },
+        {
+          "branch": "tools/pon-exact-bundles-20261011"
+        },
+        {
+          "branch": "tools/pon-source-export-20261011"
+        },
+        {
+          "branch": "work/chain-offline-build-transfer-20261006"
+        },
+        {
+          "branch": "work/pon-batched-confirmation-source-20261011"
+        },
+        {
+          "branch": "work/pon-cpu-conservation-runtime-20261011"
+        },
+        {
+          "branch": "work/pon-nullable-blob-staging-20261010"
+        }
+      ],
+      "cursor": "OTA4"
+    },
+    {
+      "branches": [],
+      "cursor": null
+    }
+  ],
+  "branch_scope": "All returned cursors exhausted; 908 unique branch names, no object IDs, observations non-atomic",
+  "qualification": false
+}

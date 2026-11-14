@@ -1,0 +1,169 @@
+{
+  "GET_exit_codes": [
+    0,
+    0
+  ],
+  "GETs": 2,
+  "HTTP_status_unparsed": true,
+  "acquisition": {
+    "bytes": 14551,
+    "path": "/private/tmp/chain-prci-H5DF-required-head-protocol-original-log-20261114-v1/acquisition-summary.json",
+    "sha256": "d2849e851192fab8acdc5ffb1aedc457d604dd6aeba5d8706214d490daf1a327"
+  },
+  "acquisition_index": {
+    "bytes": 2931,
+    "path": "/private/tmp/chain-prci-H5DF-required-head-protocol-original-log-20261114-v1/EVIDENCE_INDEX.json",
+    "sha256": "7f43177c3399d2dfb958bba1e0a8305e67af8ee10a79661ef885e127562c8f59"
+  },
+  "actual_terminal": {
+    "bytes": 8914,
+    "path": "/private/tmp/chain-prci-H5DF-required-head-protocol-original-log-20261114-v1/final-review-v1/acquisition-actual-terminal.json",
+    "sha256": "19df518df6d3a5f069d9c618d4bbfd41397e457567caebefd7caa085e3623405"
+  },
+  "actual_terminal_raw": {
+    "bytes": 876,
+    "path": "/private/tmp/chain-prci-H5DF-required-head-protocol-original-log-20261114-v1/final-review-v1/acquisition-actual-terminal.log",
+    "sha256": "41982032cbe3a300405b003c41da915a605fa692b4a09ddc55128dbe42cde307"
+  },
+  "artifact_from_original_upload": {
+    "bytes": 7258904,
+    "downloaded": false,
+    "id": 14126950344,
+    "metadata_API_freshly_verified": false,
+    "name": "head-protocol-contract-5df7ae6f482157c5f7fdcbcd52222117a965053f-1",
+    "origin": "original upload-action log lines 1482,1484-1486",
+    "sha256": "2ccebd8388401d327834f437675c782a69393ec8444ffa9bdcfae1469bd7d1a0",
+    "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621754143/artifacts/14126950344",
+    "whole_zip_verified": false
+  },
+  "attempt": 1,
+  "error_lines": [
+    {
+      "line": 1409,
+      "text": "2026-11-14T18:28:54.4392994Z ##[error]Process completed with exit code 1."
+    }
+  ],
+  "failed_step": {
+    "completed_at": "2026-11-14T18:28:54Z",
+    "conclusion": "failure",
+    "name": "Run actual protocol-contract checks",
+    "number": 8,
+    "started_at": "2026-11-14T17:36:25Z",
+    "status": "completed"
+  },
+  "host_controller_line": 1408,
+  "inner_failure": "UNKNOWN",
+  "job_id": 132528769008,
+  "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621754143/job/132528769008",
+  "limits": "Outer original log establishes this job's failure and source, not the inner failure code, original control outcomes or per-request time line. No reason is inherited from R1/cross-cost/service-model jobs.",
+  "metadata_raw": {
+    "bytes": 3144,
+    "path": "/private/tmp/chain-prci-H5DF-required-head-protocol-original-log-20261114-v1/job-132528769008-metadata.stdout",
+    "sha256": "d2aa534bbb180b20cc0396c309e2202ad852c56a532b676ad413cb3b94a709a5"
+  },
+  "name": "protocol-contract",
+  "native_manifest_acquired": false,
+  "no_additional_GET_artifact_native_or_source_ref_stage_change": true,
+  "observation_interval": {
+    "elapsed_seconds": 12.872387,
+    "finished_at": "2026-11-14T18:32:00.629793+00:00",
+    "started_at": "2026-11-14T18:31:47.757329+00:00"
+  },
+  "original_host_controller": {
+    "bytes": 7804,
+    "path": "/private/tmp/chain-prci-H5DF-required-head-protocol-original-log-20261114-v1/final-review-v1/original-controller-result.json",
+    "sha256": "495f07be988757ff187131311a701c051514580f10316b3cdb7e57601ed5d8c7"
+  },
+  "original_log": {
+    "bytes": 219531,
+    "path": "/private/tmp/chain-prci-H5DF-required-head-protocol-original-log-20261114-v1/job-132528769008-original-log.stdout",
+    "sha256": "83b7dc7a418f9a31563abf92b7702c8969ac1c9fe2ed741b2f9ba4b95ee13a5c"
+  },
+  "outer": {
+    "binary_downloaded": false,
+    "build_exit": 0,
+    "failure": null,
+    "final_host_errors": [],
+    "format_exit": 0,
+    "native_command_argv": [
+      "python3",
+      "scripts/ci/run_from_zero_native.py",
+      "--out",
+      "/home/runner/work/_temp/ci-observations/from-zero-native"
+    ],
+    "passed": false,
+    "preparation_binary_sha256": "c4832c084fa89afbe75470dd28ac52e489495e02173eba2a31cb8bc69713d2d0",
+    "preparation_completed": true,
+    "systemd_run_exit": 1
+  },
+  "preparation_source_after": {
+    "base": null,
+    "candidate": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+    "tested_tree": "6be4940d38cc88782657f2684cbefe48866f8b9f",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 3995072357,
+    "tracked_entries": 41681,
+    "tracked_worktree_verified": true
+  },
+  "preparation_source_before": {
+    "base": null,
+    "candidate": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+    "tested_tree": "6be4940d38cc88782657f2684cbefe48866f8b9f",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 3995072357,
+    "tracked_entries": 41681,
+    "tracked_worktree_verified": true
+  },
+  "qualification": false,
+  "required14_member": true,
+  "run_id": 43621754143,
+  "schema": "trnm-H5DF-required-head-protocol-outer-cause-review-v1",
+  "sealed_at": "2026-11-14T18:33:20.063190+00:00",
+  "searched_specific_native_failure_tokens_present": [],
+  "source_before_after": [
+    {
+      "end_line": 1179,
+      "source": {
+        "base": null,
+        "candidate": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+        "tested_tree": "6be4940d38cc88782657f2684cbefe48866f8b9f",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 3995072357,
+        "tracked_entries": 41681,
+        "tracked_worktree_verified": true
+      },
+      "start_line": 1167
+    },
+    {
+      "end_line": 1444,
+      "source": {
+        "base": null,
+        "candidate": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+        "tested_tree": "6be4940d38cc88782657f2684cbefe48866f8b9f",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 3995072357,
+        "tracked_entries": 41681,
+        "tracked_worktree_verified": true
+      },
+      "start_line": 1432
+    }
+  ],
+  "source_before_after_equal": true,
+  "status": "OUTER_FAILURE_CONFIRMED_INNER_UNKNOWN"
+}

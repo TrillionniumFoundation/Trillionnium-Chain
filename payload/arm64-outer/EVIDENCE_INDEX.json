@@ -1,0 +1,72 @@
+{
+  "coverage": "One exact ARM64 job metadata, its full original log, and exact artifact metadata only. No ZIP/member contents and no actual tested-source inference.",
+  "files": [
+    {
+      "bytes": 15839,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-original-evidence-20261114-v1/acquisition-summary.json",
+      "sha256": "d23ad16133974cb27eeefa25a76b5b296c786c808c3fa8dea7f0a00c840eb646"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-original-evidence-20261114-v1/artifact-14124468052-metadata.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 809,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-original-evidence-20261114-v1/artifact-14124468052-metadata.stdout",
+      "sha256": "d3fdc7640f4c09e5a66b70220f6427b1bc2f1d962d7e354e488b1459d390f2ba"
+    },
+    {
+      "bytes": 1432,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-original-evidence-20261114-v1/artifact-14124468052-metadata.step.json",
+      "sha256": "a7e0e8ac9207cba7dc34e738697c373bbc6edde01fc430944614e0daf756622d"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-original-evidence-20261114-v1/job-132528769087-metadata.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3914,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-original-evidence-20261114-v1/job-132528769087-metadata.stdout",
+      "sha256": "77e104cd3509c5ddd79e0fa6f37348df5bb4a6a2ff922110f1bdd135a768ff1d"
+    },
+    {
+      "bytes": 1409,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-original-evidence-20261114-v1/job-132528769087-metadata.step.json",
+      "sha256": "6e7b364bd3b5106f169156ce53b0059b48a55b902f01745f84066ab9e2da5284"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-original-evidence-20261114-v1/job-132528769087-original-log.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 184757,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-original-evidence-20261114-v1/job-132528769087-original-log.stdout",
+      "sha256": "b5f690a2a7cb61c16b6b459e1af5a7ca36430557c99ab51f4c66a7db09b32145"
+    },
+    {
+      "bytes": 1439,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-original-evidence-20261114-v1/job-132528769087-original-log.step.json",
+      "sha256": "65d69ee2acf345ea62fe0184ea117432d428a123756d398f196ad8a6e8ea4954"
+    },
+    {
+      "bytes": 849,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-original-evidence-20261114-v1/preparation.json",
+      "sha256": "951f8458e7583d3c603934b4aa05f7023e768bf12e7ae97f502e95c1bae1753a"
+    },
+    {
+      "bytes": 10764,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-original-evidence-20261114-v1/producer.py",
+      "sha256": "cb327032b629d3a4b7231892cb88720273e257b469a759893f8f0d7c10134e83"
+    },
+    {
+      "bytes": 9450,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-original-evidence-20261114-v1/x64-to-arm64-outer.patch",
+      "sha256": "36eea09eb04cdb3ae983ce1b8997b2aceae769cdcc72f24f643dc3667cb2f77a"
+    }
+  ],
+  "schema": "trnm-fixed-original-file-index-v1",
+  "self_excluded": true
+}

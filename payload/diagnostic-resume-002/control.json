@@ -1,0 +1,14 @@
+{
+  "commit": "78985d9a36761cf3ab370796f72f9b587776880c",
+  "parents": [
+    "2a86462a1ab20c68151719ba4635e3c294391e64"
+  ],
+  "subject_commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+  "subject_tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+  "tag": "diagnostic/r1-native-stage1-20261114-r1-v3",
+  "tag_oid": "bec22f093723cae0bb4625bd1fcbe9858d61f68b",
+  "tree": "b9999aa69ef7e148ea0760942f9b2bca6a8e6d6e",
+  "workflow_blob": "2f242e4c1dc16fbf912a93d87454ee0ff4474b91",
+  "workflow_path": ".github/workflows/trnm-required-baseline.yml",
+  "workflow_sha256": "85e9ef1d83490fb98d57c653952fe3fff67c496c8074cbf89ee6adacb266041a"
+}

@@ -1,0 +1,39 @@
+{
+  "GH_DEBUG_removed": true,
+  "GH_HOST": "github.com",
+  "argv": [
+    "/opt/homebrew/bin/gh",
+    "api",
+    "--hostname",
+    "github.com",
+    "--include",
+    "--method",
+    "PATCH",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/pulls/847",
+    "--input",
+    "/private/tmp/chain-consolidation-20261114-root/H5DF-pr847-body-only-update-v1-actual-001/body-only-payload.json"
+  ],
+  "elapsed_seconds": 9.190379,
+  "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/pulls/847",
+  "exit": 0,
+  "finished_at": "2026-11-14T18:08:24.325701+00:00",
+  "group_cleanup_completeness": "not_proven",
+  "http_status": 200,
+  "label": "body-PATCH-once",
+  "method": "PATCH",
+  "owned_pid": 87872,
+  "parse_error": null,
+  "started_at": "2026-11-14T18:08:15.135258+00:00",
+  "stderr": {
+    "bytes": 0,
+    "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-pr847-body-only-update-v1-actual-001/body-PATCH-once.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 32087,
+    "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-pr847-body-only-update-v1-actual-001/body-PATCH-once.stdout",
+    "sha256": "5d59523c486f62116c42de7bf6a4c93b02f92faaa10054113de25de501e7f3d8"
+  },
+  "termination_or_error": null,
+  "timeout_seconds": 120
+}

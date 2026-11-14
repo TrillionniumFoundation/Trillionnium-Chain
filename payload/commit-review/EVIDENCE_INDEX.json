@@ -1,0 +1,42 @@
+{
+  "files": [
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/R1-compare-new.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 175282,
+      "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/R1-compare-new.stdout",
+      "sha256": "fc777c5004b2995f8154b34a36966d88c91d7edd461fc9fcd6fe866494ef917d"
+    },
+    {
+      "bytes": 1573,
+      "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/R1-compare-new.step.json",
+      "sha256": "6f7797c7d89cba016eab6d73fd9f104efc9b67b8d28089789d18c74eb4f317b5"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/new-commit.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1355264,
+      "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/new-commit.stdout",
+      "sha256": "f2ca4cecadb5a4b465b5b5eb4d7348b02f41fe21a9059d56fa47e0c08f7e6611"
+    },
+    {
+      "bytes": 1433,
+      "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/new-commit.step.json",
+      "sha256": "1fd75a181de3c235bb8e0846e86a9943466ded4845e810998bc5492edf5d45da"
+    },
+    {
+      "bytes": 1380671,
+      "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/summary.json",
+      "sha256": "3a6c6a8ded04c094d23b1d2218f2222041766602c47b86e0a6aef09913576c95"
+    }
+  ],
+  "schema": "trnm-fixed-original-file-index-v1",
+  "scope": "Exactly two read-only original API responses; newly observed head remains unaccepted",
+  "self_excluded": true
+}

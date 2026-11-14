@@ -1,0 +1,57 @@
+{
+  "exact_patch": {
+    "bytes": 12885,
+    "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/body-proposal-v1/old-to-proposed-body.patch",
+    "sha256": "d431b77bf2ec7cfcbbaf354abef0ce6d03190281a55e57ffb288e23cc5e513f2"
+  },
+  "later_ready002_not_read_or_inherited": true,
+  "not_applied": true,
+  "observed_at": "2026-11-14T18:01:00.888536+00:00",
+  "old_body": {
+    "bytes": 8644,
+    "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/body-proposal-v1/old-body.md",
+    "sha256": "798b6bde4c1985d20c2f7c6a7b1255cc174f6b3c87383d9e7de8b59f2e39f8c4"
+  },
+  "payload": {
+    "bytes": 11428,
+    "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/body-proposal-v1/future-body-only-PATCH-payload.json",
+    "sha256": "411c30378cdc08724f36434ca461651b04ce8dc80091caf3c13130375461b830"
+  },
+  "plan": {
+    "bytes": 4548,
+    "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/body-proposal-v1/future-execution-plan.json",
+    "sha256": "fb552c05e1b42da03a70dd5689e96cfa55ba62ab4358b757c91f849d18860d4c"
+  },
+  "postpublication_archive_pending_exact_root_receipt_pin": true,
+  "preserved_main_protection_cleanup_paragraphs_byte_equal": true,
+  "preserved_system_acceptance_section_byte_equal": true,
+  "producer": {
+    "bytes": 9177,
+    "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/body-proposal-v1/prepare-body-proposal.py",
+    "sha256": "e9444719ad71f72801d58ee244aa5257b0c6e1ac97e6aba95410b9c2b9e79c86"
+  },
+  "proposed_body": {
+    "bytes": 11346,
+    "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/body-proposal-v1/proposed-body.md",
+    "sha256": "9dd0bbe670b5db4724cf93bc6fb56d2a75c703ac02eeaee4cbdca3c3f01e7131"
+  },
+  "schema": "trnm-H5DF-pr847-body-preparation-v1",
+  "selected_native_facts": {
+    "bytes": 12884,
+    "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/final-review-v1/exact-confirmation-facts.json",
+    "sha256": "9da174ec8a4b5afe3ac151e4b7b81974addd1d4893f802500bc6fb9652bb9c6c"
+  },
+  "snapshot_used": "H5DF ready001 2026-11-14T17:41:47.229813+00:00 to 17:41:57.397390+00:00",
+  "source_PR": {
+    "bytes": 27631,
+    "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-001/pr847.stdout",
+    "sha256": "d823902b692fae24f6e9cf7fd576e50a6f6148b5081969ea99d741b2ed890629"
+  },
+  "status": "PREPARED_ONLY",
+  "title_ready_auto_merge_policy_not_modified": true,
+  "workflow_review": {
+    "bytes": 25872,
+    "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/body-proposal-v1/workflow-trigger-facts.json",
+    "sha256": "0c6ccb28c54bb29ee5bda4bd32c81f3aaa5af9ae89133b9809ba2acdef4b7865"
+  }
+}

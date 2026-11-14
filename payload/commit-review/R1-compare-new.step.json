@@ -1,0 +1,40 @@
+{
+  "GH_DEBUG_removed": true,
+  "GH_HOST": "github.com",
+  "HTTP_status_unparsed": true,
+  "argv": [
+    "/opt/homebrew/bin/gh",
+    "api",
+    "--hostname",
+    "github.com",
+    "--method",
+    "GET",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/compare/2a86462a1ab20c68151719ba4635e3c294391e64...5df7ae6f482157c5f7fdcbcd52222117a965053f"
+  ],
+  "automatic_retry": false,
+  "complete_transport": true,
+  "cwd": "/private/tmp",
+  "elapsed_seconds": 2.47464,
+  "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/compare/2a86462a1ab20c68151719ba4635e3c294391e64...5df7ae6f482157c5f7fdcbcd52222117a965053f",
+  "exit": 0,
+  "finished_at": "2026-11-14T17:35:47.915831+00:00",
+  "label": "R1-compare-new",
+  "method": "GET",
+  "origin": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/compare/2a86462a1ab20c68151719ba4635e3c294391e64...5df7ae6f482157c5f7fdcbcd52222117a965053f",
+  "overall_deadline_seconds": 300,
+  "started_at": "2026-11-14T17:35:45.441239+00:00",
+  "stderr": {
+    "bytes": 0,
+    "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/R1-compare-new.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr_cap_bytes": 2097152,
+  "stdout": {
+    "bytes": 175282,
+    "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/R1-compare-new.stdout",
+    "sha256": "fc777c5004b2995f8154b34a36966d88c91d7edd461fc9fcd6fe866494ef917d"
+  },
+  "stdout_cap_bytes": 8388608,
+  "termination_reason": null,
+  "timeout_seconds": 300
+}

@@ -1,0 +1,8 @@
+FIXED_PRODUCER /private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/producer.py 1f1b31e74c0a63892fb0f7d325b830b0f64e40a379cdaf30b965599fbe9c2604
+{"label": "job-132528767983-metadata", "exit": 0, "complete_transport": true, "stdout_bytes": 6111, "stdout_sha256": "3d3cce29e709f235394567bfe431f21f7bdd925921cd1a4106297dbb7d16de1e"}
+{"label": "job-132528768001-metadata", "exit": 0, "complete_transport": true, "stdout_bytes": 6124, "stdout_sha256": "f7d27f3b44685096220a88c7f1a4d3aa9931982dc1130f5626c51f663ff20534"}
+{"label": "job-132528768003-metadata", "exit": 0, "complete_transport": true, "stdout_bytes": 6103, "stdout_sha256": "f3f13ae244917b5506db3788d07f23b08d4f60244666664cf261abef169f89d4"}
+{"label": "job-132528768001-original-log", "exit": 0, "complete_transport": true, "stdout_bytes": 2224013, "stdout_sha256": "c080ace114a9617b17fb24b68eb9f0b462783111b967a9865e2c879633bf8c1a"}
+{"label": "job-132528768003-original-log", "exit": 0, "complete_transport": true, "stdout_bytes": 2223880, "stdout_sha256": "99a61cf06def08976a97bd4610fe0953f38b6553e6b578e3dce9cac067186bbc"}
+{"label": "job-132528767983-original-log", "exit": 0, "complete_transport": true, "stdout_bytes": 2223351, "stdout_sha256": "694149d613cb36bad29ea715ac413f07e819236d7af1532fc49094529d4813a7"}
+{"status": "ACQUIRED", "summary": {"path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/acquisition-summary.json", "bytes": 42449, "sha256": "fd73d1a0089e0f132964f23a57b83dd0a89f7d5c1197a165b8117c17520bd262"}, "index": {"path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/EVIDENCE_INDEX.json", "bytes": 5222, "sha256": "4107d030713ea4b18e24c451cac31aa71eb78afc6306e58ec12cf2bba6a3e654"}, "actual_GETs": 6, "qualification": false}

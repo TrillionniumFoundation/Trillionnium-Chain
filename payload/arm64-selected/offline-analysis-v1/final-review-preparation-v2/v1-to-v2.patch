@@ -1,0 +1,60 @@
+--- offline-facts-v1
++++ offline-facts-v2
+@@ -2,7 +2,7 @@
+ from pathlib import Path,PurePosixPath
+ BASE=Path('/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1')
+ SRC=BASE/'selected-resume-001'
+-OUT=BASE/'final-review-v1'
++OUT=BASE/'final-review-v2'
+ HEAD='5df7ae6f482157c5f7fdcbcd52222117a965053f'
+ TREE='6be4940d38cc88782657f2684cbefe48866f8b9f'
+ SELECTORS=['caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct','from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection','four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged','from_zero_service_shares_cpu_with_honest_work_and_reopened_owner','from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline']
+@@ -78,7 +78,7 @@
+  process=j(prefix+'process.json');stdout=raws[prefix+'stdout'];stderr=raws[prefix+'stderr']
+  need(typed_equal(process,row['process']),'PROCESS_INLINE_ORIGINAL_EXACT')
+  need(type(process['exit_code'])is int and process['exit_code']==0 and process['timed_out']is False and row['passed']is True,'NATIVE_EXIT')
+- need(process['command']==[manifest['build']['binary'] if 'binary'in manifest['build']else process['command'][0],name,'--exact','--nocapture','--test-threads=1'],'ORIGINAL_NATIVE_ARGV')
++ need(process['command']==['/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-bcd934e577e47a17',name,'--exact','--nocapture','--test-threads=1'],'ORIGINAL_NATIVE_ARGV')
+  need(process['stdout_sha256']==row['stdout_sha256']==hashlib.sha256(stdout).hexdigest()and process['stderr_sha256']==row['stderr_sha256']==hashlib.sha256(stderr).hexdigest(),'NATIVE_STREAMS')
+  text=stdout.decode('utf-8')
+  labels=re.findall(r'^test ([A-Za-z0-9_:]+) \.\.\. ',text,re.M)
+@@ -105,24 +105,26 @@
+ c0,c1=cpu_stat(inside0),cpu_stat(inside1);need(set(c0)==set(c1),'CPU_STAT_KEYS')
+ host=put('host-original-controls.json',{'schema':'trnm-H5DF-arm-host-original-controls-v1','controller':{'schema':controller['schema'],'systemd_run_exit':controller['systemd_run_exit'],'failure':controller['failure'],'final_host_errors':controller['final_host_errors'],'parent_reused':controller['parent_reused'],'preparation_completed':True,'preparation_build_exit':0,'preparation_binary_sha256':controller['preparation']['binary_sha256'],'preparation_source_before':controller['preparation']['source_before'],'preparation_source_after':controller['preparation']['source_after']},'child':child,'limits_before_after_outside_exact':limits,'parent_identity':inside0['parent'],'boot_id':inside0['boot_id'],'installed_unit_sha256':inside0['installed_unit_sha256'],'service':inside0['service'],'thread_cgroup_before_after':inside0['thread_cgroup'],'thread_privileges_before':inside0['thread_privileges'],'thread_privileges_after':inside1['thread_privileges'],'inside_before_utc':inside0['observed_utc'],'inside_after_utc':inside1['observed_utc'],'cpu_stat_before':c0,'cpu_stat_after':c1,'cpu_stat_delta':{k:c1[k]-c0[k]for k in c0},'cpu_stat_scope':'Entire original native child command between inside snapshots; contains builds/setup and multiple controls; not the four-second pressure phase or one replay; cannot allocate throttled time to an individual phase','original_pins':{n:pin(SRC/'members/from-zero-native-host'/n)for n in('controller-result.json','child-result.json','inside-before.json','inside-after.json','outside-after.json','prepare-build.json','systemd-run.log')}})
+ def phase_rows(snapshot):
+- return [v for v in snapshot['phases']if v.get('started')or v.get('completed')or v.get('error_code')]
++ return [v for v in snapshot['phases']if(v.get('started')or v.get('completed')or v.get('error_code'))and v['phase']in('work','admission','commit','cpu_wait','history_epoch_open','history_epoch_close','history_import')]
+ def calltop(c):
+  return{k:c[k]for k in('status','started_ns','ended_ns','elapsed_wall_ns','client_thread_cpu_ns','deadline_ms','returned_after_deadline','returned_after_window','error')if k in c}
+ def phase_info(i,p):
+  out={'report_pointer':'/phases/'+str(i),'reported':{k:p[k]for k in('mode','workers','requested_window_ns','business_started_ns','confirmation_ended_ns','client_confirmation_latency_ns','client_confirmed_before_original_window_end','client_confirmed_transactions','finite_business_target_met','invariant_target_met','no_attack_accepted','receiver_matches_valid_honest_prefix','full_native_state_equal','verification_errors','reader_cpu_ns','attacker_workers_cpu_ns','attacker_workers_cpu_scope','independent_replay_and_confirmation_cpu_ns','independent_replay_and_confirmation_wall_ns','initial_meter','final_meter')},'submit_calls':[calltop(c)for c in p['honest_submissions']],'history_calls':[calltop(c)for c in p['honest_history']],'head_calls_count':len(p['honest_heads']),'head_successes_in_window':p['honest_head_successes_in_window'],'replays':[]}
+- need(p['requested_window_ns']==4000000000 and p['workers']==(0 if i==0 else16),'ORIGINAL_WINDOW_WORKERS')
++ need(p['requested_window_ns']==4000000000 and p['workers']==(0 if i==0 else 16),'ORIGINAL_WINDOW_WORKERS')
+  for k,q in enumerate(p['independent_history_page_replay']):
+   n=q['native_import_observation'];baseptr='/phases/'+str(i)+'/independent_history_page_replay/'+str(k)
+   buckets=[x for x in n['host_checkpoint_attribution']['buckets']if x['calls']['calls_started']]
+   checkpoint=next(x for x in n['host_checks']if x['phase']=='checkpoint')
+   need(sum(x['calls']['calls_started']for x in buckets)==checkpoint['calls_started']and n['host_checkpoint_attribution']['all_checkpoint_calls_attributed']is True,'HOST_BUCKET_COUNT')
+-  row={'report_pointer':baseptr,'reported':{a:b for a,b in q.items()if a!='native_import_observation'},'page_active_phases':phase_rows(n),'packet_active_phases':[{'packet_index':x['packet_index'],'phases':phase_rows(x)}for x in n['packets']],'host_checks':n['host_checks'],'host_work_bucket':next((x['calls']for x in buckets if x['owner_phase']=='work'),None),'host_commit_bucket':next((x['calls']for x in buckets if x['owner_phase']=='commit'),None),'native_wait_attribution':n['native_attribution'],'measurement_failures':n['measurement_failures'],'native_clock_scope':n['clock_scope'],'host_scope':n['host_checkpoint_attribution']['scope'],'cpu_intervals_are_nested_not_additive':n['cpu_intervals_are_nested_not_additive']}
++  row={'report_pointer':baseptr,'reported':{a:b for a,b in q.items()if a!='native_import_observation'},'page_active_phases':phase_rows(n),'packet_active_phases':[{'packet_index':x['packet_index'],'phases':phase_rows(x)}for x in n['packets']],'host_checks':n['host_checks'],'host_work_bucket':next((x['calls']for x in buckets if x['owner_phase']=='work'),None),'host_commit_bucket':next((x['calls']for x in buckets if x['owner_phase']=='commit'),None),'native_wait_attribution':n['native_attribution'],'measurement_failures':n['measurement_failures'],'cpu_intervals_are_nested_not_additive':n['cpu_intervals_are_nested_not_additive']}
+   out['replays'].append(row)
+  out['attack_workers']=[{'worker':x['worker'],'calling_thread_cpu_ns':x['calling_thread_cpu_ns'],'recorded_calls':len(x['calls']),'call_status_counts':dict(collections.Counter(c.get('status','MISSING')for c in x['calls'])),'attempt_cap_reached':x['attempt_cap_reached']}for x in p['attacks']]
+  need(sum(x['calling_thread_cpu_ns']for x in out['attack_workers'])==p['attacker_workers_cpu_ns'],'WORKER_CPU_SUM')
+  records=p['observations']['records']
+  out['receiver_observations']={'retained_records':len(records),'measurement_failures':p['observations']['measurement_failures'],'records_not_retained':p['observations']['records_not_retained'],'dispatch_thread_cpu_known_sum_ns':sum(x['dispatch_thread_cpu_ns']for x in records if type(x.get('dispatch_thread_cpu_ns'))is int),'full_work_thread_cpu_known_sum_ns':sum(x['full_work_thread_cpu_ns']for x in records if type(x.get('full_work_thread_cpu_ns'))is int),'cpu_intervals_are_nested_not_additive':p['observations']['cpu_intervals_are_nested_not_additive'],'cpu_includes_reactor_authentication':p['observations']['cpu_includes_reactor_authentication'],'cpu_includes_reactor_authentication_or_response_signing':p['observations']['cpu_includes_reactor_authentication_or_response_signing'],'scope':'Retained receiver records only; full-work nested in dispatch; not total process or full service CPU'}
+  out['service_metrics_selected']={k:v for k,v in p['service']['metrics'].items()if 'cpu' in k or k in('work_started','work_finished','work_failed','work_ns','queue_wait_ns','tasks_enqueued','tasks_dequeued','completed_submit','completed_read')}
++ out['native_clock_scope']=p['independent_history_page_replay'][0]['native_import_observation']['clock_scope']
++ out['host_bucket_scope']=p['independent_history_page_replay'][0]['native_import_observation']['host_checkpoint_attribution']['scope']
+  out['clock_limit']='Replay started/ended are original traffic phase clock. Native phase and Host timestamps have their own observer-local epoch; no invented exact cross-epoch absolute conversion. CPU/wall intervals overlap/nest and must not be added.'
+  return out
+ phase_details=[phase_info(i,p)for i,p in enumerate(report['phases'])]
+@@ -132,7 +134,8 @@
+  # Preserve compact independent scopes instead of repeating wait records in every replay.
+  for row in detail['replays']:
+   waits=row.pop('native_wait_attribution')
+-  row['native_wait_attribution_compact']={'page_owner_mode':waits['page']['owner_mode'],'page_epoch_substeps':waits['page']['epoch_substeps'],'page_cpu_waits':waits['page']['cpu_waits'],'packet_cpu_waits':[{'packet_index':x['packet_index'],'cpu_waits':x['attribution']['cpu_waits']}for x in waits['packets']]}
++  wc=lambda x:{k:x[k]for k in('reserve_attempts','reserve_returns','reserve_granted','reserve_budget_refusals','reserve_other_refusals','sleep_calls_started','sleep_calls_completed','requested_sleep_ns','actual_sleep_wall_ns')}
++  row['native_wait_attribution_compact']={'page_owner_mode':waits['page']['owner_mode'],'page_epoch_substeps':[{'substep':x['substep'],'wall_ns':x['span']['wall_ns'],'thread_cpu_ns':x['span']['thread_cpu_ns'],'accepted':x['span']['accepted'],'error_code':x['span']['error_code']}for x in waits['page']['epoch_substeps']],'page_cpu_waits':[wc(x)for x in waits['page']['cpu_waits']],'packet_cpu_waits':[{'packet_index':x['packet_index'],'cpu_waits':[wc(c)for c in x['attribution']['cpu_waits']]}for x in waits['packets']]}
+  phasepins.append(put(('baseline'if i==0 else'pressure')+'-stage-facts.json',detail))
+ last=report['phases'][1]['independent_history_page_replay'][-1]
+ lastn=last['native_import_observation'];lastpacket=lastn['packets'][0]

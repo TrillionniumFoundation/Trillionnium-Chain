@@ -1,0 +1,41 @@
+{
+  "schema": "trnm-5df-deadline-controller-review-seal-v1",
+  "status": "CLOSED_STATIC_REVIEW_NO_BLOCKER",
+  "root": "/private/tmp/chain-new-head-5df7-deadline-controller-review-20261114-v1",
+  "review": {
+    "path": "/private/tmp/chain-new-head-5df7-deadline-controller-review-20261114-v1/final-review-v2/review.json",
+    "bytes": 8665,
+    "sha256": "0fd63546cd8dd7cfc5b6124c8ef621b7df8db42f7327ae699d01f9db118778fc"
+  },
+  "index": {
+    "path": "/private/tmp/chain-new-head-5df7-deadline-controller-review-20261114-v1/final-review-v2/EVIDENCE_INDEX.json",
+    "bytes": 6007,
+    "sha256": "9ebfe423da4246733a1a64c018ed8a906fde6fddf8885cd1606bc964fb8fa873",
+    "file_count": 34,
+    "total_bytes": 702210,
+    "index_excludes_itself": true
+  },
+  "actual_static_terminal": {
+    "path": "/private/tmp/chain-new-head-5df7-deadline-controller-review-20261114-v1/final-review-v2/actual-static-terminal.json",
+    "bytes": 3602,
+    "sha256": "2c8c594cd4b907148ae715f4c9743ac5193d55804b64597b3c838a6303329a06",
+    "exit_code": 0,
+    "session_id": "dpty-b0dcb6ef96df562a4a21bf16148127ca1254cbffe5e0f78799667e5962454368"
+  },
+  "prior_static_producer_error_preserved": {
+    "path": "/private/tmp/chain-new-head-5df7-deadline-controller-review-20261114-v1/final-review-v1/actual-static-failure-terminal.json",
+    "bytes": 1828,
+    "sha256": "f3efb412661e78209f6b2e14500457478d8be04f4024d189333a0193dbd3e40c",
+    "meaning": "Review producer TypeError flattening byte-line lists; not a repository or test failure. V2 changes that one expression and new output directory."
+  },
+  "initial_tool_read_error": {
+    "status": "INVALID_ARGUMENT",
+    "meaning": "One small-file batch included an unprovided index.json filename and returned no file content; repeated only the three exact supplied paths successfully. No new network/API request."
+  },
+  "complete_file_count_excluding_this_seal": 36,
+  "complete_bytes_excluding_this_seal": 711819,
+  "tests_or_target_helpers_executed": false,
+  "source_refs_stage_changes": false,
+  "network_calls": 0,
+  "live_owned_process": false
+}

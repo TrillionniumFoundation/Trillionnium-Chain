@@ -1,0 +1,40 @@
+{
+  "actual_hook": {
+    "bytes": 4377,
+    "path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-publish-v1-r1-after-5df-resume-002/hooks/receipt.json",
+    "sha256": "a1316ac1fece7357b3a6eb61ed89bcc305e766c5dd419bfeffc4cc2ea8ee1891"
+  },
+  "installed_hook_guard": {
+    "config_exit": 1,
+    "default_hook_path": "/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git/hooks/pre-push",
+    "origin": "https://github.com/TrillionniumFoundation/Trillionnium-Chain.git"
+  },
+  "original_dispatch_started": false,
+  "original_errors": [
+    {
+      "message": "remote drift before dispatch",
+      "phase": "single-dispatch",
+      "type": "ValueError"
+    },
+    {
+      "message": "final remote refs changed",
+      "phase": "final-dispatch-source-ref-fence",
+      "type": "ValueError"
+    }
+  ],
+  "original_source_after_valid": false,
+  "original_status": "UNKNOWN",
+  "publication_confirmed": true,
+  "publication_phase_source_verified": true,
+  "push_exit": 0,
+  "receipt": {
+    "bytes": 361082,
+    "path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-publish-v1-r1-after-5df-resume-002/summary.json",
+    "sha256": "0d3791feb688b349c3208dcc87b2a1acd5213ea0dd5b8077f879307be04b1992"
+  },
+  "terminal": {
+    "bytes": 4308,
+    "path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-resume-v3-actual-terminal-v1.json",
+    "sha256": "ee22af5d330ea19f55c40c539434311cdd986ea7c9265a14245fac69e76c45df"
+  }
+}

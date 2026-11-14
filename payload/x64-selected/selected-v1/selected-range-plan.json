@@ -1,0 +1,641 @@
+{
+  "actual_planned_combined_GETs": 10,
+  "combined_original_monotonic_deadline": 142697.313790833,
+  "directory_original_GETs": 2,
+  "maximum_combined_GETs": 21,
+  "merge_rule": "Only exactly consecutive selected local records; no intervening unselected record",
+  "new_range_groups": [
+    {
+      "end": 1414641,
+      "members": [
+        "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json",
+        "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr",
+        "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout"
+      ],
+      "start": 1413577
+    },
+    {
+      "end": 2171199,
+      "members": [
+        "from-zero-native/confirmation/report.json"
+      ],
+      "start": 1559724
+    },
+    {
+      "end": 2255018,
+      "members": [
+        "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json",
+        "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr",
+        "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout",
+        "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json",
+        "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr",
+        "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+        "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr",
+        "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout",
+        "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json",
+        "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json",
+        "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr",
+        "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+        "from-zero-native/manifest.json"
+      ],
+      "start": 2237527
+    },
+    {
+      "end": 8570079,
+      "members": [
+        "from-zero-native-host/child-result.json",
+        "from-zero-native-host/inside-after.json",
+        "from-zero-native-host/controller-result.json",
+        "from-zero-native-host/inside-before.json"
+      ],
+      "start": 8565538
+    },
+    {
+      "end": 8571092,
+      "members": [
+        "from-zero-native-host/outside-after.json"
+      ],
+      "start": 8570175
+    },
+    {
+      "end": 8583317,
+      "members": [
+        "from-zero-native-host/prepare-build.json"
+      ],
+      "start": 8581613
+    },
+    {
+      "end": 8585854,
+      "members": [
+        "from-zero-native-host/systemd-run.log"
+      ],
+      "start": 8584374
+    },
+    {
+      "end": 8587678,
+      "members": [
+        "source.json"
+      ],
+      "start": 8587382
+    }
+  ],
+  "records": [
+    {
+      "already_in_tail": false,
+      "bytes": 11403,
+      "end": 2255018,
+      "path": "from-zero-native/manifest.json",
+      "row": {
+        "compressed_bytes": 11327,
+        "compression_method": 8,
+        "crc32_declared_hex": "4ef44a81",
+        "crc32_verified": false,
+        "directory": false,
+        "flags": 8,
+        "index": 107,
+        "local_header_offset": 2243616,
+        "path": "from-zero-native/manifest.json",
+        "small_member_candidate_only": true,
+        "uncompressed_bytes": 73928,
+        "version_needed": 20
+      },
+      "start": 2243616
+    },
+    {
+      "already_in_tail": false,
+      "bytes": 611476,
+      "end": 2171199,
+      "path": "from-zero-native/confirmation/report.json",
+      "row": {
+        "compressed_bytes": 611389,
+        "compression_method": 8,
+        "crc32_declared_hex": "822da318",
+        "crc32_verified": false,
+        "directory": false,
+        "flags": 8,
+        "index": 80,
+        "local_header_offset": 1559724,
+        "path": "from-zero-native/confirmation/report.json",
+        "small_member_candidate_only": true,
+        "uncompressed_bytes": 13555781,
+        "version_needed": 20
+      },
+      "start": 1559724
+    },
+    {
+      "already_in_tail": false,
+      "bytes": 297,
+      "end": 8587678,
+      "path": "source.json",
+      "row": {
+        "compressed_bytes": 240,
+        "compression_method": 8,
+        "crc32_declared_hex": "9bf59c61",
+        "crc32_verified": false,
+        "directory": false,
+        "flags": 8,
+        "index": 146,
+        "local_header_offset": 8587382,
+        "path": "source.json",
+        "small_member_candidate_only": true,
+        "uncompressed_bytes": 423,
+        "version_needed": 20
+      },
+      "start": 8587382
+    },
+    {
+      "already_in_tail": false,
+      "bytes": 2449,
+      "end": 8569188,
+      "path": "from-zero-native-host/controller-result.json",
+      "row": {
+        "compressed_bytes": 2359,
+        "compression_method": 8,
+        "crc32_declared_hex": "583246fd",
+        "crc32_verified": false,
+        "directory": false,
+        "flags": 8,
+        "index": 127,
+        "local_header_offset": 8566740,
+        "path": "from-zero-native-host/controller-result.json",
+        "small_member_candidate_only": true,
+        "uncompressed_bytes": 9054,
+        "version_needed": 20
+      },
+      "start": 8566740
+    },
+    {
+      "already_in_tail": false,
+      "bytes": 660,
+      "end": 1414236,
+      "path": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json",
+      "row": {
+        "compressed_bytes": 520,
+        "compression_method": 8,
+        "crc32_declared_hex": "f1d839ab",
+        "crc32_verified": false,
+        "directory": false,
+        "flags": 8,
+        "index": 67,
+        "local_header_offset": 1413577,
+        "path": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json",
+        "small_member_candidate_only": true,
+        "uncompressed_bytes": 885,
+        "version_needed": 20
+      },
+      "start": 1413577
+    },
+    {
+      "already_in_tail": false,
+      "bytes": 269,
+      "end": 1414641,
+      "path": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+      "row": {
+        "compressed_bytes": 135,
+        "compression_method": 8,
+        "crc32_declared_hex": "5ea001f9",
+        "crc32_verified": false,
+        "directory": false,
+        "flags": 8,
+        "index": 69,
+        "local_header_offset": 1414373,
+        "path": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+        "small_member_candidate_only": true,
+        "uncompressed_bytes": 190,
+        "version_needed": 20
+      },
+      "start": 1414373
+    },
+    {
+      "already_in_tail": false,
+      "bytes": 136,
+      "end": 1414372,
+      "path": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr",
+      "row": {
+        "compressed_bytes": 2,
+        "compression_method": 8,
+        "crc32_declared_hex": "00000000",
+        "crc32_verified": false,
+        "directory": false,
+        "flags": 8,
+        "index": 68,
+        "local_header_offset": 1414237,
+        "path": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr",
+        "small_member_candidate_only": true,
+        "uncompressed_bytes": 0,
+        "version_needed": 20
+      },
+      "start": 1414237
+    },
+    {
+      "already_in_tail": false,
+      "bytes": 669,
+      "end": 2240491,
+      "path": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json",
+      "row": {
+        "compressed_bytes": 523,
+        "compression_method": 8,
+        "crc32_declared_hex": "4612fff7",
+        "crc32_verified": false,
+        "directory": false,
+        "flags": 8,
+        "index": 98,
+        "local_header_offset": 2239823,
+        "path": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json",
+        "small_member_candidate_only": true,
+        "uncompressed_bytes": 897,
+        "version_needed": 20
+      },
+      "start": 2239823
+    },
+    {
+      "already_in_tail": false,
+      "bytes": 280,
+      "end": 2240913,
+      "path": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+      "row": {
+        "compressed_bytes": 140,
+        "compression_method": 8,
+        "crc32_declared_hex": "299184c2",
+        "crc32_verified": false,
+        "directory": false,
+        "flags": 8,
+        "index": 100,
+        "local_header_offset": 2240634,
+        "path": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+        "small_member_candidate_only": true,
+        "uncompressed_bytes": 196,
+        "version_needed": 20
+      },
+      "start": 2240634
+    },
+    {
+      "already_in_tail": false,
+      "bytes": 142,
+      "end": 2240633,
+      "path": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr",
+      "row": {
+        "compressed_bytes": 2,
+        "compression_method": 8,
+        "crc32_declared_hex": "00000000",
+        "crc32_verified": false,
+        "directory": false,
+        "flags": 8,
+        "index": 99,
+        "local_header_offset": 2240492,
+        "path": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr",
+        "small_member_candidate_only": true,
+        "uncompressed_bytes": 0,
+        "version_needed": 20
+      },
+      "start": 2240492
+    },
+    {
+      "already_in_tail": false,
+      "bytes": 672,
+      "end": 2238198,
+      "path": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json",
+      "row": {
+        "compressed_bytes": 530,
+        "compression_method": 8,
+        "crc32_declared_hex": "7da77c43",
+        "crc32_verified": false,
+        "directory": false,
+        "flags": 8,
+        "index": 95,
+        "local_header_offset": 2237527,
+        "path": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json",
+        "small_member_candidate_only": true,
+        "uncompressed_bytes": 897,
+        "version_needed": 20
+      },
+      "start": 2237527
+    },
+    {
+      "already_in_tail": false,
+      "bytes": 1486,
+      "end": 2239822,
+      "path": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout",
+      "row": {
+        "compressed_bytes": 1350,
+        "compression_method": 8,
+        "crc32_declared_hex": "5cc7d756",
+        "crc32_verified": false,
+        "directory": false,
+        "flags": 8,
+        "index": 97,
+        "local_header_offset": 2238337,
+        "path": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout",
+        "small_member_candidate_only": true,
+        "uncompressed_bytes": 3364,
+        "version_needed": 20
+      },
+      "start": 2238337
+    },
+    {
+      "already_in_tail": false,
+      "bytes": 138,
+      "end": 2238336,
+      "path": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr",
+      "row": {
+        "compressed_bytes": 2,
+        "compression_method": 8,
+        "crc32_declared_hex": "00000000",
+        "crc32_verified": false,
+        "directory": false,
+        "flags": 8,
+        "index": 96,
+        "local_header_offset": 2238199,
+        "path": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr",
+        "small_member_candidate_only": true,
+        "uncompressed_bytes": 0,
+        "version_needed": 20
+      },
+      "start": 2238199
+    },
+    {
+      "already_in_tail": false,
+      "bytes": 678,
+      "end": 2242260,
+      "path": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json",
+      "row": {
+        "compressed_bytes": 538,
+        "compression_method": 8,
+        "crc32_declared_hex": "f0286a81",
+        "crc32_verified": false,
+        "directory": false,
+        "flags": 8,
+        "index": 103,
+        "local_header_offset": 2241583,
+        "path": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json",
+        "small_member_candidate_only": true,
+        "uncompressed_bytes": 913,
+        "version_needed": 20
+      },
+      "start": 2241583
+    },
+    {
+      "already_in_tail": false,
+      "bytes": 533,
+      "end": 2241582,
+      "path": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout",
+      "row": {
+        "compressed_bytes": 399,
+        "compression_method": 8,
+        "crc32_declared_hex": "d2e6a3c6",
+        "crc32_verified": false,
+        "directory": false,
+        "flags": 8,
+        "index": 102,
+        "local_header_offset": 2241050,
+        "path": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout",
+        "small_member_candidate_only": true,
+        "uncompressed_bytes": 917,
+        "version_needed": 20
+      },
+      "start": 2241050
+    },
+    {
+      "already_in_tail": false,
+      "bytes": 136,
+      "end": 2241049,
+      "path": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr",
+      "row": {
+        "compressed_bytes": 2,
+        "compression_method": 8,
+        "crc32_declared_hex": "00000000",
+        "crc32_verified": false,
+        "directory": false,
+        "flags": 8,
+        "index": 101,
+        "local_header_offset": 2240914,
+        "path": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr",
+        "small_member_candidate_only": true,
+        "uncompressed_bytes": 0,
+        "version_needed": 20
+      },
+      "start": 2240914
+    },
+    {
+      "already_in_tail": false,
+      "bytes": 744,
+      "end": 2243004,
+      "path": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json",
+      "row": {
+        "compressed_bytes": 565,
+        "compression_method": 8,
+        "crc32_declared_hex": "71ee4cd4",
+        "crc32_verified": false,
+        "directory": false,
+        "flags": 8,
+        "index": 104,
+        "local_header_offset": 2242261,
+        "path": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json",
+        "small_member_candidate_only": true,
+        "uncompressed_bytes": 949,
+        "version_needed": 20
+      },
+      "start": 2242261
+    },
+    {
+      "already_in_tail": false,
+      "bytes": 436,
+      "end": 2243615,
+      "path": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+      "row": {
+        "compressed_bytes": 263,
+        "compression_method": 8,
+        "crc32_declared_hex": "00b5a38c",
+        "crc32_verified": false,
+        "directory": false,
+        "flags": 8,
+        "index": 106,
+        "local_header_offset": 2243180,
+        "path": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+        "small_member_candidate_only": true,
+        "uncompressed_bytes": 408,
+        "version_needed": 20
+      },
+      "start": 2243180
+    },
+    {
+      "already_in_tail": false,
+      "bytes": 175,
+      "end": 2243179,
+      "path": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr",
+      "row": {
+        "compressed_bytes": 2,
+        "compression_method": 8,
+        "crc32_declared_hex": "00000000",
+        "crc32_verified": false,
+        "directory": false,
+        "flags": 8,
+        "index": 105,
+        "local_header_offset": 2243005,
+        "path": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr",
+        "small_member_candidate_only": true,
+        "uncompressed_bytes": 0,
+        "version_needed": 20
+      },
+      "start": 2243005
+    },
+    {
+      "already_in_tail": false,
+      "bytes": 302,
+      "end": 8565839,
+      "path": "from-zero-native-host/child-result.json",
+      "row": {
+        "compressed_bytes": 217,
+        "compression_method": 8,
+        "crc32_declared_hex": "f5952b0c",
+        "crc32_verified": false,
+        "directory": false,
+        "flags": 8,
+        "index": 125,
+        "local_header_offset": 8565538,
+        "path": "from-zero-native-host/child-result.json",
+        "small_member_candidate_only": true,
+        "uncompressed_bytes": 333,
+        "version_needed": 20
+      },
+      "start": 8565538
+    },
+    {
+      "already_in_tail": false,
+      "bytes": 891,
+      "end": 8570079,
+      "path": "from-zero-native-host/inside-before.json",
+      "row": {
+        "compressed_bytes": 805,
+        "compression_method": 8,
+        "crc32_declared_hex": "0707430f",
+        "crc32_verified": false,
+        "directory": false,
+        "flags": 8,
+        "index": 128,
+        "local_header_offset": 8569189,
+        "path": "from-zero-native-host/inside-before.json",
+        "small_member_candidate_only": true,
+        "uncompressed_bytes": 1684,
+        "version_needed": 20
+      },
+      "start": 8569189
+    },
+    {
+      "already_in_tail": false,
+      "bytes": 900,
+      "end": 8566739,
+      "path": "from-zero-native-host/inside-after.json",
+      "row": {
+        "compressed_bytes": 815,
+        "compression_method": 8,
+        "crc32_declared_hex": "3bb82f31",
+        "crc32_verified": false,
+        "directory": false,
+        "flags": 8,
+        "index": 126,
+        "local_header_offset": 8565840,
+        "path": "from-zero-native-host/inside-after.json",
+        "small_member_candidate_only": true,
+        "uncompressed_bytes": 1695,
+        "version_needed": 20
+      },
+      "start": 8565840
+    },
+    {
+      "already_in_tail": false,
+      "bytes": 918,
+      "end": 8571092,
+      "path": "from-zero-native-host/outside-after.json",
+      "row": {
+        "compressed_bytes": 832,
+        "compression_method": 8,
+        "crc32_declared_hex": "5a73e3fa",
+        "crc32_verified": false,
+        "directory": false,
+        "flags": 8,
+        "index": 130,
+        "local_header_offset": 8570175,
+        "path": "from-zero-native-host/outside-after.json",
+        "small_member_candidate_only": true,
+        "uncompressed_bytes": 1659,
+        "version_needed": 20
+      },
+      "start": 8570175
+    },
+    {
+      "already_in_tail": false,
+      "bytes": 1705,
+      "end": 8583317,
+      "path": "from-zero-native-host/prepare-build.json",
+      "row": {
+        "compressed_bytes": 1619,
+        "compression_method": 8,
+        "crc32_declared_hex": "504af01d",
+        "crc32_verified": false,
+        "directory": false,
+        "flags": 8,
+        "index": 135,
+        "local_header_offset": 8581613,
+        "path": "from-zero-native-host/prepare-build.json",
+        "small_member_candidate_only": true,
+        "uncompressed_bytes": 4765,
+        "version_needed": 20
+      },
+      "start": 8581613
+    },
+    {
+      "already_in_tail": false,
+      "bytes": 1481,
+      "end": 8585854,
+      "path": "from-zero-native-host/systemd-run.log",
+      "row": {
+        "compressed_bytes": 1398,
+        "compression_method": 8,
+        "crc32_declared_hex": "312288e2",
+        "crc32_verified": false,
+        "directory": false,
+        "flags": 8,
+        "index": 143,
+        "local_header_offset": 8584374,
+        "path": "from-zero-native-host/systemd-run.log",
+        "small_member_candidate_only": true,
+        "uncompressed_bytes": 6901,
+        "version_needed": 20
+      },
+      "start": 8584374
+    }
+  ],
+  "reused_tail_paths": [],
+  "selected_expanded_bytes": 13665839,
+  "selected_paths": [
+    "from-zero-native/manifest.json",
+    "from-zero-native/confirmation/report.json",
+    "source.json",
+    "from-zero-native-host/controller-result.json",
+    "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json",
+    "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+    "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr",
+    "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json",
+    "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+    "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr",
+    "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json",
+    "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout",
+    "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr",
+    "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json",
+    "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout",
+    "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr",
+    "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json",
+    "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+    "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr",
+    "from-zero-native-host/child-result.json",
+    "from-zero-native-host/inside-before.json",
+    "from-zero-native-host/inside-after.json",
+    "from-zero-native-host/outside-after.json",
+    "from-zero-native-host/prepare-build.json",
+    "from-zero-native-host/systemd-run.log"
+  ],
+  "selected_record_bytes": 638976,
+  "unselected_ELF_SQLite_not_requested": true,
+  "whole_ZIP_not_requested": true
+}

@@ -1,0 +1,106 @@
+--- selected-v1/producer.py
++++ selected-resume-001/producer.py
+@@ -3,7 +3,7 @@
+ import datetime,hashlib,json,os,re,selectors,stat,struct,subprocess,sys,time,zlib
+ from pathlib import Path,PurePosixPath
+ BASE=Path("/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1")
+-OUT=BASE/"selected-v1"
++OUT=BASE/"selected-resume-001"
+ GH="/opt/homebrew/bin/gh"
+ REPO="TrillionniumFoundation/Trillionnium-Chain"
+ ARTIFACT=14124468052
+@@ -296,6 +296,8 @@
+ 
+ SELECTED += ["from-zero-native-host/child-result.json","from-zero-native-host/inside-before.json","from-zero-native-host/inside-after.json","from-zero-native-host/outside-after.json","from-zero-native-host/prepare-build.json","from-zero-native-host/systemd-run.log"]
+ DIRECTORY_PIN = {"path":"/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/directory-v1/summary.json","bytes":6078,"sha256":"71d2ba7895fd2c00303255fbddcd665de79a861aa96b5e4e5646ad6a478587c3"}
++PRIOR_FAILURE_PIN = {"path":"/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-v1/summary.json","bytes":3669,"sha256":"c90c5d78f244e73c7e513186bced2fc1475a5905ce994c2e339cbac6bb5c522b"}
++PRIOR_TERMINAL_PIN = {"path":"/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/actual-tool-records-v1/h5df-arm-selected-terminal.json","bytes":4317,"sha256":"f01c8a5d3abd2d28f2631ed1e8e44f75c88bb3e71d4916af3cc2f99ea08448c1"}
+ def read_pin(p):
+     return stable_bytes(Path(p["path"]),p["bytes"],p["sha256"])
+ def main():
+@@ -307,12 +309,38 @@
+          and directory["workflow_head"]==HEAD and directory["run_id"]==RUN and directory["run_attempt"]==1
+          and directory["declared_archive_sha256"]==DIGEST and directory["declared_archive_bytes"]==SIZE,"DIRECTORY_IDENTITY")
+     need(len(directory["steps"])==2 and all(x["complete_transport"]is True and x["exit"]==0 for x in directory["steps"]),"DIRECTORY_ORIGINAL_GETS")
++    prior=parse_json(read_pin(PRIOR_FAILURE_PIN));terminal=parse_json(read_pin(PRIOR_TERMINAL_PIN))
++    need(prior["status"]=="HOLD" and prior["artifact_id"]==ARTIFACT and prior["workflow_head"]==HEAD
++         and prior["directory_stage"]==DIRECTORY_PIN and prior["declared_whole_archive_sha256"]==DIGEST
++         and prior["combined_monotonic_deadline"]==directory["monotonic_deadline"],"ORIGINAL_FAILURE_IDENTITY")
++    need(type(prior["actual_combined_GETs"])is int and prior["actual_combined_GETs"]==3
++         and type(prior["actual_new_GETs"])is int and prior["actual_new_GETs"]==1
++         and len(prior["steps"])==1,"ORIGINAL_FAILURE_GET_COUNT")
++    ps=prior["steps"][0]
++    need(type(ps["exit"])is int and ps["exit"]==1 and ps["complete_transport"]is False
++         and ps["stdout_consumed_bytes"]==0 and ps["http_status"]is None
++         and ps["label"]=="selected-range-01" and ps["error"]=="GH_GET_NONZERO"
++         and prior["errors"]==["REQUEST_INCOMPLETE:selected-range-01"],"ORIGINAL_FAILED_FIRST_REQUEST")
++    need(terminal["session_id"]=="dpty-6c8a5d24a6ed6b321d48fdf0c0fd04db36d0762c12ff239ba6f0b67b5b6426d9"
++         and terminal["status"]["state"]=="exited" and type(terminal["status"]["exit_code"])is int
++         and terminal["status"]["exit_code"]==1 and terminal["output_complete"]is True
++         and terminal["status"]["output_complete"]is True and terminal["status"]["capture_error"]is None
++         and terminal["offset"]==0 and terminal["next_offset"]==1082
++         and terminal["truncated_before_offset"]is False,"ORIGINAL_ACTUAL_TERMINAL")
++    original_terminal_raw=bytes.fromhex(terminal["bytes_hex"])
++    need(len(original_terminal_raw)==1082 and hashlib.sha256(original_terminal_raw).hexdigest()
++         =="fe3017f2c61a1915ae9d38164f125d96eaaf6928e59c83ab776732c6dde6fa74","ORIGINAL_TERMINAL_RAW_SHA")
++    original_last=parse_json(original_terminal_raw.splitlines()[-1])
++    need(original_last["status"]=="HOLD" and original_last["summary"]==PRIOR_FAILURE_PIN
++         and original_last["actual_combined_GETs"]==3,"ORIGINAL_TERMINAL_SUMMARY_BINDING")
+     deadline=directory["monotonic_deadline"]
+     need(directory["monotonic_started"]<=time.monotonic()<deadline,"COMBINED_900_SECOND_DEADLINE")
+     OUT.mkdir(mode=0o700)
+     result={"schema":"trnm-H5DF-arm64-cost-selected-original-artifact-v1","status":"HOLD","started_at":now(),
+       "artifact_id":ARTIFACT,"artifact_name":NAME,"run_id":RUN,"run_attempt":1,"job_id":132528769087,
+       "workflow_head":HEAD,"expected_subject":SUBJECT,"expected_tree":TREE,"directory_stage":DIRECTORY_PIN,
++      "explicit_once_resume":True,"original_failed_summary":PRIOR_FAILURE_PIN,"original_actual_terminal":PRIOR_TERMINAL_PIN,
++      "previous_actual_GETs":3,"maximum_new_GETs":8,"original_failed_attempt_unchanged":True,
+       "declared_whole_archive_bytes":SIZE,"declared_whole_archive_sha256":DIGEST,"maximum_combined_GETs":MAX_GETS,
+       "combined_budget_seconds":TOTAL_BUDGET,"combined_monotonic_deadline":deadline,"per_GET_max_seconds":BUDGET,
+       "steps":[],"errors":[],"whole_artifact_sha256_verified":False,"all_artifact_member_crc_verified":False,
+@@ -320,7 +348,7 @@
+       "qualification":False,"source_refs_stage_CI_modified":False,"inner_code_or_test_executed":False}
+     def request(label,a,b):
+         global START,END,TAIL
+-        need(2+len(result["steps"])<MAX_GETS,"COMBINED_GET_COUNT_BOUND")
++        need(3+len(result["steps"])<MAX_GETS and len(result["steps"])<8,"COMBINED_GET_COUNT_BOUND")
+         START,END=a,b;TAIL=b-a+1
+         step,raw=capture(label,"repos/"+REPO+"/actions/artifacts/"+str(ARTIFACT)+"/zip",min(deadline,time.monotonic()+BUDGET),True)
+         result["steps"].append(step)
+@@ -355,9 +383,9 @@
+             if groups and groups[-1]["end"]+1==span["start"]:
+                 groups[-1]["end"]=span["end"];groups[-1]["members"].append(span["path"])
+             else:groups.append({"start":span["start"],"end":span["end"],"members":[span["path"]]})
+-        need(2+len(groups)<=MAX_GETS,"PLANNED_GET_BOUND")
++        need(len(groups)==8 and 3+len(groups)<=MAX_GETS,"PLANNED_GET_BOUND")
+         plan={"selected_paths":SELECTED,"records":spans,"new_range_groups":groups,
+-              "directory_original_GETs":2,"maximum_combined_GETs":MAX_GETS,"actual_planned_combined_GETs":2+len(groups),
++              "directory_original_GETs":2,"previous_failed_GETs":1,"maximum_combined_GETs":MAX_GETS,"actual_planned_combined_GETs":3+len(groups),
+               "combined_original_monotonic_deadline":deadline,
+               "selected_record_bytes":sum(x["bytes"]for x in spans),
+               "selected_expanded_bytes":sum(x["row"]["uncompressed_bytes"]for x in spans),
+@@ -365,7 +393,7 @@
+               "reused_tail_paths":[x["path"]for x in spans if x["already_in_tail"]],
+               "unselected_ELF_SQLite_not_requested":True,"whole_ZIP_not_requested":True}
+         result["selected_range_plan"]=save_json("selected-range-plan.json",plan)
+-        print(json.dumps({"phase":"selected_plan_fixed","selected_members":len(SELECTED),"actual_planned_combined_GETs":2+len(groups),
++        print(json.dumps({"phase":"selected_plan_fixed","selected_members":len(SELECTED),"actual_planned_combined_GETs":3+len(groups),
+           "selected_record_bytes":plan["selected_record_bytes"],"selected_expanded_bytes":plan["selected_expanded_bytes"],"plan":result["selected_range_plan"]}),flush=True)
+         buffers=[(tail_start,tail_end,tail,"directory-v1/tail")]
+         for i,group in enumerate(groups,1):
+@@ -392,6 +420,7 @@
+         result["manifest_source_identity"]={k:manifest.get(k)for k in("source_before","source_after","binary_sha256_before","binary_sha256_after")}
+         result["status"]="SELECTED_ORIGINAL_MEMBERS_VERIFIED"
+         read_pin(DIRECTORY_PIN);read_pin(directory["central_directory"]);read_pin(directory["tail"])
++        read_pin(PRIOR_FAILURE_PIN);read_pin(PRIOR_TERMINAL_PIN)
+         stable_bytes(SOURCE_LOG,SOURCE_BYTES,SOURCE_SHA)
+     except Exception as error:
+         result["errors"].append(str(error)if isinstance(error,ValueError)else type(error).__name__)
+@@ -399,7 +428,7 @@
+         result["finished_at"]=now();result["combined_elapsed_seconds"]=round(time.monotonic()-directory["monotonic_started"],6)
+         raw=Path(__file__).read_bytes()
+         result["producer"]={"path":str(Path(__file__).resolve()),"bytes":len(raw),"sha256":hashlib.sha256(raw).hexdigest()}
+-        result["actual_new_GETs"]=len(result["steps"]);result["actual_combined_GETs"]=2+len(result["steps"])
++        result["actual_new_GETs"]=len(result["steps"]);result["actual_combined_GETs"]=3+len(result["steps"])
+         summary=save_json("summary.json",result);files=[]
+         for p in sorted(OUT.rglob("*")):
+             if p.is_file():

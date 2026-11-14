@@ -1,0 +1,204 @@
+--- /private/tmp/chain-prci-R1-prospective-protocol-selected-artifact-20261114-v1/producer.py
++++ /private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/directory-producer.py
+@@ -1,19 +1,19 @@
+ #!/usr/bin/env python3
+-"""One fixed prospective protocol artifact, selected original records only."""
++"""One fixed H5DF x64 cost artifact; original directory discovery before selected records."""
+ import datetime,hashlib,json,os,re,selectors,stat,struct,subprocess,sys,time,zlib
+ from pathlib import Path,PurePosixPath
+-BASE=Path("/private/tmp/chain-prci-R1-prospective-protocol-selected-artifact-20261114-v1")
+-OUT=BASE/"acquisition-v1"
++BASE=Path("/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1")
++OUT=BASE/"directory-v1"
+ GH="/opt/homebrew/bin/gh"
+ REPO="TrillionniumFoundation/Trillionnium-Chain"
+-ARTIFACT=14120578879
+-RUN=43604217412
+-HEAD="2a86462a1ab20c68151719ba4635e3c294391e64"
+-PROSPECTIVE="a7ee9542d10e15bba4256de9579a0196ba9ab9c9"
+-TREE="5c26776f96f15fd131e85a5c2d7c5e895ad7fab4"
+-NAME="merge-protocol-contract-"+PROSPECTIVE+"-1"
+-SIZE=7183711
+-DIGEST="b61df70a9bb994c08803e2f440fe2f070845485db93b24034196681d9a545278"
++ARTIFACT=14124189121
++RUN=43621754143
++HEAD="5df7ae6f482157c5f7fdcbcd52222117a965053f"
++SUBJECT=HEAD
++TREE="6be4940d38cc88782657f2684cbefe48866f8b9f"
++NAME="cost-x64-"+HEAD+"-1"
++SIZE=10127368
++DIGEST="9899447cdb5c5045d0f70ffdba9aa0f271f350c823be80fbdb1c266ba541530e"
+ TAIL=65557
+ START=SIZE-TAIL
+ END=SIZE-1
+@@ -21,9 +21,9 @@
+ TOTAL_BUDGET=900
+ MAX_GETS=21
+ SAFE_HEADERS={"content-range","content-length","content-type","accept-ranges","content-encoding"}
+-SOURCE_LOG=Path("/private/tmp/chain-prci-R1-required-prospective-protocol-original-log-20261114-v2/job-132481412473-original-log.stdout")
+-SOURCE_BYTES=222493
+-SOURCE_SHA="26c0fd4492ccdd52fc002dcae6d0e09b5fb5efc896dd7b5579040a4c187ff6aa"
++SOURCE_LOG=Path("/private/tmp/chain-prci-H5DF-cross-arch-cost-x64-original-log-20261114-v1/job-132528768933-original-log.stdout")
++SOURCE_BYTES=185104
++SOURCE_SHA="db7a975f8a17e1e3854a86805e44b6cabee36d03c1fb2a280b6a840538a41a66"
+ SELECTORS=[
+  "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+  "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+@@ -294,123 +294,66 @@
+     return data
+ 
+ def main():
+-    global START,END,TAIL
+     need(sys.flags.optimize==0,"OPTIMIZATION_FORBIDDEN")
+     need(BASE.resolve(strict=True)==BASE,"OUTPUT_PARENT")
+     OUT.mkdir(mode=0o700)
+-    started=now();deadline=time.monotonic()+TOTAL_BUDGET
+-    result={"schema":"trnm-r1-prospective-protocol-selected-artifact-v1","status":"HOLD",
+-      "started_at":started,"finished_at":None,"errors":[],"steps":[],
++    began=time.monotonic();deadline=began+TOTAL_BUDGET
++    result={"schema":"trnm-H5DF-cost-selected-directory-v1","status":"HOLD","started_at":now(),
+       "artifact_id":ARTIFACT,"artifact_name":NAME,"run_id":RUN,"run_attempt":1,
+-      "job_id":132481412473,"workflow_head":HEAD,"prospective_subject":PROSPECTIVE,"tree":TREE,
+-      "declared_whole_archive_bytes":SIZE,"declared_whole_archive_sha256":DIGEST,
+-      "maximum_GETs":MAX_GETS,"total_budget_seconds":TOTAL_BUDGET,"per_GET_max_seconds":BUDGET,
+-      "whole_artifact_sha256_verified":False,"all_artifact_member_crc_verified":False,
+-      "automatic_retry":False,"manual_redirect_following":False,
++      "job_id":132528768933,"workflow_head":HEAD,"expected_subject":SUBJECT,"expected_tree":TREE,
++      "declared_archive_bytes":SIZE,"declared_archive_sha256":DIGEST,
++      "directory_stage_max_GETs":2,"combined_directory_and_selected_max_GETs":MAX_GETS,
++      "combined_budget_seconds":TOTAL_BUDGET,"per_GET_max_seconds":BUDGET,
++      "monotonic_started":began,"monotonic_deadline":deadline,
++      "steps":[],"errors":[],"whole_artifact_sha256_verified":False,
++      "all_artifact_member_crc_verified":False,"automatic_retry":False,
+       "signed_URL_raw_headers_auth_cookies_saved":False,"qualification":False,
+       "source_refs_stage_CI_modified":False,"inner_code_or_test_executed":False}
+-    original_inputs=[]
+-    def request(label,endpoint,span=None):
+-        global START,END,TAIL
+-        need(len(result["steps"])<MAX_GETS,"GET_COUNT_BOUND")
+-        if span is not None:START,END=span;TAIL=END-START+1
+-        step,raw=capture(label,endpoint,min(deadline,time.monotonic()+BUDGET),range_probe=span is not None)
+-        result["steps"].append(step)
+-        print(json.dumps({"label":label,"exit":step["exit"],"http_status":step["http_status"],
+-                          "complete":step["complete_transport"],"body_bytes":len(raw),"error":step["error"]}),flush=True)
+-        if span is None and step["complete_transport"]:
+-            result[label]=save(label+".json",raw)
+-        elif span is not None and step["http_status"]==206 and raw:
+-            result[label]=save(label+".body"if step["complete_transport"]else label+".body.partial",raw)
+-        need(step["complete_transport"],"REQUEST_INCOMPLETE:"+label)
+-        return raw
+     try:
+         log=stable_bytes(SOURCE_LOG,SOURCE_BYTES,SOURCE_SHA)
+         need((f"Artifact ID is {ARTIFACT}").encode()in log and DIGEST.encode()in log
+              and(f"Final size is {SIZE} bytes").encode()in log,"ORIGINAL_UPLOAD_ANCHOR")
+         result["original_upload_log"]={"path":str(SOURCE_LOG),"bytes":SOURCE_BYTES,"sha256":SOURCE_SHA}
+         endpoint="repos/"+REPO+"/actions/artifacts/"+str(ARTIFACT)
+-        meta_raw=request("artifact-metadata",endpoint);meta=parse_json(meta_raw)
+-        need(type(meta.get("id"))is int and meta["id"]==ARTIFACT
+-          and type(meta.get("size_in_bytes"))is int and meta["size_in_bytes"]==SIZE
+-          and meta.get("name")==NAME and meta.get("digest")=="sha256:"+DIGEST
+-          and meta.get("expired")is False,"FRESH_ARTIFACT_IDENTITY")
++        step,raw=capture("artifact-metadata",endpoint,min(deadline,time.monotonic()+BUDGET),False)
++        result["steps"].append(step)
++        print(json.dumps({"label":"artifact-metadata","exit":step["exit"],"complete":step["complete_transport"],"error":step["error"]}),flush=True)
++        need(step["complete_transport"],"METADATA_TRANSPORT_INCOMPLETE")
++        result["artifact_metadata"]=save("artifact-metadata.json",raw);meta=parse_json(raw)
++        need(type(meta.get("id"))is int and meta["id"]==ARTIFACT and type(meta.get("size_in_bytes"))is int and meta["size_in_bytes"]==SIZE
++          and meta.get("name")==NAME and meta.get("digest")=="sha256:"+DIGEST and meta.get("expired")is False,"FRESH_ARTIFACT_IDENTITY")
+         wr=meta.get("workflow_run",{})
+-        need(wr.get("id")==RUN and wr.get("head_sha")==HEAD,"FRESH_ARTIFACT_RUN_HEAD")
++        need(wr.get("id")==RUN and wr.get("head_sha")==HEAD
++          and wr.get("head_branch")=="fix/chain-hepta-closure-candidate-20261109-481716","FRESH_ARTIFACT_RUN_HEAD_BRANCH")
+         result["metadata_identity_verified"]=True
+-        tail_start=SIZE-65557;tail_end=SIZE-1
+-        tail=request("tail",endpoint+"/zip",(tail_start,tail_end))
+-        cd=central_directory(tail)
+-        need(cd["entries"]==109,"ORIGINAL_109_DIRECTORY_ENTRIES_REQUIRED")
++        step,raw=capture("tail",endpoint+"/zip",min(deadline,time.monotonic()+BUDGET),True)
++        result["steps"].append(step)
++        print(json.dumps({"label":"tail","exit":step["exit"],"http_status":step["http_status"],"complete":step["complete_transport"],"body_bytes":len(raw),"error":step["error"]}),flush=True)
++        if step["http_status"]==206 and raw:result["tail"]=save("tail.body"if step["complete_transport"]else"tail.body.partial",raw)
++        need(step["complete_transport"],"TAIL_TRANSPORT_INCOMPLETE")
++        cd=central_directory(raw)
+         result["central_directory"]=save_json("central-directory.json",cd)
+-        members=sorted(cd["members"],key=lambda x:x["local_header_offset"])
+-        need(len({r["local_header_offset"]for r in members})==len(members),"DUPLICATE_LOCAL_OFFSET")
+-        byname={r["path"]:r for r in members}
+-        need(len(SELECTED)==19 and len(set(SELECTED))==19,"SELECTED_ROSTER")
+-        spans=[]
+-        for name in SELECTED:
+-            need(name in byname,"SELECTED_MEMBER_ABSENT:"+name)
+-            row=byname[name];need(not row["directory"]and row["small_member_candidate_only"],"SELECTED_MEMBER_TYPE_BOUND")
+-            i=members.index(row);start=row["local_header_offset"]
+-            end=(members[i+1]["local_header_offset"]if i+1<len(members)else cd["central_directory_offset"])-1
+-            need(0<=start<=end<cd["central_directory_offset"],"RECORD_SPAN")
+-            need(row["compressed_bytes"]+30<=end-start+1<=row["compressed_bytes"]+30+1024+65535+16,"LOCAL_RECORD_RANGE_BOUND")
+-            spans.append({"path":name,"start":start,"end":end,"bytes":end-start+1,"row":row,
+-                          "already_in_tail":start>=tail_start and end<=tail_end})
+-        need(sum(x["bytes"]for x in spans)<=4*1024*1024,"SELECTED_TOTAL_COMPRESSED_BOUND")
+-        need(sum(x["row"]["uncompressed_bytes"]for x in spans)<=64*1024*1024,"SELECTED_TOTAL_EXPANDED_BOUND")
+-        pending=sorted([x for x in spans if not x["already_in_tail"]],key=lambda x:x["start"])
+-        groups=[]
+-        for span in pending:
+-            if groups and groups[-1]["end"]+1==span["start"]:
+-                groups[-1]["end"]=span["end"];groups[-1]["members"].append(span["path"])
+-            else:groups.append({"start":span["start"],"end":span["end"],"members":[span["path"]]})
+-        need(2+len(groups)<=MAX_GETS,"PLANNED_GET_BOUND")
+-        plan={"selected_paths":SELECTED,"records":spans,"new_range_groups":groups,
+-              "maximum_total_GETs":MAX_GETS,"actual_planned_total_GETs":2+len(groups),
+-              "merge_rule":"Only exactly consecutive selected local records; no intervening unselected record",
+-              "reused_tail_paths":[x["path"]for x in spans if x["already_in_tail"]],
+-              "unselected_ELF_SQLite_not_requested":True,"whole_ZIP_not_requested":True}
+-        result["selected_range_plan"]=save_json("selected-range-plan.json",plan)
+-        buffers=[(tail_start,tail_end,tail,"tail")]
+-        for i,group in enumerate(groups,1):
+-            data=request("selected-range-"+str(i).zfill(2),endpoint+"/zip",(group["start"],group["end"]))
+-            buffers.append((group["start"],group["end"],data,"selected-range-"+str(i).zfill(2)))
+-        verified=[]
+-        for span in spans:
+-            candidates=[v for v in buffers if v[0]<=span["start"]and v[1]>=span["end"]]
+-            need(candidates,"SELECTED_RANGE_NOT_COVERED")
+-            a,b,record,label=candidates[0]
+-            data=extract_record(span["row"],record[span["start"]-a:span["end"]-a+1])
+-            destination=OUT/"members"/span["path"]
+-            destination.parent.mkdir(parents=True,exist_ok=True)
+-            proof=save("members/"+span["path"],data)
+-            verified.append({"path":span["path"],"bytes":len(data),"sha256":proof["sha256"],
+-                "crc32":span["row"]["crc32_declared_hex"],"crc32_verified":True,
+-                "compressed_bytes":span["row"]["compressed_bytes"],"original":proof,
+-                "range_source":label,"origin":"https://github.com/"+REPO+"/actions/runs/"+str(RUN)+"/artifacts/"+str(ARTIFACT)+"#"+span["path"]})
+-        need(len(verified)==19,"EXACT_SELECTED_COMPLETION")
+-        result["selected_members"]=save_json("selected-member-index.json",{"artifact_id":ARTIFACT,"files":verified,"count":len(verified),"selected_member_crc_sha_verified":True,"whole_artifact_sha256_verified":False,"all_artifact_member_crc_verified":False})
+-        result["selected_member_crc_sha_verified"]=True
+-        manifest=parse_json((OUT/"members/from-zero-native/manifest.json").read_bytes())
+-        result["manifest_outcome"]={k:manifest.get(k)for k in("schema","passed","failures","all_named_tests_passed","format_passed","source_recompiled","execution_finished","production_activation","independent_wan_accepted","work_hardness_accepted")}
+-        result["manifest_source_identity"]={k:manifest.get(k)for k in("source_before","source_after","binary_before","binary_after")}
+-        result["status"]="SELECTED_ORIGINAL_MEMBERS_VERIFIED"
++        result["actual_directory_members"]=cd["entries"]
++        result["actual_CD_offset"]=cd["central_directory_offset"]
++        result["actual_CD_bytes"]=cd["central_directory_bytes"]
++        result["cost_subject_paths_not_inherited_from_protocol"]=True
++        result["status"]="DIRECTORY_VERIFIED_SELECTED_RECORDS_PENDING"
+         stable_bytes(SOURCE_LOG,SOURCE_BYTES,SOURCE_SHA)
+     except Exception as error:
+         result["errors"].append(str(error)if isinstance(error,ValueError)else type(error).__name__)
+     finally:
+         result["finished_at"]=now()
++        result["elapsed_seconds"]=round(time.monotonic()-began,6)
+         raw=Path(__file__).read_bytes()
+         result["producer"]={"path":str(Path(__file__).resolve()),"bytes":len(raw),"sha256":hashlib.sha256(raw).hexdigest()}
+-        result["actual_GETs"]=len(result["steps"])
+         summary=save_json("summary.json",result)
+         files=[]
+         for p in sorted(OUT.rglob("*")):
+             if p.is_file():
+                 r=p.read_bytes();files.append({"path":str(p),"bytes":len(r),"sha256":hashlib.sha256(r).hexdigest()})
+-        index=save_json("EVIDENCE_INDEX.json",{"files":files,"count":len(files),"bytes":sum(x["bytes"]for x in files),"self_excluded":True})
++        index=save_json("EVIDENCE_INDEX.json",{"files":files,"count":len(files),"self_excluded":True})
+         print(json.dumps({"status":result["status"],"summary":summary,"index":index,
+-          "actual_GETs":len(result["steps"]),"whole_artifact_sha256_verified":False,"qualification":False}),flush=True)
+-    return 0 if result["status"]=="SELECTED_ORIGINAL_MEMBERS_VERIFIED"else 1
++          "actual_GETs":len(result["steps"]),"actual_directory_members":result.get("actual_directory_members"),
++          "combined_monotonic_deadline":deadline,"whole_artifact_sha256_verified":False,"qualification":False}),flush=True)
++    return 0 if result["status"]=="DIRECTORY_VERIFIED_SELECTED_RECORDS_PENDING"else 1
+ if __name__=="__main__":raise SystemExit(main())

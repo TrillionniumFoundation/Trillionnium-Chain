@@ -1,0 +1,410 @@
+{
+  "files": [
+    {
+      "bytes": 10620,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-003-offline-delta-v1/producer.py",
+      "sha256": "7a5ece465a340bab016f545587619555e45855003513fd1fa3ace0fdcdf18108"
+    },
+    {
+      "bytes": 60633,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-003-offline-delta-v1/progress-delta.json",
+      "sha256": "d0ed039cca0beb5711ae6478d7598b006443dbfd3bd27be6305f53388fba802b"
+    }
+  ],
+  "inputs": [
+    {
+      "bytes": 14262,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-002/summary.json",
+      "sha256": "222d90ad169c08fc1a73a91f042169fa88bd005197d69587945af03c5c65e005",
+      "version": [
+        16777233,
+        607376029,
+        33152,
+        1,
+        14262,
+        1794679015210936615,
+        1794679015210936615
+      ]
+    },
+    {
+      "bytes": 14327,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-003/summary.json",
+      "sha256": "e15256e1a2369b12dae1a29bef7d0864e4511f4de10a235f8ecb7570a517cf66",
+      "version": [
+        16777233,
+        607385677,
+        33152,
+        1,
+        14327,
+        1794679905333940725,
+        1794679905333940725
+      ]
+    },
+    {
+      "bytes": 4375,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-003/EVIDENCE_INDEX.json",
+      "sha256": "e3dc3b64d61a9cacd5f5d57c3b39a49b277e931c0eab2c68cbed5ff90c74e21c",
+      "version": [
+        16777233,
+        607385678,
+        33152,
+        1,
+        4375,
+        1794679905338182054,
+        1794679905338182054
+      ]
+    },
+    {
+      "bytes": 134758,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-003/H5DF-latest-checks-normalized.json",
+      "sha256": "f2654bd33244f97c7c3444ae99cc9e88e7df2c57d3b1906cda095e6ffe6ea0dd",
+      "version": [
+        16777233,
+        607385644,
+        33152,
+        1,
+        134758,
+        1794679902256119357,
+        1794679902256119357
+      ]
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-003/H5DF-latest-checks-page-001.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "version": [
+        16777233,
+        607385464,
+        33152,
+        1,
+        0,
+        1794679893880802196,
+        1794679893880802196
+      ]
+    },
+    {
+      "bytes": 373896,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-003/H5DF-latest-checks-page-001.stdout",
+      "sha256": "64cb4ccae7fe1e805a9f219a43e4055d7cec653b72ce32383fccc692f47a61d2",
+      "version": [
+        16777233,
+        607385461,
+        33152,
+        1,
+        373896,
+        1794679898250157308,
+        1794679898250157308
+      ]
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-003/H5DF-latest-checks-page-002.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "version": [
+        16777233,
+        607385612,
+        33152,
+        1,
+        0,
+        1794679898279139229,
+        1794679898279139229
+      ]
+    },
+    {
+      "bytes": 241672,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-003/H5DF-latest-checks-page-002.stdout",
+      "sha256": "cb2800953d2cc4f9e7f9f48580700b48a9f1a642408b06daf59806434111b44b",
+      "version": [
+        16777233,
+        607385611,
+        33152,
+        1,
+        241672,
+        1794679902188022926,
+        1794679902188022926
+      ]
+    },
+    {
+      "bytes": 1499,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-003/H5DF-required-runs-normalized.json",
+      "sha256": "ce5f03ddab657747b9c06ed20c55d2aa3b33fd679272a2adeab27bb05ac39229",
+      "version": [
+        16777233,
+        607385645,
+        33152,
+        1,
+        1499,
+        1794679902256982823,
+        1794679902256982823
+      ]
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-003/H5DF-required-runs-page-001.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "version": [
+        16777233,
+        607385465,
+        33152,
+        1,
+        0,
+        1794679893880879906,
+        1794679893880879906
+      ]
+    },
+    {
+      "bytes": 15904,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-003/H5DF-required-runs-page-001.stdout",
+      "sha256": "540cb6ce0cefebb91058898bd35de993253e5cc10e065932def2e0da13189e6c",
+      "version": [
+        16777233,
+        607385463,
+        33152,
+        1,
+        15904,
+        1794679895136143914,
+        1794679895136143914
+      ]
+    },
+    {
+      "bytes": 82193,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-003/H5DF-run-43621754143-jobs-normalized.json",
+      "sha256": "490d14db72f6c253421c514ee1674bc3f880c94f827d5c786b86b79a62028b84",
+      "version": [
+        16777233,
+        607385676,
+        33152,
+        1,
+        82193,
+        1794679905331840165,
+        1794679905331840165
+      ]
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-003/H5DF-run-43621754143-jobs-page-001.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "version": [
+        16777233,
+        607385668,
+        33152,
+        1,
+        0,
+        1794679903581969568,
+        1794679903581969568
+      ]
+    },
+    {
+      "bytes": 63939,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-003/H5DF-run-43621754143-jobs-page-001.stdout",
+      "sha256": "b1ba69e671190549e541a8ab98f996a171533e2783b3938417d8a0b75d09767f",
+      "version": [
+        16777233,
+        607385667,
+        33152,
+        1,
+        63939,
+        1794679905294248085,
+        1794679905294248085
+      ]
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-003/H5DF-run-43621754143-metadata.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "version": [
+        16777233,
+        607385647,
+        33152,
+        1,
+        0,
+        1794679902257740454,
+        1794679902257740454
+      ]
+    },
+    {
+      "bytes": 15868,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-003/H5DF-run-43621754143-metadata.stdout",
+      "sha256": "b783ccc4ed1bc91c77f50d72cee0e9c58d28d23ef0f72815d190a38d68757a9c",
+      "version": [
+        16777233,
+        607385646,
+        33152,
+        1,
+        15868,
+        1794679903530129780,
+        1794679903530129780
+      ]
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-003/pr847.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "version": [
+        16777233,
+        607385462,
+        33152,
+        1,
+        0,
+        1794679893880733821,
+        1794679893880733821
+      ]
+    },
+    {
+      "bytes": 30707,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-003/pr847.stdout",
+      "sha256": "368868d5aaf71d64f51b3eb6dcae2bd5b0a916a4a4e85d6e1a5130113b650c5d",
+      "version": [
+        16777233,
+        607385460,
+        33152,
+        1,
+        30707,
+        1794679896876042548,
+        1794679896876042548
+      ]
+    },
+    {
+      "bytes": 19479,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-003/producer.py",
+      "sha256": "3f50aa71fa06f37e64c1ed1e669ad1b1b45ebe27acfddb5004957ef3a43c68fb",
+      "version": [
+        16777233,
+        607385459,
+        33152,
+        1,
+        19479,
+        1794679893878926347,
+        1794679893878926347
+      ]
+    },
+    {
+      "bytes": 14248,
+      "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/ready002-offline-delta-v1/progress-delta.json",
+      "sha256": "a4c6ce54752a2633e3f0d75a50fe02bbf94e2b67c5e7c840a729a556d519707f",
+      "version": [
+        16777233,
+        607379426,
+        33152,
+        1,
+        14248,
+        1794679317062038240,
+        1794679317062038240
+      ]
+    },
+    {
+      "bytes": 6155,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-ready003-launch-v1/actual-terminal.json",
+      "sha256": "a6715bc25f3967c97e15973a83e2d42582bb8e7baa1d15b9d8ce5640fc084e71",
+      "version": [
+        16777233,
+        607386704,
+        33152,
+        1,
+        6155,
+        1794680009163698363,
+        1794680009164219701
+      ]
+    },
+    {
+      "bytes": 3700,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-ready003-launch-v1/launcher.py",
+      "sha256": "eb5c76c12d9a46d1cf880e8ffe70eec6b40e2e117aca4360920c5fba00019a24",
+      "version": [
+        16777233,
+        607385454,
+        33152,
+        1,
+        3700,
+        1794679893866965117,
+        1794679893866965117
+      ]
+    },
+    {
+      "bytes": 19479,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-ready003-launch-v1/pinned-collector.py.original",
+      "sha256": "3f50aa71fa06f37e64c1ed1e669ad1b1b45ebe27acfddb5004957ef3a43c68fb",
+      "version": [
+        16777233,
+        607385455,
+        33152,
+        1,
+        19479,
+        1794679893867229244,
+        1794679893867229244
+      ]
+    },
+    {
+      "bytes": 1215,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-ready003-launch-v1/launch.json",
+      "sha256": "8348823de98df9a8a7abb23f0a6e57296424481ceaaaec9f0826324733612e36",
+      "version": [
+        16777233,
+        607385456,
+        33152,
+        1,
+        1215,
+        1794679893867770666,
+        1794679893867770666
+      ]
+    },
+    {
+      "bytes": 399,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-ready003-launch-v1/pin-check.json",
+      "sha256": "190982b2e4342b83d0b75283643b3fbbbb0491064ef39b30cc494a34bef01d51",
+      "version": [
+        16777233,
+        607385457,
+        33152,
+        1,
+        399,
+        1794679893867852208,
+        1794679893867852208
+      ]
+    },
+    {
+      "bytes": 367,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-ready003-launch-v1/result.json",
+      "sha256": "50fc1888c6c15c869436a208e1114bfa4a0cbb121849bc72e7f03a4bc877609b",
+      "version": [
+        16777233,
+        607385679,
+        33152,
+        1,
+        367,
+        1794679905340249072,
+        1794679905340249072
+      ]
+    },
+    {
+      "bytes": 82193,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-002/H5DF-run-43621754143-jobs-normalized.json",
+      "sha256": "490d14db72f6c253421c514ee1674bc3f880c94f827d5c786b86b79a62028b84",
+      "version": [
+        16777233,
+        607376028,
+        33152,
+        1,
+        82193,
+        1794679015209040805,
+        1794679015209040805
+      ]
+    },
+    {
+      "bytes": 134462,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-002/H5DF-latest-checks-normalized.json",
+      "sha256": "8c8b7c7a75840ceac3605e9db2bb70493d075d6799768eb4d71cbd91df23a7bc",
+      "version": [
+        16777233,
+        607375965,
+        33152,
+        1,
+        134462,
+        1794679011747626122,
+        1794679011747626122
+      ]
+    }
+  ],
+  "schema": "trnm-offline-CI-delta-evidence-index-v1",
+  "self_excluded": true
+}

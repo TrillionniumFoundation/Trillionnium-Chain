@@ -1,0 +1,149 @@
+@@ -15401,3 +15401,148 @@ store implementation; current PQ correspondence, frozen records and the B1
+ historical fixture remain. Only the three selected W1 corpus pins and this
+ plan pin change. The resulting commit requires its own original source,
+ repository and external-evidence gates before publication and protected merge.
++
++### Retained pre-reconciliation audit text
++
++The following exact text from local ABFC is retained as historical context.
++Its then-current FC39 labels do not describe the selection below. Original
++execution observations keep their original source identities and limits.
++
++```text
++### 2026-11-14 retain the reviewed hash-purpose proof descriptor binding
++
++The existing hash-purpose source guard correctly refused the stale proof
++descriptor identity after the independently reviewed standalone verifier lock
++alignment. Rebind only that descriptor within the existing 31-path inventory
++and retain the exact 19-use semantic identity. The descriptor changes only the
++byte count and digest of its selected W1 implementation map. That map preserves
++the 16 selected inputs and 140 local-closure inputs, updating the one verifier
++lock in both inventories with its explicit review record.
++
++The selected RISC Zero package versions, sources, checksums and resolved direct
++dependency edges, proof parameters, expected image and control identities, historical proof materials and unresolved obligations stay
++unchanged. The hash-purpose inspector still refuses unreviewed source changes
++or automatic repinning. Its existing 33 finite controls and positive source
++inspection are the validation scope for this correction; successful inspection
++continues to report HOLD_NO_GO, unknown security bits and no production
++activation. Original failed CI records remain valid observations of their
++original source. This binding supplies no new native execution, complete
++callgraph review, authenticated history or cryptographic qualification.
++```
++
++```text
++### Corrective audit checkpoint and remaining consolidation work — 2026-11-14
++
++The active local corrective source is
++`fc39da5f35298ce8a4c34aa5bdb25849648612f9`, tree
++`20ef410a1ea847a3585de91d5f0a0380009cf874`. The source identity is an
++audited local checkpoint, not a claim that the protected main branch or remote
++candidate has advanced. The earlier branch-disposition record describes its
++frozen inventory; it does not close later semantic review, native validation
++or branch cleanup. At this checkpoint 28 of the original 325 maximal historical
++heads remain outside the H229 integration graph and are under separate review.
++
++Retain the reviewed current PQ128 correspondence and composition namespaces.
++Their explicit 21-input correspondence and 66-path composition union preserve
++the frozen V1 source lock, original numeric assumptions and every null/false
++qualification field. The current observation, claim-guard and composition
++suites ran 25, 57 and 60 methods successfully. The budget suite originally
++ran 57 passes and one error after its old fixture expected a direct V1 report.
++The narrow adapter now checks the separate current outer record and retains
++the original V1 helper; its full 58-method rerun passed. The original error
++remains evidence and is not replaced by that result.
++
++Retain the durable-witness readback validation and explicit SQLite connection
++closure. The complete 77-method readiness suite passed after the closure fix
++with zero ResourceWarnings; the earlier passing run's warnings remain recorded.
++SP27 receiver and strata readers now bind the exact prepared child command,
++integer-zero exit and false timeout fields after the original readback guard.
++All 36 original methods remain and four controls are added: the complete
++40-method finite candidate passed, while the original readers failed all
++40 added tamper subcases. This does not execute a native SP27 campaign or
++establish the four-second confirmation target.
++
++Cost-source receipt equality now requires identical exact JSON value types
++as well as equal values and the original closed field set. All 27 existing
++methods remain unchanged and three controls are added. The actual complete
++30-method suite passed on `fc39da5f`; its 18 reviewed imported-module/data
++inputs and the full 41,378-entry / 3,992,046,497-byte checkout matched before
++and after. Earlier Boolean/integer/float substitution failures remain retained.
++Known timing scopes, original failure denominators, unknown cost values,
++resource budgets and qualification flags are unchanged.
++
++The authority44 and current-lifetime20 maps now bind `fc39da5f`; only the
++already reviewed Node store bytes differ within either selected inventory
++from their preceding `5c04c60e` map. The authority lock is
++`f90e400347b1a1431b845cc41eb89a904a629f6095ae9f2967d69b35809c5f56` and the lifetime contract digest is
++`ed9d948a4815aa2fdd858acdcda104341ab96fb504a15e761c86ae04d6547c63`. The six-crate QROM145 mapping retains its
++`5c04c60e` checkpoint and `77f3901f137119ce245bf361990990b51ecb9affdc87f273404c4330a2870ee5`
++digest because those selected input bytes are unchanged. The current proof
++descriptor remains `8e95754db175bf8f2c4b3ffc0afe46f7b1eff476479d15fb2c005bf6d79dd0f1`.
++Its upstream approval list is still empty. Current corpus pins follow only
++these reviewed source changes and add the four explicit PQ current reader,
++test and contract paths; all existing required paths remain.
++
++Hosted required checks on the unchanged remote `dc42ce4d` candidate still
++include original failures. The retained four-second service observations
++confirm the baseline but do not complete independent pressure replay before
++the existing deadline. Exit-zero native processes do not override that
++business rejection. Fresh Host checks, deadlines, CPU quota, caller work,
++test rosters and protected-main requirements remain unchanged. No speculative
++optimization, archived workload execution, skipped gate, forced update or
++protection change is authorized by this record.
++
++Complete the remaining historical review and current required checks, retain
++a newly verified full-history archive, merge through the existing protected
++main process, then verify reference cleanup. These outcomes remain pending;
++no one-branch remote result, complete-repository qualification or production
++activation is claimed. This file remains the sole development plan.
++```
++
++### 2026-11-14 reconcile local ABFC and concurrent 2a source
++
++This reconciliation selects the reviewed concurrent candidate
++`2a86462a1ab20c68151719ba4635e3c294391e64` together with the independent
++local `abfcff23d4e2aab7dfd92dfb34937ec7d6021ead` corrections. It is an
++integration candidate; main merge, complete remaining historical review and
++remote branch cleanup remain pending.
++
++The 42 active differences were read and independently rebound to native Git
++bytes. The 298 retained evidence paths and all 327 ZIP members were checked
++for custody and complete CRC/hash reads. That check does not confer source
++semantics or successful execution on historical programs. Four metadata
++files missing from the original-full-lane index were recovered byte for byte
++from their declared source copies; the original index is unchanged.
++
++Select the immutable PublicPolicy hash-prefix cache without changing any
++domain, resource bytes, framing or six dynamic fields. All 84 existing test
++definitions remain intact; the three added definitions and structural hash
++work reduction alone do not prove the four-second target. Preserve the local
++public_v2 strict-signature completion deadline fix.
++
++Select Node store d596dc6 with epoch capture before readiness and same-row
++work checks before time deferral. The previous local preference for 3bce39ce
++is withdrawn: an independent SQLite writer can otherwise be captured after
++readiness, and simultaneous future time can mask a typed local work-integrity
++fault. Both counterexamples are static; no new exploit, global transaction
++snapshot, public-listener shutdown or native performance result is asserted.
++
++Select the raw fixed historical collector fixture as read-only evidence.
++Use the remote closed-gate TERM deferral with the composed 16-control suite;
++its real post-fork refusal keeps raw same-root wait status and requires a
++recorded causal KILL event for the signal branch. This does not weaken the
++ordinary exit-125 check, the original kill/grace boundary or cleanup ownership.
++
++Use the concurrent current source maps for their exact selected bodies.
++Retain the earlier FC39 audit and its original failures/passes as historical
++records; finite PASS results do not prove the two uncovered store schedules.
++The current authority44 and lifetime20 maps select 5c04c60e; the current QROM
++comparison still fixes both provenance lock fields 0 and 2. No frozen
++mathematical claim, historical failure or qualification flag is upgraded.
++
++The original 096 protocol head and prospective-merge archives both retain
++five exit-zero native children, but their pressure confirmations fail
++CONFIRMATION_TARGET with PUBLIC_REQUEST_DEADLINE. The original 4,000,000,000 ns
++window and 16 workers are unchanged. The later 2a ARM and x64 cost jobs also
++report failure; their original artifacts are under separate inspection.
++No new committed-source gate or native target PASS is claimed by this entry.

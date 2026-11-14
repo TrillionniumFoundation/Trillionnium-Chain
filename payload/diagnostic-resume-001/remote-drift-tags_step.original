@@ -1,0 +1,40 @@
+{
+  "GH_DEBUG_removed": true,
+  "GH_HOST": "github.com",
+  "HTTP_status_unparsed": true,
+  "argv": [
+    "/opt/homebrew/bin/gh",
+    "api",
+    "--hostname",
+    "github.com",
+    "--method",
+    "GET",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/git/matching-refs/tags/"
+  ],
+  "automatic_retry": false,
+  "complete_transport": true,
+  "cwd": "/private/tmp",
+  "elapsed_seconds": 3.423268,
+  "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/git/matching-refs/tags/",
+  "exit": 0,
+  "finished_at": "2026-11-14T17:47:06.198761+00:00",
+  "label": "remote-tags",
+  "method": "GET",
+  "origin": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/matching-refs/tags/",
+  "overall_deadline_seconds": 300,
+  "started_at": "2026-11-14T17:47:02.775513+00:00",
+  "stderr": {
+    "bytes": 0,
+    "path": "/private/tmp/chain-consolidation-20261114-root/candidate-drift-github-refs-20261114-v2/remote-tags.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr_cap_bytes": 2097152,
+  "stdout": {
+    "bytes": 2712,
+    "path": "/private/tmp/chain-consolidation-20261114-root/candidate-drift-github-refs-20261114-v2/remote-tags.stdout",
+    "sha256": "6d6914509667f91c458e4dc952572a77d0ef842e06189b89a2eb9464297165e0"
+  },
+  "stdout_cap_bytes": 4194304,
+  "termination_reason": null,
+  "timeout_seconds": 300
+}

@@ -1,0 +1,64 @@
+{
+  "bytes": 224610,
+  "count": 11,
+  "files": [
+    {
+      "bytes": 9177,
+      "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/body-proposal-v1/prepare-body-proposal.py",
+      "sha256": "e9444719ad71f72801d58ee244aa5257b0c6e1ac97e6aba95410b9c2b9e79c86"
+    },
+    {
+      "bytes": 8644,
+      "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/body-proposal-v1/old-body.md",
+      "sha256": "798b6bde4c1985d20c2f7c6a7b1255cc174f6b3c87383d9e7de8b59f2e39f8c4"
+    },
+    {
+      "bytes": 11346,
+      "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/body-proposal-v1/proposed-body.md",
+      "sha256": "9dd0bbe670b5db4724cf93bc6fb56d2a75c703ac02eeaee4cbdca3c3f01e7131"
+    },
+    {
+      "bytes": 12885,
+      "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/body-proposal-v1/old-to-proposed-body.patch",
+      "sha256": "d431b77bf2ec7cfcbbaf354abef0ce6d03190281a55e57ffb288e23cc5e513f2"
+    },
+    {
+      "bytes": 11428,
+      "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/body-proposal-v1/future-body-only-PATCH-payload.json",
+      "sha256": "411c30378cdc08724f36434ca461651b04ce8dc80091caf3c13130375461b830"
+    },
+    {
+      "bytes": 25872,
+      "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/body-proposal-v1/workflow-trigger-facts.json",
+      "sha256": "0c6ccb28c54bb29ee5bda4bd32c81f3aaa5af9ae89133b9809ba2acdef4b7865"
+    },
+    {
+      "bytes": 5968,
+      "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/body-proposal-v1/first-local-workflow-read-failure.json",
+      "sha256": "83ecc1c48effc53fa55c75ec7c34848a8fcacbf371258551ecba259485224d60"
+    },
+    {
+      "bytes": 131483,
+      "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/body-proposal-v1/workflow-read-v2-actual-terminal-pages.json",
+      "sha256": "e95549032dc4be44b16892edc4aca408d428d130f2198a8693dd1bbcdacc3f7e"
+    },
+    {
+      "bytes": 526,
+      "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/body-proposal-v1/workflow-read-v2-actual-launch.json",
+      "sha256": "0b631dca3ec58ed086dd976cf85c69dce2ebb593bcf3f4745311d500131da6bd"
+    },
+    {
+      "bytes": 4548,
+      "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/body-proposal-v1/future-execution-plan.json",
+      "sha256": "fb552c05e1b42da03a70dd5689e96cfa55ba62ab4358b757c91f849d18860d4c"
+    },
+    {
+      "bytes": 2733,
+      "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/body-proposal-v1/preparation.json",
+      "sha256": "942c2ddd344cfc3529ee085862df8eaae577269ecc8fc9221cdee811d5f3a9b5"
+    }
+  ],
+  "prepared_only": true,
+  "schema": "trnm-prepared-body-proposal-index-v1",
+  "self_excluded": true
+}

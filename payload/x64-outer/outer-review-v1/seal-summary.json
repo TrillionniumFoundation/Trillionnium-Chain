@@ -1,0 +1,17 @@
+{
+  "actual_acquisition_session": "dpty-a8707e8b75dcc38c324f4dee804d6639cd0265c19859bdbaafb8f7b04ed0aba7",
+  "index": {
+    "bytes": 2612,
+    "path": "/private/tmp/chain-prci-H5DF-cross-arch-cost-x64-original-log-20261114-v1/outer-review-v1/EVIDENCE_INDEX.json",
+    "sha256": "a51b6d27680d36fbffde688490ba035713def79d7eb13682090bbee3746331dd"
+  },
+  "no_retries": true,
+  "originals_unchanged": true,
+  "qualification": false,
+  "review": {
+    "bytes": 5214,
+    "path": "/private/tmp/chain-prci-H5DF-cross-arch-cost-x64-original-log-20261114-v1/outer-review-v1/review.json",
+    "sha256": "8ed5bedb6d7b8bb722c5fe39c42e742dfb6bbdc17d34de19a1f4b11dfe60c3f4"
+  },
+  "status": "CLOSED"
+}

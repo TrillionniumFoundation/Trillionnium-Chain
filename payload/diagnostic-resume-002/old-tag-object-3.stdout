@@ -1,0 +1,6 @@
+object ffc6e0ca4bfa7794ab6031a6e398dcd08b7a1982
+type commit
+tag archive/post-publication-diagnostics-20261114-2a86462a1ab2-v1
+tagger Qian QI <102159240+ProfHepta@users.noreply.github.com> 1794673674 +0800
+
+Closed post-publication diagnostics for R1. Existing failures retained. No source change, main merge, branch deletion, hosted qualification or activation.

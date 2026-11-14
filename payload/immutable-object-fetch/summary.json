@@ -1,0 +1,238 @@
+{
+  "candidate": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+  "complete": true,
+  "errors": [],
+  "fetch_started": true,
+  "fetch_transport_complete": true,
+  "finished_at": "2026-11-14T17:43:33.169393+00:00",
+  "local_refs_unchanged": true,
+  "new_commit_object_verified": true,
+  "no_checkout": true,
+  "qualification": false,
+  "schema": "trnm-head5df-exact-object-fetch-v1",
+  "source_HEAD_or_localrefs_changed": false,
+  "source_HEAD_unchanged": true,
+  "started_at": "2026-11-14T17:43:32.153907+00:00",
+  "steps": [
+    {
+      "argv": [
+        "/usr/bin/git",
+        "rev-parse",
+        "HEAD",
+        "HEAD^{tree}"
+      ],
+      "automatic_retry": false,
+      "exit": 0,
+      "finished_at": "2026-11-14T17:43:32.265589+00:00",
+      "label": "local-head-before",
+      "started_at": "2026-11-14T17:43:32.154582+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/local-head-before.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 82,
+        "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/local-head-before.stdout",
+        "sha256": "495ce2ca3a422955329a0ef51ae578f86340a1c91ea21ef2fa9074eea745da07"
+      },
+      "timeout_seconds": 30
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=no"
+      ],
+      "automatic_retry": false,
+      "exit": 0,
+      "finished_at": "2026-11-14T17:43:32.377623+00:00",
+      "label": "tracked-status-before",
+      "started_at": "2026-11-14T17:43:32.266239+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/tracked-status-before.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/tracked-status-before.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timeout_seconds": 90
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "for-each-ref",
+        "--format=%(refname) %(objectname)"
+      ],
+      "automatic_retry": false,
+      "exit": 0,
+      "finished_at": "2026-11-14T17:43:32.490093+00:00",
+      "label": "local-refs-before",
+      "started_at": "2026-11-14T17:43:32.378451+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/local-refs-before.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 74115,
+        "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/local-refs-before.stdout",
+        "sha256": "22ee7c52e09f816489f53153950e6e45671ebce1a2d836b2c99a87ef73bb96a5"
+      },
+      "timeout_seconds": 30
+    },
+    {
+      "argv": [
+        "/bin/bash",
+        "scripts/project-preflight.sh"
+      ],
+      "automatic_retry": false,
+      "exit": 0,
+      "finished_at": "2026-11-14T17:43:32.603930+00:00",
+      "label": "default-preflight",
+      "started_at": "2026-11-14T17:43:32.491294+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/default-preflight.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 161,
+        "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/default-preflight.stdout",
+        "sha256": "2e0930e3e5b93d19ab63db0fe013c910ee3255283942eeab771e4db4aec002ec"
+      },
+      "timeout_seconds": 120
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "-c",
+        "gc.auto=0",
+        "fetch",
+        "--no-tags",
+        "--no-recurse-submodules",
+        "--no-write-fetch-head",
+        "--no-auto-maintenance",
+        "origin",
+        "5df7ae6f482157c5f7fdcbcd52222117a965053f"
+      ],
+      "automatic_retry": false,
+      "exit": 0,
+      "finished_at": "2026-11-14T17:43:32.715527+00:00",
+      "label": "fetch-exact-5df-objects",
+      "started_at": "2026-11-14T17:43:32.604396+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/fetch-exact-5df-objects.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/fetch-exact-5df-objects.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timeout_seconds": 300
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "show",
+        "-s",
+        "--format=%H%n%T%n%P",
+        "5df7ae6f482157c5f7fdcbcd52222117a965053f"
+      ],
+      "automatic_retry": false,
+      "exit": 0,
+      "finished_at": "2026-11-14T17:43:32.827559+00:00",
+      "label": "new-head-tree-parents",
+      "started_at": "2026-11-14T17:43:32.716325+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/new-head-tree-parents.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 164,
+        "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/new-head-tree-parents.stdout",
+        "sha256": "8eba7d8d7b01bf3a1e8d366cdac66a9047a0fb6fea0b314199e38292b3230c2d"
+      },
+      "timeout_seconds": 30
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "for-each-ref",
+        "--format=%(refname) %(objectname)"
+      ],
+      "automatic_retry": false,
+      "exit": 0,
+      "finished_at": "2026-11-14T17:43:32.945840+00:00",
+      "label": "local-refs-after",
+      "started_at": "2026-11-14T17:43:32.828402+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/local-refs-after.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 74115,
+        "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/local-refs-after.stdout",
+        "sha256": "22ee7c52e09f816489f53153950e6e45671ebce1a2d836b2c99a87ef73bb96a5"
+      },
+      "timeout_seconds": 30
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "rev-parse",
+        "HEAD",
+        "HEAD^{tree}"
+      ],
+      "automatic_retry": false,
+      "exit": 0,
+      "finished_at": "2026-11-14T17:43:33.061925+00:00",
+      "label": "local-head-after",
+      "started_at": "2026-11-14T17:43:32.948008+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/local-head-after.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 82,
+        "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/local-head-after.stdout",
+        "sha256": "495ce2ca3a422955329a0ef51ae578f86340a1c91ea21ef2fa9074eea745da07"
+      },
+      "timeout_seconds": 30
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=no"
+      ],
+      "automatic_retry": false,
+      "exit": 0,
+      "finished_at": "2026-11-14T17:43:33.168483+00:00",
+      "label": "tracked-status-after",
+      "started_at": "2026-11-14T17:43:33.063709+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/tracked-status-after.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/tracked-status-after.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timeout_seconds": 90
+    }
+  ],
+  "tracked_source_still_clean": true
+}

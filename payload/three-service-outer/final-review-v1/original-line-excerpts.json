@@ -1,0 +1,428 @@
+[
+  {
+    "job_id": 132528768003,
+    "lines": [
+      {
+        "line": 1186,
+        "text": "2026-11-14T17:34:40.6616652Z {"
+      },
+      {
+        "line": 1187,
+        "text": "2026-11-14T17:34:40.6617020Z   \"base\": null,"
+      },
+      {
+        "line": 1188,
+        "text": "2026-11-14T17:34:40.6617488Z   \"candidate\": \"5df7ae6f482157c5f7fdcbcd52222117a965053f\","
+      },
+      {
+        "line": 1189,
+        "text": "2026-11-14T17:34:40.6617945Z   \"kind\": \"head\","
+      },
+      {
+        "line": 1190,
+        "text": "2026-11-14T17:34:40.6618171Z   \"prospective_merge\": null,"
+      },
+      {
+        "line": 1191,
+        "text": "2026-11-14T17:34:40.6618430Z   \"schema\": \"trnm-ci-source-v1\","
+      },
+      {
+        "line": 1192,
+        "text": "2026-11-14T17:34:40.6618758Z   \"tested_commit\": \"5df7ae6f482157c5f7fdcbcd52222117a965053f\","
+      },
+      {
+        "line": 1193,
+        "text": "2026-11-14T17:34:40.6619161Z   \"tested_tree\": \"6be4940d38cc88782657f2684cbefe48866f8b9f\","
+      },
+      {
+        "line": 1194,
+        "text": "2026-11-14T17:34:40.6619512Z   \"tests_executed_by_identity_check\": false,"
+      },
+      {
+        "line": 1195,
+        "text": "2026-11-14T17:34:40.6619798Z   \"tracked_bytes\": 3995072357,"
+      },
+      {
+        "line": 1196,
+        "text": "2026-11-14T17:34:40.6620042Z   \"tracked_entries\": 41681,"
+      },
+      {
+        "line": 1197,
+        "text": "2026-11-14T17:34:40.6620283Z   \"tracked_worktree_verified\": true"
+      },
+      {
+        "line": 1198,
+        "text": "2026-11-14T17:34:40.6620526Z }"
+      },
+      {
+        "line": 1377,
+        "text": "2026-11-14T17:35:03.5250219Z ##[group]Run python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_from_zero_native.py --out \"$TRNM_CI_RECEIPT_DIR/from-zero-native\""
+      },
+      {
+        "line": 1378,
+        "text": "2026-11-14T17:35:03.5252307Z \u001b[36;1mpython3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_from_zero_native.py --out \"$TRNM_CI_RECEIPT_DIR/from-zero-native\"\u001b[0m"
+      },
+      {
+        "line": 1395,
+        "text": "2026-11-14T17:40:47.0308535Z {\"cleanup\": \"already-collected\", \"command_argv\": [\"python3\", \"scripts/ci/run_from_zero_native.py\", \"--out\", \"/home/runner/work/_temp/priority-observations/from-zero-native\"], \"consensus_or_model_authority\": false, \"cwd\": \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\", \"failure\": null, \"final_host_errors\": [], \"final_parent_lease\": {\"consensus_or_model_authority\": false, \"creator_service\": \"trnm-from-zero-43621753847-1-native-priorities-2688.service\", \"current_service\": \"trnm-from-zero-43621753847-1-native-priorities-2688.service\", \"host_readiness_only\": true, \"parent_identity\": {\"boot_id\": \"f2936e36-6016-4dd8-b13b-584cd662199c\", \"installed_unit_sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"limits\": {\"cpu.max\": \"25000 100000\", \"cpu.max.burst\": \"0\", \"memory.max\": \"2147483648\", \"memory.swap.max\": \"0\", \"pids.max\": \"256\"}, \"parent\": {\"canonical_path\": \"/sys/fs/cgroup/trnmponpublic.slice\", \"device\": 31, \"directory\": true, \"gid\": 0, \"inode\": 7095, \"mode\": 493, \"symlink\": false, \"uid\": 0}, \"unit_file\": {\"ctime_ns\": 1794677968273856843, \"device\": 29, \"inode\": 1513, \"mtime_ns\": 1794677968273856843, \"path\": \"/run/systemd/system/trnmponpublic.slice\", \"sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"size_bytes\": 325}}, \"schema\": \"trnm-ci-public-fixture-parent-binding-v1\", \"seal_file\": {\"ctime_ns\": 1794677973383289254, \"device\": 29, \"inode\": 1559, \"mtime_ns\": 1794677973383289254, \"path\": \"/run/trnm-public-fixture-43621753847-1-native-priorities/parent.json\", \"sha256\": \"8269ee981a85732911f139b3f5a2eecba4ec4c0b193a12f0f125c2ab68e2ca4b\", \"size_bytes\": 3233}, \"seal_sha256\": \"8269ee981a85732911f139b3f5a2eecba4ec4c0b193a12f0f125c2ab68e2ca4b\"}, \"gid\": 1001, \"host_readiness_only\": true, \"parent_lease\": {\"consensus_or_model_authority\": false, \"creator_service\": \"trnm-from-zero-43621753847-1-native-priorities-2688.service\", \"current_service\": \"trnm-from-zero-43621753847-1-native-priorities-2688.service\", \"host_readiness_only\": true, \"parent_identity\": {\"boot_id\": \"f2936e36-6016-4dd8-b13b-584cd662199c\", \"installed_unit_sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"limits\": {\"cpu.max\": \"25000 100000\", \"cpu.max.burst\": \"0\", \"memory.max\": \"2147483648\", \"memory.swap.max\": \"0\", \"pids.max\": \"256\"}, \"parent\": {\"canonical_path\": \"/sys/fs/cgroup/trnmponpublic.slice\", \"device\": 31, \"directory\": true, \"gid\": 0, \"inode\": 7095, \"mode\": 493, \"symlink\": false, \"uid\": 0}, \"unit_file\": {\"ctime_ns\": 1794677968273856843, \"device\": 29, \"inode\": 1513, \"mtime_ns\": 1794677968273856843, \"path\": \"/run/systemd/system/trnmponpublic.slice\", \"sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"size_bytes\": 325}}, \"schema\": \"trnm-ci-public-fixture-parent-binding-v1\", \"seal_file\": {\"ctime_ns\": 1794677973383289254, \"device\": 29, \"inode\": 1559, \"mtime_ns\": 1794677973383289254, \"path\": \"/run/trnm-public-fixture-43621753847-1-native-priorities/parent.json\", \"sha256\": \"8269ee981a85732911f139b3f5a2eecba4ec4c0b193a12f0f125c2ab68e2ca4b\", \"size_bytes\": 3233}, \"seal_sha256\": \"8269ee981a85732911f139b3f5a2eecba4ec4c0b193a12f0f125c2ab68e2ca4b\"}, \"parent_reused\": false, \"passed\": false, \"preparation\": {\"binary_path\": \"/home/runner/work/_temp/target-priority/release/deps/public_v3_from_zero-e1ce94b852e44392\", \"binary_sha256\": \"b51a5fadd058dc5be0213136726612f8b1f2f6d29a84006d1569fe1b12ae2cb9\", \"build_env\": {\"CARGO_BUILD_JOBS\": \"2\", \"CARGO_ENCODED_RUSTFLAGS\": null, \"CARGO_HOME\": \"/home/runner/work/_temp/cargo-priority\", \"CARGO_INCREMENTAL\": \"0\", \"CARGO_TARGET_DIR\": \"/home/runner/work/_temp/target-priority\", \"OPENSSL_CONF\": null, \"OPENSSL_DIR\": null, \"OPENSSL_MODULES\": null, \"OPENSSL_STATIC\": null, \"RUSTFLAGS\": null, \"RUSTUP_TOOLCHAIN\": null, \"TRNM_PQ_OPENSSL\": null, \"TRNM_PQ_OPENSSL_SHA256\": null, \"TRNM_PQ_OPENSSL_VERSION\": null}, \"completed\": true, \"consensus_or_model_authority\": false, \"failure_type\": null, \"format_preparation\": {\"process\": {\"command\": [\"cargo\", \"fmt\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"--all\", \"--\", \"--check\"], \"cpu_ns\": 15795404000, \"cpu_scope\": \"entire child, not apportioned to nested wall intervals\", \"exit_code\": 0, \"involuntary_switches\": 108, \"major_faults\": 0, \"max_rss_kib\": 273612, \"minor_faults\": 55081, \"rss_scope\": \"whole waited child including pre-exec image; no Rust-only RSS attribution\", \"stderr_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"stdout_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"system_cpu_ns\": 170734000, \"timed_out\": false, \"user_cpu_ns\": 15624670000, \"voluntary_switches\": 32, \"wait4_cpu_resolution_ns\": 1000, \"wall_ns\": 15800487961}, \"timeout_seconds\": 60, \"tool_versions\": {\"cargo\": \"cargo 1.95.0 (f2d3ce0bd 2026-03-21)\", \"rustc\": \"rustc 1.95.0 (59807616e 2026-04-14)\\nbinary: rustc\\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\\ncommit-date: 2026-04-14\\nhost: x86_64-unknown-linux-gnu\\nrelease: 1.95.0\\nLLVM version: 22.1.2\\n\", \"rustfmt\": \"rustfmt 1.9.0-stable (59807616e1 2026-04-14)\"}}, \"native_tests_executed\": false, \"process\": {\"command\": [\"cargo\", \"test\", \"--locked\", \"--release\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"-p\", \"trnm-pon-node\", \"--test\", \"public_v3_from_zero\", \"--no-run\", \"--message-format=json\"], \"cpu_ns\": 442903718000, \"cpu_scope\": \"entire child, not apportioned to nested wall intervals\", \"exit_code\": 0, \"involuntary_switches\": 3927, \"major_faults\": 2141, \"max_rss_kib\": 1952076, \"minor_faults\": 4616277, \"rss_scope\": \"whole waited child including pre-exec image; no Rust-only RSS attribution\", \"stderr_sha256\": \"5a0f01bb8919e8f785cbc734c642d366e83b0fcf52ebf1affef9da214ecc07c5\", \"stdout_sha256\": \"81b8685e0d3987704c291b39d37539352a345c1c2d1a577e7e6b9c4141b2e6ed\", \"system_cpu_ns\": 14547422000, \"timed_out\": false, \"user_cpu_ns\": 428356296000, \"voluntary_switches\": 16293, \"wait4_cpu_resolution_ns\": 1000, \"wall_ns\": 234493296904}, \"schema\": \"trnm-ci-original-native-build-preparation-v1\", \"service_resource_observation\": false, \"source_after\": {\"commit\": \"5df7ae6f482157c5f7fdcbcd52222117a965053f\", \"test_sha256\": \"c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f\", \"tracked_source_identity\": {\"base\": null, \"candidate\": \"5df7ae6f482157c5f7fdcbcd52222117a965053f\", \"kind\": \"head\", \"prospective_merge\": null, \"schema\": \"trnm-ci-source-v1\", \"tested_commit\": \"5df7ae6f482157c5f7fdcbcd52222117a965053f\", \"tested_tree\": \"6be4940d38cc88782657f2684cbefe48866f8b9f\", \"tests_executed_by_identity_check\": false, \"tracked_bytes\": 3995072357, \"tracked_entries\": 41681, \"tracked_worktree_verified\": true}, \"tree\": \"6be4940d38cc88782657f2684cbefe48866f8b9f\"}, \"source_before\": {\"commit\": \"5df7ae6f482157c5f7fdcbcd52222117a965053f\", \"test_sha256\": \"c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f\", \"tracked_source_identity\": {\"base\": null, \"candidate\": \"5df7ae6f482157c5f7fdcbcd52222117a965053f\", \"kind\": \"head\", \"prospective_merge\": null, \"schema\": \"trnm-ci-source-v1\", \"tested_commit\": \"5df7ae6f482157c5f7fdcbcd52222117a965053f\", \"tested_tree\": \"6be4940d38cc88782657f2684cbefe48866f8b9f\", \"tests_executed_by_identity_check\": false, \"tracked_bytes\": 3995072357, \"tracked_entries\": 41681, \"tracked_worktree_verified\": true}, \"tree\": \"6be4940d38cc88782657f2684cbefe48866f8b9f\"}, \"source_error\": null}, \"schema\": \"trnm-ci-original-public-host-controller-v2\", \"service\": \"trnm-from-zero-43621753847-1-native-priorities-2688.service\", \"systemd_run_exit\": 1, \"uid\": 1001}"
+      },
+      {
+        "line": 1396,
+        "text": "2026-11-14T17:40:47.0439679Z ##[error]Process completed with exit code 1."
+      },
+      {
+        "line": 3578,
+        "text": "2026-11-14T17:59:50.9675095Z {"
+      },
+      {
+        "line": 3579,
+        "text": "2026-11-14T17:59:50.9675472Z   \"base\": null,"
+      },
+      {
+        "line": 3580,
+        "text": "2026-11-14T17:59:50.9675948Z   \"candidate\": \"5df7ae6f482157c5f7fdcbcd52222117a965053f\","
+      },
+      {
+        "line": 3581,
+        "text": "2026-11-14T17:59:50.9676494Z   \"kind\": \"head\","
+      },
+      {
+        "line": 3582,
+        "text": "2026-11-14T17:59:50.9676855Z   \"prospective_merge\": null,"
+      },
+      {
+        "line": 3583,
+        "text": "2026-11-14T17:59:50.9677281Z   \"schema\": \"trnm-ci-source-v1\","
+      },
+      {
+        "line": 3584,
+        "text": "2026-11-14T17:59:50.9677850Z   \"tested_commit\": \"5df7ae6f482157c5f7fdcbcd52222117a965053f\","
+      },
+      {
+        "line": 3585,
+        "text": "2026-11-14T17:59:50.9678499Z   \"tested_tree\": \"6be4940d38cc88782657f2684cbefe48866f8b9f\","
+      },
+      {
+        "line": 3586,
+        "text": "2026-11-14T17:59:50.9678851Z   \"tests_executed_by_identity_check\": false,"
+      },
+      {
+        "line": 3587,
+        "text": "2026-11-14T17:59:50.9679141Z   \"tracked_bytes\": 3995072357,"
+      },
+      {
+        "line": 3588,
+        "text": "2026-11-14T17:59:50.9679393Z   \"tracked_entries\": 41681,"
+      },
+      {
+        "line": 3589,
+        "text": "2026-11-14T17:59:50.9679637Z   \"tracked_worktree_verified\": true"
+      },
+      {
+        "line": 3590,
+        "text": "2026-11-14T17:59:50.9679880Z }"
+      },
+      {
+        "line": 3593,
+        "text": "2026-11-14T17:59:50.9852072Z   name: priority-ubuntu-24.04-head-service-model-5df7ae6f482157c5f7fdcbcd52222117a965053f-1"
+      },
+      {
+        "line": 3625,
+        "text": "2026-11-14T17:59:53.5803228Z SHA256 digest of uploaded artifact zip is ad83e8315ec1525be714881fcac3809b50de6f4f75f124bf21a2bcd0ea5ab066"
+      },
+      {
+        "line": 3628,
+        "text": "2026-11-14T17:59:53.9326144Z Artifact priority-ubuntu-24.04-head-service-model-5df7ae6f482157c5f7fdcbcd52222117a965053f-1 has been successfully uploaded! Final size is 9277482 bytes. Artifact ID is 14125551425"
+      }
+    ],
+    "log": {
+      "bytes": 2223880,
+      "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/job-132528768003-original-log.stdout",
+      "sha256": "99a61cf06def08976a97bd4610fe0953f38b6553e6b578e3dce9cac067186bbc"
+    }
+  },
+  {
+    "job_id": 132528767983,
+    "lines": [
+      {
+        "line": 1179,
+        "text": "2026-11-14T17:34:36.6037727Z {"
+      },
+      {
+        "line": 1180,
+        "text": "2026-11-14T17:34:36.6037960Z   \"base\": null,"
+      },
+      {
+        "line": 1181,
+        "text": "2026-11-14T17:34:36.6038216Z   \"candidate\": \"5df7ae6f482157c5f7fdcbcd52222117a965053f\","
+      },
+      {
+        "line": 1182,
+        "text": "2026-11-14T17:34:36.6038500Z   \"kind\": \"head\","
+      },
+      {
+        "line": 1183,
+        "text": "2026-11-14T17:34:36.6038685Z   \"prospective_merge\": null,"
+      },
+      {
+        "line": 1184,
+        "text": "2026-11-14T17:34:36.6038913Z   \"schema\": \"trnm-ci-source-v1\","
+      },
+      {
+        "line": 1185,
+        "text": "2026-11-14T17:34:36.6039196Z   \"tested_commit\": \"5df7ae6f482157c5f7fdcbcd52222117a965053f\","
+      },
+      {
+        "line": 1186,
+        "text": "2026-11-14T17:34:36.6039553Z   \"tested_tree\": \"6be4940d38cc88782657f2684cbefe48866f8b9f\","
+      },
+      {
+        "line": 1187,
+        "text": "2026-11-14T17:34:36.6039856Z   \"tests_executed_by_identity_check\": false,"
+      },
+      {
+        "line": 1188,
+        "text": "2026-11-14T17:34:36.6040121Z   \"tracked_bytes\": 3995072357,"
+      },
+      {
+        "line": 1189,
+        "text": "2026-11-14T17:34:36.6040331Z   \"tracked_entries\": 41681,"
+      },
+      {
+        "line": 1190,
+        "text": "2026-11-14T17:34:36.6040542Z   \"tracked_worktree_verified\": true"
+      },
+      {
+        "line": 1191,
+        "text": "2026-11-14T17:34:36.6040756Z }"
+      },
+      {
+        "line": 1370,
+        "text": "2026-11-14T17:34:54.3702115Z ##[group]Run python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_from_zero_native.py --out \"$TRNM_CI_RECEIPT_DIR/from-zero-native\""
+      },
+      {
+        "line": 1371,
+        "text": "2026-11-14T17:34:54.3703081Z \u001b[36;1mpython3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_from_zero_native.py --out \"$TRNM_CI_RECEIPT_DIR/from-zero-native\"\u001b[0m"
+      },
+      {
+        "line": 1388,
+        "text": "2026-11-14T17:40:29.8773191Z {\"cleanup\": \"already-collected\", \"command_argv\": [\"python3\", \"scripts/ci/run_from_zero_native.py\", \"--out\", \"/home/runner/work/_temp/priority-observations/from-zero-native\"], \"consensus_or_model_authority\": false, \"cwd\": \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\", \"failure\": null, \"final_host_errors\": [], \"final_parent_lease\": {\"consensus_or_model_authority\": false, \"creator_service\": \"trnm-from-zero-43621753847-1-native-priorities-2519.service\", \"current_service\": \"trnm-from-zero-43621753847-1-native-priorities-2519.service\", \"host_readiness_only\": true, \"parent_identity\": {\"boot_id\": \"c1e930e5-2573-463a-bdef-1303b0625cd2\", \"installed_unit_sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"limits\": {\"cpu.max\": \"25000 100000\", \"cpu.max.burst\": \"0\", \"memory.max\": \"2147483648\", \"memory.swap.max\": \"0\", \"pids.max\": \"256\"}, \"parent\": {\"canonical_path\": \"/sys/fs/cgroup/trnmponpublic.slice\", \"device\": 33, \"directory\": true, \"gid\": 0, \"inode\": 7219, \"mode\": 493, \"symlink\": false, \"uid\": 0}, \"unit_file\": {\"ctime_ns\": 1794677963587407455, \"device\": 31, \"inode\": 1455, \"mtime_ns\": 1794677963587407455, \"path\": \"/run/systemd/system/trnmponpublic.slice\", \"sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"size_bytes\": 325}}, \"schema\": \"trnm-ci-public-fixture-parent-binding-v1\", \"seal_file\": {\"ctime_ns\": 1794677967543616993, \"device\": 31, \"inode\": 1501, \"mtime_ns\": 1794677967543616993, \"path\": \"/run/trnm-public-fixture-43621753847-1-native-priorities/parent.json\", \"sha256\": \"9da3e43840f0cadef87441e9c79e2bbb8139b5294b5c75004e530119436d137f\", \"size_bytes\": 3231}, \"seal_sha256\": \"9da3e43840f0cadef87441e9c79e2bbb8139b5294b5c75004e530119436d137f\"}, \"gid\": 1001, \"host_readiness_only\": true, \"parent_lease\": {\"consensus_or_model_authority\": false, \"creator_service\": \"trnm-from-zero-43621753847-1-native-priorities-2519.service\", \"current_service\": \"trnm-from-zero-43621753847-1-native-priorities-2519.service\", \"host_readiness_only\": true, \"parent_identity\": {\"boot_id\": \"c1e930e5-2573-463a-bdef-1303b0625cd2\", \"installed_unit_sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"limits\": {\"cpu.max\": \"25000 100000\", \"cpu.max.burst\": \"0\", \"memory.max\": \"2147483648\", \"memory.swap.max\": \"0\", \"pids.max\": \"256\"}, \"parent\": {\"canonical_path\": \"/sys/fs/cgroup/trnmponpublic.slice\", \"device\": 33, \"directory\": true, \"gid\": 0, \"inode\": 7219, \"mode\": 493, \"symlink\": false, \"uid\": 0}, \"unit_file\": {\"ctime_ns\": 1794677963587407455, \"device\": 31, \"inode\": 1455, \"mtime_ns\": 1794677963587407455, \"path\": \"/run/systemd/system/trnmponpublic.slice\", \"sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"size_bytes\": 325}}, \"schema\": \"trnm-ci-public-fixture-parent-binding-v1\", \"seal_file\": {\"ctime_ns\": 1794677967543616993, \"device\": 31, \"inode\": 1501, \"mtime_ns\": 1794677967543616993, \"path\": \"/run/trnm-public-fixture-43621753847-1-native-priorities/parent.json\", \"sha256\": \"9da3e43840f0cadef87441e9c79e2bbb8139b5294b5c75004e530119436d137f\", \"size_bytes\": 3231}, \"seal_sha256\": \"9da3e43840f0cadef87441e9c79e2bbb8139b5294b5c75004e530119436d137f\"}, \"parent_reused\": false, \"passed\": false, \"preparation\": {\"binary_path\": \"/home/runner/work/_temp/target-priority/release/deps/public_v3_from_zero-bcd934e577e47a17\", \"binary_sha256\": \"9b80a580f751d55eaf7769da61e50f770640478a32c76c7a792184ffda7db1fe\", \"build_env\": {\"CARGO_BUILD_JOBS\": \"2\", \"CARGO_ENCODED_RUSTFLAGS\": null, \"CARGO_HOME\": \"/home/runner/work/_temp/cargo-priority\", \"CARGO_INCREMENTAL\": \"0\", \"CARGO_TARGET_DIR\": \"/home/runner/work/_temp/target-priority\", \"OPENSSL_CONF\": null, \"OPENSSL_DIR\": null, \"OPENSSL_MODULES\": null, \"OPENSSL_STATIC\": null, \"RUSTFLAGS\": null, \"RUSTUP_TOOLCHAIN\": null, \"TRNM_PQ_OPENSSL\": null, \"TRNM_PQ_OPENSSL_SHA256\": null, \"TRNM_PQ_OPENSSL_VERSION\": null}, \"completed\": true, \"consensus_or_model_authority\": false, \"failure_type\": null, \"format_preparation\": {\"process\": {\"command\": [\"cargo\", \"fmt\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"--all\", \"--\", \"--check\"], \"cpu_ns\": 12459128000, \"cpu_scope\": \"entire child, not apportioned to nested wall intervals\", \"exit_code\": 0, \"involuntary_switches\": 87, \"major_faults\": 0, \"max_rss_kib\": 218876, \"minor_faults\": 55460, \"rss_scope\": \"whole waited child including pre-exec image; no Rust-only RSS attribution\", \"stderr_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"stdout_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"system_cpu_ns\": 177061000, \"timed_out\": false, \"user_cpu_ns\": 12282067000, \"voluntary_switches\": 40, \"wait4_cpu_resolution_ns\": 1000, \"wall_ns\": 12462173747}, \"timeout_seconds\": 60, \"tool_versions\": {\"cargo\": \"cargo 1.95.0 (f2d3ce0bd 2026-03-21)\", \"rustc\": \"rustc 1.95.0 (59807616e 2026-04-14)\\nbinary: rustc\\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\\ncommit-date: 2026-04-14\\nhost: aarch64-unknown-linux-gnu\\nrelease: 1.95.0\\nLLVM version: 22.1.2\\n\", \"rustfmt\": \"rustfmt 1.9.0-stable (59807616e1 2026-04-14)\"}}, \"native_tests_executed\": false, \"process\": {\"command\": [\"cargo\", \"test\", \"--locked\", \"--release\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"-p\", \"trnm-pon-node\", \"--test\", \"public_v3_from_zero\", \"--no-run\", \"--message-format=json\"], \"cpu_ns\": 463867064000, \"cpu_scope\": \"entire child, not apportioned to nested wall intervals\", \"exit_code\": 0, \"involuntary_switches\": 3899, \"major_faults\": 1473, \"max_rss_kib\": 1949508, \"minor_faults\": 5866765, \"rss_scope\": \"whole waited child including pre-exec image; no Rust-only RSS attribution\", \"stderr_sha256\": \"430bc9b02b43ec54e4f1a61306e058f1afd941d3133754051dc5a672f416d22e\", \"stdout_sha256\": \"5c7453ec2d4831b8f057ace8154fa1552371dedb8d8dc3f686c226c063fdc4cf\", \"system_cpu_ns\": 16920192000, \"timed_out\": false, \"user_cpu_ns\": 446946872000, \"voluntary_switches\": 8707, \"wait4_cpu_resolution_ns\": 1000, \"wall_ns\": 245348421399}, \"schema\": \"trnm-ci-original-native-build-preparation-v1\", \"service_resource_observation\": false, \"source_after\": {\"commit\": \"5df7ae6f482157c5f7fdcbcd52222117a965053f\", \"test_sha256\": \"c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f\", \"tracked_source_identity\": {\"base\": null, \"candidate\": \"5df7ae6f482157c5f7fdcbcd52222117a965053f\", \"kind\": \"head\", \"prospective_merge\": null, \"schema\": \"trnm-ci-source-v1\", \"tested_commit\": \"5df7ae6f482157c5f7fdcbcd52222117a965053f\", \"tested_tree\": \"6be4940d38cc88782657f2684cbefe48866f8b9f\", \"tests_executed_by_identity_check\": false, \"tracked_bytes\": 3995072357, \"tracked_entries\": 41681, \"tracked_worktree_verified\": true}, \"tree\": \"6be4940d38cc88782657f2684cbefe48866f8b9f\"}, \"source_before\": {\"commit\": \"5df7ae6f482157c5f7fdcbcd52222117a965053f\", \"test_sha256\": \"c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f\", \"tracked_source_identity\": {\"base\": null, \"candidate\": \"5df7ae6f482157c5f7fdcbcd52222117a965053f\", \"kind\": \"head\", \"prospective_merge\": null, \"schema\": \"trnm-ci-source-v1\", \"tested_commit\": \"5df7ae6f482157c5f7fdcbcd52222117a965053f\", \"tested_tree\": \"6be4940d38cc88782657f2684cbefe48866f8b9f\", \"tests_executed_by_identity_check\": false, \"tracked_bytes\": 3995072357, \"tracked_entries\": 41681, \"tracked_worktree_verified\": true}, \"tree\": \"6be4940d38cc88782657f2684cbefe48866f8b9f\"}, \"source_error\": null}, \"schema\": \"trnm-ci-original-public-host-controller-v2\", \"service\": \"trnm-from-zero-43621753847-1-native-priorities-2519.service\", \"systemd_run_exit\": 1, \"uid\": 1001}"
+      },
+      {
+        "line": 1389,
+        "text": "2026-11-14T17:40:29.8898680Z ##[error]Process completed with exit code 1."
+      },
+      {
+        "line": 3570,
+        "text": "2026-11-14T18:00:47.4250129Z {"
+      },
+      {
+        "line": 3571,
+        "text": "2026-11-14T18:00:47.4250362Z   \"base\": null,"
+      },
+      {
+        "line": 3572,
+        "text": "2026-11-14T18:00:47.4250614Z   \"candidate\": \"5df7ae6f482157c5f7fdcbcd52222117a965053f\","
+      },
+      {
+        "line": 3573,
+        "text": "2026-11-14T18:00:47.4250929Z   \"kind\": \"head\","
+      },
+      {
+        "line": 3574,
+        "text": "2026-11-14T18:00:47.4251121Z   \"prospective_merge\": null,"
+      },
+      {
+        "line": 3575,
+        "text": "2026-11-14T18:00:47.4251350Z   \"schema\": \"trnm-ci-source-v1\","
+      },
+      {
+        "line": 3576,
+        "text": "2026-11-14T18:00:47.4251649Z   \"tested_commit\": \"5df7ae6f482157c5f7fdcbcd52222117a965053f\","
+      },
+      {
+        "line": 3577,
+        "text": "2026-11-14T18:00:47.4252191Z   \"tested_tree\": \"6be4940d38cc88782657f2684cbefe48866f8b9f\","
+      },
+      {
+        "line": 3578,
+        "text": "2026-11-14T18:00:47.4252497Z   \"tests_executed_by_identity_check\": false,"
+      },
+      {
+        "line": 3579,
+        "text": "2026-11-14T18:00:47.4252744Z   \"tracked_bytes\": 3995072357,"
+      },
+      {
+        "line": 3580,
+        "text": "2026-11-14T18:00:47.4252959Z   \"tracked_entries\": 41681,"
+      },
+      {
+        "line": 3581,
+        "text": "2026-11-14T18:00:47.4253171Z   \"tracked_worktree_verified\": true"
+      },
+      {
+        "line": 3582,
+        "text": "2026-11-14T18:00:47.4253381Z }"
+      },
+      {
+        "line": 3585,
+        "text": "2026-11-14T18:00:47.4439187Z   name: priority-ubuntu-24.04-arm-head-service-model-5df7ae6f482157c5f7fdcbcd52222117a965053f-1"
+      },
+      {
+        "line": 3617,
+        "text": "2026-11-14T18:00:49.2851065Z SHA256 digest of uploaded artifact zip is cb3b3fd33eae490acb663ff369d75968935868d46d80459c162c3a387d6b2ed4"
+      },
+      {
+        "line": 3620,
+        "text": "2026-11-14T18:00:49.6099092Z Artifact priority-ubuntu-24.04-arm-head-service-model-5df7ae6f482157c5f7fdcbcd52222117a965053f-1 has been successfully uploaded! Final size is 9347193 bytes. Artifact ID is 14125407125"
+      }
+    ],
+    "log": {
+      "bytes": 2223351,
+      "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/job-132528767983-original-log.stdout",
+      "sha256": "694149d613cb36bad29ea715ac413f07e819236d7af1532fc49094529d4813a7"
+    }
+  },
+  {
+    "job_id": 132528768001,
+    "lines": [
+      {
+        "line": 1180,
+        "text": "2026-11-14T17:35:06.0136770Z {"
+      },
+      {
+        "line": 1181,
+        "text": "2026-11-14T17:35:06.0137093Z   \"base\": \"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\","
+      },
+      {
+        "line": 1182,
+        "text": "2026-11-14T17:35:06.0137443Z   \"candidate\": \"5df7ae6f482157c5f7fdcbcd52222117a965053f\","
+      },
+      {
+        "line": 1183,
+        "text": "2026-11-14T17:35:06.0137737Z   \"kind\": \"prospective-merge\","
+      },
+      {
+        "line": 1184,
+        "text": "2026-11-14T17:35:06.0138042Z   \"prospective_merge\": \"a590178fa1ba11fc1419ea60de1f7f5633a70cfd\","
+      },
+      {
+        "line": 1185,
+        "text": "2026-11-14T17:35:06.0138366Z   \"schema\": \"trnm-ci-source-v1\","
+      },
+      {
+        "line": 1186,
+        "text": "2026-11-14T17:35:06.0138641Z   \"tested_commit\": \"a590178fa1ba11fc1419ea60de1f7f5633a70cfd\","
+      },
+      {
+        "line": 1187,
+        "text": "2026-11-14T17:35:06.0138983Z   \"tested_tree\": \"6be4940d38cc88782657f2684cbefe48866f8b9f\","
+      },
+      {
+        "line": 1188,
+        "text": "2026-11-14T17:35:06.0139289Z   \"tests_executed_by_identity_check\": false,"
+      },
+      {
+        "line": 1189,
+        "text": "2026-11-14T17:35:06.0139538Z   \"tracked_bytes\": 3995072357,"
+      },
+      {
+        "line": 1190,
+        "text": "2026-11-14T17:35:06.0139747Z   \"tracked_entries\": 41681,"
+      },
+      {
+        "line": 1191,
+        "text": "2026-11-14T17:35:06.0139960Z   \"tracked_worktree_verified\": true"
+      },
+      {
+        "line": 1192,
+        "text": "2026-11-14T17:35:06.0140174Z }"
+      },
+      {
+        "line": 1371,
+        "text": "2026-11-14T17:35:24.9494416Z ##[group]Run python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_from_zero_native.py --out \"$TRNM_CI_RECEIPT_DIR/from-zero-native\""
+      },
+      {
+        "line": 1372,
+        "text": "2026-11-14T17:35:24.9495376Z \u001b[36;1mpython3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_from_zero_native.py --out \"$TRNM_CI_RECEIPT_DIR/from-zero-native\"\u001b[0m"
+      },
+      {
+        "line": 1389,
+        "text": "2026-11-14T17:41:04.2540310Z {\"cleanup\": \"already-collected\", \"command_argv\": [\"python3\", \"scripts/ci/run_from_zero_native.py\", \"--out\", \"/home/runner/work/_temp/priority-observations/from-zero-native\"], \"consensus_or_model_authority\": false, \"cwd\": \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\", \"failure\": null, \"final_host_errors\": [], \"final_parent_lease\": {\"consensus_or_model_authority\": false, \"creator_service\": \"trnm-from-zero-43621753847-1-native-priorities-3023.service\", \"current_service\": \"trnm-from-zero-43621753847-1-native-priorities-3023.service\", \"host_readiness_only\": true, \"parent_identity\": {\"boot_id\": \"6480df63-88ce-473c-8b12-3006e308e3b7\", \"installed_unit_sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"limits\": {\"cpu.max\": \"25000 100000\", \"cpu.max.burst\": \"0\", \"memory.max\": \"2147483648\", \"memory.swap.max\": \"0\", \"pids.max\": \"256\"}, \"parent\": {\"canonical_path\": \"/sys/fs/cgroup/trnmponpublic.slice\", \"device\": 33, \"directory\": true, \"gid\": 0, \"inode\": 7405, \"mode\": 493, \"symlink\": false, \"uid\": 0}, \"unit_file\": {\"ctime_ns\": 1794677997601499170, \"device\": 31, \"inode\": 1623, \"mtime_ns\": 1794677997601499170, \"path\": \"/run/systemd/system/trnmponpublic.slice\", \"sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"size_bytes\": 325}}, \"schema\": \"trnm-ci-public-fixture-parent-binding-v1\", \"seal_file\": {\"ctime_ns\": 1794678001632525661, \"device\": 31, \"inode\": 1669, \"mtime_ns\": 1794678001632525661, \"path\": \"/run/trnm-public-fixture-43621753847-1-native-priorities/parent.json\", \"sha256\": \"cda669bbc8ca1205493141b9850d7906b7a77742c2cd2effae3d250d74ba5994\", \"size_bytes\": 3320}, \"seal_sha256\": \"cda669bbc8ca1205493141b9850d7906b7a77742c2cd2effae3d250d74ba5994\"}, \"gid\": 1001, \"host_readiness_only\": true, \"parent_lease\": {\"consensus_or_model_authority\": false, \"creator_service\": \"trnm-from-zero-43621753847-1-native-priorities-3023.service\", \"current_service\": \"trnm-from-zero-43621753847-1-native-priorities-3023.service\", \"host_readiness_only\": true, \"parent_identity\": {\"boot_id\": \"6480df63-88ce-473c-8b12-3006e308e3b7\", \"installed_unit_sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"limits\": {\"cpu.max\": \"25000 100000\", \"cpu.max.burst\": \"0\", \"memory.max\": \"2147483648\", \"memory.swap.max\": \"0\", \"pids.max\": \"256\"}, \"parent\": {\"canonical_path\": \"/sys/fs/cgroup/trnmponpublic.slice\", \"device\": 33, \"directory\": true, \"gid\": 0, \"inode\": 7405, \"mode\": 493, \"symlink\": false, \"uid\": 0}, \"unit_file\": {\"ctime_ns\": 1794677997601499170, \"device\": 31, \"inode\": 1623, \"mtime_ns\": 1794677997601499170, \"path\": \"/run/systemd/system/trnmponpublic.slice\", \"sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"size_bytes\": 325}}, \"schema\": \"trnm-ci-public-fixture-parent-binding-v1\", \"seal_file\": {\"ctime_ns\": 1794678001632525661, \"device\": 31, \"inode\": 1669, \"mtime_ns\": 1794678001632525661, \"path\": \"/run/trnm-public-fixture-43621753847-1-native-priorities/parent.json\", \"sha256\": \"cda669bbc8ca1205493141b9850d7906b7a77742c2cd2effae3d250d74ba5994\", \"size_bytes\": 3320}, \"seal_sha256\": \"cda669bbc8ca1205493141b9850d7906b7a77742c2cd2effae3d250d74ba5994\"}, \"parent_reused\": false, \"passed\": false, \"preparation\": {\"binary_path\": \"/home/runner/work/_temp/target-priority/release/deps/public_v3_from_zero-bcd934e577e47a17\", \"binary_sha256\": \"9b80a580f751d55eaf7769da61e50f770640478a32c76c7a792184ffda7db1fe\", \"build_env\": {\"CARGO_BUILD_JOBS\": \"2\", \"CARGO_ENCODED_RUSTFLAGS\": null, \"CARGO_HOME\": \"/home/runner/work/_temp/cargo-priority\", \"CARGO_INCREMENTAL\": \"0\", \"CARGO_TARGET_DIR\": \"/home/runner/work/_temp/target-priority\", \"OPENSSL_CONF\": null, \"OPENSSL_DIR\": null, \"OPENSSL_MODULES\": null, \"OPENSSL_STATIC\": null, \"RUSTFLAGS\": null, \"RUSTUP_TOOLCHAIN\": null, \"TRNM_PQ_OPENSSL\": null, \"TRNM_PQ_OPENSSL_SHA256\": null, \"TRNM_PQ_OPENSSL_VERSION\": null}, \"completed\": true, \"consensus_or_model_authority\": false, \"failure_type\": null, \"format_preparation\": {\"process\": {\"command\": [\"cargo\", \"fmt\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"--all\", \"--\", \"--check\"], \"cpu_ns\": 12497134000, \"cpu_scope\": \"entire child, not apportioned to nested wall intervals\", \"exit_code\": 0, \"involuntary_switches\": 90, \"major_faults\": 0, \"max_rss_kib\": 219772, \"minor_faults\": 55387, \"rss_scope\": \"whole waited child including pre-exec image; no Rust-only RSS attribution\", \"stderr_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"stdout_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"system_cpu_ns\": 194366000, \"timed_out\": false, \"user_cpu_ns\": 12302768000, \"voluntary_switches\": 39, \"wait4_cpu_resolution_ns\": 1000, \"wall_ns\": 12500422385}, \"timeout_seconds\": 60, \"tool_versions\": {\"cargo\": \"cargo 1.95.0 (f2d3ce0bd 2026-03-21)\", \"rustc\": \"rustc 1.95.0 (59807616e 2026-04-14)\\nbinary: rustc\\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\\ncommit-date: 2026-04-14\\nhost: aarch64-unknown-linux-gnu\\nrelease: 1.95.0\\nLLVM version: 22.1.2\\n\", \"rustfmt\": \"rustfmt 1.9.0-stable (59807616e1 2026-04-14)\"}}, \"native_tests_executed\": false, \"process\": {\"command\": [\"cargo\", \"test\", \"--locked\", \"--release\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"-p\", \"trnm-pon-node\", \"--test\", \"public_v3_from_zero\", \"--no-run\", \"--message-format=json\"], \"cpu_ns\": 461798921000, \"cpu_scope\": \"entire child, not apportioned to nested wall intervals\", \"exit_code\": 0, \"involuntary_switches\": 3972, \"major_faults\": 1529, \"max_rss_kib\": 1941368, \"minor_faults\": 5915233, \"rss_scope\": \"whole waited child including pre-exec image; no Rust-only RSS attribution\", \"stderr_sha256\": \"b8dedeee8b9bf00b9b11b5e3b29deca761284be306b7424ccf73f41a004eea03\", \"stdout_sha256\": \"f0f308a2ad452f03dc422653f7c3b6ec229222c210f4d7a4d655a94587d55bcd\", \"system_cpu_ns\": 16936742000, \"timed_out\": false, \"user_cpu_ns\": 444862179000, \"voluntary_switches\": 8865, \"wait4_cpu_resolution_ns\": 1000, \"wall_ns\": 248682663056}, \"schema\": \"trnm-ci-original-native-build-preparation-v1\", \"service_resource_observation\": false, \"source_after\": {\"commit\": \"a590178fa1ba11fc1419ea60de1f7f5633a70cfd\", \"test_sha256\": \"c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f\", \"tracked_source_identity\": {\"base\": null, \"candidate\": \"a590178fa1ba11fc1419ea60de1f7f5633a70cfd\", \"kind\": \"head\", \"prospective_merge\": null, \"schema\": \"trnm-ci-source-v1\", \"tested_commit\": \"a590178fa1ba11fc1419ea60de1f7f5633a70cfd\", \"tested_tree\": \"6be4940d38cc88782657f2684cbefe48866f8b9f\", \"tests_executed_by_identity_check\": false, \"tracked_bytes\": 3995072357, \"tracked_entries\": 41681, \"tracked_worktree_verified\": true}, \"tree\": \"6be4940d38cc88782657f2684cbefe48866f8b9f\"}, \"source_before\": {\"commit\": \"a590178fa1ba11fc1419ea60de1f7f5633a70cfd\", \"test_sha256\": \"c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f\", \"tracked_source_identity\": {\"base\": null, \"candidate\": \"a590178fa1ba11fc1419ea60de1f7f5633a70cfd\", \"kind\": \"head\", \"prospective_merge\": null, \"schema\": \"trnm-ci-source-v1\", \"tested_commit\": \"a590178fa1ba11fc1419ea60de1f7f5633a70cfd\", \"tested_tree\": \"6be4940d38cc88782657f2684cbefe48866f8b9f\", \"tests_executed_by_identity_check\": false, \"tracked_bytes\": 3995072357, \"tracked_entries\": 41681, \"tracked_worktree_verified\": true}, \"tree\": \"6be4940d38cc88782657f2684cbefe48866f8b9f\"}, \"source_error\": null}, \"schema\": \"trnm-ci-original-public-host-controller-v2\", \"service\": \"trnm-from-zero-43621753847-1-native-priorities-3023.service\", \"systemd_run_exit\": 1, \"uid\": 1001}"
+      },
+      {
+        "line": 1390,
+        "text": "2026-11-14T17:41:04.2664977Z ##[error]Process completed with exit code 1."
+      },
+      {
+        "line": 3571,
+        "text": "2026-11-14T18:01:24.5135017Z {"
+      },
+      {
+        "line": 3572,
+        "text": "2026-11-14T18:01:24.5135326Z   \"base\": \"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\","
+      },
+      {
+        "line": 3573,
+        "text": "2026-11-14T18:01:24.5135789Z   \"candidate\": \"5df7ae6f482157c5f7fdcbcd52222117a965053f\","
+      },
+      {
+        "line": 3574,
+        "text": "2026-11-14T18:01:24.5136095Z   \"kind\": \"prospective-merge\","
+      },
+      {
+        "line": 3575,
+        "text": "2026-11-14T18:01:24.5136398Z   \"prospective_merge\": \"a590178fa1ba11fc1419ea60de1f7f5633a70cfd\","
+      },
+      {
+        "line": 3576,
+        "text": "2026-11-14T18:01:24.5136753Z   \"schema\": \"trnm-ci-source-v1\","
+      },
+      {
+        "line": 3577,
+        "text": "2026-11-14T18:01:24.5137035Z   \"tested_commit\": \"a590178fa1ba11fc1419ea60de1f7f5633a70cfd\","
+      },
+      {
+        "line": 3578,
+        "text": "2026-11-14T18:01:24.5137382Z   \"tested_tree\": \"6be4940d38cc88782657f2684cbefe48866f8b9f\","
+      },
+      {
+        "line": 3579,
+        "text": "2026-11-14T18:01:24.5137686Z   \"tests_executed_by_identity_check\": false,"
+      },
+      {
+        "line": 3580,
+        "text": "2026-11-14T18:01:24.5137945Z   \"tracked_bytes\": 3995072357,"
+      },
+      {
+        "line": 3581,
+        "text": "2026-11-14T18:01:24.5138154Z   \"tracked_entries\": 41681,"
+      },
+      {
+        "line": 3582,
+        "text": "2026-11-14T18:01:24.5138366Z   \"tracked_worktree_verified\": true"
+      },
+      {
+        "line": 3583,
+        "text": "2026-11-14T18:01:24.5138588Z }"
+      },
+      {
+        "line": 3586,
+        "text": "2026-11-14T18:01:24.5325336Z   name: priority-ubuntu-24.04-arm-prospective-merge-service-model-5df7ae6f482157c5f7fdcbcd52222117a965053f-1"
+      },
+      {
+        "line": 3618,
+        "text": "2026-11-14T18:01:27.1808374Z SHA256 digest of uploaded artifact zip is e4c71e66d753620c921b8087e13378878f6ed899054efa94e7947a8f8946a64c"
+      },
+      {
+        "line": 3621,
+        "text": "2026-11-14T18:01:27.5658546Z Artifact priority-ubuntu-24.04-arm-prospective-merge-service-model-5df7ae6f482157c5f7fdcbcd52222117a965053f-1 has been successfully uploaded! Final size is 9339141 bytes. Artifact ID is 14125057766"
+      }
+    ],
+    "log": {
+      "bytes": 2224013,
+      "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/job-132528768001-original-log.stdout",
+      "sha256": "c080ace114a9617b17fb24b68eb9f0b462783111b967a9865e2c879633bf8c1a"
+    }
+  }
+]

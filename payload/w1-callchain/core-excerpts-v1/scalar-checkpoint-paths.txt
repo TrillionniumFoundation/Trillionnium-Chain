@@ -1,0 +1,362 @@
+
+32-scalar_cpu.rs.raw lines 635-884
+635:     pub(super) fn unknown(&self) {
+636:         if let Ok(mut state) = self.state.lock() {
+637:             state.unavailable = true;
+638:         }
+639:         if let Ok(mut budget) = self.budget.lock() {
+640:             budget.unavailable = true;
+641:         }
+642:     }
+643:     pub(super) fn register_worker(&self, stamp: Option<ThreadCpuStamp>) {
+644:         let Some(stamp) = stamp else {
+645:             self.unknown();
+646:             return;
+647:         };
+648:         let mut state = match self.state.lock() {
+649:             Ok(state) => state,
+650:             Err(error) => {
+651:                 drop(error);
+652:                 self.unknown();
+653:                 return;
+654:             }
+655:         };
+656:         let id = thread::current().id();
+657:         if state.threads.contains_key(&id) {
+658:             drop(state);
+659:             self.unknown();
+660:             return;
+661:         }
+662:         state.threads.insert(id, stamp);
+663:     }
+664:     pub(super) fn observe(&self, remove: bool, enforce: bool) -> Result<()> {
+665:         let wait = match self.state.lock() {
+666:             Ok(state) => state.wait_inside_checkpoint,
+667:             Err(error) => {
+668:                 // This policy read precedes observe_sample, so it must retain
+669:                 // that sampler's fail-closed global fence. Release the poisoned
+670:                 // guard before unknown() reacquires the request registry.
+671:                 drop(error);
+672:                 self.unknown();
+673:                 return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+674:             }
+675:         };
+676:         self.observe_with_control(remove, enforce, wait, &|| Ok(()))
+677:     }
+678:     fn observe_with_control(
+679:         &self,
+680:         remove: bool,
+681:         enforce: bool,
+682:         may_wait: bool,
+683:         resource: &dyn Fn() -> Result<()>,
+684:     ) -> Result<()> {
+685:         loop {
+686:             resource()?;
+687:             let Some(request) = self.observe_sample(remove, enforce)? else {
+688:                 return Ok(());
+689:             };
+690:             // Shared History cannot suspend while owning the Node mutex.
+691:             // A long indivisible phase still fails under the original budget.
+692:             if !may_wait {
+693:                 self.state
+694:                     .lock()
+695:                     .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?
+696:                     .refused = true;
+697:                 return Err("PUBLIC_MUTATION_CPU_BUDGET".into());
+698:             }
+699:             // An exclusive embedding has no Node mutex. Keep its exact paid
+700:             // continuation, original absolute deadline AND caller resource
+701:             // cancellation throughout every actual refill wait. No stored
+702:             // callback, detached lifetime or new reservation is introduced.
+703:             resource()?;
+704:             request.check()?;
+705:             thread::sleep(
+706:                 Duration::from_millis(5)
+707:                     .min(request.deadline.saturating_duration_since(Instant::now())),
+708:             );
+709:         }
+710:     }
+711: 
+712:     /// The same settled-worker History continuation may prepare to reacquire
+713:     /// its Node writer or finish after native admission. This earns free credit
+714:     /// through the ORIGINAL refill;
+715:     /// it does not reserve another start quantum or predict commit cost.
+716:     /// Another live owner may consume that headroom before the held checks,
+717:     /// which must still refuse rather than wait under the writer.
+718:     fn prepare_history_writer(&self, resource: &dyn Fn() -> Result<()>) -> Result<()> {
+719:         loop {
+720:             resource()?;
+721:             // Charge this exact owner's new interval once. The sampler keeps
+722:             // unknown/refused and verified native-completion scheduling rules.
+723:             self.observe_sample(false, true)?;
+724:             let (request, ready) = {
+725:                 let mut state = match self.state.lock() {
+726:                     Ok(state) => state,
+727:                     Err(error) => {
+728:                         drop(error);
+729:                         self.unknown();
+730:                         return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+731:                     }
+732:                 };
+733:                 let mut budget = match self.budget.lock() {
+734:                     Ok(budget) => budget,
+735:                     Err(error) => {
+736:                         state.unavailable = true;
+737:                         drop(state);
+738:                         drop(error);
+739:                         self.unknown();
+740:                         return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+741:                     }
+742:                 };
+743:                 if state.unavailable
+744:                     || budget.unavailable
+745:                     || state.owner_thread != thread::current().id()
+746:                     || state.threads.len() != 1
+747:                     || !state.threads.contains_key(&state.owner_thread)
+748:                     || budget.in_flight == 0
+749:                     || budget.in_flight > MUTATION_CPU_WORKERS
+750:                     || (state.verified_completion
+751:                         && (budget.verified_completions == 0
+752:                             || budget.verified_completions > budget.in_flight))
+753:                 {
+754:                     state.unavailable = true;
+755:                     budget.unavailable = true;
+756:                     return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+757:                 }
+758:                 ensure(!state.refused, "PUBLIC_MUTATION_CPU_BUDGET")?;
+759:                 let Some(request) = state.public_request.clone() else {
+760:                     state.unavailable = true;
+761:                     budget.unavailable = true;
+762:                     return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+763:                 };
+764:                 // Stored free credit excludes EVERY outstanding start reserve.
+765:                 // Reaching zero leaves the original principals intact; this
+766:                 // operation cannot borrow another owner's purchased quantum.
+767:                 // Nonpromoted work retains its original sampler verdict,
+768:                 // including its own already purchased allowance when stored
+769:                 // free credit is negative. It never receives this extra wait.
+770:                 let ready = !state.verified_completion || budget.credit_ns >= 0;
+771:                 (request, ready)
+772:             };
+773:             // No request/global mutex or Node writer is held across any caller
+774:             // resource observation, original deadline check or actual sleep.
+775:             request.check()?;
+776:             if ready {
+777:                 return Ok(());
+778:             }
+779:             resource()?;
+780:             request.check()?;
+781:             thread::sleep(
+782:                 Duration::from_millis(5)
+783:                     .min(request.deadline.saturating_duration_since(Instant::now())),
+784:             );
+785:         }
+786:     }
+787:     fn observe_sample(&self, remove: bool, enforce: bool) -> Result<Option<PublicRequestDeadline>> {
+788:         // All two-lock paths use request -> global. Neither is held across a
+789:         // Work replay, envelope, State/root calculation, join or SQL call.
+790:         let mut state = match self.state.lock() {
+791:             Ok(state) => state,
+792:             Err(error) => {
+793:                 // A PoisonError owns the failed lock guard; release it before
+794:                 // marking request/global accounting unavailable.
+795:                 drop(error);
+796:                 self.unknown();
+797:                 return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+798:             }
+799:         };
+800:         if enforce && state.verified_completion {
+801:             state
+802:                 .public_request
+803:                 .as_ref()
+804:                 .ok_or("PUBLIC_MUTATION_CPU_UNAVAILABLE")?
+805:                 .check()?;
+806:         }
+807:         let id = thread::current().id();
+808:         let measured = state
+809:             .threads
+810:             .get_mut(&id)
+811:             .and_then(ThreadCpuStamp::checkpoint);
+812:         #[cfg(test)]
+813:         let measured = if self.fail_next_sample.swap(false, Ordering::AcqRel) {
+814:             None
+815:         } else {
+816:             measured
+817:         };
+818:         if remove {
+819:             state.threads.remove(&id);
+820:         }
+821:         let Some(measured) = measured else {
+822:             drop(state);
+823:             self.unknown();
+824:             return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+825:         };
+826:         let Some(total) = state.charged_ns.checked_add(measured) else {
+827:             drop(state);
+828:             self.unknown();
+829:             return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+830:         };
+831:         state.charged_ns = total;
+832:         let result: Result<()> = (|| {
+833:             let mut budget = self
+834:                 .budget
+835:                 .lock()
+836:                 .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+837:             if enforce {
+838:                 budget.charge_request_live(Instant::now(), measured, total)?;
+839:                 // A probe already running when another request finishes W1
+840:                 // keeps only its already purchased original start quantum.
+841:                 // It cannot consume successive future completion refills.
+842:                 ensure(
+843:                     state.verified_completion
+844:                         || !budget.completion_pending()
+845:                         || total <= MUTATION_CPU_START_RESERVE_NS,
+846:                     "PUBLIC_MUTATION_CPU_BUDGET",
+847:                 )
+848:             } else {
+849:                 budget.record_final_live(Instant::now(), measured)
+850:             }
+851:         })();
+852:         let mut wait = None;
+853:         if let Err(error) = &result {
+854:             if error.is(crate::ErrorCode::PublicMutationCpuBudget) {
+855:                 if enforce && state.verified_completion && !state.refused {
+856:                     wait = state.public_request.clone();
+857:                     if wait.is_none() {
+858:                         state.unavailable = true;
+859:                     }
+860:                 } else {
+861:                     state.refused |= enforce;
+862:                 }
+863:             } else {
+864:                 state.unavailable = true;
+865:             }
+866:         }
+867:         let unavailable = state.unavailable;
+868:         let refused = state.refused;
+869:         drop(state);
+870:         if unavailable {
+871:             self.unknown();
+872:             return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+873:         }
+874:         // Final samples still charge after cancellation/debt. They never
+875:         // replace an already completed native outcome with a new refusal.
+876:         if enforce {
+877:             ensure(!refused, "PUBLIC_MUTATION_CPU_BUDGET")?;
+878:         }
+879:         Ok(wait)
+880:     }
+881:     pub(super) fn checkpoint(&self) -> Result<()> {
+882:         self.observe(false, true)
+883:     }
+884:     pub(super) fn finish_thread(&self) {
+
+32-scalar_cpu.rs.raw lines 1108-1148
+1108: impl ServiceMutationCpuOperation {
+1109:     pub fn checkpoint(&self) -> Result<()> {
+1110:         self.live.checkpoint()
+1111:     }
+1112:     /// Bind the History scope's original absolute deadline once. Shared
+1113:     /// callers may never wait from a checkpoint under their Node mutex. The
+1114:     /// exclusive native embedding owns no mutex; it may continue its exact
+1115:     /// stack under this same operation and deadline after native completion.
+1116:     pub(crate) fn bind_history_request(&self, deadline: Instant) -> Result<()> {
+1117:         self.live.bind_public_request(
+1118:             deadline,
+1119:             Arc::new(AtomicBool::new(false)),
+1120:             Arc::new(AtomicBool::new(false)),
+1121:         )?;
+1122:         self.live
+1123:             .state
+1124:             .lock()
+1125:             .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?
+1126:             .wait_inside_checkpoint = false;
+1127:         Ok(())
+1128:     }
+1129: 
+1130:     pub(crate) fn history_checkpoint(
+1131:         &self,
+1132:         owns_node_mutex: bool,
+1133:         resource: &dyn Fn() -> Result<()>,
+1134:     ) -> Result<()> {
+1135:         self.live
+1136:             .observe_with_control(false, true, !owns_node_mutex, resource)
+1137:     }
+1138: 
+1139:     #[cfg(test)]
+1140:     pub(crate) fn test_legacy_history_w1_only_priority(
+1141:         &self,
+1142:         checked: &crate::store::WorkCheckedPacket,
+1143:     ) -> Result<()> {
+1144:         self.live.test_legacy_w1_only_priority(checked)
+1145:     }
+1146: 
+1147:     pub fn worker_accounting(&self) -> &dyn ExecutionWorkerAccounting {
+1148:         &self.workers
+
+32-scalar_cpu.rs.raw lines 1220-1284
+1220:     pub fn checkpoint(&self) -> Result<()> {
+1221:         self.live.checkpoint()
+1222:     }
+1223: 
+1224:     /// The native owner alone constructs this evidence after all mathematical
+1225:     /// and State/output checks. Keep the same live interval, absolute deadline,
+1226:     /// cancellation, identity set and principal; no new reservation is created.
+1227:     pub(crate) fn native_admission_complete(
+1228:         &self,
+1229:         complete: &crate::store::NativeAdmissionCompletion<'_>,
+1230:     ) -> Result<()> {
+1231:         // Trusted local metered helpers share this checkpoint for termination
+1232:         // accounting but never bind a public request. Preserve their original
+1233:         // policy: no scheduling hash or additional precommit CPU checkpoint.
+1234:         let bound_request = match self.live.state.lock() {
+1235:             Ok(state) => state.public_request.is_some(),
+1236:             Err(error) => {
+1237:                 // PoisonError owns the failed guard. Release it before the
+1238:                 // original Unknown handler reacquires request/global locks.
+1239:                 drop(error);
+1240:                 self.live.unknown();
+1241:                 return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+1242:             }
+1243:         };
+1244:         if !bound_request {
+1245:             return Ok(());
+1246:         }
+1247:         self.live.checkpoint()?;
+1248:         let identity = complete.identity();
+1249:         self.live.promote_verified_identity(identity)
+1250:     }
+1251: 
+1252:     pub(crate) fn history_checkpoint(
+1253:         &self,
+1254:         owns_node_mutex: bool,
+1255:         resource: &dyn Fn() -> Result<()>,
+1256:     ) -> Result<()> {
+1257:         self.live
+1258:             .observe_with_control(false, true, !owns_node_mutex, resource)
+1259:     }
+1260: 
+1261:     /// Call only with workers joined and no Node writer held. Only this same
+1262:     /// operation's unique full native completion may wait for original free
+1263:     /// credit, with its original request controls. Before native completion,
+1264:     /// the original paid checkpoint still applies without extra waiting rights.
+1265:     /// This is no reservation or guarantee that a later held commit can finish.
+1266:     pub(crate) fn history_prepare_writer(&self, resource: &dyn Fn() -> Result<()>) -> Result<()> {
+1267:         self.live.prepare_history_writer(resource)
+1268:     }
+1269: 
+1270:     pub(crate) fn shares_domain_with(&self, domain: &ServiceMutationCpuDomain) -> bool {
+1271:         Arc::ptr_eq(&self.live.budget, &domain.budget)
+1272:     }
+1273: 
+1274:     pub(crate) fn shares_operation_with(&self, original: &Self) -> bool {
+1275:         Arc::ptr_eq(&self.live, &original.live)
+1276:     }
+1277: 
+1278:     pub(crate) fn reserve_reorg_termination(&self) -> Result<ReorgTerminationCpuReservation> {
+1279:         self.checkpoint()?;
+1280:         let mut state = self
+1281:             .live
+1282:             .state
+1283:             .lock()
+1284:             .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;

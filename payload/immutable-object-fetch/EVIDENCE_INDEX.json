@@ -1,0 +1,150 @@
+{
+  "files": [
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/default-preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 161,
+      "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/default-preflight.stdout",
+      "sha256": "2e0930e3e5b93d19ab63db0fe013c910ee3255283942eeab771e4db4aec002ec"
+    },
+    {
+      "bytes": 770,
+      "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/default-preflight.step.json",
+      "sha256": "65020c57865f5b9be4d1c12d274540bbe99a9a381ecfeb082c294b42b3d58678"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/fetch-exact-5df-objects.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/fetch-exact-5df-objects.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 961,
+      "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/fetch-exact-5df-objects.step.json",
+      "sha256": "7b09949a74682c7c0a2037f8c6f315b500d2d5459f398be21196dc3fa6446a9f"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/local-head-after.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 82,
+      "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/local-head-after.stdout",
+      "sha256": "495ce2ca3a422955329a0ef51ae578f86340a1c91ea21ef2fa9074eea745da07"
+    },
+    {
+      "bytes": 780,
+      "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/local-head-after.step.json",
+      "sha256": "6af2497a5b72aed72c76a2d93f7e20e97cb982ac27dea5a669696b5fad9e578e"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/local-head-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 82,
+      "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/local-head-before.stdout",
+      "sha256": "495ce2ca3a422955329a0ef51ae578f86340a1c91ea21ef2fa9074eea745da07"
+    },
+    {
+      "bytes": 783,
+      "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/local-head-before.step.json",
+      "sha256": "49cdb97fe285258fb5bcd9709d37ba33958f529ddd6a19845c92d0cd07d895a3"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/local-refs-after.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 74115,
+      "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/local-refs-after.stdout",
+      "sha256": "22ee7c52e09f816489f53153950e6e45671ebce1a2d836b2c99a87ef73bb96a5"
+    },
+    {
+      "bytes": 796,
+      "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/local-refs-after.step.json",
+      "sha256": "30243be840c791205e01317f185454f827150ab9522bc588421b9316892ee962"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/local-refs-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 74115,
+      "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/local-refs-before.stdout",
+      "sha256": "22ee7c52e09f816489f53153950e6e45671ebce1a2d836b2c99a87ef73bb96a5"
+    },
+    {
+      "bytes": 799,
+      "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/local-refs-before.step.json",
+      "sha256": "de42a2618e9cfe387e021ada4a5287738b5daf467c010d748b742ad236e72540"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/new-head-tree-parents.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 164,
+      "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/new-head-tree-parents.stdout",
+      "sha256": "8eba7d8d7b01bf3a1e8d366cdac66a9047a0fb6fea0b314199e38292b3230c2d"
+    },
+    {
+      "bytes": 845,
+      "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/new-head-tree-parents.step.json",
+      "sha256": "c8567e82d5e315df7d14b9cf0a447b57cf1f7ecf7fd04c72a74630443864af0d"
+    },
+    {
+      "bytes": 6048,
+      "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/producer.py",
+      "sha256": "f5560cbe7e44dfc6fafdf5bd14492dff736d487a0506f874ebb12952adcbfd57"
+    },
+    {
+      "bytes": 8802,
+      "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/summary.json",
+      "sha256": "7051816f15f23d2e9ce182062e1c2b1d3c84b17c4e597388f56f777154828e65"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/tracked-status-after.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/tracked-status-after.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 807,
+      "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/tracked-status-after.step.json",
+      "sha256": "d9a23a9c1c81778975240836e25ce200d8cc28d24f529413e42071890b08a75a"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/tracked-status-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/tracked-status-before.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 810,
+      "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/tracked-status-before.step.json",
+      "sha256": "716cdccfd46e5ce741600b17444849a3818d177228a30bca06f235e4efd690e5"
+    }
+  ],
+  "self_excluded": true
+}

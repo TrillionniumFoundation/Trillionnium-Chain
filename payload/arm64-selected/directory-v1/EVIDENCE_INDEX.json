@@ -1,0 +1,36 @@
+{
+  "count": 6,
+  "files": [
+    {
+      "bytes": 809,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/directory-v1/artifact-metadata.json",
+      "sha256": "d3fdc7640f4c09e5a66b70220f6427b1bc2f1d962d7e354e488b1459d390f2ba"
+    },
+    {
+      "bytes": 1111,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/directory-v1/artifact-metadata.step.json",
+      "sha256": "d47cbaa7379b55cfc7f7d5f1be49b691cccc0a8b55732b1877b3b849f1efff61"
+    },
+    {
+      "bytes": 67495,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/directory-v1/central-directory.json",
+      "sha256": "0e60ee6eac7addb6af9adaa3080ba8dac48e805d5fe748369ddb99d7a53b5926"
+    },
+    {
+      "bytes": 6078,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/directory-v1/summary.json",
+      "sha256": "71d2ba7895fd2c00303255fbddcd665de79a861aa96b5e4e5646ad6a478587c3"
+    },
+    {
+      "bytes": 65557,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/directory-v1/tail.body",
+      "sha256": "0f8c768695f30eba3ff3c8551e91266261121d44e1e0ce2c77b5a24321ffbd20"
+    },
+    {
+      "bytes": 1396,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/directory-v1/tail.step.json",
+      "sha256": "a7868e2aab9c775781fe1251c5d98bb50b7b6a39949980586951947e5f896e3a"
+    }
+  ],
+  "self_excluded": true
+}

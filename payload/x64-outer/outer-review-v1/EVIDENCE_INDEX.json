@@ -1,0 +1,56 @@
+{
+  "files": [
+    {
+      "bytes": 7533,
+      "path": "/private/tmp/chain-prci-H5DF-cross-arch-cost-x64-original-log-20261114-v1/outer-review-v1/producer.py",
+      "sha256": "d9a2347f0550af82f4da03cb69b10e39444c52ac7e843954b7c8f2a48fa0c850"
+    },
+    {
+      "bytes": 602,
+      "path": "/private/tmp/chain-prci-H5DF-cross-arch-cost-x64-original-log-20261114-v1/outer-review-v1/actual-launch-tool-response.json",
+      "sha256": "8c3c5d11a8dda47794edd26060f2dc8521f6cd4242a411eb84ba0debfd647ee8"
+    },
+    {
+      "bytes": 8100,
+      "path": "/private/tmp/chain-prci-H5DF-cross-arch-cost-x64-original-log-20261114-v1/outer-review-v1/actual-pty-read-tool-responses.json",
+      "sha256": "b242999b06cd8a0ad2394bd0e4ae2640c9950c9418c73e5053607098f579e081"
+    },
+    {
+      "bytes": 13676,
+      "path": "/private/tmp/chain-prci-H5DF-cross-arch-cost-x64-original-log-20261114-v1/outer-review-v1/actual-terminal-pages.json",
+      "sha256": "3a481a9f975b5b4b2beab46e58ad1fc53cf22fdb7df625f14cdcbbf93e04a58d"
+    },
+    {
+      "bytes": 1867,
+      "path": "/private/tmp/chain-prci-H5DF-cross-arch-cost-x64-original-log-20261114-v1/outer-review-v1/actual-terminal.log",
+      "sha256": "09ff6b542d6e781c5e867b0fb687192a3b435795530d5cc3d7ec1fd80f795ff2"
+    },
+    {
+      "bytes": 9054,
+      "path": "/private/tmp/chain-prci-H5DF-cross-arch-cost-x64-original-log-20261114-v1/outer-review-v1/controller-parsed-from-log.json",
+      "sha256": "7f718e146c05acee9ca19f953c1a9dd9fe9028a5fe380b9d68f5e0249c3615bd"
+    },
+    {
+      "bytes": 1083,
+      "path": "/private/tmp/chain-prci-H5DF-cross-arch-cost-x64-original-log-20261114-v1/outer-review-v1/source-identities-parsed-from-log.json",
+      "sha256": "eeb8c2f3d8ffd5cb053155db6111573dde8d4fdf45a18223140dccc5d370e9f1"
+    },
+    {
+      "bytes": 12002,
+      "path": "/private/tmp/chain-prci-H5DF-cross-arch-cost-x64-original-log-20261114-v1/outer-review-v1/exact-numbered-log-excerpts.json",
+      "sha256": "bc7f461396fa3c291c2a1fa58c93511900c6a5d8fc5a79396644aa5bd6d64f81"
+    },
+    {
+      "bytes": 5214,
+      "path": "/private/tmp/chain-prci-H5DF-cross-arch-cost-x64-original-log-20261114-v1/outer-review-v1/review.json",
+      "sha256": "8ed5bedb6d7b8bb722c5fe39c42e742dfb6bbdc17d34de19a1f4b11dfe60c3f4"
+    }
+  ],
+  "original_acquisition_index": {
+    "bytes": 3120,
+    "path": "/private/tmp/chain-prci-H5DF-cross-arch-cost-x64-original-log-20261114-v1/EVIDENCE_INDEX.json",
+    "sha256": "fc18e7cc4d3c610eeea46ffa264faa75a48f0a6a55816e79a0cf75b80c5edf66"
+  },
+  "schema": "trnm-H5DF-cross-cost-outer-review-index-v1",
+  "self_excluded": true
+}

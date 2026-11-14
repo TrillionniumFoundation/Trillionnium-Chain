@@ -1,0 +1,335 @@
+{
+  "already_desired_before": false,
+  "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+  "desired_body": {
+    "bytes": 11714,
+    "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/body-proposal-v2/proposed-body.md",
+    "sha256": "89e8ecdd9860b513b0d4f4d32f9566ab55b1c8b4cfeb4c818f2df59f425ee2da"
+  },
+  "desired_body_observed_after": true,
+  "errors": [],
+  "finished_at": "2026-11-14T18:08:27.123346+00:00",
+  "head": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+  "normal_PATCH_no_atomic_expected_head_or_body_CAS": true,
+  "old_body": {
+    "bytes": 8644,
+    "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/body-proposal-v2/old-body.md",
+    "sha256": "798b6bde4c1985d20c2f7c6a7b1255cc174f6b3c87383d9e7de8b59f2e39f8c4"
+  },
+  "patch_accepted": true,
+  "patch_started": true,
+  "producer": {
+    "bytes": 10663,
+    "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/body-proposal-v2/execute_pr847_body_only_v1.py",
+    "sha256": "568d5f3a1e59b0cd599f4586da09d39d2e213a6c07b57ebf4f9ec59b3c003bc6"
+  },
+  "schema": "trnm-H5DF-pr847-body-only-receipt-v1",
+  "spec": {
+    "bytes": 3345,
+    "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/body-proposal-v2/execution-spec.json",
+    "sha256": "ac2aa670f550cd0b3362fb156032fd15ed4c06da9468d977240de0972e1ebf05"
+  },
+  "started_at": "2026-11-14T18:08:12.889212+00:00",
+  "status": "confirmed",
+  "steps": [
+    {
+      "GH_DEBUG_removed": true,
+      "GH_HOST": "github.com",
+      "argv": [
+        "/opt/homebrew/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--include",
+        "--method",
+        "GET",
+        "user"
+      ],
+      "elapsed_seconds": 1.505365,
+      "endpoint": "user",
+      "exit": 0,
+      "finished_at": "2026-11-14T18:08:14.396582+00:00",
+      "group_cleanup_completeness": "not_proven",
+      "http_status": 200,
+      "label": "before-actor",
+      "method": "GET",
+      "owned_pid": 87798,
+      "parse_error": null,
+      "started_at": "2026-11-14T18:08:12.891259+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-pr847-body-only-update-v1-actual-001/before-actor.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 2660,
+        "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-pr847-body-only-update-v1-actual-001/before-actor.stdout",
+        "sha256": "a8a2ad68fba0473e330471420f46ade969ac817a21448e34bc0e8c5967684815"
+      },
+      "termination_or_error": null,
+      "timeout_seconds": 120
+    },
+    {
+      "GH_DEBUG_removed": true,
+      "GH_HOST": "github.com",
+      "argv": [
+        "/opt/homebrew/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--include",
+        "--method",
+        "GET",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/pulls/847"
+      ],
+      "elapsed_seconds": 2.241268,
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/pulls/847",
+      "exit": 0,
+      "finished_at": "2026-11-14T18:08:15.132569+00:00",
+      "group_cleanup_completeness": "not_proven",
+      "http_status": 200,
+      "label": "before-pr",
+      "method": "GET",
+      "owned_pid": 87800,
+      "parse_error": null,
+      "started_at": "2026-11-14T18:08:12.891311+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-pr847-body-only-update-v1-actual-001/before-pr.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 29119,
+        "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-pr847-body-only-update-v1-actual-001/before-pr.stdout",
+        "sha256": "f9702deeaebc120e4623d77d9c961ca5a4cc212e1b4a9d7459d90fe8974ce3e3"
+      },
+      "termination_or_error": null,
+      "timeout_seconds": 120
+    },
+    {
+      "GH_DEBUG_removed": true,
+      "GH_HOST": "github.com",
+      "argv": [
+        "/opt/homebrew/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--include",
+        "--method",
+        "GET",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/git/ref/heads/fix/chain-hepta-closure-candidate-20261109-481716"
+      ],
+      "elapsed_seconds": 1.572941,
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/git/ref/heads/fix/chain-hepta-closure-candidate-20261109-481716",
+      "exit": 0,
+      "finished_at": "2026-11-14T18:08:14.464290+00:00",
+      "group_cleanup_completeness": "not_proven",
+      "http_status": 200,
+      "label": "before-candidate-ref",
+      "method": "GET",
+      "owned_pid": 87799,
+      "parse_error": null,
+      "started_at": "2026-11-14T18:08:12.891360+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-pr847-body-only-update-v1-actual-001/before-candidate-ref.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 1999,
+        "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-pr847-body-only-update-v1-actual-001/before-candidate-ref.stdout",
+        "sha256": "77fa954a5e8de32b32354287d4fe290d5725e7ce214ce24601b6bf18caf8f747"
+      },
+      "termination_or_error": null,
+      "timeout_seconds": 120
+    },
+    {
+      "GH_DEBUG_removed": true,
+      "GH_HOST": "github.com",
+      "argv": [
+        "/opt/homebrew/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--include",
+        "--method",
+        "GET",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/git/ref/heads/main"
+      ],
+      "elapsed_seconds": 1.512753,
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/git/ref/heads/main",
+      "exit": 0,
+      "finished_at": "2026-11-14T18:08:14.404140+00:00",
+      "group_cleanup_completeness": "not_proven",
+      "http_status": 200,
+      "label": "before-main-ref",
+      "method": "GET",
+      "owned_pid": 87801,
+      "parse_error": null,
+      "started_at": "2026-11-14T18:08:12.891389+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-pr847-body-only-update-v1-actual-001/before-main-ref.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 1846,
+        "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-pr847-body-only-update-v1-actual-001/before-main-ref.stdout",
+        "sha256": "bedb726d7c6fcee8ae4521315d581e1e6c2b1f3c072a258cfd7aed2b7f9eb19a"
+      },
+      "termination_or_error": null,
+      "timeout_seconds": 120
+    },
+    {
+      "GH_DEBUG_removed": true,
+      "GH_HOST": "github.com",
+      "argv": [
+        "/opt/homebrew/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--include",
+        "--method",
+        "PATCH",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/pulls/847",
+        "--input",
+        "/private/tmp/chain-consolidation-20261114-root/H5DF-pr847-body-only-update-v1-actual-001/body-only-payload.json"
+      ],
+      "elapsed_seconds": 9.190379,
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/pulls/847",
+      "exit": 0,
+      "finished_at": "2026-11-14T18:08:24.325701+00:00",
+      "group_cleanup_completeness": "not_proven",
+      "http_status": 200,
+      "label": "body-PATCH-once",
+      "method": "PATCH",
+      "owned_pid": 87872,
+      "parse_error": null,
+      "started_at": "2026-11-14T18:08:15.135258+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-pr847-body-only-update-v1-actual-001/body-PATCH-once.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 32087,
+        "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-pr847-body-only-update-v1-actual-001/body-PATCH-once.stdout",
+        "sha256": "5d59523c486f62116c42de7bf6a4c93b02f92faaa10054113de25de501e7f3d8"
+      },
+      "termination_or_error": null,
+      "timeout_seconds": 120
+    },
+    {
+      "GH_DEBUG_removed": true,
+      "GH_HOST": "github.com",
+      "argv": [
+        "/opt/homebrew/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--include",
+        "--method",
+        "GET",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/pulls/847"
+      ],
+      "elapsed_seconds": 2.788938,
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/pulls/847",
+      "exit": 0,
+      "finished_at": "2026-11-14T18:08:27.115770+00:00",
+      "group_cleanup_completeness": "not_proven",
+      "http_status": 200,
+      "label": "after-pr",
+      "method": "GET",
+      "owned_pid": 87970,
+      "parse_error": null,
+      "started_at": "2026-11-14T18:08:24.326838+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-pr847-body-only-update-v1-actual-001/after-pr.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 32195,
+        "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-pr847-body-only-update-v1-actual-001/after-pr.stdout",
+        "sha256": "1514e78c7a6c929ce0eb08a327082fec0dcba512d005f2810a827b7e9a482931"
+      },
+      "termination_or_error": null,
+      "timeout_seconds": 120
+    },
+    {
+      "GH_DEBUG_removed": true,
+      "GH_HOST": "github.com",
+      "argv": [
+        "/opt/homebrew/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--include",
+        "--method",
+        "GET",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/git/ref/heads/fix/chain-hepta-closure-candidate-20261109-481716"
+      ],
+      "elapsed_seconds": 1.376081,
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/git/ref/heads/fix/chain-hepta-closure-candidate-20261109-481716",
+      "exit": 0,
+      "finished_at": "2026-11-14T18:08:25.703065+00:00",
+      "group_cleanup_completeness": "not_proven",
+      "http_status": 200,
+      "label": "after-candidate-ref",
+      "method": "GET",
+      "owned_pid": 87971,
+      "parse_error": null,
+      "started_at": "2026-11-14T18:08:24.326992+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-pr847-body-only-update-v1-actual-001/after-candidate-ref.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 1998,
+        "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-pr847-body-only-update-v1-actual-001/after-candidate-ref.stdout",
+        "sha256": "90215acd53b5dda45b0c4911e8986ff1ca16aa914bd0b4fb975e38433cb3b0d7"
+      },
+      "termination_or_error": null,
+      "timeout_seconds": 120
+    },
+    {
+      "GH_DEBUG_removed": true,
+      "GH_HOST": "github.com",
+      "argv": [
+        "/opt/homebrew/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--include",
+        "--method",
+        "GET",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/git/ref/heads/main"
+      ],
+      "elapsed_seconds": 1.233474,
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/git/ref/heads/main",
+      "exit": 0,
+      "finished_at": "2026-11-14T18:08:25.560575+00:00",
+      "group_cleanup_completeness": "not_proven",
+      "http_status": 200,
+      "label": "after-main-ref",
+      "method": "GET",
+      "owned_pid": 87972,
+      "parse_error": null,
+      "started_at": "2026-11-14T18:08:24.327130+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-pr847-body-only-update-v1-actual-001/after-main-ref.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 1846,
+        "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-pr847-body-only-update-v1-actual-001/after-main-ref.stdout",
+        "sha256": "8ad31ba28e53ea15222a742a0500b147340f3422ecd6b8a7527153a6e4f1c9bd"
+      },
+      "termination_or_error": null,
+      "timeout_seconds": 120
+    }
+  ],
+  "title_ready_auto_merge_policy_CI_refs_source_modified": false
+}

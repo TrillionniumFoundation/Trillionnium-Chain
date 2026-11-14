@@ -1,0 +1,17 @@
+{
+  "source": {
+    "bytes": 19479,
+    "path": "/private/tmp/chain-prci-head-5df7ae6-ci-progress-preparation-20261114-v1/read_head5df_required_ci_progress_v1.py",
+    "sha256": "3f50aa71fa06f37e64c1ed1e669ad1b1b45ebe27acfddb5004957ef3a43c68fb"
+  },
+  "validated": true,
+  "version": [
+    16777233,
+    607364487,
+    33152,
+    1,
+    19479,
+    1794678035744377706,
+    1794678035744377706
+  ]
+}

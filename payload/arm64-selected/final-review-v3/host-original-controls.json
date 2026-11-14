@@ -1,0 +1,167 @@
+{
+  "boot_id": "1ced8096-7fc2-4724-9592-1b6b09614ddc",
+  "child": {
+    "command_argv": [
+      "python3",
+      "scripts/ci/run_from_zero_native.py",
+      "--out",
+      "/home/runner/work/_temp/ci-observations/from-zero-native"
+    ],
+    "consensus_or_model_authority": false,
+    "host_errors": [],
+    "host_readiness_only": true,
+    "native_child_exit": 1,
+    "schema": "trnm-ci-original-public-host-child-v1"
+  },
+  "controller": {
+    "failure": null,
+    "final_host_errors": [],
+    "parent_reused": false,
+    "preparation_binary_sha256": "2ebad185ecc1204d50c8d31b903722c99490929a5c7249366c99f32304d76ae5",
+    "preparation_build_exit": 0,
+    "preparation_completed": true,
+    "preparation_source_after": {
+      "commit": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "test_sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f",
+      "tracked_source_identity": {
+        "base": null,
+        "candidate": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+        "tested_tree": "6be4940d38cc88782657f2684cbefe48866f8b9f",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 3995072357,
+        "tracked_entries": 41681,
+        "tracked_worktree_verified": true
+      },
+      "tree": "6be4940d38cc88782657f2684cbefe48866f8b9f"
+    },
+    "preparation_source_before": {
+      "commit": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "test_sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f",
+      "tracked_source_identity": {
+        "base": null,
+        "candidate": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+        "tested_tree": "6be4940d38cc88782657f2684cbefe48866f8b9f",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 3995072357,
+        "tracked_entries": 41681,
+        "tracked_worktree_verified": true
+      },
+      "tree": "6be4940d38cc88782657f2684cbefe48866f8b9f"
+    },
+    "schema": "trnm-ci-original-public-host-controller-v2",
+    "systemd_run_exit": 1
+  },
+  "cpu_stat_after": {
+    "burst_usec": 0,
+    "core_sched.force_idle_usec": 0,
+    "nice_usec": 0,
+    "nr_bursts": 0,
+    "nr_periods": 549,
+    "nr_throttled": 477,
+    "system_usec": 3949854,
+    "throttled_usec": 47488357,
+    "usage_usec": 13103133,
+    "user_usec": 9153279
+  },
+  "cpu_stat_before": {
+    "burst_usec": 0,
+    "core_sched.force_idle_usec": 0,
+    "nice_usec": 0,
+    "nr_bursts": 0,
+    "nr_periods": 6,
+    "nr_throttled": 4,
+    "system_usec": 14723,
+    "throttled_usec": 286792,
+    "usage_usec": 118766,
+    "user_usec": 104043
+  },
+  "cpu_stat_delta": {
+    "burst_usec": 0,
+    "core_sched.force_idle_usec": 0,
+    "nice_usec": 0,
+    "nr_bursts": 0,
+    "nr_periods": 543,
+    "nr_throttled": 473,
+    "system_usec": 3935131,
+    "throttled_usec": 47201565,
+    "usage_usec": 12984367,
+    "user_usec": 9049236
+  },
+  "cpu_stat_scope": "Entire original native child command between inside snapshots; contains builds/setup and multiple controls; not the four-second pressure phase or one replay; cannot allocate throttled time to an individual phase",
+  "inside_after_utc": "2026-11-14T17:42:12.335773+00:00",
+  "inside_before_utc": "2026-11-14T17:41:18.022703+00:00",
+  "installed_unit_sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+  "limits_before_after_outside_exact": {
+    "cpu.max": "25000 100000",
+    "cpu.max.burst": "0",
+    "memory.max": "2147483648",
+    "memory.swap.max": "0",
+    "pids.max": "256"
+  },
+  "original_pins": {
+    "child-result.json": {
+      "bytes": 333,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/members/from-zero-native-host/child-result.json",
+      "sha256": "b624dd8f68fd721f45d9a3242294d04b80982ba4d060d61d55eaf1125394a321"
+    },
+    "controller-result.json": {
+      "bytes": 9054,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/members/from-zero-native-host/controller-result.json",
+      "sha256": "c6edd271efb2a55d9fdd49f341c229b667ac09a5794af767a5040ed86b8c06e9"
+    },
+    "inside-after.json": {
+      "bytes": 1695,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/members/from-zero-native-host/inside-after.json",
+      "sha256": "f72d84c007b84aac16c7939686d513c2b625c010e79614b2728d2585ad4b687e"
+    },
+    "inside-before.json": {
+      "bytes": 1685,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/members/from-zero-native-host/inside-before.json",
+      "sha256": "d4c0fd79793e48b0c646c2669ca351bb52ee103b8f5856da2e03e65db4250205"
+    },
+    "outside-after.json": {
+      "bytes": 1659,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/members/from-zero-native-host/outside-after.json",
+      "sha256": "db0c32ddb05f2a11cb26bb91dbbb6ee308ae2950507380e39d8522bd17f9a52a"
+    },
+    "prepare-build.json": {
+      "bytes": 4765,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/members/from-zero-native-host/prepare-build.json",
+      "sha256": "e95622b4106ef5e4c7681618bf42390798f704fd4dcd917bb63efccf2216cd7d"
+    },
+    "systemd-run.log": {
+      "bytes": 6898,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/members/from-zero-native-host/systemd-run.log",
+      "sha256": "69b804752a3d893cf347ab15d139e5c813a0927e5850cc942d96a19af82f0816"
+    }
+  },
+  "parent_identity": {
+    "canonical_path": "/sys/fs/cgroup/trnmponpublic.slice",
+    "device": 33,
+    "directory": true,
+    "gid": 0,
+    "inode": 7467,
+    "mode": 493,
+    "symlink": false,
+    "uid": 0
+  },
+  "schema": "trnm-H5DF-arm-host-original-controls-v1",
+  "service": "trnm-from-zero-43621754143-1-cross-arch-cost-4806.service",
+  "thread_cgroup_before_after": "0::/trnmponpublic.slice/trnm-from-zero-43621754143-1-cross-arch-cost-4806.service",
+  "thread_privileges_after": {
+    "CapBnd": "0000000000000000",
+    "NoNewPrivs": "1"
+  },
+  "thread_privileges_before": {
+    "CapBnd": "0000000000000000",
+    "NoNewPrivs": "1"
+  }
+}

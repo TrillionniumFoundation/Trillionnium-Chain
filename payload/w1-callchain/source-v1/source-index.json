@@ -1,0 +1,427 @@
+{
+  "comparison": "2a86462a1ab20c68151719ba4635e3c294391e64",
+  "head": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+  "read_only_git": true,
+  "source_rows": [
+    {
+      "H5DF_oid": "27f7af353d61ec4cd6273a10c0034988eb3824a2",
+      "R1_oid": "27f7af353d61ec4cd6273a10c0034988eb3824a2",
+      "captured": {
+        "bytes": 2953,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/00-pon_work.rs.raw",
+        "sha256": "af443df76b65018d287874d22866ce873e283a3ca3526d5be6f9508da5af517a"
+      },
+      "lines": 81,
+      "same_R1_H5DF": true,
+      "source": "trillionnium/crates/trnm-crypto-primitives/examples/pon_work.rs"
+    },
+    {
+      "H5DF_oid": "c258df9b422991ed29b56d03d7f43c7b6d125a9d",
+      "R1_oid": "c258df9b422991ed29b56d03d7f43c7b6d125a9d",
+      "captured": {
+        "bytes": 40448,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/01-pon_work_expensive_v1.rs.raw",
+        "sha256": "86cce1ac568a4542f37922ac88887f1e9a0c8071d233cd4be1fc0da19cf4364e"
+      },
+      "lines": 945,
+      "same_R1_H5DF": true,
+      "source": "trillionnium/crates/trnm-crypto-primitives/examples/pon_work_expensive_v1.rs"
+    },
+    {
+      "H5DF_oid": "97cd83b6df80e51cc652cd841860d01b0e0d36f4",
+      "R1_oid": "97cd83b6df80e51cc652cd841860d01b0e0d36f4",
+      "captured": {
+        "bytes": 17650,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/02-pon_work_expensive_verifier_v1.rs.raw",
+        "sha256": "e27598a342e73e100d9f801b9e040db45c46dd4f92bd900f73245ef270f076b8"
+      },
+      "lines": 488,
+      "same_R1_H5DF": true,
+      "source": "trillionnium/crates/trnm-crypto-primitives/examples/pon_work_expensive_verifier_v1.rs"
+    },
+    {
+      "H5DF_oid": "99db2bb54d10f7fc36a4b3529211fba8ffa74cf1",
+      "R1_oid": "99db2bb54d10f7fc36a4b3529211fba8ffa74cf1",
+      "captured": {
+        "bytes": 1495,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/03-pon_work_io.rs.raw",
+        "sha256": "2377bbb748a67fb238c2d113799adce472e905465b5ac46372597ff7ab4dd0b3"
+      },
+      "lines": 43,
+      "same_R1_H5DF": true,
+      "source": "trillionnium/crates/trnm-crypto-primitives/examples/pon_work_io.rs"
+    },
+    {
+      "H5DF_oid": "b89112abb32b692c83cf94a3e85fce58c5798628",
+      "R1_oid": "b89112abb32b692c83cf94a3e85fce58c5798628",
+      "captured": {
+        "bytes": 106066,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/04-pon_work.rs.raw",
+        "sha256": "7af17da8488782bf403275b5fd401ad469dd460fd0ecda38a0edb4e714c5494e"
+      },
+      "lines": 2889,
+      "same_R1_H5DF": true,
+      "source": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs"
+    },
+    {
+      "H5DF_oid": "430e040256cfe5386011bcfa5ca46f7d23760625",
+      "R1_oid": "430e040256cfe5386011bcfa5ca46f7d23760625",
+      "captured": {
+        "bytes": 13186,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/05-arithmetic_facts.rs.raw",
+        "sha256": "b6f453410f588391b8a05427299f7e7c3b10d1972d2057620146cde5ca28fbb9"
+      },
+      "lines": 348,
+      "same_R1_H5DF": true,
+      "source": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts.rs"
+    },
+    {
+      "H5DF_oid": "effe3147d6b1c65e23ec5617b0fe1b814c02b7f8",
+      "R1_oid": "effe3147d6b1c65e23ec5617b0fe1b814c02b7f8",
+      "captured": {
+        "bytes": 5124,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/06-churn_controls.rs.raw",
+        "sha256": "d8e2d55c858925a749c97ea39d1c8935ef7767ae01436189d0e2fb587076e8c5"
+      },
+      "lines": 113,
+      "same_R1_H5DF": true,
+      "source": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/churn_controls.rs"
+    },
+    {
+      "H5DF_oid": "b6167eaa94886e25310e614a61639c244ae897e1",
+      "R1_oid": "b6167eaa94886e25310e614a61639c244ae897e1",
+      "captured": {
+        "bytes": 23186,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/07-controls.rs.raw",
+        "sha256": "1e53a6aa598d0fcb23866253f5c89add025cdd0654d6e82570a761a2d253f7a5"
+      },
+      "lines": 580,
+      "same_R1_H5DF": true,
+      "source": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/controls.rs"
+    },
+    {
+      "H5DF_oid": "6866e991170daf5c618177411a319a5bf38dade3",
+      "R1_oid": "6866e991170daf5c618177411a319a5bf38dade3",
+      "captured": {
+        "bytes": 9812,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/08-full_limb_controls.rs.raw",
+        "sha256": "b418bcbac9261335b0296f46fed8644f2cdc11d3df368bee9b39f7909a357905"
+      },
+      "lines": 264,
+      "same_R1_H5DF": true,
+      "source": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/full_limb_controls.rs"
+    },
+    {
+      "H5DF_oid": "81c1c73fe5b0e113ff8e2e7010527ead723ae5fb",
+      "R1_oid": "81c1c73fe5b0e113ff8e2e7010527ead723ae5fb",
+      "captured": {
+        "bytes": 4167,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/09-tests.rs.raw",
+        "sha256": "f93b72aa1b5dec2b991de6586214f274a7797f8a347d0444125101f0e52cee2f"
+      },
+      "lines": 105,
+      "same_R1_H5DF": true,
+      "source": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/tests.rs"
+    },
+    {
+      "H5DF_oid": "a01331d9403552e6e96dfd0d5bdbf34dae8c7083",
+      "R1_oid": "a01331d9403552e6e96dfd0d5bdbf34dae8c7083",
+      "captured": {
+        "bytes": 3747,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/10-artifacts.rs.raw",
+        "sha256": "fd99053e94bb38b929b848898f4f2ad9f7d3ce33d48097e444337f6ed1d82919"
+      },
+      "lines": 101,
+      "same_R1_H5DF": true,
+      "source": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/artifacts.rs"
+    },
+    {
+      "H5DF_oid": "d95d20caba662c884241a51cb045cfa17fa03983",
+      "R1_oid": "d95d20caba662c884241a51cb045cfa17fa03983",
+      "captured": {
+        "bytes": 16879,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/11-blocked_one_zero.rs.raw",
+        "sha256": "214552a72056e7b0a87e90f0e094cb2668a54de18bcf82e3eddc1896ab0b0031"
+      },
+      "lines": 423,
+      "same_R1_H5DF": true,
+      "source": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_one_zero.rs"
+    },
+    {
+      "H5DF_oid": "0ae9356516dd4201b086fc4323296db57fbea219",
+      "R1_oid": "0ae9356516dd4201b086fc4323296db57fbea219",
+      "captured": {
+        "bytes": 10436,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/12-blocked_zero.rs.raw",
+        "sha256": "be1b375808d0923e3f938f1c4d23475a16bfe43bf665cb464d79d1dc9ef85f8f"
+      },
+      "lines": 272,
+      "same_R1_H5DF": true,
+      "source": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero.rs"
+    },
+    {
+      "H5DF_oid": "11dd4cdfe1abb8f9bfb0565e08de4277a2d56a4c",
+      "R1_oid": "11dd4cdfe1abb8f9bfb0565e08de4277a2d56a4c",
+      "captured": {
+        "bytes": 34628,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/13-blocked_zero_paired.rs.raw",
+        "sha256": "cb3d908e1a88e599d6f17b7678271cf9e93fe8b8dc973be30ff031abcc140b96"
+      },
+      "lines": 828,
+      "same_R1_H5DF": true,
+      "source": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero_paired.rs"
+    },
+    {
+      "H5DF_oid": "31dd5adf013f2d3f88698e2b91e592ef14fb94f4",
+      "R1_oid": "31dd5adf013f2d3f88698e2b91e592ef14fb94f4",
+      "captured": {
+        "bytes": 8795,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/14-facts.rs.raw",
+        "sha256": "d3e10fd0b3f2ab50fbf95778bd38353a1c9da38f44cf6f558d309661f47606a2"
+      },
+      "lines": 236,
+      "same_R1_H5DF": true,
+      "source": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/facts.rs"
+    },
+    {
+      "H5DF_oid": "9438387c4c1f46807e6212b1c797343ee1969bc5",
+      "R1_oid": "9438387c4c1f46807e6212b1c797343ee1969bc5",
+      "captured": {
+        "bytes": 21981,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/15-tests.rs.raw",
+        "sha256": "010410761dc0a71e03f32f43e82b09f808ee69cab860f5a708081ae661f6396e"
+      },
+      "lines": 602,
+      "same_R1_H5DF": true,
+      "source": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/facts/tests.rs"
+    },
+    {
+      "H5DF_oid": "ed132de30fb271c0cb56662cf2cbef053abfb69f",
+      "R1_oid": "ed132de30fb271c0cb56662cf2cbef053abfb69f",
+      "captured": {
+        "bytes": 5033,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/16-integer_paired.rs.raw",
+        "sha256": "fae34d70af6ac6fc61fb0e2e6f022df1548a333aaacd91eb83597e0174f41101"
+      },
+      "lines": 138,
+      "same_R1_H5DF": true,
+      "source": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/integer_paired.rs"
+    },
+    {
+      "H5DF_oid": "28fcb2723f377c910557924c6f15638c6cb63ab0",
+      "R1_oid": "28fcb2723f377c910557924c6f15638c6cb63ab0",
+      "captured": {
+        "bytes": 40347,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/17-legal_attempt.rs.raw",
+        "sha256": "bc4c29d40d5d80ea13167e8d1c8294a110875742e419ce040bfd3e9dc553de71"
+      },
+      "lines": 1007,
+      "same_R1_H5DF": true,
+      "source": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs"
+    },
+    {
+      "H5DF_oid": "c50b2d32099f9ddb1d193199c19555a05a09f504",
+      "R1_oid": "c50b2d32099f9ddb1d193199c19555a05a09f504",
+      "captured": {
+        "bytes": 13599,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/18-low_rank.rs.raw",
+        "sha256": "b167b51b07a6fbf186a1485c1f742de3df1007cb9794c364c7421d77e0afacb4"
+      },
+      "lines": 353,
+      "same_R1_H5DF": true,
+      "source": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt/low_rank.rs"
+    },
+    {
+      "H5DF_oid": "c359642f95dc5f2fa6981fd52c775785d223effa",
+      "R1_oid": "c359642f95dc5f2fa6981fd52c775785d223effa",
+      "captured": {
+        "bytes": 13950,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/19-low_rank_prefix.rs.raw",
+        "sha256": "83007c8d1395ba38328f4546cb88da89786c7aa5e1048f76a7568787d28732c5"
+      },
+      "lines": 400,
+      "same_R1_H5DF": true,
+      "source": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/low_rank_prefix.rs"
+    },
+    {
+      "H5DF_oid": "bbdcbe216eea36f0aa79d1bd7320ede197c66130",
+      "R1_oid": "bbdcbe216eea36f0aa79d1bd7320ede197c66130",
+      "captured": {
+        "bytes": 20390,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/20-maintenance_limb.rs.raw",
+        "sha256": "4dcb3b9280005cd022cb99c30752525406463d963419608b1532a7092198891d"
+      },
+      "lines": 525,
+      "same_R1_H5DF": true,
+      "source": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_limb.rs"
+    },
+    {
+      "H5DF_oid": "e33309316b5eed3fc8e9ceb3b816f81cb7485d95",
+      "R1_oid": "e33309316b5eed3fc8e9ceb3b816f81cb7485d95",
+      "captured": {
+        "bytes": 12611,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/21-maintenance_periodic.rs.raw",
+        "sha256": "5fd27cac9ddad5c87a4623f25d2a97f488d16d8542d9402f59f621db33dfb9ac"
+      },
+      "lines": 334,
+      "same_R1_H5DF": true,
+      "source": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_periodic.rs"
+    },
+    {
+      "H5DF_oid": "69f2ffbc96d5fce17c262d0f1165812448cf18e4",
+      "R1_oid": "69f2ffbc96d5fce17c262d0f1165812448cf18e4",
+      "captured": {
+        "bytes": 26429,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/22-maintenance_prefix.rs.raw",
+        "sha256": "a88ab5bccbc7085fd0c4823e574a6dfe48b18c9d5d70493b817b97cf0a106899"
+      },
+      "lines": 655,
+      "same_R1_H5DF": true,
+      "source": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_prefix.rs"
+    },
+    {
+      "H5DF_oid": "0b03945c58b0d90ad1b073487374351e3a9020e7",
+      "R1_oid": "0b03945c58b0d90ad1b073487374351e3a9020e7",
+      "captured": {
+        "bytes": 15194,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/23-paired_product.rs.raw",
+        "sha256": "3facd5578e8f57b88722e2c3c9c7a19b3d6c3427f9dad22648a13254656a9bab"
+      },
+      "lines": 413,
+      "same_R1_H5DF": true,
+      "source": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/paired_product.rs"
+    },
+    {
+      "H5DF_oid": "f42757c83c1135da285f54c65efa3c0078ea0354",
+      "R1_oid": "f42757c83c1135da285f54c65efa3c0078ea0354",
+      "captured": {
+        "bytes": 29477,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/24-rejection_cache.rs.raw",
+        "sha256": "5aef4dc44007bb3a81af68769c72eba8a9398360903e057f883602cd0e915187"
+      },
+      "lines": 741,
+      "same_R1_H5DF": true,
+      "source": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs"
+    },
+    {
+      "H5DF_oid": "d71d6cfaab47da1702c030e10734dbcb6b47728c",
+      "R1_oid": "d71d6cfaab47da1702c030e10734dbcb6b47728c",
+      "captured": {
+        "bytes": 10004,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/25-rejection_cache_tests.rs.raw",
+        "sha256": "e85c9f8fc28d44fed0899c1167500c122b4e4703b46513bdac5385a59eaa4ce9"
+      },
+      "lines": 259,
+      "same_R1_H5DF": true,
+      "source": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache_tests.rs"
+    },
+    {
+      "H5DF_oid": "afbbfda1cc2b58df4ff3f382af73141a74684f57",
+      "R1_oid": "afbbfda1cc2b58df4ff3f382af73141a74684f57",
+      "captured": {
+        "bytes": 5504,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/26-statement_boundaries.rs.raw",
+        "sha256": "4e03678b595de74ec6556c6b1db8c1ea2230dd0660d7c7a97a910c142bd1a496"
+      },
+      "lines": 153,
+      "same_R1_H5DF": true,
+      "source": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/statement_boundaries.rs"
+    },
+    {
+      "H5DF_oid": "1358d5f5a2df7f593ecfde0382357961631b6a8f",
+      "R1_oid": "1358d5f5a2df7f593ecfde0382357961631b6a8f",
+      "captured": {
+        "bytes": 22800,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/27-structured.rs.raw",
+        "sha256": "a0535365dc141d15d6e22242352f554d5ada6d31a02cd627f2eb92135704556c"
+      },
+      "lines": 619,
+      "same_R1_H5DF": true,
+      "source": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/structured.rs"
+    },
+    {
+      "H5DF_oid": "1f9b65dc67775243c5a9122ee411718079b38323",
+      "R1_oid": "1f9b65dc67775243c5a9122ee411718079b38323",
+      "captured": {
+        "bytes": 9625,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/28-task_product_facts.rs.raw",
+        "sha256": "3c5dd05a1f7fd2cd90f92f310b7e708963895dd0965946e0006fa2dd2d5d3870"
+      },
+      "lines": 261,
+      "same_R1_H5DF": true,
+      "source": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/task_product_facts.rs"
+    },
+    {
+      "H5DF_oid": "8d9bcc405eeae63d20b3f668c09d3a5f0439781e",
+      "R1_oid": "8d9bcc405eeae63d20b3f668c09d3a5f0439781e",
+      "captured": {
+        "bytes": 15147,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/29-tests.rs.raw",
+        "sha256": "69a7a12a240f4a71983a815b00c34058dca938f4392ff918a8b84d638c61b97f"
+      },
+      "lines": 434,
+      "same_R1_H5DF": true,
+      "source": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/task_product_facts/tests.rs"
+    },
+    {
+      "H5DF_oid": "5bc6aff0a362fa6923ef7db2c1ea48b6fbf3e943",
+      "R1_oid": "5bc6aff0a362fa6923ef7db2c1ea48b6fbf3e943",
+      "captured": {
+        "bytes": 27612,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/30-history_import.rs.raw",
+        "sha256": "79c092cfd3cddec2c72553619669df5e13208e69f4e6bbead016f4d3571cf884"
+      },
+      "lines": 704,
+      "same_R1_H5DF": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs"
+    },
+    {
+      "H5DF_oid": "7919f646c4fd9f44000b0f59493fa71e84f991ea",
+      "R1_oid": "7919f646c4fd9f44000b0f59493fa71e84f991ea",
+      "captured": {
+        "bytes": 114097,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/31-request_observation.rs.raw",
+        "sha256": "9d4f8c71a87e2e1214789e0e096ded2c3497f93fb61e3239099e8753a639015b"
+      },
+      "lines": 2823,
+      "same_R1_H5DF": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs"
+    },
+    {
+      "H5DF_oid": "a7fd76834d321f57cc46a6559e2bcc3f046de0c5",
+      "R1_oid": "a7fd76834d321f57cc46a6559e2bcc3f046de0c5",
+      "captured": {
+        "bytes": 82351,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/32-scalar_cpu.rs.raw",
+        "sha256": "799cfe0fab3fb8e0b3796eee7748cb63a98c02b74d3083af98b4368c5895e384"
+      },
+      "lines": 2026,
+      "same_R1_H5DF": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs"
+    },
+    {
+      "H5DF_oid": "d596dc6bab16698cd18bcc15bcbbe1fafedf603e",
+      "R1_oid": "d596dc6bab16698cd18bcc15bcbbe1fafedf603e",
+      "captured": {
+        "bytes": 391470,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/33-store.rs.raw",
+        "sha256": "5918270368c61b420d26910dc5934714e1423f71c686b2d01f8d2e3ccceb990c"
+      },
+      "lines": 9445,
+      "same_R1_H5DF": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/store.rs"
+    },
+    {
+      "H5DF_oid": "cfbe6205890aa23a08dfa4b5bee6c32556537f26",
+      "R1_oid": "cfbe6205890aa23a08dfa4b5bee6c32556537f26",
+      "captured": {
+        "bytes": 2014,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/34-work_checked.rs.raw",
+        "sha256": "6e961948607155c6846c947a9c767e8727028bc98d3445b015a8ceefb2096842"
+      },
+      "lines": 50,
+      "same_R1_H5DF": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/store/growth/work_checked.rs"
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "schema": "trnm-H5DF-ready003-closed-observation-v1",
+  "status": "CLOSED_METADATA_ONLY",
+  "collector_natural_exit": 0,
+  "offline_review_natural_exit": 0,
+  "source_producer_unchanged": true,
+  "one_metadata_collection": true,
+  "additional_GETs_or_job_logs_or_artifacts": false,
+  "no_source_Git_refs_index_stage_config_changes": true,
+  "qualification": false,
+  "actual_tested_source_verified": false,
+  "snapshot": {
+    "start": "2026-11-14T18:11:33.879008+00:00",
+    "end": "2026-11-14T18:11:45.333112+00:00"
+  },
+  "run_id": 43621754143,
+  "attempt": 1,
+  "required_counts": {
+    "absent": 2,
+    "running": 6,
+    "success": 6
+  },
+  "required_changes_since_ready002": 0,
+  "run_job_counts": {
+    "completed/failure": 2,
+    "completed/success": 11,
+    "in_progress/None": 6
+  },
+  "latest_checks": {
+    "completed/cancelled": 1,
+    "completed/failure": 12,
+    "completed/skipped": 3,
+    "completed/success": 130,
+    "in_progress/None": 19
+  },
+  "all_165_check_ids_unchanged": true,
+  "PR_head": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+  "PR_base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+  "PR_draft": false,
+  "PR_auto_merge": null,
+  "PR_updated_at": "2026-11-14T18:08:16Z",
+  "PR_mergeable_state": "blocked",
+  "files": [
+    {
+      "bytes": 14327,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-003/summary.json",
+      "sha256": "e15256e1a2369b12dae1a29bef7d0864e4511f4de10a235f8ecb7570a517cf66"
+    },
+    {
+      "bytes": 4375,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-003/EVIDENCE_INDEX.json",
+      "sha256": "e3dc3b64d61a9cacd5f5d57c3b39a49b277e931c0eab2c68cbed5ff90c74e21c"
+    },
+    {
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-ready003-launch-v1/actual-terminal.json",
+      "bytes": 6155,
+      "sha256": "a6715bc25f3967c97e15973a83e2d42582bb8e7baa1d15b9d8ce5640fc084e71"
+    },
+    {
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-ready003-launch-v1/launcher.py",
+      "bytes": 3700,
+      "sha256": "eb5c76c12d9a46d1cf880e8ffe70eec6b40e2e117aca4360920c5fba00019a24"
+    },
+    {
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-ready003-launch-v1/pinned-collector.py.original",
+      "bytes": 19479,
+      "sha256": "3f50aa71fa06f37e64c1ed1e669ad1b1b45ebe27acfddb5004957ef3a43c68fb"
+    },
+    {
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-ready003-launch-v1/launch.json",
+      "bytes": 1215,
+      "sha256": "8348823de98df9a8a7abb23f0a6e57296424481ceaaaec9f0826324733612e36"
+    },
+    {
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-ready003-launch-v1/pin-check.json",
+      "bytes": 399,
+      "sha256": "190982b2e4342b83d0b75283643b3fbbbb0491064ef39b30cc494a34bef01d51"
+    },
+    {
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-ready003-launch-v1/result.json",
+      "bytes": 367,
+      "sha256": "50fc1888c6c15c869436a208e1114bfa4a0cbb121849bc72e7f03a4bc877609b"
+    },
+    {
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-003-offline-delta-v1/progress-delta.json",
+      "bytes": 60633,
+      "sha256": "d0ed039cca0beb5711ae6478d7598b006443dbfd3bd27be6305f53388fba802b"
+    },
+    {
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-003-offline-delta-v1/EVIDENCE_INDEX.json",
+      "bytes": 12119,
+      "sha256": "943b5752fbc8844c651766523eee23831e922eb50e55d387566ce9acb98a80f3"
+    },
+    {
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-003-offline-delta-v1/actual-terminal.json",
+      "bytes": 15991,
+      "sha256": "67fa11e813668eaf32e915be579e007e27d786affc6a865068961f954b7429aa"
+    }
+  ],
+  "viewer_note": "One local h_read_multiple_files view requested a too-small response envelope and returned INVALID_ARGUMENT; a larger bounded read succeeded. No collection or network request was rerun."
+}

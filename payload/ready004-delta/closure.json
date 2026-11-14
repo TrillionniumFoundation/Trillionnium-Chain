@@ -1,0 +1,159 @@
+{
+  "actual_exit": 0,
+  "actual_terminal": {
+    "bytes": 5226,
+    "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-ready004-launch-v1/actual-terminal.json",
+    "sha256": "f39af9be78dd068ab2ee0053800f5e02cd404ef5d2de400199b604f79091fcd3"
+  },
+  "actual_tested_source_verified": false,
+  "all_run_job_count": 19,
+  "all_run_job_counts": {
+    "completed/failure": 3,
+    "completed/success": 11,
+    "in_progress/None": 5
+  },
+  "app15368_counts": {
+    "completed/cancelled": 2,
+    "completed/failure": 13,
+    "completed/skipped": 3,
+    "completed/success": 135,
+    "in_progress/None": 11
+  },
+  "attempt": 1,
+  "delta": {
+    "bytes": 43571,
+    "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-004-offline-delta-v1/progress-delta.json",
+    "sha256": "561fbe2b509ffe8c514f0df61d1f07851e3a8d0dbaca37be3a17878d1191ea3e"
+  },
+  "latest_check_counts": {
+    "completed/cancelled": 2,
+    "completed/failure": 13,
+    "completed/skipped": 3,
+    "completed/success": 136,
+    "in_progress/None": 11
+  },
+  "latest_checks_count": 165,
+  "new_failed_or_cancelled_checks": [
+    {
+      "actual_tested_source_verified": false,
+      "app_id": 15368,
+      "completed_at": "2026-11-14T18:29:05Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621754143/job/132528769008",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621754143/job/132528769008",
+      "id": 132528769008,
+      "job_id_from_url": 132528769008,
+      "metadata_head_sha": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "name": "protocol-contract",
+      "required14_name_match": true,
+      "run_id_from_url": 43621754143,
+      "started_at": "2026-11-14T17:33:34Z",
+      "status": "completed"
+    },
+    {
+      "actual_tested_source_verified": false,
+      "app_id": 15368,
+      "completed_at": "2026-11-14T18:13:52Z",
+      "conclusion": "cancelled",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753940/job/132528768264",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753940/job/132528768264",
+      "id": 132528768264,
+      "job_id_from_url": 132528768264,
+      "metadata_head_sha": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "name": "native-components (ubuntu-24.04-arm)",
+      "required14_name_match": false,
+      "run_id_from_url": 43621753940,
+      "started_at": "2026-11-14T17:33:36Z",
+      "status": "completed"
+    }
+  ],
+  "no_network_or_subprocess_in_offline_review": true,
+  "original_index": {
+    "bytes": 4375,
+    "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-004/EVIDENCE_INDEX.json",
+    "sha256": "6870f90263070c4e987191180f622f9946ea5fe42912d122a0b9c528bec2b5f1"
+  },
+  "original_summary": {
+    "bytes": 14327,
+    "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-004/summary.json",
+    "sha256": "1c58ab044a18d0b1e485f618fe7c4932c1e45779150d876e9a659f7b9ed9fec8"
+  },
+  "previous_latest_check_counts": {
+    "completed/cancelled": 1,
+    "completed/failure": 12,
+    "completed/skipped": 3,
+    "completed/success": 130,
+    "in_progress/None": 19
+  },
+  "previous_summary": {
+    "bytes": 14327,
+    "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-003/summary.json",
+    "sha256": "e15256e1a2369b12dae1a29bef7d0864e4511f4de10a235f8ecb7570a517cf66"
+  },
+  "qualification": false,
+  "required_changes_since_ready003": [
+    {
+      "after": {
+        "actual_tested_commit": null,
+        "actual_tested_source_verified": false,
+        "actual_tested_tree": null,
+        "completed_at": "2026-11-14T18:29:05Z",
+        "conclusion": "failure",
+        "current_steps": [],
+        "failed_steps": [
+          {
+            "completed_at": "2026-11-14T18:28:54Z",
+            "conclusion": "failure",
+            "name": "Run actual protocol-contract checks",
+            "number": 8,
+            "started_at": "2026-11-14T17:36:25Z",
+            "status": "completed"
+          }
+        ],
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621754143/job/132528769008",
+        "job_id": 132528769008,
+        "name": "protocol-contract",
+        "source_kind_name_hint": "head",
+        "started_at": "2026-11-14T17:33:34Z",
+        "state": "failure",
+        "status": "completed"
+      },
+      "before": {
+        "actual_tested_commit": null,
+        "actual_tested_source_verified": false,
+        "actual_tested_tree": null,
+        "completed_at": null,
+        "conclusion": null,
+        "current_steps": [
+          {
+            "completed_at": null,
+            "conclusion": null,
+            "name": "Run actual protocol-contract checks",
+            "number": 8,
+            "started_at": "2026-11-14T17:36:25Z",
+            "status": "in_progress"
+          }
+        ],
+        "failed_steps": [],
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621754143/job/132528769008",
+        "job_id": 132528769008,
+        "name": "protocol-contract",
+        "source_kind_name_hint": "head",
+        "started_at": "2026-11-14T17:33:34Z",
+        "state": "running",
+        "status": "in_progress"
+      }
+    }
+  ],
+  "required_counts": {
+    "absent": 2,
+    "failure": 1,
+    "running": 5,
+    "success": 6
+  },
+  "run_id": 43621754143,
+  "schema": "trnm-H5DF-ready004-offline-delta-v1",
+  "snapshot_end": "2026-11-14T18:29:14.405759+00:00",
+  "snapshot_start": "2026-11-14T18:29:06.181333+00:00",
+  "status": "OBSERVED_METADATA_ONLY"
+}

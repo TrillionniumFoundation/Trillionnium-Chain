@@ -1,0 +1,22 @@
+{
+  "bytes": 27248,
+  "count": 3,
+  "files": [
+    {
+      "bytes": 1167,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-v1/selected-range-01.step.json",
+      "sha256": "520573bdaae5fee0281b7cd347ac02e9e3cac7fdc2af68476969961fc825e31f"
+    },
+    {
+      "bytes": 22412,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-v1/selected-range-plan.json",
+      "sha256": "2fdaf306c764fb71bded7d57e0483eefd058b64a930adfff2782d8ef16fda32f"
+    },
+    {
+      "bytes": 3669,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-v1/summary.json",
+      "sha256": "c90c5d78f244e73c7e513186bced2fc1475a5905ce994c2e339cbac6bb5c522b"
+    }
+  ],
+  "self_excluded": true
+}

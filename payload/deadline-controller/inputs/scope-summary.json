@@ -1,0 +1,380 @@
+{
+  "actual_terminal": {
+    "bytes": 2213,
+    "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/scope-and-patches-v1/terminal/actual-terminal-index.json",
+    "sha256": "87a2773a35effbc5e8c31cecd2d1679c8850a8efc1cf541b77416326f5ae7836"
+  },
+  "all_patch_bytes": 124427,
+  "all_patch_parts": 12,
+  "all_returned_patches_line_counts_and_hunks_match": true,
+  "author_account": {
+    "id": 273673612,
+    "login": "Tomasrgbsf"
+  },
+  "changed_file_count": 12,
+  "committer_account": {
+    "id": 273673612,
+    "login": "Tomasrgbsf"
+  },
+  "compare_response": {
+    "bytes": 175282,
+    "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/R1-compare-new.stdout",
+    "sha256": "fc777c5004b2995f8154b34a36966d88c91d7edd461fc9fcd6fe866494ef917d"
+  },
+  "comparison": {
+    "R1_direct_second_parent": true,
+    "actual_commits_returned": 6,
+    "ahead_by": 6,
+    "all_commit_rows_returned": true,
+    "base": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "behind_by": 0,
+    "local_Git_ancestry_or_new_source_blobs_not_read": true,
+    "merge_base": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "status": "ahead",
+    "total_commits": 6
+  },
+  "created_at": "2026-11-14T17:38:01.216289+00:00",
+  "extra_network_GETs_for_review": 0,
+  "files": [
+    {
+      "actual_patch_additions": 6,
+      "actual_patch_deletions": 6,
+      "additions": 6,
+      "api_patch_bytes": 5167,
+      "api_patch_present": true,
+      "api_patch_sha256": "24254644e9732664e315ed076eb80608f40a8f59044369448b34abfd194a610e",
+      "changes": 12,
+      "deletions": 6,
+      "filename": "config/pon/pq-cross-branch-corpus-v1.json",
+      "hunk_old_new_line_counts_match": true,
+      "parts": [
+        {
+          "bytes": 5167,
+          "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/scope-and-patches-v1/patches/01-part-01.patch",
+          "sha256": "24254644e9732664e315ed076eb80608f40a8f59044369448b34abfd194a610e"
+        }
+      ],
+      "patch_line_counts_match_reported": true,
+      "previous_filename": null,
+      "sha": "6bab79ccc6de83b0b354383dd4e78a6332148d90",
+      "status": "modified"
+    },
+    {
+      "actual_patch_additions": 48,
+      "actual_patch_deletions": 0,
+      "additions": 48,
+      "api_patch_bytes": 3270,
+      "api_patch_present": true,
+      "api_patch_sha256": "880d276a6d556d985be17209c81c1723d962701ce9d69f044277511b117958d6",
+      "changes": 48,
+      "deletions": 0,
+      "filename": "docs/development/BRANCH_CONSOLIDATION_AUDIT_20261114.md",
+      "hunk_old_new_line_counts_match": true,
+      "parts": [
+        {
+          "bytes": 3270,
+          "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/scope-and-patches-v1/patches/02-part-01.patch",
+          "sha256": "880d276a6d556d985be17209c81c1723d962701ce9d69f044277511b117958d6"
+        }
+      ],
+      "patch_line_counts_match_reported": true,
+      "previous_filename": null,
+      "sha": "fe36bbf8f1ba9dfb933f5e93f10685be1f7977c2",
+      "status": "modified"
+    },
+    {
+      "actual_patch_additions": 145,
+      "actual_patch_deletions": 0,
+      "additions": 145,
+      "api_patch_bytes": 9397,
+      "api_patch_present": true,
+      "api_patch_sha256": "7804aab1744bca359cc901a92901e5aeebb5574e31fc676fad4dd4e7b7c334f6",
+      "changes": 145,
+      "deletions": 0,
+      "filename": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "hunk_old_new_line_counts_match": true,
+      "parts": [
+        {
+          "bytes": 9397,
+          "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/scope-and-patches-v1/patches/03-part-01.patch",
+          "sha256": "7804aab1744bca359cc901a92901e5aeebb5574e31fc676fad4dd4e7b7c334f6"
+        }
+      ],
+      "patch_line_counts_match_reported": true,
+      "previous_filename": null,
+      "sha": "8308164308dbaa7504a167f30e0a2ab0fc553227",
+      "status": "modified"
+    },
+    {
+      "actual_patch_additions": 45,
+      "actual_patch_deletions": 4,
+      "additions": 45,
+      "api_patch_bytes": 5090,
+      "api_patch_present": true,
+      "api_patch_sha256": "e63cdada405f4ae55f414f8cc24af71dd9afef38f325fc809e1926f87ff4b1b4",
+      "changes": 49,
+      "deletions": 4,
+      "filename": "docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md",
+      "hunk_old_new_line_counts_match": true,
+      "parts": [
+        {
+          "bytes": 5090,
+          "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/scope-and-patches-v1/patches/04-part-01.patch",
+          "sha256": "e63cdada405f4ae55f414f8cc24af71dd9afef38f325fc809e1926f87ff4b1b4"
+        }
+      ],
+      "patch_line_counts_match_reported": true,
+      "previous_filename": null,
+      "sha": "94a921086fd5136ae12e3308b7017d6bfc226a40",
+      "status": "modified"
+    },
+    {
+      "actual_patch_additions": 50,
+      "actual_patch_deletions": 12,
+      "additions": 50,
+      "api_patch_bytes": 6352,
+      "api_patch_present": true,
+      "api_patch_sha256": "42081dac22d8243ae7a2b655197de8296eec48dd6c36ed676a7563f3d05e0378",
+      "changes": 62,
+      "deletions": 12,
+      "filename": "docs/security/W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md",
+      "hunk_old_new_line_counts_match": true,
+      "parts": [
+        {
+          "bytes": 6352,
+          "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/scope-and-patches-v1/patches/05-part-01.patch",
+          "sha256": "42081dac22d8243ae7a2b655197de8296eec48dd6c36ed676a7563f3d05e0378"
+        }
+      ],
+      "patch_line_counts_match_reported": true,
+      "previous_filename": null,
+      "sha": "78c21de7954a9c65a751a61e6531d3f325303add",
+      "status": "modified"
+    },
+    {
+      "actual_patch_additions": 7,
+      "actual_patch_deletions": 0,
+      "additions": 7,
+      "api_patch_bytes": 1104,
+      "api_patch_present": true,
+      "api_patch_sha256": "2ae35952468fb78a68bb4f73f6c9a2ef092106053f7b9087114f40101cf4e1db",
+      "changes": 7,
+      "deletions": 0,
+      "filename": "evidence/hash-use-current-source-review-20261114/original-full-lane/README.md",
+      "hunk_old_new_line_counts_match": true,
+      "parts": [
+        {
+          "bytes": 1104,
+          "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/scope-and-patches-v1/patches/06-part-01.patch",
+          "sha256": "2ae35952468fb78a68bb4f73f6c9a2ef092106053f7b9087114f40101cf4e1db"
+        }
+      ],
+      "patch_line_counts_match_reported": true,
+      "previous_filename": null,
+      "sha": "4fa1470c0b21118c20b3561477f9a48775e6631d",
+      "status": "added"
+    },
+    {
+      "actual_patch_additions": 344,
+      "actual_patch_deletions": 0,
+      "additions": 344,
+      "api_patch_bytes": 15472,
+      "api_patch_present": true,
+      "api_patch_sha256": "5970c71ce80951844565dfca4bc097923c88fc69a41ad62df25202c43f47cca9",
+      "changes": 344,
+      "deletions": 0,
+      "filename": "evidence/hash-use-current-source-review-20261114/original-full-lane/copy-plan.json",
+      "hunk_old_new_line_counts_match": true,
+      "parts": [
+        {
+          "bytes": 15472,
+          "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/scope-and-patches-v1/patches/07-part-01.patch",
+          "sha256": "5970c71ce80951844565dfca4bc097923c88fc69a41ad62df25202c43f47cca9"
+        }
+      ],
+      "patch_line_counts_match_reported": true,
+      "previous_filename": null,
+      "sha": "f6b4744e3487b35cd496cab3b43ee3440ba5df53",
+      "status": "added"
+    },
+    {
+      "actual_patch_additions": 799,
+      "actual_patch_deletions": 0,
+      "additions": 799,
+      "api_patch_bytes": 26991,
+      "api_patch_present": true,
+      "api_patch_sha256": "8db8b3e71c0c4539394e24bad1de0d8615cdeecdb42189105f38799f897fa0fb",
+      "changes": 799,
+      "deletions": 0,
+      "filename": "evidence/hash-use-current-source-review-20261114/original-full-lane/copy-verification.json",
+      "hunk_old_new_line_counts_match": true,
+      "parts": [
+        {
+          "bytes": 26991,
+          "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/scope-and-patches-v1/patches/08-part-01.patch",
+          "sha256": "8db8b3e71c0c4539394e24bad1de0d8615cdeecdb42189105f38799f897fa0fb"
+        }
+      ],
+      "patch_line_counts_match_reported": true,
+      "previous_filename": null,
+      "sha": "6145ddceeb2d4ee25234a8a884c78820217b303d",
+      "status": "added"
+    },
+    {
+      "actual_patch_additions": 1001,
+      "actual_patch_deletions": 0,
+      "additions": 1001,
+      "api_patch_bytes": 43213,
+      "api_patch_present": true,
+      "api_patch_sha256": "2a2bcdaf3dedd8907754f4462b233c7d4145d4d2a3c622d7401ecd75043df57b",
+      "changes": 1001,
+      "deletions": 0,
+      "filename": "evidence/hash-use-current-source-review-20261114/original-full-lane/transfer-receipts.json",
+      "hunk_old_new_line_counts_match": true,
+      "parts": [
+        {
+          "bytes": 43213,
+          "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/scope-and-patches-v1/patches/09-part-01.patch",
+          "sha256": "2a2bcdaf3dedd8907754f4462b233c7d4145d4d2a3c622d7401ecd75043df57b"
+        }
+      ],
+      "patch_line_counts_match_reported": true,
+      "previous_filename": null,
+      "sha": "8795ab38b1a66efb2007ccc50b88053e9da1df07",
+      "status": "added"
+    },
+    {
+      "actual_patch_additions": 1,
+      "actual_patch_deletions": 0,
+      "additions": 1,
+      "api_patch_bytes": 618,
+      "api_patch_present": true,
+      "api_patch_sha256": "9af4abcea97fbfedd465f47811efa42f55b312309c49dda86b93519cf0535fab",
+      "changes": 1,
+      "deletions": 0,
+      "filename": "scripts/ci/test_pq_authority_effect_register.py",
+      "hunk_old_new_line_counts_match": true,
+      "parts": [
+        {
+          "bytes": 618,
+          "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/scope-and-patches-v1/patches/10-part-01.patch",
+          "sha256": "9af4abcea97fbfedd465f47811efa42f55b312309c49dda86b93519cf0535fab"
+        }
+      ],
+      "patch_line_counts_match_reported": true,
+      "previous_filename": null,
+      "sha": "275538b69aeed4bd00fd8197336b866e4e076f7a",
+      "status": "modified"
+    },
+    {
+      "actual_patch_additions": 38,
+      "actual_patch_deletions": 1,
+      "additions": 38,
+      "api_patch_bytes": 3072,
+      "api_patch_present": true,
+      "api_patch_sha256": "fd920f2318abc62d4daf3c451366904f3273ad6b5047fda2d794193cf841a660",
+      "changes": 39,
+      "deletions": 1,
+      "filename": "scripts/test_w1_owned_process_collector_v1.py",
+      "hunk_old_new_line_counts_match": true,
+      "parts": [
+        {
+          "bytes": 3072,
+          "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/scope-and-patches-v1/patches/11-part-01.patch",
+          "sha256": "fd920f2318abc62d4daf3c451366904f3273ad6b5047fda2d794193cf841a660"
+        }
+      ],
+      "patch_line_counts_match_reported": true,
+      "previous_filename": null,
+      "sha": "530169ab9de7079958ada8f2f4d66702ea54cca0",
+      "status": "modified"
+    },
+    {
+      "actual_patch_additions": 98,
+      "actual_patch_deletions": 0,
+      "additions": 98,
+      "api_patch_bytes": 4681,
+      "api_patch_present": true,
+      "api_patch_sha256": "e81cccfa2244091530ff3e99fce5f326e90bdc8d8a428114953e7d406be54a8d",
+      "changes": 98,
+      "deletions": 0,
+      "filename": "trillionnium/crates/trnm-pon-node/src/ingress/public_v2.rs",
+      "hunk_old_new_line_counts_match": true,
+      "parts": [
+        {
+          "bytes": 4681,
+          "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/scope-and-patches-v1/patches/12-part-01.patch",
+          "sha256": "e81cccfa2244091530ff3e99fce5f326e90bdc8d8a428114953e7d406be54a8d"
+        }
+      ],
+      "patch_line_counts_match_reported": true,
+      "previous_filename": null,
+      "sha": "3a9fbe26283920a77ae4883a46153440abbe7e12",
+      "status": "modified"
+    }
+  ],
+  "first_parent_commit_response": {
+    "files_returned": 300,
+    "full_first_parent_file_list_proven": false,
+    "listing_at_API_300_cap": true,
+    "pin": {
+      "bytes": 1355264,
+      "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/new-commit.stdout",
+      "sha256": "f2ca4cecadb5a4b465b5b5eb4d7348b02f41fe21a9059d56fa47e0c08f7e6611"
+    }
+  },
+  "new_commit": {
+    "author": {
+      "date": "2026-11-14T15:37:19Z",
+      "email": "tomasbraynt@gmail.com",
+      "name": "Tomasrgbsf"
+    },
+    "committer": {
+      "date": "2026-11-14T15:37:19Z",
+      "email": "tomasbraynt@gmail.com",
+      "name": "Tomasrgbsf"
+    },
+    "message": "Merge reviewed concurrent source with local deadline and ownership fixes\n\nReconcile ABFC and 2a by explicit source and evidence dispositions.\nKeep the local public_v2 completion deadline check, select the reviewed\nimmutable PublicPolicy prefix cache and epoch-before-readiness store,\nand compose all sixteen owned-collector controls with causal raw status.\nRestore four byte-exact metadata files missing from a retained index,\ncorrect current versus historical source labels, and preserve the old\nFC39 observations with the withdrawn ordering recommendation explicit.\nOriginal business failures and qualification boundaries remain open.\nProposal SHA256: 21e5299e01eec57f7c72fb7ae76c287f00389be64cb3bd3c3493b2d783b8f1e6\nResolution SHA256: 5f10655e03bd7c801eb99cc445990e98ba675c998b3dcb941235e2858fc08cb5",
+    "parents": [
+      "abfcff23d4e2aab7dfd92dfb34937ec7d6021ead",
+      "2a86462a1ab20c68151719ba4635e3c294391e64"
+    ],
+    "sha": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+    "tree": "6be4940d38cc88782657f2684cbefe48866f8b9f"
+  },
+  "new_head_accepted_as_R1": false,
+  "newhead_CI_or_native_tests_examined": false,
+  "observed_from": "2026-11-14T17:35:45.439861+00:00",
+  "observed_intent_not_verified_outcome": "Commit message explicitly describes deadline/ownership fixes, retained historical failure and open business qualification; it is not proof that CI or 4s acceptance is fixed.",
+  "observed_to": "2026-11-14T17:35:53.159671+00:00",
+  "original_acquisition": {
+    "bytes": 1380671,
+    "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/summary.json",
+    "sha256": "3a6c6a8ded04c094d23b1d2218f2222041766602c47b86e0a6aef09913576c95"
+  },
+  "part_max_bytes": 43213,
+  "patches_absent": [],
+  "patches_counts_or_hunks_incomplete": [],
+  "qualification": false,
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "returned_commits": {
+    "bytes": 6093,
+    "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/scope-and-patches-v1/six-returned-commit-metadata.json",
+    "sha256": "1e596fde82b27d2a38130c7350de8bc0620c8671129f4268ce508796fa161ead"
+  },
+  "schema": "trnm-R1-to-5df-scope-readonly-v1",
+  "scope_basis": "The R1...5df compare response, not the merge commit's first-parent file list",
+  "source_refs_stage_changes": false,
+  "source_scope": {
+    "corpus": "config/pon/pq-cross-branch-corpus-v1.json",
+    "documentation_or_evidence_files": 8,
+    "production": [
+      "trillionnium/crates/trnm-pon-node/src/ingress/public_v2.rs"
+    ],
+    "test_files": [
+      "scripts/ci/test_pq_authority_effect_register.py",
+      "scripts/test_w1_owned_process_collector_v1.py"
+    ]
+  },
+  "status": "CLOSED_UNACCEPTED_NEW_HEAD_SCOPE"
+}

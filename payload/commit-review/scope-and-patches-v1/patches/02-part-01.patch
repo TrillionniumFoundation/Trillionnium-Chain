@@ -1,0 +1,52 @@
+@@ -859,3 +859,51 @@ failures, without inferring that every failure has the same cause. No test
+ or producer is altered to make macOS pass. The normal merge is finalized
+ after its repository and inventory checks; the original Linux lane must
+ validate this merged source separately before publication.
++
++### 2026-11-14 reconcile local ABFC and concurrent 2a source
++
++This reconciliation selects the reviewed concurrent candidate
++`2a86462a1ab20c68151719ba4635e3c294391e64` together with the independent
++local `abfcff23d4e2aab7dfd92dfb34937ec7d6021ead` corrections. It is an
++integration candidate; main merge, complete remaining historical review and
++remote branch cleanup remain pending.
++
++The 42 active differences were read and independently rebound to native Git
++bytes. The 298 retained evidence paths and all 327 ZIP members were checked
++for custody and complete CRC/hash reads. That check does not confer source
++semantics or successful execution on historical programs. Four metadata
++files missing from the original-full-lane index were recovered byte for byte
++from their declared source copies; the original index is unchanged.
++
++Select the immutable PublicPolicy hash-prefix cache without changing any
++domain, resource bytes, framing or six dynamic fields. All 84 existing test
++definitions remain intact; the three added definitions and structural hash
++work reduction alone do not prove the four-second target. Preserve the local
++public_v2 strict-signature completion deadline fix.
++
++Select Node store d596dc6 with epoch capture before readiness and same-row
++work checks before time deferral. The previous local preference for 3bce39ce
++is withdrawn: an independent SQLite writer can otherwise be captured after
++readiness, and simultaneous future time can mask a typed local work-integrity
++fault. Both counterexamples are static; no new exploit, global transaction
++snapshot, public-listener shutdown or native performance result is asserted.
++
++Select the raw fixed historical collector fixture as read-only evidence.
++Use the remote closed-gate TERM deferral with the composed 16-control suite;
++its real post-fork refusal keeps raw same-root wait status and requires a
++recorded causal KILL event for the signal branch. This does not weaken the
++ordinary exit-125 check, the original kill/grace boundary or cleanup ownership.
++
++Use the concurrent current source maps for their exact selected bodies.
++Retain the earlier FC39 audit and its original failures/passes as historical
++records; finite PASS results do not prove the two uncovered store schedules.
++The current authority44 and lifetime20 maps select 5c04c60e; the current QROM
++comparison still fixes both provenance lock fields 0 and 2. No frozen
++mathematical claim, historical failure or qualification flag is upgraded.
++
++The original 096 protocol head and prospective-merge archives both retain
++five exit-zero native children, but their pressure confirmations fail
++CONFIRMATION_TARGET with PUBLIC_REQUEST_DEADLINE. The original 4,000,000,000 ns
++window and 16 workers are unchanged. The later 2a ARM and x64 cost jobs also
++report failure; their original artifacts are under separate inspection.
++No new committed-source gate or native target PASS is claimed by this entry.

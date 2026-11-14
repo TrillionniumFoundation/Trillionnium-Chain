@@ -1,0 +1,178 @@
+--- /private/tmp/chain-prci-R1-ci-progress-reader-preparation-20261114-v1/read_R1_required_ci_progress_v1.py
++++ /private/tmp/chain-prci-head-5df7ae6-ci-progress-preparation-20261114-v1/read_head5df_required_ci_progress_v1.py
+@@ -1,16 +1,16 @@
+-"""Task-specific R1 CI progress metadata. Main only issues bounded GitHub GETs.
+-Each invocation owns a fresh ROOT/R1-required-ci-progress-v1-* directory.
++"""Task-specific H5DF CI progress metadata. Main only issues bounded GitHub GETs.
++Each invocation owns a fresh ROOT/H5DF-required-ci-progress-v1-* directory.
+ This is not the fixed final observer, hosted evidence collector or a merge gate.
+ """
+ import argparse, concurrent.futures, datetime, hashlib, json, math, os
+ import pathlib, re, signal, stat, subprocess, sys, time
+ 
+ ROOT = pathlib.Path("/private/tmp/chain-consolidation-20261114-root")
+-SELF = pathlib.Path("/private/tmp/chain-prci-R1-ci-progress-reader-preparation-20261114-v1/read_R1_required_ci_progress_v1.py")
++SELF = pathlib.Path("/private/tmp/chain-prci-head-5df7ae6-ci-progress-preparation-20261114-v1/read_head5df_required_ci_progress_v1.py")
+ WT = pathlib.Path("/private/tmp/chain-consolidation-20261114-mainline")
+ REPO = "TrillionniumFoundation/Trillionnium-Chain"
+-R1 = "2a86462a1ab20c68151719ba4635e3c294391e64"
+-TREE = "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4"
++H5DF = "5df7ae6f482157c5f7fdcbcd52222117a965053f"
++TREE = "6be4940d38cc88782657f2684cbefe48866f8b9f"
+ MAIN = "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0"
+ HEAD_REF = "fix/chain-hepta-closure-candidate-20261109-481716"
+ WORKFLOW = ".github/workflows/trnm-required-baseline.yml"
+@@ -46,7 +46,7 @@
+ 
+ def run_matches(row):
+     return (type(row) is dict and type(row.get("id")) is int and row["id"] > 0
+-            and row.get("head_sha") == R1 and row.get("event") == "pull_request"
++            and row.get("head_sha") == H5DF and row.get("event") == "pull_request"
+             and row.get("path") == WORKFLOW
+             and type(row.get("run_attempt")) is int and row["run_attempt"] > 0)
+ 
+@@ -58,7 +58,7 @@
+     args = parser.parse_args()
+     directory = pathlib.Path(args.evidence_dir)
+     need(ROOT.resolve(strict=True) == ROOT and directory.parent == ROOT
+-         and re.fullmatch(r"R1-required-ci-progress-v1-[a-z0-9][a-z0-9-]{0,63}", directory.name),
++         and re.fullmatch(r"H5DF-required-ci-progress-v1-[a-z0-9][a-z0-9-]{0,63}", directory.name),
+          "fresh task-specific output directory required")
+     own = SELF.lstat()
+     need(stat.S_ISREG(own.st_mode) and own.st_nlink == 1, "ordinary producer file required")
+@@ -195,18 +195,18 @@
+             "maximum_pages": maximum, "actual_rows": len(rows), "unique_ids": unique,
+             "page_total_counts": totals, "failed_pages": failed, "observations_non_atomic": True}
+ 
+-    checks_endpoint = "repos/" + REPO + "/commits/" + R1 + "/check-runs?filter=latest&per_page=100"
++    checks_endpoint = "repos/" + REPO + "/commits/" + H5DF + "/check-runs?filter=latest&per_page=100"
+     runs_endpoint = ("repos/" + REPO + "/actions/workflows/trnm-required-baseline.yml/runs?head_sha="
+-                     + R1 + "&per_page=100")
++                     + H5DF + "&per_page=100")
+     observations = []
+     status = "UNKNOWN"
+     details = {}
+     try:
+         execute([("pr847", api("repos/" + REPO + "/pulls/847")),
+-                 ("R1-latest-checks-page-001", api(checks_endpoint + "&page=1")),
+-                 ("R1-required-runs-page-001", api(runs_endpoint + "&page=1"))])
+-        checks, check_pages = paginate("R1-latest-checks", checks_endpoint, "check_runs", 5, True)
+-        runs, run_pages = paginate("R1-required-runs", runs_endpoint, "workflow_runs", 3, True)
++                 ("H5DF-latest-checks-page-001", api(checks_endpoint + "&page=1")),
++                 ("H5DF-required-runs-page-001", api(runs_endpoint + "&page=1"))])
++        checks, check_pages = paginate("H5DF-latest-checks", checks_endpoint, "check_runs", 5, True)
++        runs, run_pages = paginate("H5DF-required-runs", runs_endpoint, "workflow_runs", 3, True)
+         pr = results["pr847"]["value"]
+         pr_view = None
+         if type(pr) is dict:
+@@ -217,9 +217,9 @@
+                 source = pr.get(side) or {}
+                 pr_view[side] = {key: source.get(key) for key in ("sha", "ref", "label")}
+                 pr_view[side]["repo_full_name"] = (source.get("repo") or {}).get("full_name")
+-            pr_view["identity_matches_R1_and_main"] = (
++            pr_view["identity_matches_H5DF_and_main"] = (
+                 type(pr.get("number")) is int and pr["number"] == 847
+-                and pr_view["head"]["sha"] == R1 and pr_view["head"]["ref"] == HEAD_REF
++                and pr_view["head"]["sha"] == H5DF and pr_view["head"]["ref"] == HEAD_REF
+                 and pr_view["base"]["sha"] == MAIN and pr_view["base"]["ref"] == "main"
+                 and pr_view["head"]["repo_full_name"] == REPO
+                 and pr_view["base"]["repo_full_name"] == REPO)
+@@ -235,11 +235,11 @@
+             row["app15368"] = type(app.get("id")) is int and app["id"] == APP_ID
+             row["actual_tested_source_verified"] = False
+             normalized_checks.append(row)
+-        check_pin = save("R1-latest-checks-normalized.json", normalized_checks)
+-        run_pin = save("R1-required-runs-normalized.json", [run_view(row) for row in runs])
++        check_pin = save("H5DF-latest-checks-normalized.json", normalized_checks)
++        run_pin = save("H5DF-required-runs-normalized.json", [run_view(row) for row in runs])
+         eligible = [row for row in runs if run_matches(row)]
+         excluded = [{"metadata": run_view(row), "reason":
+-            "not exact R1 / pull_request / workflow path / positive run-id-and-attempt"}
++            "not exact H5DF / pull_request / workflow path / positive run-id-and-attempt"}
+             for row in runs if not run_matches(row)]
+         selected = eligible[:MAX_RUNS]
+         unobserved = []
+@@ -248,14 +248,14 @@
+                 unobserved.append(listed["id"])
+                 continue
+             rid = listed["id"]
+-            family = "R1-run-" + str(rid)
++            family = "H5DF-run-" + str(rid)
+             execute([(family + "-metadata", api("repos/" + REPO + "/actions/runs/" + str(rid)))])
+             actual = results[family + "-metadata"]["value"]
+             same = run_matches(actual) and actual["id"] == rid
+             if not same:
+                 observations.append({"run_id": rid, "metadata":
+                     run_view(actual) if type(actual) is dict else None,
+-                    "metadata_matches_R1_pull_request_workflow": False,
++                    "metadata_matches_H5DF_pull_request_workflow": False,
+                     "jobs_not_fetched": "actual run identity unavailable or differs"})
+                 continue
+             endpoint = "repos/" + REPO + "/actions/runs/" + str(rid) + "/jobs?filter=all&per_page=100"
+@@ -271,7 +271,7 @@
+                     "prospective" if "prospective" in name else
+                     "head" if re.search(r"(^|[^a-z])head([^a-z]|$)", name) else "not_explicit_in_name")
+                 row["matches_observed_run_attempt"] = (
+-                    job.get("run_id") == rid and job.get("head_sha") == R1
++                    job.get("run_id") == rid and job.get("head_sha") == H5DF
+                     and type(job.get("run_attempt")) is int
+                     and job["run_attempt"] == actual["run_attempt"])
+                 row["steps"] = [{key: step.get(key) for key in (
+@@ -284,29 +284,29 @@
+             current_jobs = [row for row in normalized if row["matches_observed_run_attempt"]]
+             job_pin = save(family + "-jobs-normalized.json", normalized)
+             observations.append({"run_id": rid, "metadata": run_view(actual),
+-                "metadata_matches_R1_pull_request_workflow": True,
++                "metadata_matches_H5DF_pull_request_workflow": True,
+                 "listed_attempt": listed["run_attempt"], "observed_attempt": actual["run_attempt"],
+                 "attempt_changed_during_snapshot": listed["run_attempt"] != actual["run_attempt"],
+                 "jobs_pagination": job_pages, "all_attempt_job_counts": counts(jobs),
+                 "observed_attempt_job_counts": counts(current_jobs),
+-                "all_returned_jobs_match_run_and_R1": all(
+-                    row.get("run_id") == rid and row.get("head_sha") == R1 for row in jobs),
++                "all_returned_jobs_match_run_and_H5DF": all(
++                    row.get("run_id") == rid and row.get("head_sha") == H5DF for row in jobs),
+                 "jobs": job_pin, "observed_attempt_job_count": len(current_jobs)})
+         complete = (check_pages["complete"] and run_pages["complete"] and pr_view is not None
+             and len(eligible) <= MAX_RUNS and not unobserved
+-            and all(row.get("metadata_matches_R1_pull_request_workflow") is True
++            and all(row.get("metadata_matches_H5DF_pull_request_workflow") is True
+                     and row.get("jobs_pagination", {}).get("complete") is True
+-                    and row.get("all_returned_jobs_match_run_and_R1") is True
++                    and row.get("all_returned_jobs_match_run_and_H5DF") is True
+                     and not row.get("attempt_changed_during_snapshot", False)
+                     for row in observations)
+-            and all(row.get("head_sha") == R1 for row in checks)
++            and all(row.get("head_sha") == H5DF for row in checks)
+             and not any(result["value"] is None for result in results.values()))
+-        status = ("DRIFT" if pr_view is not None and not pr_view["identity_matches_R1_and_main"]
++        status = ("DRIFT" if pr_view is not None and not pr_view["identity_matches_H5DF_and_main"]
+                   else "OBSERVED" if complete else "UNKNOWN")
+         details = {"pr": pr_view, "latest_checks": {"pagination": check_pages,
+             "filter": "latest", "status_counts": counts(checks),
+             "app15368_status_counts": counts([row for row in normalized_checks if row["app15368"]]),
+-            "all_returned_head_sha_equal_R1": all(row.get("head_sha") == R1 for row in checks),
++            "all_returned_head_sha_equal_H5DF": all(row.get("head_sha") == H5DF for row in checks),
+             "normalized": check_pin},
+             "required_runs": {"pagination": run_pages, "normalized": run_pin,
+                 "eligible_pull_request_runs": len(eligible), "excluded_run_metadata": excluded,
+@@ -316,8 +316,8 @@
+             "metadata_pages_complete": complete}
+     except Exception as exc:
+         errors.append(type(exc).__name__ + ": " + str(exc))
+-    summary = {"schema": "trnm-R1-required-ci-progress-v1", "status": status,
+-        "started_at": started, "finished_at": now(), "expected_candidate": R1,
++    summary = {"schema": "trnm-H5DF-required-ci-progress-v1", "status": status,
++        "started_at": started, "finished_at": now(), "expected_candidate": H5DF,
+         "expected_candidate_tree": TREE, "expected_main": MAIN, "required_workflow": WORKFLOW,
+         "required_run_event": "pull_request", "expected_check_app_id": APP_ID,
+         "producer": {"path": str(SELF), "bytes": len(producer_raw), "sha256": sha(producer_raw)},
+@@ -325,7 +325,7 @@
+         "unknown_reads": [key for key, value in results.items() if value["value"] is None],
+         "errors": errors, "observations_non_atomic": True,
+         "job_name_source_kind_is_only_a_hint": True, "PR_prospective_SHA_is_not_tested_source_proof": True,
+-        "actual_tested_source_verified": False, "older_N_N2_results_inherited": False,
++        "actual_tested_source_verified": False, "older_R1_N_N2_results_inherited": False,
+         "pending_or_in_progress_is_not_pass": True, "hosted_qualification_granted": False,
+         "final_observer_or_collector_substituted": False, "network_readonly": True,
+         "no_source_refs_stage_or_config_changes": True, "policy_data_collected": False,

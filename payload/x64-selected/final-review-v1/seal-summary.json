@@ -1,0 +1,23 @@
+{
+  "facts": {
+    "bytes": 12884,
+    "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/final-review-v1/exact-confirmation-facts.json",
+    "sha256": "9da174ec8a4b5afe3ac151e4b7b81974addd1d4893f802500bc6fb9652bb9c6c"
+  },
+  "index": {
+    "bytes": 34146,
+    "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/final-review-v1/EVIDENCE_INDEX.json",
+    "sha256": "06d404a3db159d2958da3be69a9d9716ea95d9892b634d197546a707fc0f2075"
+  },
+  "indexed_bytes": 14746133,
+  "indexed_files": 70,
+  "no_network_or_test_or_source_mutation": true,
+  "qualification": false,
+  "review": {
+    "bytes": 4405,
+    "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/final-review-v1/review.json",
+    "sha256": "8e8eb66ca65cd5795491f351d43911704a96474fcacaab165a7a4b7e2860a2b2"
+  },
+  "schema": "trnm-evidence-seal-v1",
+  "status": "CLOSED"
+}

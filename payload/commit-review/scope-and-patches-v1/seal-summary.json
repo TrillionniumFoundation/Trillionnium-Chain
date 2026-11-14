@@ -1,0 +1,19 @@
+{
+  "bytes": 3406586,
+  "files": 33,
+  "index": {
+    "bytes": 8230,
+    "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/scope-and-patches-v1/EVIDENCE_INDEX.json",
+    "sha256": "b747784cdd4afcc5d2db588b4b6f79a74eea6ac877c40959485a1c3e2d414ae6"
+  },
+  "no_new_network_or_Git_or_test": true,
+  "original_terminal_complete": true,
+  "original_terminal_exit": 0,
+  "schema": "trnm-evidence-seal-v1",
+  "scope": {
+    "bytes": 15508,
+    "path": "/private/tmp/chain-prci-remote-head-5df7ae6-commit-review-20261114-v1/scope-and-patches-v1/scope-summary.json",
+    "sha256": "ee27851678dc860bccd3630eab4ce69a3640199365aa78c7ec96ed4caa754e1e"
+  },
+  "status": "CLOSED"
+}

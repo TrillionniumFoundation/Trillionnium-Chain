@@ -1,0 +1,34 @@
+{
+  "CI_mutations_authorized": false,
+  "GET_only_source_reviewed": true,
+  "GH_DEBUG_removed": false,
+  "GH_HOST": "github.com",
+  "argv": [
+    "/private/tmp/chain-prci-head-5df7ae6-ci-progress-preparation-20261114-v1/read_head5df_required_ci_progress_v1.py",
+    "--evidence-dir",
+    "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-003"
+  ],
+  "automatic_retry": false,
+  "cwd": "/private/tmp",
+  "executable": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+  "original_max_GET_workers": 4,
+  "original_overall_budget_seconds": 240,
+  "output": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-003",
+  "producer": {
+    "bytes": 19479,
+    "path": "/private/tmp/chain-prci-head-5df7ae6-ci-progress-preparation-20261114-v1/read_head5df_required_ci_progress_v1.py",
+    "sha256": "3f50aa71fa06f37e64c1ed1e669ad1b1b45ebe27acfddb5004957ef3a43c68fb"
+  },
+  "schema": "trnm-H5DF-required-reader-pinned-launch-v1",
+  "source_Git_index_refs_not_modified": true,
+  "source_version": [
+    16777233,
+    607364487,
+    33152,
+    1,
+    19479,
+    1794678035744377706,
+    1794678035744377706
+  ],
+  "started_at": "2026-11-14T18:11:33.867272+00:00"
+}

@@ -1,0 +1,42 @@
+{
+  "automatic_retry": false,
+  "deadline_reset": false,
+  "diff": {
+    "bytes": 8728,
+    "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-preparation-001/selected-v1-to-resume-001.patch",
+    "sha256": "2d231b36817d86095a97e2617789450b5ff01bed325dd034e4a091ec435e8ad4"
+  },
+  "maximum_new_GETs": 8,
+  "metadata_directory_new_GETs": 0,
+  "original_900_second_deadline": 144005.637619083,
+  "original_attempt_unchanged": true,
+  "original_combined_limit": 21,
+  "planned_combined_GETs": 11,
+  "previous_actual_GETs": 3,
+  "remaining_seconds_at_preparation": 653.4458583749947,
+  "same_25_members": true,
+  "same_8_ranges": true,
+  "schema": "trnm-H5DF-arm-selected-explicit-resume-preparation-v1",
+  "source": {
+    "bytes": 29178,
+    "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001-producer.py",
+    "sha256": "aedf670225c743f11eb55588b441faa1000f882a18eaa2e4b8e3e903e406e578"
+  },
+  "static_compile_only": true,
+  "status": "PREPARED_NOT_EXECUTED",
+  "unchanged_helpers": [
+    "need",
+    "now",
+    "fingerprint",
+    "stable_bytes",
+    "save",
+    "save_json",
+    "pairs",
+    "parse_json",
+    "parsed_headers",
+    "capture",
+    "central_directory",
+    "extract_record",
+    "read_pin"
+  ]
+}

@@ -1,0 +1,386 @@
+
+04-pon_work.rs.raw lines 912-1295
+912: fn producer_reduce(x: u128) -> u32 {
+913:     debug_assert!(x < (1_u128 << 70));
+914:     let first = (x as u32 as u64) + 5 * ((x >> 32) as u64);
+915:     let second = (first as u32 as u64) + 5 * (first >> 32);
+916:     if second >= Q as u64 {
+917:         (second - Q as u64) as u32
+918:     } else {
+919:         second as u32
+920:     }
+921: }
+922: fn producer_mul(a: &[u32], b: &[u32], rows: usize, inner: usize, cols: usize) -> Vec<u32> {
+923:     match transposed_mul_with_progress(a, b, rows, inner, cols, &mut no_cancellation) {
+924:         Ok(product) => product,
+925:         Err(impossible) => match impossible {},
+926:     }
+927: }
+928: fn transposed_mul_with_progress<E>(
+929:     a: &[u32],
+930:     b: &[u32],
+931:     rows: usize,
+932:     inner: usize,
+933:     cols: usize,
+934:     progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
+935: ) -> Result<Vec<u32>, E> {
+936:     transposed_mul_kernel_with_progress::<false, E>(a, b, rows, inner, cols, progress)
+937: }
+938: 
+939: fn transposed_mul_kernel_with_progress<const LIMB: bool, E>(
+940:     a: &[u32],
+941:     b: &[u32],
+942:     rows: usize,
+943:     inner: usize,
+944:     cols: usize,
+945:     progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
+946: ) -> Result<Vec<u32>, E> {
+947:     debug_assert!(inner <= N);
+948:     let mut transposed = vec![0; b.len()];
+949:     for k in 0..inner {
+950:         for j in 0..cols {
+951:             transposed[j * inner + k] = b[k * cols + j];
+952:         }
+953:     }
+954:     multiply_transposed_right_with_progress::<LIMB, E>(a, &transposed, rows, inner, cols, progress)
+955: }
+956: 
+957: // Receives a transpose owned by this same arithmetic call. Keeping it across
+958: // transcript/product stages avoids another full B' transpose; every dot product
+959: // and every original MatrixRow callback is still performed.
+960: fn multiply_transposed_right_with_progress<const LIMB: bool, E>(
+961:     a: &[u32],
+962:     transposed: &[u32],
+963:     rows: usize,
+964:     inner: usize,
+965:     cols: usize,
+966:     progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
+967: ) -> Result<Vec<u32>, E> {
+968:     debug_assert!(inner <= N);
+969:     let mut out = vec![0; rows * cols];
+970:     for i in 0..rows {
+971:         progress(VerificationProgress::MatrixRow { row: i })?;
+972:         for j in 0..cols {
+973:             out[i * cols + j] = if LIMB {
+974:                 maintenance_limb::dot_bounded(
+975:                     &a[i * inner..(i + 1) * inner],
+976:                     &transposed[j * inner..(j + 1) * inner],
+977:                     0,
+978:                 )
+979:             } else {
+980:                 let mut sum = 0_u128;
+981:                 for k in 0..inner {
+982:                     sum += u128::from(a[i * inner + k]) * u128::from(transposed[j * inner + k]);
+983:                 }
+984:                 producer_reduce(sum)
+985:             };
+986:         }
+987:     }
+988:     Ok(out)
+989: }
+990: 
+991: // The owned B' buffer is square. Transposing each off-diagonal pair once
+992: // preserves its allocation and all field values; callers need only this
+993: // representation after preparation. No input, proof or arithmetic fact is shared.
+994: fn transpose_square_in_place(matrix: &mut [u32]) {
+995:     debug_assert_eq!(matrix.len(), CELLS);
+996:     for row in 0..N {
+997:         for column in row + 1..N {
+998:             matrix.swap(row * N + column, column * N + row);
+999:         }
+1000:     }
+1001: }
+1002: 
+1003: // Exact full replay. Transposition and batched hashing change neither transcript
+1004: // order nor the original noise/row/tile observation sequence. Nothing is trusted
+1005: // from the producer, a prior task, the claimed product or an earlier callback.
+1006: fn evaluate_transposed_with_progress<const LIMB_TRANSCRIPT: bool, E>(
+1007:     challenge: Hash,
+1008:     a: &[u32],
+1009:     b: &[u32],
+1010:     progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
+1011: ) -> Result<OptimizedTranscriptEvaluation, VerificationError<E>> {
+1012:     evaluate_transcript_kernel_with_progress::<LIMB_TRANSCRIPT, false, false, E>(
+1013:         challenge, a, b, progress,
+1014:     )
+1015: }
+1016: 
+1017: fn evaluate_transcript_kernel_with_progress<
+1018:     const LIMB_TRANSCRIPT: bool,
+1019:     const COLUMN_LIMB: bool,
+1020:     const FULL_LIMB: bool,
+1021:     E,
+1022: >(
+1023:     challenge: Hash,
+1024:     a: &[u32],
+1025:     b: &[u32],
+1026:     progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
+1027: ) -> Result<OptimizedTranscriptEvaluation, VerificationError<E>> {
+1028:     #[cfg(test)]
+1029:     ARITHMETIC_TRANSCRIPT_REPLAYS.with(|count| count.set(count.get() + 1));
+1030:     validate(a)?;
+1031:     validate(b)?;
+1032:     let el = expand_with_progress(challenge, 0, N * R, progress)?;
+1033:     let er = expand_with_progress(challenge, 1, R * N, progress)?;
+1034:     let fl = expand_with_progress(challenge, 2, N * R, progress)?;
+1035:     let fr = expand_with_progress(challenge, 3, R * N, progress)?;
+1036:     let e = transposed_mul_kernel_with_progress::<FULL_LIMB, E>(&el, &er, N, R, N, progress)
+1037:         .map_err(VerificationError::Cancelled)?;
+1038:     let f = transposed_mul_kernel_with_progress::<FULL_LIMB, E>(&fl, &fr, N, R, N, progress)
+1039:         .map_err(VerificationError::Cancelled)?;
+1040:     let mut ap = e;
+1041:     for (value, original) in ap.iter_mut().zip(a) {
+1042:         *value = producer_reduce(u128::from(*original) + u128::from(*value));
+1043:     }
+1044:     let mut bp = f;
+1045:     for (value, original) in bp.iter_mut().zip(b) {
+1046:         *value = producer_reduce(u128::from(*original) + u128::from(*value));
+1047:     }
+1048:     // The column kernel keeps the original contiguous B' rows. The other
+1049:     // kernels need only its transpose, so move the same owned allocation
+1050:     // after an exact in-place permutation. There are no callbacks in this
+1051:     // preparation interval; the original callback sequence remains unchanged.
+1052:     let mut bt = Vec::new();
+1053:     if !COLUMN_LIMB {
+1054:         transpose_square_in_place(&mut bp);
+1055:         bt = std::mem::take(&mut bp);
+1056:     }
+1057:     let mut cp = vec![0u32; CELLS];
+1058:     let mut transcript = Sha256::new();
+1059:     transcript.update(b"TRNM-PON-TRACE1\0");
+1060:     transcript.update(challenge);
+1061:     for bi in 0..N / R {
+1062:         for bj in 0..N / R {
+1063:             let mut cells = [0u32; R * R];
+1064:             let mut bytes = [0u8; R * R * 4];
+1065:             for bk in 0..N / R {
+1066:                 progress(VerificationProgress::TranscriptTile {
+1067:                     row: bi,
+1068:                     column: bj,
+1069:                     inner: bk,
+1070:                 })
+1071:                 .map_err(VerificationError::Cancelled)?;
+1072:                 for i in 0..R {
+1073:                     if COLUMN_LIMB {
+1074:                         let left = (bi * R + i) * N + bk * R;
+1075:                         let right = bk * R * N + bj * R;
+1076:                         let row = column_limb_row(
+1077:                             &ap[left..left + R],
+1078:                             &bp[right..right + (R - 1) * N + R],
+1079:                             &cells[i * R..(i + 1) * R],
+1080:                         );
+1081:                         cells[i * R..(i + 1) * R].copy_from_slice(&row);
+1082:                         for (j, value) in row.iter().enumerate() {
+1083:                             let pos = i * R + j;
+1084:                             bytes[pos * 4..pos * 4 + 4].copy_from_slice(&value.to_le_bytes());
+1085:                         }
+1086:                         continue;
+1087:                     }
+1088:                     for j in 0..R {
+1089:                         let pos = i * R + j;
+1090:                         cells[pos] = if LIMB_TRANSCRIPT {
+1091:                             let left = (bi * R + i) * N + bk * R;
+1092:                             let right = (bj * R + j) * N + bk * R;
+1093:                             maintenance_limb::dot8(
+1094:                                 &ap[left..left + R],
+1095:                                 &bt[right..right + R],
+1096:                                 cells[pos],
+1097:                             )
+1098:                         } else {
+1099:                             let mut sum = u128::from(cells[pos]);
+1100:                             for k in bk * R..(bk + 1) * R {
+1101:                                 sum += u128::from(ap[(bi * R + i) * N + k])
+1102:                                     * u128::from(bt[(bj * R + j) * N + k]);
+1103:                             }
+1104:                             producer_reduce(sum)
+1105:                         };
+1106:                         bytes[pos * 4..pos * 4 + 4].copy_from_slice(&cells[pos].to_le_bytes());
+1107:                     }
+1108:                 }
+1109:                 transcript.update(bytes);
+1110:             }
+1111:             for i in 0..R {
+1112:                 cp[(bi * R + i) * N + bj * R..(bi * R + i) * N + (bj + 1) * R]
+1113:                     .copy_from_slice(&cells[i * R..(i + 1) * R]);
+1114:             }
+1115:         }
+1116:     }
+1117:     let trace = transcript.finalize().into();
+1118:     #[cfg(test)]
+1119:     ARITHMETIC_TRANSCRIPT_COMPLETIONS.with(|count| count.set(count.get() + 1));
+1120:     let right = if COLUMN_LIMB {
+1121:         ReplayedRightOperand::RowMajor(bp)
+1122:     } else {
+1123:         // Retain only the already computed transpose for the later ER * B'.
+1124:         // This is per-call arithmetic material, never reused across requests.
+1125:         drop(bp);
+1126:         ReplayedRightOperand::Transposed(bt)
+1127:     };
+1128:     Ok(OptimizedTranscriptEvaluation {
+1129:         cp,
+1130:         el,
+1131:         er,
+1132:         fl,
+1133:         fr,
+1134:         right,
+1135:         trace,
+1136:     })
+1137: }
+1138: 
+1139: // Eight independent columns keep the right-hand row contiguous. LLVM may
+1140: // vectorize these portable integer operations; no SIMD capability is required.
+1141: // For each column, p=lo+2^32*hi and 2^32=5 (mod q). Including prior,
+1142: // low<9*2^32, high<8*2^32, sum=low+5*high<49*2^32. Its fold is
+1143: // <2^32+240<2q, so one subtraction is exact. No u64 sum can overflow.
+1144: #[inline]
+1145: fn column_limb_row(left: &[u32], right: &[u32], prior: &[u32]) -> [u32; R] {
+1146:     debug_assert_eq!(left.len(), R);
+1147:     debug_assert_eq!(right.len(), (R - 1) * N + R);
+1148:     debug_assert_eq!(prior.len(), R);
+1149:     let mut low = [0u64; R];
+1150:     let mut high = [0u64; R];
+1151:     for j in 0..R {
+1152:         low[j] = u64::from(prior[j]);
+1153:     }
+1154:     for k in 0..R {
+1155:         let row = &right[k * N..k * N + R];
+1156:         let value = u64::from(left[k]);
+1157:         for j in 0..R {
+1158:             let product = value * u64::from(row[j]);
+1159:             low[j] += u64::from(product as u32);
+1160:             high[j] += product >> 32;
+1161:         }
+1162:     }
+1163:     std::array::from_fn(|j| {
+1164:         let sum = low[j] + 5 * high[j];
+1165:         let folded = u64::from(sum as u32) + 5 * (sum >> 32);
+1166:         if folded >= Q as u64 {
+1167:             (folded - Q as u64) as u32
+1168:         } else {
+1169:             folded as u32
+1170:         }
+1171:     })
+1172: }
+1173: 
+1174: fn finish_transposed_with_progress<E>(
+1175:     a: &[u32],
+1176:     evaluated: OptimizedTranscriptEvaluation,
+1177:     progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
+1178: ) -> Result<Vec<u32>, E> {
+1179:     finish_transposed_kernel_with_progress::<false, E>(a, evaluated, progress)
+1180: }
+1181: 
+1182: // Both product corrections have shape (N x R) * (R x N). Subtract each
+1183: // complete dot product directly into this call's owned result, avoiding a
+1184: // second full-size output matrix. Every original MatrixRow callback still
+1185: // precedes that row's arithmetic. On cancellation the caller discards this
+1186: // operation-local result; partial updates are never published as a fact.
+1187: fn subtract_transposed_correction_with_progress<const LIMB: bool, E>(
+1188:     left: &[u32],
+1189:     right: &[u32],
+1190:     product: &mut [u32],
+1191:     progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
+1192: ) -> Result<(), E> {
+1193:     debug_assert_eq!(left.len(), N * R);
+1194:     debug_assert_eq!(right.len(), R * N);
+1195:     debug_assert_eq!(product.len(), CELLS);
+1196:     let mut transposed = vec![0; right.len()];
+1197:     for k in 0..R {
+1198:         for j in 0..N {
+1199:             transposed[j * R + k] = right[k * N + j];
+1200:         }
+1201:     }
+1202:     for (i, row) in product.chunks_exact_mut(N).enumerate() {
+1203:         progress(VerificationProgress::MatrixRow { row: i })?;
+1204:         let a = &left[i * R..(i + 1) * R];
+1205:         for (j, value) in row.iter_mut().enumerate() {
+1206:             let b = &transposed[j * R..(j + 1) * R];
+1207:             let correction = if LIMB {
+1208:                 maintenance_limb::dot_bounded(a, b, 0)
+1209:             } else {
+1210:                 let mut sum = 0_u128;
+1211:                 for k in 0..R {
+1212:                     sum += u128::from(a[k]) * u128::from(b[k]);
+1213:                 }
+1214:                 producer_reduce(sum)
+1215:             };
+1216:             // Canonical operands make this nonnegative and below 2Q. Two
+1217:             // successive subtractions equal the original (C' - C1 - C2) mod Q.
+1218:             let corrected = u64::from(*value) + Q as u64 - u64::from(correction);
+1219:             *value = if corrected >= Q as u64 {
+1220:                 (corrected - Q as u64) as u32
+1221:             } else {
+1222:                 corrected as u32
+1223:             };
+1224:         }
+1225:     }
+1226:     Ok(())
+1227: }
+1228: 
+1229: fn finish_transposed_kernel_with_progress<const LIMB: bool, E>(
+1230:     a: &[u32],
+1231:     evaluated: OptimizedTranscriptEvaluation,
+1232:     progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
+1233: ) -> Result<Vec<u32>, E> {
+1234:     progress(VerificationProgress::BeforeProduct)?;
+1235:     #[cfg(test)]
+1236:     PRODUCT_RECONSTRUCTIONS.with(|count| count.set(count.get() + 1));
+1237:     let mut product = evaluated.cp;
+1238:     let left = transposed_mul_kernel_with_progress::<LIMB, E>(a, &evaluated.fl, N, N, R, progress)?;
+1239:     subtract_transposed_correction_with_progress::<LIMB, E>(
+1240:         &left,
+1241:         &evaluated.fr,
+1242:         &mut product,
+1243:         progress,
+1244:     )?;
+1245:     let right = match &evaluated.right {
+1246:         ReplayedRightOperand::RowMajor(bp) => {
+1247:             transposed_mul_kernel_with_progress::<LIMB, E>(&evaluated.er, bp, R, N, N, progress)
+1248:         }
+1249:         ReplayedRightOperand::Transposed(bt) => {
+1250:             multiply_transposed_right_with_progress::<LIMB, E>(&evaluated.er, bt, R, N, N, progress)
+1251:         }
+1252:     }?;
+1253:     subtract_transposed_correction_with_progress::<LIMB, E>(
+1254:         &evaluated.el,
+1255:         &right,
+1256:         &mut product,
+1257:         progress,
+1258:     )?;
+1259:     Ok(product)
+1260: }
+1261: 
+1262: /// Bounded producer cache for one exact task. It carries no verification authority.
+1263: /// The useful product is fixed across challenges; every challenge still hashes every tile.
+1264: pub struct PreparedTask {
+1265:     a: Vec<u32>,
+1266:     b: Vec<u32>,
+1267:     prefix: Vec<u8>,
+1268: }
+1269: 
+1270: /// Local generation checkpoints, with no proof field or verification capability.
+1271: #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+1272: pub enum PreparedGenerationProgress {
+1273:     BeforeReplay,
+1274:     Noise {
+1275:         label: u8,
+1276:         counter: u32,
+1277:     },
+1278:     NoiseRow {
+1279:         operand: u8,
+1280:         row: usize,
+1281:     },
+1282:     TranscriptTile {
+1283:         row: usize,
+1284:         column: usize,
+1285:         inner: usize,
+1286:     },
+1287:     BeforeProof,
+1288: }
+1289: 
+1290: #[derive(Debug, PartialEq, Eq)]
+1291: pub enum PreparedGenerationError<E> {
+1292:     Relation(WorkError),
+1293:     Cancelled(E),
+1294: }
+1295: 

@@ -1,0 +1,46 @@
+{
+  "closed_stream_index": {
+    "bytes": 64177,
+    "path": "/private/tmp/chain-consolidation-20261114-root/R1-diagnostic-tag-dispatch-only-preparation-v1/original-closure-v1/original-stream-index.json",
+    "sha256": "cf0e96cf73b41245692a3d5c5b8d1aaf11733bff944e462a67782a58e3ae5081"
+  },
+  "control": {
+    "commit": "78985d9a36761cf3ab370796f72f9b587776880c",
+    "parents": [
+      "2a86462a1ab20c68151719ba4635e3c294391e64"
+    ],
+    "subject_commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "subject_tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+    "tag": "diagnostic/r1-native-stage1-20261114-r1-v3",
+    "tag_oid": "bec22f093723cae0bb4625bd1fcbe9858d61f68b",
+    "tree": "b9999aa69ef7e148ea0760942f9b2bca6a8e6d6e",
+    "workflow_blob": "2f242e4c1dc16fbf912a93d87454ee0ff4474b91",
+    "workflow_path": ".github/workflows/trnm-required-baseline.yml",
+    "workflow_sha256": "85e9ef1d83490fb98d57c653952fe3fff67c496c8074cbf89ee6adacb266041a"
+  },
+  "dispatch_timeout_seconds": 180,
+  "evidence_dir": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-dispatch-only-v1-r1-001",
+  "producer_sha256": "bf25839cb805e1005192125a1de5b916bf3017825465fff866ec6533fdb09dac",
+  "published_producer": {
+    "bytes": 54443,
+    "path": "/private/tmp/chain-consolidation-20261114-root/R1-diagnostic-tag-resume-preparation-v3/resume_diagnostic_stage1_v3.py",
+    "sha256": "6f6a2dd66b0baa46eb9bcf4ed9d51cb4b502316a643abb1a184ae844a874bd50"
+  },
+  "published_receipt": {
+    "bytes": 361082,
+    "path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-publish-v1-r1-after-5df-resume-002/summary.json",
+    "sha256": "0d3791feb688b349c3208dcc87b2a1acd5213ea0dd5b8077f879307be04b1992"
+  },
+  "published_spec": {
+    "bytes": 5156,
+    "path": "/private/tmp/chain-consolidation-20261114-root/R1-diagnostic-tag-resume-preparation-v3/spec.for-review.json",
+    "sha256": "e6afd04a65a3e8e305f2fe1a74239b751816b7c8e17e16d30ab9568ab0222543"
+  },
+  "published_terminal": {
+    "bytes": 4308,
+    "path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-resume-v3-actual-terminal-v1.json",
+    "sha256": "ee22af5d330ea19f55c40c539434311cdd986ea7c9265a14245fac69e76c45df"
+  },
+  "remote_head": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+  "schema": "trnm-r1-diagnostic-stage1-dispatch-only-spec-v1"
+}

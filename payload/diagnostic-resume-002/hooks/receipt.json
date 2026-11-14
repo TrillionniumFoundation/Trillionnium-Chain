@@ -1,0 +1,101 @@
+{
+  "argv": [
+    "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-publish-v1-r1-after-5df-resume-002/hooks/pre-push",
+    "origin",
+    "https://github.com/TrillionniumFoundation/Trillionnium-Chain.git"
+  ],
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "remote",
+        "get-url",
+        "--push",
+        "--all",
+        "origin"
+      ],
+      "exit": 0,
+      "label": "push-url",
+      "stderr_bytes": 0,
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-publish-v1-r1-after-5df-resume-002/hooks/push-url.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 65,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-publish-v1-r1-after-5df-resume-002/hooks/push-url.stdout",
+      "stdout_sha256": "4381bbe444696febc4724724342b7c204fb1ddac075199545272db3c4a3cb1c7",
+      "timeout_seconds": 90
+    },
+    {
+      "argv": [
+        "git",
+        "remote",
+        "get-url",
+        "--all",
+        "origin"
+      ],
+      "exit": 0,
+      "label": "fetch-url",
+      "stderr_bytes": 0,
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-publish-v1-r1-after-5df-resume-002/hooks/fetch-url.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 65,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-publish-v1-r1-after-5df-resume-002/hooks/fetch-url.stdout",
+      "stdout_sha256": "4381bbe444696febc4724724342b7c204fb1ddac075199545272db3c4a3cb1c7",
+      "timeout_seconds": 90
+    },
+    {
+      "argv": [
+        "git",
+        "ls-remote",
+        "--heads",
+        "origin"
+      ],
+      "exit": 0,
+      "label": "heads",
+      "stderr_bytes": 0,
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-publish-v1-r1-after-5df-resume-002/hooks/heads.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 87154,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-publish-v1-r1-after-5df-resume-002/hooks/heads.stdout",
+      "stdout_sha256": "71f3698ff24be6f9a0de3432c5ac93357cc9877937a4bb670522dd39112f27eb",
+      "timeout_seconds": 90
+    },
+    {
+      "argv": [
+        "git",
+        "ls-remote",
+        "origin",
+        "refs/tags/archive/branches-before-consolidation-20261114-dc42ce4df5cf-v2",
+        "refs/tags/archive/branches-before-consolidation-20261114-dc42ce4df5cf-v2^{}",
+        "refs/tags/archive/execution-receipts-20261114-2a86462a1ab2-v1",
+        "refs/tags/archive/execution-receipts-20261114-2a86462a1ab2-v1^{}",
+        "refs/tags/archive/post-publication-diagnostics-20261114-2a86462a1ab2-v1",
+        "refs/tags/archive/post-publication-diagnostics-20261114-2a86462a1ab2-v1^{}",
+        "refs/tags/diagnostic/r1-native-stage1-20261114-r1-v3",
+        "refs/tags/diagnostic/r1-native-stage1-20261114-r1-v3^{}"
+      ],
+      "exit": 0,
+      "label": "tags",
+      "stderr_bytes": 0,
+      "stderr_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-publish-v1-r1-after-5df-resume-002/hooks/tags.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 669,
+      "stdout_path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-publish-v1-r1-after-5df-resume-002/hooks/tags.stdout",
+      "stdout_sha256": "97f4ffbcced4c14e288ca811133106f42ad6f93763784f8d98b35616a8270bbf",
+      "timeout_seconds": 90
+    }
+  ],
+  "errors": [],
+  "expected_sha256": "e051dee8793454798303e7aab2e81b98cccc97319f3d289e78e75894dd383c6b",
+  "finished_at": "2026-11-14T18:10:55.623463+00:00",
+  "hook_sha256": "656243a2668d0aca0219ca9e10f8cacfc4c784da5a6338c2c73e4902efa53722",
+  "schema": "trnm-r1-diagnostic-tag-prepush-v1",
+  "started_at": "2026-11-14T18:10:50.250283+00:00",
+  "status": "passed",
+  "updates": {
+    "refs/tags/diagnostic/r1-native-stage1-20261114-r1-v3": {
+      "local_ref": "refs/tags/diagnostic/r1-native-stage1-20261114-r1-v3",
+      "new": "bec22f093723cae0bb4625bd1fcbe9858d61f68b",
+      "old": "0000000000000000000000000000000000000000"
+    }
+  }
+}

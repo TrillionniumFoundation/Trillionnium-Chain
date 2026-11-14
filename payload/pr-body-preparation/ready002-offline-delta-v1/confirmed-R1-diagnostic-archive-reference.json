@@ -1,0 +1,34 @@
+{
+  "R1_scope_not_H5DF": true,
+  "actual_push_exit": 0,
+  "actual_status": "confirmed",
+  "actual_terminal": {
+    "bytes": 4322,
+    "path": "/private/tmp/chain-consolidation-20261114-root/postpublication-diagnostics-resume-002-actual-terminal-v1.json",
+    "sha256": "c3a04e0495394b1d6eb7b18f1eda3ed2f4a520d21252e0348e9be90bd149b738"
+  },
+  "archive": {
+    "archive_bytes": 157679667,
+    "archive_files": 1898,
+    "commit": "ffc6e0ca4bfa7794ab6031a6e398dcd08b7a1982",
+    "direct_parents": [
+      "0f4b8b70bde65f84139b4cc7ed9e176ed55cf1d9"
+    ],
+    "file_index_sha256": "ce246d5bb36f7e18791e3041024f3ae5df81f60e470472dbb12781d9b0ddde68",
+    "payload_manifest_sha256": "f39f2a27975982ec6806ff319fd15a3e902e29d92af4653d770acc1b470e9777",
+    "source_commit": "2a86462a1ab20c68151719ba4635e3c294391e64",
+    "source_tree": "5c26776f96f15fd131e85a5c2d7c5e895ad7fab4",
+    "tag": "archive/post-publication-diagnostics-20261114-2a86462a1ab2-v1",
+    "tag_oid": "894875e2161bea8f0d4a135879e687de78c1f18a",
+    "tree": "49d60a411334ca5bae53c5ad6296787c3ffc496a"
+  },
+  "exact_hook_verified": true,
+  "not_newly_executed_or_republished": true,
+  "schema": "trnm-existing-archive-closed-reference-v1",
+  "source_after_valid": true,
+  "source_summary": {
+    "bytes": 440684,
+    "path": "/private/tmp/chain-consolidation-20261114-root/postpublication-diagnostics-publish-v1-r1-resume-002/summary.json",
+    "sha256": "70520e50f0259eb283252919ca4aa9f6da92bf15b8d5fff5d8c57dd2e0332ded"
+  }
+}

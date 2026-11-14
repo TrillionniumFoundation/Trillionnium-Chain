@@ -1,0 +1,169 @@
+{
+  "bytes": 6877352,
+  "count": 32,
+  "files": [
+    {
+      "bytes": 42449,
+      "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/acquisition-summary.json",
+      "sha256": "fd73d1a0089e0f132964f23a57b83dd0a89f7d5c1197a165b8117c17520bd262"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/job-132528767983-metadata.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 6111,
+      "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/job-132528767983-metadata.stdout",
+      "sha256": "3d3cce29e709f235394567bfe431f21f7bdd925921cd1a4106297dbb7d16de1e"
+    },
+    {
+      "bytes": 1405,
+      "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/job-132528767983-metadata.step.json",
+      "sha256": "e50eddc93e69a244c662ab6ede3b12a2da277747ddccbafed732e7de2c153976"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/job-132528767983-original-log.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2223351,
+      "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/job-132528767983-original-log.stdout",
+      "sha256": "694149d613cb36bad29ea715ac413f07e819236d7af1532fc49094529d4813a7"
+    },
+    {
+      "bytes": 1437,
+      "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/job-132528767983-original-log.step.json",
+      "sha256": "430515010244747bb85e14976d944d61e9800700ad7da17911b311d0bcd07850"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/job-132528768001-metadata.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 6124,
+      "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/job-132528768001-metadata.stdout",
+      "sha256": "f7d27f3b44685096220a88c7f1a4d3aa9931982dc1130f5626c51f663ff20534"
+    },
+    {
+      "bytes": 1405,
+      "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/job-132528768001-metadata.step.json",
+      "sha256": "90775f36ccc91d59b80af0dded71ddf5aa9e4943dfdc8a1e0ff50b8e812ac0bd"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/job-132528768001-original-log.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2224013,
+      "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/job-132528768001-original-log.stdout",
+      "sha256": "c080ace114a9617b17fb24b68eb9f0b462783111b967a9865e2c879633bf8c1a"
+    },
+    {
+      "bytes": 1436,
+      "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/job-132528768001-original-log.step.json",
+      "sha256": "3a6d20132a1e39ee84ad855786138e70a65a8c57ada25a8b266235c541e9ff11"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/job-132528768003-metadata.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 6103,
+      "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/job-132528768003-metadata.stdout",
+      "sha256": "f3f13ae244917b5506db3788d07f23b08d4f60244666664cf261abef169f89d4"
+    },
+    {
+      "bytes": 1405,
+      "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/job-132528768003-metadata.step.json",
+      "sha256": "09d913ca68a565a27ade86c966ac018009ec2ec9a134cc47877ba8fabfa397f7"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/job-132528768003-original-log.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2223880,
+      "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/job-132528768003-original-log.stdout",
+      "sha256": "99a61cf06def08976a97bd4610fe0953f38b6553e6b578e3dce9cac067186bbc"
+    },
+    {
+      "bytes": 1437,
+      "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/job-132528768003-original-log.step.json",
+      "sha256": "1ff54a88c186a672495d12026f7e606f7d572463d8bd3f0018f71194927940a7"
+    },
+    {
+      "bytes": 710,
+      "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/launcher.py",
+      "sha256": "6ca36333597c11417d3c39db3eb341a64c4933ca368f68d68eb4005c39039c84"
+    },
+    {
+      "bytes": 8561,
+      "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/producer.py",
+      "sha256": "1f1b31e74c0a63892fb0f7d325b830b0f64e40a379cdaf30b965599fbe9c2604"
+    },
+    {
+      "bytes": 5222,
+      "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/EVIDENCE_INDEX.json",
+      "sha256": "4107d030713ea4b18e24c451cac31aa71eb78afc6306e58ec12cf2bba6a3e654"
+    },
+    {
+      "bytes": 2163,
+      "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/final-review-v1/README.md",
+      "sha256": "32588b49c43e247edf0b3478e61bcff1735b9d1b7ea37539b294954bf60e0ac0"
+    },
+    {
+      "bytes": 13365,
+      "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/final-review-v1/acquisition-actual-terminal.json",
+      "sha256": "174af64477f74bed8a5732d87f6d7ca829d7f72a88b6c70e884198151b2d728b"
+    },
+    {
+      "bytes": 1781,
+      "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/final-review-v1/acquisition-actual-terminal.log",
+      "sha256": "80d738e96ac75f7066d8f86f4d7ed454b718b890a9f2492920360cf0f48de7c5"
+    },
+    {
+      "bytes": 27599,
+      "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/final-review-v1/exact-outer-facts.json",
+      "sha256": "08251cc1de202b1ed29d340c462e88296d3841603987efe254eead60740e48e2"
+    },
+    {
+      "bytes": 7496,
+      "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/final-review-v1/job-132528767983-controller-result.json",
+      "sha256": "c8bb98158fa2fe830d02b62e076fe5a877e4a45e1d334fc8f2d367515c59dbe5"
+    },
+    {
+      "bytes": 7496,
+      "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/final-review-v1/job-132528768001-controller-result.json",
+      "sha256": "1d4c8cf1fd0a79295b964be92d83a3b1d3ac239319344fca133e699b7ea3a879"
+    },
+    {
+      "bytes": 7497,
+      "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/final-review-v1/job-132528768003-controller-result.json",
+      "sha256": "4e8fc763225518c9b43eaf4d451bc2e3c67ed6854c7b38a03ec3779910e5e97a"
+    },
+    {
+      "bytes": 1700,
+      "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/final-review-v1/minimal-artifact-plan.json",
+      "sha256": "d9178b49f5f9617b0c4b6929d940486a518f022606e793c9dd672cbd3c054ba9"
+    },
+    {
+      "bytes": 38821,
+      "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/final-review-v1/original-line-excerpts.json",
+      "sha256": "b922be7c5e08b90d4a85156e8978bb0ca64235372e98aab7a58ad08a8e7af986"
+    },
+    {
+      "bytes": 14385,
+      "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/final-review-v1/producer.py",
+      "sha256": "5e1fbadf52892c34d47ec00fb11923d16bd97e064c71c8672be3c4f95d325107"
+    }
+  ],
+  "schema": "trnm-H5DF-service-model-closed-review-index-v1",
+  "scope": "actual acquisition originals plus bounded offline projections; no artifact payload",
+  "self_excluded": true
+}

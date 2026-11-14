@@ -1,0 +1,28 @@
+{
+  "closed": true,
+  "excerpts": {
+    "bytes": 38821,
+    "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/final-review-v1/original-line-excerpts.json",
+    "sha256": "b922be7c5e08b90d4a85156e8978bb0ca64235372e98aab7a58ad08a8e7af986"
+  },
+  "facts": {
+    "bytes": 27599,
+    "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/final-review-v1/exact-outer-facts.json",
+    "sha256": "08251cc1de202b1ed29d340c462e88296d3841603987efe254eead60740e48e2"
+  },
+  "index": {
+    "bytes": 7892,
+    "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/final-review-v1/EVIDENCE_INDEX.json",
+    "sha256": "202c3540da16142da3eac5df2f2e0d5c7eb3a379daeba913e013ab4a70050609"
+  },
+  "minimal_plan": {
+    "bytes": 1700,
+    "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/final-review-v1/minimal-artifact-plan.json",
+    "sha256": "d9178b49f5f9617b0c4b6929d940486a518f022606e793c9dd672cbd3c054ba9"
+  },
+  "no_writer_remaining_after_exit": true,
+  "original_files_unchanged": true,
+  "schema": "trnm-H5DF-service-model-closed-review-seal-v1",
+  "sealed_at": "2026-11-14T18:26:07.018562+00:00",
+  "status": "OUTER_FAILURE_CONFIRMED_INNER_UNKNOWN"
+}

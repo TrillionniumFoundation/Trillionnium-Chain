@@ -1,0 +1,31 @@
+{
+  "files": [
+    {
+      "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/attribution-corrected-v2/exact-work-host-attribution.json",
+      "bytes": 197150,
+      "sha256": "f464b23408267eed9e63bfb98431d2a9aeb0afb58b2a7a921c62eccbfbf8f038"
+    },
+    {
+      "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/attribution-corrected-v2/history-domain-grep.stdout",
+      "bytes": 7405,
+      "sha256": "6818cdee23fef434b7a41e10785ec632a462b485c576bf99d82afccb27d9308c"
+    },
+    {
+      "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/attribution-corrected-v2/history-domain-grep.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "grep_argv": [
+    "/usr/bin/git",
+    "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+    "grep",
+    "-n",
+    "-E",
+    "remote_history_cpu_domain|cold_remote_history_epoch",
+    "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+    "--",
+    "trillionnium/crates/trnm-pon-node/src"
+  ],
+  "grep_exit": 0
+}

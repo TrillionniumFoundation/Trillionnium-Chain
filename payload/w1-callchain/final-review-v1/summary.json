@@ -1,0 +1,203 @@
+{
+  "conclusions": [
+    "W1 FullLimb arithmetic and current progress callbacks execute synchronously on the importer thread; no hidden W1 worker CPU",
+    "Original 5ms verified-completion refill wait is unreachable during unfinished W1",
+    "Current fixture uses Exclusive independent Node and its own cold History domain; no shared-node wait during Work",
+    "Existing Work-attributed Host CPU is 63274464/66412397 ns and 19052498/19988815 ns for these pressure replays",
+    "Only small source-level FR-transpose and checked-A/B-rescan candidates; no measured improvement or proven 4s repair",
+    "Need actual phase/TID scheduler and phase-aligned cgroup data to assign wall delay"
+  ],
+  "corrected_attribution": {
+    "bytes": 197150,
+    "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/attribution-corrected-v2/exact-work-host-attribution.json",
+    "sha256": "f464b23408267eed9e63bfb98431d2a9aeb0afb58b2a7a921c62eccbfbf8f038"
+  },
+  "domain_evidence": {
+    "H5DF_oid": "d94f27a764a2788e90352881b52fc9017a32ab67",
+    "R1_oid": "d94f27a764a2788e90352881b52fc9017a32ab67",
+    "excerpt": {
+      "bytes": 3564,
+      "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/domain-source-v1/remote-history-domain.txt",
+      "sha256": "5f16e398c53a1d210b586f33702fdcb9b84a7b340b968cbfb2c571fca4b68bb0"
+    },
+    "private_callers": {
+      "bytes": 2937,
+      "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/domain-source-v1/private-kernel-callers.json",
+      "sha256": "43e24dcfa78014415eac17d3917a657ed734252e06a48be1aa70a0f7d609e1dc"
+    },
+    "raw": {
+      "bytes": 120278,
+      "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/domain-source-v1/operator_continuous_owner.rs.raw",
+      "sha256": "59398375101f36e234001dbd5bb15cd767a7b8537f457ccb104c41b110dfef4a"
+    },
+    "same_R1_H5DF": true,
+    "source": "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs"
+  },
+  "files": [
+    {
+      "bytes": 5734,
+      "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/final-review-v1/producer.py",
+      "sha256": "2acbf2d51d9d7e8771d961e8028072cee1af33969c4eb3b20299ffaeff0382d7"
+    },
+    {
+      "bytes": 15094,
+      "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/final-review-v1/compact-work-observations.json",
+      "sha256": "fca816fe38b35c7a8799c457cbcc310f2557cb4d0d8ea016f37bbfaba54bef12"
+    },
+    {
+      "bytes": 9590,
+      "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/final-review-v1/review.md",
+      "sha256": "d2bcc6090bdc6f3c13c017345f90ad598e2db38b505cb05078ce2dd91768ae54"
+    }
+  ],
+  "frozen_payload_changed": false,
+  "new_native_or_tests_executed": false,
+  "new_network_calls": false,
+  "original_elf_independently_hashed": false,
+  "original_selected_facts": {
+    "bytes": 12884,
+    "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/final-review-v1/exact-confirmation-facts.json",
+    "sha256": "9da174ec8a4b5afe3ac151e4b7b81974addd1d4893f802500bc6fb9652bb9c6c"
+  },
+  "projection_correction": {
+    "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/measurement-excerpts-v1/exact-work-host-attribution.json",
+    "problem": "projection variable p was shadowed by a phase dict, causing invalid original_report.path; worker_count projection used absent key; original bytes remain preserved and are not relied upon",
+    "raw_report_unchanged": true
+  },
+  "schema": "h5df-w1-replay-readonly-review-v1",
+  "scope": "current H5DF x64 selected original artifact plus immutable same-blob R1/H5DF source; not ARM or required protocol inference",
+  "sealed_at": "2026-11-14T18:19:20.729779+00:00",
+  "source_indices": [
+    {
+      "bytes": 18722,
+      "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/source-index.json",
+      "sha256": "bbbdc6961fb87f302e5b943f2771ddd5fb090bccbbbb00e255587b720ff9bbe1"
+    },
+    {
+      "bytes": 15648,
+      "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/measurement-source-v1/source-index.json",
+      "sha256": "c59b70f579142a76b981643436915731fe232bbcd68c981bc1e0c1ccd783deab"
+    }
+  ],
+  "source_or_git_ref_changed": false,
+  "source_rows": [
+    {
+      "H5DF_oid": "b89112abb32b692c83cf94a3e85fce58c5798628",
+      "R1_oid": "b89112abb32b692c83cf94a3e85fce58c5798628",
+      "captured": {
+        "bytes": 106066,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/04-pon_work.rs.raw",
+        "sha256": "7af17da8488782bf403275b5fd401ad469dd460fd0ecda38a0edb4e714c5494e"
+      },
+      "lines": 2889,
+      "same_R1_H5DF": true,
+      "source": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs"
+    },
+    {
+      "H5DF_oid": "bbdcbe216eea36f0aa79d1bd7320ede197c66130",
+      "R1_oid": "bbdcbe216eea36f0aa79d1bd7320ede197c66130",
+      "captured": {
+        "bytes": 20390,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/20-maintenance_limb.rs.raw",
+        "sha256": "4dcb3b9280005cd022cb99c30752525406463d963419608b1532a7092198891d"
+      },
+      "lines": 525,
+      "same_R1_H5DF": true,
+      "source": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_limb.rs"
+    },
+    {
+      "H5DF_oid": "5bc6aff0a362fa6923ef7db2c1ea48b6fbf3e943",
+      "R1_oid": "5bc6aff0a362fa6923ef7db2c1ea48b6fbf3e943",
+      "captured": {
+        "bytes": 27612,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/30-history_import.rs.raw",
+        "sha256": "79c092cfd3cddec2c72553619669df5e13208e69f4e6bbead016f4d3571cf884"
+      },
+      "lines": 704,
+      "same_R1_H5DF": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs"
+    },
+    {
+      "H5DF_oid": "7919f646c4fd9f44000b0f59493fa71e84f991ea",
+      "R1_oid": "7919f646c4fd9f44000b0f59493fa71e84f991ea",
+      "captured": {
+        "bytes": 114097,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/31-request_observation.rs.raw",
+        "sha256": "9d4f8c71a87e2e1214789e0e096ded2c3497f93fb61e3239099e8753a639015b"
+      },
+      "lines": 2823,
+      "same_R1_H5DF": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs"
+    },
+    {
+      "H5DF_oid": "a7fd76834d321f57cc46a6559e2bcc3f046de0c5",
+      "R1_oid": "a7fd76834d321f57cc46a6559e2bcc3f046de0c5",
+      "captured": {
+        "bytes": 82351,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/32-scalar_cpu.rs.raw",
+        "sha256": "799cfe0fab3fb8e0b3796eee7748cb63a98c02b74d3083af98b4368c5895e384"
+      },
+      "lines": 2026,
+      "same_R1_H5DF": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs"
+    },
+    {
+      "H5DF_oid": "d596dc6bab16698cd18bcc15bcbbe1fafedf603e",
+      "R1_oid": "d596dc6bab16698cd18bcc15bcbbe1fafedf603e",
+      "captured": {
+        "bytes": 391470,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/33-store.rs.raw",
+        "sha256": "5918270368c61b420d26910dc5934714e1423f71c686b2d01f8d2e3ccceb990c"
+      },
+      "lines": 9445,
+      "same_R1_H5DF": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/store.rs"
+    },
+    {
+      "H5DF_oid": "a9aef9689af378bd115a54c25a076941ef2cbb96",
+      "R1_oid": "a9aef9689af378bd115a54c25a076941ef2cbb96",
+      "captured": {
+        "bytes": 221433,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/measurement-source-v1/0-ingress.rs.raw",
+        "sha256": "b04d1c8a2812fb17f8fd7b58c42cd3c430c42babd6889ac89f5d558cd7d07f2f"
+      },
+      "same_R1_H5DF": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/ingress.rs"
+    },
+    {
+      "H5DF_oid": "e1634d90de8a0d23eb4ddfba4187e64e7a8e372b",
+      "R1_oid": "e1634d90de8a0d23eb4ddfba4187e64e7a8e372b",
+      "captured": {
+        "bytes": 32240,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/measurement-source-v1/1-observation.rs.raw",
+        "sha256": "719ef0802c1ab4ddefc86f268859c36a8aaf875cca329a2220cae5321d7c30ed"
+      },
+      "same_R1_H5DF": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/ingress/history_import/observation.rs"
+    },
+    {
+      "H5DF_oid": "dededee2bfae0f6d9ba20b7a68c15d1ad2826933",
+      "R1_oid": "dededee2bfae0f6d9ba20b7a68c15d1ad2826933",
+      "captured": {
+        "bytes": 79324,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/measurement-source-v1/2-public_v3_from_zero.rs.raw",
+        "sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f"
+      },
+      "same_R1_H5DF": true,
+      "source": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs"
+    },
+    {
+      "H5DF_oid": "d94f27a764a2788e90352881b52fc9017a32ab67",
+      "R1_oid": "d94f27a764a2788e90352881b52fc9017a32ab67",
+      "captured": {
+        "bytes": 120278,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/domain-source-v1/operator_continuous_owner.rs.raw",
+        "sha256": "59398375101f36e234001dbd5bb15cd767a7b8537f457ccb104c41b110dfef4a"
+      },
+      "same_R1_H5DF": true,
+      "source": "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs"
+    }
+  ],
+  "status": "CLOSED_STATIC_REVIEW_NO_ACCEPTANCE_CHANGE",
+  "whole_zip_verified": false
+}

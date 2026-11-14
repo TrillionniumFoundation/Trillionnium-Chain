@@ -1,0 +1,699 @@
+{
+  "acquisition_index": {
+    "bytes": 5222,
+    "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/EVIDENCE_INDEX.json",
+    "sha256": "4107d030713ea4b18e24c451cac31aa71eb78afc6306e58ec12cf2bba6a3e654"
+  },
+  "acquisition_summary": {
+    "bytes": 42449,
+    "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/acquisition-summary.json",
+    "sha256": "fd73d1a0089e0f132964f23a57b83dd0a89f7d5c1197a165b8117c17520bd262"
+  },
+  "actual_GET_count": 6,
+  "actual_terminal": {
+    "bytes": 13365,
+    "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/final-review-v1/acquisition-actual-terminal.json",
+    "sha256": "174af64477f74bed8a5732d87f6d7ca829d7f72a88b6c70e884198151b2d728b"
+  },
+  "actual_terminal_raw": {
+    "bytes": 1781,
+    "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/final-review-v1/acquisition-actual-terminal.log",
+    "sha256": "80d738e96ac75f7066d8f86f4d7ed454b718b890a9f2492920360cf0f48de7c5"
+  },
+  "all_GET_exit_codes": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "http_status_note": "gh transport completion was recorded; HTTP status headers were not captured and no HTTP 200 claim is inferred",
+  "jobs": [
+    {
+      "artifact_from_original_upload": {
+        "bytes": 9277482,
+        "digest_line": 3625,
+        "downloaded": false,
+        "id": 14125551425,
+        "id_size_line": 3628,
+        "name": "priority-ubuntu-24.04-head-service-model-5df7ae6f482157c5f7fdcbcd52222117a965053f-1",
+        "name_line": 3593,
+        "origin": "original upload-action lines; not fresh artifact API",
+        "sha256": "ad83e8315ec1525be714881fcac3809b50de6f4f75f124bf21a2bcd0ea5ab066",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753847/artifacts/14125551425",
+        "whole_zip_sha256_verified": false
+      },
+      "conclusion": "failure",
+      "controller_log_line": 1395,
+      "controller_original_json": {
+        "bytes": 7497,
+        "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/final-review-v1/job-132528768003-controller-result.json",
+        "sha256": "4e8fc763225518c9b43eaf4d451bc2e3c67ed6854c7b38a03ec3779910e5e97a"
+      },
+      "error_lines": [
+        {
+          "line": 1396,
+          "text": "2026-11-14T17:40:47.0439679Z ##[error]Process completed with exit code 1."
+        }
+      ],
+      "failed_step": {
+        "completed_at": "2026-11-14T17:40:47Z",
+        "conclusion": "failure",
+        "name": "Execute original release from-zero controls",
+        "number": 7,
+        "started_at": "2026-11-14T17:35:03Z",
+        "status": "completed"
+      },
+      "host_command_log_lines": [
+        {
+          "line": 1377,
+          "text": "2026-11-14T17:35:03.5250219Z ##[group]Run python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_from_zero_native.py --out \"$TRNM_CI_RECEIPT_DIR/from-zero-native\""
+        },
+        {
+          "line": 1378,
+          "text": "2026-11-14T17:35:03.5252307Z \u001b[36;1mpython3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_from_zero_native.py --out \"$TRNM_CI_RECEIPT_DIR/from-zero-native\"\u001b[0m"
+        }
+      ],
+      "inner_failure_class": "UNKNOWN",
+      "job_id": 132528768003,
+      "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753847/job/132528768003",
+      "later_panic_interpretation": "Panic text appears in later successful control steps and is not the sole failed release step; it is not promoted to a new failure cause",
+      "later_panic_lines": [
+        1974,
+        1980,
+        2009,
+        2014,
+        2019,
+        2024,
+        2029,
+        2034,
+        2039,
+        2044,
+        2073,
+        2098,
+        2111,
+        2116,
+        2124,
+        2129,
+        2132
+      ],
+      "metadata_head_sha": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "metadata_raw": {
+        "bytes": 6103,
+        "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/job-132528768003-metadata.stdout",
+        "sha256": "f3f13ae244917b5506db3788d07f23b08d4f60244666664cf261abef169f89d4"
+      },
+      "name": "native priorities (ubuntu-24.04, head, service-model)",
+      "native_manifest_acquired": false,
+      "original_log": {
+        "bytes": 2223880,
+        "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/job-132528768003-original-log.stdout",
+        "sha256": "99a61cf06def08976a97bd4610fe0953f38b6553e6b578e3dce9cac067186bbc"
+      },
+      "other_successful_steps": [
+        {
+          "name": "Execute original window owner and context-bound consumer controls",
+          "number": 6
+        },
+        {
+          "name": "Execute actual CLI observation boundaries and retain every child result",
+          "number": 8
+        },
+        {
+          "name": "Execute isolated original debug pressure regression",
+          "number": 9
+        },
+        {
+          "name": "Execute original public service cancellation and actual CPU accounting controls",
+          "number": 10
+        },
+        {
+          "name": "Reject valid W1 state-root replay without durable admission",
+          "number": 11
+        },
+        {
+          "name": "Require actual shared CPU depletion and native public recovery",
+          "number": 12
+        },
+        {
+          "name": "Execute real native model lifecycle and adverse decisions",
+          "number": 13
+        },
+        {
+          "name": "Require native replay, packet encoding and admissible DAA controls",
+          "number": 14
+        },
+        {
+          "name": "Observe complete native history and packet response cost",
+          "number": 15
+        }
+      ],
+      "outer_observations": {
+        "binary_bytes_independently_acquired": false,
+        "build_exit": 0,
+        "cleanup": "already-collected",
+        "failure": null,
+        "final_host_errors": [],
+        "format_exit": 0,
+        "native_command_argv": [
+          "python3",
+          "scripts/ci/run_from_zero_native.py",
+          "--out",
+          "/home/runner/work/_temp/priority-observations/from-zero-native"
+        ],
+        "passed": false,
+        "preparation_binary_sha256": "b51a5fadd058dc5be0213136726612f8b1f2f6d29a84006d1569fe1b12ae2cb9",
+        "preparation_completed": true,
+        "preparation_failure_type": null,
+        "systemd_run_exit": 1
+      },
+      "preparation_source": {
+        "base": null,
+        "candidate": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+        "tested_tree": "6be4940d38cc88782657f2684cbefe48866f8b9f",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 3995072357,
+        "tracked_entries": 41681,
+        "tracked_worktree_verified": true
+      },
+      "preparation_source_before_after_equal": true,
+      "preparation_source_semantics": "kind=head describes the checked-out actual tested commit; top-level job source separately binds candidate/base/prospective",
+      "required14_member": false,
+      "run_attempt": 1,
+      "run_id": 43621753847,
+      "specific_native_error_token_matches": [],
+      "specific_native_error_tokens_searched": [
+        "CONFIRMATION_TARGET",
+        "PUBLIC_REQUEST_DEADLINE",
+        "PQ_WITNESS_DEADLINE",
+        "test result: FAILED",
+        "error: test failed"
+      ],
+      "status": "completed",
+      "top_level_source_before_after": [
+        {
+          "first_line": 1186,
+          "last_line": 1198,
+          "value": {
+            "base": null,
+            "candidate": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+            "tested_tree": "6be4940d38cc88782657f2684cbefe48866f8b9f",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 3995072357,
+            "tracked_entries": 41681,
+            "tracked_worktree_verified": true
+          }
+        },
+        {
+          "first_line": 3578,
+          "last_line": 3590,
+          "value": {
+            "base": null,
+            "candidate": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+            "tested_tree": "6be4940d38cc88782657f2684cbefe48866f8b9f",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 3995072357,
+            "tracked_entries": 41681,
+            "tracked_worktree_verified": true
+          }
+        }
+      ],
+      "top_level_source_equal": true,
+      "total_log_lines": 3643,
+      "workflow_name": "PoN priority acceptance"
+    },
+    {
+      "artifact_from_original_upload": {
+        "bytes": 9347193,
+        "digest_line": 3617,
+        "downloaded": false,
+        "id": 14125407125,
+        "id_size_line": 3620,
+        "name": "priority-ubuntu-24.04-arm-head-service-model-5df7ae6f482157c5f7fdcbcd52222117a965053f-1",
+        "name_line": 3585,
+        "origin": "original upload-action lines; not fresh artifact API",
+        "sha256": "cb3b3fd33eae490acb663ff369d75968935868d46d80459c162c3a387d6b2ed4",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753847/artifacts/14125407125",
+        "whole_zip_sha256_verified": false
+      },
+      "conclusion": "failure",
+      "controller_log_line": 1388,
+      "controller_original_json": {
+        "bytes": 7496,
+        "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/final-review-v1/job-132528767983-controller-result.json",
+        "sha256": "c8bb98158fa2fe830d02b62e076fe5a877e4a45e1d334fc8f2d367515c59dbe5"
+      },
+      "error_lines": [
+        {
+          "line": 1389,
+          "text": "2026-11-14T17:40:29.8898680Z ##[error]Process completed with exit code 1."
+        }
+      ],
+      "failed_step": {
+        "completed_at": "2026-11-14T17:40:29Z",
+        "conclusion": "failure",
+        "name": "Execute original release from-zero controls",
+        "number": 7,
+        "started_at": "2026-11-14T17:34:54Z",
+        "status": "completed"
+      },
+      "host_command_log_lines": [
+        {
+          "line": 1370,
+          "text": "2026-11-14T17:34:54.3702115Z ##[group]Run python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_from_zero_native.py --out \"$TRNM_CI_RECEIPT_DIR/from-zero-native\""
+        },
+        {
+          "line": 1371,
+          "text": "2026-11-14T17:34:54.3703081Z \u001b[36;1mpython3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_from_zero_native.py --out \"$TRNM_CI_RECEIPT_DIR/from-zero-native\"\u001b[0m"
+        }
+      ],
+      "inner_failure_class": "UNKNOWN",
+      "job_id": 132528767983,
+      "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753847/job/132528767983",
+      "later_panic_interpretation": "Panic text appears in later successful control steps and is not the sole failed release step; it is not promoted to a new failure cause",
+      "later_panic_lines": [
+        1966,
+        1972,
+        2001,
+        2006,
+        2011,
+        2016,
+        2021,
+        2026,
+        2031,
+        2036,
+        2065,
+        2090,
+        2103,
+        2108,
+        2116,
+        2121,
+        2124
+      ],
+      "metadata_head_sha": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "metadata_raw": {
+        "bytes": 6111,
+        "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/job-132528767983-metadata.stdout",
+        "sha256": "3d3cce29e709f235394567bfe431f21f7bdd925921cd1a4106297dbb7d16de1e"
+      },
+      "name": "native priorities (ubuntu-24.04-arm, head, service-model)",
+      "native_manifest_acquired": false,
+      "original_log": {
+        "bytes": 2223351,
+        "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/job-132528767983-original-log.stdout",
+        "sha256": "694149d613cb36bad29ea715ac413f07e819236d7af1532fc49094529d4813a7"
+      },
+      "other_successful_steps": [
+        {
+          "name": "Execute original window owner and context-bound consumer controls",
+          "number": 6
+        },
+        {
+          "name": "Execute actual CLI observation boundaries and retain every child result",
+          "number": 8
+        },
+        {
+          "name": "Execute isolated original debug pressure regression",
+          "number": 9
+        },
+        {
+          "name": "Execute original public service cancellation and actual CPU accounting controls",
+          "number": 10
+        },
+        {
+          "name": "Reject valid W1 state-root replay without durable admission",
+          "number": 11
+        },
+        {
+          "name": "Require actual shared CPU depletion and native public recovery",
+          "number": 12
+        },
+        {
+          "name": "Execute real native model lifecycle and adverse decisions",
+          "number": 13
+        },
+        {
+          "name": "Require native replay, packet encoding and admissible DAA controls",
+          "number": 14
+        },
+        {
+          "name": "Observe complete native history and packet response cost",
+          "number": 15
+        }
+      ],
+      "outer_observations": {
+        "binary_bytes_independently_acquired": false,
+        "build_exit": 0,
+        "cleanup": "already-collected",
+        "failure": null,
+        "final_host_errors": [],
+        "format_exit": 0,
+        "native_command_argv": [
+          "python3",
+          "scripts/ci/run_from_zero_native.py",
+          "--out",
+          "/home/runner/work/_temp/priority-observations/from-zero-native"
+        ],
+        "passed": false,
+        "preparation_binary_sha256": "9b80a580f751d55eaf7769da61e50f770640478a32c76c7a792184ffda7db1fe",
+        "preparation_completed": true,
+        "preparation_failure_type": null,
+        "systemd_run_exit": 1
+      },
+      "preparation_source": {
+        "base": null,
+        "candidate": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+        "tested_tree": "6be4940d38cc88782657f2684cbefe48866f8b9f",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 3995072357,
+        "tracked_entries": 41681,
+        "tracked_worktree_verified": true
+      },
+      "preparation_source_before_after_equal": true,
+      "preparation_source_semantics": "kind=head describes the checked-out actual tested commit; top-level job source separately binds candidate/base/prospective",
+      "required14_member": false,
+      "run_attempt": 1,
+      "run_id": 43621753847,
+      "specific_native_error_token_matches": [],
+      "specific_native_error_tokens_searched": [
+        "CONFIRMATION_TARGET",
+        "PUBLIC_REQUEST_DEADLINE",
+        "PQ_WITNESS_DEADLINE",
+        "test result: FAILED",
+        "error: test failed"
+      ],
+      "status": "completed",
+      "top_level_source_before_after": [
+        {
+          "first_line": 1179,
+          "last_line": 1191,
+          "value": {
+            "base": null,
+            "candidate": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+            "tested_tree": "6be4940d38cc88782657f2684cbefe48866f8b9f",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 3995072357,
+            "tracked_entries": 41681,
+            "tracked_worktree_verified": true
+          }
+        },
+        {
+          "first_line": 3570,
+          "last_line": 3582,
+          "value": {
+            "base": null,
+            "candidate": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+            "tested_tree": "6be4940d38cc88782657f2684cbefe48866f8b9f",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 3995072357,
+            "tracked_entries": 41681,
+            "tracked_worktree_verified": true
+          }
+        }
+      ],
+      "top_level_source_equal": true,
+      "total_log_lines": 3635,
+      "workflow_name": "PoN priority acceptance"
+    },
+    {
+      "artifact_from_original_upload": {
+        "bytes": 9339141,
+        "digest_line": 3618,
+        "downloaded": false,
+        "id": 14125057766,
+        "id_size_line": 3621,
+        "name": "priority-ubuntu-24.04-arm-prospective-merge-service-model-5df7ae6f482157c5f7fdcbcd52222117a965053f-1",
+        "name_line": 3586,
+        "origin": "original upload-action lines; not fresh artifact API",
+        "sha256": "e4c71e66d753620c921b8087e13378878f6ed899054efa94e7947a8f8946a64c",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753847/artifacts/14125057766",
+        "whole_zip_sha256_verified": false
+      },
+      "conclusion": "failure",
+      "controller_log_line": 1389,
+      "controller_original_json": {
+        "bytes": 7496,
+        "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/final-review-v1/job-132528768001-controller-result.json",
+        "sha256": "1d4c8cf1fd0a79295b964be92d83a3b1d3ac239319344fca133e699b7ea3a879"
+      },
+      "error_lines": [
+        {
+          "line": 1390,
+          "text": "2026-11-14T17:41:04.2664977Z ##[error]Process completed with exit code 1."
+        }
+      ],
+      "failed_step": {
+        "completed_at": "2026-11-14T17:41:04Z",
+        "conclusion": "failure",
+        "name": "Execute original release from-zero controls",
+        "number": 7,
+        "started_at": "2026-11-14T17:35:24Z",
+        "status": "completed"
+      },
+      "host_command_log_lines": [
+        {
+          "line": 1371,
+          "text": "2026-11-14T17:35:24.9494416Z ##[group]Run python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_from_zero_native.py --out \"$TRNM_CI_RECEIPT_DIR/from-zero-native\""
+        },
+        {
+          "line": 1372,
+          "text": "2026-11-14T17:35:24.9495376Z \u001b[36;1mpython3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_from_zero_native.py --out \"$TRNM_CI_RECEIPT_DIR/from-zero-native\"\u001b[0m"
+        }
+      ],
+      "inner_failure_class": "UNKNOWN",
+      "job_id": 132528768001,
+      "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753847/job/132528768001",
+      "later_panic_interpretation": "Panic text appears in later successful control steps and is not the sole failed release step; it is not promoted to a new failure cause",
+      "later_panic_lines": [
+        1967,
+        1973,
+        2002,
+        2007,
+        2012,
+        2017,
+        2022,
+        2027,
+        2032,
+        2037,
+        2066,
+        2091,
+        2104,
+        2109,
+        2117,
+        2122,
+        2125
+      ],
+      "metadata_head_sha": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "metadata_raw": {
+        "bytes": 6124,
+        "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/job-132528768001-metadata.stdout",
+        "sha256": "f7d27f3b44685096220a88c7f1a4d3aa9931982dc1130f5626c51f663ff20534"
+      },
+      "name": "native priorities (ubuntu-24.04-arm, prospective-merge, service-model)",
+      "native_manifest_acquired": false,
+      "original_log": {
+        "bytes": 2224013,
+        "path": "/private/tmp/chain-prci-H5DF-service-model-original-logs-20261114-v1/job-132528768001-original-log.stdout",
+        "sha256": "c080ace114a9617b17fb24b68eb9f0b462783111b967a9865e2c879633bf8c1a"
+      },
+      "other_successful_steps": [
+        {
+          "name": "Execute original window owner and context-bound consumer controls",
+          "number": 6
+        },
+        {
+          "name": "Execute actual CLI observation boundaries and retain every child result",
+          "number": 8
+        },
+        {
+          "name": "Execute isolated original debug pressure regression",
+          "number": 9
+        },
+        {
+          "name": "Execute original public service cancellation and actual CPU accounting controls",
+          "number": 10
+        },
+        {
+          "name": "Reject valid W1 state-root replay without durable admission",
+          "number": 11
+        },
+        {
+          "name": "Require actual shared CPU depletion and native public recovery",
+          "number": 12
+        },
+        {
+          "name": "Execute real native model lifecycle and adverse decisions",
+          "number": 13
+        },
+        {
+          "name": "Require native replay, packet encoding and admissible DAA controls",
+          "number": 14
+        },
+        {
+          "name": "Observe complete native history and packet response cost",
+          "number": 15
+        }
+      ],
+      "outer_observations": {
+        "binary_bytes_independently_acquired": false,
+        "build_exit": 0,
+        "cleanup": "already-collected",
+        "failure": null,
+        "final_host_errors": [],
+        "format_exit": 0,
+        "native_command_argv": [
+          "python3",
+          "scripts/ci/run_from_zero_native.py",
+          "--out",
+          "/home/runner/work/_temp/priority-observations/from-zero-native"
+        ],
+        "passed": false,
+        "preparation_binary_sha256": "9b80a580f751d55eaf7769da61e50f770640478a32c76c7a792184ffda7db1fe",
+        "preparation_completed": true,
+        "preparation_failure_type": null,
+        "systemd_run_exit": 1
+      },
+      "preparation_source": {
+        "base": null,
+        "candidate": "a590178fa1ba11fc1419ea60de1f7f5633a70cfd",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "a590178fa1ba11fc1419ea60de1f7f5633a70cfd",
+        "tested_tree": "6be4940d38cc88782657f2684cbefe48866f8b9f",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 3995072357,
+        "tracked_entries": 41681,
+        "tracked_worktree_verified": true
+      },
+      "preparation_source_before_after_equal": true,
+      "preparation_source_semantics": "kind=head describes the checked-out actual tested commit; top-level job source separately binds candidate/base/prospective",
+      "required14_member": false,
+      "run_attempt": 1,
+      "run_id": 43621753847,
+      "specific_native_error_token_matches": [],
+      "specific_native_error_tokens_searched": [
+        "CONFIRMATION_TARGET",
+        "PUBLIC_REQUEST_DEADLINE",
+        "PQ_WITNESS_DEADLINE",
+        "test result: FAILED",
+        "error: test failed"
+      ],
+      "status": "completed",
+      "top_level_source_before_after": [
+        {
+          "first_line": 1180,
+          "last_line": 1192,
+          "value": {
+            "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+            "candidate": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+            "kind": "prospective-merge",
+            "prospective_merge": "a590178fa1ba11fc1419ea60de1f7f5633a70cfd",
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "a590178fa1ba11fc1419ea60de1f7f5633a70cfd",
+            "tested_tree": "6be4940d38cc88782657f2684cbefe48866f8b9f",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 3995072357,
+            "tracked_entries": 41681,
+            "tracked_worktree_verified": true
+          }
+        },
+        {
+          "first_line": 3571,
+          "last_line": 3583,
+          "value": {
+            "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+            "candidate": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+            "kind": "prospective-merge",
+            "prospective_merge": "a590178fa1ba11fc1419ea60de1f7f5633a70cfd",
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "a590178fa1ba11fc1419ea60de1f7f5633a70cfd",
+            "tested_tree": "6be4940d38cc88782657f2684cbefe48866f8b9f",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 3995072357,
+            "tracked_entries": 41681,
+            "tracked_worktree_verified": true
+          }
+        }
+      ],
+      "top_level_source_equal": true,
+      "total_log_lines": 3636,
+      "workflow_name": "PoN priority acceptance"
+    }
+  ],
+  "minimal_next_read_plan": {
+    "bounds": {
+      "initial_each_seconds": 120,
+      "initial_max_GETs": 4,
+      "initial_total_seconds": 300,
+      "selected_member_uncompressed_cap_bytes": 4194304
+    },
+    "first_candidate_artifact": {
+      "bytes": 9277482,
+      "digest_line": 3625,
+      "downloaded": false,
+      "id": 14125551425,
+      "id_size_line": 3628,
+      "name": "priority-ubuntu-24.04-head-service-model-5df7ae6f482157c5f7fdcbcd52222117a965053f-1",
+      "name_line": 3593,
+      "origin": "original upload-action lines; not fresh artifact API",
+      "sha256": "ad83e8315ec1525be714881fcac3809b50de6f4f75f124bf21a2bcd0ea5ab066",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753847/artifacts/14125551425",
+      "whole_zip_sha256_verified": false
+    },
+    "initial_requests": "Fresh metadata, one exact positive tail range, central-directory range only if not wholly in that tail, and the exact local-header+compressed member range for from-zero-native/manifest.json if the actual CD contains it",
+    "not_downloaded": [
+      "ELF",
+      "SQLite",
+      "unrelated artifacts"
+    ],
+    "purpose": "Read this job's own native failure manifest, then only evidence named by it if needed; no cause inheritance across jobs",
+    "required_checks": "metadata exact run/head/name/size/digest against the original upload; range status 206 and exact Content-Range/length; central-directory safe names/duplicates/symlinks; selected record filename/size/CRC; ignored Range stops without whole-download fallback",
+    "scope_limit": "Selected-member CRC is not whole ZIP digest or all-member validation. Other two jobs stay inner UNKNOWN until their own manifest is acquired.",
+    "status": "PROPOSED_NOT_EXECUTED"
+  },
+  "no_additional_network_for_analysis": true,
+  "no_native_execution": true,
+  "observation_interval": {
+    "elapsed_seconds": 71.043604,
+    "finished_at": "2026-11-14T18:22:39.794452+00:00",
+    "started_at": "2026-11-14T18:21:28.750246+00:00"
+  },
+  "qualifications": false,
+  "schema": "trnm-H5DF-three-service-model-outer-cause-review-v1",
+  "scope": "three original PoN priority acceptance service-model jobs, outside required14; metadata and complete outer logs only",
+  "sealed_at": "2026-11-14T18:26:07.018562+00:00",
+  "source": {
+    "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "candidate": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+    "prospective": "a590178fa1ba11fc1419ea60de1f7f5633a70cfd",
+    "tree": "6be4940d38cc88782657f2684cbefe48866f8b9f"
+  },
+  "source_refs_stage_unchanged": true,
+  "status": "OUTER_FAILURE_CONFIRMED_INNER_UNKNOWN"
+}

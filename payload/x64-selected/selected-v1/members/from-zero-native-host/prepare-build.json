@@ -1,0 +1,130 @@
+{
+  "binary_path": "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-e1ce94b852e44392",
+  "binary_sha256": "bb788ecebc740db3e54cdb1a2942db4af9f19f592404f73026dfeb6ad9f26507",
+  "build_env": {
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CARGO_HOME": "/home/runner/work/_temp/cargo-cross-arch-cost",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_TARGET_DIR": "/home/runner/work/_temp/target-cross-arch-cost",
+    "OPENSSL_CONF": null,
+    "OPENSSL_DIR": null,
+    "OPENSSL_MODULES": null,
+    "OPENSSL_STATIC": null,
+    "RUSTFLAGS": null,
+    "RUSTUP_TOOLCHAIN": null,
+    "TRNM_PQ_OPENSSL": null,
+    "TRNM_PQ_OPENSSL_SHA256": null,
+    "TRNM_PQ_OPENSSL_VERSION": null
+  },
+  "completed": true,
+  "consensus_or_model_authority": false,
+  "failure_type": null,
+  "format_preparation": {
+    "process": {
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "cpu_ns": 11958732000,
+      "cpu_scope": "entire child, not apportioned to nested wall intervals",
+      "exit_code": 0,
+      "involuntary_switches": 66,
+      "major_faults": 0,
+      "max_rss_kib": 273580,
+      "minor_faults": 55183,
+      "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "system_cpu_ns": 215016000,
+      "timed_out": false,
+      "user_cpu_ns": 11743716000,
+      "voluntary_switches": 37,
+      "wait4_cpu_resolution_ns": 1000,
+      "wall_ns": 11959990713
+    },
+    "timeout_seconds": 60,
+    "tool_versions": {
+      "cargo": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)",
+      "rustc": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+      "rustfmt": "rustfmt 1.9.0-stable (59807616e1 2026-04-14)"
+    }
+  },
+  "native_tests_executed": false,
+  "process": {
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--release",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--test",
+      "public_v3_from_zero",
+      "--no-run",
+      "--message-format=json"
+    ],
+    "cpu_ns": 359798932000,
+    "cpu_scope": "entire child, not apportioned to nested wall intervals",
+    "exit_code": 0,
+    "involuntary_switches": 2555,
+    "major_faults": 445,
+    "max_rss_kib": 1954364,
+    "minor_faults": 4315511,
+    "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+    "stderr_sha256": "f162e80cda8a1974016726d1e62bb3d72dab1e28178a48e7e6050350a6f77c66",
+    "stdout_sha256": "065bb6cd12f3e0c9745f8cc62723f958f797fd639bbff31c56ded5cd2f86aee4",
+    "system_cpu_ns": 11194789000,
+    "timed_out": false,
+    "user_cpu_ns": 348604143000,
+    "voluntary_switches": 12283,
+    "wait4_cpu_resolution_ns": 1000,
+    "wall_ns": 185787800296
+  },
+  "schema": "trnm-ci-original-native-build-preparation-v1",
+  "service_resource_observation": false,
+  "source_after": {
+    "commit": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+    "test_sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f",
+    "tracked_source_identity": {
+      "base": null,
+      "candidate": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "tested_tree": "6be4940d38cc88782657f2684cbefe48866f8b9f",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 3995072357,
+      "tracked_entries": 41681,
+      "tracked_worktree_verified": true
+    },
+    "tree": "6be4940d38cc88782657f2684cbefe48866f8b9f"
+  },
+  "source_before": {
+    "commit": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+    "test_sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f",
+    "tracked_source_identity": {
+      "base": null,
+      "candidate": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "tested_tree": "6be4940d38cc88782657f2684cbefe48866f8b9f",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 3995072357,
+      "tracked_entries": 41681,
+      "tracked_worktree_verified": true
+    },
+    "tree": "6be4940d38cc88782657f2684cbefe48866f8b9f"
+  },
+  "source_error": null
+}

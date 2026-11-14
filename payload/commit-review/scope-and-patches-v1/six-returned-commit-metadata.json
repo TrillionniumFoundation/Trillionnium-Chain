@@ -1,0 +1,111 @@
+[
+  {
+    "author": {
+      "date": "2026-11-14T12:43:06Z",
+      "email": "tomasbraynt@gmail.com",
+      "name": "Tomasrgbsf"
+    },
+    "committer": {
+      "date": "2026-11-14T12:43:06Z",
+      "email": "tomasbraynt@gmail.com",
+      "name": "Tomasrgbsf"
+    },
+    "message": "fix(ingress): enforce V2 deadline after signed response verification\n\nResponse decoding and signature verification consume the original caller\ndeadline. Refuse a completed signed response once that deadline expires.\n\nExercise a real loopback signed response at the final return boundary,\nretain an on-time response control, and refuse expired calls before TCP.\nUpdate the exact audited source pin without changing protocol domains\nor any service lifetime, resource budget, or qualification verdict.",
+    "parents": [
+      "096c6b5f9b952c49389fd975515744074ba61317"
+    ],
+    "sha": "2155d48d42854f672f5dbac84baffacdd01db16d",
+    "tree": "1ba016675226d07b847e5eb0cc9351e581e07e3d"
+  },
+  {
+    "author": {
+      "date": "2026-11-14T13:12:38Z",
+      "email": "tomasbraynt@gmail.com",
+      "name": "Tomasrgbsf"
+    },
+    "committer": {
+      "date": "2026-11-14T13:12:38Z",
+      "email": "tomasbraynt@gmail.com",
+      "name": "Tomasrgbsf"
+    },
+    "message": "Fix MU1 source binding after audited verifier updates\n\nBind the unchanged MU1 research contract to the reviewed current pon_work\nsource. The native delta preserves the original W1 statement and adds\ncooperative task hashing, module exports and a private checked continuation.\nKeep all 16 cost cells unknown, all proof obligations open, and HOLD_NO_GO.\n\nThe original source mismatch and 16-test failure remain in audit receipts;\nthe 16 existing contract and negative controls pass after this one-pin fix.",
+    "parents": [
+      "2155d48d42854f672f5dbac84baffacdd01db16d"
+    ],
+    "sha": "efb206f29317c3836da70b497f061a746fb9ad68",
+    "tree": "9f00bfc5637014a7a1e0ded31a08c214ed35f1db"
+  },
+  {
+    "author": {
+      "date": "2026-11-14T13:16:54Z",
+      "email": "tomasbraynt@gmail.com",
+      "name": "Tomasrgbsf"
+    },
+    "committer": {
+      "date": "2026-11-14T13:16:54Z",
+      "email": "tomasbraynt@gmail.com",
+      "name": "Tomasrgbsf"
+    },
+    "message": "Rebind joint research audit to reviewed current source\n\nThe listed 23-file source anchor drifted after reviewed native verifier,\nread-only forecast, and confirmation-integrity updates. Compare every pin\nto the original Git revision, review the three complete native deltas, and\nanchor the current map to the commit containing the MU1 pin repair.\n\nRetain all 18 unknown parameters, 13 open obligations, 16 unproved cost\ncells, and HOLD_NO_GO. Keep the independent checker map guard and expand\nthe existing revision-refusal control to reject the superseded anchor.\nUpdate the matching joint contract, checker and control blobs in the PQ corpus.",
+    "parents": [
+      "efb206f29317c3836da70b497f061a746fb9ad68"
+    ],
+    "sha": "ecd0f270911f37f57d11e6a56da411832f56135a",
+    "tree": "c2c482d915308a07954196105f129d90b8c4cbd3"
+  },
+  {
+    "author": {
+      "date": "2026-11-14T14:02:19Z",
+      "email": "tomasbraynt@gmail.com",
+      "name": "Tomasrgbsf"
+    },
+    "committer": {
+      "date": "2026-11-14T14:02:19Z",
+      "email": "tomasbraynt@gmail.com",
+      "name": "Tomasrgbsf"
+    },
+    "message": "fix: bind retained native collector to its pinned source commit\n\nRead and verify the original collector blob under the externally pinned commit and tree without executing it. Preserve current collector evolution and retained evidence. Cover changed current source, absent commits, wrong trees, symlinks, replacement refs and forged current digests.",
+    "parents": [
+      "ecd0f270911f37f57d11e6a56da411832f56135a"
+    ],
+    "sha": "989055428a46b67ff99390bf7bcaa09783936d39",
+    "tree": "f08061d433a23606363efcc6af49c580f07ed27a"
+  },
+  {
+    "author": {
+      "date": "2026-11-14T14:29:37Z",
+      "email": "tomasbraynt@gmail.com",
+      "name": "Tomasrgbsf"
+    },
+    "committer": {
+      "date": "2026-11-14T14:29:37Z",
+      "email": "tomasbraynt@gmail.com",
+      "name": "Tomasrgbsf"
+    },
+    "message": "test: bind gated-root cleanup to its actual native wait status\n\nKeep the original launch error, execution gate, cleanup limits and production status untouched. Require exact owned-root waitid/wait4 agreement. Accept gate EOF exit125 or only a recorded same-birth TERM/KILL from launch-error cleanup before the actual reap. Preserve all other controls and update the one corpus blob pin.",
+    "parents": [
+      "989055428a46b67ff99390bf7bcaa09783936d39"
+    ],
+    "sha": "abfcff23d4e2aab7dfd92dfb34937ec7d6021ead",
+    "tree": "f1d9b44a443f0f773642432f181e4f5ad2b21c29"
+  },
+  {
+    "author": {
+      "date": "2026-11-14T15:37:19Z",
+      "email": "tomasbraynt@gmail.com",
+      "name": "Tomasrgbsf"
+    },
+    "committer": {
+      "date": "2026-11-14T15:37:19Z",
+      "email": "tomasbraynt@gmail.com",
+      "name": "Tomasrgbsf"
+    },
+    "message": "Merge reviewed concurrent source with local deadline and ownership fixes\n\nReconcile ABFC and 2a by explicit source and evidence dispositions.\nKeep the local public_v2 completion deadline check, select the reviewed\nimmutable PublicPolicy prefix cache and epoch-before-readiness store,\nand compose all sixteen owned-collector controls with causal raw status.\nRestore four byte-exact metadata files missing from a retained index,\ncorrect current versus historical source labels, and preserve the old\nFC39 observations with the withdrawn ordering recommendation explicit.\nOriginal business failures and qualification boundaries remain open.\nProposal SHA256: 21e5299e01eec57f7c72fb7ae76c287f00389be64cb3bd3c3493b2d783b8f1e6\nResolution SHA256: 5f10655e03bd7c801eb99cc445990e98ba675c998b3dcb941235e2858fc08cb5",
+    "parents": [
+      "abfcff23d4e2aab7dfd92dfb34937ec7d6021ead",
+      "2a86462a1ab20c68151719ba4635e3c294391e64"
+    ],
+    "sha": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+    "tree": "6be4940d38cc88782657f2684cbefe48866f8b9f"
+  }
+]

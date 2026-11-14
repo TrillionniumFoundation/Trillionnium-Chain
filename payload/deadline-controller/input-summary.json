@@ -1,0 +1,222 @@
+{
+  "derived": [
+    {
+      "bytes": 29308,
+      "git_oid": "530169ab9de7079958ada8f2f4d66702ea54cca0",
+      "hunks": [
+        {
+          "new_count": 44,
+          "new_start": 303,
+          "old_count": 7,
+          "old_start": 303
+        }
+      ],
+      "mode": "100644",
+      "path": "/private/tmp/chain-new-head-5df7-deadline-controller-review-20261114-v1/5df-derived/scripts/test_w1_owned_process_collector_v1.py",
+      "repo_path": "scripts/test_w1_owned_process_collector_v1.py",
+      "sha256": "e3148f32e4d09994b72cbfe3613cf4baf6427a45247c6119287e744f1f6144e2",
+      "source_kind": "derived exact Git blob"
+    },
+    {
+      "bytes": 113603,
+      "git_oid": "3a9fbe26283920a77ae4883a46153440abbe7e12",
+      "hunks": [
+        {
+          "new_count": 10,
+          "new_start": 1540,
+          "old_count": 6,
+          "old_start": 1540
+        },
+        {
+          "new_count": 100,
+          "new_start": 1584,
+          "old_count": 6,
+          "old_start": 1580
+        }
+      ],
+      "mode": "100644",
+      "path": "/private/tmp/chain-new-head-5df7-deadline-controller-review-20261114-v1/5df-derived/trillionnium/crates/trnm-pon-node/src/ingress/public_v2.rs",
+      "repo_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v2.rs",
+      "sha256": "925473c9eef8a32eee6fa29bc5b58a52168f83995578c2ef3ca4384a354295b9",
+      "source_kind": "derived exact Git blob"
+    }
+  ],
+  "new": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+  "new_blob_source": "strict reconstruction of pinned complete API patch and immutable R1 blob; no new network/blob request",
+  "old": "2a86462a1ab20c68151719ba4635e3c294391e64",
+  "schema": "trnm-new-head-deadline-controller-inputs-v1",
+  "source_refs_stage_changes": false,
+  "sources": [
+    {
+      "bytes": 26879,
+      "git_oid": "0c683b183d64d71e8ae6c6f44dca857b4f6e77b3",
+      "mode": "100644",
+      "path": "/private/tmp/chain-new-head-5df7-deadline-controller-review-20261114-v1/R1/scripts/test_w1_owned_process_collector_v1.py",
+      "repo_path": "scripts/test_w1_owned_process_collector_v1.py",
+      "sha256": "31b2e67e25653fdb025150c6ba5fef1ba23b20efe7c6c05fe429cca853a3e8aa"
+    },
+    {
+      "bytes": 48204,
+      "git_oid": "7049001ace23192d6d32e4f438ca85e4b0ac16cc",
+      "mode": "100644",
+      "path": "/private/tmp/chain-new-head-5df7-deadline-controller-review-20261114-v1/R1/scripts/w1_owned_process_collector_v1.py",
+      "repo_path": "scripts/w1_owned_process_collector_v1.py",
+      "sha256": "01accf26eecd5b0bdecd94909d328cafc028d7d2bcf387ec9ecbcab533b146cc"
+    },
+    {
+      "bytes": 46605,
+      "git_oid": "bbe1c63b258cb59042d1b389f598d54290cd5d9f",
+      "mode": "100644",
+      "path": "/private/tmp/chain-new-head-5df7-deadline-controller-review-20261114-v1/R1/scripts/ci/ci_job.sh",
+      "repo_path": "scripts/ci/ci_job.sh",
+      "sha256": "a3789f3e81a97abe8d85b3f5394d7b8c31b962027b381ac9b1bb953a6fdc610b"
+    },
+    {
+      "bytes": 109568,
+      "git_oid": "e359ba90bb714c6e04233f32cdd12e817a09ed8b",
+      "mode": "100644",
+      "path": "/private/tmp/chain-new-head-5df7-deadline-controller-review-20261114-v1/R1/trillionnium/crates/trnm-pon-node/src/ingress/public_v2.rs",
+      "repo_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v2.rs",
+      "sha256": "8d58828533019c97f4e7061704cf40caa86cb6b180846397d4b50e3169b25ae5"
+    }
+  ],
+  "status": "INPUTS_CLOSED",
+  "steps": [
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "-C",
+        "/private/tmp/chain-consolidation-20261114-mainline",
+        "ls-tree",
+        "-z",
+        "2a86462a1ab20c68151719ba4635e3c294391e64",
+        "--",
+        "scripts/test_w1_owned_process_collector_v1.py",
+        "scripts/w1_owned_process_collector_v1.py",
+        "scripts/ci/ci_job.sh",
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v2.rs"
+      ],
+      "cwd": "/private/tmp",
+      "exit_code": 0,
+      "finished_at": "2026-11-14T17:40:49.876891+00:00",
+      "label": "R1-exact-source-tree",
+      "started_at": "2026-11-14T17:40:49.865568+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-head-5df7-deadline-controller-review-20261114-v1/commands/R1-exact-source-tree.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 379,
+        "path": "/private/tmp/chain-new-head-5df7-deadline-controller-review-20261114-v1/commands/R1-exact-source-tree.stdout",
+        "sha256": "8ebc648df1daad1bf482f185467c06cd67aa035a018af27df878832165dd138a"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "-C",
+        "/private/tmp/chain-consolidation-20261114-mainline",
+        "cat-file",
+        "blob",
+        "0c683b183d64d71e8ae6c6f44dca857b4f6e77b3"
+      ],
+      "cwd": "/private/tmp",
+      "exit_code": 0,
+      "finished_at": "2026-11-14T17:40:49.885791+00:00",
+      "label": "R1-blob-1",
+      "started_at": "2026-11-14T17:40:49.876921+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-head-5df7-deadline-controller-review-20261114-v1/commands/R1-blob-1.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 26879,
+        "path": "/private/tmp/chain-new-head-5df7-deadline-controller-review-20261114-v1/commands/R1-blob-1.stdout",
+        "sha256": "31b2e67e25653fdb025150c6ba5fef1ba23b20efe7c6c05fe429cca853a3e8aa"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "-C",
+        "/private/tmp/chain-consolidation-20261114-mainline",
+        "cat-file",
+        "blob",
+        "7049001ace23192d6d32e4f438ca85e4b0ac16cc"
+      ],
+      "cwd": "/private/tmp",
+      "exit_code": 0,
+      "finished_at": "2026-11-14T17:40:49.892986+00:00",
+      "label": "R1-blob-2",
+      "started_at": "2026-11-14T17:40:49.885954+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-head-5df7-deadline-controller-review-20261114-v1/commands/R1-blob-2.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 48204,
+        "path": "/private/tmp/chain-new-head-5df7-deadline-controller-review-20261114-v1/commands/R1-blob-2.stdout",
+        "sha256": "01accf26eecd5b0bdecd94909d328cafc028d7d2bcf387ec9ecbcab533b146cc"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "-C",
+        "/private/tmp/chain-consolidation-20261114-mainline",
+        "cat-file",
+        "blob",
+        "bbe1c63b258cb59042d1b389f598d54290cd5d9f"
+      ],
+      "cwd": "/private/tmp",
+      "exit_code": 0,
+      "finished_at": "2026-11-14T17:40:49.900708+00:00",
+      "label": "R1-blob-3",
+      "started_at": "2026-11-14T17:40:49.893108+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-head-5df7-deadline-controller-review-20261114-v1/commands/R1-blob-3.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 46605,
+        "path": "/private/tmp/chain-new-head-5df7-deadline-controller-review-20261114-v1/commands/R1-blob-3.stdout",
+        "sha256": "a3789f3e81a97abe8d85b3f5394d7b8c31b962027b381ac9b1bb953a6fdc610b"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "-C",
+        "/private/tmp/chain-consolidation-20261114-mainline",
+        "cat-file",
+        "blob",
+        "e359ba90bb714c6e04233f32cdd12e817a09ed8b"
+      ],
+      "cwd": "/private/tmp",
+      "exit_code": 0,
+      "finished_at": "2026-11-14T17:40:49.918460+00:00",
+      "label": "R1-blob-4",
+      "started_at": "2026-11-14T17:40:49.901239+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-new-head-5df7-deadline-controller-review-20261114-v1/commands/R1-blob-4.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 109568,
+        "path": "/private/tmp/chain-new-head-5df7-deadline-controller-review-20261114-v1/commands/R1-blob-4.stdout",
+        "sha256": "8d58828533019c97f4e7061704cf40caa86cb6b180846397d4b50e3169b25ae5"
+      }
+    }
+  ],
+  "tests_or_target_helpers_executed": false
+}

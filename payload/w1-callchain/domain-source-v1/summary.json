@@ -1,0 +1,21 @@
+{
+  "source": "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs",
+  "H5DF_oid": "d94f27a764a2788e90352881b52fc9017a32ab67",
+  "R1_oid": "d94f27a764a2788e90352881b52fc9017a32ab67",
+  "same_R1_H5DF": true,
+  "raw": {
+    "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/domain-source-v1/operator_continuous_owner.rs.raw",
+    "bytes": 120278,
+    "sha256": "59398375101f36e234001dbd5bb15cd767a7b8537f457ccb104c41b110dfef4a"
+  },
+  "excerpt": {
+    "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/domain-source-v1/remote-history-domain.txt",
+    "bytes": 3564,
+    "sha256": "5f16e398c53a1d210b586f33702fdcb9b84a7b340b968cbfb2c571fca4b68bb0"
+  },
+  "private_callers": {
+    "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/domain-source-v1/private-kernel-callers.json",
+    "bytes": 2937,
+    "sha256": "43e24dcfa78014415eac17d3917a657ed734252e06a48be1aa70a0f7d609e1dc"
+  }
+}

@@ -1,0 +1,150 @@
+{
+  "ci": {
+    "exact_required_controls": 16,
+    "runtime_collector_identical_by_compare": {
+      "bytes": 48204,
+      "git_oid": "7049001ace23192d6d32e4f438ca85e4b0ac16cc",
+      "mode": "100644",
+      "path": "/private/tmp/chain-new-head-5df7-deadline-controller-review-20261114-v1/R1/scripts/w1_owned_process_collector_v1.py",
+      "repo_path": "scripts/w1_owned_process_collector_v1.py",
+      "sha256": "01accf26eecd5b0bdecd94909d328cafc028d7d2bcf387ec9ecbcab533b146cc"
+    },
+    "same_file_at_new_head_by_complete_12path_compare": true,
+    "zero_skip_and_OK_guard_retained": true
+  },
+  "input_summary": {
+    "bytes": 8467,
+    "path": "/private/tmp/chain-new-head-5df7-deadline-controller-review-20261114-v1/input-summary.json",
+    "sha256": "593207e1148e34a1a11ba2e6bee82b288e1b2c385143a7e609e25201cd1669c3"
+  },
+  "python": {
+    "all_test_names": [
+      "CollectorControls.test_actual_double_fork_new_session_root_exits_before_descendants",
+      "CollectorControls.test_actual_internal_popen_status_and_external_sibling_are_preserved",
+      "CollectorControls.test_actual_root_signal_is_not_translated_to_success",
+      "CollectorControls.test_actual_cancel_reaps_detached_ignoring_descendant",
+      "CollectorControls.test_actual_original_timeout_reaps_after_root_has_exited",
+      "CollectorControls.test_actual_owner_lost_is_cleaned_without_treating_successful_root_as_success",
+      "CollectorControls.test_actual_collector_sigkill_is_unknown_even_after_guard_reaps_orphan",
+      "CollectorControls.test_actual_output_limit_is_bounded_and_fails_without_losing_root_status",
+      "CollectorControls.test_actual_exec_closes_inherited_fd_and_rejects_direct_shebang",
+      "CollectorControls.test_real_pidfd_rejects_wrong_birth_and_fifo_reads_do_not_block",
+      "CollectorControls.test_actual_post_fork_identity_failure_reaps_gated_root_without_exec",
+      "CollectorControls.test_reader_strict_types_identity_clock_and_actual_terminal_binding",
+      "CollectorControls.test_original_clock_gate_and_nonlinux_never_execute_payload",
+      "CollectorControls.test_actual_generation_dispatch_worker_exec_chain_is_wrapped_without_status_theft",
+      "ClosedExecGateSignalControls.test_closed_unreleased_gate_defers_term_without_extending_original_kill_threshold",
+      "ClosedExecGateSignalControls.test_released_root_or_unconfirmed_gate_keeps_original_term_cleanup"
+    ],
+    "all_unchanged_method_source_sha256": {
+      "ClosedExecGateSignalControls.closed_gate_collector": "2cf78e2709be5e598295b72ead3d2da7f6ae3c337bf1e85871aeb9181dacf13c",
+      "ClosedExecGateSignalControls.test_closed_unreleased_gate_defers_term_without_extending_original_kill_threshold": "d2724bf44c9bf9fd3eab18ac1d8a956b0c601bd562bea1caba6355ecc9163238",
+      "ClosedExecGateSignalControls.test_released_root_or_unconfirmed_gate_keeps_original_term_cleanup": "4313bbc34069ac2a355f09084000665741b07605311329de96562a777a98f631",
+      "CollectorControls.argv": "61cc543f0b4855b5b0faa8741dc6a48ddcd504bab72a764b8032a3ce34161c09",
+      "CollectorControls.finish": "5b615d565061388eeba94cf405334236b9df24baf92541fb9347382b2fc5bbfa",
+      "CollectorControls.guarded": "b8d4f891e5f2cd600806ae5da6246f20983e2ad8abfc3beaee67ac38c6418d38",
+      "CollectorControls.long_tree": "9fc8d1dd19ca15ea98cc55f0b635e7d4d5344eb2432018f582274787f4e5d468",
+      "CollectorControls.script": "4a3deaa18aff0a51743fbdbee248a3751346a233f2e9de1ccbb150b7651f5775",
+      "CollectorControls.setUp": "bb0c986d61ce00d5a2b1152b4f1c55fe570ec6482dd25ea7e840d4f28131b674",
+      "CollectorControls.start": "0e3810c5c6ba772465762d2822b3587c7183f6b65ce90b72e3b96dd34edc5b09",
+      "CollectorControls.tearDown": "dfb2f9889ac4dd33bba419ed22d2c612780404e894121646bcb44c22eb0974bf",
+      "CollectorControls.test_actual_cancel_reaps_detached_ignoring_descendant": "307c9da2856f887391f3e63470d362c715eb5f84a6c2585c24af18d0cf59561a",
+      "CollectorControls.test_actual_collector_sigkill_is_unknown_even_after_guard_reaps_orphan": "3c6f8c9944da4e85f11294f780a39724eabff939a518628cd7a23a01a4a63b38",
+      "CollectorControls.test_actual_double_fork_new_session_root_exits_before_descendants": "8299bd9c73d4660fc26ebac91230ef2c8d57b100684fd81ffa470ca0d35cd0fd",
+      "CollectorControls.test_actual_exec_closes_inherited_fd_and_rejects_direct_shebang": "f9d26125678e07b928c27297bde77b77c43f1c502ab6088808e7dbe84a538414",
+      "CollectorControls.test_actual_generation_dispatch_worker_exec_chain_is_wrapped_without_status_theft": "d3e34fc92cedd9fafe87a9e3a08d066c10b20a23197059225b85a9982278c3d5",
+      "CollectorControls.test_actual_internal_popen_status_and_external_sibling_are_preserved": "385220e9f6daf4c3ec78da61b39c224604c99e3f189ab8997d48d7f8367c85d3",
+      "CollectorControls.test_actual_original_timeout_reaps_after_root_has_exited": "5aa519421819ed6ad50bde0c99e5b21ee05413d5708bdefe693ef6bad35121a8",
+      "CollectorControls.test_actual_output_limit_is_bounded_and_fails_without_losing_root_status": "215cebd37a3a23935fc1c85dd801af7ed0aea1d75755316b66e929ad7ae0acda",
+      "CollectorControls.test_actual_owner_lost_is_cleaned_without_treating_successful_root_as_success": "c8e3b31dd63388dedb20f6bce6e037599c310a95baa1e9d896cc285311929d4b",
+      "CollectorControls.test_actual_root_signal_is_not_translated_to_success": "a9b39cbc5cfb99397deeeac24cd17e30b5ecde06536d6b362c0541e3b371afc2",
+      "CollectorControls.test_original_clock_gate_and_nonlinux_never_execute_payload": "6d362834d998235b9b2fa1d18d65dcf5fd3db3a5b2ec38b1e02318a7b4b1571c",
+      "CollectorControls.test_reader_strict_types_identity_clock_and_actual_terminal_binding": "0ba41c76d34c9825df7e56bb9166b767a8cfdfbab03fd006312d84972ef07948",
+      "CollectorControls.test_real_pidfd_rejects_wrong_birth_and_fifo_reads_do_not_block": "8e8bac02a1a98f66a64b008368ff5ad79454ebb0d234c0557f8adb13dfce834b"
+    },
+    "changed_AST_methods": [
+      "CollectorControls.test_actual_post_fork_identity_failure_reaps_gated_root_without_exec"
+    ],
+    "new_tests": 16,
+    "old_tests": 16,
+    "remaining_module_AST_equal_after_restoring_one_method": true,
+    "same_method_names": true,
+    "unchanged_test_SOURCE_and_AST": 15
+  },
+  "rust": {
+    "added_test_names": [
+      "original_v2_client_rejects_expiry_after_signed_response_verification",
+      "expired_v2_client_deadline_refuses_before_tcp"
+    ],
+    "all_original_bytes_retained_in_order": true,
+    "all_preexisting_runtime_constants_policy_encoding_server_code_and_tests_byte_unchanged": true,
+    "new_test_names": [
+      "original_v2_client_rejects_expiry_after_signed_response_verification",
+      "expired_v2_client_deadline_refuses_before_tcp",
+      "pq_only_account_profile_refuses_classical_public_v2_before_tcp",
+      "v2_refuses_non_loopback_before_starting_unmetered_full_w1",
+      "public_loop_exit_records_lifetime_before_internal_stop",
+      "public_loop_exit_records_external_stop_after_signed_read",
+      "paid_mutation_body_budget_preserves_signed_read_service_with_rotating_callers",
+      "paid_mutation_grants_are_global_across_identity_rotation_and_release_on_eof",
+      "write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work",
+      "paid_wrong_product_is_fully_rejected_and_the_preserved_valid_packet_is_activated",
+      "resource_revision_r2_rejects_a_signed_r1_cookie_and_preserves_control_output_reserve",
+      "v3_magic_profile_pool_operation_and_signature_domains_are_rejected_exactly",
+      "canonical_streaming_rejects_escaped_packets_and_extra_fields",
+      "hmac_sha256_matches_rfc4231_and_fixed_32_byte_oracle_vectors",
+      "failed_output_closes_only_that_connection_and_later_honest_request_succeeds",
+      "fixed_preface_checks_all_bounds_before_paid_body_allocation",
+      "cookie_binds_every_authority_and_resource_field_and_restart_epoch",
+      "spent_cache_never_evicts_live_tokens_when_full",
+      "reservations_survive_queues_and_release_on_disconnect_and_dropped_output",
+      "honest_fragmented_small_frames_and_body_100_to_300_ms_need_no_retry",
+      "slow_initial_frames_cannot_occupy_read_worker_or_renew_absolute_deadline"
+    ],
+    "old_test_names": [
+      "pq_only_account_profile_refuses_classical_public_v2_before_tcp",
+      "v2_refuses_non_loopback_before_starting_unmetered_full_w1",
+      "public_loop_exit_records_lifetime_before_internal_stop",
+      "public_loop_exit_records_external_stop_after_signed_read",
+      "paid_mutation_body_budget_preserves_signed_read_service_with_rotating_callers",
+      "paid_mutation_grants_are_global_across_identity_rotation_and_release_on_eof",
+      "write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work",
+      "paid_wrong_product_is_fully_rejected_and_the_preserved_valid_packet_is_activated",
+      "resource_revision_r2_rejects_a_signed_r1_cookie_and_preserves_control_output_reserve",
+      "v3_magic_profile_pool_operation_and_signature_domains_are_rejected_exactly",
+      "canonical_streaming_rejects_escaped_packets_and_extra_fields",
+      "hmac_sha256_matches_rfc4231_and_fixed_32_byte_oracle_vectors",
+      "failed_output_closes_only_that_connection_and_later_honest_request_succeeds",
+      "fixed_preface_checks_all_bounds_before_paid_body_allocation",
+      "cookie_binds_every_authority_and_resource_field_and_restart_epoch",
+      "spent_cache_never_evicts_live_tokens_when_full",
+      "reservations_survive_queues_and_release_on_disconnect_and_dropped_output",
+      "honest_fragmented_small_frames_and_body_100_to_300_ms_need_no_retry",
+      "slow_initial_frames_cannot_occupy_read_worker_or_renew_absolute_deadline"
+    ],
+    "only_two_insertions": [
+      {
+        "new_first_line": 1543,
+        "new_line_count": 4,
+        "old_line_after": 1542,
+        "pin": {
+          "bytes": 224,
+          "path": "/private/tmp/chain-new-head-5df7-deadline-controller-review-20261114-v1/final-review-v2/rust-added-block-1.rs.original",
+          "sha256": "bc710843f6b198a04a00c33939a9b59b81a07d28f71d135949794c0d3d8ce59f"
+        }
+      },
+      {
+        "new_first_line": 1587,
+        "new_line_count": 94,
+        "old_line_after": 1582,
+        "pin": {
+          "bytes": 3811,
+          "path": "/private/tmp/chain-new-head-5df7-deadline-controller-review-20261114-v1/final-review-v2/rust-added-block-2.rs.original",
+          "sha256": "f89df75bf8b49c7d033d917d4e242e2e2b7060ca7b519222d498b1cd4212b235"
+        }
+      }
+    ]
+  },
+  "schema": "trnm-5df-deadline-controller-static-continuity-v1",
+  "tests_or_target_helpers_executed": false
+}

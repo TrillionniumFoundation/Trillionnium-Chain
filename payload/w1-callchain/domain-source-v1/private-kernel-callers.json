@@ -1,0 +1,82 @@
+[
+  {
+    "source": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+    "line": 682,
+    "text": "struct CheckedProofInputs {"
+  },
+  {
+    "source": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+    "line": 770,
+    "text": "        return Ok(CheckedProofInputs {"
+  },
+  {
+    "source": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+    "line": 803,
+    "text": "    Ok(CheckedProofInputs {"
+  },
+  {
+    "source": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+    "line": 819,
+    "text": "    verify_checked_with_kernel(challenge, bytes, progress, kernel, checked)"
+  },
+  {
+    "source": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+    "line": 824,
+    "text": "fn verify_checked_with_kernel<E>("
+  },
+  {
+    "source": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+    "line": 831,
+    "text": "    let CheckedProofInputs {"
+  },
+  {
+    "source": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+    "line": 852,
+    "text": "            ReplayedTranscript::Optimized(evaluate_transcript_kernel_with_progress::<"
+  },
+  {
+    "source": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+    "line": 860,
+    "text": "            ReplayedTranscript::Optimized(evaluate_transcript_kernel_with_progress::<"
+  },
+  {
+    "source": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+    "line": 1012,
+    "text": "    evaluate_transcript_kernel_with_progress::<LIMB_TRANSCRIPT, false, false, E>("
+  },
+  {
+    "source": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+    "line": 1017,
+    "text": "fn evaluate_transcript_kernel_with_progress<"
+  },
+  {
+    "source": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts.rs",
+    "line": 193,
+    "text": "        let evaluated = evaluate_transcript_kernel_with_progress::<true, false, true, E>("
+  },
+  {
+    "source": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs",
+    "line": 8,
+    "text": "    evaluate_transcript_kernel_with_progress, field_bytes, hash, producer_reduce, relation_only,"
+  },
+  {
+    "source": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs",
+    "line": 218,
+    "text": "                evaluate_transcript_kernel_with_progress::<false, false, false, E>("
+  },
+  {
+    "source": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs",
+    "line": 226,
+    "text": "                evaluate_transcript_kernel_with_progress::<true, false, true, E>("
+  },
+  {
+    "source": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs",
+    "line": 224,
+    "text": "        let inputs = super::CheckedProofInputs {"
+  },
+  {
+    "source": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs",
+    "line": 245,
+    "text": "    let result = super::verify_checked_with_kernel("
+  }
+]

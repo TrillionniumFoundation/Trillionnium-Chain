@@ -1,0 +1,10 @@
+{
+  "automatic_retry": false,
+  "collector_error": null,
+  "collector_exit": 0,
+  "collector_source_unchanged": true,
+  "elapsed_seconds": 11.472,
+  "finished_at": "2026-11-14T18:11:45.339939+00:00",
+  "output": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-003",
+  "schema": "trnm-H5DF-required-reader-pinned-launch-result-v1"
+}

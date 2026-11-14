@@ -1,0 +1,62 @@
+{
+  "head": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+  "read_only": true,
+  "rows": [
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "grep",
+        "-n",
+        "-E",
+        "struct WorkCheckedPacket|impl WorkCheckedPacket|fn verify_with_progress|struct ThreadCpuStamp|impl ThreadCpuStamp",
+        "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+        "--",
+        "trillionnium/crates/trnm-pon-node/src",
+        "trillionnium/crates/trnm-protocol/src"
+      ],
+      "exit": 0,
+      "label": "entrypoints",
+      "started_at": "2026-11-14T18:09:20.309352+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/discovery-v1/entrypoints.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 1031,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/discovery-v1/entrypoints.stdout",
+        "sha256": "15b1bb9cd7af4033b02ba46365212cf19a11e287e06ca701309f291bf4d16298"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--git-dir=/private/tmp/chain-audit-recovery-records-20261113/full-history-independent-v1/complete.git",
+        "ls-tree",
+        "-r",
+        "--name-only",
+        "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+        "--",
+        "trillionnium/crates/trnm-protocol/src/pon_work",
+        "trillionnium/crates/trnm-protocol/src/pon_work.rs",
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/history_import.rs",
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs",
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs"
+      ],
+      "exit": 0,
+      "label": "work-paths",
+      "started_at": "2026-11-14T18:09:20.378867+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/discovery-v1/work-paths.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 149,
+        "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/discovery-v1/work-paths.stdout",
+        "sha256": "22981d6c45689a0bbfcdf33a32cbbfe1a1cf63d2a895dee6d9bfeb0660ccc03e"
+      }
+    }
+  ]
+}

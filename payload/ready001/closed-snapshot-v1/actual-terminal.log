@@ -1,0 +1,7 @@
+{"phase": "metadata_read_finished", "label": "H5DF-required-runs-page-001", "exit": 0, "parse_error": null}
+{"phase": "metadata_read_finished", "label": "H5DF-latest-checks-page-001", "exit": 0, "parse_error": null}
+{"phase": "metadata_read_finished", "label": "pr847", "exit": 0, "parse_error": null}
+{"phase": "metadata_read_finished", "label": "H5DF-latest-checks-page-002", "exit": 0, "parse_error": null}
+{"phase": "metadata_read_finished", "label": "H5DF-run-43621754143-metadata", "exit": 0, "parse_error": null}
+{"phase": "metadata_read_finished", "label": "H5DF-run-43621754143-jobs-page-001", "exit": 0, "parse_error": null}
+{"status": "OBSERVED", "summary": {"path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-001/summary.json", "bytes": 14290, "sha256": "c5fa45d344541a3c2a12b3fd7132ec354d49f0c0b4e6b75f08ff6c85d5a9443b"}, "index": {"path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-001/EVIDENCE_INDEX.json", "bytes": 4375, "sha256": "fb0960cfa95a5869184a98b2fed57bc0b756b2bfe5fb134aaee02c211c7730bb"}, "hosted_qualification_granted": false}

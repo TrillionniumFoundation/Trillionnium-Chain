@@ -1,0 +1,562 @@
+{
+  "binary_sha256_after": "2ebad185ecc1204d50c8d31b903722c99490929a5c7249366c99f32304d76ae5",
+  "binary_sha256_before": "2ebad185ecc1204d50c8d31b903722c99490929a5c7249366c99f32304d76ae5",
+  "confirmation_report": null,
+  "files_count": 54,
+  "files_examples": [
+    [
+      "build/process.json",
+      "905442b127eb93c0d135de0b6d5da1959f68a73571a085fc78d5f7a83073e0a1"
+    ],
+    [
+      "build/stderr",
+      "1d4a459075bb084f679636df54054e09c302d0ad0d545b52395925946c48d277"
+    ],
+    [
+      "build/stdout",
+      "d1fa90cd359ba22fa79a19765b995e6cf5b1f90feb537f908402e473abbc1ab8"
+    ]
+  ],
+  "host": {
+    "child-result.json": {
+      "command_argv": {
+        "first": "python3",
+        "length": 4
+      },
+      "consensus_or_model_authority": false,
+      "host_errors": {
+        "first": null,
+        "length": 0
+      },
+      "host_readiness_only": true,
+      "native_child_exit": 1,
+      "schema": "trnm-ci-original-public-host-child-v1"
+    },
+    "controller-result.json": {
+      "cleanup": "already-collected",
+      "command_argv": {
+        "first": "python3",
+        "length": 4
+      },
+      "consensus_or_model_authority": false,
+      "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+      "failure": null,
+      "final_host_errors": {
+        "first": null,
+        "length": 0
+      },
+      "final_parent_lease": {
+        "consensus_or_model_authority": false,
+        "creator_service": "trnm-from-zero-43621754143-1-cross-arch-cost-4806.service",
+        "current_service": "trnm-from-zero-43621754143-1-cross-arch-cost-4806.service",
+        "host_readiness_only": true,
+        "parent_identity": {
+          "keys": [
+            "boot_id",
+            "installed_unit_sha256",
+            "limits",
+            "parent",
+            "unit_file"
+          ]
+        },
+        "schema": "trnm-ci-public-fixture-parent-binding-v1",
+        "seal_file": {
+          "keys": [
+            "ctime_ns",
+            "device",
+            "inode",
+            "mtime_ns",
+            "path",
+            "sha256",
+            "size_bytes"
+          ]
+        },
+        "seal_sha256": "0f2c0f1de8f4879667cfac33d22ed7589e8a0ac4acc919333f32049971813d79"
+      },
+      "gid": 1001,
+      "host_readiness_only": true,
+      "parent_lease": {
+        "consensus_or_model_authority": false,
+        "creator_service": "trnm-from-zero-43621754143-1-cross-arch-cost-4806.service",
+        "current_service": "trnm-from-zero-43621754143-1-cross-arch-cost-4806.service",
+        "host_readiness_only": true,
+        "parent_identity": {
+          "keys": [
+            "boot_id",
+            "installed_unit_sha256",
+            "limits",
+            "parent",
+            "unit_file"
+          ]
+        },
+        "schema": "trnm-ci-public-fixture-parent-binding-v1",
+        "seal_file": {
+          "keys": [
+            "ctime_ns",
+            "device",
+            "inode",
+            "mtime_ns",
+            "path",
+            "sha256",
+            "size_bytes"
+          ]
+        },
+        "seal_sha256": "0f2c0f1de8f4879667cfac33d22ed7589e8a0ac4acc919333f32049971813d79"
+      },
+      "parent_reused": false,
+      "passed": false,
+      "preparation": {
+        "binary_path": "/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-bcd934e577e47a17",
+        "binary_sha256": "2ebad185ecc1204d50c8d31b903722c99490929a5c7249366c99f32304d76ae5",
+        "build_env": {
+          "keys": [
+            "CARGO_BUILD_JOBS",
+            "CARGO_ENCODED_RUSTFLAGS",
+            "CARGO_HOME",
+            "CARGO_INCREMENTAL",
+            "CARGO_TARGET_DIR",
+            "OPENSSL_CONF",
+            "OPENSSL_DIR",
+            "OPENSSL_MODULES",
+            "OPENSSL_STATIC",
+            "RUSTFLAGS",
+            "RUSTUP_TOOLCHAIN",
+            "TRNM_PQ_OPENSSL",
+            "TRNM_PQ_OPENSSL_SHA256",
+            "TRNM_PQ_OPENSSL_VERSION"
+          ]
+        },
+        "completed": true,
+        "consensus_or_model_authority": false,
+        "failure_type": null,
+        "format_preparation": {
+          "keys": [
+            "process",
+            "timeout_seconds",
+            "tool_versions"
+          ]
+        },
+        "native_tests_executed": false,
+        "process": {
+          "keys": [
+            "command",
+            "cpu_ns",
+            "cpu_scope",
+            "exit_code",
+            "involuntary_switches",
+            "major_faults",
+            "max_rss_kib",
+            "minor_faults",
+            "rss_scope",
+            "stderr_sha256",
+            "stdout_sha256",
+            "system_cpu_ns",
+            "timed_out",
+            "user_cpu_ns",
+            "voluntary_switches",
+            "wait4_cpu_resolution_ns",
+            "wall_ns"
+          ]
+        },
+        "schema": "trnm-ci-original-native-build-preparation-v1",
+        "service_resource_observation": false,
+        "source_after": {
+          "keys": [
+            "commit",
+            "test_sha256",
+            "tracked_source_identity",
+            "tree"
+          ]
+        },
+        "source_before": {
+          "keys": [
+            "commit",
+            "test_sha256",
+            "tracked_source_identity",
+            "tree"
+          ]
+        },
+        "source_error": null
+      },
+      "schema": "trnm-ci-original-public-host-controller-v2",
+      "service": "trnm-from-zero-43621754143-1-cross-arch-cost-4806.service",
+      "systemd_run_exit": 1,
+      "uid": 1001
+    },
+    "inside-after.json": {
+      "boot_id": "1ced8096-7fc2-4724-9592-1b6b09614ddc",
+      "cgroup_controllers": "cpuset cpu io memory hugetlb pids rdma misc dmem",
+      "consensus_or_model_authority": false,
+      "counters": {
+        "cgroup.events": "populated 1\nfrozen 0",
+        "cpu.stat": "usage_usec 13103133\nuser_usec 9153279\nsystem_usec 3949854\nnice_usec 0\ncore_sched[length=179]",
+        "memory.current": "79622144",
+        "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "pids.current": "1"
+      },
+      "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+      "gid": 1001,
+      "host_readiness_only": true,
+      "installed_unit_sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+      "limits": {
+        "cpu.max": "25000 100000",
+        "cpu.max.burst": "0",
+        "memory.max": "2147483648",
+        "memory.swap.max": "0",
+        "pids.max": "256"
+      },
+      "observed_utc": "2026-11-14T17:42:12.335773+00:00",
+      "parent": {
+        "canonical_path": "/sys/fs/cgroup/trnmponpublic.slice",
+        "device": 33,
+        "directory": true,
+        "gid": 0,
+        "inode": 7467,
+        "mode": 493,
+        "symlink": false,
+        "uid": 0
+      },
+      "parent_path": "/sys/fs/cgroup/trnmponpublic.slice",
+      "phase": "inside-after-native",
+      "pid": 7064,
+      "read_errors": {},
+      "schema": "trnm-ci-original-public-host-observation-v1",
+      "service": "trnm-from-zero-43621754143-1-cross-arch-cost-4806.service",
+      "thread_cgroup": "0::/trnmponpublic.slice/trnm-from-zero-43621754143-1-cross-arch-cost-4806.service",
+      "thread_privileges": {
+        "CapBnd": "0000000000000000",
+        "NoNewPrivs": "1"
+      },
+      "uid": 1001
+    },
+    "inside-before.json": {
+      "boot_id": "1ced8096-7fc2-4724-9592-1b6b09614ddc",
+      "cgroup_controllers": "cpuset cpu io memory hugetlb pids rdma misc dmem",
+      "consensus_or_model_authority": false,
+      "counters": {
+        "cgroup.events": "populated 1\nfrozen 0",
+        "cpu.stat": "usage_usec 118766\nuser_usec 104043\nsystem_usec 14723\nnice_usec 0\ncore_sched.forc[length=168]",
+        "memory.current": "17788928",
+        "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "pids.current": "1"
+      },
+      "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+      "gid": 1001,
+      "host_readiness_only": true,
+      "installed_unit_sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+      "limits": {
+        "cpu.max": "25000 100000",
+        "cpu.max.burst": "0",
+        "memory.max": "2147483648",
+        "memory.swap.max": "0",
+        "pids.max": "256"
+      },
+      "observed_utc": "2026-11-14T17:41:18.022703+00:00",
+      "parent": {
+        "canonical_path": "/sys/fs/cgroup/trnmponpublic.slice",
+        "device": 33,
+        "directory": true,
+        "gid": 0,
+        "inode": 7467,
+        "mode": 493,
+        "symlink": false,
+        "uid": 0
+      },
+      "parent_path": "/sys/fs/cgroup/trnmponpublic.slice",
+      "phase": "inside-before-native",
+      "pid": 7064,
+      "read_errors": {},
+      "schema": "trnm-ci-original-public-host-observation-v1",
+      "service": "trnm-from-zero-43621754143-1-cross-arch-cost-4806.service",
+      "thread_cgroup": "0::/trnmponpublic.slice/trnm-from-zero-43621754143-1-cross-arch-cost-4806.service",
+      "thread_privileges": {
+        "CapBnd": "0000000000000000",
+        "NoNewPrivs": "1"
+      },
+      "uid": 1001
+    },
+    "outside-after.json": {
+      "boot_id": "1ced8096-7fc2-4724-9592-1b6b09614ddc",
+      "cgroup_controllers": "cpuset cpu io memory hugetlb pids rdma misc dmem",
+      "consensus_or_model_authority": false,
+      "counters": {
+        "cgroup.events": "populated 0\nfrozen 0",
+        "cpu.stat": "usage_usec 13115315\nuser_usec 9163415\nsystem_usec 3951899\nnice_usec 0\ncore_sched[length=179]",
+        "memory.current": "61644800",
+        "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "pids.current": "0"
+      },
+      "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+      "gid": 1001,
+      "host_readiness_only": true,
+      "installed_unit_sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+      "limits": {
+        "cpu.max": "25000 100000",
+        "cpu.max.burst": "0",
+        "memory.max": "2147483648",
+        "memory.swap.max": "0",
+        "pids.max": "256"
+      },
+      "observed_utc": "2026-11-14T17:42:12.428250+00:00",
+      "parent": {
+        "canonical_path": "/sys/fs/cgroup/trnmponpublic.slice",
+        "device": 33,
+        "directory": true,
+        "gid": 0,
+        "inode": 7467,
+        "mode": 493,
+        "symlink": false,
+        "uid": 0
+      },
+      "parent_path": "/sys/fs/cgroup/trnmponpublic.slice",
+      "phase": "outside-after-child",
+      "pid": 4806,
+      "read_errors": {},
+      "schema": "trnm-ci-original-public-host-observation-v1",
+      "service": "trnm-from-zero-43621754143-1-cross-arch-cost-4806.service",
+      "thread_cgroup": "0::/system.slice/hosted-compute-agent.service",
+      "thread_privileges": {
+        "CapBnd": "000001ffffffffff",
+        "NoNewPrivs": "0"
+      },
+      "uid": 1001
+    }
+  },
+  "pressure_last_native_shape": {
+    "after": {
+      "first": 230,
+      "length": 32
+    },
+    "clock_scope": "one observer-local monotonic epoch; page import includes packet and checkpoint H[length=334]",
+    "cpu_intervals_are_nested_not_additive": true,
+    "host_checkpoint_attribution": {
+      "all_checkpoint_calls_attributed": true,
+      "buckets": {
+        "first": {
+          "keys": [
+            "calls",
+            "owner_phase"
+          ]
+        },
+        "length": 20
+      },
+      "has_consensus_authority": false,
+      "schema": "pon-local-history-host-phase-attribution-v1",
+      "scope": "actual Host checkpoint calls classified once at entry by the innermost open owne[length=488]"
+    },
+    "host_checks": {
+      "first": {
+        "keys": [
+          "calls_accepted",
+          "calls_completed",
+          "calls_rejected",
+          "calls_started",
+          "calls_unfinished",
+          "cpu_clock_unknown_calls",
+          "first_started_ns",
+          "last_ended_ns",
+          "last_error_code",
+          "phase",
+          "thread_cpu_ns",
+          "wall_clock_unknown_calls",
+          "wall_ns"
+        ]
+      },
+      "length": 4
+    },
+    "host_checks_are_nested_not_additive": true,
+    "host_cpu_includes_each_calling_thread": true,
+    "host_cpu_is_full_worker_cpu": false,
+    "measurement_failures": 0,
+    "native_attribution": {
+      "packets": {
+        "first": {
+          "keys": [
+            "attribution",
+            "packet_id",
+            "packet_index"
+          ]
+        },
+        "length": 1
+      },
+      "page": {
+        "keys": [
+          "cpu_wait_capacity",
+          "cpu_waits",
+          "epoch_substeps",
+          "intervals_are_nested_not_additive",
+          "observation_has_consensus_authority",
+          "owner_mode",
+          "schema",
+          "scope"
+        ]
+      },
+      "schema": "pon-local-history-import-native-attribution-v1"
+    },
+    "observation_has_consensus_authority": false,
+    "packet_capacity": 16,
+    "packets": {
+      "first": {
+        "keys": [
+          "packet_id",
+          "packet_index",
+          "phases"
+        ]
+      },
+      "length": 1
+    },
+    "phase_cpu_excludes_scoped_workers": true,
+    "phases": {
+      "first": {
+        "keys": [
+          "accepted",
+          "completed",
+          "ended_ns",
+          "error_code",
+          "parent_phase",
+          "phase",
+          "started",
+          "started_ns",
+          "thread_cpu_ns",
+          "wall_ns"
+        ]
+      },
+      "length": 19
+    },
+    "schema": "pon-local-history-import-observation-v1",
+    "supplied_packets": 1,
+    "tip": {
+      "first": 60,
+      "length": 32
+    }
+  },
+  "pressure_replay_top": [
+    {
+      "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+      "history_call_index": 0,
+      "history_request_ended_ns": 1105968709,
+      "next_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+      "prior_after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+      "replay_accepted": true,
+      "replay_ended_ns": 1905288818,
+      "replay_error": null,
+      "replay_started_ns": 1105984548,
+      "replay_thread_cpu_ns": 39385864,
+      "replay_wall_ns": 799304270
+    },
+    {
+      "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+      "history_call_index": 1,
+      "history_request_ended_ns": 2000392731,
+      "next_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+      "prior_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+      "replay_accepted": true,
+      "replay_ended_ns": 2603036033,
+      "replay_error": null,
+      "replay_started_ns": 2000409850,
+      "replay_thread_cpu_ns": 38587968,
+      "replay_wall_ns": 602626183
+    },
+    {
+      "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+      "history_call_index": 2,
+      "history_request_ended_ns": 2702904197,
+      "next_after": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70",
+      "prior_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+      "replay_accepted": true,
+      "replay_ended_ns": 3209047128,
+      "replay_error": null,
+      "replay_started_ns": 2702924220,
+      "replay_thread_cpu_ns": 38595064,
+      "replay_wall_ns": 506122908
+    },
+    {
+      "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+      "history_call_index": 3,
+      "history_request_ended_ns": 3302781509,
+      "next_after": null,
+      "prior_after": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70",
+      "replay_accepted": false,
+      "replay_ended_ns": 4001658537,
+      "replay_error": "PUBLIC_REQUEST_DEADLINE",
+      "replay_started_ns": 3302799444,
+      "replay_thread_cpu_ns": 38006040,
+      "replay_wall_ns": 698859093
+    }
+  ],
+  "runs": {
+    "first": {
+      "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+      "named_execution": {
+        "keys": [
+          "result",
+          "test",
+          "executed_tests",
+          "scope"
+        ]
+      },
+      "passed": true,
+      "process": {
+        "keys": [
+          "command",
+          "exit_code",
+          "timed_out",
+          "wall_ns",
+          "user_cpu_ns",
+          "system_cpu_ns",
+          "cpu_ns",
+          "max_rss_kib",
+          "rss_scope",
+          "minor_faults",
+          "major_faults",
+          "voluntary_switches",
+          "involuntary_switches",
+          "cpu_scope",
+          "wait4_cpu_resolution_ns",
+          "stdout_sha256",
+          "stderr_sha256"
+        ]
+      },
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "5d8b4712794f101cd8aa20d17a5d273df8bc32d74d62764afa09ba1040dc2f4e"
+    },
+    "length": 5
+  },
+  "runs_type": "list",
+  "source_after": {
+    "commit": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+    "test_sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f",
+    "tracked_source_identity": {
+      "base": null,
+      "candidate": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "tested_tree": "6be4940d38cc88782657f2684cbefe48866f8b9f",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 3995072357,
+      "tracked_entries": 41681,
+      "tracked_worktree_verified": true
+    },
+    "tree": "6be4940d38cc88782657f2684cbefe48866f8b9f"
+  },
+  "source_before": {
+    "commit": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+    "test_sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f",
+    "tracked_source_identity": {
+      "base": null,
+      "candidate": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "tested_tree": "6be4940d38cc88782657f2684cbefe48866f8b9f",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 3995072357,
+      "tracked_entries": 41681,
+      "tracked_worktree_verified": true
+    },
+    "tree": "6be4940d38cc88782657f2684cbefe48866f8b9f"
+  }
+}

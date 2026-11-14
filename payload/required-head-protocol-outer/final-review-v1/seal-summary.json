@@ -1,0 +1,21 @@
+{
+  "excerpts": {
+    "bytes": 12957,
+    "path": "/private/tmp/chain-prci-H5DF-required-head-protocol-original-log-20261114-v1/final-review-v1/original-line-excerpts.json",
+    "sha256": "1ca3ee516ed514eb034e268cfc8c359cd341979d4197c9096038e94f151f5b91"
+  },
+  "facts": {
+    "bytes": 6556,
+    "path": "/private/tmp/chain-prci-H5DF-required-head-protocol-original-log-20261114-v1/final-review-v1/exact-outer-facts.json",
+    "sha256": "baffa38d6308570c328f38b9e96e233ae128c7a15594af0b05742fc8b6d8bfdf"
+  },
+  "index": {
+    "bytes": 4784,
+    "path": "/private/tmp/chain-prci-H5DF-required-head-protocol-original-log-20261114-v1/final-review-v1/EVIDENCE_INDEX.json",
+    "sha256": "9408272233e20c08bff4d1c36773741702ccd9cefc94055ffdc40ca7aa8cc272"
+  },
+  "no_active_network_or_writer_after_exit": true,
+  "originals_unchanged": true,
+  "schema": "trnm-H5DF-required-head-protocol-outer-seal-v1",
+  "status": "OUTER_FAILURE_CONFIRMED_INNER_UNKNOWN"
+}

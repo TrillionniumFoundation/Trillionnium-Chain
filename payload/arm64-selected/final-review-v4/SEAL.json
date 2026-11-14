@@ -1,0 +1,28 @@
+{
+  "actual_selected_terminal": {
+    "exit_code": 0,
+    "original_output_bytes": 2251,
+    "original_output_sha256": "d50e6c48771015e3a52a1cf9f3c1ea5fdb9e13cf7988a3a46cabb030e6bcdf66",
+    "output_complete": true,
+    "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/actual-tool-records-resume-and-analysis-v1/h5df-arm-selected-resume-terminal.json",
+    "session_id": "dpty-5786a3d25b3998c890c674e1d07556b52525313f66c2078e84dd1387f8a86038"
+  },
+  "closed_at": "2026-11-14T18:25:02.347154+00:00",
+  "facts": {
+    "bytes": 19677,
+    "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/final-review-v4/exact-confirmation-facts.json",
+    "sha256": "38005efb3f1dd717bac424109075ee56fdaba370c23b759f3ace6b16c02e9edb"
+  },
+  "index": {
+    "bytes": 110644,
+    "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/final-review-v4/EVIDENCE_INDEX.json",
+    "sha256": "c742eae449d253bba08a025fe34f260fa681daaf053cba6a3b79c7640a16b429"
+  },
+  "indexed_bytes": 18475335,
+  "indexed_files": 193,
+  "no_active_GET_or_native_writer": true,
+  "no_source_ref_stage_changes": true,
+  "schema": "trnm-H5DF-arm64-bounded-original-evidence-seal-v1",
+  "status": "CLOSED",
+  "whole_ZIP_SHA_verified": false
+}

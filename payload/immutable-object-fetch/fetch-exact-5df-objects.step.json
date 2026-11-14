@@ -1,0 +1,30 @@
+{
+  "argv": [
+    "/usr/bin/git",
+    "-c",
+    "gc.auto=0",
+    "fetch",
+    "--no-tags",
+    "--no-recurse-submodules",
+    "--no-write-fetch-head",
+    "--no-auto-maintenance",
+    "origin",
+    "5df7ae6f482157c5f7fdcbcd52222117a965053f"
+  ],
+  "automatic_retry": false,
+  "exit": 0,
+  "finished_at": "2026-11-14T17:43:32.715527+00:00",
+  "label": "fetch-exact-5df-objects",
+  "started_at": "2026-11-14T17:43:32.604396+00:00",
+  "stderr": {
+    "bytes": 0,
+    "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/fetch-exact-5df-objects.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 0,
+    "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/fetch-exact-5df-objects.stdout",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "timeout_seconds": 300
+}

@@ -1,0 +1,28 @@
+{
+  "archive_path": "/Users/qianqi/.local/state/hepta-runtime-mac-worker/terminals/dpty-6c8a5d24a6ed6b321d48fdf0c0fd04db36d0762c12ff239ba6f0b67b5b6426d9/output.log",
+  "available_end": 387,
+  "bytes_hex": "7b227068617365223a202273656c65637465645f706c616e5f6669786564222c202273656c65637465645f6d656d62657273223a2032352c202261637475616c5f706c616e6e65645f636f6d62696e65645f47455473223a2031302c202273656c65637465645f7265636f72645f6279746573223a203734363537382c202273656c65637465645f657870616e6465645f6279746573223a2031363039383238322c2022706c616e223a207b2270617468223a20222f707269766174652f746d702f636861696e2d483544462d61726d36342d63726f73732d636f73742d73656c65637465642d61727469666163742d32303236313131342d76312f73656c65637465642d76312f73656c65637465642d72616e67652d706c616e2e6a736f6e222c20226279746573223a2032323431322c2022736861323536223a202232666461663330366337363466623731626465643764353765303438336565666430353862363461393330616466666632373832643865663136666461333266227d7d0d0a",
+  "chunk_sha256": "2e5b445a619c36baee08a56d943e91abbd654a1fa4e42a30ea58b2eacc698bdd",
+  "host": "mac",
+  "next_offset": 387,
+  "offset": 0,
+  "output_complete": false,
+  "persistent_across_runtime_restart": true,
+  "session_id": "dpty-6c8a5d24a6ed6b321d48fdf0c0fd04db36d0762c12ff239ba6f0b67b5b6426d9",
+  "status": {
+    "boot": "{ sec = 1794536756, usec = 280987 } Fri Nov 13 10:25:56 2026",
+    "bytes_seen": 387,
+    "bytes_stored": 387,
+    "capture_error": null,
+    "created_unix_ms": 1794679959937,
+    "output_complete": false,
+    "owner_pid": 91372,
+    "pid": 91373,
+    "state": "running"
+  },
+  "storage": "target_archive",
+  "text": "{\"phase\": \"selected_plan_fixed\", \"selected_members\": 25, \"actual_planned_combined_GETs\": 10, \"selected_record_bytes\": 746578, \"selected_expanded_bytes\": 16098282, \"plan\": {\"path\": \"/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-v1/selected-range-plan.json\", \"bytes\": 22412, \"sha256\": \"2fdaf306c764fb71bded7d57e0483eefd058b64a930adfff2782d8ef16fda32f\"}}\r\n",
+  "text_is_lossy": false,
+  "truncated_before_offset": false,
+  "utf8_pending": false
+}

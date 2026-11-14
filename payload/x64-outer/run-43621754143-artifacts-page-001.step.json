@@ -1,0 +1,40 @@
+{
+  "GH_DEBUG_removed": true,
+  "GH_HOST": "github.com",
+  "HTTP_status_unparsed": true,
+  "argv": [
+    "/opt/homebrew/bin/gh",
+    "api",
+    "--hostname",
+    "github.com",
+    "--method",
+    "GET",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621754143/artifacts?per_page=100&page=1"
+  ],
+  "automatic_retry": false,
+  "complete_transport": true,
+  "cwd": "/private/tmp",
+  "elapsed_seconds": 1.493499,
+  "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621754143/artifacts?per_page=100&page=1",
+  "exit": 0,
+  "finished_at": "2026-11-14T17:44:22.722665+00:00",
+  "label": "run-43621754143-artifacts-page-001",
+  "method": "GET",
+  "origin": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621754143/artifacts?per_page=100&page=1",
+  "overall_deadline_seconds": 300,
+  "started_at": "2026-11-14T17:44:21.229262+00:00",
+  "stderr": {
+    "bytes": 0,
+    "path": "/private/tmp/chain-prci-H5DF-cross-arch-cost-x64-original-log-20261114-v1/run-43621754143-artifacts-page-001.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr_cap_bytes": 2097152,
+  "stdout": {
+    "bytes": 6607,
+    "path": "/private/tmp/chain-prci-H5DF-cross-arch-cost-x64-original-log-20261114-v1/run-43621754143-artifacts-page-001.stdout",
+    "sha256": "ebd0f29e6f5a39129916d1a196b00a5a2fd7bc77e4864d65990203799e76cc33"
+  },
+  "stdout_cap_bytes": 4194304,
+  "termination_reason": null,
+  "timeout_seconds": 300
+}

@@ -1,0 +1,70 @@
+--- reviewed-x64/selected-producer.py
++++ arm64/selected-producer.py
+@@ -1,19 +1,19 @@
+ #!/usr/bin/env python3
+-"""One fixed H5DF x64 cost artifact; original directory discovery before selected records."""
++"""One fixed H5DF ARM64 cost artifact; fixed selected records after actual directory discovery."""
+ import datetime,hashlib,json,os,re,selectors,stat,struct,subprocess,sys,time,zlib
+ from pathlib import Path,PurePosixPath
+-BASE=Path("/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1")
++BASE=Path("/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1")
+ OUT=BASE/"selected-v1"
+ GH="/opt/homebrew/bin/gh"
+ REPO="TrillionniumFoundation/Trillionnium-Chain"
+-ARTIFACT=14124189121
++ARTIFACT=14124468052
+ RUN=43621754143
+ HEAD="5df7ae6f482157c5f7fdcbcd52222117a965053f"
+ SUBJECT=HEAD
+ TREE="6be4940d38cc88782657f2684cbefe48866f8b9f"
+-NAME="cost-x64-"+HEAD+"-1"
+-SIZE=10127368
+-DIGEST="9899447cdb5c5045d0f70ffdba9aa0f271f350c823be80fbdb1c266ba541530e"
++NAME="cost-arm64-"+HEAD+"-1"
++SIZE=9909858
++DIGEST="3b093c989b92fb7d657195826ae6faed9e641840dbe8f48c7721aebcf7804d7d"
+ TAIL=65557
+ START=SIZE-TAIL
+ END=SIZE-1
+@@ -21,9 +21,9 @@
+ TOTAL_BUDGET=900
+ MAX_GETS=21
+ SAFE_HEADERS={"content-range","content-length","content-type","accept-ranges","content-encoding"}
+-SOURCE_LOG=Path("/private/tmp/chain-prci-H5DF-cross-arch-cost-x64-original-log-20261114-v1/job-132528768933-original-log.stdout")
+-SOURCE_BYTES=185104
+-SOURCE_SHA="db7a975f8a17e1e3854a86805e44b6cabee36d03c1fb2a280b6a840538a41a66"
++SOURCE_LOG=Path("/private/tmp/chain-H5DF-arm64-cross-cost-original-evidence-20261114-v1/job-132528769087-original-log.stdout")
++SOURCE_BYTES=184757
++SOURCE_SHA="b5f690a2a7cb61c16b6b459e1af5a7ca36430557c99ab51f4c66a7db09b32145"
+ SELECTORS=[
+  "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+  "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+@@ -295,7 +295,7 @@
+ 
+ 
+ SELECTED += ["from-zero-native-host/child-result.json","from-zero-native-host/inside-before.json","from-zero-native-host/inside-after.json","from-zero-native-host/outside-after.json","from-zero-native-host/prepare-build.json","from-zero-native-host/systemd-run.log"]
+-DIRECTORY_PIN = {"path":"/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/directory-v1/summary.json","bytes":6080,"sha256":"69938b857b69003bb8e45a9fc71fd5d9ab3fcec87f222170dbce822d9cbbba61"}
++DIRECTORY_PIN = {"path":"/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/directory-v1/summary.json","bytes":6078,"sha256":"71d2ba7895fd2c00303255fbddcd665de79a861aa96b5e4e5646ad6a478587c3"}
+ def read_pin(p):
+     return stable_bytes(Path(p["path"]),p["bytes"],p["sha256"])
+ def main():
+@@ -310,8 +310,8 @@
+     deadline=directory["monotonic_deadline"]
+     need(directory["monotonic_started"]<=time.monotonic()<deadline,"COMBINED_900_SECOND_DEADLINE")
+     OUT.mkdir(mode=0o700)
+-    result={"schema":"trnm-H5DF-x64-cost-selected-original-artifact-v1","status":"HOLD","started_at":now(),
+-      "artifact_id":ARTIFACT,"artifact_name":NAME,"run_id":RUN,"run_attempt":1,"job_id":132528768933,
++    result={"schema":"trnm-H5DF-arm64-cost-selected-original-artifact-v1","status":"HOLD","started_at":now(),
++      "artifact_id":ARTIFACT,"artifact_name":NAME,"run_id":RUN,"run_attempt":1,"job_id":132528769087,
+       "workflow_head":HEAD,"expected_subject":SUBJECT,"expected_tree":TREE,"directory_stage":DIRECTORY_PIN,
+       "declared_whole_archive_bytes":SIZE,"declared_whole_archive_sha256":DIGEST,"maximum_combined_GETs":MAX_GETS,
+       "combined_budget_seconds":TOTAL_BUDGET,"combined_monotonic_deadline":deadline,"per_GET_max_seconds":BUDGET,
+@@ -389,7 +389,7 @@
+         result["selected_member_crc_sha_verified"]=True
+         manifest=parse_json((OUT/"members/from-zero-native/manifest.json").read_bytes())
+         result["manifest_outcome"]={k:manifest.get(k)for k in("schema","passed","failures","all_named_tests_passed","format_passed","source_recompiled","execution_finished","production_activation","independent_wan_accepted","work_hardness_accepted")}
+-        result["manifest_source_identity"]={k:manifest.get(k)for k in("source_before","source_after","binary_before","binary_after")}
++        result["manifest_source_identity"]={k:manifest.get(k)for k in("source_before","source_after","binary_sha256_before","binary_sha256_after")}
+         result["status"]="SELECTED_ORIGINAL_MEMBERS_VERIFIED"
+         read_pin(DIRECTORY_PIN);read_pin(directory["central_directory"]);read_pin(directory["tail"])
+         stable_bytes(SOURCE_LOG,SOURCE_BYTES,SOURCE_SHA)

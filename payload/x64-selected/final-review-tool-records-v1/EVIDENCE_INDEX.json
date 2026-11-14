@@ -1,0 +1,16 @@
+{
+  "files": [
+    {
+      "bytes": 526,
+      "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/final-review-tool-records-v1/actual-review-launch.json",
+      "sha256": "6fce1525f26dfb89df2b19cbf477e6dfe72d3a2f45ce79720f4bc5ad0ade2a43"
+    },
+    {
+      "bytes": 4505,
+      "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/final-review-tool-records-v1/actual-review-terminal.json",
+      "sha256": "2d1caeaff9b809fdb91f6155fbf8d5b2bf31154423e17a4912861d61d3295978"
+    }
+  ],
+  "no_new_acquisition_or_test": true,
+  "schema": "trnm-actual-tool-records-index-v1"
+}

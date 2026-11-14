@@ -1,0 +1,227 @@
+{
+  "bytes": 16922724,
+  "count": 44,
+  "files": [
+    {
+      "bytes": 889,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/members/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json",
+      "sha256": "cb696137e73ce5f1359576f509b84bd8ebcb8a367ae9b608ae59138019095923"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/members/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 190,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/members/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+      "sha256": "5d8b4712794f101cd8aa20d17a5d273df8bc32d74d62764afa09ba1040dc2f4e"
+    },
+    {
+      "bytes": 15988224,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/members/from-zero-native/confirmation/report.json",
+      "sha256": "365ad3745f14e43c3234f0f5ccdbd9e78034ba910014f5667ee80267df3fbb8c"
+    },
+    {
+      "bytes": 897,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/members/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json",
+      "sha256": "8cfc02395060f64e39e3ac993b018b54f093b801c073a64fc7e0246610534373"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/members/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3364,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/members/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout",
+      "sha256": "9f2d2460006d660c0b016ac59ddf3ef7c88b856b3131f2c4b640947ad1a35064"
+    },
+    {
+      "bytes": 892,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/members/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json",
+      "sha256": "de66df9477eea7602c348ef001df138b1684f20252286fd8aa4ee47169fe0aef"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/members/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 196,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/members/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+      "sha256": "39ee1b2fb59f9b43a9ad42273d5b96922b727fd9332645d734ad36909310fbaa"
+    },
+    {
+      "bytes": 911,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/members/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json",
+      "sha256": "c069c859102907655d2324c3e1226ba9b69f2fbb95e56d8cdac0f9fdc4ee6d69"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/members/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 916,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/members/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout",
+      "sha256": "46c5e89ee85dd522b31a6d57ea5a095250395a32a4b9ba4425edfa4dab2b26dc"
+    },
+    {
+      "bytes": 949,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/members/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json",
+      "sha256": "07b5b0fc0b68d6254a5961323a23e7e5eda736ba67468b869d2a77eb94308f65"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/members/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 408,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/members/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+      "sha256": "7559ecf10ef3435e565ae521f7ac4404561a16781c09efe41d075b5fb35ad298"
+    },
+    {
+      "bytes": 73934,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/members/from-zero-native/manifest.json",
+      "sha256": "84f563765c738bb6e214712fa716f9e30b44ffc6c9d731ff68e2b35b53c08f59"
+    },
+    {
+      "bytes": 333,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/members/from-zero-native-host/child-result.json",
+      "sha256": "b624dd8f68fd721f45d9a3242294d04b80982ba4d060d61d55eaf1125394a321"
+    },
+    {
+      "bytes": 9054,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/members/from-zero-native-host/controller-result.json",
+      "sha256": "c6edd271efb2a55d9fdd49f341c229b667ac09a5794af767a5040ed86b8c06e9"
+    },
+    {
+      "bytes": 1695,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/members/from-zero-native-host/inside-after.json",
+      "sha256": "f72d84c007b84aac16c7939686d513c2b625c010e79614b2728d2585ad4b687e"
+    },
+    {
+      "bytes": 1685,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/members/from-zero-native-host/inside-before.json",
+      "sha256": "d4c0fd79793e48b0c646c2669ca351bb52ee103b8f5856da2e03e65db4250205"
+    },
+    {
+      "bytes": 1659,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/members/from-zero-native-host/outside-after.json",
+      "sha256": "db0c32ddb05f2a11cb26bb91dbbb6ee308ae2950507380e39d8522bd17f9a52a"
+    },
+    {
+      "bytes": 4765,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/members/from-zero-native-host/prepare-build.json",
+      "sha256": "e95622b4106ef5e4c7681618bf42390798f704fd4dcd917bb63efccf2216cd7d"
+    },
+    {
+      "bytes": 6898,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/members/from-zero-native-host/systemd-run.log",
+      "sha256": "69b804752a3d893cf347ab15d139e5c813a0927e5850cc942d96a19af82f0816"
+    },
+    {
+      "bytes": 423,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/members/source.json",
+      "sha256": "53388fa9016e607c02e52ef4fdbbed6e96cfea904afe4ab85b1f600dda618546"
+    },
+    {
+      "bytes": 21960,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/selected-member-index.json",
+      "sha256": "2bafa832b74e01a99255e7e8695fdf19dfee9b45e73671e09f3d118bb1c28894"
+    },
+    {
+      "bytes": 1066,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/selected-range-01.body",
+      "sha256": "1decc3068ce1ef5822395a96ef9a461aa9f00d47c9d5a71e4643c73dd53aa408"
+    },
+    {
+      "bytes": 1405,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/selected-range-01.step.json",
+      "sha256": "0f203a4efd1a8817191265f22ce5dc29c952c57233534e301873afe74bb2d241"
+    },
+    {
+      "bytes": 719038,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/selected-range-02.body",
+      "sha256": "08bdcb05bd224806371c4e5dbdd25ff2f478c7d654ea931e4554b09cacbbd1df"
+    },
+    {
+      "bytes": 1413,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/selected-range-02.step.json",
+      "sha256": "3e6a277c32b30caa872dc25e1d7bc80bd5bf9e246a0500115362de9c7804600f"
+    },
+    {
+      "bytes": 17533,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/selected-range-03.body",
+      "sha256": "304263adcc6fc9d300bd979ebec4d50f0361a9919eb9f94fa5af7ac7d68bbfc8"
+    },
+    {
+      "bytes": 1409,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/selected-range-03.step.json",
+      "sha256": "f05f7973a8cf32bdbe82deb33fe0320711cafe3cd256819209e23d20e5e62c8a"
+    },
+    {
+      "bytes": 4540,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/selected-range-04.body",
+      "sha256": "430fd22c85825ec21c550b6300d9a49bd2a141b39253ba78d50dd373a79c34f0"
+    },
+    {
+      "bytes": 1405,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/selected-range-04.step.json",
+      "sha256": "8ed87687306f6d5e4de5112c5eba01b4b4c2a43e18a7ce77db6e4d6631d79b9d"
+    },
+    {
+      "bytes": 913,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/selected-range-05.body",
+      "sha256": "64c3b2db262490818a3c3720a6d4768bc7d1683e7eab4903ca09505fcb68dc17"
+    },
+    {
+      "bytes": 1402,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/selected-range-05.step.json",
+      "sha256": "cc730f2931a2460291cf5e14124aeb095c4e01d5165e5cf2f871726839da0f20"
+    },
+    {
+      "bytes": 1705,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/selected-range-06.body",
+      "sha256": "b2da7e1ef844067069c9311b6f5edf543a630a81b89e610d095024075b978280"
+    },
+    {
+      "bytes": 1405,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/selected-range-06.step.json",
+      "sha256": "b70beeb8a360025bff31820cac14d629b546de74e5085ef48863dea560f9807b"
+    },
+    {
+      "bytes": 1486,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/selected-range-07.body",
+      "sha256": "0328300e6fccdaed25b916e2f2ff3080d0981cdfa00944194c83893c03c4b101"
+    },
+    {
+      "bytes": 1405,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/selected-range-07.step.json",
+      "sha256": "c76b9ef74a292b8ee45035883fcf3eea719d8a0b0f9d86cf5480c0ec4899f38e"
+    },
+    {
+      "bytes": 297,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/selected-range-08.body",
+      "sha256": "7f1318c515f07a5de511912ded17e60297795cdcb2bf77b7e0cf80dc9f834a52"
+    },
+    {
+      "bytes": 1402,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/selected-range-08.step.json",
+      "sha256": "fd09989a3068c02e61cb324611af8b73398ec1f06c8d5587891ca754782a81b5"
+    },
+    {
+      "bytes": 22441,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/selected-range-plan.json",
+      "sha256": "d38d109fb7e4ac123cf8b4059c7e8ab782b23b12723236abe8ffcbecb115527f"
+    },
+    {
+      "bytes": 22217,
+      "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-resume-001/summary.json",
+      "sha256": "721e28940cd1735b304104886fc2b553ba7df62e72b80d810ba350e99fb6daa6"
+    }
+  ],
+  "self_excluded": true
+}

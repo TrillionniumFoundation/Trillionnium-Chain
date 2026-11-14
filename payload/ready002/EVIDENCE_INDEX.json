@@ -1,0 +1,91 @@
+{
+  "files": [
+    {
+      "bytes": 134462,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-002/H5DF-latest-checks-normalized.json",
+      "sha256": "8c8b7c7a75840ceac3605e9db2bb70493d075d6799768eb4d71cbd91df23a7bc"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-002/H5DF-latest-checks-page-001.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 373684,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-002/H5DF-latest-checks-page-001.stdout",
+      "sha256": "baa4a647213048b20ffd016925ab8f28f38c009bcde97ccbc5b74ce7f073f90d"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-002/H5DF-latest-checks-page-002.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 241588,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-002/H5DF-latest-checks-page-002.stdout",
+      "sha256": "2564f3ac27f89d0924df3f43b2af28baad8e023a2383be156a021b13238c58d5"
+    },
+    {
+      "bytes": 1499,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-002/H5DF-required-runs-normalized.json",
+      "sha256": "ce5f03ddab657747b9c06ed20c55d2aa3b33fd679272a2adeab27bb05ac39229"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-002/H5DF-required-runs-page-001.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 15904,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-002/H5DF-required-runs-page-001.stdout",
+      "sha256": "540cb6ce0cefebb91058898bd35de993253e5cc10e065932def2e0da13189e6c"
+    },
+    {
+      "bytes": 82193,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-002/H5DF-run-43621754143-jobs-normalized.json",
+      "sha256": "490d14db72f6c253421c514ee1674bc3f880c94f827d5c786b86b79a62028b84"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-002/H5DF-run-43621754143-jobs-page-001.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 63939,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-002/H5DF-run-43621754143-jobs-page-001.stdout",
+      "sha256": "b1ba69e671190549e541a8ab98f996a171533e2783b3938417d8a0b75d09767f"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-002/H5DF-run-43621754143-metadata.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 15868,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-002/H5DF-run-43621754143-metadata.stdout",
+      "sha256": "b783ccc4ed1bc91c77f50d72cee0e9c58d28d23ef0f72815d190a38d68757a9c"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-002/pr847.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 27631,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-002/pr847.stdout",
+      "sha256": "d823902b692fae24f6e9cf7fd576e50a6f6148b5081969ea99d741b2ed890629"
+    },
+    {
+      "bytes": 19479,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-002/producer.py",
+      "sha256": "3f50aa71fa06f37e64c1ed1e669ad1b1b45ebe27acfddb5004957ef3a43c68fb"
+    },
+    {
+      "bytes": 14262,
+      "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-002/summary.json",
+      "sha256": "222d90ad169c08fc1a73a91f042169fa88bd005197d69587945af03c5c65e005"
+    }
+  ],
+  "schema": "trnm-readonly-progress-index-v1",
+  "self_excluded": "EVIDENCE_INDEX.json"
+}

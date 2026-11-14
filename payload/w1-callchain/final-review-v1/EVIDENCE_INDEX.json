@@ -1,0 +1,97 @@
+{
+  "files": [
+    {
+      "bytes": 5734,
+      "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/final-review-v1/producer.py",
+      "sha256": "2acbf2d51d9d7e8771d961e8028072cee1af33969c4eb3b20299ffaeff0382d7"
+    },
+    {
+      "bytes": 15094,
+      "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/final-review-v1/compact-work-observations.json",
+      "sha256": "fca816fe38b35c7a8799c457cbcc310f2557cb4d0d8ea016f37bbfaba54bef12"
+    },
+    {
+      "bytes": 9590,
+      "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/final-review-v1/review.md",
+      "sha256": "d2bcc6090bdc6f3c13c017345f90ad598e2db38b505cb05078ce2dd91768ae54"
+    },
+    {
+      "bytes": 9586,
+      "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/final-review-v1/summary.json",
+      "sha256": "57e92fef544d785ffa321f224b29dc8e8c6894a11a0b754eb43565aa2cf6004f"
+    }
+  ],
+  "schema": "readonly-review-files-v1",
+  "source_inputs": [
+    {
+      "bytes": 106066,
+      "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/04-pon_work.rs.raw",
+      "sha256": "7af17da8488782bf403275b5fd401ad469dd460fd0ecda38a0edb4e714c5494e"
+    },
+    {
+      "bytes": 20390,
+      "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/20-maintenance_limb.rs.raw",
+      "sha256": "4dcb3b9280005cd022cb99c30752525406463d963419608b1532a7092198891d"
+    },
+    {
+      "bytes": 27612,
+      "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/30-history_import.rs.raw",
+      "sha256": "79c092cfd3cddec2c72553619669df5e13208e69f4e6bbead016f4d3571cf884"
+    },
+    {
+      "bytes": 114097,
+      "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/31-request_observation.rs.raw",
+      "sha256": "9d4f8c71a87e2e1214789e0e096ded2c3497f93fb61e3239099e8753a639015b"
+    },
+    {
+      "bytes": 82351,
+      "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/32-scalar_cpu.rs.raw",
+      "sha256": "799cfe0fab3fb8e0b3796eee7748cb63a98c02b74d3083af98b4368c5895e384"
+    },
+    {
+      "bytes": 391470,
+      "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/33-store.rs.raw",
+      "sha256": "5918270368c61b420d26910dc5934714e1423f71c686b2d01f8d2e3ccceb990c"
+    },
+    {
+      "bytes": 221433,
+      "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/measurement-source-v1/0-ingress.rs.raw",
+      "sha256": "b04d1c8a2812fb17f8fd7b58c42cd3c430c42babd6889ac89f5d558cd7d07f2f"
+    },
+    {
+      "bytes": 32240,
+      "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/measurement-source-v1/1-observation.rs.raw",
+      "sha256": "719ef0802c1ab4ddefc86f268859c36a8aaf875cca329a2220cae5321d7c30ed"
+    },
+    {
+      "bytes": 79324,
+      "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/measurement-source-v1/2-public_v3_from_zero.rs.raw",
+      "sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f"
+    },
+    {
+      "bytes": 120278,
+      "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/domain-source-v1/operator_continuous_owner.rs.raw",
+      "sha256": "59398375101f36e234001dbd5bb15cd767a7b8537f457ccb104c41b110dfef4a"
+    },
+    {
+      "bytes": 18722,
+      "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/source-v1/source-index.json",
+      "sha256": "bbbdc6961fb87f302e5b943f2771ddd5fb090bccbbbb00e255587b720ff9bbe1"
+    },
+    {
+      "bytes": 15648,
+      "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/measurement-source-v1/source-index.json",
+      "sha256": "c59b70f579142a76b981643436915731fe232bbcd68c981bc1e0c1ccd783deab"
+    },
+    {
+      "bytes": 197150,
+      "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/attribution-corrected-v2/exact-work-host-attribution.json",
+      "sha256": "f464b23408267eed9e63bfb98431d2a9aeb0afb58b2a7a921c62eccbfbf8f038"
+    },
+    {
+      "bytes": 12884,
+      "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/final-review-v1/exact-confirmation-facts.json",
+      "sha256": "9da174ec8a4b5afe3ac151e4b7b81974addd1d4893f802500bc6fb9652bb9c6c"
+    }
+  ]
+}

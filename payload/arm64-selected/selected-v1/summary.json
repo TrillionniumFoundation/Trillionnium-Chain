@@ -1,0 +1,96 @@
+{
+  "actual_combined_GETs": 3,
+  "actual_new_GETs": 1,
+  "all_artifact_member_crc_verified": false,
+  "artifact_id": 14124468052,
+  "artifact_name": "cost-arm64-5df7ae6f482157c5f7fdcbcd52222117a965053f-1",
+  "automatic_retry": false,
+  "combined_budget_seconds": 900,
+  "combined_elapsed_seconds": 134.283419,
+  "combined_monotonic_deadline": 144005.637619083,
+  "declared_whole_archive_bytes": 9909858,
+  "declared_whole_archive_sha256": "3b093c989b92fb7d657195826ae6faed9e641840dbe8f48c7721aebcf7804d7d",
+  "directory_stage": {
+    "bytes": 6078,
+    "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/directory-v1/summary.json",
+    "sha256": "71d2ba7895fd2c00303255fbddcd665de79a861aa96b5e4e5646ad6a478587c3"
+  },
+  "errors": [
+    "REQUEST_INCOMPLETE:selected-range-01"
+  ],
+  "expected_subject": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+  "expected_tree": "6be4940d38cc88782657f2684cbefe48866f8b9f",
+  "finished_at": "2026-11-14T18:13:09.987846+00:00",
+  "inner_code_or_test_executed": false,
+  "job_id": 132528769087,
+  "manual_redirect_following": false,
+  "maximum_combined_GETs": 21,
+  "per_GET_max_seconds": 180,
+  "producer": {
+    "bytes": 26265,
+    "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-producer.py",
+    "sha256": "016e306f086be343fb59d2b6f47c1fb39053c0ea90b53ec87ebb96b46354a717"
+  },
+  "qualification": false,
+  "run_attempt": 1,
+  "run_id": 43621754143,
+  "schema": "trnm-H5DF-arm64-cost-selected-original-artifact-v1",
+  "selected_range_plan": {
+    "bytes": 22412,
+    "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-v1/selected-range-plan.json",
+    "sha256": "2fdaf306c764fb71bded7d57e0483eefd058b64a930adfff2782d8ef16fda32f"
+  },
+  "signed_URL_raw_headers_auth_cookies_saved": false,
+  "source_refs_stage_CI_modified": false,
+  "started_at": "2026-11-14T18:12:39.958990+00:00",
+  "status": "HOLD",
+  "steps": [
+    {
+      "GH_DEBUG_removed": true,
+      "GH_HOST": "github.com",
+      "argv": [
+        "/opt/homebrew/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "--include",
+        "--header",
+        "Range: bytes=1390399-1391464",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14124468052/zip"
+      ],
+      "automatic_retry": false,
+      "body_retained_bytes": 0,
+      "complete_transport": false,
+      "cwd": "/private/tmp",
+      "error": "GH_GET_NONZERO",
+      "exit": 1,
+      "finished_at": "2026-11-14T18:13:09.983657+00:00",
+      "headers_raw_saved": false,
+      "http_status": null,
+      "label": "selected-range-01",
+      "method": "GET",
+      "owned_pid": 91375,
+      "per_GET_budget_seconds": 180,
+      "raw_header_bytes": null,
+      "raw_header_sha256": null,
+      "safe_response_headers": {},
+      "started_at": "2026-11-14T18:12:39.960937+00:00",
+      "stderr_consumed_bytes": 151,
+      "stderr_consumed_sha256": "6a34549a398e4e1f1561ae0ef4974af1f30ee9e14bea907a56f6b70c88860859",
+      "stderr_eof": true,
+      "stderr_raw_saved": false,
+      "stdout_consumed_bytes": 0,
+      "stdout_consumed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_eof": true,
+      "step_receipt": {
+        "bytes": 1167,
+        "path": "/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1/selected-v1/selected-range-01.step.json",
+        "sha256": "520573bdaae5fee0281b7cd347ac02e9e3cac7fdc2af68476969961fc825e31f"
+      }
+    }
+  ],
+  "whole_artifact_sha256_verified": false,
+  "workflow_head": "5df7ae6f482157c5f7fdcbcd52222117a965053f"
+}

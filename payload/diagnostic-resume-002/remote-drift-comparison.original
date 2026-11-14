@@ -1,0 +1,50 @@
+{
+  "added": [],
+  "archive_tag_objects_unchanged": {
+    "refs/tags/archive/branches-before-consolidation-20261114-dc42ce4df5cf-v2": "9dafd9192e4040fab530958ef71598aaec9265b9",
+    "refs/tags/archive/execution-receipts-20261114-2a86462a1ab2-v1": "454761ef276433740453b5b80ce886c1d251c6d3",
+    "refs/tags/archive/post-publication-diagnostics-20261114-2a86462a1ab2-v1": "894875e2161bea8f0d4a135879e687de78c1f18a"
+  },
+  "changed": {
+    "fix/chain-hepta-closure-candidate-20261109-481716": {
+      "new": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+      "old": "2a86462a1ab20c68151719ba4635e3c294391e64"
+    }
+  },
+  "diagnostic_tag_absent": true,
+  "fresh_peeled_tag_observation": false,
+  "head_count": 908,
+  "inputs": [
+    {
+      "bytes": 342603,
+      "path": "/private/tmp/chain-consolidation-20261114-root/r1-diagnostic-stage1-publish-v1-r1-001/summary.json",
+      "sha256": "cabdb51529518374495ffefd5da7d776b65e5836c28c390b03a2837d9a82256b"
+    },
+    {
+      "bytes": 149335,
+      "path": "/private/tmp/chain-consolidation-20261114-root/candidate-drift-github-refs-20261114-v2/summary.json",
+      "sha256": "05fbce0a63427adc24ddc2e605ccee01734eb697ad9af1e35849cdc14665bc78"
+    },
+    {
+      "bytes": 466336,
+      "path": "/private/tmp/chain-consolidation-20261114-root/candidate-drift-github-refs-20261114-v2/remote-heads.stdout",
+      "sha256": "321f442db08954c924707a0bdf321f5bdf6b9352ed00f0fdddfdd244425526b5"
+    },
+    {
+      "bytes": 2712,
+      "path": "/private/tmp/chain-consolidation-20261114-root/candidate-drift-github-refs-20261114-v2/remote-tags.stdout",
+      "sha256": "6d6914509667f91c458e4dc952572a77d0ef842e06189b89a2eb9464297165e0"
+    }
+  ],
+  "new_network_calls": 0,
+  "new_observed_from": "2026-11-14T17:46:56.536690+00:00",
+  "new_observed_to": "2026-11-14T17:47:06.201181+00:00",
+  "new_source_acceptance": false,
+  "observed_at": "2026-11-14T17:49:24.899335+00:00",
+  "old_observed_at": "2026-11-14T17:28:44.079935+00:00",
+  "qualification": false,
+  "read_only": true,
+  "removed": [],
+  "schema": "trnm-explicit-R1-to-5df-remote-drift-comparison-v1",
+  "unchanged_heads": 907
+}

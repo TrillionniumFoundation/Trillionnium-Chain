@@ -1,0 +1,822 @@
+1: //! Optional local import measurements. No resource, proof or owner authority.
+2: use super::attribution::{HistoryNativeAttributionSnapshot, NativeAttribution};
+3: use crate::ingress::public_v3::{
+4:     request_observation::{TaskObservation, ThreadCpuStamp},
+5:     SubmitPhase, SubmitPhaseObservation,
+6: };
+7: use serde::Serialize;
+8: use std::sync::{
+9:     atomic::{AtomicU64, AtomicUsize, Ordering},
+10:     Mutex,
+11: };
+12: use std::time::Instant;
+13: use trnm_protocol::pon_wire::Hash;
+14: 
+15: pub const MAX_HISTORY_IMPORT_OBSERVATION_PACKETS: usize = 16;
+16: 
+17: #[derive(Clone, Copy, Debug, Serialize)]
+18: #[serde(rename_all = "snake_case")]
+19: pub enum HistoryHostPhase {
+20:     Resolve,
+21:     Initial,
+22:     Checkpoint,
+23:     Final,
+24: }
+25: 
+26: /// Fixed aggregate over actual calls, including rejected and unwound calls.
+27: /// `Resolve` includes opening/checking the current fixed Host context. The
+28: /// other slots each time the actual existing KernelBudget::verify invocation.
+29: #[derive(Clone, Copy, Debug, Serialize)]
+30: pub struct HistoryHostObservation {
+31:     pub phase: HistoryHostPhase,
+32:     pub calls_started: u64,
+33:     pub calls_completed: u64,
+34:     pub calls_accepted: u64,
+35:     pub calls_rejected: u64,
+36:     pub calls_unfinished: u64,
+37:     pub first_started_ns: Option<u64>,
+38:     pub last_ended_ns: Option<u64>,
+39:     pub wall_ns: Option<u64>,
+40:     pub thread_cpu_ns: Option<u64>,
+41:     pub wall_clock_unknown_calls: u64,
+42:     pub cpu_clock_unknown_calls: u64,
+43:     pub last_error_code: Option<&'static str>,
+44: }
+45: impl HistoryHostObservation {
+46:     fn new(phase: HistoryHostPhase) -> Self {
+47:         Self {
+48:             phase,
+49:             calls_started: 0,
+50:             calls_completed: 0,
+51:             calls_accepted: 0,
+52:             calls_rejected: 0,
+53:             calls_unfinished: 0,
+54:             first_started_ns: None,
+55:             last_ended_ns: None,
+56:             wall_ns: None,
+57:             thread_cpu_ns: None,
+58:             wall_clock_unknown_calls: 0,
+59:             cpu_clock_unknown_calls: 0,
+60:             last_error_code: None,
+61:         }
+62:     }
+63: }
+64: 
+65: fn host_slots() -> [HistoryHostObservation; 4] {
+66:     [
+67:         HistoryHostPhase::Resolve,
+68:         HistoryHostPhase::Initial,
+69:         HistoryHostPhase::Checkpoint,
+70:         HistoryHostPhase::Final,
+71:     ]
+72:     .map(HistoryHostObservation::new)
+73: }
+74: 
+75: const HOST_PHASE_BUCKETS: usize = SubmitPhase::ALL.len() + 1;
+76: const UNATTRIBUTED_HOST_PHASE: usize = HOST_PHASE_BUCKETS - 1;
+77: 
+78: struct HostRecords {
+79:     phases: [HistoryHostObservation; 4],
+80:     checkpoints: [HistoryHostObservation; HOST_PHASE_BUCKETS],
+81: }
+82: impl HostRecords {
+83:     fn new() -> Self {
+84:         Self {
+85:             phases: host_slots(),
+86:             checkpoints: [HistoryHostObservation::new(HistoryHostPhase::Checkpoint);
+87:                 HOST_PHASE_BUCKETS],
+88:         }
+89:     }
+90: }
+91: 
+92: /// An exclusive classification of actual checkpoint CALLS by the already-open
+93: /// native owner phase at call entry. Parallel worker calls inherit that owner
+94: /// context; this does not claim their own phase CPU or a partition of runtime.
+95: #[derive(Clone, Debug, Serialize)]
+96: pub struct HistoryHostCheckpointPhase {
+97:     pub owner_phase: Option<SubmitPhase>,
+98:     pub calls: HistoryHostObservation,
+99: }
+100: 
+101: #[derive(Clone, Debug, Serialize)]
+102: pub struct HistoryHostCheckpointAttribution {
+103:     pub schema: &'static str,
+104:     pub buckets: [HistoryHostCheckpointPhase; HOST_PHASE_BUCKETS],
+105:     pub all_checkpoint_calls_attributed: bool,
+106:     pub has_consensus_authority: bool,
+107:     pub scope: &'static str,
+108: }
+109: 
+110: #[derive(Clone, Copy, Default)]
+111: struct Context {
+112:     entered: bool,
+113:     tip: Option<Hash>,
+114:     after: Option<Hash>,
+115:     supplied_packets: Option<usize>,
+116:     packet_ids: [Option<Hash>; MAX_HISTORY_IMPORT_OBSERVATION_PACKETS],
+117: }
+118: 
+119: /// One explicitly observed invocation of the existing importer. Reusing the
+120: /// recorder marks measurement failure; it cannot reset the request deadline,
+121: /// CPU account or a prior failure. Construct another observer for another page.
+122: pub struct HistoryImportObserver {
+123:     epoch: Instant,
+124:     page: TaskObservation,
+125:     packets: [TaskObservation; MAX_HISTORY_IMPORT_OBSERVATION_PACKETS],
+126:     active_packet: AtomicUsize,
+127:     context: Mutex<Context>,
+128:     failures: AtomicU64,
+129:     host: Mutex<HostRecords>,
+130:     page_attribution: NativeAttribution,
+131:     packet_attribution: [NativeAttribution; MAX_HISTORY_IMPORT_OBSERVATION_PACKETS],
+132: }
+133: 
+134: #[derive(Clone, Debug, Serialize)]
+135: pub struct HistoryPacketObservation {
+136:     pub packet_index: usize,
+137:     pub packet_id: Option<Hash>,
+138:     pub phases: [SubmitPhaseObservation; 19],
+139: }
+140: 
+141: #[derive(Clone, Debug, Serialize)]
+142: pub struct HistoryPacketNativeAttribution {
+143:     pub packet_index: usize,
+144:     pub packet_id: Option<Hash>,
+145:     pub attribution: HistoryNativeAttributionSnapshot,
+146: }
+147: 
+148: /// Optional top-level extension. The retained packet/phase/Host row shapes
+149: /// remain unchanged for existing strict readers; missing capture stays absent.
+150: #[derive(Clone, Debug, Serialize)]
+151: pub struct HistoryImportNativeAttribution {
+152:     pub schema: &'static str,
+153:     pub page: Option<HistoryNativeAttributionSnapshot>,
+154:     pub packets: Vec<HistoryPacketNativeAttribution>,
+155: }
+156: 
+157: #[derive(Clone, Debug, Serialize)]
+158: pub struct HistoryImportObservationSnapshot {
+159:     pub schema: &'static str,
+160:     pub tip: Option<Hash>,
+161:     pub after: Option<Hash>,
+162:     pub supplied_packets: Option<usize>,
+163:     pub packet_capacity: usize,
+164:     pub phases: [SubmitPhaseObservation; 19],
+165:     #[serde(skip_serializing_if = "Option::is_none")]
+166:     pub native_attribution: Option<HistoryImportNativeAttribution>,
+167:     pub packets: Vec<HistoryPacketObservation>,
+168:     pub measurement_failures: u64,
+169:     pub host_checks: [HistoryHostObservation; 4],
+170:     pub host_checkpoint_attribution: HistoryHostCheckpointAttribution,
+171:     pub host_checks_are_nested_not_additive: bool,
+172:     pub cpu_intervals_are_nested_not_additive: bool,
+173:     pub phase_cpu_excludes_scoped_workers: bool,
+174:     pub host_cpu_includes_each_calling_thread: bool,
+175:     pub host_cpu_is_full_worker_cpu: bool,
+176:     pub observation_has_consensus_authority: bool,
+177:     pub clock_scope: &'static str,
+178: }
+179: 
+180: impl Default for HistoryImportObserver {
+181:     fn default() -> Self {
+182:         Self::new()
+183:     }
+184: }
+185: impl HistoryImportObserver {
+186:     pub fn new() -> Self {
+187:         let epoch = Instant::now();
+188:         Self {
+189:             epoch,
+190:             page: TaskObservation::local(epoch),
+191:             packets: std::array::from_fn(|_| TaskObservation::local(epoch)),
+192:             active_packet: AtomicUsize::new(MAX_HISTORY_IMPORT_OBSERVATION_PACKETS),
+193:             context: Mutex::new(Context::default()),
+194:             failures: AtomicU64::new(0),
+195:             host: Mutex::new(HostRecords::new()),
+196:             page_attribution: NativeAttribution::new(epoch),
+197:             packet_attribution: std::array::from_fn(|_| NativeAttribution::new(epoch)),
+198:         }
+199:     }
+200:     fn fail(&self) {
+201:         let _ = self
+202:             .failures
+203:             .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |n| {
+204:                 Some(n.saturating_add(1))
+205:             });
+206:     }
+207:     pub(super) fn enter(&self, tip: Hash, after: Hash, packets: usize) {
+208:         match self.context.try_lock() {
+209:             Ok(mut context) if !context.entered => {
+210:                 context.entered = true;
+211:                 context.tip = Some(tip);
+212:                 context.after = Some(after);
+213:                 context.supplied_packets = Some(packets);
+214:             }
+215:             _ => self.fail(),
+216:         }
+217:     }
+218:     pub(super) fn page(&self) -> &TaskObservation {
+219:         &self.page
+220:     }
+221:     pub(super) fn native_page(&self) -> &NativeAttribution {
+222:         &self.page_attribution
+223:     }
+224:     pub(super) fn native_packet(&self, index: usize) -> Option<&NativeAttribution> {
+225:         let record = self.packet_attribution.get(index);
+226:         if record.is_none() {
+227:             self.fail();
+228:         }
+229:         record
+230:     }
+231:     pub(super) fn decoded_packet(&self, index: usize, id: Hash) {
+232:         match self.context.try_lock() {
+233:             Ok(mut context) if index < context.packet_ids.len() => {
+234:                 if context.packet_ids[index].is_some() {
+235:                     self.fail();
+236:                 } else {
+237:                     context.packet_ids[index] = Some(id);
+238:                 }
+239:             }
+240:             _ => self.fail(),
+241:         }
+242:     }
+243:     pub(super) fn packet(&self, index: usize) -> Option<&TaskObservation> {
+244:         let packet = self.packets.get(index);
+245:         if packet.is_some() {
+246:             self.active_packet.store(index, Ordering::Release);
+247:         } else {
+248:             self.fail();
+249:         }
+250:         packet
+251:     }
+252: 
+253:     fn checkpoint_phase(&self) -> usize {
+254:         let observed = (|| {
+255:             let index = self.active_packet.load(Ordering::Acquire);
+256:             if let Some(packet) = self.packets.get(index) {
+257:                 if let Some(phase) = packet.active_phase()? {
+258:                     return Ok(Some(phase));
+259:                 }
+260:             }
+261:             self.page.active_phase()
+262:         })();
+263:         match observed {
+264:             Ok(Some(phase)) => phase as usize,
+265:             Ok(None) => UNATTRIBUTED_HOST_PHASE,
+266:             Err(()) => {
+267:                 self.fail();
+268:                 UNATTRIBUTED_HOST_PHASE
+269:             }
+270:         }
+271:     }
+272:     /// Snapshot after the synchronous import returned/unwound. A live snapshot
+273:     /// can contain unfinished spans and does not establish service completion.
+274:     pub fn snapshot(&self) -> HistoryImportObservationSnapshot {
+275:         let (host_checks, checkpoints) = match self.host.lock() {
+276:             Ok(host) => (host.phases, host.checkpoints),
+277:             Err(_) => {
+278:                 self.fail();
+279:                 let host = HostRecords::new();
+280:                 (host.phases, host.checkpoints)
+281:             }
+282:         };
+283:         let context = match self.context.lock() {
+284:             Ok(context) => *context,
+285:             Err(_) => {
+286:                 self.fail();
+287:                 Context::default()
+288:             }
+289:         };
+290:         let (phases, phase_failures) = self.page.phase_snapshot();
+291:         let (page_attribution, attribution_failures) = self.page_attribution.snapshot();
+292:         let mut failures = self
+293:             .failures
+294:             .load(Ordering::Acquire)
+295:             .saturating_add(phase_failures)
+296:             .saturating_add(attribution_failures);
+297:         let mut packet_attributions = Vec::new();
+298:         let packets = self
+299:             .packets
+300:             .iter()
+301:             .enumerate()
+302:             .filter_map(|(index, packet)| {
+303:                 let (phases, phase_failures) = packet.phase_snapshot();
+304:                 let (native_attribution, attribution_failures) =
+305:                     self.packet_attribution[index].snapshot();
+306:                 failures = failures
+307:                     .saturating_add(phase_failures)
+308:                     .saturating_add(attribution_failures);
+309:                 if let Some(attribution) = native_attribution {
+310:                     packet_attributions.push(HistoryPacketNativeAttribution {
+311:                         packet_index: index,
+312:                         packet_id: context.packet_ids[index],
+313:                         attribution,
+314:                     });
+315:                 }
+316:                 (context.packet_ids[index].is_some() || phases.iter().any(|phase| phase.started))
+317:                     .then_some(HistoryPacketObservation {
+318:                         packet_index: index,
+319:                         packet_id: context.packet_ids[index],
+320:                         phases,
+321:                     })
+322:             })
+323:             .collect();
+324:         let native_attribution = (page_attribution.is_some() || !packet_attributions.is_empty())
+325:             .then_some(HistoryImportNativeAttribution {
+326:                 schema: "pon-local-history-import-native-attribution-v1",
+327:                 page: page_attribution,
+328:                 packets: packet_attributions,
+329:             });
+330:         HistoryImportObservationSnapshot {
+331:             schema: "pon-local-history-import-observation-v1",
+332:             tip: context.tip,
+333:             after: context.after,
+334:             supplied_packets: context.supplied_packets,
+335:             packet_capacity: MAX_HISTORY_IMPORT_OBSERVATION_PACKETS,
+336:             phases,
+337:             native_attribution,
+338:             packets,
+339:             measurement_failures: failures,
+340:             host_checks,
+341:             host_checkpoint_attribution: HistoryHostCheckpointAttribution {
+342:                 schema: "pon-local-history-host-phase-attribution-v1",
+343:                 buckets: std::array::from_fn(|index| HistoryHostCheckpointPhase {
+344:                     owner_phase: SubmitPhase::ALL.get(index).copied(),
+345:                     calls: checkpoints[index],
+346:                 }),
+347:                 all_checkpoint_calls_attributed: failures == 0
+348:                     && checkpoints[UNATTRIBUTED_HOST_PHASE].calls_started == 0
+349:                     && checkpoints.iter().try_fold(0u64, |sum, row| {
+350:                         sum.checked_add(row.calls_started)
+351:                     }) == Some(host_checks[HistoryHostPhase::Checkpoint as usize].calls_started),
+352:                 has_consensus_authority: false,
+353:                 scope: "actual Host checkpoint calls classified once at entry by the innermost open owner phase; worker calls use the current owner phase context; absent or ambiguous contexts remain unattributed; the same existing call clocks feed aggregate and bucket records, which overlap; summed call wall intervals are not elapsed runtime and may overlap across threads; Host CPU includes each invoking thread, while native phase CPU excludes scoped workers; observer overhead remains in outer measured work",
+354:             },
+355:             host_checks_are_nested_not_additive: true,
+356:             cpu_intervals_are_nested_not_additive: true,
+357:             phase_cpu_excludes_scoped_workers: true,
+358:             host_cpu_includes_each_calling_thread: true,
+359:             host_cpu_is_full_worker_cpu: false,
+360:             observation_has_consensus_authority: false,
+361:             clock_scope: "one observer-local monotonic epoch; page import includes packet and checkpoint Host spans; phase CPU is importer thread only; Host CPU sums each actual invoking thread's Host intervals, not complete worker CPU; resolve/initial/final Host spans are outside native import but inside client replay; network fetch is outside client replay",
+362:         }
+363:     }
+364: }
+365: 
+366: fn add_sample(total: Option<u64>, sample: Option<u64>, first: bool) -> Option<u64> {
+367:     if first {
+368:         sample
+369:     } else {
+370:         total
+371:             .zip(sample)
+372:             .and_then(|(sum, next)| sum.checked_add(next))
+373:     }
+374: }
+375: 
+376: struct HostGuard<'a> {
+377:     observer: &'a HistoryImportObserver,
+378:     phase: HistoryHostPhase,
+379:     checkpoint_phase: Option<usize>,
+380:     start: Instant,
+381:     cpu: Option<ThreadCpuStamp>,
+382:     accepted: Option<bool>,
+383:     error_code: Option<&'static str>,
+384:     recorded: bool,
+385: }
+386: impl<'a> HostGuard<'a> {
+387:     fn new(observer: &'a HistoryImportObserver, phase: HistoryHostPhase) -> Self {
+388:         // This is an observation of existing spans, never another Host action.
+389:         // It is lock-free and its overhead remains in the outer native span.
+390:         let mut checkpoint_phase =
+391:             matches!(phase, HistoryHostPhase::Checkpoint).then(|| observer.checkpoint_phase());
+392:         let start = Instant::now();
+393:         let offset = start
+394:             .checked_duration_since(observer.epoch)
+395:             .and_then(|elapsed| u64::try_from(elapsed.as_nanos()).ok());
+396:         let mut recorded = false;
+397:         let mut checkpoint_recorded = false;
+398:         if let Ok(mut host) = observer.host.try_lock() {
+399:             let HostRecords {
+400:                 phases,
+401:                 checkpoints,
+402:             } = &mut *host;
+403:             let rows = [
+404:                 Some(&mut phases[phase as usize]),
+405:                 checkpoint_phase.map(|index| &mut checkpoints[index]),
+406:             ];
+407:             for (index, row) in rows.into_iter().enumerate() {
+408:                 let Some(row) = row else { continue };
+409:                 if let Some(count) = row.calls_started.checked_add(1) {
+410:                     row.first_started_ns = if count == 1 {
+411:                         offset
+412:                     } else {
+413:                         row.first_started_ns
+414:                             .zip(offset)
+415:                             .map(|(before, now)| before.min(now))
+416:                     };
+417:                     row.calls_started = count;
+418:                     if index == 0 {
+419:                         recorded = true;
+420:                     } else {
+421:                         checkpoint_recorded = true;
+422:                     }
+423:                 } else {
+424:                     observer.fail();
+425:                 }
+426:             }
+427:         } else {
+428:             observer.fail();
+429:         }
+430:         if !checkpoint_recorded {
+431:             checkpoint_phase = None;
+432:         }
+433:         Self {
+434:             observer,
+435:             phase,
+436:             checkpoint_phase,
+437:             start,
+438:             cpu: ThreadCpuStamp::start(),
+439:             accepted: None,
+440:             error_code: None,
+441:             recorded,
+442:         }
+443:     }
+444:     fn finish<T>(mut self, result: &crate::Result<T>) {
+445:         self.accepted = Some(result.is_ok());
+446:         self.error_code = result
+447:             .as_ref()
+448:             .err()
+449:             .and_then(crate::Error::code)
+450:             .map(crate::ErrorCode::as_str);
+451:     }
+452: }
+453: impl Drop for HostGuard<'_> {
+454:     fn drop(&mut self) {
+455:         if !self.recorded {
+456:             return;
+457:         }
+458:         let end = Instant::now();
+459:         let ended = end
+460:             .checked_duration_since(self.observer.epoch)
+461:             .and_then(|elapsed| u64::try_from(elapsed.as_nanos()).ok());
+462:         let wall = end
+463:             .checked_duration_since(self.start)
+464:             .and_then(|elapsed| u64::try_from(elapsed.as_nanos()).ok());
+465:         let cpu = self.cpu.take().and_then(ThreadCpuStamp::finish);
+466:         if let Ok(mut host) = self.observer.host.try_lock() {
+467:             let HostRecords {
+468:                 phases,
+469:                 checkpoints,
+470:             } = &mut *host;
+471:             let rows = [
+472:                 Some(&mut phases[self.phase as usize]),
+473:                 self.checkpoint_phase.map(|index| &mut checkpoints[index]),
+474:             ];
+475:             for row in rows.into_iter().flatten() {
+476:                 let first = row.calls_completed == 0 && row.calls_unfinished == 0;
+477:                 row.wall_ns = add_sample(row.wall_ns, wall, first);
+478:                 row.thread_cpu_ns = add_sample(row.thread_cpu_ns, cpu, first);
+479:                 row.last_ended_ns = if first {
+480:                     ended
+481:                 } else {
+482:                     row.last_ended_ns
+483:                         .zip(ended)
+484:                         .map(|(before, now)| before.max(now))
+485:                 };
+486:                 row.wall_clock_unknown_calls = row
+487:                     .wall_clock_unknown_calls
+488:                     .saturating_add(u64::from(wall.is_none()));
+489:                 row.cpu_clock_unknown_calls = row
+490:                     .cpu_clock_unknown_calls
+491:                     .saturating_add(u64::from(cpu.is_none()));
+492:                 match self.accepted {
+493:                     Some(accepted) => {
+494:                         row.calls_completed = row.calls_completed.saturating_add(1);
+495:                         if accepted {
+496:                             row.calls_accepted = row.calls_accepted.saturating_add(1);
+497:                         } else {
+498:                             row.calls_rejected = row.calls_rejected.saturating_add(1);
+499:                             row.last_error_code = self.error_code;
+500:                         }
+501:                     }
+502:                     None => {
+503:                         row.calls_unfinished = row.calls_unfinished.saturating_add(1);
+504:                     }
+505:                 }
+506:                 if wall.is_some() && row.wall_ns.is_none() && row.wall_clock_unknown_calls == 0 {
+507:                     self.observer.fail(); // Aggregate overflow cannot look like zero work.
+508:                 }
+509:                 if cpu.is_some() && row.thread_cpu_ns.is_none() && row.cpu_clock_unknown_calls == 0
+510:                 {
+511:                     self.observer.fail();
+512:                 }
+513:             }
+514:         } else {
+515:             self.observer.fail();
+516:         }
+517:     }
+518: }
+519: 
+520: pub(in crate::ingress) fn observe_host<T>(
+521:     observer: Option<&HistoryImportObserver>,
+522:     phase: HistoryHostPhase,
+523:     action: impl FnOnce() -> crate::Result<T>,
+524: ) -> crate::Result<T> {
+525:     let guard = observer.map(|observer| HostGuard::new(observer, phase));
+526:     let result = action();
+527:     if let Some(guard) = guard {
+528:         guard.finish(&result);
+529:     }
+530:     result
+531: }
+532: 
+533: #[cfg(test)]
+534: mod tests {
+535:     use super::*;
+536:     use std::sync::atomic::AtomicUsize;
+537: 
+538:     #[test]
+539:     fn host_checkpoints_follow_existing_native_spans_without_new_callbacks() {
+540:         use crate::ingress::execution_observation::{self, Scope};
+541:         use trnm_mvcc_fee::pon_executor::{ExecutionControl, ExecutionProgress};
+542: 
+543:         let observer = HistoryImportObserver::new();
+544:         let calls = AtomicUsize::new(0);
+545:         let original = || {
+546:             observe_host(Some(&observer), HistoryHostPhase::Checkpoint, || {
+547:                 calls.fetch_add(1, Ordering::Relaxed);
+548:                 Ok(())
+549:             })
+550:         };
+551:         let page = observer.page().phase(SubmitPhase::HistoryImport);
+552:         original().unwrap();
+553:         let packet = observer.packet(0).unwrap();
+554:         let import = packet.phase(SubmitPhase::HistoryImport);
+555:         let work = packet.phase(SubmitPhase::Work);
+556:         original().unwrap();
+557:         work.finish(true);
+558:         let admission = packet.phase(SubmitPhase::Admission);
+559:         execution_observation::run(
+560:             Some(packet),
+561:             &ExecutionControl::new(&|_| original(), &()),
+562:             Scope::Held,
+563:             |control| {
+564:                 // Each marker invokes the original hook BEFORE its observer
+565:                 // transition, so the boundary belongs to the preceding span.
+566:                 for point in [
+567:                     ExecutionProgress::BeforeParentBinding,
+568:                     ExecutionProgress::BeforeStateClone,
+569:                     ExecutionProgress::BeforeCommitment,
+570:                     ExecutionProgress::AfterCommitment,
+571:                     ExecutionProgress::BeforePersistence,
+572:                     ExecutionProgress::BeforeDurableCommit,
+573:                 ] {
+574:                     (control.progress)(point)?;
+575:                 }
+576:                 Ok(())
+577:             },
+578:         )
+579:         .unwrap();
+580:         admission.finish(true);
+581:         import.finish(true);
+582:         page.finish(true);
+583: 
+584:         let snapshot = observer.snapshot();
+585:         let attribution = &snapshot.host_checkpoint_attribution;
+586:         assert_eq!(calls.load(Ordering::Relaxed), 8);
+587:         assert_eq!(snapshot.measurement_failures, 0);
+588:         assert!(attribution.all_checkpoint_calls_attributed);
+589:         assert!(!attribution.has_consensus_authority);
+590:         for (phase, expected) in [
+591:             (SubmitPhase::HistoryImport, 1),
+592:             (SubmitPhase::Work, 1),
+593:             (SubmitPhase::AdmissionPrepare, 2),
+594:             (SubmitPhase::Execution, 2),
+595:             (SubmitPhase::RootCommitment, 1),
+596:             (SubmitPhase::Commit, 1),
+597:         ] {
+598:             let bucket = &attribution.buckets[phase as usize];
+599:             assert_eq!(bucket.owner_phase, Some(phase));
+600:             assert_eq!(bucket.calls.calls_started, expected);
+601:             assert_eq!(bucket.calls.calls_accepted, expected);
+602:         }
+603:         let total = snapshot.host_checks[HistoryHostPhase::Checkpoint as usize];
+604:         assert_eq!(total.calls_started, 8);
+605:         assert_eq!(
+606:             attribution
+607:                 .buckets
+608:                 .iter()
+609:                 .map(|row| row.calls.wall_ns.unwrap_or(0))
+610:                 .sum::<u64>(),
+611:             total.wall_ns.unwrap()
+612:         );
+613:         // These are identical call samples, not independently measured phase
+614:         // CPU or disjoint elapsed-runtime intervals.
+615:         let encoded = serde_json::to_value(&snapshot).unwrap();
+616:         assert_eq!(encoded["schema"], "pon-local-history-import-observation-v1");
+617:         assert_eq!(
+618:             encoded["host_checkpoint_attribution"]["schema"],
+619:             "pon-local-history-host-phase-attribution-v1"
+620:         );
+621:         assert_eq!(encoded["host_checks"].as_array().unwrap().len(), 4);
+622:         assert_eq!(
+623:             encoded["host_checkpoint_attribution"]["buckets"]
+624:                 .as_array()
+625:                 .unwrap()
+626:                 .len(),
+627:             HOST_PHASE_BUCKETS
+628:         );
+629:     }
+630: 
+631:     #[test]
+632:     fn checkpoint_attribution_keeps_errors_unwind_and_missing_clocks() {
+633:         let observer = HistoryImportObserver::new();
+634:         let packet = observer.packet(0).unwrap();
+635:         let work = packet.phase(SubmitPhase::Work);
+636:         let calls = AtomicUsize::new(0);
+637:         let result = observe_host(Some(&observer), HistoryHostPhase::Checkpoint, || {
+638:             calls.fetch_add(1, Ordering::Relaxed);
+639:             Err::<(), _>("PUBLIC_REQUEST_DEADLINE".into())
+640:         });
+641:         assert!(result
+642:             .unwrap_err()
+643:             .is(crate::ErrorCode::PublicRequestDeadline));
+644:         let panicked = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+645:             let _: crate::Result<()> =
+646:                 observe_host(Some(&observer), HistoryHostPhase::Checkpoint, || {
+647:                     calls.fetch_add(1, Ordering::Relaxed);
+648:                     panic!("retain the original unwind");
+649:                 });
+650:         }));
+651:         assert!(panicked.is_err());
+652:         let mut guard = HostGuard::new(&observer, HistoryHostPhase::Checkpoint);
+653:         guard.cpu = None;
+654:         guard.finish(&Ok(()));
+655:         work.finish(false);
+656:         let snapshot = observer.snapshot();
+657:         let row = snapshot.host_checkpoint_attribution.buckets[SubmitPhase::Work as usize].calls;
+658:         assert_eq!(calls.load(Ordering::Relaxed), 2);
+659:         assert_eq!(
+660:             (
+661:                 row.calls_started,
+662:                 row.calls_completed,
+663:                 row.calls_accepted,
+664:                 row.calls_rejected,
+665:                 row.calls_unfinished
+666:             ),
+667:             (3, 2, 1, 1, 1)
+668:         );
+669:         assert_eq!(row.last_error_code, Some("PUBLIC_REQUEST_DEADLINE"));
+670:         assert_eq!(row.thread_cpu_ns, None);
+671:         assert!(row.cpu_clock_unknown_calls >= 1);
+672:         assert_eq!(snapshot.measurement_failures, 0);
+673:     }
+674: 
+675:     #[test]
+676:     fn unattributed_and_ambiguous_contexts_never_guess_or_change_original_action() {
+677:         let observer = HistoryImportObserver::new();
+678:         observe_host(Some(&observer), HistoryHostPhase::Checkpoint, || Ok(())).unwrap();
+679:         let packet = observer.packet(0).unwrap();
+680:         let work = packet.phase(SubmitPhase::Work);
+681:         let context = packet.phase(SubmitPhase::Context);
+682:         let calls = AtomicUsize::new(0);
+683:         let result = observe_host(Some(&observer), HistoryHostPhase::Checkpoint, || {
+684:             calls.fetch_add(1, Ordering::Relaxed);
+685:             Err::<(), _>("PUBLIC_REQUEST_CANCELLED".into())
+686:         });
+687:         assert!(result
+688:             .unwrap_err()
+689:             .is(crate::ErrorCode::PublicRequestCancelled));
+690:         context.finish(false);
+691:         work.finish(false);
+692:         let snapshot = observer.snapshot();
+693:         assert_eq!(calls.load(Ordering::Relaxed), 1);
+694:         assert_eq!(snapshot.measurement_failures, 1);
+695:         assert!(
+696:             !snapshot
+697:                 .host_checkpoint_attribution
+698:                 .all_checkpoint_calls_attributed
+699:         );
+700:         let unknown = &snapshot.host_checkpoint_attribution.buckets[UNATTRIBUTED_HOST_PHASE];
+701:         assert_eq!(unknown.owner_phase, None);
+702:         assert_eq!(unknown.calls.calls_started, 2);
+703:         assert_eq!(unknown.calls.calls_rejected, 1);
+704:     }
+705: 
+706:     #[test]
+707:     fn worker_checkpoint_uses_owner_phase_without_relabeling_worker_cpu() {
+708:         let observer = HistoryImportObserver::new();
+709:         let packet = observer.packet(0).unwrap();
+710:         let admission = packet.phase(SubmitPhase::Admission);
+711:         let execution = packet.phase(SubmitPhase::Execution);
+712:         std::thread::scope(|scope| {
+713:             scope
+714:                 .spawn(|| {
+715:                     observe_host(Some(&observer), HistoryHostPhase::Checkpoint, || Ok(())).unwrap();
+716:                 })
+717:                 .join()
+718:                 .unwrap();
+719:         });
+720:         execution.finish(true);
+721:         admission.finish(true);
+722:         let snapshot = observer.snapshot();
+723:         assert_eq!(
+724:             snapshot.host_checkpoint_attribution.buckets[SubmitPhase::Execution as usize]
+725:                 .calls
+726:                 .calls_started,
+727:             1
+728:         );
+729:         assert!(
+730:             snapshot
+731:                 .host_checkpoint_attribution
+732:                 .all_checkpoint_calls_attributed
+733:         );
+734:         assert!(snapshot.phase_cpu_excludes_scoped_workers);
+735:         assert!(snapshot.host_cpu_includes_each_calling_thread);
+736:         assert!(!snapshot.host_cpu_is_full_worker_cpu);
+737:     }
+738: 
+739:     #[test]
+740:     fn host_aggregate_retains_returns_unwind_and_unentered_unknowns() {
+741:         let observer = HistoryImportObserver::new();
+742:         let calls = AtomicUsize::new(0);
+743:         observe_host(Some(&observer), HistoryHostPhase::Checkpoint, || {
+744:             calls.fetch_add(1, Ordering::Relaxed);
+745:             Ok(())
+746:         })
+747:         .unwrap();
+748:         let refused = observe_host(Some(&observer), HistoryHostPhase::Checkpoint, || {
+749:             calls.fetch_add(1, Ordering::Relaxed);
+750:             Err::<(), _>("PUBLIC_REQUEST_CANCELLED".into())
+751:         });
+752:         assert!(refused
+753:             .unwrap_err()
+754:             .is(crate::ErrorCode::PublicRequestCancelled));
+755:         let panicked = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+756:             let _: crate::Result<()> =
+757:                 observe_host(Some(&observer), HistoryHostPhase::Checkpoint, || {
+758:                     calls.fetch_add(1, Ordering::Relaxed);
+759:                     panic!("diagnostic native call unwind");
+760:                 });
+761:         }));
+762:         assert!(panicked.is_err());
+763:         let snapshot = observer.snapshot();
+764:         let row = snapshot.host_checks[HistoryHostPhase::Checkpoint as usize];
+765:         assert_eq!(calls.load(Ordering::Relaxed), 3);
+766:         assert_eq!(
+767:             (
+768:                 row.calls_started,
+769:                 row.calls_completed,
+770:                 row.calls_accepted,
+771:                 row.calls_rejected,
+772:                 row.calls_unfinished
+773:             ),
+774:             (3, 2, 1, 1, 1)
+775:         );
+776:         assert_eq!(row.last_error_code, Some("PUBLIC_REQUEST_CANCELLED"));
+777:         assert!(row.wall_ns.is_some());
+778:         assert!(row.last_ended_ns.unwrap() >= row.first_started_ns.unwrap());
+779:         assert_eq!(snapshot.measurement_failures, 0);
+780:         let absent = snapshot.host_checks[HistoryHostPhase::Final as usize];
+781:         assert_eq!(absent.calls_started, 0);
+782:         assert_eq!(absent.wall_ns, None);
+783:         assert_eq!(absent.thread_cpu_ns, None);
+784:     }
+785: 
+786:     #[test]
+787:     fn host_capture_contention_never_changes_original_error_or_calls_action_twice() {
+788:         let observer = HistoryImportObserver::new();
+789:         let locked = observer.host.lock().unwrap();
+790:         let calls = AtomicUsize::new(0);
+791:         let result = observe_host(Some(&observer), HistoryHostPhase::Initial, || {
+792:             calls.fetch_add(1, Ordering::Relaxed);
+793:             Err::<(), _>("PUBLIC_REQUEST_DEADLINE".into())
+794:         });
+795:         drop(locked);
+796:         assert!(result
+797:             .unwrap_err()
+798:             .is(crate::ErrorCode::PublicRequestDeadline));
+799:         assert_eq!(calls.load(Ordering::Relaxed), 1);
+800:         let snapshot = observer.snapshot();
+801:         assert_eq!(snapshot.measurement_failures, 1);
+802:         assert_eq!(
+803:             snapshot.host_checks[HistoryHostPhase::Initial as usize].calls_started,
+804:             0
+805:         );
+806:     }
+807: 
+808:     #[test]
+809:     fn a_missing_host_cpu_sample_keeps_the_aggregate_unknown_after_known_returns() {
+810:         let observer = HistoryImportObserver::new();
+811:         let mut guard = HostGuard::new(&observer, HistoryHostPhase::Final);
+812:         guard.cpu = None; // Exercise unavailable-clock accounting, not a zero sample.
+813:         guard.finish(&Ok(()));
+814:         observe_host(Some(&observer), HistoryHostPhase::Final, || Ok(())).unwrap();
+815:         let row = observer.snapshot().host_checks[HistoryHostPhase::Final as usize];
+816:         assert_eq!(row.calls_started, 2);
+817:         assert_eq!(row.calls_completed, 2);
+818:         assert!(row.cpu_clock_unknown_calls >= 1);
+819:         assert_eq!(row.thread_cpu_ns, None);
+820:         assert!(row.wall_ns.is_some());
+821:     }
+822: }

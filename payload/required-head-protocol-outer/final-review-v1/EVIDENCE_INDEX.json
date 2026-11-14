@@ -1,0 +1,103 @@
+{
+  "bytes": 313865,
+  "count": 19,
+  "files": [
+    {
+      "bytes": 14551,
+      "path": "/private/tmp/chain-prci-H5DF-required-head-protocol-original-log-20261114-v1/acquisition-summary.json",
+      "sha256": "d2849e851192fab8acdc5ffb1aedc457d604dd6aeba5d8706214d490daf1a327"
+    },
+    {
+      "bytes": 8561,
+      "path": "/private/tmp/chain-prci-H5DF-required-head-protocol-original-log-20261114-v1/approved-capture-source.py",
+      "sha256": "1f1b31e74c0a63892fb0f7d325b830b0f64e40a379cdaf30b965599fbe9c2604"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-prci-H5DF-required-head-protocol-original-log-20261114-v1/job-132528769008-metadata.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3144,
+      "path": "/private/tmp/chain-prci-H5DF-required-head-protocol-original-log-20261114-v1/job-132528769008-metadata.stdout",
+      "sha256": "d2aa534bbb180b20cc0396c309e2202ad852c56a532b676ad413cb3b94a709a5"
+    },
+    {
+      "bytes": 1421,
+      "path": "/private/tmp/chain-prci-H5DF-required-head-protocol-original-log-20261114-v1/job-132528769008-metadata.step.json",
+      "sha256": "9cfe946126719e48292a9a77077be0553b53405bff5510a0cdd6ed3da4c65b0a"
+    },
+    {
+      "bytes": 0,
+      "path": "/private/tmp/chain-prci-H5DF-required-head-protocol-original-log-20261114-v1/job-132528769008-original-log.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 219531,
+      "path": "/private/tmp/chain-prci-H5DF-required-head-protocol-original-log-20261114-v1/job-132528769008-original-log.stdout",
+      "sha256": "83b7dc7a418f9a31563abf92b7702c8969ac1c9fe2ed741b2f9ba4b95ee13a5c"
+    },
+    {
+      "bytes": 1452,
+      "path": "/private/tmp/chain-prci-H5DF-required-head-protocol-original-log-20261114-v1/job-132528769008-original-log.step.json",
+      "sha256": "2a2005ea0e9df40ece24799b7d23461a8d7baa2261cb7d8b928ae0bfc0d95f81"
+    },
+    {
+      "bytes": 959,
+      "path": "/private/tmp/chain-prci-H5DF-required-head-protocol-original-log-20261114-v1/launcher.py",
+      "sha256": "d268b1c0be0cea964c5ae59370e1bcab39fa5b74e2c55e42c52a57307a24c455"
+    },
+    {
+      "bytes": 8321,
+      "path": "/private/tmp/chain-prci-H5DF-required-head-protocol-original-log-20261114-v1/producer.py",
+      "sha256": "b5bfad58b2b4dbed3d4410d46460f9bb3b16d07a8e0dd4a0d55753bed364b9a4"
+    },
+    {
+      "bytes": 7306,
+      "path": "/private/tmp/chain-prci-H5DF-required-head-protocol-original-log-20261114-v1/service-to-required-protocol.patch",
+      "sha256": "f9a8d40df90e1d99a47ec24def0000aaa6b40934afcc960626dfc2fb495e884d"
+    },
+    {
+      "bytes": 2931,
+      "path": "/private/tmp/chain-prci-H5DF-required-head-protocol-original-log-20261114-v1/EVIDENCE_INDEX.json",
+      "sha256": "7f43177c3399d2dfb958bba1e0a8305e67af8ee10a79661ef885e127562c8f59"
+    },
+    {
+      "bytes": 588,
+      "path": "/private/tmp/chain-prci-H5DF-required-head-protocol-original-log-20261114-v1/final-review-v1/README.txt",
+      "sha256": "abc781cd29c6c6ca0676735a56a28ebfec54c7b290fac0e611cbfabe92fbb261"
+    },
+    {
+      "bytes": 8914,
+      "path": "/private/tmp/chain-prci-H5DF-required-head-protocol-original-log-20261114-v1/final-review-v1/acquisition-actual-terminal.json",
+      "sha256": "19df518df6d3a5f069d9c618d4bbfd41397e457567caebefd7caa085e3623405"
+    },
+    {
+      "bytes": 876,
+      "path": "/private/tmp/chain-prci-H5DF-required-head-protocol-original-log-20261114-v1/final-review-v1/acquisition-actual-terminal.log",
+      "sha256": "41982032cbe3a300405b003c41da915a605fa692b4a09ddc55128dbe42cde307"
+    },
+    {
+      "bytes": 6556,
+      "path": "/private/tmp/chain-prci-H5DF-required-head-protocol-original-log-20261114-v1/final-review-v1/exact-outer-facts.json",
+      "sha256": "baffa38d6308570c328f38b9e96e233ae128c7a15594af0b05742fc8b6d8bfdf"
+    },
+    {
+      "bytes": 7804,
+      "path": "/private/tmp/chain-prci-H5DF-required-head-protocol-original-log-20261114-v1/final-review-v1/original-controller-result.json",
+      "sha256": "495f07be988757ff187131311a701c051514580f10316b3cdb7e57601ed5d8c7"
+    },
+    {
+      "bytes": 12957,
+      "path": "/private/tmp/chain-prci-H5DF-required-head-protocol-original-log-20261114-v1/final-review-v1/original-line-excerpts.json",
+      "sha256": "1ca3ee516ed514eb034e268cfc8c359cd341979d4197c9096038e94f151f5b91"
+    },
+    {
+      "bytes": 7993,
+      "path": "/private/tmp/chain-prci-H5DF-required-head-protocol-original-log-20261114-v1/final-review-v1/producer.py",
+      "sha256": "7e063c5c3de35d1164d06f242c2b7626332be1e91d4634c6a6b5072e92bee843"
+    }
+  ],
+  "schema": "trnm-H5DF-required-head-protocol-closed-review-index-v1",
+  "self_excluded": true
+}

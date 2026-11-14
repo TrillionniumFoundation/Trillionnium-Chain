@@ -1,0 +1,291 @@
+
+31-request_observation.rs.raw lines 1230-1518
+1230:     network: Option<Handle>,
+1231:     phases: PhaseRecorder,
+1232: }
+1233: impl TaskObservation {
+1234:     pub(in crate::ingress) fn local(epoch: Instant) -> Self {
+1235:         Self {
+1236:             network: None,
+1237:             phases: PhaseRecorder::new(epoch),
+1238:         }
+1239:     }
+1240:     pub(in crate::ingress) fn phase_snapshot(&self) -> ([SubmitPhaseObservation; 19], u64) {
+1241:         self.phases.snapshot()
+1242:     }
+1243:     pub(in crate::ingress) fn measurement_failed(&self) {
+1244:         self.phases.failed();
+1245:     }
+1246:     pub(in crate::ingress) fn phase(&self, phase: SubmitPhase) -> SubmitPhaseGuard<'_> {
+1247:         self.phases.phase(phase)
+1248:     }
+1249:     /// Sample the already-open owner spans for diagnostic attribution only.
+1250:     /// One atomic mask is a coherent sample; it never waits for a row mutex or
+1251:     /// relies on a clock value being available. An ambiguous overlap stays
+1252:     /// unknown instead of guessing a stage or changing a native result.
+1253:     pub(in crate::ingress) fn active_phase(&self) -> std::result::Result<Option<SubmitPhase>, ()> {
+1254:         self.phases.active_phase()
+1255:     }
+1256:     pub(super) fn worker_scope(&self) -> Option<RequestWorkerObservation> {
+1257:         let network = self.network.as_ref()?;
+1258:         let entered = network.inner.timestamp_ns(Instant::now());
+1259:         let recordable = network.cell.worker_entered_ns.set(entered).is_ok();
+1260:         if !recordable || entered.is_none() {
+1261:             network.cell.failed.store(true, Ordering::Release);
+1262:             network.inner.count(&network.inner.failures);
+1263:         }
+1264:         network.cell.worker_entered.store(true, Ordering::Release);
+1265:         Some(RequestWorkerObservation {
+1266:             network: network.clone(),
+1267:             thread: thread::current().id(),
+1268:             recordable,
+1269:         })
+1270:     }
+1271:     fn update_task(&self, change: impl FnOnce(&mut TaskProgress)) {
+1272:         if let Some(network) = &self.network {
+1273:             network.update_task(change);
+1274:         }
+1275:     }
+1276:     pub(super) fn queue_started(&self, started: Instant) {
+1277:         if let Some(network) = &self.network {
+1278:             network.update_task(|r| {
+1279:                 r.paid_task_queue_wait =
+1280:                     RequestWaitObservation::start(network.inner.epoch, started);
+1281:             });
+1282:         }
+1283:     }
+1284:     pub(super) fn queue_finished<T>(&self, result: &crate::Result<T>) {
+1285:         if let Some(network) = &self.network {
+1286:             let code = result
+1287:                 .as_ref()
+1288:                 .err()
+1289:                 .and_then(crate::Error::code)
+1290:                 .map(crate::ErrorCode::as_str);
+1291:             network.update_task(|r| {
+1292:                 r.paid_task_queue_wait
+1293:                     .finish(network.inner.epoch, Some((result.is_ok(), code)));
+1294:             });
+1295:         }
+1296:     }
+1297:     pub(super) fn dispatch_started(&self) {
+1298:         self.update_task(|r| {
+1299:             r.dispatch_started = true;
+1300:         });
+1301:     }
+1302:     pub(super) fn dispatch_finished(&self, cpu: Option<u64>, accepted: bool) {
+1303:         self.update_task(|r| {
+1304:             r.dispatch_thread_cpu_ns = cpu;
+1305:             r.dispatch_accepted = Some(accepted);
+1306:         });
+1307:     }
+1308:     pub(super) fn settlement_finished(&self, actual: PublicCpuSettlementObservation) {
+1309:         self.update_task(|r| {
+1310:             if r.cpu_settlement.is_some() {
+1311:                 self.measurement_failed();
+1312:             } else {
+1313:                 r.cpu_settlement = Some(actual);
+1314:             }
+1315:         });
+1316:     }
+1317:     pub(super) fn dispatch_error(&self, error: &crate::Error) {
+1318:         if let Some(network) = &self.network {
+1319:             let moment = RequestErrorMoment {
+1320:                 observed_ns: network.inner.timestamp_ns(Instant::now()),
+1321:                 phase: "dispatch",
+1322:                 error_code: error.code().map(crate::ErrorCode::as_str),
+1323:             };
+1324:             network.update_task(|r| {
+1325:                 r.dispatch_error_code = moment.error_code;
+1326:                 r.dispatch_error_diagnostic = Some(ObservedErrorDiagnostic::capture(error));
+1327:                 r.first_dispatch_error.get_or_insert(moment);
+1328:             });
+1329:         }
+1330:     }
+1331:     pub(super) fn work_started(&self) {
+1332:         self.update_task(|r| {
+1333:             r.full_work_started = true;
+1334:         });
+1335:     }
+1336:     pub(super) fn work_arithmetic(&self, observation: PublicArithmeticWorkObservation) {
+1337:         self.update_task(|r| {
+1338:             r.work_arithmetic = Some(observation);
+1339:         });
+1340:     }
+1341:     pub(super) fn work_rejection(&self, observation: PublicRejectionWorkObservation) {
+1342:         self.update_task(|r| {
+1343:             r.work_rejection = Some(observation);
+1344:         });
+1345:     }
+1346:     pub(super) fn work_finished(&self, cpu: Option<u64>, accepted: bool) {
+1347:         self.update_task(|r| {
+1348:             r.full_work_thread_cpu_ns = cpu;
+1349:             r.full_work_accepted = Some(accepted);
+1350:         });
+1351:     }
+1352: }
+1353: 
+1354: #[derive(Clone)]
+1355: struct PhaseRecorder(Arc<PhaseRecorderInner>);
+1356: struct PhaseRecorderInner {
+1357:     epoch: Instant,
+1358:     rows: Mutex<[SubmitPhaseObservation; 19]>,
+1359:     active: AtomicU32,
+1360:     failures: AtomicU64,
+1361: }
+1362: impl PhaseRecorder {
+1363:     fn new(epoch: Instant) -> Self {
+1364:         Self(Arc::new(PhaseRecorderInner {
+1365:             epoch,
+1366:             rows: Mutex::new(submit_phases()),
+1367:             active: AtomicU32::new(0),
+1368:             failures: AtomicU64::new(0),
+1369:         }))
+1370:     }
+1371:     fn failed(&self) {
+1372:         // The diagnostic counter saturates; it never becomes service credit.
+1373:         let _ = self
+1374:             .0
+1375:             .failures
+1376:             .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |n| {
+1377:                 Some(n.saturating_add(1))
+1378:             });
+1379:     }
+1380:     fn failures(&self) -> u64 {
+1381:         self.0.failures.load(Ordering::Acquire)
+1382:     }
+1383:     fn update(&self, change: impl FnOnce(&mut [SubmitPhaseObservation; 19])) {
+1384:         match self.0.rows.try_lock() {
+1385:             Ok(mut rows) => change(&mut rows),
+1386:             Err(_) => self.failed(),
+1387:         }
+1388:     }
+1389:     fn snapshot(&self) -> ([SubmitPhaseObservation; 19], u64) {
+1390:         let rows = match self.0.rows.lock() {
+1391:             Ok(rows) => *rows,
+1392:             Err(_) => {
+1393:                 self.failed();
+1394:                 submit_phases()
+1395:             }
+1396:         };
+1397:         (rows, self.failures())
+1398:     }
+1399:     fn active_phase(&self) -> std::result::Result<Option<SubmitPhase>, ()> {
+1400:         if self.failures() != 0 {
+1401:             return Err(());
+1402:         }
+1403:         let active = self.0.active.load(Ordering::Acquire);
+1404:         if active == 0 {
+1405:             return Ok(None);
+1406:         }
+1407:         for phase in SubmitPhase::ALL {
+1408:             if active & (1 << phase as u32) == 0 {
+1409:                 continue;
+1410:             }
+1411:             // HistoryImport is the enclosing local invocation. All other
+1412:             // containment comes from the existing declared parent links.
+1413:             // Never choose by timestamp or guess across live sibling spans.
+1414:             let mut lineage = 0u32;
+1415:             let mut current = Some(phase);
+1416:             while let Some(parent) = current {
+1417:                 lineage |= 1 << parent as u32;
+1418:                 current = if parent == SubmitPhase::HistoryImport {
+1419:                     None
+1420:                 } else {
+1421:                     parent.parent().or(Some(SubmitPhase::HistoryImport))
+1422:                 };
+1423:             }
+1424:             if active & !lineage == 0 {
+1425:                 return Ok(Some(phase));
+1426:             }
+1427:         }
+1428:         Err(())
+1429:     }
+1430:     fn phase(&self, phase: SubmitPhase) -> SubmitPhaseGuard<'_> {
+1431:         let started = Instant::now();
+1432:         let started_ns = started
+1433:             .checked_duration_since(self.0.epoch)
+1434:             .and_then(|elapsed| u64::try_from(elapsed.as_nanos()).ok());
+1435:         let mut recordable = false;
+1436:         self.update(|rows| {
+1437:             let row = &mut rows[phase as usize];
+1438:             if row.started {
+1439:                 // Fixed slots are single-entry. Never overwrite a previous
+1440:                 // failure with a retry's success or hide an unbounded loop.
+1441:                 self.failed();
+1442:             } else {
+1443:                 row.started = true;
+1444:                 row.started_ns = started_ns;
+1445:                 recordable = true;
+1446:             }
+1447:         });
+1448:         if recordable {
+1449:             self.0.active.fetch_or(1 << phase as u32, Ordering::Release);
+1450:         }
+1451:         SubmitPhaseGuard {
+1452:             observation: self,
+1453:             phase,
+1454:             started,
+1455:             cpu: ThreadCpuStamp::start(),
+1456:             accepted: None,
+1457:             error_code: None,
+1458:             recordable,
+1459:         }
+1460:     }
+1461: }
+1462: 
+1463: /// Drop retains an unfinished/panicked phase with unknown outcome. Measurement
+1464: /// failure never changes the request result, cancellation or resource account.
+1465: pub(in crate::ingress) struct SubmitPhaseGuard<'a> {
+1466:     observation: &'a PhaseRecorder,
+1467:     phase: SubmitPhase,
+1468:     started: Instant,
+1469:     cpu: Option<ThreadCpuStamp>,
+1470:     accepted: Option<bool>,
+1471:     error_code: Option<&'static str>,
+1472:     recordable: bool,
+1473: }
+1474: impl SubmitPhaseGuard<'_> {
+1475:     pub(in crate::ingress) fn finish(mut self, accepted: bool) {
+1476:         self.accepted = Some(accepted);
+1477:     }
+1478:     pub(in crate::ingress) fn finish_result<T>(mut self, result: &crate::Result<T>) {
+1479:         self.accepted = Some(result.is_ok());
+1480:         self.error_code = result
+1481:             .as_ref()
+1482:             .err()
+1483:             .and_then(crate::Error::code)
+1484:             .map(crate::ErrorCode::as_str);
+1485:     }
+1486: }
+1487: impl Drop for SubmitPhaseGuard<'_> {
+1488:     fn drop(&mut self) {
+1489:         if !self.recordable {
+1490:             return;
+1491:         }
+1492:         self.observation
+1493:             .0
+1494:             .active
+1495:             .fetch_and(!(1 << self.phase as u32), Ordering::Release);
+1496:         let ended = Instant::now();
+1497:         let wall = ended
+1498:             .checked_duration_since(self.started)
+1499:             .and_then(|elapsed| u64::try_from(elapsed.as_nanos()).ok());
+1500:         let ended_ns = ended
+1501:             .checked_duration_since(self.observation.0.epoch)
+1502:             .and_then(|elapsed| u64::try_from(elapsed.as_nanos()).ok());
+1503:         let cpu = self.cpu.take().and_then(ThreadCpuStamp::finish);
+1504:         self.observation.update(|rows| {
+1505:             let phase = &mut rows[self.phase as usize];
+1506:             if phase.ended_ns.is_some() {
+1507:                 self.observation.failed();
+1508:                 return;
+1509:             }
+1510:             phase.completed = self.accepted.is_some();
+1511:             phase.accepted = self.accepted;
+1512:             phase.error_code = self.error_code;
+1513:             phase.ended_ns = ended_ns;
+1514:             phase.wall_ns = wall;
+1515:             phase.thread_cpu_ns = cpu;
+1516:         });
+1517:     }
+1518: }

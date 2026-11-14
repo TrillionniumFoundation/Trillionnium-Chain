@@ -1,0 +1,64 @@
+{
+  "PR_prospective_SHA_not_tested_source_proof": true,
+  "actual_tested_source_verified": false,
+  "allowed_network": "Only inherited GET metadata calls: PR847, exacthead latest check-runs pages, exacthead registered required-workflow runs pages, each matching pull_request run metadata/jobs pages.",
+  "base_reader": {
+    "bytes": 19408,
+    "path": "/private/tmp/chain-prci-head-5df7ae6-ci-progress-preparation-20261114-v1/reviewed-original-R1-reader.py.raw",
+    "sha256": "8d3a5cba653cd53caa4144d71193e4b7ff3faf49f4a10a1ebce45940eb072503"
+  },
+  "created_at": "2026-11-14T17:40:35.744668+00:00",
+  "current_action": "Create-only external sources/diff/contract; AST and compile-only. No reader helper/main/Git/API/source/stage action.",
+  "exact_diff": {
+    "bytes": 12015,
+    "path": "/private/tmp/chain-prci-head-5df7ae6-ci-progress-preparation-20261114-v1/R1-to-head5df-identity-only.patch",
+    "sha256": "eb689d1e7df18869033dae9c201b6431979d97d7e74dc1815ca460bc3333946a"
+  },
+  "execution_authorized_now": false,
+  "future_cli": [
+    "/private/tmp/chain-prci-head-5df7ae6-ci-progress-preparation-20261114-v1/read_head5df_required_ci_progress_v1.py",
+    "--evidence-dir",
+    "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-SUFFIX"
+  ],
+  "future_launcher_environment": {
+    "remove": [
+      "GH_DEBUG"
+    ],
+    "set": {
+      "GH_HOST": "github.com"
+    }
+  },
+  "future_launcher_must_check_exact_reader_SHA_before_execution": true,
+  "hosted_qualification_granted": false,
+  "new_audit_target": {
+    "PR": 847,
+    "branch": "fix/chain-hepta-closure-candidate-20261109-481716",
+    "candidate": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+    "main": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "tree": "6be4940d38cc88782657f2684cbefe48866f8b9f"
+  },
+  "new_head_accepted_as_R1": false,
+  "non_atomic_snapshot": true,
+  "old_R1_results_inherited": false,
+  "output_name_rule": "H5DF-required-ci-progress-v1-[a-z0-9][a-z0-9-]{0,63}",
+  "prepared_reader": {
+    "bytes": 19479,
+    "path": "/private/tmp/chain-prci-head-5df7ae6-ci-progress-preparation-20261114-v1/read_head5df_required_ci_progress_v1.py",
+    "sha256": "3f50aa71fa06f37e64c1ed1e669ad1b1b45ebe27acfddb5004957ef3a43c68fb"
+  },
+  "response_schema": "trnm-H5DF-required-ci-progress-v1",
+  "run_ids_or_future_job_results_fabricated": false,
+  "same_caps": {
+    "check_pages": 5,
+    "each_GET_seconds": 120,
+    "jobs_pages_per_run": 3,
+    "max_runs": 20,
+    "max_workers": 4,
+    "overall_seconds": 240,
+    "run_pages": 3
+  },
+  "schema": "trnm-head5df-ci-progress-preparation-v1",
+  "source_kind_from_job_name_only_hint": true,
+  "status": "PREPARED_ONLY_NOT_EXECUTED",
+  "wait_for": "Root accepts new audit target and explicitly authorizes a fresh one-shot metadata snapshot."
+}

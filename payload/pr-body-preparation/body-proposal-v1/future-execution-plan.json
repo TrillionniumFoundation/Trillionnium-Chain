@@ -1,0 +1,87 @@
+{
+  "actor": {
+    "id": 102159240,
+    "login": "ProfHepta"
+  },
+  "body_only_payload": {
+    "bytes": 11428,
+    "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/body-proposal-v1/future-body-only-PATCH-payload.json",
+    "sha256": "411c30378cdc08724f36434ca461651b04ce8dc80091caf3c13130375461b830"
+  },
+  "concurrency_limit": "The normal PR PATCH API does not supply an expected-head/body compare-and-swap parameter. Fresh prechecks plus postchecks detect observed drift; they cannot lock a ref or rule against an interleaving update. Do not describe this as an atomic Git/ref CAS.",
+  "expected": {
+    "auto_merge": null,
+    "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "base_ref": "main",
+    "both_repository_id": 1323087357,
+    "desired_body": {
+      "bytes": 11346,
+      "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/body-proposal-v1/proposed-body.md",
+      "sha256": "9dd0bbe670b5db4724cf93bc6fb56d2a75c703ac02eeaee4cbdca3c3f01e7131"
+    },
+    "draft": false,
+    "head": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+    "head_ref": "fix/chain-hepta-closure-candidate-20261109-481716",
+    "node_id": "PR_kwDOTty1_c8AAAABN3jgpw",
+    "old_body": {
+      "bytes": 8644,
+      "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/body-proposal-v1/old-body.md",
+      "sha256": "798b6bde4c1985d20c2f7c6a7b1255cc174f6b3c87383d9e7de8b59f2e39f8c4"
+    },
+    "state": "open",
+    "title": "Consolidate audited branch history and current runtime",
+    "tree": "6be4940d38cc88782657f2684cbefe48866f8b9f"
+  },
+  "facts": {
+    "bytes": 12884,
+    "path": "/private/tmp/chain-prci-H5DF-cross-cost-selected-artifact-20261114-v1/final-review-v1/exact-confirmation-facts.json",
+    "sha256": "9da174ec8a4b5afe3ac151e4b7b81974addd1d4893f802500bc6fb9652bb9c6c"
+  },
+  "future_actions": [
+    {
+      "action": "Verify stable prepared body and payload byte/SHA pins; use existing bounded capture, unset GH_DEBUG and fix GH_HOST=github.com; do not change auth/config.",
+      "phase": "preflight"
+    },
+    {
+      "action": "GET actor and PR847; require exact actor id/login, repo/node/number/open/ready/no-auto, current title, head H5DF/base B and exact original body bytes. Record original GET argv/HTTP/exit/stdout/stderr/time. A changed body or identity is HOLD.",
+      "phase": "fresh_read"
+    },
+    {
+      "action": "Use existing readonly ref reader to confirm candidate branch=H5DF and main=B immediately before update, and bind observed archive tag/object/peeled commit from root's confirmed archive proof. No source/ref write.",
+      "phase": "refs"
+    },
+    {
+      "action": "At most one normal PATCH to repos/TrillionniumFoundation/Trillionnium-Chain/pulls/847 using only the exact body JSON payload. No title/ready/auto-merge/labels/policy/CI fields. Preserve actual HTTP, command exit and raw response separately.",
+      "phase": "mutation"
+    },
+    {
+      "action": "Bounded GET PR847 and candidate/main refs again; require desired body exactly, unchanged title/draft/state/auto-merge and expected head/base/repo. A timeout or concurrent drift remains UNKNOWN/HOLD; no blind PATCH retry, forced overwrite, rollback or CI action.",
+      "phase": "readback"
+    }
+  ],
+  "network_or_PR_mutation_executed": false,
+  "observed_original_PR": {
+    "bytes": 27631,
+    "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-001/pr847.stdout",
+    "sha256": "d823902b692fae24f6e9cf7fd576e50a6f6148b5081969ea99d741b2ed890629"
+  },
+  "observed_updated_at": "2026-11-14T17:33:40Z",
+  "postpublication_archive": {
+    "closed_receipt_pin": null,
+    "commit": "ffc6e0ca4bfa7794ab6031a6e398dcd08b7a1982",
+    "confirmed_fact_source": "root task states actual resume002 confirmed; exact closed receipt pin to be supplied by root before future execution",
+    "scope": "Frozen R1 postpublication evidence, including ready019; no later H5DF source or executions",
+    "tag_object": "894875e2161bea8f0d4a135879e687de78c1f18a"
+  },
+  "pr_number": 847,
+  "qualification": false,
+  "repo": "TrillionniumFoundation/Trillionnium-Chain",
+  "schema": "trnm-pr847-body-only-edit-prepared-plan-v1",
+  "source_refs_stage_changed": false,
+  "status": "PREPARED_ONLY_NOT_EXECUTED",
+  "workflow_trigger_review": {
+    "bytes": 25872,
+    "path": "/private/tmp/chain-prci-H5DF-pr-body-preparation-20261114-v1/body-proposal-v1/workflow-trigger-facts.json",
+    "sha256": "0c6ccb28c54bb29ee5bda4bd32c81f3aaa5af9ae89133b9809ba2acdef4b7865"
+  }
+}

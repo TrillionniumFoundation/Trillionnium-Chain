@@ -1,0 +1,20 @@
+--- offline-facts-v2
++++ offline-facts-v3
+@@ -2,7 +2,7 @@
+ from pathlib import Path,PurePosixPath
+ BASE=Path('/private/tmp/chain-H5DF-arm64-cross-cost-selected-artifact-20261114-v1')
+ SRC=BASE/'selected-resume-001'
+-OUT=BASE/'final-review-v2'
++OUT=BASE/'final-review-v3'
+ HEAD='5df7ae6f482157c5f7fdcbcd52222117a965053f'
+ TREE='6be4940d38cc88782657f2684cbefe48866f8b9f'
+ SELECTORS=['caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct','from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection','four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged','from_zero_service_shares_cpu_with_honest_work_and_reopened_owner','from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline']
+@@ -136,6 +136,8 @@
+   waits=row.pop('native_wait_attribution')
+   wc=lambda x:{k:x[k]for k in('reserve_attempts','reserve_returns','reserve_granted','reserve_budget_refusals','reserve_other_refusals','sleep_calls_started','sleep_calls_completed','requested_sleep_ns','actual_sleep_wall_ns')}
+   row['native_wait_attribution_compact']={'page_owner_mode':waits['page']['owner_mode'],'page_epoch_substeps':[{'substep':x['substep'],'wall_ns':x['span']['wall_ns'],'thread_cpu_ns':x['span']['thread_cpu_ns'],'accepted':x['span']['accepted'],'error_code':x['span']['error_code']}for x in waits['page']['epoch_substeps']],'page_cpu_waits':[wc(x)for x in waits['page']['cpu_waits']],'packet_cpu_waits':[{'packet_index':x['packet_index'],'cpu_waits':[wc(c)for c in x['attribution']['cpu_waits']]}for x in waits['packets']]}
++ replay_details=detail.pop('replays')
++ detail['replay_detail_files']=[put(('baseline'if i==0 else'pressure')+'-replay-'+str(k)+'-stage.json',row)for k,row in enumerate(replay_details)]
+  phasepins.append(put(('baseline'if i==0 else'pressure')+'-stage-facts.json',detail))
+ last=report['phases'][1]['independent_history_page_replay'][-1]
+ lastn=last['native_import_observation'];lastpacket=lastn['packets'][0]

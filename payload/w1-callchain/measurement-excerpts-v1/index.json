@@ -1,0 +1,22 @@
+[
+  {
+    "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/measurement-excerpts-v1/call-and-fixture.txt",
+    "bytes": 4414,
+    "sha256": "4665c621540ac9c1b77ad3867cd8884a0519f8b7e2cfd33aff8e360d05579817"
+  },
+  {
+    "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/measurement-excerpts-v1/fixture-thread-and-replay.txt",
+    "bytes": 11926,
+    "sha256": "6bc3bacc11159ee216e2e6d203d49652768a3ad6cb04aeec795f4ed0c5a1b221"
+  },
+  {
+    "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/measurement-excerpts-v1/store-history-domain.txt",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "/private/tmp/chain-H5DF-W1-replay-callchain-review-20261114-v1/measurement-excerpts-v1/exact-work-host-attribution.json",
+    "bytes": 5181051,
+    "sha256": "099794e975392acc5992cf496a63399a917bd23b2b50eda801b16c103adde232"
+  }
+]

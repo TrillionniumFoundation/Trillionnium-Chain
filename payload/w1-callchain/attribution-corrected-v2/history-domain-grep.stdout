@@ -1,0 +1,41 @@
+5df7ae6f482157c5f7fdcbcd52222117a965053f:trillionnium/crates/trnm-pon-node/src/ingress.rs:3131:        let account = original.remote_history_cpu_domain().unwrap();
+5df7ae6f482157c5f7fdcbcd52222117a965053f:trillionnium/crates/trnm-pon-node/src/ingress.rs:3138:                .remote_history_cpu_domain()
+5df7ae6f482157c5f7fdcbcd52222117a965053f:trillionnium/crates/trnm-pon-node/src/ingress.rs:3200:        let fresh = reopened.remote_history_cpu_domain().unwrap();
+5df7ae6f482157c5f7fdcbcd52222117a965053f:trillionnium/crates/trnm-pon-node/src/ingress.rs:3516:        let reloaded = node.remote_history_cpu_domain().unwrap();
+5df7ae6f482157c5f7fdcbcd52222117a965053f:trillionnium/crates/trnm-pon-node/src/ingress.rs:3584:                .remote_history_cpu_domain()
+5df7ae6f482157c5f7fdcbcd52222117a965053f:trillionnium/crates/trnm-pon-node/src/ingress.rs:3605:        let first = reopened.remote_history_cpu_domain().unwrap();
+5df7ae6f482157c5f7fdcbcd52222117a965053f:trillionnium/crates/trnm-pon-node/src/ingress.rs:3606:        let next = reopened.remote_history_cpu_domain().unwrap();
+5df7ae6f482157c5f7fdcbcd52222117a965053f:trillionnium/crates/trnm-pon-node/src/ingress.rs:3622:            node.remote_history_cpu_domain().err().unwrap().to_string(),
+5df7ae6f482157c5f7fdcbcd52222117a965053f:trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs:156:                node.remote_history_cpu_domain()
+5df7ae6f482157c5f7fdcbcd52222117a965053f:trillionnium/crates/trnm-pon-node/src/ingress/history_import/attribution/tests.rs:132:    let domain = ServiceMutationCpuDomain::cold_remote_history_epoch();
+5df7ae6f482157c5f7fdcbcd52222117a965053f:trillionnium/crates/trnm-pon-node/src/ingress/history_import_deadline_tests.rs:134:    let reopened_cpu = reopened.remote_history_cpu_domain().unwrap();
+5df7ae6f482157c5f7fdcbcd52222117a965053f:trillionnium/crates/trnm-pon-node/src/ingress/history_import_deadline_tests.rs:225:        let reopened_cpu = reopened.remote_history_cpu_domain().unwrap();
+5df7ae6f482157c5f7fdcbcd52222117a965053f:trillionnium/crates/trnm-pon-node/src/ingress/history_import_detached_budget_tests.rs:81:    let original = owner.lock().unwrap().remote_history_cpu_domain().unwrap();
+5df7ae6f482157c5f7fdcbcd52222117a965053f:trillionnium/crates/trnm-pon-node/src/ingress/history_import_detached_budget_tests.rs:382:            .remote_history_cpu_domain()
+5df7ae6f482157c5f7fdcbcd52222117a965053f:trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs:103:    let original = owner.lock().unwrap().remote_history_cpu_domain().unwrap();
+5df7ae6f482157c5f7fdcbcd52222117a965053f:trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs:973:    let original = owner.lock().unwrap().remote_history_cpu_domain().unwrap();
+5df7ae6f482157c5f7fdcbcd52222117a965053f:trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs:1077:    let original = owner.lock().unwrap().remote_history_cpu_domain().unwrap();
+5df7ae6f482157c5f7fdcbcd52222117a965053f:trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs:1123:        .remote_history_cpu_domain()
+5df7ae6f482157c5f7fdcbcd52222117a965053f:trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs:1239:    let cpu = owner.lock().unwrap().remote_history_cpu_domain().unwrap();
+5df7ae6f482157c5f7fdcbcd52222117a965053f:trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs:1462:            .remote_history_cpu_domain()
+5df7ae6f482157c5f7fdcbcd52222117a965053f:trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs:1491:        let original = node.remote_history_cpu_domain().unwrap();
+5df7ae6f482157c5f7fdcbcd52222117a965053f:trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs:1539:            .remote_history_cpu_domain()
+5df7ae6f482157c5f7fdcbcd52222117a965053f:trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs:1584:            let original = node.remote_history_cpu_domain().unwrap();
+5df7ae6f482157c5f7fdcbcd52222117a965053f:trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs:1709:                .remote_history_cpu_domain()
+5df7ae6f482157c5f7fdcbcd52222117a965053f:trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs:1722:    let domain = node.remote_history_cpu_domain().unwrap();
+5df7ae6f482157c5f7fdcbcd52222117a965053f:trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs:1787:            .remote_history_cpu_domain()
+5df7ae6f482157c5f7fdcbcd52222117a965053f:trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs:1801:            .remote_history_cpu_domain()
+5df7ae6f482157c5f7fdcbcd52222117a965053f:trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs:1808:                .remote_history_cpu_domain()
+5df7ae6f482157c5f7fdcbcd52222117a965053f:trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs:1936:            let original = node.remote_history_cpu_domain().unwrap();
+5df7ae6f482157c5f7fdcbcd52222117a965053f:trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs:2082:                .remote_history_cpu_domain()
+5df7ae6f482157c5f7fdcbcd52222117a965053f:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs:1037:    pub(crate) fn cold_remote_history_epoch() -> Self {
+5df7ae6f482157c5f7fdcbcd52222117a965053f:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_completion_tests.rs:709:    let domain = ServiceMutationCpuDomain::cold_remote_history_epoch();
+5df7ae6f482157c5f7fdcbcd52222117a965053f:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_history_handoff_tests.rs:111:    let domain = ServiceMutationCpuDomain::cold_remote_history_epoch();
+5df7ae6f482157c5f7fdcbcd52222117a965053f:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_history_handoff_tests.rs:187:        let domain = ServiceMutationCpuDomain::cold_remote_history_epoch();
+5df7ae6f482157c5f7fdcbcd52222117a965053f:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_history_handoff_tests.rs:242:        let domain = ServiceMutationCpuDomain::cold_remote_history_epoch();
+5df7ae6f482157c5f7fdcbcd52222117a965053f:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_history_handoff_tests.rs:305:        let domain = ServiceMutationCpuDomain::cold_remote_history_epoch();
+5df7ae6f482157c5f7fdcbcd52222117a965053f:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_native_completion_tests.rs:288:    let domain = receiver.remote_history_cpu_domain().unwrap();
+5df7ae6f482157c5f7fdcbcd52222117a965053f:trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_native_completion_tests.rs:377:    let domain = receiver.remote_history_cpu_domain().unwrap();
+5df7ae6f482157c5f7fdcbcd52222117a965053f:trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs:830:                "cpu_flow": client.remote_history_cpu_domain().unwrap().observe_actual_flow().unwrap(),
+5df7ae6f482157c5f7fdcbcd52222117a965053f:trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs:543:    pub(crate) fn remote_history_cpu_domain(&mut self) -> Result<ServiceMutationCpuDomain> {
+5df7ae6f482157c5f7fdcbcd52222117a965053f:trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs:572:        let cold = ServiceMutationCpuDomain::cold_remote_history_epoch();

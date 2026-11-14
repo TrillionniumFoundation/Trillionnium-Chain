@@ -1,0 +1,25 @@
+{
+  "argv": [
+    "/usr/bin/git",
+    "show",
+    "-s",
+    "--format=%H%n%T%n%P",
+    "5df7ae6f482157c5f7fdcbcd52222117a965053f"
+  ],
+  "automatic_retry": false,
+  "exit": 0,
+  "finished_at": "2026-11-14T17:43:32.827559+00:00",
+  "label": "new-head-tree-parents",
+  "started_at": "2026-11-14T17:43:32.716325+00:00",
+  "stderr": {
+    "bytes": 0,
+    "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/new-head-tree-parents.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 164,
+    "path": "/private/tmp/chain-consolidation-20261114-root/head5df-immutable-object-fetch-20261114-v1/new-head-tree-parents.stdout",
+    "sha256": "8eba7d8d7b01bf3a1e8d366cdac66a9047a0fb6fea0b314199e38292b3230c2d"
+  },
+  "timeout_seconds": 30
+}

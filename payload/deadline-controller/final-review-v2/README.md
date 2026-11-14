@@ -1,0 +1,9 @@
+# 5df7 deadline and collector review
+
+Static review found no blocker in the two assigned changes. The new public_v2 completion check uses the original caller deadline after canonical response and signature verification. It adds a refusal for a valid response that completes late; it does not extend a phase, skip verification, change a signed field, or change qualification flags. The original v2 default overall budget is 30 seconds; the new 2-second loopback control is not the separate hosted 4-second confirmation campaign.
+
+The collector production source is unchanged from R1. Its closed, never-released exec gate exits with 125 on EOF, while the original bounded cleanup can still send SIGKILL if that root has not completed by the unchanged escalation boundary. The amended existing test accepts only those two actual raw outcomes and additionally binds launch error, birth identity, waitid/wait4 status, no exec/no TERM, and the collector's sent KILL event between cleanup and reap. Wrapper 125 and both failure booleans remain required. All 16 method names remain; the other 15 methods and the two deterministic signal-ordering controls are source/AST identical. The original exact 16, OK, and no-skips CI gate is unchanged.
+
+Both changed files were derived from immutable R1 blobs and the pinned complete GitHub compare patches, with every hunk checked. Their computed Git blob identities exactly match the compare response. They are explicitly derived source copies, not a new server whole-blob download. The production collector and CI shell were read as fixed R1 Git blobs. No target helpers, tests, build, probes, network calls, source/index/ref/stage mutations were performed.
+
+This review does not claim either new test passed, either collector scheduling branch occurred, or the hosted W1/PQ deadline failures are fixed. Existing failed evidence remains unchanged. Exact identities and source line references are in review.json and static-continuity.json.

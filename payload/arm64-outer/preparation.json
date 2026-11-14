@@ -1,0 +1,24 @@
+{
+  "schema": "H5DF-arm64-outer-capture-preparation-v1",
+  "status": "PREPARED_NOT_EXECUTED",
+  "producer": {
+    "path": "/private/tmp/chain-H5DF-arm64-cross-cost-original-evidence-20261114-v1/producer.py",
+    "bytes": 10764,
+    "sha256": "cb327032b629d3a4b7231892cb88720273e257b469a759893f8f0d7c10134e83"
+  },
+  "diff": {
+    "path": "/private/tmp/chain-H5DF-arm64-cross-cost-original-evidence-20261114-v1/x64-to-arm64-outer.patch",
+    "bytes": 9450,
+    "sha256": "36eea09eb04cdb3ae983ce1b8997b2aceae769cdcc72f24f643dc3667cb2f77a"
+  },
+  "syntax_AST_only": true,
+  "capture_helpers_AST_unchanged": true,
+  "planned_GETs": 3,
+  "overall_seconds": 300,
+  "job_id": 132528769087,
+  "artifact_id": 14124468052,
+  "artifact_bytes": 9909858,
+  "artifact_downloaded": false,
+  "native_build_test_probe": false,
+  "source_refs_stage_changed": false
+}

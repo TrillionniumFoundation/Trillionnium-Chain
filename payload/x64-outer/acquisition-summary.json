@@ -1,0 +1,399 @@
+{
+  "actual_tested_source_verified": false,
+  "allowed_job_ids": [
+    132528768933
+  ],
+  "artifact_candidates": [
+    {
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14124189121/zip",
+      "created_at": "2026-11-14T17:41:19Z",
+      "digest": "sha256:9899447cdb5c5045d0f70ffdba9aa0f271f350c823be80fbdb1c266ba541530e",
+      "expired": false,
+      "expires_at": "2026-12-14T17:41:18Z",
+      "id": 14124189121,
+      "name": "cost-x64-5df7ae6f482157c5f7fdcbcd52222117a965053f-1",
+      "size_in_bytes": 10127368,
+      "updated_at": "2026-11-14T17:41:19Z",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/14124189121",
+      "workflow_run": {
+        "head_branch": "fix/chain-hepta-closure-candidate-20261109-481716",
+        "head_repository_id": 1323087357,
+        "head_sha": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+        "id": 43621754143,
+        "repository_id": 1323087357
+      }
+    }
+  ],
+  "artifact_list": {
+    "GH_DEBUG_removed": true,
+    "GH_HOST": "github.com",
+    "HTTP_status_unparsed": true,
+    "argv": [
+      "/opt/homebrew/bin/gh",
+      "api",
+      "--hostname",
+      "github.com",
+      "--method",
+      "GET",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621754143/artifacts?per_page=100&page=1"
+    ],
+    "automatic_retry": false,
+    "complete_transport": true,
+    "cwd": "/private/tmp",
+    "elapsed_seconds": 1.493499,
+    "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621754143/artifacts?per_page=100&page=1",
+    "exit": 0,
+    "finished_at": "2026-11-14T17:44:22.722665+00:00",
+    "label": "run-43621754143-artifacts-page-001",
+    "method": "GET",
+    "origin": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621754143/artifacts?per_page=100&page=1",
+    "overall_deadline_seconds": 300,
+    "started_at": "2026-11-14T17:44:21.229262+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "/private/tmp/chain-prci-H5DF-cross-arch-cost-x64-original-log-20261114-v1/run-43621754143-artifacts-page-001.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr_cap_bytes": 2097152,
+    "stdout": {
+      "bytes": 6607,
+      "path": "/private/tmp/chain-prci-H5DF-cross-arch-cost-x64-original-log-20261114-v1/run-43621754143-artifacts-page-001.stdout",
+      "sha256": "ebd0f29e6f5a39129916d1a196b00a5a2fd7bc77e4864d65990203799e76cc33"
+    },
+    "stdout_cap_bytes": 4194304,
+    "step_receipt": {
+      "bytes": 1529,
+      "path": "/private/tmp/chain-prci-H5DF-cross-arch-cost-x64-original-log-20261114-v1/run-43621754143-artifacts-page-001.step.json",
+      "sha256": "c500af6c699a672e139216b06d57956760e7cae63b6d393b60bc5281d3c4c14b"
+    },
+    "termination_reason": null,
+    "timeout_seconds": 300
+  },
+  "artifact_list_returned_count": 8,
+  "artifact_list_total_count": 8,
+  "artifacts_downloaded": false,
+  "automatic_retry": false,
+  "check_head_is_not_tested_source_proof": true,
+  "ci_actions": false,
+  "complete_artifact_list_claimed": true,
+  "elapsed_seconds": 16.094506,
+  "errors": [],
+  "finished_at": "2026-11-14T17:44:37.321282+00:00",
+  "head": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+  "jobs": [
+    {
+      "error": null,
+      "expected_name": "cross-arch-cost (x64)",
+      "identity_valid": true,
+      "job_id": 132528768933,
+      "log_complete": true,
+      "observed_job": {
+        "completed_at": "2026-11-14T17:41:22Z",
+        "conclusion": "failure",
+        "head_branch": "fix/chain-hepta-closure-candidate-20261109-481716",
+        "head_sha": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621754143/job/132528768933",
+        "id": 132528768933,
+        "name": "cross-arch-cost (x64)",
+        "run_attempt": 1,
+        "run_id": 43621754143,
+        "started_at": "2026-11-14T17:33:34Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completed_at": "2026-11-14T17:33:36Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "started_at": "2026-11-14T17:33:35Z",
+            "status": "completed"
+          },
+          {
+            "completed_at": "2026-11-14T17:34:36Z",
+            "conclusion": "success",
+            "name": "Checkout exact candidate",
+            "number": 2,
+            "started_at": "2026-11-14T17:33:36Z",
+            "status": "completed"
+          },
+          {
+            "completed_at": "2026-11-14T17:34:40Z",
+            "conclusion": "success",
+            "name": "Verify immutable source identity",
+            "number": 3,
+            "started_at": "2026-11-14T17:34:36Z",
+            "status": "completed"
+          },
+          {
+            "completed_at": "2026-11-14T17:34:40Z",
+            "conclusion": "success",
+            "name": "Set isolated Cargo paths after runner allocation",
+            "number": 4,
+            "started_at": "2026-11-14T17:34:40Z",
+            "status": "completed"
+          },
+          {
+            "completed_at": "2026-11-14T17:34:48Z",
+            "conclusion": "success",
+            "name": "Install pinned native release compiler",
+            "number": 5,
+            "started_at": "2026-11-14T17:34:40Z",
+            "status": "completed"
+          },
+          {
+            "completed_at": "2026-11-14T17:34:49Z",
+            "conclusion": "success",
+            "name": "Install matching native formatter",
+            "number": 6,
+            "started_at": "2026-11-14T17:34:48Z",
+            "status": "completed"
+          },
+          {
+            "completed_at": "2026-11-14T17:35:38Z",
+            "conclusion": "success",
+            "name": "Execute native release setup and repeated-search costs",
+            "number": 7,
+            "started_at": "2026-11-14T17:34:49Z",
+            "status": "completed"
+          },
+          {
+            "completed_at": "2026-11-14T17:35:50Z",
+            "conclusion": "success",
+            "name": "Execute native zero-matrix locality costs",
+            "number": 8,
+            "started_at": "2026-11-14T17:35:38Z",
+            "status": "completed"
+          },
+          {
+            "completed_at": "2026-11-14T17:36:01Z",
+            "conclusion": "success",
+            "name": "Execute native one-zero rank-one locality costs",
+            "number": 9,
+            "started_at": "2026-11-14T17:35:50Z",
+            "status": "completed"
+          },
+          {
+            "completed_at": "2026-11-14T17:36:14Z",
+            "conclusion": "success",
+            "name": "Execute native fixed maintenance producer and preparation costs",
+            "number": 10,
+            "started_at": "2026-11-14T17:36:01Z",
+            "status": "completed"
+          },
+          {
+            "completed_at": "2026-11-14T17:36:34Z",
+            "conclusion": "success",
+            "name": "Execute native legal and late-rejection verifier costs",
+            "number": 11,
+            "started_at": "2026-11-14T17:36:14Z",
+            "status": "completed"
+          },
+          {
+            "completed_at": "2026-11-14T17:41:13Z",
+            "conclusion": "failure",
+            "name": "Execute exact native from-zero service controls",
+            "number": 12,
+            "started_at": "2026-11-14T17:36:34Z",
+            "status": "completed"
+          },
+          {
+            "completed_at": "2026-11-14T17:41:17Z",
+            "conclusion": "success",
+            "name": "Verify source remained unchanged",
+            "number": 13,
+            "started_at": "2026-11-14T17:41:13Z",
+            "status": "completed"
+          },
+          {
+            "completed_at": "2026-11-14T17:41:19Z",
+            "conclusion": "success",
+            "name": "Retain native cost successes and failures",
+            "number": 14,
+            "started_at": "2026-11-14T17:41:17Z",
+            "status": "completed"
+          },
+          {
+            "completed_at": "2026-11-14T17:41:20Z",
+            "conclusion": "success",
+            "name": "Post Checkout exact candidate",
+            "number": 28,
+            "started_at": "2026-11-14T17:41:19Z",
+            "status": "completed"
+          },
+          {
+            "completed_at": "2026-11-14T17:41:20Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 29,
+            "started_at": "2026-11-14T17:41:20Z",
+            "status": "completed"
+          }
+        ],
+        "workflow_name": "trnm-required-baseline"
+      },
+      "steps": [
+        {
+          "GH_DEBUG_removed": true,
+          "GH_HOST": "github.com",
+          "HTTP_status_unparsed": true,
+          "argv": [
+            "/opt/homebrew/bin/gh",
+            "api",
+            "--hostname",
+            "github.com",
+            "--method",
+            "GET",
+            "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/132528768933"
+          ],
+          "automatic_retry": false,
+          "complete_transport": true,
+          "cwd": "/private/tmp",
+          "elapsed_seconds": 2.027614,
+          "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/132528768933",
+          "exit": 0,
+          "finished_at": "2026-11-14T17:44:23.256788+00:00",
+          "label": "job-132528768933-metadata",
+          "method": "GET",
+          "origin": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/132528768933",
+          "overall_deadline_seconds": 300,
+          "started_at": "2026-11-14T17:44:21.229202+00:00",
+          "stderr": {
+            "bytes": 0,
+            "path": "/private/tmp/chain-prci-H5DF-cross-arch-cost-x64-original-log-20261114-v1/job-132528768933-metadata.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stderr_cap_bytes": 2097152,
+          "stdout": {
+            "bytes": 3908,
+            "path": "/private/tmp/chain-prci-H5DF-cross-arch-cost-x64-original-log-20261114-v1/job-132528768933-metadata.stdout",
+            "sha256": "ef606e675f670db35d8d33906b44e084ae4da6fd51082f78e7d2c8021c8510e4"
+          },
+          "stdout_cap_bytes": 2097152,
+          "step_receipt": {
+            "bytes": 1415,
+            "path": "/private/tmp/chain-prci-H5DF-cross-arch-cost-x64-original-log-20261114-v1/job-132528768933-metadata.step.json",
+            "sha256": "b1b6a9b6bf2fbedced7c83db2f2597d841e90525a3dc287f03ac529f78943b21"
+          },
+          "termination_reason": null,
+          "timeout_seconds": 300
+        },
+        {
+          "GH_DEBUG_removed": true,
+          "GH_HOST": "github.com",
+          "HTTP_status_unparsed": true,
+          "argv": [
+            "/opt/homebrew/bin/gh",
+            "api",
+            "--hostname",
+            "github.com",
+            "--method",
+            "GET",
+            "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/132528768933/logs"
+          ],
+          "automatic_retry": false,
+          "complete_transport": true,
+          "cwd": "/private/tmp",
+          "elapsed_seconds": 14.061425,
+          "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/132528768933/logs",
+          "exit": 0,
+          "finished_at": "2026-11-14T17:44:37.319980+00:00",
+          "label": "job-132528768933-original-log",
+          "method": "GET",
+          "origin": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/132528768933/logs",
+          "overall_deadline_seconds": 300,
+          "started_at": "2026-11-14T17:44:23.258519+00:00",
+          "stderr": {
+            "bytes": 0,
+            "path": "/private/tmp/chain-prci-H5DF-cross-arch-cost-x64-original-log-20261114-v1/job-132528768933-original-log.stderr",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stderr_cap_bytes": 2097152,
+          "stdout": {
+            "bytes": 185104,
+            "path": "/private/tmp/chain-prci-H5DF-cross-arch-cost-x64-original-log-20261114-v1/job-132528768933-original-log.stdout",
+            "sha256": "db7a975f8a17e1e3854a86805e44b6cabee36d03c1fb2a280b6a840538a41a66"
+          },
+          "stdout_cap_bytes": 20971520,
+          "step_receipt": {
+            "bytes": 1446,
+            "path": "/private/tmp/chain-prci-H5DF-cross-arch-cost-x64-original-log-20261114-v1/job-132528768933-original-log.step.json",
+            "sha256": "a30fa86aabe6628b4b5246acd59fff16b56a5ff9d168a085b35e868f3e0e02a3"
+          },
+          "termination_reason": null,
+          "timeout_seconds": 300
+        }
+      ]
+    }
+  ],
+  "maximum_GETs": 3,
+  "native_tests_executed": false,
+  "network_methods": [
+    "GET"
+  ],
+  "observed_run": {
+    "conclusion": null,
+    "created_at": "2026-11-14T17:33:29Z",
+    "event": "pull_request",
+    "head_branch": "fix/chain-hepta-closure-candidate-20261109-481716",
+    "head_sha": "5df7ae6f482157c5f7fdcbcd52222117a965053f",
+    "id": 43621754143,
+    "path": ".github/workflows/trnm-required-baseline.yml",
+    "pull_requests": [
+      {
+        "base": {
+          "ref": "main",
+          "repo": {
+            "id": 1323087357,
+            "name": "Trillionnium-Chain",
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain"
+          },
+          "sha": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0"
+        },
+        "head": {
+          "ref": "fix/chain-hepta-closure-candidate-20261109-481716",
+          "repo": {
+            "id": 1323087357,
+            "name": "Trillionnium-Chain",
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain"
+          },
+          "sha": "5df7ae6f482157c5f7fdcbcd52222117a965053f"
+        },
+        "id": 5225636007,
+        "number": 847,
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/pulls/847"
+      }
+    ],
+    "run_attempt": 1,
+    "status": "in_progress",
+    "updated_at": "2026-11-14T17:34:49Z",
+    "workflow_id": 345677268
+  },
+  "original_capture_helper": {
+    "bytes": 7384,
+    "path": "/private/tmp/chain-prci-R1-prospective-Rust-runtime-original-log-20261114-v1/producer.py",
+    "sha256": "e2996e652d160530a854585c3d95a69879f71bcbb57e669b8380149b2469ac44"
+  },
+  "overall_budget_seconds": 300,
+  "prior_run_identity_valid": true,
+  "prior_run_metadata": {
+    "bytes": 15868,
+    "path": "/private/tmp/chain-consolidation-20261114-root/H5DF-required-ci-progress-v1-ready-001/H5DF-run-43621754143-metadata.stdout",
+    "sha256": "fc337869d51d0c17253de3970edadd8f7ee9739d993b2c8b385d9bf0020dd9b2"
+  },
+  "prior_run_observation": "Existing ready001 raw GET finished 2026-11-14T17:41:55.724718+00:00; not a fresh new GET here",
+  "producer": {
+    "bytes": 9427,
+    "path": "/private/tmp/chain-prci-H5DF-cross-arch-cost-x64-original-log-20261114-v1/producer.py",
+    "sha256": "54a584717bb86071cfa2afe7a03ca5ad9aa6de4cd7ac968d636f1b228cd9b0b2"
+  },
+  "qualification": false,
+  "read_only": true,
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "run_attempt": 1,
+  "run_id": 43621754143,
+  "schema": "trnm-H5DF-cross-cost-original-log-acquisition-v1",
+  "source_refs_stage_changes": false,
+  "started_at": "2026-11-14T17:44:21.226775+00:00",
+  "status": "ACQUIRED",
+  "workflow_path": ".github/workflows/trnm-required-baseline.yml"
+}

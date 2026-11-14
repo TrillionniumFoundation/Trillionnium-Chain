@@ -1,0 +1,333 @@
+
+32-scalar_cpu.rs.raw lines 468-635
+468: }
+469: /// Only this request's live thread baselines. No State, packet, identity or
+470: /// progress authority is cached. Locks are released before any native work.
+471: pub(super) struct LiveRequestCpu {
+472:     pub(super) budget: Arc<Mutex<PaidMutationCpuBudget>>,
+473:     pub(super) state: Mutex<LiveRequestCpuState>,
+474:     #[cfg(test)]
+475:     pub(super) fail_next_sample: AtomicBool,
+476: }
+477: pub(super) struct LiveRequestCpuState {
+478:     pub(super) threads: HashMap<thread::ThreadId, ThreadCpuStamp>,
+479:     pub(super) charged_ns: u64,
+480:     pub(super) refused: bool,
+481:     pub(super) unavailable: bool,
+482:     public_request: Option<PublicRequestDeadline>,
+483:     verified_completion: bool,
+484:     wait_inside_checkpoint: bool,
+485:     owner_thread: thread::ThreadId,
+486:     termination_reserved: bool,
+487: }
+488: #[derive(Clone)]
+489: struct PublicRequestDeadline {
+490:     deadline: Instant,
+491:     stop: Arc<AtomicBool>,
+492:     cancelled: Arc<AtomicBool>,
+493: }
+494: impl PublicRequestDeadline {
+495:     fn check(&self) -> Result<()> {
+496:         super::task_alive(self.deadline, &self.stop, &self.cancelled)
+497:     }
+498: }
+499: impl LiveRequestCpu {
+500:     pub(super) fn new(budget: Arc<Mutex<PaidMutationCpuBudget>>, owner: ThreadCpuStamp) -> Self {
+501:         Self {
+502:             budget,
+503:             state: Mutex::new(LiveRequestCpuState {
+504:                 threads: [(thread::current().id(), owner)].into_iter().collect(),
+505:                 charged_ns: 0,
+506:                 refused: false,
+507:                 unavailable: false,
+508:                 public_request: None,
+509:                 verified_completion: false,
+510:                 wait_inside_checkpoint: true,
+511:                 owner_thread: thread::current().id(),
+512:                 termination_reserved: false,
+513:             }),
+514:             #[cfg(test)]
+515:             fail_next_sample: AtomicBool::new(false),
+516:         }
+517:     }
+518:     /// The worker binds the original task deadline/cancellation once, before
+519:     /// body decoding. A caller cannot renew a waiting completion's lifetime.
+520:     pub(super) fn bind_public_request(
+521:         &self,
+522:         deadline: Instant,
+523:         stop: Arc<AtomicBool>,
+524:         cancelled: Arc<AtomicBool>,
+525:     ) -> Result<()> {
+526:         let mut state = self
+527:             .state
+528:             .lock()
+529:             .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+530:         ensure(
+531:             state.public_request.is_none()
+532:                 && !state.verified_completion
+533:                 && state.threads.len() == 1
+534:                 && state.threads.contains_key(&thread::current().id()),
+535:             "PUBLIC_MUTATION_CPU_UNAVAILABLE",
+536:         )?;
+537:         let request = PublicRequestDeadline {
+538:             deadline,
+539:             stop,
+540:             cancelled,
+541:         };
+542:         request.check()?;
+543:         state.public_request = Some(request);
+544:         Ok(())
+545:     }
+546:     /// Historical W1-only scheduling fixture, compiled only for meter controls.
+547:     /// Production callers must supply the native owner's complete relation.
+548:     #[cfg(test)]
+549:     pub(super) fn test_legacy_w1_only_priority(
+550:         &self,
+551:         checked: &crate::store::WorkCheckedPacket,
+552:     ) -> Result<()> {
+553:         self.checkpoint()?;
+554:         // Hashing the canonical complete packet is paid by this same original
+555:         // thread interval; no caller-supplied identity can claim priority.
+556:         let identity = checked.completion_identity()?;
+557:         self.promote_verified_identity(identity)
+558:     }
+559:     // Production reaches this only through the private full native relation.
+560:     fn promote_verified_identity(&self, identity: [u8; 32]) -> Result<()> {
+561:         self.checkpoint()?;
+562:         let mut state = self
+563:             .state
+564:             .lock()
+565:             .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+566:         // Non-public local meter clients keep their original policy.
+567:         let Some(request) = &state.public_request else {
+568:             return Ok(());
+569:         };
+570:         request.check()?;
+571:         ensure(
+572:             !state.unavailable && !state.refused,
+573:             "PUBLIC_MUTATION_CPU_UNAVAILABLE",
+574:         )?;
+575:         ensure(
+576:             !state.verified_completion,
+577:             "PUBLIC_MUTATION_CPU_UNAVAILABLE",
+578:         )?;
+579:         let mut budget = self
+580:             .budget
+581:             .lock()
+582:             .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+583:         ensure(
+584:             !budget.unavailable
+585:                 && budget.in_flight > budget.verified_completions
+586:                 && budget.in_flight <= MUTATION_CPU_WORKERS,
+587:             "PUBLIC_MUTATION_CPU_UNAVAILABLE",
+588:         )?;
+589:         // Claim and promotion are one atomic operation in the shared CPU owner.
+590:         // Never remove entries on success, relation error, cancellation, Unknown
+591:         // or listener reconstruction. Full capacity only withholds this extra
+592:         // scheduling benefit; it is not an invalid-work or recovery verdict.
+593:         if budget.completion_work[..budget.completion_work_len].contains(&identity) {
+594:             budget.completion_replay_skips = budget.completion_replay_skips.saturating_add(1);
+595:             return Ok(());
+596:         }
+597:         if budget.completion_work_len == COMPLETION_WORK_CAPACITY {
+598:             budget.completion_capacity_skips = budget.completion_capacity_skips.saturating_add(1);
+599:             return Ok(());
+600:         }
+601:         let index = budget.completion_work_len;
+602:         budget.completion_work[index] = identity;
+603:         budget.completion_work_len += 1;
+604:         budget.verified_completions += 1;
+605:         state.verified_completion = true;
+606:         Ok(())
+607:     }
+608:     /// Release scheduling ownership once, after response construction and all
+609:     /// actual workers have joined. Outstanding principal is returned separately
+610:     /// by the unchanged exact settlement, including failures and unknown CPU.
+611:     pub(super) fn release_completion(&self) {
+612:         let mut state = match self.state.lock() {
+613:             Ok(state) => state,
+614:             Err(error) => {
+615:                 drop(error);
+616:                 self.unknown();
+617:                 return;
+618:             }
+619:         };
+620:         if !state.verified_completion {
+621:             return;
+622:         }
+623:         state.verified_completion = false;
+624:         let Ok(mut budget) = self.budget.lock() else {
+625:             state.unavailable = true;
+626:             return;
+627:         };
+628:         if budget.verified_completions == 0 {
+629:             state.unavailable = true;
+630:             budget.unavailable = true;
+631:         } else {
+632:             budget.verified_completions -= 1;
+633:         }
+634:     }
+635:     pub(super) fn unknown(&self) {
+
+32-scalar_cpu.rs.raw lines 1000-1107
+1000:         let stamp = ThreadCpuStamp::start();
+1001:         #[cfg(test)]
+1002:         let stamp = if self.fail_next_start.swap(false, Ordering::AcqRel) {
+1003:             None
+1004:         } else {
+1005:             stamp
+1006:         };
+1007:         self.add(&self.started, 1);
+1008:         if let Some(live) = &self.live {
+1009:             live.register_worker(stamp.clone());
+1010:         }
+1011:         if stamp.is_none() {
+1012:             self.unknown();
+1013:         }
+1014:         Some(Box::new(ScopedWorkerInterval {
+1015:             collector: self,
+1016:             stamp,
+1017:         }))
+1018:     }
+1019:     fn worker_spawn_succeeded(&self) {
+1020:         self.add(&self.spawned, 1);
+1021:     }
+1022: }
+1023: /// A clone shares the existing volatile service epoch; cloning never refills or
+1024: /// changes capacity. This metering handle is not a Native or task permission.
+1025: #[derive(Clone)]
+1026: pub struct ServiceMutationCpuDomain {
+1027:     budget: Arc<Mutex<PaidMutationCpuBudget>>,
+1028: }
+1029: impl ServiceMutationCpuDomain {
+1030:     pub(super) fn from_shared(budget: Arc<Mutex<PaidMutationCpuBudget>>) -> Self {
+1031:         Self { budget }
+1032:     }
+1033:     /// Only the existing Node may construct a cold remote-History import epoch.
+1034:     /// No initial CPU burst: the original 100ms start reserve is earned through
+1035:     /// the original 0.25 CPU-sec/sec refill. This is one Node-scoped accounting
+1036:     /// handle, not a per-peer, per-page or per-restart entitlement.
+1037:     pub(crate) fn cold_remote_history_epoch() -> Self {
+1038:         Self {
+1039:             budget: Arc::new(Mutex::new(PaidMutationCpuBudget::cold_start())),
+1040:         }
+1041:     }
+1042:     /// Explicit standalone local epoch for a trusted local caller. A serving
+1043:     /// miner must instead clone PublicServer::mutation_cpu_domain().
+1044:     pub fn standalone() -> Self {
+1045:         Self {
+1046:             budget: Arc::new(Mutex::new(PaidMutationCpuBudget::new())),
+1047:         }
+1048:     }
+1049:     pub fn shares_domain_with(&self, other: &Self) -> bool {
+1050:         Arc::ptr_eq(&self.budget, &other.budget)
+1051:     }
+1052:     /// Begin on the actual owner thread, after separate task-purpose authority
+1053:     /// but before expensive Native work. No ledger authority is minted here.
+1054:     pub fn begin(&self) -> Result<ServiceMutationCpuOperation> {
+1055:         let stamp = ThreadCpuStamp::start();
+1056:         let mut budget = self
+1057:             .budget
+1058:             .lock()
+1059:             .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+1060:         if stamp.is_none() {
+1061:             budget.unavailable = true;
+1062:         }
+1063:         budget.reserve(Instant::now())?;
+1064:         drop(budget);
+1065:         let owner = stamp
+1066:             .as_ref()
+1067:             .ok_or("PUBLIC_MUTATION_CPU_UNAVAILABLE")?
+1068:             .clone();
+1069:         let live = Arc::new(LiveRequestCpu::new(self.budget.clone(), owner));
+1070:         Ok(ServiceMutationCpuOperation {
+1071:             budget: self.budget.clone(),
+1072:             stamp,
+1073:             live: live.clone(),
+1074:             settled: false,
+1075:             workers: ScopedWorkerCpu {
+1076:                 budget: Some(self.budget.clone()),
+1077:                 live: Some(live),
+1078:                 ..ScopedWorkerCpu::default()
+1079:             },
+1080:         })
+1081:     }
+1082: }
+1083: 
+1084: /// Request-local actual owner plus scoped-worker samples. Moving the operation
+1085: /// to a different owner thread produces unknown accounting, never CPU zero.
+1086: pub struct ServiceMutationCpuOperation {
+1087:     budget: Arc<Mutex<PaidMutationCpuBudget>>,
+1088:     stamp: Option<ThreadCpuStamp>,
+1089:     live: Arc<LiveRequestCpu>,
+1090:     workers: ScopedWorkerCpu,
+1091:     settled: bool,
+1092: }
+1093: #[derive(Debug, serde::Serialize)]
+1094: pub struct ServiceMutationCpuSettlement {
+1095:     pub schema: &'static str,
+1096:     pub owner_cpu_ns: Option<u64>,
+1097:     pub scoped_worker_cpu_ns: Option<u64>,
+1098:     pub total_cpu_ns: Option<u64>,
+1099:     pub live_paid_cpu_ns: Option<u64>,
+1100:     pub residual_cpu_ns: Option<u64>,
+1101:     pub spawned_workers: u64,
+1102:     pub started_workers: u64,
+1103:     pub finished_workers: u64,
+1104:     pub known_workers: u64,
+1105:     pub live_refused: bool,
+1106:     pub accounting_unavailable: bool,
+1107: }
+
+32-scalar_cpu.rs.raw lines 1380-1430
+1380:         if budget.credit_ns > budget.credit_ceiling() {
+1381:             state.unavailable = true;
+1382:             budget.unavailable = true;
+1383:         }
+1384:     }
+1385: }
+1386: impl ServiceMutationCpuOperation {
+1387:     pub fn checkpoint_handle(&self) -> ServiceMutationCpuCheckpoint {
+1388:         ServiceMutationCpuCheckpoint {
+1389:             live: self.live.clone(),
+1390:         }
+1391:     }
+1392: }
+1393: impl ServiceMutationCpuDomain {
+1394:     /// This reads no balance and changes no credit. A failed begin can separate
+1395:     /// unknown/poisoned accounting from the existing known budget refusal.
+1396:     pub fn accounting_available(&self) -> bool {
+1397:         self.budget.lock().is_ok_and(|budget| !budget.unavailable)
+1398:     }
+1399: 
+1400:     /// The original shared intake also owns PQ authentication intervals.
+1401:     /// A known scalar settlement cannot make an unknown authentication sample
+1402:     /// clean. Release the scalar lock before reading the separate intake lock;
+1403:     /// this observation creates no budget, refund or recovery permission.
+1404:     pub(crate) fn public_authentication_accounting_available(&self) -> bool {
+1405:         let intake = {
+1406:             let Ok(budget) = self.budget.lock() else {
+1407:                 return false;
+1408:             };
+1409:             budget.intake.clone()
+1410:         };
+1411:         intake
+1412:             .pq_authentication
+1413:             .usage()
+1414:             .is_ok_and(|usage| !usage.unavailable)
+1415:     }
+1416: 
+1417:     /// A History scope could not publish its original durable epoch close.
+1418:     /// Keep the same account unavailable; never substitute a fresh domain or
+1419:     /// infer that an abandoned reservation cost zero. Its marker remains.
+1420:     pub(crate) fn abandon_history_epoch(&self) {
+1421:         if let Ok(mut budget) = self.budget.lock() {
+1422:             budget.unavailable = true;
+1423:         }
+1424:     }
+1425: }
+1426: 
+1427: /// Consume an outside-pinned known clean cold-close token. This never starts a
+1428: /// fresh burst: only the original time refill can create new volatile credit.
+1429: impl ServiceMutationCpuDomain {
+1430:     pub(crate) fn from_clean_continuous_restart(
