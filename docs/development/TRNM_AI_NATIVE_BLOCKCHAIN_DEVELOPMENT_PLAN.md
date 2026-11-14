@@ -15255,3 +15255,35 @@ the code review. Historical source-object recovery and the external-evidence
 lane remain separate validation. The unchanged active Rust implementation
 still has original C0 pressure-confirmation failures. No main merge, branch
 deletion, production qualification or single-branch completion is declared.
+
+
+### 2026-11-14 exact collector count and complete historical-evidence lane
+
+The original full Linux repository-truth lane on 08c9becab740ab2c375b970f376a7638f44c9e8e
+ran for 481.260 seconds and failed after all 16 collector controls passed in
+2.664 seconds. This includes every original 14 method and both added signal
+controls; the previously failing post-fork identity-refusal control passed.
+The later shell guard still required exactly 14 and rejected the actual 16.
+Preserve original receipt c39d394f383dd88f31544292e3222b8a76f69ebea86377099a6192e8bbba9777
+and all 39 original execution files as a failed full lane.
+
+Merge f0f6a4192dc3bcda2fca20110322f7cff07e4644: align the shell and independent
+CI contract to exactly 16. Preserve rejection of skips, incomplete/duplicate
+counts, failed runs and missing logs. The original four CI methods passed;
+negative fixtures retain bad counts 0/13 and additionally reject old 14 and
+incomplete 15. Synthetic parser fixtures are not collector execution.
+No collector method, runtime, command deadline or native workload changes.
+
+The separate original external-evidence-contract lane on the same 08c9beca
+source passed in 225.948 seconds; all 77 readiness tests passed in 36.691
+seconds. Both source identities remained 41,671 tracked entries and
+3,994,762,924 bytes. Receipt 624efff452b6bd0b2c6ebcf9a47abe3216999a7d051d1e7d0fb9e5ea86fb2ca3
+records all 12 driver stages, the original 30-command lane and no source fetch.
+The materializer verified all 14 declared historical trees with fetched=[].
+These observations bind 08c9beca, not the new integration commit.
+
+Run the original complete repository-truth lane on the new committed source.
+Current-source consistency and historical-evidence checks do not repair the
+unchanged active Rust four-second/16-worker CONFIRMATION_TARGET failures.
+Main integration, protected branch cleanup and a one-branch result remain
+pending; no required check, source identity or production acceptance is waived.

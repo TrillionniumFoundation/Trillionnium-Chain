@@ -602,3 +602,33 @@ is still pending at this source checkpoint. This Python collector correction
 does not change the active Rust workload or resolve its four-second pressure
 confirmation failure. Local source checks, hosted qualification and the final
 remote one-branch result remain distinct observations.
+
+
+## Complete M5 observations and exact-count integration
+
+The full Linux repository-truth lane on 08c9beca exited 1 after 481.260 seconds.
+All 16 collector tests passed, including the original post-fork refusal case,
+but the later CI parser still required exactly 14. The failed execution and
+both unchanged source identities remain preserved; passing the collector
+suite does not turn the complete lane into a pass.
+
+Component f0f6a419 updates only the exact collector count in the shell,
+its independent CI contract, and their existing mutation controls. It
+requires all 16, retains failures for 0/13, and adds refusal of old 14 and
+incomplete 15. The original zero-skip, exact-OK, missing-log and failed-process
+guards remain. All four original focused CI methods and ten synthetic parser
+cases passed; no collector or Rust runtime code changed in this follow-up.
+
+The independent complete external-evidence-contract command on 08c9beca
+passed in 225.948 seconds. The previously incomplete readiness suite now
+passed all 77 tests in the prepared Linux dependency environment. All 14
+declared historical source trees were present, the original materializer
+reported fetched=[], and before/after source identities were equal. This
+validates the declared historical-evidence contract on that exact source;
+it does not grant current system, hosted or production qualification.
+
+The new integration requires its own original full repository-truth result.
+The unchanged original C0 head and prospective native confirmation failures,
+the original four-second window and 16 pressure workers, and all prior
+HOLD_NO_GO / DENY_ALL conditions remain in force. No main merge or branch
+deletion has occurred at this checkpoint.
