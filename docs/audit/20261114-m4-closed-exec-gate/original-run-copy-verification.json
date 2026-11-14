@@ -1,0 +1,64 @@
+{
+  "all_42_members_CRC_SHA_verified": true,
+  "chunks": [
+    {
+      "chunk_sha256": "882688e35964c00181270ce1e06c4f51e22bff1203fdddcd117592f30ce38979",
+      "eof": false,
+      "next_offset": 65535,
+      "offset": 0,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-repository-truth-1a7afc-failure-v1/original-repository-truth-1a7afc-failure-v1.zip",
+      "size": 152665,
+      "version": "66306:34744711:152665:1794645495332135850:1794645495332135850"
+    },
+    {
+      "chunk_sha256": "0b840ad0abfcc4e8ba0831cd9beb6ae223cde808b7223bd12d47014039170a9f",
+      "eof": false,
+      "next_offset": 131070,
+      "offset": 65535,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-repository-truth-1a7afc-failure-v1/original-repository-truth-1a7afc-failure-v1.zip",
+      "size": 152665,
+      "version": "66306:34744711:152665:1794645495332135850:1794645495332135850"
+    },
+    {
+      "chunk_sha256": "81e37de8424b9d1ec4e8c0683f834bdea5a8ec0ea8d20884b61b5bff2653b7f1",
+      "eof": true,
+      "next_offset": 152665,
+      "offset": 131070,
+      "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-repository-truth-1a7afc-failure-v1/original-repository-truth-1a7afc-failure-v1.zip",
+      "size": 152665,
+      "version": "66306:34744711:152665:1794645495332135850:1794645495332135850"
+    }
+  ],
+  "completed_at": "2026-11-14T08:41:44.744750+00:00",
+  "destination": {
+    "mode": 384,
+    "sha256": "c67721b25a546d73b25b498c6afbeb1e6338fb267eea202403d2e167f2bf469a",
+    "size": 152665,
+    "version": "16777233:606783153:152665:1794645695019200078:1794645695019700283",
+    "written": 152665
+  },
+  "destination_path": "/private/tmp/chain-consolidation-20261114-root/original-repository-truth-1a7afc-failure-copy-v1/original-repository-truth-1a7afc-failure-v1.zip",
+  "original_39_execution_files_preserved": true,
+  "original_result": "failed",
+  "schema": "trnm-M4-full-original-failure-official-copy-verification-v1",
+  "source": {
+    "metadata": {
+      "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gid": 1000,
+      "link_count": 1,
+      "metadata_platform": "linux",
+      "mode": 384,
+      "uid": 1000,
+      "xattr_names": [],
+      "xattr_sha256": {}
+    },
+    "mode": 384,
+    "path": "/home/qian-qi/chain-final-consolidation-20261114-root/package-original-repository-truth-1a7afc-failure-v1/original-repository-truth-1a7afc-failure-v1.zip",
+    "sha256": "c67721b25a546d73b25b498c6afbeb1e6338fb267eea202403d2e167f2bf469a",
+    "size": 152665,
+    "version": "66306:34744711:152665:1794645495332135850:1794645495332135850"
+  },
+  "source_before_after_equal": true,
+  "tests_rerun": false,
+  "whole_zip_SHA_verified": true
+}
