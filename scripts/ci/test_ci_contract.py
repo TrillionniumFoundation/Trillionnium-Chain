@@ -711,6 +711,8 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
             'scripts/ci/test_throughput_cost_coverage.py',
             'scripts/ci/test_rust_source_tokens.py',
             'scripts/ci/test_collected_unit_empty_v1.py',
+            'scripts/ci/test_collect_pinned_codeql_metadata_v1.py',
+            'scripts/ci/test_codeql_semantic_observations_v1.py',
             'scripts/ci/test_read_validated_business_goodput.py',
             'scripts/ci/test_pon_w1_reused_cost_reader_v3.py',
             'scripts/ci/test_run_w1_reused_cost_v3.py',

@@ -1311,6 +1311,16 @@ COLLECTED_UNIT_READER_REQUIRED_PATHS = frozenset((
 ))
 NATIVE_REQUIRED_PATHS |= COLLECTED_UNIT_READER_REQUIRED_PATHS
 
+
+# Original bounded metadata and pure semantic readback grant no scan qualification.
+CODEQL_DIAGNOSTIC_READER_REQUIRED_PATHS = frozenset((
+    'scripts/ci/collect_pinned_codeql_metadata_v1.py',
+    'scripts/ci/test_collect_pinned_codeql_metadata_v1.py',
+    'scripts/ci/read_codeql_semantic_observations_v1.py',
+    'scripts/ci/test_codeql_semantic_observations_v1.py',
+))
+NATIVE_REQUIRED_PATHS |= CODEQL_DIAGNOSTIC_READER_REQUIRED_PATHS
+
 def is_pq_source(parts: tuple[str, ...]) -> bool:
     """Recognize versioned pq3 modules, pq.rs, cell_pq and older prefixes."""
     return any(
