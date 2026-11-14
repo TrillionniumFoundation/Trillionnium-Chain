@@ -27,6 +27,8 @@ import run_history_native as history
 import run_history_diagnostic as diagnostic
 import run_public_fixture_native as architecture
 import public_fixture_host_lease as lease
+import run_sp27_receiver_controls as sp27
+import run_sp27_strata_controls as sp27_strata
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -82,7 +84,9 @@ def validate_command(command: list[str]) -> Path:
         'python3', 'scripts/ci/run_w1_fresh_service_v1.py', '--out'], [
         'python3', history.SCRIPT, '--out'], [
         'python3', diagnostic.SCRIPT, '--out'], [
-        'python3', architecture.SCRIPT, '--out']), 'ORIGINAL_ARGV_REQUIRED')
+        'python3', architecture.SCRIPT, '--out'], [
+        'python3', sp27.SCRIPT, '--out'], [
+        'python3', sp27_strata.SCRIPT, '--out']), 'ORIGINAL_ARGV_REQUIRED')
     out = Path(command[3])
     require(out.is_absolute() and not out.resolve().is_relative_to(ROOT),
             'OUTPUT_MUST_BE_OUTSIDE_CHECKOUT')
@@ -267,6 +271,10 @@ def prepared_format_handoff(prepared: dict, receipts: Path) -> tuple[str, str]:
 
 
 def prepare_command(command: list[str], output: Path, receipts: Path) -> dict:
+    if command[1] == sp27_strata.SCRIPT:
+        return sp27_strata.validate_preparation(output)
+    if command[1] == sp27.SCRIPT:
+        return sp27.validate_preparation(output)
     if command[1] == architecture.SCRIPT:
         return architecture.validate_preparation(output)
     if command[1] == history.SCRIPT:
@@ -279,6 +287,10 @@ def prepare_command(command: list[str], output: Path, receipts: Path) -> dict:
 
 
 def bind_command(command: list[str], prepared: dict, output: Path) -> dict:
+    if command[1] == sp27_strata.SCRIPT:
+        return sp27_strata.bind_execution(prepared, output)
+    if command[1] == sp27.SCRIPT:
+        return sp27.bind_execution(prepared, output)
     if command[1] == architecture.SCRIPT:
         return architecture.bind_execution(prepared, output)
     if command[1] == history.SCRIPT:
