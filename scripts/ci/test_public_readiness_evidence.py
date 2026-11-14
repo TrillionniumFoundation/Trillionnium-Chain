@@ -7,6 +7,7 @@ import json
 import os
 import re
 import sqlite3
+from contextlib import closing
 import subprocess
 import sys
 import tempfile
@@ -627,7 +628,7 @@ class DurableStoreTests(unittest.TestCase):
         self.summary['producer_final_state'] = {'tip':parent.hex()}
         for owner in ('producer','validator'):
             directory = self.folder/owner; directory.mkdir()
-            with sqlite3.connect(directory/'native.sqlite') as database:
+            with closing(sqlite3.connect(directory/'native.sqlite')) as database, database:
                 database.executescript(ddl)
                 database.executemany('INSERT INTO metadata VALUES(?,?)',[
                     ('schema',H(self.schema_domain,ddl.encode())),
@@ -665,18 +666,18 @@ class DurableStoreTests(unittest.TestCase):
         self.summary['ledger_disk_bytes'] += 1
         with self.assertRaises(ValueError): self.verify()
         self.summary['ledger_disk_bytes'] -= 1
-        with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
+        with closing(sqlite3.connect(self.folder/'validator/native.sqlite')) as database, database:
             database.execute('UPDATE blocks SET packet=? WHERE height=1',(b'forged bytes',))
         with self.assertRaises(ValueError): self.verify()
-        with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
+        with closing(sqlite3.connect(self.folder/'validator/native.sqlite')) as database, database:
             database.execute('UPDATE blocks SET packet=?,chainwork=? WHERE height=1',(self.packets[0],bytes(64)))
         with self.assertRaises(ValueError): self.verify()
 
     def test_changed_published_state_and_injected_schema_reject(self):
-        with sqlite3.connect(self.folder/'producer/native.sqlite') as database:
+        with closing(sqlite3.connect(self.folder/'producer/native.sqlite')) as database, database:
             database.execute('UPDATE kv SET value=?',(self.canonical(2),))
         with self.assertRaises(ValueError): self.verify()
-        with sqlite3.connect(self.folder/'producer/native.sqlite') as database:
+        with closing(sqlite3.connect(self.folder/'producer/native.sqlite')) as database, database:
             database.execute('UPDATE kv SET value=?',(self.canonical(1),))
             database.execute('CREATE TRIGGER injected AFTER INSERT ON metadata BEGIN SELECT 1; END')
         with self.assertRaises(ValueError): self.verify()
@@ -688,7 +689,7 @@ class DurableStoreTests(unittest.TestCase):
         for owner in ('producer', 'validator'):
             path = self.folder/owner/'native.sqlite'
             with self.subTest(owner=owner,kind=kind,name=name):
-                with sqlite3.connect(path) as database:
+                with closing(sqlite3.connect(path)) as database, database:
                     database.execute(sql)
                     actual = database.execute(
                         'SELECT type,name,sql FROM sqlite_master WHERE name=?', (name,)).fetchone()
@@ -700,7 +701,7 @@ class DurableStoreTests(unittest.TestCase):
                     with self.assertRaisesRegex(ValueError,'durable schema additions/omissions/changes'):
                         self.verify()
                 finally:
-                    with sqlite3.connect(path) as database:
+                    with closing(sqlite3.connect(path)) as database, database:
                         database.execute('DROP '+kind.upper()+' "'+name+'"')
                     self.summary['ledger_disk_bytes'] = sum(path.stat().st_size for path in self.folder.rglob('*') if path.is_file())
                     self.verify()
@@ -723,7 +724,7 @@ class DurableStoreTests(unittest.TestCase):
 
     def test_real_sqlite_internal_autoindexes_and_statistics_remain_supported(self):
         for owner in ('producer', 'validator'):
-            with sqlite3.connect(self.folder/owner/'native.sqlite') as database:
+            with closing(sqlite3.connect(self.folder/owner/'native.sqlite')) as database, database:
                 autoindexes = database.execute(
                     'SELECT name,sql FROM sqlite_master WHERE type="index"').fetchall()
                 self.assertTrue(any(name.startswith('sqlite_autoindex_') and sql is None
@@ -740,12 +741,12 @@ class DurableStoreTests(unittest.TestCase):
     def test_current_v2_schema_and_complete_index_positive_control(self):
         self.assertEqual(self.schema_domain,'native-branch-schema-v2')
         self.verify()
-        with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
+        with closing(sqlite3.connect(self.folder/'validator/native.sqlite')) as database, database:
             self.assertEqual(database.execute('SELECT count(*) FROM ancestry_jump').fetchone()[0],5)
 
     def test_v2_schema_metadata_cannot_use_legacy_hash_domain(self):
         ddl,_ = check.native_durable_schema(check.ROOT)
-        with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
+        with closing(sqlite3.connect(self.folder/'validator/native.sqlite')) as database, database:
             database.execute("UPDATE metadata SET value=? WHERE key='schema'",
                              (self.H('native-branch-schema-v1',ddl.encode()),))
         with self.assertRaisesRegex(ValueError,'durable metadata/context'): self.verify()
@@ -756,17 +757,17 @@ class DurableStoreTests(unittest.TestCase):
         self.verify()
         for owner in ('producer','validator'):
             with self.subTest(owner=owner):
-                with sqlite3.connect(self.folder/owner/'native.sqlite') as database:
+                with closing(sqlite3.connect(self.folder/owner/'native.sqlite')) as database, database:
                     self.assertEqual(database.execute("SELECT value FROM metadata WHERE key='schema'").fetchone()[0],current)
                     database.execute("UPDATE metadata SET value=? WHERE key='schema'",(old,))
                 with self.assertRaisesRegex(ValueError,'durable metadata/context'): self.verify()
-                with sqlite3.connect(self.folder/owner/'native.sqlite') as database:
+                with closing(sqlite3.connect(self.folder/owner/'native.sqlite')) as database, database:
                     database.execute("UPDATE metadata SET value=? WHERE key='schema'",(current,))
                 self.verify()
 
     def test_authenticated_domain_cannot_relabel_legacy_tables(self):
         ddl,_ = check.native_durable_schema(check.ROOT)
-        with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
+        with closing(sqlite3.connect(self.folder/'validator/native.sqlite')) as database, database:
             database.execute("UPDATE metadata SET value=? WHERE key='schema'",
                              (self.H('native-authenticated-branch-schema-v1',ddl.encode()),))
         with self.assertRaisesRegex(ValueError,'durable metadata/context'): self.verify()
@@ -779,14 +780,14 @@ class DurableStoreTests(unittest.TestCase):
         for schema in (original,self.H(domain,(ddl+extension).encode()),
                        self.H('native-authenticated-branch-schema-v1',(ddl+extension).encode())):
             with self.subTest(schema=schema.hex()):
-                with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
+                with closing(sqlite3.connect(self.folder/'validator/native.sqlite')) as database, database:
                     database.executescript(extension)
                     database.execute('INSERT INTO archive_nodes VALUES(?,?)',(bytes(32),b'unverified node'))
                     database.execute('INSERT INTO native_state_commitments VALUES(?,?)',(bytes(32),b'unverified commitment'))
                     database.execute("UPDATE metadata SET value=? WHERE key='schema'",(schema,))
                 self.summary['ledger_disk_bytes'] = sum(path.stat().st_size for path in self.folder.rglob('*') if path.is_file())
                 with self.assertRaisesRegex(ValueError,'durable schema additions/omissions/changes'): self.verify()
-                with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
+                with closing(sqlite3.connect(self.folder/'validator/native.sqlite')) as database, database:
                     database.execute('DROP TABLE archive_nodes')
                     database.execute('DROP TABLE native_state_commitments')
                     database.execute("UPDATE metadata SET value=? WHERE key='schema'",(original,))
@@ -798,11 +799,11 @@ class DurableStoreTests(unittest.TestCase):
         for foreign in ('native-growth-reference-branch-schema-v2',
                         'native-permanent-account-growth-schema-v2'):
             with self.subTest(domain=foreign):
-                with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
+                with closing(sqlite3.connect(self.folder/'validator/native.sqlite')) as database, database:
                     database.execute("UPDATE metadata SET value=? WHERE key='schema'",
                                      (self.H(foreign,ddl.encode()),))
                 with self.assertRaisesRegex(ValueError,'durable metadata/context'): self.verify()
-        with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
+        with closing(sqlite3.connect(self.folder/'validator/native.sqlite')) as database, database:
             database.execute("UPDATE metadata SET value=? WHERE key='schema'",
                              (self.H(domain,ddl.encode()),))
         self.verify()
@@ -815,14 +816,14 @@ class DurableStoreTests(unittest.TestCase):
         for schema in (original,self.H(domain,(ddl+extension).encode()),
                        self.H('native-permanent-account-growth-schema-v2',(ddl+extension).encode())):
             with self.subTest(schema=schema.hex()):
-                with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
+                with closing(sqlite3.connect(self.folder/'validator/native.sqlite')) as database, database:
                     database.executescript(extension)
                     database.execute('INSERT INTO archive_nodes VALUES(?,?)',(bytes(32),b'unverified node'))
                     database.execute('INSERT INTO growth_states VALUES(?,?)',(bytes(32),b'unverified growth state'))
                     database.execute("UPDATE metadata SET value=? WHERE key='schema'",(schema,))
                 self.summary['ledger_disk_bytes'] = sum(path.stat().st_size for path in self.folder.rglob('*') if path.is_file())
                 with self.assertRaisesRegex(ValueError,'durable schema additions/omissions/changes'): self.verify()
-                with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
+                with closing(sqlite3.connect(self.folder/'validator/native.sqlite')) as database, database:
                     database.execute('DROP TABLE archive_nodes')
                     database.execute('DROP TABLE growth_states')
                     database.execute("UPDATE metadata SET value=? WHERE key='schema'",(original,))
@@ -837,20 +838,20 @@ class DurableStoreTests(unittest.TestCase):
         foreign = 'native-pq-network-witness-schema-v4'
         # Relabelling the ordinary database with the new domain cannot upgrade
         # the dump to external-witness or whole-owner evidence.
-        with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
+        with closing(sqlite3.connect(self.folder/'validator/native.sqlite')) as database, database:
             database.execute("UPDATE metadata SET value=? WHERE key='schema'",
                              (self.H(foreign,ddl.encode()),))
         with self.assertRaisesRegex(ValueError,'durable metadata/context'): self.verify()
         for schema in (original,self.H(domain,(ddl+extension).encode()),
                        self.H(foreign,(ddl+extension).encode())):
             with self.subTest(schema=schema.hex()):
-                with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
+                with closing(sqlite3.connect(self.folder/'validator/native.sqlite')) as database, database:
                     database.executescript(extension)
                     database.execute('INSERT INTO pq_witness_checkpoint_v1 VALUES(1,1,?)',(bytes(64),))
                     database.execute("UPDATE metadata SET value=? WHERE key='schema'",(schema,))
                 self.summary['ledger_disk_bytes'] = sum(path.stat().st_size for path in self.folder.rglob('*') if path.is_file())
                 with self.assertRaisesRegex(ValueError,'durable schema additions/omissions/changes'): self.verify()
-                with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
+                with closing(sqlite3.connect(self.folder/'validator/native.sqlite')) as database, database:
                     database.execute('DROP TABLE pq_witness_checkpoint_v1')
                     database.execute("UPDATE metadata SET value=? WHERE key='schema'",(original,))
                 self.summary['ledger_disk_bytes'] = sum(path.stat().st_size for path in self.folder.rglob('*') if path.is_file())
@@ -858,7 +859,7 @@ class DurableStoreTests(unittest.TestCase):
 
     def test_resealed_wrong_half_link_is_not_accepted_as_derived_structure(self):
         block,previous,height = self.blocks[1]
-        with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
+        with closing(sqlite3.connect(self.folder/'validator/native.sqlite')) as database, database:
             ancestor,ancestor_height,_,right,_ = database.execute(
                 'SELECT ancestor,ancestor_height,left_seal,right_seal,seal FROM ancestry_jump WHERE block=? AND level=1',(block,)).fetchone()
             left = bytes([9])*32
