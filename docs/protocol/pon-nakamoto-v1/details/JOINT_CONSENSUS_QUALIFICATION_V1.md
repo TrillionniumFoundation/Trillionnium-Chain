@@ -1,6 +1,6 @@
 # Joint difficulty, time and credit qualification contract V1
 
-Status: **research contract; HOLD_NO_GO**. The reviewed listed source is
+Status: **research contract; HOLD_NO_GO**. The historical listed-source checkpoint is
 `2bb56596e637908c44b5a2ef5984c9c37c7d3cc8`, tree
 `18cfc660131170a5b0c5c7244987a9fcebfb7e62`. The prior PR #835 source,
 `e2a02f9271b49f146e70806c8a66e161b5973971`, retains its historical identity.
@@ -63,9 +63,10 @@ these thresholds is supplied by V1.
 
 The machine contract contains exactly **23 SHA-256 source pins**. The roster
 is fixed in the reader; omission, addition or changed bytes requires review.
-Their canonical map also has a separately fixed digest in the checker,
+The historical 2bb56596 canonical map had the separately fixed checker digest
 `c142b6758d90e01e1960dc5f7fb110209fa9fd40c25fca22f4010acbc085a459`,
-verified against the listed Git blobs at the reviewed commit. Editing source
+verified against the listed Git blobs at that historical checkpoint. The current
+reviewed map and source checkpoint are recorded in section 8. Editing source
 and JSON hashes together still fails that anchor. A new anchor requires a
 reviewed checker change; there is no automatic repinning option.
 
@@ -208,3 +209,45 @@ six-confirmation failure bounds, and false activation, finality and execution
 authority. Future qualification requires a reviewed contract revision and
 evidence verifier for the missing premises; editing JSON numbers or booleans
 cannot supply that proof.
+
+## 8. Reviewed current listed-source mapping — 2026-11-14
+
+The current default contract binds exactly the same 23 source paths to source
+checkpoint `2d9baf313e54e49a4507c5057578e89ddbe7a1b6`, tree
+`9d85026774e6d5d8ba63162db5332954831fab74`. This is the actual committed source
+checkpoint containing the reviewed fixed-probability child contract. It is
+not the commit that stores this new joint mapping.
+
+The independently reviewed canonical map digest is
+`5fd6aea2f2d1a6a3831853f54c8cc6e83cc8233cc61ab97a01a8e482749be674`.
+All 23 Git blobs were compared with their physical files. Relative to the
+historical `2bb56596e637908c44b5a2ef5984c9c37c7d3cc8` mapping, nineteen inputs are
+unchanged and four have reviewed changes:
+
+| Input | Current SHA-256 | Reviewed change |
+| --- | --- | --- |
+| `trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs` | `7af17da8488782bf403275b5fd401ad469dd460fd0ecda38a0edb4e714c5494e` | Selected progress API and same-invocation verifier continuation; no change to the MU1 probability or credit relation |
+| `trillionnium/crates/trnm-pon-node/src/lib.rs` | `baafb16f125fda88b09d2342a0b6badb253497742c9a106921e8416e930f108d` | Previously selected owner and observer exports and advisory Q4 API |
+| `trillionnium/crates/trnm-pon-node/src/store.rs` | `5918270368c61b420d26910dc5934714e1423f71c686b2d01f8d2e3ccceb990c` | Reviewed snapshot, replay, advisory and confirmation checks; no threshold relaxation |
+| `formal/pon-nakamoto-v1/fixed_probability_contract_v1.json` | `916cbdcf0f163844d269a7152305de952022f92065d0f70f77a752baa6cba092` | The F1 one-pin source update, with the original probability, costs and qualification boundary preserved |
+
+The old map digest `c142b6758d90e01e1960dc5f7fb110209fa9fd40c25fca22f4010acbc085a459`,
+old contract, reader, tests and document remain original historical evidence
+in [the source-binding record](../../../../evidence/pon-fixed-joint-source-binding-20261114/README.md).
+They are not accepted alternate current mappings. The original 35 test methods
+are retained; the revision-identity method now requires this real source
+checkpoint and explicitly refuses both the old 2bb56596 revision and the
+earlier e2a02f92 revision, as well as an unknown revision.
+
+The original Linux failures at units 022 and 023 remain recorded with their
+original exit codes and source-digest failures. The complete 23-input review,
+full changed-source patches and subsequent focused results are recorded under
+`evidence/pon-fixed-joint-source-binding-20261114/f2/`. A focused
+source-consistency result does not substitute for a complete repository lane
+or a hosted run.
+
+This mapping change leaves all eighteen environment parameters unknown,
+all thirteen obligations open and all sixteen classical/quantum cost points
+unproved. The development parameters, native semantic contract, null failure
+bounds, `HOLD_NO_GO`, and false activation, finality and execution-authority
+flags are unchanged. No Rust runtime source is edited in F2.

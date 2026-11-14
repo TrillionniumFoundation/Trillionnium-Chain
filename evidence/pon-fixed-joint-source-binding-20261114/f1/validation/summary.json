@@ -1,0 +1,142 @@
+{
+  "actual_default_reader": "binding_validation PASS / qualification HOLD_NO_GO",
+  "base": "7d8d4c59fcd01480a12e1c64835b202079091800",
+  "canonical_tmpdir": "/private/tmp/chain-architecture-fixed-joint-source-binding-evidence-20261114/canonical-tmp-f1",
+  "full_lane_executed": false,
+  "hosted_qualification": false,
+  "native_execution": false,
+  "old_mapping_refused": true,
+  "original_reader_and_tests_byte_identical": true,
+  "original_test_count": 16,
+  "production_activation": false,
+  "python_executable": "/opt/homebrew/bin/python3",
+  "schema": "fixed-current-mapping-targeted-validation-v1",
+  "selected_input_count": 7,
+  "selected_inputs_before_after_equal": true,
+  "status": "passed",
+  "steps": [
+    {
+      "argv": [
+        "/bin/bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114",
+      "elapsed_seconds": 0.044402,
+      "exit": 0,
+      "label": "preflight",
+      "started_at": "2026-11-14T07:42:39.416494+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114/evidence/pon-fixed-joint-source-binding-20261114/f1/validation/preflight.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 176,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114/evidence/pon-fixed-joint-source-binding-20261114/f1/validation/preflight.stdout",
+        "sha256": "9d6c19e895e5795b948d5f0f9a61fe95dd345bb61ecfa7af950c9f8ba1c37fb3"
+      },
+      "timeout_seconds": 120
+    },
+    {
+      "argv": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_fixed_probability_contract.py",
+        "-v"
+      ],
+      "cwd": "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114",
+      "elapsed_seconds": 0.053573,
+      "exit": 0,
+      "label": "original-fixed-controls-16",
+      "started_at": "2026-11-14T07:42:39.461283+00:00",
+      "stderr": {
+        "bytes": 2881,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114/evidence/pon-fixed-joint-source-binding-20261114/f1/validation/original-fixed-controls-16.stderr",
+        "sha256": "75cb87e93166571ed2a709a65446eb1948c1158b1d07691ba867d14f252e3a8c"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114/evidence/pon-fixed-joint-source-binding-20261114/f1/validation/original-fixed-controls-16.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timeout_seconds": 120
+    },
+    {
+      "argv": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "formal/pon-nakamoto-v1/fixed_probability_contract.py"
+      ],
+      "cwd": "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114",
+      "elapsed_seconds": 0.039409,
+      "exit": 0,
+      "label": "actual-fixed-reader",
+      "started_at": "2026-11-14T07:42:39.515179+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114/evidence/pon-fixed-joint-source-binding-20261114/f1/validation/actual-fixed-reader.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 3799,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114/evidence/pon-fixed-joint-source-binding-20261114/f1/validation/actual-fixed-reader.stdout",
+        "sha256": "d77f16d77fbd7ca7cdc0c9e4394c5272218b66c6102063d9e6f38a1dcbb4d8d8"
+      },
+      "timeout_seconds": 120
+    },
+    {
+      "argv": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114/evidence/pon-fixed-joint-source-binding-20261114/f1/validation/old-mapping-control.py",
+        "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114"
+      ],
+      "cwd": "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114",
+      "elapsed_seconds": 0.032814,
+      "exit": 0,
+      "label": "old-mapping-refusal",
+      "started_at": "2026-11-14T07:42:39.559705+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114/evidence/pon-fixed-joint-source-binding-20261114/f1/validation/old-mapping-refusal.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 153,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114/evidence/pon-fixed-joint-source-binding-20261114/f1/validation/old-mapping-refusal.stdout",
+        "sha256": "90a17ac78f4f084f3870e17f568175fd8e3acf687506e09020f66d7ba515362c"
+      },
+      "timeout_seconds": 120
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "--no-optional-locks",
+        "diff",
+        "--check"
+      ],
+      "cwd": "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114",
+      "elapsed_seconds": 0.067704,
+      "exit": 0,
+      "label": "diff-check",
+      "started_at": "2026-11-14T07:42:39.592798+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114/evidence/pon-fixed-joint-source-binding-20261114/f1/validation/diff-check.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/private/tmp/chain-architecture-fixed-joint-source-binding-20261114/evidence/pon-fixed-joint-source-binding-20261114/f1/validation/diff-check.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timeout_seconds": 120
+    }
+  ]
+}

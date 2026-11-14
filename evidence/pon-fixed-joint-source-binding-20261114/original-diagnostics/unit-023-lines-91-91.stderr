@@ -1,0 +1,850 @@
+..FFFFFFFFFFFFFFFFFF.E.F.FFFF..FEFFFFFFFFFFFFF.FFFFFFFFFFFFFFF..F.F....FFE.FF.
+======================================================================
+ERROR: test_both_owner_implementations_and_work_relation_are_bound (__main__.JointQualificationTests.test_both_owner_implementations_and_work_relation_are_bound)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 67, in test_both_owner_implementations_and_work_relation_are_bound
+    pins = q.inspect(self.root)["source_sha256"]
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/joint_consensus_qualification.py", line 348, in inspect
+    require(observed[path] == pins[path], "SOURCE_DIGEST_MISMATCH:" + path)
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/joint_consensus_qualification.py", line 230, in require
+    raise QualificationError(code)
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+======================================================================
+ERROR: test_current_contract_keeps_all_actual_probabilities_unknown (__main__.JointQualificationTests.test_current_contract_keeps_all_actual_probabilities_unknown)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 40, in test_current_contract_keeps_all_actual_probabilities_unknown
+    report = q.inspect(self.root)
+             ^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/joint_consensus_qualification.py", line 348, in inspect
+    require(observed[path] == pins[path], "SOURCE_DIGEST_MISMATCH:" + path)
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/joint_consensus_qualification.py", line 230, in require
+    raise QualificationError(code)
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+======================================================================
+ERROR: test_six_successors_exclude_inclusion_work (__main__.JointQualificationTests.test_six_successors_exclude_inclusion_work)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 128, in test_six_successors_exclude_inclusion_work
+    semantics = q.inspect(self.root)["native_semantics"]
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/joint_consensus_qualification.py", line 348, in inspect
+    require(observed[path] == pins[path], "SOURCE_DIGEST_MISMATCH:" + path)
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/joint_consensus_qualification.py", line 230, in require
+    raise QualificationError(code)
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+======================================================================
+FAIL: test_all_unknown_environment_inputs_reject_invented_numbers (__main__.JointQualificationTests.test_all_unknown_environment_inputs_reject_invented_numbers) (group='clocks', name='activation_confirmation_and_recovery_clock_coverage')
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 98, in test_all_unknown_environment_inputs_reject_invented_numbers
+    self.reject(data, "UNPROVED_ENVIRONMENT_PARAMETER")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "UNPROVED_ENVIRONMENT_PARAMETER" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_all_unknown_environment_inputs_reject_invented_numbers (__main__.JointQualificationTests.test_all_unknown_environment_inputs_reject_invented_numbers) (group='clocks', name='wall_clock_skew_and_drift_bound')
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 98, in test_all_unknown_environment_inputs_reject_invented_numbers
+    self.reject(data, "UNPROVED_ENVIRONMENT_PARAMETER")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "UNPROVED_ENVIRONMENT_PARAMETER" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_all_unknown_environment_inputs_reject_invented_numbers (__main__.JointQualificationTests.test_all_unknown_environment_inputs_reject_invented_numbers) (group='clocks', name='wall_to_monotonic_to_model_clock_mapping')
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 98, in test_all_unknown_environment_inputs_reject_invented_numbers
+    self.reject(data, "UNPROVED_ENVIRONMENT_PARAMETER")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "UNPROVED_ENVIRONMENT_PARAMETER" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_all_unknown_environment_inputs_reject_invented_numbers (__main__.JointQualificationTests.test_all_unknown_environment_inputs_reject_invented_numbers) (group='delivery', name='availability_queue_verification_and_state_service_capacity')
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 98, in test_all_unknown_environment_inputs_reject_invented_numbers
+    self.reject(data, "UNPROVED_ENVIRONMENT_PARAMETER")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "UNPROVED_ENVIRONMENT_PARAMETER" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_all_unknown_environment_inputs_reject_invented_numbers (__main__.JointQualificationTests.test_all_unknown_environment_inputs_reject_invented_numbers) (group='delivery', name='complete_validated_eligible_delivery_delay')
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 98, in test_all_unknown_environment_inputs_reject_invented_numbers
+    self.reject(data, "UNPROVED_ENVIRONMENT_PARAMETER")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "UNPROVED_ENVIRONMENT_PARAMETER" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_all_unknown_environment_inputs_reject_invented_numbers (__main__.JointQualificationTests.test_all_unknown_environment_inputs_reject_invented_numbers) (group='delivery', name='stale_parent_and_retention_bounds')
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 98, in test_all_unknown_environment_inputs_reject_invented_numbers
+    self.reject(data, "UNPROVED_ENVIRONMENT_PARAMETER")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "UNPROVED_ENVIRONMENT_PARAMETER" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_all_unknown_environment_inputs_reject_invented_numbers (__main__.JointQualificationTests.test_all_unknown_environment_inputs_reject_invented_numbers) (group='lifetime', name='analysis_horizon_and_adaptive_start_budget')
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 98, in test_all_unknown_environment_inputs_reject_invented_numbers
+    self.reject(data, "UNPROVED_ENVIRONMENT_PARAMETER")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "UNPROVED_ENVIRONMENT_PARAMETER" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_all_unknown_environment_inputs_reject_invented_numbers (__main__.JointQualificationTests.test_all_unknown_environment_inputs_reject_invented_numbers) (group='lifetime', name='initial_private_inventory_bound')
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 98, in test_all_unknown_environment_inputs_reject_invented_numbers
+    self.reject(data, "UNPROVED_ENVIRONMENT_PARAMETER")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "UNPROVED_ENVIRONMENT_PARAMETER" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_all_unknown_environment_inputs_reject_invented_numbers (__main__.JointQualificationTests.test_all_unknown_environment_inputs_reject_invented_numbers) (group='lifetime', name='joint_bad_environment_and_cryptographic_failure_budget')
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 98, in test_all_unknown_environment_inputs_reject_invented_numbers
+    self.reject(data, "UNPROVED_ENVIRONMENT_PARAMETER")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "UNPROVED_ENVIRONMENT_PARAMETER" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_all_unknown_environment_inputs_reject_invented_numbers (__main__.JointQualificationTests.test_all_unknown_environment_inputs_reject_invented_numbers) (group='participation', name='adversarial_complete_credit_upper_tail')
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 98, in test_all_unknown_environment_inputs_reject_invented_numbers
+    self.reject(data, "UNPROVED_ENVIRONMENT_PARAMETER")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "UNPROVED_ENVIRONMENT_PARAMETER" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_all_unknown_environment_inputs_reject_invented_numbers (__main__.JointQualificationTests.test_all_unknown_environment_inputs_reject_invented_numbers) (group='participation', name='bootstrap_currentness_and_entry_debt_bound')
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 98, in test_all_unknown_environment_inputs_reject_invented_numbers
+    self.reject(data, "UNPROVED_ENVIRONMENT_PARAMETER")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "UNPROVED_ENVIRONMENT_PARAMETER" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_all_unknown_environment_inputs_reject_invented_numbers (__main__.JointQualificationTests.test_all_unknown_environment_inputs_reject_invented_numbers) (group='participation', name='qualified_honest_production_lower_tail')
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 98, in test_all_unknown_environment_inputs_reject_invented_numbers
+    self.reject(data, "UNPROVED_ENVIRONMENT_PARAMETER")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "UNPROVED_ENVIRONMENT_PARAMETER" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_all_unknown_environment_inputs_reject_invented_numbers (__main__.JointQualificationTests.test_all_unknown_environment_inputs_reject_invented_numbers) (group='participation', name='variation_window_and_churn_bound')
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 98, in test_all_unknown_environment_inputs_reject_invented_numbers
+    self.reject(data, "UNPROVED_ENVIRONMENT_PARAMETER")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "UNPROVED_ENVIRONMENT_PARAMETER" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_all_unknown_environment_inputs_reject_invented_numbers (__main__.JointQualificationTests.test_all_unknown_environment_inputs_reject_invented_numbers) (group='resources', name='all_algorithm_classical_cost_lower_envelope')
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 98, in test_all_unknown_environment_inputs_reject_invented_numbers
+    self.reject(data, "UNPROVED_ENVIRONMENT_PARAMETER")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "UNPROVED_ENVIRONMENT_PARAMETER" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_all_unknown_environment_inputs_reject_invented_numbers (__main__.JointQualificationTests.test_all_unknown_environment_inputs_reject_invented_numbers) (group='resources', name='all_algorithm_quantum_cost_lower_envelope')
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 98, in test_all_unknown_environment_inputs_reject_invented_numbers
+    self.reject(data, "UNPROVED_ENVIRONMENT_PARAMETER")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "UNPROVED_ENVIRONMENT_PARAMETER" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_all_unknown_environment_inputs_reject_invented_numbers (__main__.JointQualificationTests.test_all_unknown_environment_inputs_reject_invented_numbers) (group='resources', name='cross_fork_batch_cache_and_unpublished_work_composition')
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 98, in test_all_unknown_environment_inputs_reject_invented_numbers
+    self.reject(data, "UNPROVED_ENVIRONMENT_PARAMETER")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "UNPROVED_ENVIRONMENT_PARAMETER" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_all_unknown_environment_inputs_reject_invented_numbers (__main__.JointQualificationTests.test_all_unknown_environment_inputs_reject_invented_numbers) (group='resources', name='joint_initial_help_preprocessing_and_residual_state_bound')
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 98, in test_all_unknown_environment_inputs_reject_invented_numbers
+    self.reject(data, "UNPROVED_ENVIRONMENT_PARAMETER")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "UNPROVED_ENVIRONMENT_PARAMETER" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_all_unknown_environment_inputs_reject_invented_numbers (__main__.JointQualificationTests.test_all_unknown_environment_inputs_reject_invented_numbers) (group='resources', name='physical_resource_unit_and_scalarization')
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 98, in test_all_unknown_environment_inputs_reject_invented_numbers
+    self.reject(data, "UNPROVED_ENVIRONMENT_PARAMETER")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "UNPROVED_ENVIRONMENT_PARAMETER" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_chain_growth_is_not_business_liveness (__main__.JointQualificationTests.test_chain_growth_is_not_business_liveness)
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 120, in test_chain_growth_is_not_business_liveness
+    self.reject(data, "UNPROVED_PROPERTY")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "UNPROVED_PROPERTY" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_cli_has_distinct_check_and_qualification_exit_codes (__main__.JointQualificationTests.test_cli_has_distinct_check_and_qualification_exit_codes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 301, in test_cli_has_distinct_check_and_qualification_exit_codes
+    self.assertEqual(code, 0)
+AssertionError: 2 != 0
+
+======================================================================
+FAIL: test_common_prefix_growth_quality_bounds_cannot_be_self_assigned (__main__.JointQualificationTests.test_common_prefix_growth_quality_bounds_cannot_be_self_assigned) (key='common_prefix')
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 110, in test_common_prefix_growth_quality_bounds_cannot_be_self_assigned
+    self.reject(data, "UNPROVED_PROPERTY")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "UNPROVED_PROPERTY" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_common_prefix_growth_quality_bounds_cannot_be_self_assigned (__main__.JointQualificationTests.test_common_prefix_growth_quality_bounds_cannot_be_self_assigned) (key='chain_growth')
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 110, in test_common_prefix_growth_quality_bounds_cannot_be_self_assigned
+    self.reject(data, "UNPROVED_PROPERTY")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "UNPROVED_PROPERTY" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_common_prefix_growth_quality_bounds_cannot_be_self_assigned (__main__.JointQualificationTests.test_common_prefix_growth_quality_bounds_cannot_be_self_assigned) (key='chain_quality')
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 110, in test_common_prefix_growth_quality_bounds_cannot_be_self_assigned
+    self.reject(data, "UNPROVED_PROPERTY")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "UNPROVED_PROPERTY" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_credit_quality_is_not_count_quality (__main__.JointQualificationTests.test_credit_quality_is_not_count_quality)
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 115, in test_credit_quality_is_not_count_quality
+    self.reject(data, "UNPROVED_PROPERTY")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "UNPROVED_PROPERTY" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_declaring_an_obligation_proved_does_not_promote_it (__main__.JointQualificationTests.test_declaring_an_obligation_proved_does_not_promote_it) (name='adversarial-credit-tail')
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 90, in test_declaring_an_obligation_proved_does_not_promote_it
+    self.reject(data, "UNPROVED_OBLIGATION")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "UNPROVED_OBLIGATION" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_declaring_an_obligation_proved_does_not_promote_it (__main__.JointQualificationTests.test_declaring_an_obligation_proved_does_not_promote_it) (name='all-legal-resource-cost')
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 90, in test_declaring_an_obligation_proved_does_not_promote_it
+    self.reject(data, "UNPROVED_OBLIGATION")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "UNPROVED_OBLIGATION" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_declaring_an_obligation_proved_does_not_promote_it (__main__.JointQualificationTests.test_declaring_an_obligation_proved_does_not_promote_it) (name='chain-growth')
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 90, in test_declaring_an_obligation_proved_does_not_promote_it
+    self.reject(data, "UNPROVED_OBLIGATION")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "UNPROVED_OBLIGATION" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_declaring_an_obligation_proved_does_not_promote_it (__main__.JointQualificationTests.test_declaring_an_obligation_proved_does_not_promote_it) (name='chain-quality')
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 90, in test_declaring_an_obligation_proved_does_not_promote_it
+    self.reject(data, "UNPROVED_OBLIGATION")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "UNPROVED_OBLIGATION" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_declaring_an_obligation_proved_does_not_promote_it (__main__.JointQualificationTests.test_declaring_an_obligation_proved_does_not_promote_it) (name='common-prefix')
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 90, in test_declaring_an_obligation_proved_does_not_promote_it
+    self.reject(data, "UNPROVED_OBLIGATION")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "UNPROVED_OBLIGATION" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_declaring_an_obligation_proved_does_not_promote_it (__main__.JointQualificationTests.test_declaring_an_obligation_proved_does_not_promote_it) (name='complete-delivery')
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 90, in test_declaring_an_obligation_proved_does_not_promote_it
+    self.reject(data, "UNPROVED_OBLIGATION")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "UNPROVED_OBLIGATION" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_declaring_an_obligation_proved_does_not_promote_it (__main__.JointQualificationTests.test_declaring_an_obligation_proved_does_not_promote_it) (name='dynamic-participation')
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 90, in test_declaring_an_obligation_proved_does_not_promote_it
+    self.reject(data, "UNPROVED_OBLIGATION")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "UNPROVED_OBLIGATION" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_declaring_an_obligation_proved_does_not_promote_it (__main__.JointQualificationTests.test_declaring_an_obligation_proved_does_not_promote_it) (name='honest-progress-tail')
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 90, in test_declaring_an_obligation_proved_does_not_promote_it
+    self.reject(data, "UNPROVED_OBLIGATION")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "UNPROVED_OBLIGATION" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_declaring_an_obligation_proved_does_not_promote_it (__main__.JointQualificationTests.test_declaring_an_obligation_proved_does_not_promote_it) (name='joint-initial-state')
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 90, in test_declaring_an_obligation_proved_does_not_promote_it
+    self.reject(data, "UNPROVED_OBLIGATION")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "UNPROVED_OBLIGATION" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_declaring_an_obligation_proved_does_not_promote_it (__main__.JointQualificationTests.test_declaring_an_obligation_proved_does_not_promote_it) (name='lifetime-composition')
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 90, in test_declaring_an_obligation_proved_does_not_promote_it
+    self.reject(data, "UNPROVED_OBLIGATION")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "UNPROVED_OBLIGATION" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_declaring_an_obligation_proved_does_not_promote_it (__main__.JointQualificationTests.test_declaring_an_obligation_proved_does_not_promote_it) (name='mixed-resource-calibration')
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 90, in test_declaring_an_obligation_proved_does_not_promote_it
+    self.reject(data, "UNPROVED_OBLIGATION")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "UNPROVED_OBLIGATION" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_declaring_an_obligation_proved_does_not_promote_it (__main__.JointQualificationTests.test_declaring_an_obligation_proved_does_not_promote_it) (name='native-to-model')
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 90, in test_declaring_an_obligation_proved_does_not_promote_it
+    self.reject(data, "UNPROVED_OBLIGATION")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "UNPROVED_OBLIGATION" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_declaring_an_obligation_proved_does_not_promote_it (__main__.JointQualificationTests.test_declaring_an_obligation_proved_does_not_promote_it) (name='time-target-credit')
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 90, in test_declaring_an_obligation_proved_does_not_promote_it
+    self.reject(data, "UNPROVED_OBLIGATION")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "UNPROVED_OBLIGATION" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_every_open_obligation_is_mandatory (__main__.JointQualificationTests.test_every_open_obligation_is_mandatory) (name='adversarial-credit-tail')
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 83, in test_every_open_obligation_is_mandatory
+    self.reject(data, "OBLIGATION_ROSTER")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "OBLIGATION_ROSTER" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_every_open_obligation_is_mandatory (__main__.JointQualificationTests.test_every_open_obligation_is_mandatory) (name='all-legal-resource-cost')
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 83, in test_every_open_obligation_is_mandatory
+    self.reject(data, "OBLIGATION_ROSTER")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "OBLIGATION_ROSTER" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_every_open_obligation_is_mandatory (__main__.JointQualificationTests.test_every_open_obligation_is_mandatory) (name='chain-growth')
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 83, in test_every_open_obligation_is_mandatory
+    self.reject(data, "OBLIGATION_ROSTER")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "OBLIGATION_ROSTER" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_every_open_obligation_is_mandatory (__main__.JointQualificationTests.test_every_open_obligation_is_mandatory) (name='chain-quality')
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 83, in test_every_open_obligation_is_mandatory
+    self.reject(data, "OBLIGATION_ROSTER")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "OBLIGATION_ROSTER" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_every_open_obligation_is_mandatory (__main__.JointQualificationTests.test_every_open_obligation_is_mandatory) (name='common-prefix')
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 83, in test_every_open_obligation_is_mandatory
+    self.reject(data, "OBLIGATION_ROSTER")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "OBLIGATION_ROSTER" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_every_open_obligation_is_mandatory (__main__.JointQualificationTests.test_every_open_obligation_is_mandatory) (name='complete-delivery')
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 83, in test_every_open_obligation_is_mandatory
+    self.reject(data, "OBLIGATION_ROSTER")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "OBLIGATION_ROSTER" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_every_open_obligation_is_mandatory (__main__.JointQualificationTests.test_every_open_obligation_is_mandatory) (name='dynamic-participation')
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 83, in test_every_open_obligation_is_mandatory
+    self.reject(data, "OBLIGATION_ROSTER")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "OBLIGATION_ROSTER" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_every_open_obligation_is_mandatory (__main__.JointQualificationTests.test_every_open_obligation_is_mandatory) (name='honest-progress-tail')
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 83, in test_every_open_obligation_is_mandatory
+    self.reject(data, "OBLIGATION_ROSTER")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "OBLIGATION_ROSTER" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_every_open_obligation_is_mandatory (__main__.JointQualificationTests.test_every_open_obligation_is_mandatory) (name='joint-initial-state')
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 83, in test_every_open_obligation_is_mandatory
+    self.reject(data, "OBLIGATION_ROSTER")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "OBLIGATION_ROSTER" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_every_open_obligation_is_mandatory (__main__.JointQualificationTests.test_every_open_obligation_is_mandatory) (name='lifetime-composition')
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 83, in test_every_open_obligation_is_mandatory
+    self.reject(data, "OBLIGATION_ROSTER")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "OBLIGATION_ROSTER" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_every_open_obligation_is_mandatory (__main__.JointQualificationTests.test_every_open_obligation_is_mandatory) (name='mixed-resource-calibration')
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 83, in test_every_open_obligation_is_mandatory
+    self.reject(data, "OBLIGATION_ROSTER")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "OBLIGATION_ROSTER" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_every_open_obligation_is_mandatory (__main__.JointQualificationTests.test_every_open_obligation_is_mandatory) (name='native-to-model')
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 83, in test_every_open_obligation_is_mandatory
+    self.reject(data, "OBLIGATION_ROSTER")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "OBLIGATION_ROSTER" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_every_open_obligation_is_mandatory (__main__.JointQualificationTests.test_every_open_obligation_is_mandatory) (name='time-target-credit')
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 83, in test_every_open_obligation_is_mandatory
+    self.reject(data, "OBLIGATION_ROSTER")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "OBLIGATION_ROSTER" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_header_time_is_not_a_real_cost_clock (__main__.JointQualificationTests.test_header_time_is_not_a_real_cost_clock)
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 145, in test_header_time_is_not_a_real_cost_clock
+    self.reject(data, "NATIVE_SEMANTICS")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "NATIVE_SEMANTICS" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_height_only_confirmation_is_refused (__main__.JointQualificationTests.test_height_only_confirmation_is_refused)
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 140, in test_height_only_confirmation_is_refused
+    self.reject(data, "NATIVE_SEMANTICS")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "NATIVE_SEMANTICS" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_native_metrics_cannot_be_silently_changed (__main__.JointQualificationTests.test_native_metrics_cannot_be_silently_changed)
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 125, in test_native_metrics_cannot_be_silently_changed
+    self.reject(data, "UNPROVED_PROPERTY")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "UNPROVED_PROPERTY" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_parameter_manifest_cannot_override_installed_policy (__main__.JointQualificationTests.test_parameter_manifest_cannot_override_installed_policy)
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 230, in test_parameter_manifest_cannot_override_installed_policy
+    self.reject(data, "PARAMETER_CONTRACT")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "PARAMETER_CONTRACT" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_runtime_finality_and_authority_are_not_granted (__main__.JointQualificationTests.test_runtime_finality_and_authority_are_not_granted)
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 176, in test_runtime_finality_and_authority_are_not_granted
+    self.reject(data, "NATIVE_SEMANTICS")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "NATIVE_SEMANTICS" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_scalar_honest_majority_cannot_be_inserted (__main__.JointQualificationTests.test_scalar_honest_majority_cannot_be_inserted)
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 155, in test_scalar_honest_majority_cannot_be_inserted
+    self.reject(data, "UNPROVED_ENVIRONMENT_PARAMETER")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "UNPROVED_ENVIRONMENT_PARAMETER" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_sqrt_credit_cannot_be_substituted (__main__.JointQualificationTests.test_sqrt_credit_cannot_be_substituted)
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 150, in test_sqrt_credit_cannot_be_substituted
+    self.reject(data, "NATIVE_SEMANTICS")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "NATIVE_SEMANTICS" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+======================================================================
+FAIL: test_true_is_not_an_authenticated_environment_assumption (__main__.JointQualificationTests.test_true_is_not_an_authenticated_environment_assumption)
+----------------------------------------------------------------------
+joint_consensus_qualification.QualificationError: SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 103, in test_true_is_not_an_authenticated_environment_assumption
+    self.reject(data, "UNPROVED_ENVIRONMENT_PARAMETER")
+  File "/home/qian-qi/chain-final-consolidation-20261114-root/source/formal/pon-nakamoto-v1/test_joint_consensus_qualification.py", line 36, in reject
+    with self.assertRaisesRegex(q.QualificationError, code):
+AssertionError: "UNPROVED_ENVIRONMENT_PARAMETER" does not match "SOURCE_DIGEST_MISMATCH:trillionnium/crates/trnm-pon-node/src/lib.rs"
+
+----------------------------------------------------------------------
+Ran 35 tests in 0.129s
+
+FAILED (failures=58, errors=3)
