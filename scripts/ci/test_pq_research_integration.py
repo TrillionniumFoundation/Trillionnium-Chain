@@ -2061,5 +2061,54 @@ class CorpusGateTests(unittest.TestCase):
         self.assertIs(result['node_activated'], False)
 
 
+
+    def test_native_ownership_boundaries_cannot_omit_or_mutate(self):
+        dependencies = (
+            'trillionnium/crates/trnm-data-availability/src/cell/archive.rs',
+            'trillionnium/crates/trnm-data-availability/src/cell/retention.rs',
+            'trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs',
+            'trillionnium/crates/trnm-pon-node/src/host_kernel_parent_relative_tests.rs',
+            'trillionnium/crates/trnm-pon-node/src/host_kernel_parent_resource_tests.rs',
+            'trillionnium/crates/trnm-pon-node/src/store.rs',
+            'trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests.rs',
+            'trillionnium/crates/trnm-pon-node/src/store/pinned_account_query.rs',
+            'trillionnium/crates/trnm-pon-node/src/store/pinned_account_query_tests.rs',
+            'trillionnium/crates/trnm-pon-node/src/store/storage_service.rs',
+            'trillionnium/crates/trnm-pon-node/src/store/storage_service/release.rs',
+            'trillionnium/crates/trnm-pon-node/src/store/storage_service/release_tests.rs',
+            'trillionnium/crates/trnm-pon-node/src/store/storage_service/successor_owner_tests.rs',
+            'trillionnium/crates/trnm-pon-node/src/store/storage_service/tests.rs',
+            'trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2.rs',
+            'trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2/tests.rs',
+        )
+        self.assertTrue(set(dependencies).issubset(NATIVE_REQUIRED_PATHS))
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ('required', 'pin', 'required-and-pin'):
+                self.manifest = copy.deepcopy(original)
+                if omission in ('required', 'required-and-pin'):
+                    self.manifest['required_paths'].remove(name)
+                if omission in ('pin', 'required-and-pin'):
+                    del self.manifest['pinned_blobs'][name]
+                self.save()
+                with self.subTest(path=name, omission=omission), self.assertRaises(IntegrityError):
+                    check(self.root)
+        self.manifest = original
+        self.save()
+        for name in dependencies:
+            path = self.root / name
+            before = path.read_bytes()
+            try:
+                path.write_bytes(before + b'changed selected native ownership boundary')
+                with self.subTest(path=name), self.assertRaisesRegex(IntegrityError, 'changed source'):
+                    check(self.root)
+            finally:
+                path.write_bytes(before)
+        result = check(self.root)
+        self.assertEqual(result['status'], 'HOLD_NO_GO')
+        self.assertIs(result['cryptographic_acceptance'], False)
+        self.assertIs(result['node_activated'], False)
+
+
 if __name__ == "__main__":
     unittest.main()

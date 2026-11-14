@@ -5832,6 +5832,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/src/host_kernel_parent_relative_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/host_kernel_parent_relative_tests.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/host_kernel_parent_resource_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/host_kernel_parent_resource_tests.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/src/host_public_guard.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -8167,6 +8181,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/src/store/storage_service/shard_tests.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/store/storage_service/successor_owner_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/storage_service/successor_owner_tests.rs"
         )),
     ),
     (

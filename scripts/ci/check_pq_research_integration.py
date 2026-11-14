@@ -1463,6 +1463,27 @@ W1_RECEIPT_CLOCK_REQUIRED_PATHS = frozenset((
 ))
 NATIVE_REQUIRED_PATHS |= W1_RECEIPT_CLOCK_REQUIRED_PATHS
 
+# Native ownership checks bind their active callers and original boundary controls.
+NATIVE_OWNERSHIP_BOUNDARY_REQUIRED_PATHS = frozenset((
+    'trillionnium/crates/trnm-data-availability/src/cell/archive.rs',
+    'trillionnium/crates/trnm-data-availability/src/cell/retention.rs',
+    'trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs',
+    'trillionnium/crates/trnm-pon-node/src/host_kernel_parent_relative_tests.rs',
+    'trillionnium/crates/trnm-pon-node/src/host_kernel_parent_resource_tests.rs',
+    'trillionnium/crates/trnm-pon-node/src/store.rs',
+    'trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests.rs',
+    'trillionnium/crates/trnm-pon-node/src/store/pinned_account_query.rs',
+    'trillionnium/crates/trnm-pon-node/src/store/pinned_account_query_tests.rs',
+    'trillionnium/crates/trnm-pon-node/src/store/storage_service.rs',
+    'trillionnium/crates/trnm-pon-node/src/store/storage_service/release.rs',
+    'trillionnium/crates/trnm-pon-node/src/store/storage_service/release_tests.rs',
+    'trillionnium/crates/trnm-pon-node/src/store/storage_service/successor_owner_tests.rs',
+    'trillionnium/crates/trnm-pon-node/src/store/storage_service/tests.rs',
+    'trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2.rs',
+    'trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2/tests.rs',
+))
+NATIVE_REQUIRED_PATHS |= NATIVE_OWNERSHIP_BOUNDARY_REQUIRED_PATHS
+
 FINAL_REVIEWED_BRANCH_REQUIRED_PATHS = frozenset((
     '.github/workflows/pon-recent-batch-acceptance.yml',
     'config/pon/applicability-v1.json',
