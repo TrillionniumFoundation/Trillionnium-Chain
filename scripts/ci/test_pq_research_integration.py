@@ -170,10 +170,12 @@ class CorpusGateTests(unittest.TestCase):
         self.assertFalse(result["node_activated"])
 
     def test_consolidation_controls_require_each_path_and_pin(self):
-        # Independent literals preserve the selected five-path review scope.
+        # Independent literals preserve the selected review scope.
         paths = (
             "scripts/ci/chain_system_security.py",
             "scripts/ci/test_chain_system_security.py",
+            "scripts/ci/pq_external_rollback_oracle.py",
+            "scripts/ci/test_pq_external_rollback_oracle.py",
             "docs/security/SYSTEM_SECURITY_BLOCKERS_V1.md",
             "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/packed_branch_regression_tests.rs",
             "formal/pon-nakamoto-v1/test_pq_sqlite_schema_names.py",
@@ -197,6 +199,8 @@ class CorpusGateTests(unittest.TestCase):
         paths = (
             "scripts/ci/chain_system_security.py",
             "scripts/ci/test_chain_system_security.py",
+            "scripts/ci/pq_external_rollback_oracle.py",
+            "scripts/ci/test_pq_external_rollback_oracle.py",
             "docs/security/SYSTEM_SECURITY_BLOCKERS_V1.md",
             "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/packed_branch_regression_tests.rs",
             "formal/pon-nakamoto-v1/test_pq_sqlite_schema_names.py",
