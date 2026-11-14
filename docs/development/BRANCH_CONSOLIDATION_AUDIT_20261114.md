@@ -576,3 +576,29 @@ The e1bf seven-source-gate run also remains an original failed observation:
 six commands passed, while the corpus checker refused the newly appended
 development-plan bytes. The 308878 follow-up changed only the stale plan pin.
 All subsequent plan appends must be pinned after their final bytes are written.
+
+
+## Original full Linux failure and bounded exec-gate repair
+
+The 1a7afc candidate passed its seven local source gates. Its complete original
+Linux repository-truth command subsequently exited 1 after 496.806 seconds,
+with identical source identities before and after execution. The last suite
+passed 13 of 14 original collector controls. In the post-fork identity-refusal
+case, the recorded root exit was -15 rather than the required 125. The
+[collector review and complete failed-run package](../audit/20261114-m4-closed-exec-gate/README.md)
+retain the raw result and its source identity.
+
+The source review found a concrete ordering race: the parent closes the exec
+gate, but cleanup can signal TERM before the child is scheduled to read EOF.
+Component b71b84bb adds a successful-close flag and defers only that root's
+TERM when exec was never released. The original KILL threshold and total
+cleanup grace remain unchanged; descendants, already released roots and
+unconfirmed gate closures retain their original signal behavior. No return
+code is rewritten. All original 14 test methods are preserved, and two
+deterministic signal-order controls are added.
+
+Linux execution of the changed 16-method suite and the complete original lane
+is still pending at this source checkpoint. This Python collector correction
+does not change the active Rust workload or resolve its four-second pressure
+confirmation failure. Local source checks, hosted qualification and the final
+remote one-branch result remain distinct observations.

@@ -213,6 +213,7 @@ class Collector:
         self.root_pid = None
         self.root_returncode = None
         self.root_exec_released = False
+        self.root_exec_gate_closed = False
         self.echild = None
         self.records_truncated = False
         self.events_count = 0
@@ -394,6 +395,13 @@ class Collector:
         elapsed = time.monotonic_ns() - self.cleanup_started
         sig = signal.SIGKILL if elapsed >= min(250_000_000, int(self.args.cleanup_grace_seconds * 500_000_000)) else signal.SIGTERM
         for item in list(self.owned.values()):
+            # A closed, never-released exec gate already tells this root to exit
+            # with 125. Do not race that refusal with TERM before it can read
+            # EOF. The original KILL escalation and total cleanup bound remain.
+            if (sig == signal.SIGTERM and self.root_exec_gate_closed
+                    and not self.root_exec_released
+                    and item["identity"]["pid"] == self.root_pid):
+                continue
             if sig in item["signals"]:
                 continue
             item["signals"].add(sig)
@@ -507,6 +515,7 @@ class Collector:
                 self.emit("root-exec-released", {"identity": self.root})
         finally:
             os.close(gate_writer)
+            self.root_exec_gate_closed = True
 
     def loop(self):
         while True:

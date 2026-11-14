@@ -15226,3 +15226,32 @@ one-leaf 308878 correction preserved that failure; synchronize this new plan
 blob after this appendix as well. Preserve all failed observations and original
 qualification boundaries. The current four-second pressure confirmation
 failure remains an independent runtime problem; no source-map repair closes it.
+
+
+### 2026-11-14 original Linux lane and closed exec-gate cleanup
+
+The exact 1a7afc source passed all seven local source gates with identical
+before/after identities: 41,653 tracked entries and 3,994,532,888 bytes.
+Its original Linux repository-truth command then ran for 496.806 seconds and
+failed. The final owned-process collector suite passed 13 of its original
+14 methods; the post-fork identity-refusal control received the actual wait4
+return code -15 where the original contract requires 125. The original
+source-before/source-after identities remained equal. Preserve that full
+failed execution, not only its last assertion.
+
+Merge reviewed component b71b84bbccd9bc403384921802e7edcf2e682242. After a
+successful close of the never-released exec gate, defer only the first TERM
+to that exact root so it can read EOF and return its original refusal code.
+Keep the existing KILL escalation, total cleanup grace, descendant signals,
+released-root cleanup, actual wait4 status and original command deadline.
+The original 14 method bodies remain byte- and AST-identical. Two new
+deterministic controls cover the unchanged escalation boundary and the roots
+that must not receive this deferral.
+
+At this integration checkpoint the changed collector has syntax/static
+validation only. Run the complete 16-method suite and the original full
+Linux lane on the committed integration source; do not infer a pass from
+the code review. Historical source-object recovery and the external-evidence
+lane remain separate validation. The unchanged active Rust implementation
+still has original C0 pressure-confirmation failures. No main merge, branch
+deletion, production qualification or single-branch completion is declared.
