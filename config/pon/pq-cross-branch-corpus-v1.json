@@ -151,7 +151,7 @@
     ".github/workflows/pon-original-large-state-cpu.yml": "b304444ad20e6341fae8f977fac8536da78c7eca",
     ".github/workflows/pon-original-workspace-large-state-cpu.yml": "5092acc212fd3429d607276a53f0b7d7097e774e",
     ".github/workflows/pon-pq-system-continuation.yml": "75a8f1a913f7e9e3ffb2445bed11451d6cb6de1e",
-    ".github/workflows/pon-recent-batch-acceptance.yml": "d91b1bd75a91d33106df99a482b9b74b68592dd0",
+    ".github/workflows/pon-recent-batch-acceptance.yml": "10370fb69e7398d976b2e5516ff5e139bf298455",
     ".github/workflows/pon-w1-qrom-closure.yml": "fe0a830ee9b120bdc1928f044bfe8384243b2f38",
     ".github/workflows/pon-w1-qrom-implementation.yml": "eca8b1d4733f452a685894e8e942461f64f74a1e",
     ".github/workflows/pon-w1-transparent-profile.yml": "6b0ea0fcceb61c245cb516ba4a8bb2e9c0570ad8",
