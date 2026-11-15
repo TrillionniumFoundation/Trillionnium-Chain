@@ -210,6 +210,43 @@ fn deadline(until: Instant) -> Result<Duration> {
 fn message(domain: &[u8], body: &[u8]) -> Vec<u8> {
     [domain, body].concat()
 }
+fn wait_for_witness_io(stream: &UnixStream, writable: bool, until: Instant) -> Result<()> {
+    let delay = deadline(until)?.min(Duration::from_millis(1));
+    #[cfg(target_os = "linux")]
+    {
+        use nix::poll::{poll, PollFd, PollFlags, PollTimeout};
+        use std::os::fd::AsFd;
+
+        // Do not round the final fractional millisecond up to a poll timeout.
+        if delay == Duration::from_millis(1) {
+            let started = Instant::now();
+            let events = if writable {
+                PollFlags::POLLOUT
+            } else {
+                PollFlags::POLLIN
+            };
+            let mut fds = [PollFd::new(stream.as_fd(), events)];
+            match poll(&mut fds, PollTimeout::from(1_u16)) {
+                // Readiness, HUP/ERR/NVAL and EINTR are only wakeup hints.
+                // The original deadline and recv/send retain error authority.
+                Ok(_) | Err(nix::errno::Errno::EINTR) => return Ok(()),
+                Err(_) => {
+                    // Keep the original bounded wait if polling is unavailable.
+                    std::thread::sleep(
+                        delay
+                            .saturating_sub(started.elapsed())
+                            .min(until.saturating_duration_since(Instant::now())),
+                    );
+                    return Ok(());
+                }
+            }
+        }
+    }
+    #[cfg(not(target_os = "linux"))]
+    let _ = (stream, writable);
+    std::thread::sleep(delay);
+    Ok(())
+}
 fn read_until(stream: &mut UnixStream, mut output: &mut [u8], until: Instant) -> Result<()> {
     while !output.is_empty() {
         deadline(until)?;
@@ -223,7 +260,7 @@ fn read_until(stream: &mut UnixStream, mut output: &mut [u8], until: Instant) ->
             Ok((n, _)) => output = &mut output[n..],
             Err(e) if e.kind() == std::io::ErrorKind::Interrupted => {}
             Err(e) if e.kind() == std::io::ErrorKind::WouldBlock => {
-                std::thread::sleep(deadline(until)?.min(Duration::from_millis(1)));
+                wait_for_witness_io(stream, false, until)?;
             }
             Err(e) => return Err(e.into()),
         }
@@ -245,7 +282,7 @@ fn write_until(stream: &mut UnixStream, mut input: &[u8], until: Instant) -> Res
             Ok(n) => input = &input[n..],
             Err(e) if e.kind() == std::io::ErrorKind::Interrupted => {}
             Err(e) if e.kind() == std::io::ErrorKind::WouldBlock => {
-                std::thread::sleep(deadline(until)?.min(Duration::from_millis(1)));
+                wait_for_witness_io(stream, true, until)?;
             }
             Err(e) => return Err(e.into()),
         }

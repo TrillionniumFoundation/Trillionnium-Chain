@@ -604,10 +604,75 @@ struct Cookie {
 }
 impl Cookie {
     fn unsigned(&self) -> Result<Vec<u8>> {
-        let mut c = self.clone();
-        c.mac.clear();
-        c.signature.clear();
-        Ok(serde_json::to_vec(&c)?)
+        // Keep Cookie's ordered JSON representation without cloning its strings.
+        #[derive(Serialize)]
+        struct UnsignedCookie<'a> {
+            schema: &'a str,
+            profile: &'a str,
+            network: &'a str,
+            parameters: &'a str,
+            genesis: &'a str,
+            server: &'a str,
+            epoch: &'a str,
+            connection_nonce: &'a str,
+            peer_binding: &'a str,
+            caller: &'a str,
+            client_nonce: &'a str,
+            op: u8,
+            body_len: u32,
+            body_digest: &'a str,
+            bits: u8,
+            lifetime_ms: u64,
+            issued_tick_ms: u64,
+            expires_tick_ms: u64,
+            mac: &'a str,
+            signature: &'a str,
+        }
+        // No "..": adding a Cookie field must also revisit this wire view.
+        let Self {
+            schema,
+            profile,
+            network,
+            parameters,
+            genesis,
+            server,
+            epoch,
+            connection_nonce,
+            peer_binding,
+            caller,
+            client_nonce,
+            op,
+            body_len,
+            body_digest,
+            bits,
+            lifetime_ms,
+            issued_tick_ms,
+            expires_tick_ms,
+            mac: _,
+            signature: _,
+        } = self;
+        Ok(serde_json::to_vec(&UnsignedCookie {
+            schema,
+            profile,
+            network,
+            parameters,
+            genesis,
+            server,
+            epoch,
+            connection_nonce,
+            peer_binding,
+            caller,
+            client_nonce,
+            op: *op,
+            body_len: *body_len,
+            body_digest,
+            bits: *bits,
+            lifetime_ms: *lifetime_ms,
+            issued_tick_ms: *issued_tick_ms,
+            expires_tick_ms: *expires_tick_ms,
+            mac: "",
+            signature: "",
+        })?)
     }
     fn server_message(&self) -> Result<Vec<u8>> {
         let mut c = self.clone();
@@ -4280,6 +4345,117 @@ mod shared_cpu_domain_source_tests {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    // This is the original implementation, deliberately using Cookie's own
+    // Serialize derive rather than duplicating the borrowed view.
+    fn original_cookie_unsigned_clone_oracle(cookie: &Cookie) -> Result<Vec<u8>> {
+        let mut c = cookie.clone();
+        c.mac.clear();
+        c.signature.clear();
+        Ok(serde_json::to_vec(&c)?)
+    }
+
+    fn cookie_unsigned_encoding_fixture() -> Cookie {
+        Cookie {
+            schema: "schema-value".to_owned(),
+            profile: "profile-value".to_owned(),
+            network: "network-value".to_owned(),
+            parameters: "parameters-value".to_owned(),
+            genesis: "genesis-value".to_owned(),
+            server: "server-value".to_owned(),
+            epoch: "epoch-value".to_owned(),
+            connection_nonce: "connection-nonce-value".to_owned(),
+            peer_binding: "peer-binding-value".to_owned(),
+            caller: "caller-value".to_owned(),
+            client_nonce: "client-nonce-value".to_owned(),
+            op: 17,
+            body_len: 1025,
+            body_digest: "body-digest-value".to_owned(),
+            bits: 9,
+            lifetime_ms: 2000,
+            issued_tick_ms: 23,
+            expires_tick_ms: 2023,
+            mac: "nonempty-mac".to_owned(),
+            signature: "nonempty-signature".to_owned(),
+        }
+    }
+
+    fn assert_cookie_unsigned_matches_clone_oracle(cookie: &Cookie) -> Vec<u8> {
+        let before = serde_json::to_vec(cookie).unwrap();
+        let expected = original_cookie_unsigned_clone_oracle(cookie).unwrap();
+        let actual = cookie.unsigned().unwrap();
+        assert_eq!(actual, expected);
+        assert_eq!(serde_json::to_vec(cookie).unwrap(), before);
+        actual
+    }
+
+    #[test]
+    fn borrowed_cookie_unsigned_matches_clone_oracle_and_original_field_order() {
+        let cookie = cookie_unsigned_encoding_fixture();
+        let expected = concat!(
+            "{\"schema\":\"schema-value\",\"profile\":\"profile-value\",",
+            "\"network\":\"network-value\",\"parameters\":\"parameters-value\",",
+            "\"genesis\":\"genesis-value\",\"server\":\"server-value\",",
+            "\"epoch\":\"epoch-value\",\"connection_nonce\":\"connection-nonce-value\",",
+            "\"peer_binding\":\"peer-binding-value\",\"caller\":\"caller-value\",",
+            "\"client_nonce\":\"client-nonce-value\",\"op\":17,\"body_len\":1025,",
+            "\"body_digest\":\"body-digest-value\",\"bits\":9,\"lifetime_ms\":2000,",
+            "\"issued_tick_ms\":23,\"expires_tick_ms\":2023,\"mac\":\"\",\"signature\":\"\"}"
+        );
+        let actual = assert_cookie_unsigned_matches_clone_oracle(&cookie);
+        assert_eq!(actual.as_slice(), expected.as_bytes());
+
+        // Exercise simultaneous scalar boundaries as well as the per-field
+        // changes below. These are serialization controls, not valid tickets.
+        for maximum in [false, true] {
+            let mut boundary = cookie.clone();
+            boundary.op = if maximum { u8::MAX } else { 0 };
+            boundary.body_len = if maximum { u32::MAX } else { 0 };
+            boundary.bits = if maximum { u8::MAX } else { 0 };
+            boundary.lifetime_ms = if maximum { u64::MAX } else { 0 };
+            boundary.issued_tick_ms = if maximum { u64::MAX } else { 0 };
+            boundary.expires_tick_ms = if maximum { u64::MAX } else { 0 };
+            assert_cookie_unsigned_matches_clone_oracle(&boundary);
+        }
+    }
+
+    #[test]
+    fn borrowed_cookie_unsigned_preserves_every_field_and_omits_only_authenticators() {
+        let cookie = cookie_unsigned_encoding_fixture();
+        let baseline = assert_cookie_unsigned_matches_clone_oracle(&cookie);
+        let original = serde_json::to_value(&cookie).unwrap();
+        let fields = original.as_object().unwrap();
+        assert_eq!(fields.len(), 20);
+        for (name, value) in fields {
+            let replacements = if value.is_string() {
+                vec![
+                    json!(""),
+                    json!("\"\\/\n\r\t\u{0}\u{8}\u{c}\u{e9}\u{6f22}\u{1f642}"),
+                    json!("a different nonempty value"),
+                ]
+            } else {
+                let max = match name.as_str() {
+                    "op" | "bits" => u64::from(u8::MAX),
+                    "body_len" => u64::from(u32::MAX),
+                    "lifetime_ms" | "issued_tick_ms" | "expires_tick_ms" => u64::MAX,
+                    _ => panic!("unreviewed Cookie scalar field: {name}"),
+                };
+                vec![json!(0), json!(max)]
+            };
+            for replacement in replacements {
+                assert_ne!(&replacement, value, "{name}: control must change the field");
+                let mut changed = original.clone();
+                changed[name.as_str()] = replacement;
+                let changed: Cookie = serde_json::from_value(changed).unwrap();
+                let actual = assert_cookie_unsigned_matches_clone_oracle(&changed);
+                if name == "mac" || name == "signature" {
+                    assert_eq!(actual, baseline, "{name}: authenticator is omitted");
+                } else {
+                    assert_ne!(actual, baseline, "{name}: field must remain committed");
+                }
+            }
+        }
+    }
 
     #[test]
     fn w1_negative_cache_explicit_settings_are_bounded_before_service_startup() {
