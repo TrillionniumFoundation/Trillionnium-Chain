@@ -1,8 +1,8 @@
 # HIA native implementation
 
 This directory contains the HIA migration of Trillionnium-Chain. Its target is
-one complete HIA-native implementation. The current candidate contains **21
-kernel units and three native foundations**, accounting for all **29 HIA source
+one complete HIA-native implementation. The current candidate contains **27
+kernel units and four native foundations**, accounting for all **36 HIA source
 files**. The 26 existing Rust packages remain until their complete replacement
 is qualified. The authoritative sequence remains the
 [repository development plan](../docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md).
@@ -54,12 +54,18 @@ new proof of work hardness or satisfy an unexecuted service campaign.
 | [Replay](src/transport/replay.hepta) | Session/nonce/pending checks, ACK and pure successor proposals | Two native backends, original boundary vectors and Rust-reference CI |
 | [Closed round](src/verification/closed_round.hepta) | Exact evaluator policy over canonical UTF-8 containers | Full-width scores, all arrival orders, Unicode, 1 MiB and Rust-reference CI |
 | [Checkpoint V2](src/checkpoint/value_v2.hepta) | Canonical value construction/decoding, watermark, SHA binding and successor relation | Every record byte, truncation, field/error identity, full-width counters and original-Rust CI |
+| [Binary64](src/math/README.md) | Shared exact finite binary64 arithmetic | Subnormal/exponent boundaries and 11,706 native arithmetic controls |
+| [Executor](src/executor/README.md) | All seven scheduling strategies with explicit configuration and corrected maximum reader dependency | Independent conflict graph, 5,928 native calls, real 8,192-transaction arena and mandatory original-Rust comparison |
+| [State String and Value](STATE_VALUE.md) | ASCII string codec and iterative typed Value construction, sorted last-wins objects, M06 grammar and canonical serialization | 1,518 native controls including a 7,280-level array; finite constructor profile and complete-State gate remain distinct |
+| [Incremental SHA256](src/crypto/sha256_stream.hepta) | One continuous context, all compression blocks and one final padding | Fourteen controls through 2 MiB + 1,024 bytes |
+| [Authenticated request](platform/transport_request/README.md) | All five classical request variants, complete 2 MiB frame and strict authentication equation | 178 native controls, complete payload mutation, original-default serde behavior and mandatory private original-Node oracle |
 
 The [cryptography guide](CRYPTO.md) specifies the SHA-512 and Ed25519 ABIs,
 error order, arithmetic bounds and remaining key-ownership limitations. The
 [state-root guide](STATE.md) defines the byte descriptor, scratch extent and
 complete count/key/value limits. Its actual 65,536-row execution matched the
-independent oracle in 353.568397442 seconds. That run used small keys/values;
+independent oracle in 299.705821145 seconds in exact `96a0846` CI; the prior
+353.568397442-second local observation remains retained. These used small keys/values;
 simultaneously maximal rows and values were not executed. The original service
 time budget remains open. [Development observations](qualification/state-root-development.json)
 retain the rejected over-capacity compiler optimization, the maximum-count run
@@ -130,9 +136,10 @@ is no second copied SHA helper in the W1 or PoN source files.
 ### Original Rust differential
 
 The first test adapter directly imports the retained `trnm-transport` and
-`closed_round` modules. Three additional adapters link the unchanged original
-`trnm-protocol`, `trnm-checkpoint-types` and `trnm-crypto-primitives` crates with
-their locked dependencies.
+`closed_round` modules. Four additional adapters link the unchanged original
+`trnm-protocol`, `trnm-checkpoint-types`, `trnm-crypto-primitives` and
+`trnm-mvcc-fee` crates with their locked dependencies. The State adapter calls
+actual `serde_json::Value` construction/serialization and M06 root grammar.
 The protocol adapter compares both PNX1 and the original
 `state_root_from_entries` function. These adapters do not reimplement the
 policies they compare.
@@ -142,8 +149,8 @@ rustc --edition=2021 -O hia/tests/rust_reference.rs -o /absolute/new/path/rust-r
 export TRNM_HIA_RUST_REFERENCE=/absolute/new/path/rust-reference
 RUST_VALUE_TARGET=/absolute/new/path/rust-values
 cargo build --locked --manifest-path trillionnium/Cargo.toml \
-  -p trnm-protocol -p trnm-checkpoint-types -p trnm-crypto-primitives \
-  --target-dir "$RUST_VALUE_TARGET"
+  -p trnm-protocol -p trnm-checkpoint-types -p trnm-crypto-primitives -p trnm-mvcc-fee \
+  --target-dir "$RUST_VALUE_TARGET" --message-format=json > /absolute/new/path/rust-build.jsonl
 rustc --edition=2021 -O hia/tests/rust_protocol_reference.rs \
   --extern trnm_protocol="$RUST_VALUE_TARGET/debug/libtrnm_protocol.rlib" \
   -L dependency="$RUST_VALUE_TARGET/debug/deps" -o /absolute/new/path/rust-protocol
@@ -156,12 +163,24 @@ rustc --edition=2021 -O hia/tests/rust_crypto_reference.rs \
 export TRNM_HIA_RUST_PROTOCOL_REFERENCE=/absolute/new/path/rust-protocol
 export TRNM_HIA_RUST_CHECKPOINT_REFERENCE=/absolute/new/path/rust-checkpoint
 export TRNM_HIA_RUST_CRYPTO_REFERENCE=/absolute/new/path/rust-crypto
+python3 - /absolute/new/path/rust-build.jsonl "$RUST_VALUE_TARGET" /absolute/new/path/rust-state <<'PYCODE'
+import json, pathlib, subprocess, sys
+rows = [json.loads(line) for line in pathlib.Path(sys.argv[1]).read_text().splitlines()]
+serde = [row for row in rows if row.get('reason') == 'compiler-artifact' and row['target']['name'] == 'serde_json']
+assert len(serde) == 1 and serde[0]['package_id'].endswith('serde_json@1.0.149')
+assert set(serde[0]['features']) == {'default', 'std'}
+rlibs = [name for name in serde[0]['filenames'] if name.endswith('.rlib')]
+assert len(rlibs) == 1
+base = pathlib.Path(sys.argv[2]) / 'debug'
+subprocess.run(['rustc', '--edition=2021', '-O', 'hia/tests/rust_state_reference.rs', '--extern', 'trnm_mvcc_fee=' + str(base / 'libtrnm_mvcc_fee.rlib'), '--extern', 'serde_json=' + rlibs[0], '-L', 'dependency=' + str(base / 'deps'), '-o', sys.argv[3]], check=True)
+PYCODE
+export TRNM_HIA_RUST_STATE_REFERENCE=/absolute/new/path/rust-state
 python3 -B hia/tools/qualify.py --require-rust-oracle \
   --output /absolute/new/path/native-and-rust-results.json
 ```
 
 Without a corresponding environment variable, the local report explicitly
-records that original Rust differential as not run. CI requires all four, compiles the actual
+records that original Rust differential as not run. CI requires all five, compiles the actual
 original modules and preserves the exact head's observations. The fixed
 `SourceOk` in the test fixture only exposes pure transport boundaries; source
 authentication is an independent integration obligation.
@@ -234,28 +253,44 @@ checks and 38 phases. The generated standalone ELF is byte-identical to the
 compiler used for these Chain components. The reports preserve the target,
 trusted dependencies and precise qualification scope.
 
-The third published candidate `79fc1d4c970f8ecb414f011605e0a6fbcf7332e8`
-passed the [native CI run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43741974022):
-126 tests, 36,032 actual shared-runner native calls, no failures and no skips.
-All four original Rust adapters compiled and ran, including actual Ed25519
-signing/strict-verification comparison; 17 original Rust unit tests also passed.
-The retained [CI report](qualification/native-ci.json) binds that exact source
-set (`4f459ede08ad14419e57eeef1c0fcb6b27dd7b89954da47cfd34e14904c24a17`).
-The downloaded artifact `14173162454` had ZIP SHA-256
-`8d944c61e612430e773f81f9455baf8e62b03f0d835102a09d47d30df3cc04ad`;
-the report's SHA-256 is `455227380fb51e4e7b8bcd253d718e06d547f6bcd42a5052aa9f0a589d462c23`.
-The [platform report](qualification/native-platform-ci.json) retains 25 finite
-controls, the actual blocking-call hard-deadline failure and unavailable ptrace.
-The first publication of that batch failed because three retained stderr logs
-were ignored during staging. Their original bytes were explicitly tracked and
-the unchanged archive gate then passed; both observations are preserved.
+The fourth repaired candidate `96a0846e383745f88e033c7db2abc0611f1dae63`
+passed both jobs in [run 43746877132](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43746877132):
+160 tests, 36,222 shared-runner native calls, no failures, errors or skips.
+All four then-existing original Rust adapters and 17 original unit tests ran.
+The [exact CI report](qualification/native-ci.json) binds source set
+`b4a657cc76c97a022ae31742c98ad573a45b94edb8fea00c36b527891c708d3b`;
+its SHA-256 is `adcef71fe36e416df0f467adb01679f0a2d1e567bd49e07f12ae03051d9d9214`.
+Artifact `14175470420` has ZIP SHA-256
+`8a851c22165189224c00b00fea2fa7ee8279323ef6de26d56712dc0a96d9fb03`.
+That run also passed 25 finite OS controls, 49 reactor controls with 13 native
+contracts, and 48 storage controls with 14 native entry contracts. Actual syscall
+traces were captured. The separate state-root maximum-count child made 86 raw
+ABI calls, outside the shared-runner count. The source job passed the original
+historical readers and all 113 PQ negative tests in 546.161 seconds.
 
-The current state-root, reactor and storage-owner additions are later work.
-Their local source-bound reports do not inherit the previous CI result. The
-workflow now independently requires all historical/source gates and the native
-components, including the complete state-root count case and all four Rust
-oracles. Historical source checking runs in a separate job from native execution.
-No original service time budget is increased by that separation.
+The earlier fourth candidate failed at the direct storage script import before
+storage, Rust or kernel execution. Both CLI entrypoints now bind their repository
+root and are tested from a fresh directory without ambient Python path variables.
+The third candidate's three ignored stderr logs and the fixed import failure
+remain recorded in [development observations](qualification/development-observations.json).
+Neither repair altered the native storage ELF or an original service budget.
+
+The current scheduler, String/Value and authenticated-request additions are
+later sources. Their local reports explicitly mark original Rust execution as
+NOT_RUN. CI now requires five shared-suite original Rust adapters, a separate
+real executor comparison, and a separate complete-request/original-Node job.
+The request's 30-second outer test budget does not qualify the original request
+read deadline or service response budget. Full 2 MiB submit and dense 69,878-query
+ConfirmMany took 5.171449401 and 6.773873071 seconds locally.
+
+The scheduler's source-derived old model can place a later reader and writer in
+one conflicting group because it overwrites a higher reader dependency with a
+lower group. HIA retains the maximum dependency. The report preserves 122
+intentional old-model differences and requires every native result to satisfy an
+independent conflict graph. The unchanged original Rust library is the mandatory
+CI oracle; source analysis alone is not described as an executed Rust failure.
+This executor belongs to the full 26-package repository scope and is outside the
+normal Node dependency closure.
 
 ## Tree cleanup and remaining integration
 
@@ -288,7 +323,18 @@ and 2,588 original source blobs. Current and historical tracking are checked;
 no network retrieval substitutes for missing objects. [The retained observation](qualification/public-readiness-cleanup.json)
 records the successful original semantic gate without promoting historical
 engineering results to current native or public readiness.
-All five sets remove **1,523 payload copies / 1,132,595,614 original bytes**;
+The [hosted-cost archive](../evidence/pon-work-security-eight-samples-20261101/HOSTED_COST_ARCHIVE.json)
+removes 32 more containers/shards (180,351,232 bytes), preserving five small
+records byte-for-byte. Its private exact 210-file historical view executes the
+original verifier: all 208 top-level entries, 12 archives, 32 parts and 808 members
+(3,762,781,104 uncompressed bytes) are read and verified. Sixteen negative tests
+include the real missing-index and dangling-symlink CLI paths. A prepublication
+fallback bug that could overwrite a copied historical receipt was reproduced and
+fixed by unconditional read-only dispatch; the retained repository receipt was
+unchanged. [The observation](qualification/hosted-cost-cleanup.json) preserves
+that failure and the final complete PASS. Original ZIP bytes and current native
+work/service acceptance are not inferred from this historical byte verification.
+All six sets remove **1,555 payload copies / 1,312,946,846 original bytes**;
 new metadata, code and retained receipts make the net tree reduction smaller.
 No original startup UNKNOWN, failure, or qualification HOLD is rewritten.
 
@@ -309,13 +355,14 @@ and [artifact publication boundary](https://github.com/TrillionniumFoundation/He
 define that distinction. The compiler cold gate did not execute every specialized
 file application gate and gives no socket, SQLite or node-lifecycle guarantee.
 
-The three native foundations have separate contracts and qualification:
+The four native foundations have separate contracts and qualification:
 
 | Foundation | Native behavior | Remaining integration |
 | --- | --- | --- |
 | [Linux OS fixture](platform/README.md) | Real file publication, fsync, loopback TCP, epoll, clock and random operations through an HIA-emitted adapter | Finite fixture; its blocking-call deadline failure remains |
 | [Stream reactor](platform/reactor/README.md) | Connected FIFO/stream capabilities, generations, readiness, absolute deadline, partial-progress cursors and cancellation with explicit caller entrypoints | Node framing, admission, ownership and full transport integration; regular-file/fsync deadlines are outside its admitted descriptor class |
 | [Transaction owner](storage/README.md) | Private directory FD, process lock, immutable hash-linked transactions, atomic HEAD, fsync, reopen validation and exact payload readback | Typed Node reducers, replay/outbox/reorg, original initialization recovery, external anti-rollback witness, complete payload/lifetime limits and service qualification |
+| [Request qualification caller](platform/transport_request/README.md) | Native framing and incremental-hash fixture around the complete classical request kernel | Private Settings/session owner, socket/reactor connection, replay/outbox, response codec, signing-key custody and PQ |
 
 The reactor and transaction owner are actual native implementations generated
 through the pinned HIA compiler. The literal ISA adapters remain separately

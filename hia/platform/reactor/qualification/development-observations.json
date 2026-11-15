@@ -293,8 +293,8 @@
         ],
         "cleanup": null,
         "cleanup_limit_seconds": 3,
-        "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/build/compile-reactor-policy",
-        "end_monotonic_ns": 16440069707434,
+        "cwd": "/home/runner/work/_temp/hia-reactor/build/compile-reactor-policy",
+        "end_monotonic_ns": 100113299180,
         "environment": {
           "PATH": ""
         },
@@ -306,7 +306,7 @@
         "output_bytes": 167235,
         "output_sha256": "c43a9a594fddd6a7b3e146424df464b7092fe354fdf1d417e4327a31f37b2b65",
         "stage": "compile-reactor-policy",
-        "start_monotonic_ns": 16439896249510,
+        "start_monotonic_ns": 99955292849,
         "stderr_hex": "",
         "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "timed_out": false,
@@ -318,8 +318,8 @@
         ],
         "cleanup": null,
         "cleanup_limit_seconds": 3,
-        "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/build/compile-reactor-emitter",
-        "end_monotonic_ns": 16440135902798,
+        "cwd": "/home/runner/work/_temp/hia-reactor/build/compile-reactor-emitter",
+        "end_monotonic_ns": 100175390935,
         "environment": {
           "PATH": ""
         },
@@ -331,7 +331,7 @@
         "output_bytes": 58868,
         "output_sha256": "4b9e64792a1ebdc067a5c520311964f8f84ff1559c6593199f9251d362f9c0a3",
         "stage": "compile-reactor-emitter",
-        "start_monotonic_ns": 16440072039814,
+        "start_monotonic_ns": 100114639879,
         "stderr_hex": "",
         "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "timed_out": false,
@@ -343,8 +343,8 @@
         ],
         "cleanup": null,
         "cleanup_limit_seconds": 3,
-        "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/build/emit-reactor-elf",
-        "end_monotonic_ns": 16440138990708,
+        "cwd": "/home/runner/work/_temp/hia-reactor/build/emit-reactor-elf",
+        "end_monotonic_ns": 100177286298,
         "environment": {
           "PATH": ""
         },
@@ -356,7 +356,7 @@
         "output_bytes": 168741,
         "output_sha256": "a6277ac254cd10556bc1639d2663e93f1a6ac0fbaa99a2547d7cceaea7044f7f",
         "stage": "emit-reactor-elf",
-        "start_monotonic_ns": 16440137673124,
+        "start_monotonic_ns": 100176433534,
         "stderr_hex": "",
         "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "timed_out": false,
@@ -368,8 +368,8 @@
         ],
         "cleanup": null,
         "cleanup_limit_seconds": 3,
-        "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/build/compile-context-fixture",
-        "end_monotonic_ns": 16440374042537,
+        "cwd": "/home/runner/work/_temp/hia-reactor/build/compile-context-fixture",
+        "end_monotonic_ns": 100353927797,
         "environment": {
           "PATH": ""
         },
@@ -381,7 +381,7 @@
         "output_bytes": 195523,
         "output_sha256": "61040927859cdfb2f5b275cf273c8754ea879b87f8f3f70c56d02d6f592010a3",
         "stage": "compile-context-fixture",
-        "start_monotonic_ns": 16440140718631,
+        "start_monotonic_ns": 100178211231,
         "stderr_hex": "",
         "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "timed_out": false,
@@ -393,8 +393,8 @@
         ],
         "cleanup": null,
         "cleanup_limit_seconds": 3,
-        "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/build/emit-context-fixture-elf",
-        "end_monotonic_ns": 16440378265861,
+        "cwd": "/home/runner/work/_temp/hia-reactor/build/emit-context-fixture-elf",
+        "end_monotonic_ns": 100356062110,
         "environment": {
           "PATH": ""
         },
@@ -406,7 +406,7 @@
         "output_bytes": 197029,
         "output_sha256": "9e0957ecd2f508c39a3744b8efe105ee88b3e8fffd02b03ed5be3f50f3ce6423",
         "stage": "emit-context-fixture-elf",
-        "start_monotonic_ns": 16440376678937,
+        "start_monotonic_ns": 100355130548,
         "stderr_hex": "",
         "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "timed_out": false,
@@ -418,8 +418,8 @@
         ],
         "cleanup": null,
         "cleanup_limit_seconds": 3,
-        "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/build/compile-api-contract-fixture",
-        "end_monotonic_ns": 16440711982120,
+        "cwd": "/home/runner/work/_temp/hia-reactor/build/compile-api-contract-fixture",
+        "end_monotonic_ns": 100618849288,
         "environment": {
           "PATH": ""
         },
@@ -431,7 +431,7 @@
         "output_bytes": 169228,
         "output_sha256": "509ea43badd5f3b2bb1b00fd1451c7155cce8ffa55b8200827e905f30b94a655",
         "stage": "compile-api-contract-fixture",
-        "start_monotonic_ns": 16440510264588,
+        "start_monotonic_ns": 100467470946,
         "stderr_hex": "",
         "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "timed_out": false,
@@ -443,8 +443,8 @@
         ],
         "cleanup": null,
         "cleanup_limit_seconds": 3,
-        "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/build/compile-guard-unknown-syscall",
-        "end_monotonic_ns": 16452726624520,
+        "cwd": "/home/runner/work/_temp/hia-reactor/build/compile-guard-unknown-syscall",
+        "end_monotonic_ns": 112558061014,
         "environment": {
           "PATH": ""
         },
@@ -456,7 +456,7 @@
         "output_bytes": 5552,
         "output_sha256": "2727414dbf40a29948a642a0a5751a28f8d612002344d54528749823f6ae219a",
         "stage": "compile-guard-unknown-syscall",
-        "start_monotonic_ns": 16452715137110,
+        "start_monotonic_ns": 112548463220,
         "stderr_hex": "",
         "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "timed_out": false,
@@ -468,8 +468,8 @@
         ],
         "cleanup": null,
         "cleanup_limit_seconds": 3,
-        "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/build/pack-guard-unknown-syscall",
-        "end_monotonic_ns": 16452727827012,
+        "cwd": "/home/runner/work/_temp/hia-reactor/build/pack-guard-unknown-syscall",
+        "end_monotonic_ns": 112560213063,
         "environment": {
           "PATH": ""
         },
@@ -481,7 +481,7 @@
         "output_bytes": 7058,
         "output_sha256": "c53953f4a96af07f0cfe9fbdafc1bbe11e7ddae7903ef7dc18539558d125051e",
         "stage": "pack-guard-unknown-syscall",
-        "start_monotonic_ns": 16452727402353,
+        "start_monotonic_ns": 112558776631,
         "stderr_hex": "",
         "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "timed_out": false,
@@ -493,8 +493,8 @@
         ],
         "cleanup": null,
         "cleanup_limit_seconds": 3,
-        "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/build/compile-guard-pointer-before-data",
-        "end_monotonic_ns": 16452741324681,
+        "cwd": "/home/runner/work/_temp/hia-reactor/build/compile-guard-pointer-before-data",
+        "end_monotonic_ns": 112572795629,
         "environment": {
           "PATH": ""
         },
@@ -506,7 +506,7 @@
         "output_bytes": 5552,
         "output_sha256": "b5f4c2884d7129d1e109c7f15812b6922b1d8b8cd641b5845f566232ba75a8c2",
         "stage": "compile-guard-pointer-before-data",
-        "start_monotonic_ns": 16452731328560,
+        "start_monotonic_ns": 112563292357,
         "stderr_hex": "",
         "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "timed_out": false,
@@ -518,8 +518,8 @@
         ],
         "cleanup": null,
         "cleanup_limit_seconds": 3,
-        "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/build/pack-guard-pointer-before-data",
-        "end_monotonic_ns": 16452742796331,
+        "cwd": "/home/runner/work/_temp/hia-reactor/build/pack-guard-pointer-before-data",
+        "end_monotonic_ns": 112574903051,
         "environment": {
           "PATH": ""
         },
@@ -531,7 +531,7 @@
         "output_bytes": 7058,
         "output_sha256": "a0e957389e5fb91238319e8a6a7d21e66effb9cb1e2e6be66bbac065e8b9a51a",
         "stage": "pack-guard-pointer-before-data",
-        "start_monotonic_ns": 16452742346194,
+        "start_monotonic_ns": 112573488332,
         "stderr_hex": "",
         "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "timed_out": false,
@@ -543,8 +543,8 @@
         ],
         "cleanup": null,
         "cleanup_limit_seconds": 3,
-        "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/build/compile-guard-pointer-end-overflow",
-        "end_monotonic_ns": 16452757697279,
+        "cwd": "/home/runner/work/_temp/hia-reactor/build/compile-guard-pointer-end-overflow",
+        "end_monotonic_ns": 112587460499,
         "environment": {
           "PATH": ""
         },
@@ -556,7 +556,7 @@
         "output_bytes": 5552,
         "output_sha256": "be68e0e3f90b7610db1cc62063580440af50e66a09b64b87139021b971715337",
         "stage": "compile-guard-pointer-end-overflow",
-        "start_monotonic_ns": 16452746762908,
+        "start_monotonic_ns": 112577940282,
         "stderr_hex": "",
         "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "timed_out": false,
@@ -568,8 +568,8 @@
         ],
         "cleanup": null,
         "cleanup_limit_seconds": 3,
-        "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/build/pack-guard-pointer-end-overflow",
-        "end_monotonic_ns": 16452758898119,
+        "cwd": "/home/runner/work/_temp/hia-reactor/build/pack-guard-pointer-end-overflow",
+        "end_monotonic_ns": 112589619408,
         "environment": {
           "PATH": ""
         },
@@ -581,7 +581,7 @@
         "output_bytes": 7058,
         "output_sha256": "21b94cd8b72eae65bfaa003986a8cf9812da78f687124bbb999e3b5a6314c3bb",
         "stage": "pack-guard-pointer-end-overflow",
-        "start_monotonic_ns": 16452758410867,
+        "start_monotonic_ns": 112588189586,
         "stderr_hex": "",
         "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "timed_out": false,
@@ -593,8 +593,8 @@
         ],
         "cleanup": null,
         "cleanup_limit_seconds": 3,
-        "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/build/compile-guard-wrong-pointer-mask",
-        "end_monotonic_ns": 16452773523168,
+        "cwd": "/home/runner/work/_temp/hia-reactor/build/compile-guard-wrong-pointer-mask",
+        "end_monotonic_ns": 112602409476,
         "environment": {
           "PATH": ""
         },
@@ -606,7 +606,7 @@
         "output_bytes": 5552,
         "output_sha256": "879caa9088c5fb877d16bb762d65a730ecc2654405120ac0316121deee79f0f1",
         "stage": "compile-guard-wrong-pointer-mask",
-        "start_monotonic_ns": 16452763550011,
+        "start_monotonic_ns": 112592858863,
         "stderr_hex": "",
         "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "timed_out": false,
@@ -618,8 +618,8 @@
         ],
         "cleanup": null,
         "cleanup_limit_seconds": 3,
-        "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/build/pack-guard-wrong-pointer-mask",
-        "end_monotonic_ns": 16452774681404,
+        "cwd": "/home/runner/work/_temp/hia-reactor/build/pack-guard-wrong-pointer-mask",
+        "end_monotonic_ns": 112604593784,
         "environment": {
           "PATH": ""
         },
@@ -631,7 +631,7 @@
         "output_bytes": 7058,
         "output_sha256": "88297cd7b30ed861c0c7145490689acfa4bdf4c5afb7c80b74a2975ab980a4e3",
         "stage": "pack-guard-wrong-pointer-mask",
-        "start_monotonic_ns": 16452774295913,
+        "start_monotonic_ns": 112603169510,
         "stderr_hex": "",
         "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "timed_out": false,
@@ -643,8 +643,8 @@
         ],
         "cleanup": null,
         "cleanup_limit_seconds": 3,
-        "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/build/compile-guard-epoll-event-count",
-        "end_monotonic_ns": 16452795665024,
+        "cwd": "/home/runner/work/_temp/hia-reactor/build/compile-guard-epoll-event-count",
+        "end_monotonic_ns": 112617432295,
         "environment": {
           "PATH": ""
         },
@@ -656,7 +656,7 @@
         "output_bytes": 5552,
         "output_sha256": "d94bd6da4cc42a5abfefd5de782ea745563013c35fd70c3ab11269e58507eb25",
         "stage": "compile-guard-epoll-event-count",
-        "start_monotonic_ns": 16452778873755,
+        "start_monotonic_ns": 112607848973,
         "stderr_hex": "",
         "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "timed_out": false,
@@ -668,8 +668,8 @@
         ],
         "cleanup": null,
         "cleanup_limit_seconds": 3,
-        "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/build/pack-guard-epoll-event-count",
-        "end_monotonic_ns": 16452797144315,
+        "cwd": "/home/runner/work/_temp/hia-reactor/build/pack-guard-epoll-event-count",
+        "end_monotonic_ns": 112619635461,
         "environment": {
           "PATH": ""
         },
@@ -681,7 +681,7 @@
         "output_bytes": 7058,
         "output_sha256": "53d0a6337c853a3513330ec7298b67d6340779ebca59c5a1000aff39838cb5e2",
         "stage": "pack-guard-epoll-event-count",
-        "start_monotonic_ns": 16452796607049,
+        "start_monotonic_ns": 112618193781,
         "stderr_hex": "",
         "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "timed_out": false,
@@ -693,8 +693,8 @@
         ],
         "cleanup": null,
         "cleanup_limit_seconds": 3,
-        "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/build/compile-guard-epoll-zero-timeout",
-        "end_monotonic_ns": 16452811365506,
+        "cwd": "/home/runner/work/_temp/hia-reactor/build/compile-guard-epoll-zero-timeout",
+        "end_monotonic_ns": 112632682175,
         "environment": {
           "PATH": ""
         },
@@ -706,7 +706,7 @@
         "output_bytes": 5552,
         "output_sha256": "bea0e7b653bdfe0f697f14cd4d734541c64db4403ade66fb4793e0e2067d41f6",
         "stage": "compile-guard-epoll-zero-timeout",
-        "start_monotonic_ns": 16452801197250,
+        "start_monotonic_ns": 112623063019,
         "stderr_hex": "",
         "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "timed_out": false,
@@ -718,8 +718,8 @@
         ],
         "cleanup": null,
         "cleanup_limit_seconds": 3,
-        "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/build/pack-guard-epoll-zero-timeout",
-        "end_monotonic_ns": 16452813065675,
+        "cwd": "/home/runner/work/_temp/hia-reactor/build/pack-guard-epoll-zero-timeout",
+        "end_monotonic_ns": 112633804174,
         "environment": {
           "PATH": ""
         },
@@ -731,7 +731,7 @@
         "output_bytes": 7058,
         "output_sha256": "d8e8e03f161b477d7e3f1f7d6023369aeda75e6a15785deb6d940c3db18e93e8",
         "stage": "pack-guard-epoll-zero-timeout",
-        "start_monotonic_ns": 16452812486727,
+        "start_monotonic_ns": 112633432564,
         "stderr_hex": "",
         "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "timed_out": false,
@@ -743,8 +743,8 @@
         ],
         "cleanup": null,
         "cleanup_limit_seconds": 3,
-        "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/build/compile-guard-epoll-oversize-timeout",
-        "end_monotonic_ns": 16452826468904,
+        "cwd": "/home/runner/work/_temp/hia-reactor/build/compile-guard-epoll-oversize-timeout",
+        "end_monotonic_ns": 112646726461,
         "environment": {
           "PATH": ""
         },
@@ -756,7 +756,7 @@
         "output_bytes": 5552,
         "output_sha256": "8c20a4aabac44bdf46347cd0313a56202a4593f20c68cec1ba2777455913cd6b",
         "stage": "compile-guard-epoll-oversize-timeout",
-        "start_monotonic_ns": 16452817553424,
+        "start_monotonic_ns": 112637156449,
         "stderr_hex": "",
         "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "timed_out": false,
@@ -768,8 +768,8 @@
         ],
         "cleanup": null,
         "cleanup_limit_seconds": 3,
-        "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/build/pack-guard-epoll-oversize-timeout",
-        "end_monotonic_ns": 16452828111147,
+        "cwd": "/home/runner/work/_temp/hia-reactor/build/pack-guard-epoll-oversize-timeout",
+        "end_monotonic_ns": 112649018591,
         "environment": {
           "PATH": ""
         },
@@ -781,7 +781,7 @@
         "output_bytes": 7058,
         "output_sha256": "e9783ba436a26ccc308f2b5e7d0d6ef4e53d63dd26fca36a47f3ea851b2cb4ea",
         "stage": "pack-guard-epoll-oversize-timeout",
-        "start_monotonic_ns": 16452827365682,
+        "start_monotonic_ns": 112647468267,
         "stderr_hex": "",
         "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "timed_out": false,
@@ -793,8 +793,8 @@
         ],
         "cleanup": null,
         "cleanup_limit_seconds": 3,
-        "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/build/compile-guard-fcntl-blocking-flags",
-        "end_monotonic_ns": 16452842316163,
+        "cwd": "/home/runner/work/_temp/hia-reactor/build/compile-guard-fcntl-blocking-flags",
+        "end_monotonic_ns": 112661827377,
         "environment": {
           "PATH": ""
         },
@@ -806,7 +806,7 @@
         "output_bytes": 5552,
         "output_sha256": "9a7be45554ad978ff925017630a0cdcd4928b2aec9ef571fb26ebc770ae11942",
         "stage": "compile-guard-fcntl-blocking-flags",
-        "start_monotonic_ns": 16452832351570,
+        "start_monotonic_ns": 112652348272,
         "stderr_hex": "",
         "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "timed_out": false,
@@ -818,8 +818,8 @@
         ],
         "cleanup": null,
         "cleanup_limit_seconds": 3,
-        "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/build/pack-guard-fcntl-blocking-flags",
-        "end_monotonic_ns": 16452843697100,
+        "cwd": "/home/runner/work/_temp/hia-reactor/build/pack-guard-fcntl-blocking-flags",
+        "end_monotonic_ns": 112663984143,
         "environment": {
           "PATH": ""
         },
@@ -831,7 +831,7 @@
         "output_bytes": 7058,
         "output_sha256": "583771e491cfa6c43ec512668a65d45a52a8301784f7de6cf84ca2a805afd1d9",
         "stage": "pack-guard-fcntl-blocking-flags",
-        "start_monotonic_ns": 16452843168326,
+        "start_monotonic_ns": 112662562413,
         "stderr_hex": "",
         "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "timed_out": false,
@@ -843,8 +843,8 @@
         ],
         "cleanup": null,
         "cleanup_limit_seconds": 3,
-        "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/build/compile-guard-epoll-delete-nonnull",
-        "end_monotonic_ns": 16452858140970,
+        "cwd": "/home/runner/work/_temp/hia-reactor/build/compile-guard-epoll-delete-nonnull",
+        "end_monotonic_ns": 112676954302,
         "environment": {
           "PATH": ""
         },
@@ -856,7 +856,7 @@
         "output_bytes": 5552,
         "output_sha256": "fa7ff863da065e86d15ca589dc43fb4132a556144fa5e3ca485873d26ce8ea58",
         "stage": "compile-guard-epoll-delete-nonnull",
-        "start_monotonic_ns": 16452847821040,
+        "start_monotonic_ns": 112667295877,
         "stderr_hex": "",
         "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "timed_out": false,
@@ -868,8 +868,8 @@
         ],
         "cleanup": null,
         "cleanup_limit_seconds": 3,
-        "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/build/pack-guard-epoll-delete-nonnull",
-        "end_monotonic_ns": 16452859419254,
+        "cwd": "/home/runner/work/_temp/hia-reactor/build/pack-guard-epoll-delete-nonnull",
+        "end_monotonic_ns": 112679110648,
         "environment": {
           "PATH": ""
         },
@@ -881,7 +881,7 @@
         "output_bytes": 7058,
         "output_sha256": "5d8c8c965b2a52561eda309d96279f931e4c21d2bab56757169026b0dcfc58f0",
         "stage": "pack-guard-epoll-delete-nonnull",
-        "start_monotonic_ns": 16452858931952,
+        "start_monotonic_ns": 112677680896,
         "stderr_hex": "",
         "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "timed_out": false,
@@ -893,8 +893,8 @@
         ],
         "cleanup": null,
         "cleanup_limit_seconds": 3,
-        "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/build/compile-guard-sockopt-length-mismatch",
-        "end_monotonic_ns": 16452873651110,
+        "cwd": "/home/runner/work/_temp/hia-reactor/build/compile-guard-sockopt-length-mismatch",
+        "end_monotonic_ns": 112691970671,
         "environment": {
           "PATH": ""
         },
@@ -906,7 +906,7 @@
         "output_bytes": 5552,
         "output_sha256": "fabd1d6fac608f39b2b2b6dea72d893cec343eff75b56c2e73795977e62909db",
         "stage": "compile-guard-sockopt-length-mismatch",
-        "start_monotonic_ns": 16452863662982,
+        "start_monotonic_ns": 112682382592,
         "stderr_hex": "",
         "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "timed_out": false,
@@ -918,8 +918,8 @@
         ],
         "cleanup": null,
         "cleanup_limit_seconds": 3,
-        "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/build/pack-guard-sockopt-length-mismatch",
-        "end_monotonic_ns": 16452875068280,
+        "cwd": "/home/runner/work/_temp/hia-reactor/build/pack-guard-sockopt-length-mismatch",
+        "end_monotonic_ns": 112693039019,
         "environment": {
           "PATH": ""
         },
@@ -931,7 +931,7 @@
         "output_bytes": 7058,
         "output_sha256": "1cd3fc20aeee0f0f750394fa1cc3fc6d16483045358b27be968e63eb412a0b30",
         "stage": "pack-guard-sockopt-length-mismatch",
-        "start_monotonic_ns": 16452874575239,
+        "start_monotonic_ns": 112692671426,
         "stderr_hex": "",
         "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "timed_out": false,
@@ -943,8 +943,8 @@
         ],
         "cleanup": null,
         "cleanup_limit_seconds": 3,
-        "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/build/compile-guard-sockopt-unknown-option",
-        "end_monotonic_ns": 16452889768681,
+        "cwd": "/home/runner/work/_temp/hia-reactor/build/compile-guard-sockopt-unknown-option",
+        "end_monotonic_ns": 112784138965,
         "environment": {
           "PATH": ""
         },
@@ -956,7 +956,7 @@
         "output_bytes": 5552,
         "output_sha256": "640e99c98da7cc0d2f1bec85465420467fdcd26200ecf087728d389e408fd007",
         "stage": "compile-guard-sockopt-unknown-option",
-        "start_monotonic_ns": 16452878913077,
+        "start_monotonic_ns": 112774418777,
         "stderr_hex": "",
         "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "timed_out": false,
@@ -968,8 +968,8 @@
         ],
         "cleanup": null,
         "cleanup_limit_seconds": 3,
-        "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/build/pack-guard-sockopt-unknown-option",
-        "end_monotonic_ns": 16452891360970,
+        "cwd": "/home/runner/work/_temp/hia-reactor/build/pack-guard-sockopt-unknown-option",
+        "end_monotonic_ns": 112786346838,
         "environment": {
           "PATH": ""
         },
@@ -981,7 +981,7 @@
         "output_bytes": 7058,
         "output_sha256": "a5b7d3db6f099e5c43cc350f5dea79ec855c2e76813c55969c34c6e9228dba63",
         "stage": "pack-guard-sockopt-unknown-option",
-        "start_monotonic_ns": 16452890734702,
+        "start_monotonic_ns": 112784892359,
         "stderr_hex": "",
         "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "timed_out": false,
@@ -993,8 +993,8 @@
         ],
         "cleanup": null,
         "cleanup_limit_seconds": 3,
-        "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/build/compile-guard-epoll-create-without-cloexec",
-        "end_monotonic_ns": 16452905893031,
+        "cwd": "/home/runner/work/_temp/hia-reactor/build/compile-guard-epoll-create-without-cloexec",
+        "end_monotonic_ns": 112799544410,
         "environment": {
           "PATH": ""
         },
@@ -1006,7 +1006,7 @@
         "output_bytes": 5552,
         "output_sha256": "b9ca65158daeff3427bfa5198f6bd8dda4184106e05a0bb5f9dea3692069115c",
         "stage": "compile-guard-epoll-create-without-cloexec",
-        "start_monotonic_ns": 16452895820607,
+        "start_monotonic_ns": 112789931493,
         "stderr_hex": "",
         "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "timed_out": false,
@@ -1018,8 +1018,8 @@
         ],
         "cleanup": null,
         "cleanup_limit_seconds": 3,
-        "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/build/pack-guard-epoll-create-without-cloexec",
-        "end_monotonic_ns": 16452907421786,
+        "cwd": "/home/runner/work/_temp/hia-reactor/build/pack-guard-epoll-create-without-cloexec",
+        "end_monotonic_ns": 112801721897,
         "environment": {
           "PATH": ""
         },
@@ -1031,7 +1031,7 @@
         "output_bytes": 7058,
         "output_sha256": "b5ef95e1979200bcdcf374fa685b0d999ca35c9bc18fd27e6b3b83b8ad76e78d",
         "stage": "pack-guard-epoll-create-without-cloexec",
-        "start_monotonic_ns": 16452906791372,
+        "start_monotonic_ns": 112800292125,
         "stderr_hex": "",
         "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "timed_out": false,
@@ -1043,8 +1043,8 @@
         ],
         "cleanup": null,
         "cleanup_limit_seconds": 3,
-        "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/build/compile-guard-getpeername-length-mismatch",
-        "end_monotonic_ns": 16452921973015,
+        "cwd": "/home/runner/work/_temp/hia-reactor/build/compile-guard-getpeername-length-mismatch",
+        "end_monotonic_ns": 112814739087,
         "environment": {
           "PATH": ""
         },
@@ -1056,7 +1056,7 @@
         "output_bytes": 5552,
         "output_sha256": "28193f1f9edeebb6ba63bf32fbd82e9a68372dc21cae18efe32daebeeebc2294",
         "stage": "compile-guard-getpeername-length-mismatch",
-        "start_monotonic_ns": 16452911712863,
+        "start_monotonic_ns": 112805223596,
         "stderr_hex": "",
         "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "timed_out": false,
@@ -1068,8 +1068,8 @@
         ],
         "cleanup": null,
         "cleanup_limit_seconds": 3,
-        "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/build/pack-guard-getpeername-length-mismatch",
-        "end_monotonic_ns": 16452923191650,
+        "cwd": "/home/runner/work/_temp/hia-reactor/build/pack-guard-getpeername-length-mismatch",
+        "end_monotonic_ns": 112816867760,
         "environment": {
           "PATH": ""
         },
@@ -1081,7 +1081,7 @@
         "output_bytes": 7058,
         "output_sha256": "a7d9c305d96b7ac84cd669a568266667b466443af0c9c226a13d8d6ce41f3668",
         "stage": "pack-guard-getpeername-length-mismatch",
-        "start_monotonic_ns": 16452922770156,
+        "start_monotonic_ns": 112815470548,
         "stderr_hex": "",
         "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "timed_out": false,
@@ -1112,9 +1112,9 @@
       "cleanup_sigkill_seconds": 2,
       "cleanup_sigterm_seconds": 1,
       "communicate_limit_seconds": 8,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/zero-copy",
-      "elapsed_ns": 633189,
-      "end_ns": 16440743746437,
+      "cwd": "/home/runner/work/_temp/hia-reactor/zero-copy",
+      "elapsed_ns": 529607,
+      "end_ns": 100636435115,
       "environment": {
         "PATH": ""
       },
@@ -1130,7 +1130,7 @@
         "chunks": 0,
         "close_errors": 0,
         "closed_count": 3,
-        "deadline_ns": 16445743480317,
+        "deadline_ns": 105636177047,
         "eagain": 0,
         "eintr": 0,
         "epoll_ready": 0,
@@ -1145,16 +1145,16 @@
         "partial_write": 0,
         "read_bytes": 0,
         "requested": 0,
-        "start_ns": 16440743480317,
+        "start_ns": 100636177047,
         "status": 0,
-        "terminal_ns": 16440743561647,
+        "terminal_ns": 100636266392,
         "written_bytes": 0
       },
       "passed": true,
-      "pid": 39,
-      "start_ns": 16440743113248,
+      "pid": 2633,
+      "start_ns": 100635905508,
       "stderr_bytes": 192,
-      "stderr_sha256": "5ae18b4649677f3fed2299bfea5bc66d843954eaa3f560811401012d8cfbf866",
+      "stderr_sha256": "eac97007b5d56b3540152c56e15e4d4bf21ebe693bee4ab63e3d9572b17c59ba",
       "stdio_parent_descriptors": [
         -1,
         -1,
@@ -1176,9 +1176,9 @@
       "cleanup_sigkill_seconds": 2,
       "cleanup_sigterm_seconds": 1,
       "communicate_limit_seconds": 8,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/copy-eight",
-      "elapsed_ns": 730433,
-      "end_ns": 16440745508230,
+      "cwd": "/home/runner/work/_temp/hia-reactor/copy-eight",
+      "elapsed_ns": 1618657,
+      "end_ns": 100638676079,
       "environment": {
         "PATH": ""
       },
@@ -1194,7 +1194,7 @@
         "chunks": 1,
         "close_errors": 0,
         "closed_count": 3,
-        "deadline_ns": 16445745016285,
+        "deadline_ns": 105637276583,
         "eagain": 1,
         "eintr": 0,
         "epoll_ready": 1,
@@ -1209,16 +1209,16 @@
         "partial_write": 0,
         "read_bytes": 8,
         "requested": 8,
-        "start_ns": 16440745016285,
+        "start_ns": 100637276583,
         "status": 0,
-        "terminal_ns": 16440745314818,
+        "terminal_ns": 100637528863,
         "written_bytes": 8
       },
       "passed": true,
-      "pid": 40,
-      "start_ns": 16440744777797,
+      "pid": 2634,
+      "start_ns": 100637057422,
       "stderr_bytes": 192,
-      "stderr_sha256": "53fa5232f92427807702bcc62a9d2d340277c2467b8d4ef3b68d0ec51a5569e8",
+      "stderr_sha256": "c539a64a7d14153f60101b287cb055d239c2cee5d7e4f1f7216dd42e26298e5b",
       "stdio_parent_descriptors": [
         -1,
         -1,
@@ -1240,9 +1240,9 @@
       "cleanup_sigkill_seconds": 2,
       "cleanup_sigterm_seconds": 1,
       "communicate_limit_seconds": 8,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/copy-two-mib",
-      "elapsed_ns": 10062847,
-      "end_ns": 16440764950570,
+      "cwd": "/home/runner/work/_temp/hia-reactor/copy-two-mib",
+      "elapsed_ns": 5089162,
+      "end_ns": 100646433349,
       "environment": {
         "PATH": ""
       },
@@ -1252,16 +1252,16 @@
       "expected_exit": 0,
       "external_cleanup_used": false,
       "observation": {
-        "calls": 424,
+        "calls": 375,
         "cancel": 0,
         "cause_bits": 0,
         "chunks": 32,
         "close_errors": 0,
         "closed_count": 3,
-        "deadline_ns": 16445755220090,
-        "eagain": 39,
+        "deadline_ns": 105641602205,
+        "eagain": 14,
         "eintr": 0,
-        "epoll_ready": 39,
+        "epoll_ready": 14,
         "epoll_timeout": 0,
         "last_handle": 4294967298,
         "last_phase": 10,
@@ -1269,20 +1269,20 @@
         "magic": "HIAIO001",
         "magic_bits": 3544386023830145352,
         "operation_sequence": 64,
-        "partial_read": 208,
+        "partial_read": 249,
         "partial_write": 0,
         "read_bytes": 2097152,
         "requested": 2097152,
-        "start_ns": 16440755220090,
+        "start_ns": 100641602205,
         "status": 0,
-        "terminal_ns": 16440760770233,
+        "terminal_ns": 100644275590,
         "written_bytes": 2097152
       },
       "passed": true,
-      "pid": 41,
-      "start_ns": 16440754887723,
+      "pid": 2635,
+      "start_ns": 100641344187,
       "stderr_bytes": 192,
-      "stderr_sha256": "0ccfd94a664a0c088bb7770a6d2ae0cc9de2c63e984bb259fb756dc2094a3025",
+      "stderr_sha256": "3f6fa09d1664f758b0c9d10600bf8362b8b70490a7046c267c65e06078f7139f",
       "stdio_parent_descriptors": [
         -1,
         -1,
@@ -1304,9 +1304,9 @@
       "cleanup_sigkill_seconds": 2,
       "cleanup_sigterm_seconds": 1,
       "communicate_limit_seconds": 8,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/actual-short-reads",
-      "elapsed_ns": 1428408,
-      "end_ns": 16440770406532,
+      "cwd": "/home/runner/work/_temp/hia-reactor/actual-short-reads",
+      "elapsed_ns": 2244239,
+      "end_ns": 100651919549,
       "environment": {
         "PATH": ""
       },
@@ -1314,7 +1314,7 @@
         {
           "arguments": [
             4,
-            139688722437120,
+            140211662398464,
             2,
             100,
             0,
@@ -1324,22 +1324,22 @@
           "epoll_registered_tokens": [
             4294967297
           ],
-          "monotonic_ns": 16440769937877,
+          "monotonic_ns": 100650459090,
           "pending": 0,
           "sig_caught": 512,
           "state": "S (sleeping)",
           "syscall": 232,
-          "syscall_text": "232 0x4 0x7f0bd0ae1400 0x2 0x64 0x0 0x0 0x7ffe73be4b98 0x4005d7"
+          "syscall_text": "232 0x4 0x7f859254a400 0x2 0x64 0x0 0x0 0x7ffdc5fb4548 0x4005d7"
         },
         {
           "action": "stdin-write",
           "hex": "48",
-          "monotonic_ns": 16440769975964
+          "monotonic_ns": 100650479470
         },
         {
           "arguments": [
             4,
-            139688722437120,
+            140211662398464,
             2,
             100,
             0,
@@ -1349,22 +1349,22 @@
           "epoll_registered_tokens": [
             4294967297
           ],
-          "monotonic_ns": 16440770101890,
+          "monotonic_ns": 100650602376,
           "pending": 0,
           "sig_caught": 512,
           "state": "S (sleeping)",
           "syscall": 232,
-          "syscall_text": "232 0x4 0x7f0bd0ae1400 0x2 0x64 0x0 0x0 0x7ffe73be4b98 0x4005d7"
+          "syscall_text": "232 0x4 0x7f859254a400 0x2 0x64 0x0 0x0 0x7ffdc5fb4548 0x4005d7"
         },
         {
           "action": "stdin-write",
           "hex": "4941",
-          "monotonic_ns": 16440770124374
+          "monotonic_ns": 100650614474
         },
         {
           "arguments": [
             4,
-            139688722437120,
+            140211662398464,
             2,
             100,
             0,
@@ -1374,12 +1374,12 @@
           "epoll_registered_tokens": [
             4294967297
           ],
-          "monotonic_ns": 16440770221668,
+          "monotonic_ns": 100650712622,
           "pending": 0,
           "sig_caught": 512,
           "state": "S (sleeping)",
           "syscall": 232,
-          "syscall_text": "232 0x4 0x7f0bd0ae1400 0x2 0x64 0x0 0x0 0x7ffe73be4b98 0x4005d7"
+          "syscall_text": "232 0x4 0x7f859254a400 0x2 0x64 0x0 0x0 0x7ffdc5fb4548 0x4005d7"
         }
       ],
       "executable_sha256": "a6277ac254cd10556bc1639d2663e93f1a6ac0fbaa99a2547d7cceaea7044f7f",
@@ -1393,7 +1393,7 @@
         "chunks": 1,
         "close_errors": 0,
         "closed_count": 3,
-        "deadline_ns": 16445769298068,
+        "deadline_ns": 105649965712,
         "eagain": 3,
         "eintr": 0,
         "epoll_ready": 3,
@@ -1408,16 +1408,16 @@
         "partial_write": 0,
         "read_bytes": 8,
         "requested": 8,
-        "start_ns": 16440769298068,
+        "start_ns": 100649965712,
         "status": 0,
-        "terminal_ns": 16440770299974,
+        "terminal_ns": 100650768932,
         "written_bytes": 8
       },
       "passed": true,
-      "pid": 42,
-      "start_ns": 16440768978124,
+      "pid": 2636,
+      "start_ns": 100649675310,
       "stderr_bytes": 192,
-      "stderr_sha256": "1004216975b34e3c5e547079841ec1b775cc3d18a1feccd9797c6330efdcd79e",
+      "stderr_sha256": "2c6e13fccf9917af4ccb44e68a4633a311eefc2353f74fbfcb17276c246e719c",
       "stdio_parent_descriptors": [
         -1,
         -1,
@@ -1439,9 +1439,9 @@
       "cleanup_sigkill_seconds": 2,
       "cleanup_sigterm_seconds": 1,
       "communicate_limit_seconds": 8,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/actual-epoll-eintr",
-      "elapsed_ns": 4621224,
-      "end_ns": 16440776196340,
+      "cwd": "/home/runner/work/_temp/hia-reactor/actual-epoll-eintr",
+      "elapsed_ns": 1972369,
+      "end_ns": 100654971924,
       "environment": {
         "PATH": ""
       },
@@ -1449,7 +1449,7 @@
         {
           "arguments": [
             4,
-            139848064390144,
+            139693995684864,
             2,
             100,
             0,
@@ -1459,21 +1459,21 @@
           "epoll_registered_tokens": [
             4294967297
           ],
-          "monotonic_ns": 16440772354642,
+          "monotonic_ns": 100653549182,
           "pending": 0,
           "sig_caught": 512,
           "state": "S (sleeping)",
           "syscall": 232,
-          "syscall_text": "232 0x4 0x7f30ea335400 0x2 0x64 0x0 0x0 0x7ffee990df78 0x4005d7"
+          "syscall_text": "232 0x4 0x7f0d0afd7400 0x2 0x64 0x0 0x0 0x7ffe08009058 0x4005d7"
         },
         {
           "action": "SIGUSR1",
-          "monotonic_ns": 16440772432598
+          "monotonic_ns": 100653566879
         },
         {
           "arguments": [
             4,
-            139848064390144,
+            139693995684864,
             2,
             100,
             0,
@@ -1483,21 +1483,21 @@
           "epoll_registered_tokens": [
             4294967297
           ],
-          "monotonic_ns": 16440772551694,
+          "monotonic_ns": 100653668512,
           "pending": 0,
           "sig_caught": 512,
           "state": "S (sleeping)",
           "syscall": 232,
-          "syscall_text": "232 0x4 0x7f30ea335400 0x2 0x64 0x0 0x0 0x7ffee990df78 0x4005d7"
+          "syscall_text": "232 0x4 0x7f0d0afd7400 0x2 0x64 0x0 0x0 0x7ffe08009058 0x4005d7"
         },
         {
           "action": "SIGUSR1",
-          "monotonic_ns": 16440772571373
+          "monotonic_ns": 100653678186
         },
         {
           "arguments": [
             4,
-            139848064390144,
+            139693995684864,
             2,
             100,
             0,
@@ -1507,12 +1507,12 @@
           "epoll_registered_tokens": [
             4294967297
           ],
-          "monotonic_ns": 16440774906878,
+          "monotonic_ns": 100653770756,
           "pending": 0,
           "sig_caught": 512,
           "state": "S (sleeping)",
           "syscall": 232,
-          "syscall_text": "232 0x4 0x7f30ea335400 0x2 0x64 0x0 0x0 0x7ffee990df78 0x4005d7"
+          "syscall_text": "232 0x4 0x7f0d0afd7400 0x2 0x64 0x0 0x0 0x7ffe08009058 0x4005d7"
         }
       ],
       "executable_sha256": "a6277ac254cd10556bc1639d2663e93f1a6ac0fbaa99a2547d7cceaea7044f7f",
@@ -1526,7 +1526,7 @@
         "chunks": 1,
         "close_errors": 0,
         "closed_count": 3,
-        "deadline_ns": 16445771818091,
+        "deadline_ns": 105653236341,
         "eagain": 1,
         "eintr": 2,
         "epoll_ready": 1,
@@ -1541,16 +1541,16 @@
         "partial_write": 0,
         "read_bytes": 8,
         "requested": 8,
-        "start_ns": 16440771818091,
+        "start_ns": 100653236341,
         "status": 0,
-        "terminal_ns": 16440775015393,
+        "terminal_ns": 100653822885,
         "written_bytes": 8
       },
       "passed": true,
-      "pid": 43,
-      "start_ns": 16440771575116,
+      "pid": 2637,
+      "start_ns": 100652999555,
       "stderr_bytes": 192,
-      "stderr_sha256": "2c839ed0eafb0de9698ea5d7be6eb329b6bd8b7460311243e5e2af6ff0ca9988",
+      "stderr_sha256": "ece7e3347c6ed9ce003d982516d6765952c46f365acc3178355a7d5c1f85949d",
       "stdio_parent_descriptors": [
         -1,
         -1,
@@ -1572,10 +1572,10 @@
       "cleanup_sigkill_seconds": 2,
       "cleanup_sigterm_seconds": 1,
       "communicate_limit_seconds": 8,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/idle-read-native-deadline",
+      "cwd": "/home/runner/work/_temp/hia-reactor/idle-read-native-deadline",
       "deadline_external_signal_or_input_wakeup": false,
-      "elapsed_ns": 5012845651,
-      "end_ns": 16445790553143,
+      "elapsed_ns": 5001655921,
+      "end_ns": 105657875123,
       "environment": {
         "PATH": ""
       },
@@ -1583,7 +1583,7 @@
         {
           "arguments": [
             4,
-            140024343196672,
+            140611267830784,
             2,
             100,
             0,
@@ -1593,12 +1593,12 @@
           "epoll_registered_tokens": [
             4294967297
           ],
-          "monotonic_ns": 16440778494179,
+          "monotonic_ns": 100656753136,
           "pending": 0,
           "sig_caught": 512,
           "state": "S (sleeping)",
           "syscall": 232,
-          "syscall_text": "232 0x4 0x7f59f53c7400 0x2 0x64 0x0 0x0 0x7ffe5dccc838 0x4005d7"
+          "syscall_text": "232 0x4 0x7fe29caba400 0x2 0x64 0x0 0x0 0x7ffd95445768 0x4005d7"
         }
       ],
       "executable_sha256": "a6277ac254cd10556bc1639d2663e93f1a6ac0fbaa99a2547d7cceaea7044f7f",
@@ -1612,7 +1612,7 @@
         "chunks": 1,
         "close_errors": 0,
         "closed_count": 3,
-        "deadline_ns": 16445778093079,
+        "deadline_ns": 105656442183,
         "eagain": 1,
         "eintr": 0,
         "epoll_ready": 0,
@@ -1627,16 +1627,16 @@
         "partial_write": 0,
         "read_bytes": 0,
         "requested": 8,
-        "start_ns": 16440778093079,
+        "start_ns": 100656442183,
         "status": 72,
-        "terminal_ns": 16445779192581,
+        "terminal_ns": 105657479012,
         "written_bytes": 0
       },
       "passed": true,
-      "pid": 44,
-      "start_ns": 16440777707492,
+      "pid": 2638,
+      "start_ns": 100656219202,
       "stderr_bytes": 192,
-      "stderr_sha256": "9d9f24853312714651074a4fbe598cc15b1866cd51bc837da9597bfba6e9f3df",
+      "stderr_sha256": "2590e74d6fb1fee0f39952b3fa7561013e9576acf1729707ed5ee5f7d9480714",
       "stdio_parent_descriptors": [
         -1,
         -1,
@@ -1658,10 +1658,10 @@
       "cleanup_sigkill_seconds": 2,
       "cleanup_sigterm_seconds": 1,
       "communicate_limit_seconds": 8,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/partial-read-native-deadline",
+      "cwd": "/home/runner/work/_temp/hia-reactor/partial-read-native-deadline",
       "deadline_external_signal_or_input_wakeup": false,
-      "elapsed_ns": 303954214,
-      "end_ns": 16446111546693,
+      "elapsed_ns": 301626725,
+      "end_ns": 105961047303,
       "environment": {
         "PATH": ""
       },
@@ -1669,7 +1669,7 @@
         {
           "arguments": [
             4,
-            139781578228736,
+            140369149182976,
             2,
             100,
             0,
@@ -1679,22 +1679,22 @@
           "epoll_registered_tokens": [
             4294967297
           ],
-          "monotonic_ns": 16445812268638,
+          "monotonic_ns": 105660133220,
           "pending": 0,
           "sig_caught": 512,
           "state": "S (sleeping)",
           "syscall": 232,
-          "syscall_text": "232 0x4 0x7f216f510400 0x2 0x64 0x0 0x0 0x7fff510dcb38 0x4005d7"
+          "syscall_text": "232 0x4 0x7faa3d464400 0x2 0x64 0x0 0x0 0x7ffe5d639388 0x4005d7"
         },
         {
           "action": "stdin-write",
           "hex": "484941",
-          "monotonic_ns": 16445812492559
+          "monotonic_ns": 105660151568
         },
         {
           "arguments": [
             4,
-            139781578228736,
+            140369149182976,
             2,
             100,
             0,
@@ -1704,12 +1704,12 @@
           "epoll_registered_tokens": [
             4294967297
           ],
-          "monotonic_ns": 16445812726877,
+          "monotonic_ns": 105660257257,
           "pending": 0,
           "sig_caught": 512,
           "state": "S (sleeping)",
           "syscall": 232,
-          "syscall_text": "232 0x4 0x7f216f510400 0x2 0x64 0x0 0x0 0x7fff510dcb38 0x4005d7"
+          "syscall_text": "232 0x4 0x7faa3d464400 0x2 0x64 0x0 0x0 0x7ffe5d639388 0x4005d7"
         }
       ],
       "executable_sha256": "a6277ac254cd10556bc1639d2663e93f1a6ac0fbaa99a2547d7cceaea7044f7f",
@@ -1723,7 +1723,7 @@
         "chunks": 1,
         "close_errors": 0,
         "closed_count": 3,
-        "deadline_ns": 16446110253923,
+        "deadline_ns": 105959750850,
         "eagain": 2,
         "eintr": 0,
         "epoll_ready": 1,
@@ -1738,16 +1738,16 @@
         "partial_write": 0,
         "read_bytes": 3,
         "requested": 8,
-        "start_ns": 16445810253923,
+        "start_ns": 105659750850,
         "status": 72,
-        "terminal_ns": 16446111030683,
+        "terminal_ns": 105960649200,
         "written_bytes": 0
       },
       "passed": true,
-      "pid": 45,
-      "start_ns": 16445807592479,
+      "pid": 2639,
+      "start_ns": 105659420578,
       "stderr_bytes": 192,
-      "stderr_sha256": "e7e4f2fe8b925d9f04d01ddde19ad62dbd455afaa98baffa6bf8eb81e50f57f4",
+      "stderr_sha256": "f7a7604b5874418412ef7954740a9c3263cadfdc63e1c020aa551b1b8b9c082e",
       "stdio_parent_descriptors": [
         -1,
         -1,
@@ -1769,9 +1769,9 @@
       "cleanup_sigkill_seconds": 2,
       "cleanup_sigterm_seconds": 1,
       "communicate_limit_seconds": 8,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/actual-short-write-resumption",
-      "elapsed_ns": 4851027,
-      "end_ns": 16446119775665,
+      "cwd": "/home/runner/work/_temp/hia-reactor/actual-short-write-resumption",
+      "elapsed_ns": 4243976,
+      "end_ns": 105966897025,
       "environment": {
         "PATH": ""
       },
@@ -1779,7 +1779,7 @@
         {
           "arguments": [
             3,
-            140353359041536,
+            140177052664832,
             2,
             100,
             0,
@@ -1789,12 +1789,12 @@
           "epoll_registered_tokens": [
             4294967298
           ],
-          "monotonic_ns": 16446118623178,
+          "monotonic_ns": 105965487624,
           "pending": 0,
           "sig_caught": 512,
           "state": "S (sleeping)",
           "syscall": 232,
-          "syscall_text": "232 0x3 0x7fa6901bd400 0x2 0x64 0x0 0x0 0x7ffe594b3dd8 0x4005d7"
+          "syscall_text": "232 0x3 0x7f7d836e0400 0x2 0x64 0x0 0x0 0x7ffd5c103738 0x4005d7"
         }
       ],
       "executable_sha256": "a6277ac254cd10556bc1639d2663e93f1a6ac0fbaa99a2547d7cceaea7044f7f",
@@ -1802,16 +1802,16 @@
       "expected_exit": 0,
       "external_cleanup_used": false,
       "observation": {
-        "calls": 44,
+        "calls": 58,
         "cancel": 0,
         "cause_bits": 0,
         "chunks": 1,
         "close_errors": 0,
         "closed_count": 2,
-        "deadline_ns": 16451115892327,
-        "eagain": 8,
+        "deadline_ns": 110962954949,
+        "eagain": 15,
         "eintr": 0,
-        "epoll_ready": 8,
+        "epoll_ready": 15,
         "epoll_timeout": 0,
         "last_handle": 4294967298,
         "last_phase": 10,
@@ -1823,16 +1823,16 @@
         "partial_write": 15,
         "read_bytes": 0,
         "requested": 65536,
-        "start_ns": 16446115892327,
+        "start_ns": 105962954949,
         "status": 0,
-        "terminal_ns": 16446119669062,
+        "terminal_ns": 105965751957,
         "written_bytes": 65536
       },
       "passed": true,
-      "pid": 46,
-      "start_ns": 16446114924638,
+      "pid": 2640,
+      "start_ns": 105962653049,
       "stderr_bytes": 192,
-      "stderr_sha256": "9d7400c1b3de76c47e7793a734c884dba68339e66b5efae65954113bf380e1ed",
+      "stderr_sha256": "b2cd1c920c34f4bb8283cc5ceb1264688bef6a46e6810b4f255c193462ca727d",
       "stdio_parent_descriptors": [
         -1,
         4,
@@ -1854,9 +1854,9 @@
       "cleanup_sigkill_seconds": 2,
       "cleanup_sigterm_seconds": 1,
       "communicate_limit_seconds": 8,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/blocked-write-native-deadline",
-      "elapsed_ns": 5003153145,
-      "end_ns": 16451125663312,
+      "cwd": "/home/runner/work/_temp/hia-reactor/blocked-write-native-deadline",
+      "elapsed_ns": 5001604278,
+      "end_ns": 110969914349,
       "environment": {
         "PATH": ""
       },
@@ -1864,7 +1864,7 @@
         {
           "arguments": [
             3,
-            140157251085312,
+            140407992476672,
             2,
             100,
             0,
@@ -1874,12 +1874,12 @@
           "epoll_registered_tokens": [
             4294967298
           ],
-          "monotonic_ns": 16446126020688,
+          "monotonic_ns": 105970973498,
           "pending": 0,
           "sig_caught": 512,
           "state": "S (sleeping)",
           "syscall": 232,
-          "syscall_text": "232 0x3 0x7f78e729e400 0x2 0x64 0x0 0x0 0x7ffcda460ea8 0x4005d7"
+          "syscall_text": "232 0x3 0x7fb34883e400 0x2 0x64 0x0 0x0 0x7ffd2dbd9d48 0x4005d7"
         }
       ],
       "executable_sha256": "a6277ac254cd10556bc1639d2663e93f1a6ac0fbaa99a2547d7cceaea7044f7f",
@@ -1893,7 +1893,7 @@
         "chunks": 1,
         "close_errors": 0,
         "closed_count": 2,
-        "deadline_ns": 16451123002662,
+        "deadline_ns": 110968504709,
         "eagain": 1,
         "eintr": 0,
         "epoll_ready": 0,
@@ -1908,16 +1908,16 @@
         "partial_write": 1,
         "read_bytes": 0,
         "requested": 65536,
-        "start_ns": 16446123002662,
+        "start_ns": 105968504709,
         "status": 72,
-        "terminal_ns": 16451123457975,
+        "terminal_ns": 110969538338,
         "written_bytes": 4096
       },
       "passed": true,
-      "pid": 47,
-      "start_ns": 16446122510167,
+      "pid": 2641,
+      "start_ns": 105968310071,
       "stderr_bytes": 192,
-      "stderr_sha256": "5f367f0b481c9fa50a1a14b39d2f2db4722f45277d87a8add7aa43af402d5547",
+      "stderr_sha256": "d7a1904b511a46f782f0469917200f9e68ef999d1a185aeb7329e9f007f39c6a",
       "stdio_parent_descriptors": [
         -1,
         4,
@@ -1939,9 +1939,9 @@
       "cleanup_sigkill_seconds": 2,
       "cleanup_sigterm_seconds": 1,
       "communicate_limit_seconds": 8,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/cancel-read-through-pipe",
-      "elapsed_ns": 2090482,
-      "end_ns": 16451132624922,
+      "cwd": "/home/runner/work/_temp/hia-reactor/cancel-read-through-pipe",
+      "elapsed_ns": 906624,
+      "end_ns": 110972460741,
       "environment": {
         "PATH": ""
       },
@@ -1949,7 +1949,7 @@
         {
           "arguments": [
             4,
-            139838637102080,
+            140285477397504,
             2,
             100,
             0,
@@ -1960,12 +1960,12 @@
             4294967297,
             4294967299
           ],
-          "monotonic_ns": 16451132240167,
+          "monotonic_ns": 110972266168,
           "pending": 0,
           "sig_caught": 512,
           "state": "S (sleeping)",
           "syscall": 232,
-          "syscall_text": "232 0x4 0x7f2eb84a5400 0x2 0x64 0x0 0x0 0x7ffff733ac38 0x4005d7"
+          "syscall_text": "232 0x4 0x7f96c20c2400 0x2 0x64 0x0 0x0 0x7fff13757138 0x4005d7"
         }
       ],
       "executable_sha256": "a6277ac254cd10556bc1639d2663e93f1a6ac0fbaa99a2547d7cceaea7044f7f",
@@ -1979,7 +1979,7 @@
         "chunks": 1,
         "close_errors": 0,
         "closed_count": 4,
-        "deadline_ns": 16456131630243,
+        "deadline_ns": 115971892717,
         "eagain": 1,
         "eintr": 0,
         "epoll_ready": 1,
@@ -1994,16 +1994,16 @@
         "partial_write": 0,
         "read_bytes": 0,
         "requested": 8,
-        "start_ns": 16451131630243,
+        "start_ns": 110971892717,
         "status": 73,
-        "terminal_ns": 16451132345002,
+        "terminal_ns": 110972292939,
         "written_bytes": 0
       },
       "passed": true,
-      "pid": 48,
-      "start_ns": 16451130534440,
+      "pid": 2644,
+      "start_ns": 110971554117,
       "stderr_bytes": 192,
-      "stderr_sha256": "9dc4c6ec07fed05cfed5c3d6d97d64652b41e1f0cc4ece9d1c167267e0a206d2",
+      "stderr_sha256": "450d83a99161d064a97f42d6d741bf8892f68e6aefc4ac7e73abe8503798d37d",
       "stdio_parent_descriptors": [
         -1,
         -1,
@@ -2025,9 +2025,9 @@
       "cleanup_sigkill_seconds": 2,
       "cleanup_sigterm_seconds": 1,
       "communicate_limit_seconds": 8,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/cancel-channel-eof",
-      "elapsed_ns": 946242,
-      "end_ns": 16451134904790,
+      "cwd": "/home/runner/work/_temp/hia-reactor/cancel-channel-eof",
+      "elapsed_ns": 902588,
+      "end_ns": 110974601142,
       "environment": {
         "PATH": ""
       },
@@ -2035,7 +2035,7 @@
         {
           "arguments": [
             4,
-            140495265883136,
+            140623168898048,
             2,
             100,
             0,
@@ -2046,12 +2046,12 @@
             4294967299,
             4294967297
           ],
-          "monotonic_ns": 16451134726145,
+          "monotonic_ns": 110974417135,
           "pending": 0,
           "sig_caught": 512,
           "state": "S (sleeping)",
           "syscall": 232,
-          "syscall_text": "232 0x4 0x7fc79a6a6400 0x2 0x64 0x0 0x0 0x7fff7c8a7aa8 0x4005d7"
+          "syscall_text": "232 0x4 0x7fe562078400 0x2 0x64 0x0 0x0 0x7ffc04c80708 0x4005d7"
         }
       ],
       "executable_sha256": "a6277ac254cd10556bc1639d2663e93f1a6ac0fbaa99a2547d7cceaea7044f7f",
@@ -2065,7 +2065,7 @@
         "chunks": 1,
         "close_errors": 0,
         "closed_count": 4,
-        "deadline_ns": 16456134284045,
+        "deadline_ns": 115973961340,
         "eagain": 1,
         "eintr": 0,
         "epoll_ready": 1,
@@ -2080,16 +2080,16 @@
         "partial_write": 0,
         "read_bytes": 0,
         "requested": 8,
-        "start_ns": 16451134284045,
+        "start_ns": 110973961340,
         "status": 73,
-        "terminal_ns": 16451134764767,
+        "terminal_ns": 110974441442,
         "written_bytes": 0
       },
       "passed": true,
-      "pid": 49,
-      "start_ns": 16451133958548,
+      "pid": 2645,
+      "start_ns": 110973698554,
       "stderr_bytes": 192,
-      "stderr_sha256": "486d8757efb6ca84e6f92041e2c092ceb7009d00b51280592b7b89f42ef0f97a",
+      "stderr_sha256": "beb96dc12e3fb62e183b2838acfbf7acc9f4ccd6635a8e9049e269c88b1c3b3d",
       "stdio_parent_descriptors": [
         -1,
         -1,
@@ -2111,9 +2111,9 @@
       "cleanup_sigkill_seconds": 2,
       "cleanup_sigterm_seconds": 1,
       "communicate_limit_seconds": 8,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/cancel-after-partial-write",
-      "elapsed_ns": 2893347,
-      "end_ns": 16451139051584,
+      "cwd": "/home/runner/work/_temp/hia-reactor/cancel-after-partial-write",
+      "elapsed_ns": 2855027,
+      "end_ns": 110978749145,
       "environment": {
         "PATH": ""
       },
@@ -2121,7 +2121,7 @@
         {
           "arguments": [
             3,
-            139655354942464,
+            139656308433920,
             2,
             100,
             0,
@@ -2129,15 +2129,15 @@
           ],
           "context_switches": 1,
           "epoll_registered_tokens": [
-            4294967298,
-            4294967299
+            4294967299,
+            4294967298
           ],
-          "monotonic_ns": 16451138873890,
+          "monotonic_ns": 110978564076,
           "pending": 0,
           "sig_caught": 512,
           "state": "S (sleeping)",
           "syscall": 232,
-          "syscall_text": "232 0x3 0x7f040bd28400 0x2 0x64 0x0 0x0 0x7ffdd00f5fe8 0x4005d7"
+          "syscall_text": "232 0x3 0x7f0444a7a400 0x2 0x64 0x0 0x0 0x7ffe93199de8 0x4005d7"
         }
       ],
       "executable_sha256": "a6277ac254cd10556bc1639d2663e93f1a6ac0fbaa99a2547d7cceaea7044f7f",
@@ -2151,7 +2151,7 @@
         "chunks": 1,
         "close_errors": 0,
         "closed_count": 3,
-        "deadline_ns": 16456136420681,
+        "deadline_ns": 115976092196,
         "eagain": 1,
         "eintr": 0,
         "epoll_ready": 1,
@@ -2166,16 +2166,16 @@
         "partial_write": 1,
         "read_bytes": 0,
         "requested": 65536,
-        "start_ns": 16451136420681,
+        "start_ns": 110976092196,
         "status": 73,
-        "terminal_ns": 16451138915096,
+        "terminal_ns": 110978588894,
         "written_bytes": 4096
       },
       "passed": true,
-      "pid": 50,
-      "start_ns": 16451136158237,
+      "pid": 2646,
+      "start_ns": 110975894118,
       "stderr_bytes": 192,
-      "stderr_sha256": "87a55767061725252de6c4868fe415622286acaf2676e9954ae3862110f27591",
+      "stderr_sha256": "1672b9b2964036b82d76da8606b418d940dd426ea4a2848ba9c04c4b781c8caa",
       "stdio_parent_descriptors": [
         -1,
         4,
@@ -2197,9 +2197,9 @@
       "cleanup_sigkill_seconds": 2,
       "cleanup_sigterm_seconds": 1,
       "communicate_limit_seconds": 8,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/partial-eof",
-      "elapsed_ns": 1771825,
-      "end_ns": 16451142283332,
+      "cwd": "/home/runner/work/_temp/hia-reactor/partial-eof",
+      "elapsed_ns": 1603053,
+      "end_ns": 110981735189,
       "environment": {
         "PATH": ""
       },
@@ -2215,7 +2215,7 @@
         "chunks": 1,
         "close_errors": 0,
         "closed_count": 3,
-        "deadline_ns": 16456140754592,
+        "deadline_ns": 115980353700,
         "eagain": 1,
         "eintr": 0,
         "epoll_ready": 1,
@@ -2230,16 +2230,16 @@
         "partial_write": 0,
         "read_bytes": 3,
         "requested": 8,
-        "start_ns": 16451140754592,
+        "start_ns": 110980353700,
         "status": 65,
-        "terminal_ns": 16451141130479,
+        "terminal_ns": 110980583395,
         "written_bytes": 0
       },
       "passed": true,
-      "pid": 51,
-      "start_ns": 16451140511507,
+      "pid": 2647,
+      "start_ns": 110980132136,
       "stderr_bytes": 192,
-      "stderr_sha256": "48964bbaa9e41d57c2bc07d3dc148bfbd8da2b458026413001fe9d29974f47d2",
+      "stderr_sha256": "d32a2e012503c41e047c03425a47048bb89087bb36771131d46538d349e5166a",
       "stdio_parent_descriptors": [
         -1,
         -1,
@@ -2261,9 +2261,9 @@
       "cleanup_sigkill_seconds": 2,
       "cleanup_sigterm_seconds": 1,
       "communicate_limit_seconds": 8,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/actual-epipe",
-      "elapsed_ns": 1601999,
-      "end_ns": 16451145306536,
+      "cwd": "/home/runner/work/_temp/hia-reactor/actual-epipe",
+      "elapsed_ns": 2536868,
+      "end_ns": 110992802334,
       "environment": {
         "PATH": ""
       },
@@ -2279,7 +2279,7 @@
         "chunks": 1,
         "close_errors": 0,
         "closed_count": 2,
-        "deadline_ns": 16456144064851,
+        "deadline_ns": 115990501992,
         "eagain": 0,
         "eintr": 0,
         "epoll_ready": 0,
@@ -2294,16 +2294,16 @@
         "partial_write": 0,
         "read_bytes": 0,
         "requested": 65536,
-        "start_ns": 16451144064851,
+        "start_ns": 110990501992,
         "status": 70,
-        "terminal_ns": 16451145216297,
+        "terminal_ns": 110991654196,
         "written_bytes": 0
       },
       "passed": true,
-      "pid": 52,
-      "start_ns": 16451143704537,
+      "pid": 2648,
+      "start_ns": 110990265466,
       "stderr_bytes": 192,
-      "stderr_sha256": "27e972d7e46c1cbd814347384a30947aee1b2b858b70066c6e0741d80deb9716",
+      "stderr_sha256": "d3960eaf52d9bf3a78ed2bb0188c8d0a34acc349a8504c828985d7e77e226ce1",
       "stdio_parent_descriptors": [
         -1,
         4,
@@ -2325,9 +2325,9 @@
       "cleanup_sigkill_seconds": 2,
       "cleanup_sigterm_seconds": 1,
       "communicate_limit_seconds": 8,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/regular-input-refusal",
-      "elapsed_ns": 433342,
-      "end_ns": 16451147310906,
+      "cwd": "/home/runner/work/_temp/hia-reactor/regular-input-refusal",
+      "elapsed_ns": 413993,
+      "end_ns": 110994669814,
       "environment": {
         "PATH": ""
       },
@@ -2343,7 +2343,7 @@
         "chunks": 0,
         "close_errors": 0,
         "closed_count": 0,
-        "deadline_ns": 16456147083419,
+        "deadline_ns": 115994446509,
         "eagain": 0,
         "eintr": 0,
         "epoll_ready": 0,
@@ -2358,16 +2358,16 @@
         "partial_write": 0,
         "read_bytes": 0,
         "requested": 8,
-        "start_ns": 16451147083419,
+        "start_ns": 110994446509,
         "status": 71,
-        "terminal_ns": 16451147135486,
+        "terminal_ns": 110994506128,
         "written_bytes": 0
       },
       "passed": true,
-      "pid": 53,
-      "start_ns": 16451146877564,
+      "pid": 2649,
+      "start_ns": 110994255821,
       "stderr_bytes": 192,
-      "stderr_sha256": "226f9bfa1c5c70f7aa94bcc3fde63885b83ebf566ee295b1ce659774d19292d2",
+      "stderr_sha256": "a8106d46ebe31282ee4a722a7b9993353054dd893150c4477be795ab85550815",
       "stdio_parent_descriptors": [
         3,
         -1,
@@ -2389,9 +2389,9 @@
       "cleanup_sigkill_seconds": 2,
       "cleanup_sigterm_seconds": 1,
       "communicate_limit_seconds": 8,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/regular-output-refusal",
-      "elapsed_ns": 480612,
-      "end_ns": 16451149116982,
+      "cwd": "/home/runner/work/_temp/hia-reactor/regular-output-refusal",
+      "elapsed_ns": 454895,
+      "end_ns": 110996846070,
       "environment": {
         "PATH": ""
       },
@@ -2407,7 +2407,7 @@
         "chunks": 0,
         "close_errors": 0,
         "closed_count": 1,
-        "deadline_ns": 16456148962253,
+        "deadline_ns": 115996583615,
         "eagain": 0,
         "eintr": 0,
         "epoll_ready": 0,
@@ -2422,16 +2422,16 @@
         "partial_write": 0,
         "read_bytes": 0,
         "requested": 8,
-        "start_ns": 16451148962253,
+        "start_ns": 110996583615,
         "status": 71,
-        "terminal_ns": 16451149024936,
+        "terminal_ns": 110996656174,
         "written_bytes": 0
       },
       "passed": true,
-      "pid": 54,
-      "start_ns": 16451148636370,
+      "pid": 2650,
+      "start_ns": 110996391175,
       "stderr_bytes": 192,
-      "stderr_sha256": "ce4424c2392647c635a9449f2f6add22218d3d288caacd63abafa0e73a3eda19",
+      "stderr_sha256": "11b18bd5cb3ada2de02862a8da20c804aed41b8d68d73dca028cbce5fd5a4f84",
       "stdio_parent_descriptors": [
         -1,
         3,
@@ -2453,9 +2453,9 @@
       "cleanup_sigkill_seconds": 2,
       "cleanup_sigterm_seconds": 1,
       "communicate_limit_seconds": 8,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/connected-stream-socket-short-write",
-      "elapsed_ns": 3997804,
-      "end_ns": 16451154864268,
+      "cwd": "/home/runner/work/_temp/hia-reactor/connected-stream-socket-short-write",
+      "elapsed_ns": 4016765,
+      "end_ns": 111002783635,
       "environment": {
         "PATH": ""
       },
@@ -2463,7 +2463,7 @@
         {
           "arguments": [
             3,
-            140044882420736,
+            140022983156736,
             2,
             100,
             0,
@@ -2473,12 +2473,12 @@
           "epoll_registered_tokens": [
             8589934594
           ],
-          "monotonic_ns": 16451154216909,
+          "monotonic_ns": 111001515697,
           "pending": 0,
           "sig_caught": 512,
           "state": "S (sleeping)",
           "syscall": 232,
-          "syscall_text": "232 0x3 0x7f5ebd782400 0x2 0x64 0x0 0x0 0x7fffed3b4048 0x4005d7"
+          "syscall_text": "232 0x3 0x7f59a42be400 0x2 0x64 0x0 0x0 0x7ffee63b4fb8 0x4005d7"
         }
       ],
       "executable_sha256": "a6277ac254cd10556bc1639d2663e93f1a6ac0fbaa99a2547d7cceaea7044f7f",
@@ -2486,37 +2486,37 @@
       "expected_exit": 0,
       "external_cleanup_used": false,
       "observation": {
-        "calls": 49,
+        "calls": 41,
         "cancel": 0,
         "cause_bits": 0,
         "chunks": 1,
         "close_errors": 0,
         "closed_count": 3,
-        "deadline_ns": 16456151178146,
-        "eagain": 7,
+        "deadline_ns": 115998957467,
+        "eagain": 4,
         "eintr": 0,
-        "epoll_ready": 7,
+        "epoll_ready": 4,
         "epoll_timeout": 0,
         "last_handle": 4294967298,
         "last_phase": 10,
-        "last_result_bits": 1024,
+        "last_result_bits": 5056,
         "magic": "HIAIO001",
         "magic_bits": 3544386023830145352,
         "operation_sequence": 2,
-        "partial_read": 1,
-        "partial_write": 8,
+        "partial_read": 0,
+        "partial_write": 7,
         "read_bytes": 65536,
         "requested": 65536,
-        "start_ns": 16451151178146,
+        "start_ns": 110998957467,
         "status": 0,
-        "terminal_ns": 16451154739643,
+        "terminal_ns": 111001631021,
         "written_bytes": 65536
       },
       "passed": true,
-      "pid": 55,
-      "start_ns": 16451150866464,
+      "pid": 2651,
+      "start_ns": 110998766870,
       "stderr_bytes": 192,
-      "stderr_sha256": "c860ec8557e0adbc61efddccdc3c0bb2d94721d364c7355d246ffc49b217982f",
+      "stderr_sha256": "357d0ea75f33e0f5df044d6298617ba2ee8388414ecfd73ec630272d23c38b0d",
       "stdio_parent_descriptors": [
         4,
         4,
@@ -2538,9 +2538,9 @@
       "cleanup_sigkill_seconds": 2,
       "cleanup_sigterm_seconds": 1,
       "communicate_limit_seconds": 8,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/socket-active-linger-refusal",
-      "elapsed_ns": 436397,
-      "end_ns": 16451157154942,
+      "cwd": "/home/runner/work/_temp/hia-reactor/socket-active-linger-refusal",
+      "elapsed_ns": 409146,
+      "end_ns": 111004815894,
       "environment": {
         "PATH": ""
       },
@@ -2558,7 +2558,7 @@
         "chunks": 0,
         "close_errors": 0,
         "closed_count": 0,
-        "deadline_ns": 16456156926693,
+        "deadline_ns": 116004601882,
         "eagain": 0,
         "eintr": 0,
         "epoll_ready": 0,
@@ -2573,16 +2573,16 @@
         "partial_write": 0,
         "read_bytes": 0,
         "requested": 65536,
-        "start_ns": 16451156926693,
+        "start_ns": 111004601882,
         "status": 71,
-        "terminal_ns": 16451156991189,
+        "terminal_ns": 111004672238,
         "written_bytes": 0
       },
       "passed": true,
-      "pid": 56,
-      "start_ns": 16451156718545,
+      "pid": 2652,
+      "start_ns": 111004406748,
       "stderr_bytes": 192,
-      "stderr_sha256": "07a3bfa0c423d2a6a88a3422067185972272950b0f36edd24137c177b552698b",
+      "stderr_sha256": "47b38d6f32820c49f71734655bd08c8389025fb04f1eabe478860a21e9a94218",
       "stdio_parent_descriptors": [
         4,
         4,
@@ -2604,9 +2604,9 @@
       "cleanup_sigkill_seconds": 2,
       "cleanup_sigterm_seconds": 1,
       "communicate_limit_seconds": 8,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/same-context-two-operations",
-      "elapsed_ns": 1848849,
-      "end_ns": 16451161169900,
+      "cwd": "/home/runner/work/_temp/hia-reactor/same-context-two-operations",
+      "elapsed_ns": 1733038,
+      "end_ns": 111008050592,
       "environment": {
         "PATH": ""
       },
@@ -2629,7 +2629,7 @@
         "chunks": 1,
         "close_errors": 0,
         "closed_count": 3,
-        "deadline_ns": 16456159579534,
+        "deadline_ns": 116006528952,
         "eagain": 0,
         "eintr": 0,
         "epoll_ready": 0,
@@ -2644,16 +2644,16 @@
         "partial_write": 0,
         "read_bytes": 4,
         "requested": 4,
-        "start_ns": 16451159861502,
+        "start_ns": 111006777787,
         "status": 0,
-        "terminal_ns": 16451159928972,
+        "terminal_ns": 111006843165,
         "written_bytes": 4
       },
       "passed": true,
-      "pid": 57,
-      "start_ns": 16451159321051,
+      "pid": 2653,
+      "start_ns": 111006317554,
       "stderr_bytes": 192,
-      "stderr_sha256": "51e6721242aba53c8be7fc64c4d5e162faa07fdef77be5d85b1b66ff8639fcdd",
+      "stderr_sha256": "9676d4c7633462019e0e234db6de73f3c84582cb468d9e61969fb2111a16e90c",
       "stdio_parent_descriptors": [
         -1,
         -1,
@@ -2675,9 +2675,9 @@
       "cleanup_sigkill_seconds": 2,
       "cleanup_sigterm_seconds": 1,
       "communicate_limit_seconds": 8,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/same-context-original-deadline",
-      "elapsed_ns": 1004211253,
-      "end_ns": 16452166866664,
+      "cwd": "/home/runner/work/_temp/hia-reactor/same-context-original-deadline",
+      "elapsed_ns": 1001677662,
+      "end_ns": 112011450425,
       "environment": {
         "PATH": ""
       },
@@ -2685,7 +2685,7 @@
         {
           "arguments": [
             4,
-            140422955930624,
+            140593666655232,
             2,
             100,
             0,
@@ -2695,22 +2695,22 @@
           "epoll_registered_tokens": [
             4294967297
           ],
-          "monotonic_ns": 16451163199758,
+          "monotonic_ns": 111010358355,
           "pending": 0,
           "sig_caught": 512,
           "state": "S (sleeping)",
           "syscall": 232,
-          "syscall_text": "232 0x4 0x7fb6c4681400 0x2 0x64 0x0 0x0 0x7ffe9dd2f2b8 0x4005d7"
+          "syscall_text": "232 0x4 0x7fde838f0400 0x2 0x64 0x0 0x0 0x7ffea7a07488 0x4005d7"
         },
         {
           "action": "stdin-write",
           "hex": "31323334",
-          "monotonic_ns": 16451163228020
+          "monotonic_ns": 111010374850
         },
         {
           "arguments": [
             4,
-            140422955930624,
+            140593666655232,
             2,
             100,
             0,
@@ -2720,12 +2720,12 @@
           "epoll_registered_tokens": [
             12884901889
           ],
-          "monotonic_ns": 16451165552243,
+          "monotonic_ns": 111012624275,
           "pending": 0,
           "sig_caught": 512,
           "state": "S (sleeping)",
           "syscall": 232,
-          "syscall_text": "232 0x4 0x7fb6c4681400 0x2 0x64 0x0 0x0 0x7ffe9dd2f2b8 0x4005d7"
+          "syscall_text": "232 0x4 0x7fde838f0400 0x2 0x64 0x0 0x0 0x7ffea7a07488 0x4005d7"
         }
       ],
       "executable_sha256": "9e0957ecd2f508c39a3744b8efe105ee88b3e8fffd02b03ed5be3f50f3ce6423",
@@ -2747,7 +2747,7 @@
         "chunks": 1,
         "close_errors": 0,
         "closed_count": 3,
-        "deadline_ns": 16452162866975,
+        "deadline_ns": 112009995850,
         "eagain": 1,
         "eintr": 0,
         "epoll_ready": 0,
@@ -2762,16 +2762,16 @@
         "partial_write": 0,
         "read_bytes": 0,
         "requested": 4,
-        "start_ns": 16451163277263,
+        "start_ns": 111010400018,
         "status": 72,
-        "terminal_ns": 16452163925697,
+        "terminal_ns": 112011016923,
         "written_bytes": 0
       },
       "passed": true,
-      "pid": 58,
-      "start_ns": 16451162655411,
+      "pid": 2654,
+      "start_ns": 111009772763,
       "stderr_bytes": 192,
-      "stderr_sha256": "7ce9499a1e9a005a609b6b3942716cc2074f6347858ee5e8f3f02fc48eef1ceb",
+      "stderr_sha256": "c10c7a694f37d425e83e7fa95f67aa5273cbdd79b28ae4015c612a1928237abe",
       "stdio_parent_descriptors": [
         -1,
         -1,
@@ -2793,9 +2793,9 @@
       "cleanup_sigkill_seconds": 2,
       "cleanup_sigterm_seconds": 1,
       "communicate_limit_seconds": 8,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/caller-prepared-write-window",
-      "elapsed_ns": 1781410,
-      "end_ns": 16452175490011,
+      "cwd": "/home/runner/work/_temp/hia-reactor/caller-prepared-write-window",
+      "elapsed_ns": 581175,
+      "end_ns": 112014365402,
       "environment": {
         "PATH": ""
       },
@@ -2818,7 +2818,7 @@
         "chunks": 1,
         "close_errors": 0,
         "closed_count": 2,
-        "deadline_ns": 16457174945915,
+        "deadline_ns": 117014112321,
         "eagain": 0,
         "eintr": 0,
         "epoll_ready": 0,
@@ -2833,16 +2833,16 @@
         "partial_write": 0,
         "read_bytes": 0,
         "requested": 17,
-        "start_ns": 16452174945915,
+        "start_ns": 112014112321,
         "status": 0,
-        "terminal_ns": 16452175052402,
+        "terminal_ns": 112014206323,
         "written_bytes": 17
       },
       "passed": true,
-      "pid": 59,
-      "start_ns": 16452173708601,
+      "pid": 2655,
+      "start_ns": 112013784227,
       "stderr_bytes": 192,
-      "stderr_sha256": "02c7f6ccc46ef2b5477bdd9228bb72b87ed7435825dafc85bda197cc4d6325c6",
+      "stderr_sha256": "90affd20003deac2ee8e55a3853ed2ad8396cced18568dec523aa4e52a9cddc6",
       "stdio_parent_descriptors": [
         -1,
         -1,
@@ -2864,10 +2864,10 @@
       "cleanup_sigkill_seconds": 2,
       "cleanup_sigterm_seconds": 1,
       "communicate_limit_seconds": 8,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/full-diagnostic-pipe-native-deadline",
+      "cwd": "/home/runner/work/_temp/hia-reactor/full-diagnostic-pipe-native-deadline",
       "diagnostic_delivered": false,
-      "elapsed_ns": 501821175,
-      "end_ns": 16452679884819,
+      "elapsed_ns": 501482715,
+      "end_ns": 112517652462,
       "environment": {
         "PATH": ""
       },
@@ -2875,7 +2875,7 @@
         {
           "arguments": [
             3,
-            140065309017088,
+            140627624178688,
             2,
             100,
             0,
@@ -2885,12 +2885,12 @@
           "epoll_registered_tokens": [
             4294967297
           ],
-          "monotonic_ns": 16452179319215,
+          "monotonic_ns": 112016746575,
           "pending": 0,
           "sig_caught": 512,
           "state": "S (sleeping)",
           "syscall": 232,
-          "syscall_text": "232 0x3 0x7f637efd4400 0x2 0x64 0x0 0x0 0x7ffd103c61a8 0x4005d7"
+          "syscall_text": "232 0x3 0x7fe66b95b400 0x2 0x64 0x0 0x0 0x7ffe47f4f5a8 0x4005d7"
         }
       ],
       "executable_sha256": "a6277ac254cd10556bc1639d2663e93f1a6ac0fbaa99a2547d7cceaea7044f7f",
@@ -2899,8 +2899,8 @@
       "external_cleanup_used": false,
       "native_deadline_without_external_signal_or_input_wakeup": true,
       "passed": true,
-      "pid": 60,
-      "start_ns": 16452178063644,
+      "pid": 2656,
+      "start_ns": 112016169747,
       "stderr_bytes": 0,
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "stdio_parent_descriptors": [
@@ -2924,9 +2924,9 @@
       "cleanup_sigkill_seconds": 2,
       "cleanup_sigterm_seconds": 1,
       "communicate_limit_seconds": 8,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/datagram-refusal-before-flag-change",
-      "elapsed_ns": 674729,
-      "end_ns": 16452683551271,
+      "cwd": "/home/runner/work/_temp/hia-reactor/datagram-refusal-before-flag-change",
+      "elapsed_ns": 521926,
+      "end_ns": 112520578175,
       "environment": {
         "PATH": ""
       },
@@ -2945,7 +2945,7 @@
         "chunks": 0,
         "close_errors": 0,
         "closed_count": 0,
-        "deadline_ns": 16457683206330,
+        "deadline_ns": 117520344624,
         "eagain": 0,
         "eintr": 0,
         "epoll_ready": 0,
@@ -2960,16 +2960,16 @@
         "partial_write": 0,
         "read_bytes": 0,
         "requested": 8,
-        "start_ns": 16452683206330,
+        "start_ns": 112520344624,
         "status": 71,
-        "terminal_ns": 16452683281041,
+        "terminal_ns": 112520418505,
         "written_bytes": 0
       },
       "passed": true,
-      "pid": 61,
-      "start_ns": 16452682876542,
+      "pid": 2657,
+      "start_ns": 112520056249,
       "stderr_bytes": 192,
-      "stderr_sha256": "07c598f45d8a1f1f75820cbdcb7e3151feffb2a79b0f6d83b14f6f477aaf792b",
+      "stderr_sha256": "57150a423ab0141473863e4612bc2452aaac4c8d4045029ebb6225c6605ade97",
       "stdio_parent_descriptors": [
         3,
         -1,
@@ -2991,9 +2991,9 @@
       "cleanup_sigkill_seconds": 2,
       "cleanup_sigterm_seconds": 1,
       "communicate_limit_seconds": 8,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/unconnected-stream-refusal-before-flag-change",
-      "elapsed_ns": 694709,
-      "end_ns": 16452685819993,
+      "cwd": "/home/runner/work/_temp/hia-reactor/unconnected-stream-refusal-before-flag-change",
+      "elapsed_ns": 427423,
+      "end_ns": 112522893319,
       "environment": {
         "PATH": ""
       },
@@ -3012,7 +3012,7 @@
         "chunks": 0,
         "close_errors": 0,
         "closed_count": 0,
-        "deadline_ns": 16457685562692,
+        "deadline_ns": 117522668361,
         "eagain": 0,
         "eintr": 0,
         "epoll_ready": 0,
@@ -3027,16 +3027,16 @@
         "partial_write": 0,
         "read_bytes": 0,
         "requested": 8,
-        "start_ns": 16452685562692,
+        "start_ns": 112522668361,
         "status": 70,
-        "terminal_ns": 16452685656741,
+        "terminal_ns": 112522745717,
         "written_bytes": 0
       },
       "passed": true,
-      "pid": 62,
-      "start_ns": 16452685125284,
+      "pid": 2658,
+      "start_ns": 112522465896,
       "stderr_bytes": 192,
-      "stderr_sha256": "7bc66a89a32873f4e1396c0234904fe7567f75efb7aae94e7ea31024bdbbe6de",
+      "stderr_sha256": "9aef315931641dfe5146bfb6a17a3439514698a34e2f49697cff520126365738",
       "stdio_parent_descriptors": [
         3,
         -1,
@@ -3058,9 +3058,9 @@
       "cleanup_sigkill_seconds": 2,
       "cleanup_sigterm_seconds": 1,
       "communicate_limit_seconds": 8,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/cancel-data-object-alias-refusal",
-      "elapsed_ns": 826775,
-      "end_ns": 16452688399395,
+      "cwd": "/home/runner/work/_temp/hia-reactor/cancel-data-object-alias-refusal",
+      "elapsed_ns": 467373,
+      "end_ns": 112525299800,
       "environment": {
         "PATH": ""
       },
@@ -3076,7 +3076,7 @@
         "chunks": 0,
         "close_errors": 0,
         "closed_count": 2,
-        "deadline_ns": 16457688066502,
+        "deadline_ns": 117525066169,
         "eagain": 0,
         "eintr": 0,
         "epoll_ready": 0,
@@ -3091,17 +3091,17 @@
         "partial_write": 0,
         "read_bytes": 0,
         "requested": 8,
-        "start_ns": 16452688066502,
+        "start_ns": 112525066169,
         "status": 71,
-        "terminal_ns": 16452688153340,
+        "terminal_ns": 112525148253,
         "written_bytes": 0
       },
       "passed": true,
-      "pid": 63,
+      "pid": 2659,
       "queued_input_after_refusal_hex": "48494170726f6265",
-      "start_ns": 16452687572620,
+      "start_ns": 112524832427,
       "stderr_bytes": 192,
-      "stderr_sha256": "3d9ec40971471ae0a2404326a709a652bb6e89900cd27d8be5a712fcb249b817",
+      "stderr_sha256": "6cc2b0419eb19c4fbde3920302def49de54eef8855033b4f9302a9bba2ce2583",
       "stdio_parent_descriptors": [
         3,
         -1,
@@ -3123,10 +3123,10 @@
       "cleanup_sigkill_seconds": 2,
       "cleanup_sigterm_seconds": 1,
       "communicate_limit_seconds": 8,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/diagnostic-data-object-alias-refusal",
+      "cwd": "/home/runner/work/_temp/hia-reactor/diagnostic-data-object-alias-refusal",
       "diagnostic_disabled_before_data_alias_refusal": true,
-      "elapsed_ns": 1702753,
-      "end_ns": 16452691730420,
+      "elapsed_ns": 397108,
+      "end_ns": 112527557318,
       "environment": {
         "PATH": ""
       },
@@ -3136,8 +3136,8 @@
       "expected_exit": 71,
       "external_cleanup_used": false,
       "passed": true,
-      "pid": 64,
-      "start_ns": 16452690027667,
+      "pid": 2660,
+      "start_ns": 112527160210,
       "stderr_bytes": 0,
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "stdio_parent_descriptors": [
@@ -3161,9 +3161,9 @@
       "cleanup_sigkill_seconds": 2,
       "cleanup_sigterm_seconds": 1,
       "communicate_limit_seconds": 8,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/inherited-connected-tcp-stream",
-      "elapsed_ns": 1056686,
-      "end_ns": 16452697926300,
+      "cwd": "/home/runner/work/_temp/hia-reactor/inherited-connected-tcp-stream",
+      "elapsed_ns": 1737785,
+      "end_ns": 112532184391,
       "environment": {
         "PATH": ""
       },
@@ -3174,7 +3174,7 @@
       "external_cleanup_used": false,
       "hosted_peer_address": [
         "127.0.0.1",
-        55300
+        35360
       ],
       "inherited_connected_family": "AF_INET",
       "observation": {
@@ -3184,7 +3184,7 @@
         "chunks": 1,
         "close_errors": 0,
         "closed_count": 3,
-        "deadline_ns": 16457697301315,
+        "deadline_ns": 117530656813,
         "eagain": 1,
         "eintr": 0,
         "epoll_ready": 1,
@@ -3199,17 +3199,17 @@
         "partial_write": 0,
         "read_bytes": 8,
         "requested": 8,
-        "start_ns": 16452697301315,
+        "start_ns": 112530656813,
         "status": 0,
-        "terminal_ns": 16452697613708,
+        "terminal_ns": 112531024626,
         "written_bytes": 8
       },
       "passed": true,
-      "pid": 65,
+      "pid": 2661,
       "runtime_established_or_authenticated_peer": false,
-      "start_ns": 16452696869614,
+      "start_ns": 112530446606,
       "stderr_bytes": 192,
-      "stderr_sha256": "ca00578e6bb4d5e9ae42abb59de8c8b7a0e96d73e3abbdcafc1c9387fc530101",
+      "stderr_sha256": "3d4dcd64c755cde849a01d19876f06bdb71276d933e6fca204eada1a1c8acd3a",
       "stdio_parent_descriptors": [
         5,
         5,
@@ -3231,9 +3231,9 @@
       "cleanup_sigkill_seconds": 2,
       "cleanup_sigterm_seconds": 1,
       "communicate_limit_seconds": 8,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/oversize-request",
-      "elapsed_ns": 810631,
-      "end_ns": 16452700802361,
+      "cwd": "/home/runner/work/_temp/hia-reactor/oversize-request",
+      "elapsed_ns": 478300,
+      "end_ns": 112534729642,
       "environment": {
         "PATH": ""
       },
@@ -3243,8 +3243,8 @@
       "expected_exit": 64,
       "external_cleanup_used": false,
       "passed": true,
-      "pid": 66,
-      "start_ns": 16452699991730,
+      "pid": 2662,
+      "start_ns": 112534251342,
       "stderr_bytes": 0,
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "stdio_parent_descriptors": [
@@ -3268,9 +3268,9 @@
       "cleanup_sigkill_seconds": 2,
       "cleanup_sigterm_seconds": 1,
       "communicate_limit_seconds": 8,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/zero-budget",
-      "elapsed_ns": 532228,
-      "end_ns": 16452703418217,
+      "cwd": "/home/runner/work/_temp/hia-reactor/zero-budget",
+      "elapsed_ns": 454715,
+      "end_ns": 112536992007,
       "environment": {
         "PATH": ""
       },
@@ -3280,8 +3280,8 @@
       "expected_exit": 64,
       "external_cleanup_used": false,
       "passed": true,
-      "pid": 67,
-      "start_ns": 16452702885989,
+      "pid": 2663,
+      "start_ns": 112536537292,
       "stderr_bytes": 0,
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "stdio_parent_descriptors": [
@@ -3305,9 +3305,9 @@
       "cleanup_sigkill_seconds": 2,
       "cleanup_sigterm_seconds": 1,
       "communicate_limit_seconds": 8,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/invalid-cancel-alias",
-      "elapsed_ns": 503386,
-      "end_ns": 16452705735200,
+      "cwd": "/home/runner/work/_temp/hia-reactor/invalid-cancel-alias",
+      "elapsed_ns": 467063,
+      "end_ns": 112539280501,
       "environment": {
         "PATH": ""
       },
@@ -3317,8 +3317,8 @@
       "expected_exit": 64,
       "external_cleanup_used": false,
       "passed": true,
-      "pid": 68,
-      "start_ns": 16452705231814,
+      "pid": 2664,
+      "start_ns": 112538813438,
       "stderr_bytes": 0,
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "stdio_parent_descriptors": [
@@ -3342,9 +3342,9 @@
       "cleanup_sigkill_seconds": 2,
       "cleanup_sigterm_seconds": 1,
       "communicate_limit_seconds": 8,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/invalid-mode",
-      "elapsed_ns": 458349,
-      "end_ns": 16452707854700,
+      "cwd": "/home/runner/work/_temp/hia-reactor/invalid-mode",
+      "elapsed_ns": 441795,
+      "end_ns": 112541538990,
       "environment": {
         "PATH": ""
       },
@@ -3354,8 +3354,8 @@
       "expected_exit": 64,
       "external_cleanup_used": false,
       "passed": true,
-      "pid": 69,
-      "start_ns": 16452707396351,
+      "pid": 2665,
+      "start_ns": 112541097195,
       "stderr_bytes": 0,
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "stdio_parent_descriptors": [
@@ -3377,9 +3377,9 @@
       "cleanup_sigkill_seconds": 2,
       "cleanup_sigterm_seconds": 1,
       "communicate_limit_seconds": 8,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/bad-argc",
-      "elapsed_ns": 616874,
-      "end_ns": 16452710266123,
+      "cwd": "/home/runner/work/_temp/hia-reactor/bad-argc",
+      "elapsed_ns": 449517,
+      "end_ns": 112543770989,
       "environment": {
         "PATH": ""
       },
@@ -3389,8 +3389,8 @@
       "expected_exit": 64,
       "external_cleanup_used": false,
       "passed": true,
-      "pid": 70,
-      "start_ns": 16452709649249,
+      "pid": 2666,
+      "start_ns": 112543321472,
       "stderr_bytes": 0,
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "stdio_parent_descriptors": [
@@ -3414,9 +3414,9 @@
       "cleanup_sigkill_seconds": 2,
       "cleanup_sigterm_seconds": 1,
       "communicate_limit_seconds": 8,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/oversize-argument",
-      "elapsed_ns": 540701,
-      "end_ns": 16452712430530,
+      "cwd": "/home/runner/work/_temp/hia-reactor/oversize-argument",
+      "elapsed_ns": 468145,
+      "end_ns": 112546173154,
       "environment": {
         "PATH": ""
       },
@@ -3426,8 +3426,8 @@
       "expected_exit": 64,
       "external_cleanup_used": false,
       "passed": true,
-      "pid": 71,
-      "start_ns": 16452711889829,
+      "pid": 2667,
+      "start_ns": 112545705009,
       "stderr_bytes": 0,
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "stdio_parent_descriptors": [
@@ -3462,9 +3462,9 @@
         1
       ],
       "communicate_limit_seconds": 8,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/guard-unknown-syscall",
-      "elapsed_ns": 422065,
-      "end_ns": 16452728593107,
+      "cwd": "/home/runner/work/_temp/hia-reactor/guard-unknown-syscall",
+      "elapsed_ns": 339431,
+      "end_ns": 112560802150,
       "environment": {
         "PATH": ""
       },
@@ -3488,10 +3488,10 @@
         "type": "ET_EXEC"
       },
       "passed": true,
-      "pid": 74,
+      "pid": 2670,
       "same_emitter_sha256": "4b9e64792a1ebdc067a5c520311964f8f84ff1559c6593199f9251d362f9c0a3",
       "source_sha256": "db98eb94951063fd3321fce33e124e865bffda88364ae4d81e3b73d557fd8668",
-      "start_ns": 16452728171042,
+      "start_ns": 112560462719,
       "stderr_bytes": 0,
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "stdio_parent_descriptors": [
@@ -3526,9 +3526,9 @@
         1
       ],
       "communicate_limit_seconds": 8,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/guard-pointer-before-data",
-      "elapsed_ns": 438740,
-      "end_ns": 16452743619731,
+      "cwd": "/home/runner/work/_temp/hia-reactor/guard-pointer-before-data",
+      "elapsed_ns": 359801,
+      "end_ns": 112575530104,
       "environment": {
         "PATH": ""
       },
@@ -3552,10 +3552,10 @@
         "type": "ET_EXEC"
       },
       "passed": true,
-      "pid": 77,
+      "pid": 2673,
       "same_emitter_sha256": "4b9e64792a1ebdc067a5c520311964f8f84ff1559c6593199f9251d362f9c0a3",
       "source_sha256": "76d6ea107cca5a2890e5901f61397aa9bc383ab7bf11965c4c2fe2fa5afc1857",
-      "start_ns": 16452743180991,
+      "start_ns": 112575170303,
       "stderr_bytes": 0,
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "stdio_parent_descriptors": [
@@ -3590,9 +3590,9 @@
         1
       ],
       "communicate_limit_seconds": 8,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/guard-pointer-end-overflow",
-      "elapsed_ns": 795688,
-      "end_ns": 16452760141961,
+      "cwd": "/home/runner/work/_temp/hia-reactor/guard-pointer-end-overflow",
+      "elapsed_ns": 351689,
+      "end_ns": 112590220322,
       "environment": {
         "PATH": ""
       },
@@ -3616,10 +3616,10 @@
         "type": "ET_EXEC"
       },
       "passed": true,
-      "pid": 80,
+      "pid": 2676,
       "same_emitter_sha256": "4b9e64792a1ebdc067a5c520311964f8f84ff1559c6593199f9251d362f9c0a3",
       "source_sha256": "cc6d59cbe41cfdfff2663dba0fd96598a3e16e41010e89f4cd67d60c6568a3a9",
-      "start_ns": 16452759346273,
+      "start_ns": 112589868633,
       "stderr_bytes": 0,
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "stdio_parent_descriptors": [
@@ -3654,9 +3654,9 @@
         1
       ],
       "communicate_limit_seconds": 8,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/guard-wrong-pointer-mask",
-      "elapsed_ns": 546539,
-      "end_ns": 16452775449351,
+      "cwd": "/home/runner/work/_temp/hia-reactor/guard-wrong-pointer-mask",
+      "elapsed_ns": 352290,
+      "end_ns": 112605193256,
       "environment": {
         "PATH": ""
       },
@@ -3680,10 +3680,10 @@
         "type": "ET_EXEC"
       },
       "passed": true,
-      "pid": 83,
+      "pid": 2679,
       "same_emitter_sha256": "4b9e64792a1ebdc067a5c520311964f8f84ff1559c6593199f9251d362f9c0a3",
       "source_sha256": "e94019b4e564cb5f72b901e9557b61b97e74830bc7d1705c391e01fefa13521f",
-      "start_ns": 16452774902812,
+      "start_ns": 112604840966,
       "stderr_bytes": 0,
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "stdio_parent_descriptors": [
@@ -3718,9 +3718,9 @@
         1
       ],
       "communicate_limit_seconds": 8,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/guard-epoll-event-count",
-      "elapsed_ns": 433702,
-      "end_ns": 16452797833326,
+      "cwd": "/home/runner/work/_temp/hia-reactor/guard-epoll-event-count",
+      "elapsed_ns": 360653,
+      "end_ns": 112620238378,
       "environment": {
         "PATH": ""
       },
@@ -3744,10 +3744,10 @@
         "type": "ET_EXEC"
       },
       "passed": true,
-      "pid": 86,
+      "pid": 2682,
       "same_emitter_sha256": "4b9e64792a1ebdc067a5c520311964f8f84ff1559c6593199f9251d362f9c0a3",
       "source_sha256": "ff32cc63384a801d51e7f048d4b009d62a0f25335d7533a6a1ed3d9bb65c722c",
-      "start_ns": 16452797399624,
+      "start_ns": 112619877725,
       "stderr_bytes": 0,
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "stdio_parent_descriptors": [
@@ -3782,9 +3782,9 @@
         1
       ],
       "communicate_limit_seconds": 8,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/guard-epoll-zero-timeout",
-      "elapsed_ns": 497047,
-      "end_ns": 16452813798451,
+      "cwd": "/home/runner/work/_temp/hia-reactor/guard-epoll-zero-timeout",
+      "elapsed_ns": 361023,
+      "end_ns": 112634423786,
       "environment": {
         "PATH": ""
       },
@@ -3808,10 +3808,10 @@
         "type": "ET_EXEC"
       },
       "passed": true,
-      "pid": 89,
+      "pid": 2685,
       "same_emitter_sha256": "4b9e64792a1ebdc067a5c520311964f8f84ff1559c6593199f9251d362f9c0a3",
       "source_sha256": "61cc2090823a3033d5763d709d69acd92b14307c1c537982c98324244a55b837",
-      "start_ns": 16452813301404,
+      "start_ns": 112634062763,
       "stderr_bytes": 0,
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "stdio_parent_descriptors": [
@@ -3846,9 +3846,9 @@
         1
       ],
       "communicate_limit_seconds": 8,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/guard-epoll-oversize-timeout",
-      "elapsed_ns": 411399,
-      "end_ns": 16452828872605,
+      "cwd": "/home/runner/work/_temp/hia-reactor/guard-epoll-oversize-timeout",
+      "elapsed_ns": 355465,
+      "end_ns": 112649620206,
       "environment": {
         "PATH": ""
       },
@@ -3872,10 +3872,10 @@
         "type": "ET_EXEC"
       },
       "passed": true,
-      "pid": 92,
+      "pid": 2688,
       "same_emitter_sha256": "4b9e64792a1ebdc067a5c520311964f8f84ff1559c6593199f9251d362f9c0a3",
       "source_sha256": "b28432202488626b358da61ce528e310b4b87ca4b76b6e7e95aa8a9c74ea2f18",
-      "start_ns": 16452828461206,
+      "start_ns": 112649264741,
       "stderr_bytes": 0,
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "stdio_parent_descriptors": [
@@ -3910,9 +3910,9 @@
         1
       ],
       "communicate_limit_seconds": 8,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/guard-fcntl-blocking-flags",
-      "elapsed_ns": 547882,
-      "end_ns": 16452844472769,
+      "cwd": "/home/runner/work/_temp/hia-reactor/guard-fcntl-blocking-flags",
+      "elapsed_ns": 353782,
+      "end_ns": 112664599158,
       "environment": {
         "PATH": ""
       },
@@ -3936,10 +3936,10 @@
         "type": "ET_EXEC"
       },
       "passed": true,
-      "pid": 95,
+      "pid": 2691,
       "same_emitter_sha256": "4b9e64792a1ebdc067a5c520311964f8f84ff1559c6593199f9251d362f9c0a3",
       "source_sha256": "0845813be17cc1593cfe0f8d76575eaaa4ec557ff23ad6ef910caada9306aa24",
-      "start_ns": 16452843924887,
+      "start_ns": 112664245376,
       "stderr_bytes": 0,
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "stdio_parent_descriptors": [
@@ -3974,9 +3974,9 @@
         1
       ],
       "communicate_limit_seconds": 8,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/guard-epoll-delete-nonnull",
-      "elapsed_ns": 602643,
-      "end_ns": 16452860260180,
+      "cwd": "/home/runner/work/_temp/hia-reactor/guard-epoll-delete-nonnull",
+      "elapsed_ns": 343146,
+      "end_ns": 112679699043,
       "environment": {
         "PATH": ""
       },
@@ -4000,10 +4000,10 @@
         "type": "ET_EXEC"
       },
       "passed": true,
-      "pid": 98,
+      "pid": 2694,
       "same_emitter_sha256": "4b9e64792a1ebdc067a5c520311964f8f84ff1559c6593199f9251d362f9c0a3",
       "source_sha256": "ac102a56f5d0ca86cd35c0b3a0da4a4e097f025da560f4d7a7bdf213522dc50d",
-      "start_ns": 16452859657537,
+      "start_ns": 112679355897,
       "stderr_bytes": 0,
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "stdio_parent_descriptors": [
@@ -4038,9 +4038,9 @@
         1
       ],
       "communicate_limit_seconds": 8,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/guard-sockopt-length-mismatch",
-      "elapsed_ns": 517407,
-      "end_ns": 16452875925440,
+      "cwd": "/home/runner/work/_temp/hia-reactor/guard-sockopt-length-mismatch",
+      "elapsed_ns": 353702,
+      "end_ns": 112693627915,
       "environment": {
         "PATH": ""
       },
@@ -4064,10 +4064,10 @@
         "type": "ET_EXEC"
       },
       "passed": true,
-      "pid": 101,
+      "pid": 2697,
       "same_emitter_sha256": "4b9e64792a1ebdc067a5c520311964f8f84ff1559c6593199f9251d362f9c0a3",
       "source_sha256": "7298f1e8816084f9160744d2b5bf088acd41d345cdd72ed51bb6c133b9cb9fc2",
-      "start_ns": 16452875408033,
+      "start_ns": 112693274213,
       "stderr_bytes": 0,
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "stdio_parent_descriptors": [
@@ -4102,9 +4102,9 @@
         1
       ],
       "communicate_limit_seconds": 8,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/guard-sockopt-unknown-option",
-      "elapsed_ns": 542793,
-      "end_ns": 16452892292359,
+      "cwd": "/home/runner/work/_temp/hia-reactor/guard-sockopt-unknown-option",
+      "elapsed_ns": 374183,
+      "end_ns": 112786975855,
       "environment": {
         "PATH": ""
       },
@@ -4128,10 +4128,10 @@
         "type": "ET_EXEC"
       },
       "passed": true,
-      "pid": 104,
+      "pid": 2700,
       "same_emitter_sha256": "4b9e64792a1ebdc067a5c520311964f8f84ff1559c6593199f9251d362f9c0a3",
       "source_sha256": "78b99b8173aa9d1aceacc32a52c3cb9410ae70fb138ce90c5aa619a8febe2fee",
-      "start_ns": 16452891749566,
+      "start_ns": 112786601672,
       "stderr_bytes": 0,
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "stdio_parent_descriptors": [
@@ -4166,9 +4166,9 @@
         1
       ],
       "communicate_limit_seconds": 8,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/guard-epoll-create-without-cloexec",
-      "elapsed_ns": 507522,
-      "end_ns": 16452908161462,
+      "cwd": "/home/runner/work/_temp/hia-reactor/guard-epoll-create-without-cloexec",
+      "elapsed_ns": 363217,
+      "end_ns": 112802336482,
       "environment": {
         "PATH": ""
       },
@@ -4192,10 +4192,10 @@
         "type": "ET_EXEC"
       },
       "passed": true,
-      "pid": 107,
+      "pid": 2703,
       "same_emitter_sha256": "4b9e64792a1ebdc067a5c520311964f8f84ff1559c6593199f9251d362f9c0a3",
       "source_sha256": "ceeec1fb371825ab22c1c747dc06097412729485f34006d8f19747c44ad2685a",
-      "start_ns": 16452907653940,
+      "start_ns": 112801973265,
       "stderr_bytes": 0,
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "stdio_parent_descriptors": [
@@ -4230,9 +4230,9 @@
         1
       ],
       "communicate_limit_seconds": 8,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/guard-getpeername-length-mismatch",
-      "elapsed_ns": 424278,
-      "end_ns": 16452923876915,
+      "cwd": "/home/runner/work/_temp/hia-reactor/guard-getpeername-length-mismatch",
+      "elapsed_ns": 345800,
+      "end_ns": 112817498219,
       "environment": {
         "PATH": ""
       },
@@ -4256,10 +4256,10 @@
         "type": "ET_EXEC"
       },
       "passed": true,
-      "pid": 110,
+      "pid": 2706,
       "same_emitter_sha256": "4b9e64792a1ebdc067a5c520311964f8f84ff1559c6593199f9251d362f9c0a3",
       "source_sha256": "9299ac0a7eb05cebab613b590fcd042b636eefaf4e94819c2b2de981985943a2",
-      "start_ns": 16452923452637,
+      "start_ns": 112817152419,
       "stderr_bytes": 0,
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "stdio_parent_descriptors": [
@@ -4277,8 +4277,8 @@
       "case": "empty-policy-refusal",
       "cleanup": null,
       "cleanup_limit_seconds": 3,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/empty-policy-refusal/native-pack",
-      "end_monotonic_ns": 16452926624725,
+      "cwd": "/home/runner/work/_temp/hia-reactor/empty-policy-refusal/native-pack",
+      "end_monotonic_ns": 112820238453,
       "environment": {
         "PATH": ""
       },
@@ -4291,7 +4291,7 @@
       "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "passed": true,
       "stage": "native-pack",
-      "start_monotonic_ns": 16452926257301,
+      "start_monotonic_ns": 112819946414,
       "stderr_hex": "",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "timed_out": false,
@@ -4304,8 +4304,8 @@
       "case": "oversize-policy-refusal",
       "cleanup": null,
       "cleanup_limit_seconds": 3,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/oversize-policy-refusal/native-pack",
-      "end_monotonic_ns": 16452931591081,
+      "cwd": "/home/runner/work/_temp/hia-reactor/oversize-policy-refusal/native-pack",
+      "end_monotonic_ns": 112823518800,
       "environment": {
         "PATH": ""
       },
@@ -4318,7 +4318,7 @@
       "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "passed": true,
       "stage": "native-pack",
-      "start_monotonic_ns": 16452930427297,
+      "start_monotonic_ns": 112822616051,
       "stderr_hex": "",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "timed_out": false,
@@ -4331,8 +4331,8 @@
       "case": "exact-native-repack",
       "cleanup": null,
       "cleanup_limit_seconds": 3,
-      "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/exact-native-repack/native-repack",
-      "end_monotonic_ns": 16452936126479,
+      "cwd": "/home/runner/work/_temp/hia-reactor/exact-native-repack/native-repack",
+      "end_monotonic_ns": 112828044371,
       "environment": {
         "PATH": ""
       },
@@ -4345,7 +4345,7 @@
       "output_sha256": "a6277ac254cd10556bc1639d2663e93f1a6ac0fbaa99a2547d7cceaea7044f7f",
       "passed": true,
       "stage": "native-repack",
-      "start_monotonic_ns": 16452935210883,
+      "start_monotonic_ns": 112826295709,
       "stderr_hex": "",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "timed_out": false,
@@ -4353,6 +4353,16 @@
     }
   ],
   "deadline_scope": "owned nonblocking FIFO or connected stream; kernel timeout, subject to OS scheduling",
+  "exact_head_ci": {
+    "artifact_bytes": 2265439,
+    "artifact_id": 14175470420,
+    "artifact_zip_sha256": "8a851c22165189224c00b00fea2fa7ee8279323ef6de26d56712dc0a96d9fb03",
+    "job_id": 132912920213,
+    "later_fifth_batch_sources_qualified_by_this_run": false,
+    "source_commit": "96a0846e383745f88e033c7db2abc0611f1dae63",
+    "source_tree": "b58fd5b8cf1e8d49b4901cf1806ca11096063d05",
+    "workflow_run": 43746877132
+  },
   "full_node_io_gate": "OPEN",
   "hard_realtime_guarantee": false,
   "hosted_cleanup_and_native_contract_unittest": {
@@ -4395,8 +4405,8 @@
             ],
             "cleanup": null,
             "cleanup_limit_seconds": 3,
-            "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/policy-contracts/start-refusal-does-not-adopt/call-1",
-            "end_monotonic_ns": 16452942185523,
+            "cwd": "/home/runner/work/_temp/hia-reactor/policy-contracts/start-refusal-does-not-adopt/call-1",
+            "end_monotonic_ns": 112875806720,
             "environment": {
               "PATH": ""
             },
@@ -4408,7 +4418,7 @@
             "output_bytes": 70664,
             "output_sha256": "0fc5dfa9424b58864c9667d99379386166aecb649b7848013aefc1bd739426cd",
             "stage": "call-1",
-            "start_monotonic_ns": 16452939947098,
+            "start_monotonic_ns": 112872442898,
             "stderr_hex": "",
             "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
             "timed_out": false,
@@ -4420,8 +4430,8 @@
             ],
             "cleanup": null,
             "cleanup_limit_seconds": 3,
-            "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/policy-contracts/start-refusal-does-not-adopt/call-2",
-            "end_monotonic_ns": 16452945462598,
+            "cwd": "/home/runner/work/_temp/hia-reactor/policy-contracts/start-refusal-does-not-adopt/call-2",
+            "end_monotonic_ns": 112879648832,
             "environment": {
               "PATH": ""
             },
@@ -4433,7 +4443,7 @@
             "output_bytes": 70664,
             "output_sha256": "ec77b2ef4c260c46b565ffdb3b32d3f202fad23d6f74e7c66d7d959b58ebe14e",
             "stage": "call-2",
-            "start_monotonic_ns": 16452943149521,
+            "start_monotonic_ns": 112876462487,
             "stderr_hex": "",
             "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
             "timed_out": false,
@@ -4454,8 +4464,8 @@
             ],
             "cleanup": null,
             "cleanup_limit_seconds": 3,
-            "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/policy-contracts/submit-refusal-retains-owned-context/call-1",
-            "end_monotonic_ns": 16452949049571,
+            "cwd": "/home/runner/work/_temp/hia-reactor/policy-contracts/submit-refusal-retains-owned-context/call-1",
+            "end_monotonic_ns": 112883691687,
             "environment": {
               "PATH": ""
             },
@@ -4467,7 +4477,7 @@
             "output_bytes": 70664,
             "output_sha256": "aa00bf50b974894089793860b9249cfbdf76dda9ad44948bcf28aa29202e2c55",
             "stage": "call-1",
-            "start_monotonic_ns": 16452946613162,
+            "start_monotonic_ns": 112880518862,
             "stderr_hex": "",
             "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
             "timed_out": false,
@@ -4479,8 +4489,8 @@
             ],
             "cleanup": null,
             "cleanup_limit_seconds": 3,
-            "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/policy-contracts/submit-refusal-retains-owned-context/call-2",
-            "end_monotonic_ns": 16452953466523,
+            "cwd": "/home/runner/work/_temp/hia-reactor/policy-contracts/submit-refusal-retains-owned-context/call-2",
+            "end_monotonic_ns": 112887468511,
             "environment": {
               "PATH": ""
             },
@@ -4492,7 +4502,7 @@
             "output_bytes": 70664,
             "output_sha256": "c9a4700dfe037e70eb459d67498e08849dab409d7ea254361a2a6439237c278b",
             "stage": "call-2",
-            "start_monotonic_ns": 16452950075380,
+            "start_monotonic_ns": 112884281524,
             "stderr_hex": "",
             "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
             "timed_out": false,
@@ -4504,8 +4514,8 @@
             ],
             "cleanup": null,
             "cleanup_limit_seconds": 3,
-            "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/policy-contracts/submit-refusal-retains-owned-context/call-3",
-            "end_monotonic_ns": 16452957107456,
+            "cwd": "/home/runner/work/_temp/hia-reactor/policy-contracts/submit-refusal-retains-owned-context/call-3",
+            "end_monotonic_ns": 112891225975,
             "environment": {
               "PATH": ""
             },
@@ -4517,7 +4527,7 @@
             "output_bytes": 70664,
             "output_sha256": "6fdca8a41780d0d02146f407e6b58d921addf6779c50ca2db4a7fa408a89e04e",
             "stage": "call-3",
-            "start_monotonic_ns": 16452954803564,
+            "start_monotonic_ns": 112888056425,
             "stderr_hex": "",
             "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
             "timed_out": false,
@@ -4529,8 +4539,8 @@
             ],
             "cleanup": null,
             "cleanup_limit_seconds": 3,
-            "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/policy-contracts/submit-refusal-retains-owned-context/call-4",
-            "end_monotonic_ns": 16452960607741,
+            "cwd": "/home/runner/work/_temp/hia-reactor/policy-contracts/submit-refusal-retains-owned-context/call-4",
+            "end_monotonic_ns": 112894931722,
             "environment": {
               "PATH": ""
             },
@@ -4542,7 +4552,7 @@
             "output_bytes": 70664,
             "output_sha256": "aa00bf50b974894089793860b9249cfbdf76dda9ad44948bcf28aa29202e2c55",
             "stage": "call-4",
-            "start_monotonic_ns": 16452958208587,
+            "start_monotonic_ns": 112891787350,
             "stderr_hex": "",
             "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
             "timed_out": false,
@@ -4563,8 +4573,8 @@
             ],
             "cleanup": null,
             "cleanup_limit_seconds": 3,
-            "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/policy-contracts/phase-refusal-is-not-closed/call-1",
-            "end_monotonic_ns": 16452966218963,
+            "cwd": "/home/runner/work/_temp/hia-reactor/policy-contracts/phase-refusal-is-not-closed/call-1",
+            "end_monotonic_ns": 112898904241,
             "environment": {
               "PATH": ""
             },
@@ -4576,7 +4586,7 @@
             "output_bytes": 70664,
             "output_sha256": "ffdce7e9b2159c39e361881f8943e4989d40fc946b0eaa009882431186d83815",
             "stage": "call-1",
-            "start_monotonic_ns": 16452962407387,
+            "start_monotonic_ns": 112895755112,
             "stderr_hex": "",
             "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
             "timed_out": false,
@@ -4588,8 +4598,8 @@
             ],
             "cleanup": null,
             "cleanup_limit_seconds": 3,
-            "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/policy-contracts/phase-refusal-is-not-closed/call-2",
-            "end_monotonic_ns": 16452969941206,
+            "cwd": "/home/runner/work/_temp/hia-reactor/policy-contracts/phase-refusal-is-not-closed/call-2",
+            "end_monotonic_ns": 112902617759,
             "environment": {
               "PATH": ""
             },
@@ -4601,7 +4611,7 @@
             "output_bytes": 70664,
             "output_sha256": "96dcdb183865ad0ccdc17f0a01af52efbefb10c2806aef48efdcdd4a5b367ff6",
             "stage": "call-2",
-            "start_monotonic_ns": 16452967435885,
+            "start_monotonic_ns": 112899472666,
             "stderr_hex": "",
             "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
             "timed_out": false,
@@ -4622,8 +4632,8 @@
             ],
             "cleanup": null,
             "cleanup_limit_seconds": 3,
-            "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/policy-contracts/active-close-refusal-is-not-closed/call-1",
-            "end_monotonic_ns": 16452974081989,
+            "cwd": "/home/runner/work/_temp/hia-reactor/policy-contracts/active-close-refusal-is-not-closed/call-1",
+            "end_monotonic_ns": 112906560733,
             "environment": {
               "PATH": ""
             },
@@ -4635,7 +4645,7 @@
             "output_bytes": 70664,
             "output_sha256": "67bac913d0d43831ac02d318bda8f86b47fb7b00a37359f7b8a387e87961b76e",
             "stage": "call-1",
-            "start_monotonic_ns": 16452971756064,
+            "start_monotonic_ns": 112903424033,
             "stderr_hex": "",
             "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
             "timed_out": false,
@@ -4656,8 +4666,8 @@
             ],
             "cleanup": null,
             "cleanup_limit_seconds": 3,
-            "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/policy-contracts/clock-failure-preserves-positive-write-and-close/call-1",
-            "end_monotonic_ns": 16452977688171,
+            "cwd": "/home/runner/work/_temp/hia-reactor/policy-contracts/clock-failure-preserves-positive-write-and-close/call-1",
+            "end_monotonic_ns": 112910513782,
             "environment": {
               "PATH": ""
             },
@@ -4669,7 +4679,7 @@
             "output_bytes": 70664,
             "output_sha256": "938fa82ffccbe35d98fc129e3eb74cf81e85e2e43c22b00ab93028a8d1498f04",
             "stage": "call-1",
-            "start_monotonic_ns": 16452975142901,
+            "start_monotonic_ns": 112907357743,
             "stderr_hex": "",
             "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
             "timed_out": false,
@@ -4681,8 +4691,8 @@
             ],
             "cleanup": null,
             "cleanup_limit_seconds": 3,
-            "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/policy-contracts/clock-failure-preserves-positive-write-and-close/call-2",
-            "end_monotonic_ns": 16452980927439,
+            "cwd": "/home/runner/work/_temp/hia-reactor/policy-contracts/clock-failure-preserves-positive-write-and-close/call-2",
+            "end_monotonic_ns": 112914252719,
             "environment": {
               "PATH": ""
             },
@@ -4694,7 +4704,7 @@
             "output_bytes": 70664,
             "output_sha256": "4a256d99134abd8a82970ffa6a10066fdd909c27a49cf6c31cb21da472e7ea39",
             "stage": "call-2",
-            "start_monotonic_ns": 16452978670566,
+            "start_monotonic_ns": 112911095848,
             "stderr_hex": "",
             "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
             "timed_out": false,
@@ -4706,8 +4716,8 @@
             ],
             "cleanup": null,
             "cleanup_limit_seconds": 3,
-            "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/policy-contracts/clock-failure-preserves-positive-write-and-close/call-3",
-            "end_monotonic_ns": 16452985309500,
+            "cwd": "/home/runner/work/_temp/hia-reactor/policy-contracts/clock-failure-preserves-positive-write-and-close/call-3",
+            "end_monotonic_ns": 112917976283,
             "environment": {
               "PATH": ""
             },
@@ -4719,7 +4729,7 @@
             "output_bytes": 70664,
             "output_sha256": "18f7c6fa72faa27fd8554888dba55ddc3711301d0adee154ba42534ddb641679",
             "stage": "call-3",
-            "start_monotonic_ns": 16452981850396,
+            "start_monotonic_ns": 112914820153,
             "stderr_hex": "",
             "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
             "timed_out": false,
@@ -4731,8 +4741,8 @@
             ],
             "cleanup": null,
             "cleanup_limit_seconds": 3,
-            "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/policy-contracts/clock-failure-preserves-positive-write-and-close/call-4",
-            "end_monotonic_ns": 16452988564572,
+            "cwd": "/home/runner/work/_temp/hia-reactor/policy-contracts/clock-failure-preserves-positive-write-and-close/call-4",
+            "end_monotonic_ns": 112921717574,
             "environment": {
               "PATH": ""
             },
@@ -4744,7 +4754,7 @@
             "output_bytes": 70664,
             "output_sha256": "18f7c6fa72faa27fd8554888dba55ddc3711301d0adee154ba42534ddb641679",
             "stage": "call-4",
-            "start_monotonic_ns": 16452986157196,
+            "start_monotonic_ns": 112918555825,
             "stderr_hex": "",
             "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
             "timed_out": false,
@@ -4765,8 +4775,8 @@
             ],
             "cleanup": null,
             "cleanup_limit_seconds": 3,
-            "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/policy-contracts/clock-failure-retains-created-epoll/call-1",
-            "end_monotonic_ns": 16452992420233,
+            "cwd": "/home/runner/work/_temp/hia-reactor/policy-contracts/clock-failure-retains-created-epoll/call-1",
+            "end_monotonic_ns": 112925858796,
             "environment": {
               "PATH": ""
             },
@@ -4778,7 +4788,7 @@
             "output_bytes": 70664,
             "output_sha256": "8fb4fc3b4a3aac557c24413b4b1109f64770056e2a777d710ee5df354a64d8d1",
             "stage": "call-1",
-            "start_monotonic_ns": 16452990028660,
+            "start_monotonic_ns": 112922691009,
             "stderr_hex": "",
             "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
             "timed_out": false,
@@ -4790,8 +4800,8 @@
             ],
             "cleanup": null,
             "cleanup_limit_seconds": 3,
-            "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/policy-contracts/clock-failure-retains-created-epoll/call-2",
-            "end_monotonic_ns": 16452995805217,
+            "cwd": "/home/runner/work/_temp/hia-reactor/policy-contracts/clock-failure-retains-created-epoll/call-2",
+            "end_monotonic_ns": 112929749942,
             "environment": {
               "PATH": ""
             },
@@ -4803,7 +4813,7 @@
             "output_bytes": 70664,
             "output_sha256": "b26a1d8cc2aad82721b2bd4bc886aa403ec60d140aa7c6732ce009c198dc72d7",
             "stage": "call-2",
-            "start_monotonic_ns": 16452993593891,
+            "start_monotonic_ns": 112926489665,
             "stderr_hex": "",
             "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
             "timed_out": false,
@@ -4815,8 +4825,8 @@
             ],
             "cleanup": null,
             "cleanup_limit_seconds": 3,
-            "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/policy-contracts/clock-failure-retains-created-epoll/call-3",
-            "end_monotonic_ns": 16452999037444,
+            "cwd": "/home/runner/work/_temp/hia-reactor/policy-contracts/clock-failure-retains-created-epoll/call-3",
+            "end_monotonic_ns": 112933561448,
             "environment": {
               "PATH": ""
             },
@@ -4828,7 +4838,7 @@
             "output_bytes": 70664,
             "output_sha256": "15be642e8bdb7d0ba318d4c47c64b23e9d783fb0df0364c071175a3d4fda7c4b",
             "stage": "call-3",
-            "start_monotonic_ns": 16452996777687,
+            "start_monotonic_ns": 112930352439,
             "stderr_hex": "",
             "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
             "timed_out": false,
@@ -4840,8 +4850,8 @@
             ],
             "cleanup": null,
             "cleanup_limit_seconds": 3,
-            "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/policy-contracts/clock-failure-retains-created-epoll/call-4",
-            "end_monotonic_ns": 16453002289992,
+            "cwd": "/home/runner/work/_temp/hia-reactor/policy-contracts/clock-failure-retains-created-epoll/call-4",
+            "end_monotonic_ns": 112937371232,
             "environment": {
               "PATH": ""
             },
@@ -4853,7 +4863,7 @@
             "output_bytes": 70664,
             "output_sha256": "15be642e8bdb7d0ba318d4c47c64b23e9d783fb0df0364c071175a3d4fda7c4b",
             "stage": "call-4",
-            "start_monotonic_ns": 16452999991738,
+            "start_monotonic_ns": 112934177525,
             "stderr_hex": "",
             "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
             "timed_out": false,
@@ -4874,8 +4884,8 @@
             ],
             "cleanup": null,
             "cleanup_limit_seconds": 3,
-            "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/policy-contracts/clock-failure-detaches-successful-registration/call-1",
-            "end_monotonic_ns": 16453006022631,
+            "cwd": "/home/runner/work/_temp/hia-reactor/policy-contracts/clock-failure-detaches-successful-registration/call-1",
+            "end_monotonic_ns": 112941434737,
             "environment": {
               "PATH": ""
             },
@@ -4887,7 +4897,7 @@
             "output_bytes": 70664,
             "output_sha256": "4b7b4c88d8fb950e184af7a8b780c4bb8a3ad2f49c34d7cf0175a235372ca726",
             "stage": "call-1",
-            "start_monotonic_ns": 16453003731678,
+            "start_monotonic_ns": 112938256564,
             "stderr_hex": "",
             "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
             "timed_out": false,
@@ -4899,8 +4909,8 @@
             ],
             "cleanup": null,
             "cleanup_limit_seconds": 3,
-            "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/policy-contracts/clock-failure-detaches-successful-registration/call-2",
-            "end_monotonic_ns": 16453010570327,
+            "cwd": "/home/runner/work/_temp/hia-reactor/policy-contracts/clock-failure-detaches-successful-registration/call-2",
+            "end_monotonic_ns": 112945188907,
             "environment": {
               "PATH": ""
             },
@@ -4912,7 +4922,7 @@
             "output_bytes": 70664,
             "output_sha256": "aebb856a264596254e8521b7b6b98c802281b44c3fb272bba977d5273f2f5b4a",
             "stage": "call-2",
-            "start_monotonic_ns": 16453007148349,
+            "start_monotonic_ns": 112941993327,
             "stderr_hex": "",
             "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
             "timed_out": false,
@@ -4924,8 +4934,8 @@
             ],
             "cleanup": null,
             "cleanup_limit_seconds": 3,
-            "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/policy-contracts/clock-failure-detaches-successful-registration/call-3",
-            "end_monotonic_ns": 16453014774995,
+            "cwd": "/home/runner/work/_temp/hia-reactor/policy-contracts/clock-failure-detaches-successful-registration/call-3",
+            "end_monotonic_ns": 112948897207,
             "environment": {
               "PATH": ""
             },
@@ -4937,7 +4947,7 @@
             "output_bytes": 70664,
             "output_sha256": "4a0fc33ba89747f070750f2d2e5b339eac7fe61a354037efd122cf50d4974896",
             "stage": "call-3",
-            "start_monotonic_ns": 16453011494406,
+            "start_monotonic_ns": 112945733126,
             "stderr_hex": "",
             "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
             "timed_out": false,
@@ -4949,8 +4959,8 @@
             ],
             "cleanup": null,
             "cleanup_limit_seconds": 3,
-            "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/policy-contracts/clock-failure-detaches-successful-registration/call-4",
-            "end_monotonic_ns": 16453018342530,
+            "cwd": "/home/runner/work/_temp/hia-reactor/policy-contracts/clock-failure-detaches-successful-registration/call-4",
+            "end_monotonic_ns": 112952616595,
             "environment": {
               "PATH": ""
             },
@@ -4962,7 +4972,7 @@
             "output_bytes": 70664,
             "output_sha256": "3d1d22c873959872f457d73e621170f6c03007b1484ec792783fbd6a804538be",
             "stage": "call-4",
-            "start_monotonic_ns": 16453015742799,
+            "start_monotonic_ns": 112949456219,
             "stderr_hex": "",
             "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
             "timed_out": false,
@@ -4974,8 +4984,8 @@
             ],
             "cleanup": null,
             "cleanup_limit_seconds": 3,
-            "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/policy-contracts/clock-failure-detaches-successful-registration/call-5",
-            "end_monotonic_ns": 16453021610330,
+            "cwd": "/home/runner/work/_temp/hia-reactor/policy-contracts/clock-failure-detaches-successful-registration/call-5",
+            "end_monotonic_ns": 112956339578,
             "environment": {
               "PATH": ""
             },
@@ -4987,7 +4997,7 @@
             "output_bytes": 70664,
             "output_sha256": "79a2f007d3f8e5dc49ae2dd6de74ebd32afbad9cb047f95fd49c2d82ac27d29d",
             "stage": "call-5",
-            "start_monotonic_ns": 16453019259208,
+            "start_monotonic_ns": 112953199893,
             "stderr_hex": "",
             "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
             "timed_out": false,
@@ -4999,8 +5009,8 @@
             ],
             "cleanup": null,
             "cleanup_limit_seconds": 3,
-            "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/policy-contracts/clock-failure-detaches-successful-registration/call-6",
-            "end_monotonic_ns": 16453024837891,
+            "cwd": "/home/runner/work/_temp/hia-reactor/policy-contracts/clock-failure-detaches-successful-registration/call-6",
+            "end_monotonic_ns": 112960035330,
             "environment": {
               "PATH": ""
             },
@@ -5012,7 +5022,7 @@
             "output_bytes": 70664,
             "output_sha256": "6216f57ea1a8dbc5fb4d0368e57960de5560cd9704233315a831212430e69f0b",
             "stage": "call-6",
-            "start_monotonic_ns": 16453022481411,
+            "start_monotonic_ns": 112956895394,
             "stderr_hex": "",
             "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
             "timed_out": false,
@@ -5024,8 +5034,8 @@
             ],
             "cleanup": null,
             "cleanup_limit_seconds": 3,
-            "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/policy-contracts/clock-failure-detaches-successful-registration/call-7",
-            "end_monotonic_ns": 16453028667864,
+            "cwd": "/home/runner/work/_temp/hia-reactor/policy-contracts/clock-failure-detaches-successful-registration/call-7",
+            "end_monotonic_ns": 112963727046,
             "environment": {
               "PATH": ""
             },
@@ -5037,7 +5047,7 @@
             "output_bytes": 70664,
             "output_sha256": "6216f57ea1a8dbc5fb4d0368e57960de5560cd9704233315a831212430e69f0b",
             "stage": "call-7",
-            "start_monotonic_ns": 16453025974464,
+            "start_monotonic_ns": 112960588813,
             "stderr_hex": "",
             "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
             "timed_out": false,
@@ -5058,8 +5068,8 @@
             ],
             "cleanup": null,
             "cleanup_limit_seconds": 3,
-            "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/policy-contracts/clock-failure-does-not-repeat-successful-detach/call-1",
-            "end_monotonic_ns": 16453032289338,
+            "cwd": "/home/runner/work/_temp/hia-reactor/policy-contracts/clock-failure-does-not-repeat-successful-detach/call-1",
+            "end_monotonic_ns": 112967772634,
             "environment": {
               "PATH": ""
             },
@@ -5071,7 +5081,7 @@
             "output_bytes": 70664,
             "output_sha256": "367e856ec4dc33ef157574db3ebd58a5f8d93a5be1b25ed6b3424304f7b5893d",
             "stage": "call-1",
-            "start_monotonic_ns": 16453029965837,
+            "start_monotonic_ns": 112964607921,
             "stderr_hex": "",
             "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
             "timed_out": false,
@@ -5092,8 +5102,8 @@
             ],
             "cleanup": null,
             "cleanup_limit_seconds": 3,
-            "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/policy-contracts/failed-detach-forbids-submit/call-1",
-            "end_monotonic_ns": 16453035848030,
+            "cwd": "/home/runner/work/_temp/hia-reactor/policy-contracts/failed-detach-forbids-submit/call-1",
+            "end_monotonic_ns": 112971781507,
             "environment": {
               "PATH": ""
             },
@@ -5105,7 +5115,7 @@
             "output_bytes": 70664,
             "output_sha256": "4006916cfbd3861fa860297e9f19edd2f389677f1bf0dcac6e15dc7cf08d4e59",
             "stage": "call-1",
-            "start_monotonic_ns": 16453033517057,
+            "start_monotonic_ns": 112968600951,
             "stderr_hex": "",
             "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
             "timed_out": false,
@@ -5117,8 +5127,8 @@
             ],
             "cleanup": null,
             "cleanup_limit_seconds": 3,
-            "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/policy-contracts/failed-detach-forbids-submit/call-2",
-            "end_monotonic_ns": 16453039772112,
+            "cwd": "/home/runner/work/_temp/hia-reactor/policy-contracts/failed-detach-forbids-submit/call-2",
+            "end_monotonic_ns": 112975507535,
             "environment": {
               "PATH": ""
             },
@@ -5130,7 +5140,7 @@
             "output_bytes": 70664,
             "output_sha256": "b35639b80a42fd10a949726febf46ae876363658c41734961878dab17a534e03",
             "stage": "call-2",
-            "start_monotonic_ns": 16453037063039,
+            "start_monotonic_ns": 112972363172,
             "stderr_hex": "",
             "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
             "timed_out": false,
@@ -5142,8 +5152,8 @@
             ],
             "cleanup": null,
             "cleanup_limit_seconds": 3,
-            "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/policy-contracts/failed-detach-forbids-submit/call-3",
-            "end_monotonic_ns": 16453043031891,
+            "cwd": "/home/runner/work/_temp/hia-reactor/policy-contracts/failed-detach-forbids-submit/call-3",
+            "end_monotonic_ns": 112979215325,
             "environment": {
               "PATH": ""
             },
@@ -5155,7 +5165,7 @@
             "output_bytes": 70664,
             "output_sha256": "c83d96d55d9e8fb66b479eebb920ccad99f61e143e61e075e214c3a4be1f2b00",
             "stage": "call-3",
-            "start_monotonic_ns": 16453040678234,
+            "start_monotonic_ns": 112976074868,
             "stderr_hex": "",
             "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
             "timed_out": false,
@@ -5167,8 +5177,8 @@
             ],
             "cleanup": null,
             "cleanup_limit_seconds": 3,
-            "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/policy-contracts/failed-detach-forbids-submit/call-4",
-            "end_monotonic_ns": 16453046683810,
+            "cwd": "/home/runner/work/_temp/hia-reactor/policy-contracts/failed-detach-forbids-submit/call-4",
+            "end_monotonic_ns": 112982990977,
             "environment": {
               "PATH": ""
             },
@@ -5180,7 +5190,7 @@
             "output_bytes": 70664,
             "output_sha256": "23af22bcf304cfeecd91751fbd6e68c943549970979bea9b7305b4f7c13f4666",
             "stage": "call-4",
-            "start_monotonic_ns": 16453043953816,
+            "start_monotonic_ns": 112979810240,
             "stderr_hex": "",
             "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
             "timed_out": false,
@@ -5192,8 +5202,8 @@
             ],
             "cleanup": null,
             "cleanup_limit_seconds": 3,
-            "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/policy-contracts/failed-detach-forbids-submit/call-5",
-            "end_monotonic_ns": 16453049862568,
+            "cwd": "/home/runner/work/_temp/hia-reactor/policy-contracts/failed-detach-forbids-submit/call-5",
+            "end_monotonic_ns": 112986770825,
             "environment": {
               "PATH": ""
             },
@@ -5205,7 +5215,7 @@
             "output_bytes": 70664,
             "output_sha256": "91924465e667503487043731e5617706b48f4c1dec0a415169e999a50517f55c",
             "stage": "call-5",
-            "start_monotonic_ns": 16453047564294,
+            "start_monotonic_ns": 112983599302,
             "stderr_hex": "",
             "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
             "timed_out": false,
@@ -5217,8 +5227,8 @@
             ],
             "cleanup": null,
             "cleanup_limit_seconds": 3,
-            "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/policy-contracts/failed-detach-forbids-submit/call-6",
-            "end_monotonic_ns": 16453054309896,
+            "cwd": "/home/runner/work/_temp/hia-reactor/policy-contracts/failed-detach-forbids-submit/call-6",
+            "end_monotonic_ns": 112990662322,
             "environment": {
               "PATH": ""
             },
@@ -5230,7 +5240,7 @@
             "output_bytes": 70664,
             "output_sha256": "91924465e667503487043731e5617706b48f4c1dec0a415169e999a50517f55c",
             "stage": "call-6",
-            "start_monotonic_ns": 16453050948277,
+            "start_monotonic_ns": 112987384128,
             "stderr_hex": "",
             "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
             "timed_out": false,
@@ -5251,8 +5261,8 @@
             ],
             "cleanup": null,
             "cleanup_limit_seconds": 3,
-            "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/policy-contracts/close-eintr-recorded-without-retry/call-1",
-            "end_monotonic_ns": 16453058142292,
+            "cwd": "/home/runner/work/_temp/hia-reactor/policy-contracts/close-eintr-recorded-without-retry/call-1",
+            "end_monotonic_ns": 112994725667,
             "environment": {
               "PATH": ""
             },
@@ -5264,7 +5274,7 @@
             "output_bytes": 70664,
             "output_sha256": "f173c98cc8b336198e2e2b6719eb174f9675241bfb3b2445c13333157c1e1415",
             "stage": "call-1",
-            "start_monotonic_ns": 16453055658694,
+            "start_monotonic_ns": 112991573333,
             "stderr_hex": "",
             "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
             "timed_out": false,
@@ -5276,8 +5286,8 @@
             ],
             "cleanup": null,
             "cleanup_limit_seconds": 3,
-            "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/policy-contracts/close-eintr-recorded-without-retry/call-2",
-            "end_monotonic_ns": 16453061593094,
+            "cwd": "/home/runner/work/_temp/hia-reactor/policy-contracts/close-eintr-recorded-without-retry/call-2",
+            "end_monotonic_ns": 112998512726,
             "environment": {
               "PATH": ""
             },
@@ -5289,7 +5299,7 @@
             "output_bytes": 70664,
             "output_sha256": "a43afc180a6c0e5e774dbc780563082dd7762d8266ddc723c9273ec2795671c0",
             "stage": "call-2",
-            "start_monotonic_ns": 16453059173129,
+            "start_monotonic_ns": 112995344879,
             "stderr_hex": "",
             "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
             "timed_out": false,
@@ -5301,8 +5311,8 @@
             ],
             "cleanup": null,
             "cleanup_limit_seconds": 3,
-            "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/policy-contracts/close-eintr-recorded-without-retry/call-3",
-            "end_monotonic_ns": 16453064686776,
+            "cwd": "/home/runner/work/_temp/hia-reactor/policy-contracts/close-eintr-recorded-without-retry/call-3",
+            "end_monotonic_ns": 113002278503,
             "environment": {
               "PATH": ""
             },
@@ -5314,7 +5324,7 @@
             "output_bytes": 70664,
             "output_sha256": "a43afc180a6c0e5e774dbc780563082dd7762d8266ddc723c9273ec2795671c0",
             "stage": "call-3",
-            "start_monotonic_ns": 16453062446418,
+            "start_monotonic_ns": 112999125578,
             "stderr_hex": "",
             "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
             "timed_out": false,
@@ -5335,8 +5345,8 @@
             ],
             "cleanup": null,
             "cleanup_limit_seconds": 3,
-            "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/policy-contracts/terminal-tick-has-no-effects/call-1",
-            "end_monotonic_ns": 16453070094376,
+            "cwd": "/home/runner/work/_temp/hia-reactor/policy-contracts/terminal-tick-has-no-effects/call-1",
+            "end_monotonic_ns": 113006425244,
             "environment": {
               "PATH": ""
             },
@@ -5348,7 +5358,7 @@
             "output_bytes": 70664,
             "output_sha256": "dcd1ad2ca744488c29554bacb0381df3432b49d3a70bd9f446bb3e63508154d6",
             "stage": "call-1",
-            "start_monotonic_ns": 16453065967954,
+            "start_monotonic_ns": 113003152078,
             "stderr_hex": "",
             "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
             "timed_out": false,
@@ -5369,8 +5379,8 @@
             ],
             "cleanup": null,
             "cleanup_limit_seconds": 3,
-            "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/policy-contracts/clock-regression-preserves-positive-read/call-1",
-            "end_monotonic_ns": 16453073956978,
+            "cwd": "/home/runner/work/_temp/hia-reactor/policy-contracts/clock-regression-preserves-positive-read/call-1",
+            "end_monotonic_ns": 113010489671,
             "environment": {
               "PATH": ""
             },
@@ -5382,7 +5392,7 @@
             "output_bytes": 70664,
             "output_sha256": "ed751d94b228895620de698ede31ac991c58dc7301be4acfdd9bad69a8c801b9",
             "stage": "call-1",
-            "start_monotonic_ns": 16453071270288,
+            "start_monotonic_ns": 113007299900,
             "stderr_hex": "",
             "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
             "timed_out": false,
@@ -5403,8 +5413,8 @@
             ],
             "cleanup": null,
             "cleanup_limit_seconds": 3,
-            "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/policy-contracts/clock-failure-preserves-consumed-cancel/call-1",
-            "end_monotonic_ns": 16453078665843,
+            "cwd": "/home/runner/work/_temp/hia-reactor/policy-contracts/clock-failure-preserves-consumed-cancel/call-1",
+            "end_monotonic_ns": 113014524403,
             "environment": {
               "PATH": ""
             },
@@ -5416,7 +5426,7 @@
             "output_bytes": 70664,
             "output_sha256": "e8ecfc306391432468da419ce4f427ed97195c5b3b0fe70acf447bad0f7d50f4",
             "stage": "call-1",
-            "start_monotonic_ns": 16453075168052,
+            "start_monotonic_ns": 113011342584,
             "stderr_hex": "",
             "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
             "timed_out": false,
@@ -5437,14 +5447,16 @@
   },
   "passed_control_count": 49,
   "prior_blocking_probe_failure": "../qualification/development-observations.json (separate source/ELF identity; retained FAIL)",
+  "prior_local_report_sha256": "a821229b15e540b2a1e4b541c1799f4a43ebff4c82e50731504e210d2a719907",
   "qualification_scope": "one private stream owner/context, actual nonblocking I/O, finite cancellation/deadline and adapter guards",
   "raw_current_qualification_report": {
-    "bytes": 190770,
-    "sha256": "caa04cfee45f7d5afd41ef70104c655eb9dab3223c4238fa230ec9772cd94e33",
-    "source": "fresh local qualify_platform.py --reactor run, before historical-observation attachment"
+    "bytes": 187858,
+    "sha256": "4164f37765396a4e5767e573ebe7a70fa24c7813c8e64a5c24c2bc8f7e35220d",
+    "source": "GitHub Actions artifact 14175470420 hia-reactor/report.json"
   },
   "regular_file_fsync_deadlines": "OPEN",
   "required_control_count": 49,
+  "retained_local_unittest_scope": "The eleven hosted cleanup/native-contract unittest methods retain their earlier local source identity; current 96a0846 CI separately ran the shared test suite and all 49 OS plus 13 native contracts.",
   "retained_prior_observations": [
     {
       "executable": {
@@ -5795,7 +5807,7 @@
       "-f",
       "-qq",
       "-o",
-      "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/syscall-trace/trace.raw",
+      "/home/runner/work/_temp/hia-reactor/syscall-trace/trace.raw",
       "/proc/self/fd/3",
       "0",
       "8",
@@ -5805,23 +5817,22 @@
     "cleanup": null,
     "cleanup_limit_seconds": 3,
     "counted_as_required_control_pass": false,
-    "cwd": "/workspace/scratch/dfc64d0acfc2/hia-reactor-qualified/syscall-trace",
-    "elapsed_ns": 5827481,
+    "cwd": "/home/runner/work/_temp/hia-reactor/syscall-trace",
+    "elapsed_ns": 5646007,
     "environment": {
       "PATH": ""
     },
     "executable_sha256": "a6277ac254cd10556bc1639d2663e93f1a6ac0fbaa99a2547d7cceaea7044f7f",
-    "exit_code": 1,
+    "exit_code": 0,
     "instrumentation": "strace ptrace",
-    "instrumentation_attempt": "FAILED",
-    "reason": "PTRACE_EPERM",
-    "status": "UNKNOWN",
-    "stderr_hex": "2f7573722f62696e2f7374726163653a20746573745f7074726163655f6765745f73797363616c6c5f696e666f3a205054524143455f54524143454d453a204f7065726174696f6e206e6f74207065726d69747465640a2f7573722f62696e2f7374726163653a20707472616365285054524143455f54524143454d452c202e2e2e293a204f7065726174696f6e206e6f74207065726d69747465640a2f7573722f62696e2f7374726163653a205054524143455f5345544f5054494f4e533a204f7065726174696f6e206e6f74207065726d69747465640a2f7573722f62696e2f7374726163653a20636c65616e75703a2077616974706964282d312c205f5f57414c4c293a204e6f206368696c642070726f6365737365730a",
-    "stdout_hex": "",
+    "reason": "raw trace retained; semantic ISA audit separate",
+    "status": "CAPTURED",
+    "stderr_hex": "484941494f30303100000000000000000800000000000000080000000000000008000000000000002cbb6e501a0000002cad747a1b00000001707e501a0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000300000000000000010000000000000002000000000000000200000001000000100000000000000008000000000000000a00000000000000",
+    "stdout_hex": "48494170726f6265",
     "timed_out": false,
-    "trace_bytes": 0,
-    "trace_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "tracer_sha256": "69f88291a4e47f258b8e32b089c919a247509f063ef3d6afe5389939051102b3",
+    "trace_bytes": 2564,
+    "trace_sha256": "37cba460591295acb842d07cf9b98895935bffac656e0dbacc069c3a2a89fb51",
+    "tracer_sha256": "28f957c227012de0b18d1bd7fff2d396cb693ea60ed8013be68de071e84b5001",
     "wall_limit_seconds": 8
   },
   "unqualified_requirements": [

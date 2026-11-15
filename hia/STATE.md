@@ -139,3 +139,14 @@ the compiler and its admission limit were left unchanged. Grouping the same
 arithmetic into explicit HIA helpers produced the same observed root in
 5.236884767 seconds for the same 1,024-row input. These are local development
 observations, not a controlled service benchmark or full-node qualification.
+
+Exact candidate `96a0846e383745f88e033c7db2abc0611f1dae63` subsequently passed
+[CI run 43746877132](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43746877132),
+including the original Rust root comparison and 86 separate raw ABI calls. The
+65,536-row result was `9bff66af0bc7e68256303b4e7941e0950372b8f394caeca15c9a302526bc8f8c`
+in 299.705821145 seconds, with 4,351,328 scratch bytes. The immediately preceding
+one-byte-short scratch call returned 100 without publishing a root. This CI and
+the earlier local maximum-count run retain distinct source/driver bindings in
+[the development report](qualification/state-root-development.json). The
+[typed Value codec](STATE_VALUE.md) is a separate later component; neither
+its finite constructor profile nor this byte root closes full-State admission.

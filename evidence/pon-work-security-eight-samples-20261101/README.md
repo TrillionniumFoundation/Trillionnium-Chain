@@ -17,7 +17,7 @@
 | Merge base | `0e9eac5d2a8cdb0a6f0cc7920f84e290e0d5d0d0` | 由保存的 source/API 记录定位 | merge 身份的父关系 |
 | CI guard 后续代码 head | `9cd91ed69a0c69df42f8d7812d32d271df6e1998` | `60a521c7299febfe26a8c7d38d3420d490d07cd8` | 三文件 workflow/corpus/plan 修补；不能替代新的执行收据 |
 
-主 run 的 source-before/after 均确认 6,856 tracked entries、792,504,967 bytes，前后无源码变化。独立成本复核同时核对原 archive/成员、manifest、保留 ELF、编译器、target 与全部整数分母：x64 ELF machine 为 62，ARM64 为 183；所有 measured/retained before/after binary pins 匹配实际文件。完整明细见 [hosted 成本复核](hosted-cost/hosted-cost-analysis.md)及其 [JSON](hosted-cost/hosted-cost-analysis.json)。
+主 run 的 source-before/after 均确认 6,856 tracked entries、792,504,967 bytes，前后无源码变化。独立成本复核同时核对原 archive/成员、manifest、保留 ELF、编译器、target 与全部整数分母：x64 ELF machine 为 62，ARM64 为 183；所有 measured/retained before/after binary pins 匹配实际文件。完整明细见 [hosted 成本复核](retained-hosted-cost/hosted-cost-analysis.md)及其 [JSON](retained-hosted-cost/hosted-cost-analysis.json)。
 
 所有 cost lanes 继续使用 Rust 1.95.0、原 Cargo 默认 release 配置、`--locked` 与原 identity/build/native 命令上限 30/900/300 秒。12 份 metadata 图的 174 个 selected packages 和依赖边都在同一份 179-package Cargo.lock 中；排除文件定位元数据后 resolved graph 一致。工作区 lock SHA-256 为 `fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69`。
 
@@ -55,7 +55,7 @@
 | ARM64 head | 13093926141 | 69.321174848 | 72.161178712 | +4.096878% | 0.893970–1.118517 |
 | ARM64 merge | 13093891287 | 69.350255952 | 72.191903184 | +4.097530% | 0.894032–1.120780 |
 
-**冻结 dispatcher 在四条 lane 的完整总 CPU 都更高。** 每种材料类仍按其全部 target/horizon/sample 聚合，保留如下正负结果；完整双策略 CPU 和逐 shard 分子分母见 [hosted-cost-analysis.json](hosted-cost/hosted-cost-analysis.json)。
+**冻结 dispatcher 在四条 lane 的完整总 CPU 都更高。** 每种材料类仍按其全部 target/horizon/sample 聚合，保留如下正负结果；完整双策略 CPU 和逐 shard 分子分母见 [hosted-cost-analysis.json](retained-hosted-cost/hosted-cost-analysis.json)。
 
 | 材料类 | x64 head Δ | x64 merge Δ | ARM64 head Δ | ARM64 merge Δ |
 | --- | ---: | ---: | ---: | ---: |
@@ -216,7 +216,7 @@ Host 预算保持 `cpu.max = 25000 100000`（0.25 CPU）、burst 0、memory 2 Gi
 
 | 目录 | 内容与来源 | 索引 / 读回 |
 | --- | --- | --- |
-| `hosted-cost/` | 主 run 的 12 个完整 artifact 文件集；保留源码读回、锁图、commands、全部 raw stdout/stderr、reader、manifest 与实际 ELF | [ARCHIVES.json](hosted-cost/ARCHIVES.json)、[独立报告](hosted-cost/hosted-cost-analysis.md)、[完整结果](hosted-cost/hosted-cost-analysis.json)、[复核脚本](hosted-cost/analyze-hosted-cost.py)、[原执行日志](hosted-cost/hosted-cost-analysis.log) |
+| Git 历史 `hosted-cost/`；当前 `retained-hosted-cost/` | 主 run 的 12 个完整 artifact 文件集；保留源码读回、锁图、commands、全部 raw stdout/stderr、reader、manifest 与实际 ELF | [ARCHIVES.json](retained-hosted-cost/ARCHIVES.json)、[独立报告](retained-hosted-cost/hosted-cost-analysis.md)、[完整结果](retained-hosted-cost/hosted-cost-analysis.json)、[复核脚本](retained-hosted-cost/analyze-hosted-cost.py)、[原执行日志](retained-hosted-cost/hosted-cost-analysis.log) |
 | `hosted-cost-job-logs/` | 12 个 cost jobs 的 GitHub 日志 | 与 artifact/source 身份交叉定位，不代替 raw |
 | `local-v2/` | 30 份 stdout/stderr 和执行 metadata/ELF，分存五个 raw tar.xz 与一个 metadata/binary tar.xz | [RAW_INDEX.json](local-v2/RAW_INDEX.json)、[独立分析](local-v2/README-analysis.md)、[JSON](local-v2/independent-analysis.json) |
 | `cache-benchmark/` | 六次 raw streams、选定完整源码和实测二进制、构建/运行命令 | [INDEX.json](cache-benchmark/INDEX.json)、[README](cache-benchmark/README.md) |
@@ -261,11 +261,11 @@ bundle = Path('/path/to/pon-work-security-eight-samples-20261101')
 restored = Path('/path/to/replay')  # 下有 12 个 artifact-id 目录
 source = Path('/path/to/3bbc-source')
 spec = importlib.util.spec_from_file_location(
-    'cost_audit', bundle / 'hosted-cost/analyze-hosted-cost.py')
+    'cost_audit', bundle / 'retained-hosted-cost/analyze-hosted-cost.py')
 module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(module)
 audit = module.Audit(restored, source)
-rows = json.loads((bundle / 'hosted-cost/ARCHIVES.json').read_text())['archives']
+rows = json.loads((bundle / 'retained-hosted-cost/ARCHIVES.json').read_text())['archives']
 for row in rows:
     artifact = {'id': str(row['artifact_id']), 'name': row['artifact_name']}
     artifact.update(audit.source_graph(artifact))
@@ -301,3 +301,37 @@ print({v: len(streams) for v, streams in audit.streams.items()})
 V2 的 `policy_sample_count_satisfied=true` 仅关闭此次固定网格的样本数量不足。`fastest_adversary_lower_bound`、全材料/target 覆盖以及 reader 自身的 execution/transcript 认证边界仍未取得。上表字段属于各自成本捕获的声明范围；其中 `public_service_measured=false` 不表示本包从未执行服务测试。本包另行保留了真实服务实验，其业务结果为失败；不能把不同捕获的字段或测试结果合并为通过。
 
 接下来的验收需要分别证明：完整关系验证和挑战绑定、最便宜合法策略的真实成本、错误工作拒绝与原预算业务完成，以及独立模型效用。缓存或微基准的局部改善不能替代其中任何一项。当前原四秒压力窗口仍未完成独立确认；保持 **HOLD / no activation**，不提高出块频率，也不把 CI 成功数、重复验证次数或 CPU 优势转化为额外 chainwork。
+
+
+## 2026-11-15：保留原完整验证的载荷清理
+
+本次只清理当前工作树的重复大容器：32 个 TAR/XZ 文件或 part，共
+180,351,232 字节，保留在精确历史 commit
+`893210a45b44742edfe2510fea1d92e9974b5f95`。整套原 hosted-cost 目录的
+37 个文件由 [HOSTED_COST_ARCHIVE.json](HOSTED_COST_ARCHIVE.json) 绑定原 Git
+blob、大小和 SHA-256；其五份较小的索引、分析、日志与脚本仍以原始字节
+保留在 `retained-hosted-cost/`。其余 171 个原文件和两份原验证收据不变。
+
+原 `verify_evidence.py` 的所有验证函数保持逐字节不变，仅直接命令入口
+加入历史读取分派。当前命令会在私有临时目录恢复完整的 210 文件原视图，
+实际执行已固定的原验证器，再删除临时视图；不会覆盖旧收据。原验证仍
+核对 12 套归档的正确分片顺序与整体 SHA、全部 808 成员的 SHA/大小、
+全部五个原验证分区和顶层 208 项完整清单。成员总计 3,762,781,104 字节，
+通过流式解压核对，不把归档成员解包成可执行文件，也不重跑 native 实验。
+
+```sh
+python3 evidence/pon-work-security-eight-samples-20261101/verify_evidence.py
+```
+
+缺少任何原 Git 对象、当前保留文件或 tracked 索引均会拒绝，不自动联网
+补齐。需要取得指定原始 part 时，可使用仓库的通用历史读取器：
+
+```sh
+python3 scripts/ci/check_historical_archive.py \
+  --manifest evidence/pon-work-security-eight-samples-20261101/HOSTED_COST_ARCHIVE.json \
+  --cat evidence/pon-work-security-eight-samples-20261101/hosted-cost/13093136677.tar.xz \
+  > /absolute/new/replay/13093136677.tar.xz
+```
+
+本节是存储整理和原字节验证说明。原工作安全、公开服务及生产激活的
+HOLD / false 状态不变；原 ZIP 运输容器仍未储存于此，不声称重新验证它们。

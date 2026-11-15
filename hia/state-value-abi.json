@@ -1,0 +1,160 @@
+{
+  "borrowed_abi": "fixed upstream legacy-f0-private-buffers; high return word is ABI status, low word is the HIA result",
+  "caller": {
+    "buffers": "separate private extents; no aliases",
+    "failure_output": "entire output unchanged",
+    "hosted_build_and_test_tooling": true,
+    "input_immutable": true,
+    "success_output": "exact returned prefix, remaining output unchanged"
+  },
+  "claims": {
+    "complete_ascii_string_codec_within_borrowed_profile": true,
+    "generic_value_within_explicit_finite_profile": true,
+    "old_runtime_retirement_allowed": false,
+    "original_state_domain_upper_bound_equivalence": false,
+    "production_activation": false,
+    "whole_node_native": false
+  },
+  "entry": "f0(readbuf input, mutbuf output, mutbuf scratch) -> u32",
+  "open": [
+    "general serde JSON text parsing and its error identity",
+    "complete State order and all-value-before-wire-limit semantics for oversized/deep inputs",
+    "State-root composition and CheckedCommitment",
+    "Node SQL/row/snapshot/delta/undo/replay/outbox/cancellation integration",
+    "original workspace/continuation budget equivalence",
+    "complete typed durable owner and SQLite retirement"
+  ],
+  "original_oracle": {
+    "empty_hex": "-",
+    "environment": "TRNM_HIA_RUST_STATE_REFERENCE",
+    "grammar_authority": "retained trnm_mvcc_fee::pon_executor::root",
+    "local_execution": "NOT_RUN until the actual Rust fixture is compiled and executed",
+    "operations": [
+      "string HEX",
+      "json HEX",
+      "tape HEX",
+      "state HEX"
+    ],
+    "serialization_authority": "retained locked serde_json",
+    "singleton_root_limit": "grammar OK, root LIMIT retained separately",
+    "source": "tests/rust_state_reference.rs",
+    "test_thread_stack_bytes": 67108864,
+    "test_thread_stack_scope": "Explicit fixture resource profile for original recursive Value calls; no Node budget equivalence"
+  },
+  "returns": {
+    "4294967290": "RANGE: winning original M06 Value contains an F64 Number",
+    "4294967291": "FRAME: local operation/typed-constructor admission",
+    "4294967292": "NONCANONICAL: ASCII/string-encoding refusal or original M06 winning Value/key semantics",
+    "4294967293": "CAPACITY: local input/node/scratch/output resource refusal; never M06 LIMIT",
+    "success": "canonical or raw output byte count"
+  },
+  "schema": "trnm.hia.state-value-abi.v1",
+  "sources": {
+    "string": {
+      "admission_order": [
+        "empty operation envelope -> FRAME",
+        "input extent above 1048576 -> CAPACITY",
+        "unknown operation -> FRAME",
+        "complete ASCII/string-encoding validation",
+        "output capacity -> CAPACITY",
+        "write exact output"
+      ],
+      "canonical_escapes": {
+        "10": "\\n",
+        "12": "\\f",
+        "13": "\\r",
+        "8": "\\b",
+        "9": "\\t",
+        "DEL": "literal",
+        "backslash": "\\\\",
+        "other_controls_0_31": "lowercase \\u00xx",
+        "quote": "\\\"",
+        "slash": "literal"
+      },
+      "helpers": [
+        "json_short_escape",
+        "json_ascii_measure",
+        "json_ascii_encode",
+        "json_hex_lower",
+        "json_ascii_escape",
+        "json_ascii_decode_measure",
+        "json_ascii_decode"
+      ],
+      "input_max_bytes": 1048576,
+      "json_text_parser": false,
+      "operations": {
+        "0": "remaining bytes are raw ASCII; emit canonical JSON string",
+        "1": "remaining bytes are exact canonical ASCII JSON string; emit raw ASCII"
+      },
+      "path": "src/state/json_string.hepta",
+      "scratch_min_bytes": 0,
+      "scratch_modified": false
+    },
+    "value": {
+      "admission_order": [
+        "short or wrong JVT1 header -> FRAME",
+        "input/scratch local extent -> CAPACITY",
+        "each node framing/type/UTF8/finite-float shape before its allocation capacity",
+        "construct complete tree iteratively; all insertion payloads must parse",
+        "object key sort with original ordinal tie-break; keep last equal-key insertion",
+        "winning tree M06 semantics and full canonical byte measurement in depth-first array/sorted-object order",
+        "output capacity -> CAPACITY",
+        "iterative canonical JSON emission"
+      ],
+      "constructed_nodes_max": 8192,
+      "explicit_includes": [
+        {
+          "functions": [
+            "json_short_escape",
+            "json_ascii_measure",
+            "json_ascii_encode"
+          ],
+          "source": "src/state/json_string.hepta"
+        }
+      ],
+      "input_max_bytes": 65536,
+      "json_text_parser": false,
+      "magic": "JVT1",
+      "node_arithmetic": "positions and sizes widen to u64; subtraction is performed only within checked enclosing extents; all allocations bounded by this explicit profile",
+      "node_frame": [
+        "tag:u8",
+        "payload_bytes:u32le",
+        "payload:exact declared bytes"
+      ],
+      "object_keys": "decoded UTF8 order; nested M06 object keys must be ASCII; top-level State keys are not part of this interface",
+      "path": "src/state/json_value.hepta",
+      "scratch_min_bytes": 721152,
+      "scratch_regions": [
+        {
+          "bytes": 256,
+          "offset": 0,
+          "purpose": "private parser/traversal counters"
+        },
+        {
+          "bytes": 655360,
+          "offset": 256,
+          "purpose": "8192 private 80-byte node records"
+        },
+        {
+          "bytes": 65536,
+          "offset": 655616,
+          "purpose": "8192-element 64-bit private sort index"
+        }
+      ],
+      "scratch_tail_unchanged_after": 721152,
+      "tags": {
+        "0": "empty: null",
+        "1": "empty: false",
+        "2": "empty: true",
+        "3": "8 bytes u64le",
+        "4": "8 bytes i64 little-endian two's complement",
+        "5": "8 bytes finite IEEE754 f64 bits; original Number subsequently gives M06 RANGE",
+        "6": "raw valid UTF8 String",
+        "7": "u32le count then exact child node frames",
+        "8": "u32le insertion count then (u32le UTF8 key size, key bytes, value node) pairs"
+      },
+      "whole_state": false
+    }
+  },
+  "target": "linux-x86_64"
+}

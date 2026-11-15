@@ -8,31 +8,49 @@ The [native guide](../../hia/README.md) specifies the current source and local
 ABIs. This section extends the sole development plan; the historical plan below
 is retained verbatim.
 
-Twenty-one kernel units implement exact protocol grammars, SHA-256/SHA-512,
+Twenty-seven kernel units implement exact protocol grammars, SHA-256/SHA-512,
 PoN framing, strict public Ed25519, the non-cancelling W1 relation, replay
 proposals, evaluator decisions, PNX1, checkpoint V2 and the sparse state root.
-Three native foundations cover a finite OS fixture, a connected-stream reactor
-and a finite transaction owner. The inventory accounts for all 29 HIA source
+Four native foundations cover a finite OS fixture, a connected-stream reactor,
+a finite transaction owner and a complete-request native qualification caller. The inventory accounts for all 36 HIA source
 files, rejects unowned/duplicate/missing sources and keeps retirement false.
 Native code is emitted by Hepta at `f33d8da316de8fdf27b504371f1a5310997ff548`.
 Its original 180-second cold gate passed in 154.807339324 seconds; this does not
 qualify whole-Chain service behavior.
 
-The third published candidate `79fc1d4c970f8ecb414f011605e0a6fbcf7332e8` passed
-[native CI](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43741974022):
-126 tests, 36,032 shared-runner native calls, no skips or failures. All four
-original Rust oracles compiled and executed, including original Ed25519 signing
-and strict verification. That source-bound report does not qualify the later
-state-root/reactor/storage changes. The first third-batch publication failed on
-three ignored stderr logs; exact original bytes were explicitly tracked and the
-unchanged historical gate then passed. Preserve both observations.
+The fourth repaired candidate `96a0846e383745f88e033c7db2abc0611f1dae63` passed
+[both mandatory CI jobs](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43746877132):
+160 tests, 36,222 shared-runner native calls, no errors, failures or skips; all
+four then-existing original Rust adapters and 17 original unit tests executed.
+OS 25/25, reactor 49/49 plus 13 native contracts, and storage 48/48 plus 14 native
+contracts passed with actual traces. The separate 65,536-row state-root child
+made 86 raw calls and matched the independent oracle in 299.705821145 seconds.
+That maximum-count case used short values and does not meet or alter the
+original four-second service acceptance. Preserve the earlier 353.568397442-second
+local result, rejected compiler optimization and distinct source bindings.
 
-The [state-root ABI](../../hia/STATE.md) has executed all 65,536 rows with exact
-scratch and matched an independent bottom-up oracle. Its observed 353.568397442
-seconds is not original service-budget qualification. Preserve the rejected
-compiler optimization and separate maximum-count/final-driver source bindings.
-Do not claim simultaneously maximal values from the short-value count case.
-The protocol CI adapter calls the actual original state-root implementation.
+The third batch's ignored stderr files and fourth batch's direct storage import
+failure remain retained. Exact original logs were tracked, and both storage CLI
+entrypoints now work without ambient Python path variables. The exact fourth
+source job also passed all 113 PQ negative tests and historical reader gates.
+
+The current additions are later sources: shared binary64 and all seven conflict
+scheduling strategies, ASCII String and typed Value codecs, true incremental
+SHA256 and full five-variant classical request authentication through a 2 MiB
+body. The executor retains the maximum reader-group dependency to repair a
+source-derived unsafe original grouping; all 122 intentional model differences
+are preserved and the unchanged original library must execute in CI. This
+executor is outside the ordinary Node closure and does not close Node execution.
+
+The [Value profile](../../hia/STATE_VALUE.md) admits 65,536 tape bytes / 8,192
+nodes, with actual sorting/last-wins and full winning-Value grammar. Its 1,518
+native controls include a 7,280-level array. These bounds are local capacity,
+not substituted M06 limits; complete State, JSON text parsing and global error
+order remain open. [Full request controls](../../hia/platform/transport_request/README.md)
+passed 178 cases plus 14 incremental-hash controls locally. A complete 2 MiB
+submit took 5.171449401 seconds; dense ConfirmMany took 6.773873071 seconds.
+The outer 30-second test budget does not qualify original transport/service
+budgets. Original Rust for these new components remains NOT_RUN until CI.
 
 The next integration sequence follows actual Node dependencies. The Node
 directly owns a `rusqlite::Connection` in `Node.db` (`store.rs`) for branch,
@@ -77,25 +95,29 @@ remain open. The old [finite Linux fixture](../../hia/platform/README.md) keeps
 its actual blocked-syscall deadline failure and unavailable-trace observation;
 clock checks after return do not prove bounded blocking I/O.
 
-Five exact historical-reader cleanups remove 1,523 duplicate payload copies,
-totaling 1,132,595,614 original bytes. They cover 607 checkout preparations,
-14 sealed CI ZIPs, 13 joint-resource archives, four PQ triage streams and 885
-public-readiness pre-correction payloads. The PQ capture retains 29 smaller
-records unchanged. The new [public-readiness archive](../../evidence/pon-public-readiness-v1/PRE_CORRECTION_ARCHIVE.json)
-reconstructs the original view and executes the original checker at its measured
-source, with all 1,334 manifest entries and original source/tracking checks.
-No archive cleanup promotes HOLD/FAIL or public/native readiness. Exact Git
-history remains available; current-source tests and required evidence remain.
-The [audit](../../hia/AUDIT.md) records every original owner, remaining archive
-obligations, actual CI failures and unavailable historical artifacts.
+Six exact historical-reader cleanups remove 1,555 duplicate payload copies,
+totaling 1,312,946,846 original bytes. They cover 607 checkout preparations,
+14 sealed CI ZIPs, 13 joint-resource archives, four PQ triage streams, 885
+public-readiness pre-correction payloads and 32 hosted-cost containers/shards.
+The PQ capture retains 29 smaller records unchanged. The public-readiness
+reader executes the original semantic checker with all 1,334 entries and source
+bindings. The hosted-cost reader reconstructs the exact 210-file view, executes
+the original checker and verifies 208 entries, 12 archives/32 parts and 808
+members totaling 3,762,781,104 uncompressed bytes. Its five retained small
+records stay unchanged. Preserve the independently reproduced prepublication
+missing-index receipt-overwrite failure and the unconditional read-only fix.
+No cleanup promotes HOLD/FAIL or public/native readiness. Exact Git history,
+current-source tests and required evidence remain. The [audit](../../hia/AUDIT.md)
+records all owners, remaining archive obligations and unavailable artifacts.
 
 Refresh only current PQ source pins changed by this migration: the sole-plan
 prefix, the regenerated inventory entry and public-readiness CLI dispatch.
 Keep all unrelated source pins, all 1,177 evidence pins and all false/HOLD fields.
 The unchanged source checker and all 113 original negative tests are mandatory.
 Native CI separately requires the pinned bootstrap, whole-program admission,
-raw machine-code controls, full state count, reactor, storage and all four
-original-Rust adapters on the exact candidate. Historical/source checks run in
+raw machine-code controls, full state count, reactor, storage and all five
+original-Rust adapters, plus actual original-executor and original-Node request
+comparisons on the exact candidate. Historical/source checks run in
 a parallel job so neither gate is dropped for time. No legacy runtime package
 has been retired; all nine full-replacement gates remain open.
 

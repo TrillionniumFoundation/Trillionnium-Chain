@@ -17,7 +17,8 @@ import unittest
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 RUST_ORACLES = ("TRNM_HIA_RUST_REFERENCE", "TRNM_HIA_RUST_PROTOCOL_REFERENCE",
-                "TRNM_HIA_RUST_CHECKPOINT_REFERENCE", "TRNM_HIA_RUST_CRYPTO_REFERENCE")
+                "TRNM_HIA_RUST_CHECKPOINT_REFERENCE", "TRNM_HIA_RUST_CRYPTO_REFERENCE",
+                "TRNM_HIA_RUST_STATE_REFERENCE")
 
 
 def digest(raw):
@@ -27,21 +28,25 @@ def digest(raw):
 def sources():
     paths = sorted((ROOT / "hia").rglob("*.hepta"))
     paths += sorted((ROOT / "hia/tools").glob("*.py"))
-    paths += sorted((ROOT / "hia/tests").glob("*.py"))
-    paths += sorted((ROOT / "hia/tests").glob("*.rs"))
+    for pattern in ("*.py", "*.rs", "*.json"):
+        paths += sorted((ROOT / "hia/tests").rglob(pattern))
     for name in ("platform", "storage"):
         directory = ROOT / "hia" / name
         paths += sorted(directory.rglob("*.py"))
+        paths += sorted(directory.rglob("*.rs"))
         paths += sorted(directory.rglob("abi.json"))
         paths += sorted(directory.rglob("README.md"))
-    paths += [ROOT / "hia/components.json", ROOT / "hia/toolchain.lock.json"]
+    paths += [ROOT / "hia/components.json", ROOT / "hia/toolchain.lock.json",
+              ROOT / "hia/state-value-abi.json", ROOT / "hia/STATE_VALUE.md"]
     paths += [ROOT / "hia/qualification/compiler-binding.json"]
     paths += [ROOT / ".github/workflows/hia-native-migration.yml",
               ROOT / "trillionnium/Cargo.toml", ROOT / "trillionnium/Cargo.lock"]
-    for name in ("trnm-protocol", "trnm-checkpoint-types", "trnm-crypto-primitives"):
+    for name in ("trnm-protocol", "trnm-checkpoint-types", "trnm-crypto-primitives",
+                 "trnm-mvcc-fee", "trnm-executor", "trnm-types"):
         crate = ROOT / "trillionnium/crates" / name
         paths += sorted((crate / "src").rglob("*.rs"))
         paths.append(crate / "Cargo.toml")
+    paths += sorted((ROOT / "config/pon").rglob("*.json"))
     paths += [ROOT / name for name in (
         "trillionnium/crates/trnm-transport/src/lib.rs",
         "trillionnium/crates/trnm-transport/src/proof_admission.rs",
@@ -120,7 +125,7 @@ def main():
             "skipped": [(str(test), why) for test, why in result.skipped]},
         "native_calls_through_shared_runner": [{"backend": b, "outcome": s, "count": count}
                                                for (b, s), count in sorted(calls.items())],
-        "additional_raw_abi_probes": "The crypto, closed-round and state-root suites also execute explicit native pointer/capacity probes; these are not included in the shared-runner counts. The state-root suite executes the original 65536-row limit in an independently bounded native child. Reactor synthetic API contracts execute native ELF separately; their calls are also outside the shared-runner counts and are not real OS fault injection. Complete OS reactor and persistence controls run in their own mandatory workflow steps.",
+        "additional_raw_abi_probes": "The crypto, closed-round, state-root and executor suites also execute explicit native pointer/capacity probes outside the shared-runner counts. State-root executes the original 65536-row limit in a separately bounded native child; executor executes an 8192-transaction arena with real misalignment. Reactor synthetic API contracts are separate native ELF calls, not real OS fault injection. Complete OS reactor, persistence, executor-original and transport-original controls run in their own mandatory workflow steps.",
         "builds": builds, "wall_seconds": time.monotonic() - started,
         "rust_reference": None if reference is None else {
             "executable_sha256": digest(Path(reference).read_bytes()),

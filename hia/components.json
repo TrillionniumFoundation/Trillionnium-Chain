@@ -115,6 +115,100 @@
           "sha256_work_store64"
         ]
       }
+    ],
+    "src/executor/schedule.hepta": [
+      {
+        "source": "src/math/binary64.hepta",
+        "functions": [
+          "fp64_valid",
+          "fp64_jam",
+          "fp64_mantissa",
+          "fp64_exponent",
+          "fp64_pack",
+          "fp64_from_u64",
+          "fp64_add",
+          "fp64_product_low",
+          "fp64_product_high",
+          "fp64_mul",
+          "fp64_div",
+          "fp64_ratio"
+        ]
+      }
+    ],
+    "src/transport/authenticated_request.hepta": [
+      {
+        "functions": [
+          "tr_sha_init",
+          "tr_sha_update",
+          "tr_sha_update_work",
+          "tr_sha_feed",
+          "tr_sha_final",
+          "tr_sha_rotr",
+          "tr_sha_compress",
+          "tr_get",
+          "tr_put",
+          "tr_read"
+        ],
+        "source": "src/crypto/sha256_stream.hepta"
+      },
+      {
+        "functions": [
+          "ed_load64",
+          "ed_store64",
+          "ed_copy",
+          "ed_zero",
+          "ed_init",
+          "ed_compare",
+          "ed_normalize",
+          "ed_fe_add",
+          "ed_fe_sub",
+          "ed_fe_mul",
+          "ed_fe_pow",
+          "ed_unpack",
+          "ed_point_add",
+          "ed_point_decode",
+          "ed_point_identity",
+          "ed_point_mul",
+          "ed_is_weak",
+          "ed_point_equal",
+          "ed_scalar_compare",
+          "ed_scalar_reduce"
+        ],
+        "source": "src/crypto/ed25519_group.hepta"
+      },
+      {
+        "functions": [
+          "sha512_arena",
+          "sha512_padding_byte",
+          "sha512_rotr64",
+          "sha512_work_load64",
+          "sha512_work_store64"
+        ],
+        "source": "src/crypto/sha512_arena.hepta"
+      },
+      {
+        "functions": [
+          "fp64_jam",
+          "fp64_mantissa",
+          "fp64_exponent",
+          "fp64_pack",
+          "fp64_from_u64",
+          "fp64_product_low",
+          "fp64_product_high",
+          "fp64_mul"
+        ],
+        "source": "src/math/binary64.hepta"
+      }
+    ],
+    "src/state/json_value.hepta": [
+      {
+        "functions": [
+          "json_short_escape",
+          "json_ascii_measure",
+          "json_ascii_encode"
+        ],
+        "source": "src/state/json_string.hepta"
+      }
     ]
   }
 }

@@ -231,6 +231,67 @@
         "hia/tests/test_state_root_adversarial.py"
       ],
       "node_integration_complete": false
+    },
+    {
+      "id": "math/binary64",
+      "source": "hia/src/math/binary64.hepta",
+      "scope": "Exact finite binary64 arithmetic used by scheduler decisions and original serde number admission; not a general decimal serializer",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_binary64.py"
+      ],
+      "node_integration_complete": false
+    },
+    {
+      "id": "executor/schedule",
+      "source": "hia/src/executor/schedule.hepta",
+      "scope": "All seven explicit-configuration conflict scheduling strategies with max-reader dependency repair; original environment parsing, convenience entropy profile and Node integration remain open",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_executor_schedule.py",
+        "hia/tools/qualify_executor_original.py"
+      ],
+      "node_integration_complete": false
+    },
+    {
+      "id": "state/json_string",
+      "source": "hia/src/state/json_string.hepta",
+      "scope": "Complete ASCII Value::String canonical codec within the explicit 1 MiB borrowed profile; strict inverse is not a general JSON parser",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_state_string.py"
+      ],
+      "node_integration_complete": false
+    },
+    {
+      "id": "state/json_value",
+      "source": "hia/src/state/json_value.hepta",
+      "scope": "Iterative JVT1 finite Value construction, decoded-key sorting/last-wins, winning-Value M06 grammar and canonical serialization; local 65536-byte/8192-node profile",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_state_value.py"
+      ],
+      "node_integration_complete": false
+    },
+    {
+      "id": "crypto/sha256_stream",
+      "source": "hia/src/crypto/sha256_stream.hepta",
+      "scope": "True incremental SHA256 context and final padding across the complete transport signing domain",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tools/qualify_transport.py"
+      ],
+      "node_integration_complete": false
+    },
+    {
+      "id": "transport/authenticated_request",
+      "source": "hia/src/transport/authenticated_request.hepta",
+      "scope": "All five classical request variants through 2 MiB framing, original serde admission and canonical/auth order, complete domain hashing and strict Ed25519; trusted owner settings and service deadline integration remain open",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tools/qualify_transport.py"
+      ],
+      "node_integration_complete": false
     }
   ],
   "legacy_packages": [
@@ -246,8 +307,11 @@
       "package": "trnm-executor",
       "module": "M06",
       "legacy_path": "trillionnium/crates/trnm-executor",
-      "state": "not-ported",
-      "components": [],
+      "state": "partially-ported",
+      "components": [
+        "executor/schedule",
+        "math/binary64"
+      ],
       "retirement_accepted": false
     },
     {
@@ -336,8 +400,11 @@
       "package": "trnm-mvcc-fee",
       "module": "M06",
       "legacy_path": "trillionnium/crates/trnm-mvcc-fee",
-      "state": "not-ported",
-      "components": [],
+      "state": "partially-ported",
+      "components": [
+        "state/json_string",
+        "state/json_value"
+      ],
       "retirement_accepted": false
     },
     {
@@ -404,7 +471,8 @@
         "crypto/sha256_arena",
         "crypto/sha512_arena",
         "crypto/ed25519_group",
-        "crypto/ed25519_verify"
+        "crypto/ed25519_verify",
+        "crypto/sha256_stream"
       ],
       "retirement_accepted": false
     },
@@ -456,8 +524,10 @@
       "package": "trnm-pon-node",
       "module": "M15",
       "legacy_path": "trillionnium/crates/trnm-pon-node",
-      "state": "not-ported",
-      "components": [],
+      "state": "partially-ported",
+      "components": [
+        "transport/authenticated_request"
+      ],
       "retirement_accepted": false
     },
     {
@@ -560,6 +630,18 @@
       "tests": [
         "hia/tools/qualify_storage.py",
         "hia/tests/test_storage_native.py"
+      ],
+      "node_integration_complete": false,
+      "retirement_accepted": false
+    },
+    {
+      "id": "platform/transport-request-caller",
+      "sources": [
+        "hia/platform/transport_request/linux_fixture_emitter.hepta"
+      ],
+      "scope": "Native request and incremental-hash qualification caller; no connection, Settings, private key or Node authority",
+      "tests": [
+        "hia/tools/qualify_transport.py"
       ],
       "node_integration_complete": false,
       "retirement_accepted": false

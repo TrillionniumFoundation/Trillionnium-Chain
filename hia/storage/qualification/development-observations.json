@@ -133,8 +133,8 @@
         ],
         "cleanup": null,
         "cleanup_limit_seconds": 3,
-        "cwd": "/workspace/scratch/dfc64d0acfc2/storage-qualification-clean-cli/build/compile-policy",
-        "end_monotonic_ns": 17035438265773,
+        "cwd": "/home/runner/work/_temp/hia-storage/build/compile-policy",
+        "end_monotonic_ns": 113345329942,
         "environment": {
           "PATH": ""
         },
@@ -146,7 +146,7 @@
         "output_bytes": 256725,
         "output_sha256": "6929533a91b36cc6d7bb24a022360db17ae6eabb69b2232e096b97a0550f60e6",
         "stage": "compile-policy",
-        "start_monotonic_ns": 17035178879017,
+        "start_monotonic_ns": 113109152447,
         "stderr_hex": "",
         "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "timed_out": false,
@@ -158,8 +158,8 @@
         ],
         "cleanup": null,
         "cleanup_limit_seconds": 3,
-        "cwd": "/workspace/scratch/dfc64d0acfc2/storage-qualification-clean-cli/build/compile-emitter",
-        "end_monotonic_ns": 17035496215819,
+        "cwd": "/home/runner/work/_temp/hia-storage/build/compile-emitter",
+        "end_monotonic_ns": 113394819601,
         "environment": {
           "PATH": ""
         },
@@ -171,7 +171,7 @@
         "output_bytes": 46303,
         "output_sha256": "b2ec4009fd7640b7bf20d1e92b123d1d3c91f72be69530169bd14767ae91d0e5",
         "stage": "compile-emitter",
-        "start_monotonic_ns": 17035440636277,
+        "start_monotonic_ns": 113346744490,
         "stderr_hex": "",
         "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "timed_out": false,
@@ -183,8 +183,8 @@
         ],
         "cleanup": null,
         "cleanup_limit_seconds": 3,
-        "cwd": "/workspace/scratch/dfc64d0acfc2/storage-qualification-clean-cli/build/emit-storage-elf",
-        "end_monotonic_ns": 17035501115411,
+        "cwd": "/home/runner/work/_temp/hia-storage/build/emit-storage-elf",
+        "end_monotonic_ns": 113396929767,
         "environment": {
           "PATH": ""
         },
@@ -196,7 +196,7 @@
         "output_bytes": 257922,
         "output_sha256": "efe038da0f9a2cb94b187472634ea973375cc1b300806628dabd4c765bb1a26e",
         "stage": "emit-storage-elf",
-        "start_monotonic_ns": 17035498456961,
+        "start_monotonic_ns": 113395818895,
         "stderr_hex": "",
         "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "timed_out": false,
@@ -294,7 +294,7 @@
       "case": "sigkill-stage-10",
       "observed_gate": {
         "eintr_results": 0,
-        "observed_monotonic_ns": 17104730595045,
+        "observed_monotonic_ns": 178720921631,
         "positive_partial_results": 0,
         "sequence": 1,
         "tag": 10
@@ -309,7 +309,7 @@
       "case": "sigkill-stage-11",
       "observed_gate": {
         "eintr_results": 0,
-        "observed_monotonic_ns": 17104896516425,
+        "observed_monotonic_ns": 178874453931,
         "positive_partial_results": 0,
         "sequence": 1,
         "tag": 11
@@ -324,7 +324,7 @@
       "case": "sigkill-stage-12",
       "observed_gate": {
         "eintr_results": 0,
-        "observed_monotonic_ns": 17105071465833,
+        "observed_monotonic_ns": 179073727405,
         "positive_partial_results": 0,
         "sequence": 1,
         "tag": 12
@@ -339,7 +339,7 @@
       "case": "sigkill-stage-13",
       "observed_gate": {
         "eintr_results": 0,
-        "observed_monotonic_ns": 17105227527379,
+        "observed_monotonic_ns": 179332888306,
         "positive_partial_results": 0,
         "sequence": 1,
         "tag": 13
@@ -354,7 +354,7 @@
       "case": "sigkill-stage-14",
       "observed_gate": {
         "eintr_results": 0,
-        "observed_monotonic_ns": 17105396839180,
+        "observed_monotonic_ns": 179484667127,
         "positive_partial_results": 0,
         "sequence": 1,
         "tag": 14
@@ -369,7 +369,7 @@
       "case": "sigkill-stage-15",
       "observed_gate": {
         "eintr_results": 0,
-        "observed_monotonic_ns": 17105556955995,
+        "observed_monotonic_ns": 179637580475,
         "positive_partial_results": 0,
         "sequence": 1,
         "tag": 15
@@ -384,7 +384,7 @@
       "case": "sigkill-stage-16",
       "observed_gate": {
         "eintr_results": 0,
-        "observed_monotonic_ns": 17105713239811,
+        "observed_monotonic_ns": 179814332013,
         "positive_partial_results": 0,
         "sequence": 2,
         "tag": 16
@@ -399,7 +399,7 @@
       "case": "initialization-sigkill-1",
       "observed_gate": {
         "eintr_results": 0,
-        "observed_monotonic_ns": 17105824147990,
+        "observed_monotonic_ns": 179912465261,
         "positive_partial_results": 0,
         "sequence": 0,
         "tag": 1
@@ -412,7 +412,7 @@
       "case": "initialization-sigkill-2",
       "observed_gate": {
         "eintr_results": 0,
-        "observed_monotonic_ns": 17105830981982,
+        "observed_monotonic_ns": 180047940571,
         "positive_partial_results": 0,
         "sequence": 0,
         "tag": 2
@@ -425,7 +425,7 @@
       "case": "initialization-sigkill-3",
       "observed_gate": {
         "eintr_results": 0,
-        "observed_monotonic_ns": 17105838740796,
+        "observed_monotonic_ns": 180054615809,
         "positive_partial_results": 0,
         "sequence": 0,
         "tag": 3
@@ -438,7 +438,7 @@
       "case": "initialization-sigkill-4",
       "observed_gate": {
         "eintr_results": 0,
-        "observed_monotonic_ns": 17105847012921,
+        "observed_monotonic_ns": 180061535024,
         "positive_partial_results": 0,
         "sequence": 0,
         "tag": 4
@@ -451,7 +451,7 @@
       "case": "initialization-sigkill-20",
       "observed_gate": {
         "eintr_results": 0,
-        "observed_monotonic_ns": 17105851930850,
+        "observed_monotonic_ns": 180066657565,
         "positive_partial_results": 0,
         "sequence": 0,
         "tag": 20
@@ -641,7 +641,23 @@
       "status": "PASS"
     }
   ],
-  "development_observation_only": true,
+  "development_observation_only": false,
+  "exact_head_ci": {
+    "artifact_bytes": 2265439,
+    "artifact_id": 14175470420,
+    "artifact_zip_sha256": "8a851c22165189224c00b00fea2fa7ee8279323ef6de26d56712dc0a96d9fb03",
+    "job_id": 132912920213,
+    "later_fifth_batch_sources_qualified_by_this_run": false,
+    "native_entry_contracts": 14,
+    "native_os_controls": 48,
+    "report_sha256": "5e451f76d8839546e8605065fe16b6b7584d369fba10c08c009be2ddef044606",
+    "source_commit": "96a0846e383745f88e033c7db2abc0611f1dae63",
+    "source_tree": "b58fd5b8cf1e8d49b4901cf1806ca11096063d05",
+    "standalone_help_controls": 2,
+    "status": "PASS",
+    "workflow_run": 43746877132
+  },
+  "native_entry_contract_scope": "The fourteen native entry contract details and two fresh-cwd help commands retain their local receipt; all three storage unittest methods also passed in the exact 96a0846 CI suite.",
   "native_entry_contracts": {
     "claims": [
       "exact f0 buffer shape refusal",
@@ -828,6 +844,7 @@
     "prior_44_report_sha256": "dfac067799741833b041d5855f9fe747759f3ee66e2e0a25ba6bac02a2f61d74",
     "status": "CONFIRMED_FAILURE_BEFORE_FIX"
   },
+  "prior_local_report_sha256": "93cb08c08602705f27a5170cd5f16f98d7c648895e860008fd67d06cef4011b6",
   "runtime_proxy": false,
   "schema": "trnm.hia.storage-qualification.v1",
   "scope": "bounded generic transaction payload StoreOwner; not typed Node integration",
@@ -851,6 +868,11 @@
   "standalone_cli_repair_replay": {
     "absolute_script_fresh_cwd_help_controls": 2,
     "command": "env -u PYTHONPATH -u PYTHONHOME python3 -B hia/tools/qualify_storage.py --output /workspace/scratch/dfc64d0acfc2/storage-qualification-clean-cli",
+    "exact_head_ci": {
+      "source_commit": "96a0846e383745f88e033c7db2abc0611f1dae63",
+      "status": "PASS",
+      "workflow_run": 43746877132
+    },
     "native_os_controls": 48,
     "pythonhome_absent": true,
     "pythonpath_absent": true,
@@ -862,11 +884,11 @@
   "syscall_trace": {
     "cleanup": null,
     "executable_sha256": "efe038da0f9a2cb94b187472634ea973375cc1b300806628dabd4c765bb1a26e",
-    "exit_code": 1,
-    "reason": "PTRACE_EPERM",
-    "status": "UNKNOWN",
-    "stderr": "/usr/bin/strace: test_ptrace_get_syscall_info: PTRACE_TRACEME: Operation not permitted\n/usr/bin/strace: ptrace(PTRACE_TRACEME, ...): Operation not permitted\n/usr/bin/strace: PTRACE_SETOPTIONS: Operation not permitted\n/usr/bin/strace: cleanup: waitpid(-1, __WALL): No child processes\n",
-    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    "exit_code": 0,
+    "reason": "actual trace invocation",
+    "status": "PASS",
+    "stderr": "",
+    "stdout_sha256": "c1ebd8cecb4ae828de1cfa00df3836d04f5723eb1f11c04e2a6606ff14798061"
   },
   "total": 48,
   "whole_node_integration_gate": "OPEN"

@@ -56,6 +56,8 @@ jobs:
           python3 -m unittest discover -s scripts/ci -p 'test_public_readiness_archive.py' -v
           TRNM_GNU_TIME=/usr/bin/time python3 -m unittest discover -s scripts/ci -p 'test_public_readiness_evidence.py' -v
           python3 scripts/ci/check_public_readiness_evidence.py --historical --evidence evidence/pon-public-readiness-v1 | tee "$RUNNER_TEMP/hia-source-observations/public-readiness.json"
+          python3 -m unittest discover -s scripts/ci -p 'test_hosted_cost_archive.py' -v
+          python3 evidence/pon-work-security-eight-samples-20261101/verify_evidence.py | tee "$RUNNER_TEMP/hia-source-observations/hosted-cost.json"
           python3 scripts/ci/check_pq_research_integration.py | tee "$RUNNER_TEMP/hia-source-observations/pq-source-consistency.json"
           python3 -m unittest discover -s scripts/ci -p 'test_pq_research_integration.py' -v 2>&1 | tee "$RUNNER_TEMP/hia-source-observations/pq-negative-tests.log"
           python3 scripts/refresh_distributed_source_inventory.py --check
@@ -135,7 +137,19 @@ jobs:
           rustc --edition=2021 -O hia/tests/rust_reference.rs -o "$RUNNER_TEMP/trnm-hia-rust-reference"
           rustc --edition=2021 --test hia/tests/rust_reference.rs -o "$RUNNER_TEMP/trnm-rust-original-tests"
           "$RUNNER_TEMP/trnm-rust-original-tests"
-          cargo build --locked --manifest-path trillionnium/Cargo.toml -p trnm-protocol -p trnm-checkpoint-types -p trnm-crypto-primitives --target-dir "$RUNNER_TEMP/original-rust-values"
+          cargo build --locked --manifest-path trillionnium/Cargo.toml -p trnm-protocol -p trnm-checkpoint-types -p trnm-crypto-primitives -p trnm-mvcc-fee --target-dir "$RUNNER_TEMP/original-rust-values" --message-format=json | tee "$RUNNER_TEMP/original-rust-build.jsonl"
+          python3 - "$RUNNER_TEMP/original-rust-build.jsonl" "$RUNNER_TEMP" <<'PYCODE'
+          import json, pathlib, subprocess, sys
+          events = [json.loads(line) for line in pathlib.Path(sys.argv[1]).read_text().splitlines() if line.startswith('{')]
+          serde = [row for row in events if row.get('reason') == 'compiler-artifact' and row['target']['name'] == 'serde_json']
+          assert len(serde) == 1, 'one actual locked serde_json artifact required'
+          assert serde[0]['package_id'].endswith('serde_json@1.0.149'), serde[0]['package_id']
+          assert set(serde[0]['features']) == {'default', 'std'}, serde[0]['features']
+          rlibs = [name for name in serde[0]['filenames'] if name.endswith('.rlib')]
+          assert len(rlibs) == 1, 'one original serde_json rlib required'
+          target = pathlib.Path(sys.argv[2]) / 'original-rust-values/debug'
+          subprocess.run(['rustc', '--edition=2021', '-O', 'hia/tests/rust_state_reference.rs', '--extern', 'trnm_mvcc_fee=' + str(target / 'libtrnm_mvcc_fee.rlib'), '--extern', 'serde_json=' + rlibs[0], '-L', 'dependency=' + str(target / 'deps'), '-o', str(pathlib.Path(sys.argv[2]) / 'trnm-rust-state')], check=True)
+          PYCODE
           rustc --edition=2021 -O hia/tests/rust_protocol_reference.rs --extern trnm_protocol="$RUNNER_TEMP/original-rust-values/debug/libtrnm_protocol.rlib" -L dependency="$RUNNER_TEMP/original-rust-values/debug/deps" -o "$RUNNER_TEMP/trnm-rust-protocol"
           rustc --edition=2021 -O hia/tests/rust_checkpoint_reference.rs --extern trnm_checkpoint_types="$RUNNER_TEMP/original-rust-values/debug/libtrnm_checkpoint_types.rlib" -L dependency="$RUNNER_TEMP/original-rust-values/debug/deps" -o "$RUNNER_TEMP/trnm-rust-checkpoint"
           rustc --edition=2021 -O hia/tests/rust_crypto_reference.rs --extern trnm_crypto_primitives="$RUNNER_TEMP/original-rust-values/debug/libtrnm_crypto_primitives.rlib" -L dependency="$RUNNER_TEMP/original-rust-values/debug/deps" -o "$RUNNER_TEMP/trnm-rust-crypto"
@@ -143,8 +157,13 @@ jobs:
           printf 'TRNM_HIA_RUST_PROTOCOL_REFERENCE=%s/trnm-rust-protocol\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
           printf 'TRNM_HIA_RUST_CHECKPOINT_REFERENCE=%s/trnm-rust-checkpoint\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
           printf 'TRNM_HIA_RUST_CRYPTO_REFERENCE=%s/trnm-rust-crypto\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          printf 'TRNM_HIA_RUST_STATE_REFERENCE=%s/trnm-rust-state\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
       - name: Execute native HIA and independent reference cases
         run: python3 -B hia/tools/qualify.py --require-rust-oracle --output "$RUNNER_TEMP/hia-observations/qualification.json"
+      - name: Compare all scheduler strategies with the original Rust implementation
+        run: |
+          set -euo pipefail
+          python3 -B hia/tools/qualify_executor_original.py --repository "$GITHUB_WORKSPACE/chain" --output "$RUNNER_TEMP/hia-observations/executor-original.json" --work-dir "$RUNNER_TEMP/executor-original-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
       - name: Verify candidate sources remained unchanged
         if: always()
         run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA"
@@ -159,5 +178,75 @@ jobs:
             ${{ runner.temp }}/hia-platform/
             ${{ runner.temp }}/hia-reactor/
             ${{ runner.temp }}/hia-storage/
+            ${{ runner.temp }}/original-rust-build.jsonl
+            ${{ runner.temp }}/executor-original-${{ github.run_id }}-${{ github.run_attempt }}/
+            !${{ runner.temp }}/executor-original-${{ github.run_id }}-${{ github.run_attempt }}/target/**
+          if-no-files-found: error
+          retention-days: 30
+  native-transport:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        shell: bash
+        working-directory: chain
+    steps:
+      - name: Checkout exact chain candidate and archive history
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: chain
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Checkout the pinned HIA compiler source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: TrillionniumFoundation/Hepta
+          ref: f33d8da316de8fdf27b504371f1a5310997ff548
+          path: hia-toolchain
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout: |
+            hepta
+            tools
+            examples
+            docs
+            tests
+            formal
+      - name: Bind exact source and finite migration scope
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/hia-observations/source.json"
+          bash scripts/project-preflight.sh --audit
+          python3 hia/tools/check_migration.py
+          printf 'HIA_TOOLCHAIN_ROOT=%s/hia-toolchain\n' "$GITHUB_WORKSPACE" >> "$GITHUB_ENV"
+      - name: Bootstrap and self-reproduce the native HIA compiler
+        run: |
+          set -euo pipefail
+          python3 -B hia/tools/bootstrap.py --output "$RUNNER_TEMP/hia-bootstrap"
+          python3 - "$RUNNER_TEMP/hia-bootstrap/bootstrap.json" "$GITHUB_ENV" <<'PY'
+          import json, sys
+          value = json.load(open(sys.argv[1]))
+          assert value['status'] == 'PASS'
+          with open(sys.argv[2], 'a') as out:
+              out.write('HIA_NATIVE_COMPILER=' + value['compiler'] + '\n')
+              out.write('HIA_NATIVE_COMPILER_SHA256=' + value['compiler_sha256'] + '\n')
+          PY
+      - name: Qualify complete classical frames against original Node functions
+        run: python3 -B hia/tools/qualify_transport.py --require-rust-oracle --output "$RUNNER_TEMP/hia-transport"
+      - name: Verify exact transport candidate sources remained unchanged
+        if: always()
+        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA"
+      - name: Retain transport observations and failure receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: hia-transport-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/hia-observations/
+            ${{ runner.temp }}/hia-bootstrap/bootstrap.json
+            ${{ runner.temp }}/hia-transport/
+            !${{ runner.temp }}/hia-transport/original-rust/cargo-target/**
+            !${{ runner.temp }}/hia-transport/original-rust/isolated-source/**
           if-no-files-found: error
           retention-days: 30
