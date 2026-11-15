@@ -41,7 +41,7 @@ fn main() {
         let streak = usize::try_from(items[5]).expect("usize streak");
         let burst = usize::try_from(items[6]).expect("usize burst limit");
         assert!(normal <= 32 && critical <= 32, "finite original queue adapter");
-        let gate = LaneAdmissionGate {
+        let mut gate = LaneAdmissionGate {
             normal: Queue {capacity: total.saturating_sub(reserve),
                            queue: vec![0; normal]},
             critical: Queue {capacity: reserve, queue: vec![0; critical]},
@@ -58,6 +58,14 @@ fn main() {
             3 => u64::from(gate.can_normal_borrow_critical_slot(
                     gate.critical_free_slots())),
             4 => u64::from(gate.prefer_normal_on_pop()),
+            5 => {
+                gate.record_pop_fairness(true);
+                gate.critical_served_streak as u64
+            },
+            6 => {
+                gate.record_pop_fairness(false);
+                gate.critical_served_streak as u64
+            },
             _ => panic!("unknown original query"),
         };
         println!("{value}");
