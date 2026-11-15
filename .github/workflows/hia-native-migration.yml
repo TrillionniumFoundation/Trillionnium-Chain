@@ -55,6 +55,9 @@ jobs:
           set -euo pipefail
           python3 scripts/ci/test_historical_archive.py
           python3 scripts/ci/check_historical_archive.py --manifest evidence/pon-learning-outcome-composition-20261111/CHECKOUT_VISIBILITY_ARCHIVE.json
+          python3 -m unittest discover -s scripts/ci -p 'test_sealed_ci_archive.py' -v
+          python3 scripts/ci/check_sealed_ci_archive.py --manifest evidence/pon-business-gates-819309-final-20261107/ci-819/ORIGINAL_ZIP_ARCHIVE.json
+          python3 scripts/refresh_distributed_source_inventory.py --check
           python3 scripts/ci/check_repository.py
       - name: Bootstrap and self-reproduce the native HIA compiler
         run: |
@@ -75,7 +78,12 @@ jobs:
           rustc --edition=2021 -O hia/tests/rust_reference.rs -o "$RUNNER_TEMP/trnm-hia-rust-reference"
           rustc --edition=2021 --test hia/tests/rust_reference.rs -o "$RUNNER_TEMP/trnm-rust-original-tests"
           "$RUNNER_TEMP/trnm-rust-original-tests"
+          cargo build --locked --manifest-path trillionnium/Cargo.toml -p trnm-protocol -p trnm-checkpoint-types --target-dir "$RUNNER_TEMP/original-rust-values"
+          rustc --edition=2021 -O hia/tests/rust_protocol_reference.rs --extern trnm_protocol="$RUNNER_TEMP/original-rust-values/debug/libtrnm_protocol.rlib" -L dependency="$RUNNER_TEMP/original-rust-values/debug/deps" -o "$RUNNER_TEMP/trnm-rust-protocol"
+          rustc --edition=2021 -O hia/tests/rust_checkpoint_reference.rs --extern trnm_checkpoint_types="$RUNNER_TEMP/original-rust-values/debug/libtrnm_checkpoint_types.rlib" -L dependency="$RUNNER_TEMP/original-rust-values/debug/deps" -o "$RUNNER_TEMP/trnm-rust-checkpoint"
           printf 'TRNM_HIA_RUST_REFERENCE=%s/trnm-hia-rust-reference\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          printf 'TRNM_HIA_RUST_PROTOCOL_REFERENCE=%s/trnm-rust-protocol\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          printf 'TRNM_HIA_RUST_CHECKPOINT_REFERENCE=%s/trnm-rust-checkpoint\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
       - name: Execute native HIA and independent reference cases
         run: python3 -B hia/tools/qualify.py --require-rust-oracle --output "$RUNNER_TEMP/hia-observations/qualification.json"
       - name: Verify candidate sources remained unchanged

@@ -16,6 +16,8 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
+RUST_ORACLES = ("TRNM_HIA_RUST_REFERENCE", "TRNM_HIA_RUST_PROTOCOL_REFERENCE",
+                "TRNM_HIA_RUST_CHECKPOINT_REFERENCE")
 
 
 def digest(raw):
@@ -29,6 +31,12 @@ def sources():
     paths += sorted((ROOT / "hia/tests").glob("*.rs"))
     paths += [ROOT / "hia/components.json", ROOT / "hia/toolchain.lock.json"]
     paths += [ROOT / "hia/qualification/compiler-binding.json"]
+    paths += [ROOT / ".github/workflows/hia-native-migration.yml",
+              ROOT / "trillionnium/Cargo.toml", ROOT / "trillionnium/Cargo.lock"]
+    for name in ("trnm-protocol", "trnm-checkpoint-types"):
+        crate = ROOT / "trillionnium/crates" / name
+        paths += sorted((crate / "src").rglob("*.rs"))
+        paths.append(crate / "Cargo.toml")
     paths += [ROOT / name for name in (
         "trillionnium/crates/trnm-transport/src/lib.rs",
         "trillionnium/crates/trnm-transport/src/proof_admission.rs",
@@ -53,8 +61,9 @@ def main():
     args = parser.parse_args()
     if args.output.exists() or args.output.is_symlink():
         parser.error("Observation output must be a new file")
-    if args.require_rust_oracle and not os.environ.get("TRNM_HIA_RUST_REFERENCE"):
-        parser.error("The independent Rust oracle is required")
+    missing = [key for key in RUST_ORACLES if not os.environ.get(key)]
+    if args.require_rust_oracle and missing:
+        parser.error("The independent Rust oracles are required: " + ", ".join(missing))
     before = sources()
     from hia.tests.native_support import NativeModule
     builds, calls = [], Counter()
@@ -111,6 +120,8 @@ def main():
         "rust_reference": None if reference is None else {
             "executable_sha256": digest(Path(reference).read_bytes()),
             "compiler": subprocess.check_output(["rustc", "-Vv"], text=True)},
+        "rust_oracles": {key: {"executable_sha256": digest(Path(os.environ[key]).read_bytes())}
+                         for key in RUST_ORACLES if os.environ.get(key)},
         "upstream_cold_gate_executed_in_this_run": False,
         "retained_compiler_binding_sha256": digest(binding_path.read_bytes()),
         "selfhost_compiler_matches_cold_qualified_image": compiler_matches,

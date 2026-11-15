@@ -1,7 +1,16 @@
 hia-asm.v1 hepta.hia.program.v8 trnm_protocol_ilf3
-fn f0(input:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,trap) entry(entry)
-block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
-  v0:usize = buffer.len(input)
+fn f0(v0:readbuf,v1:mutbuf,v2:mutbuf) -> (u32) effects(read,trap) entry(b0)
+block b0(v0:readbuf,v1:mutbuf,v2:mutbuf)
+  v3:usize = buffer.len(v0)
+  v4:u32 = call(v0,v3) {"function":"validate_ilf3"}
+  ret(v4)
+end
+fn validate_ilf3(span_input:readbuf,payload_len:usize) -> (u32) effects(read,trap) entry(span)
+block span(span_input:readbuf,payload_len:usize)
+  span_capacity:usize = buffer.len(span_input)
+  span_fits:bool = compare.le(payload_len,span_capacity)
+  branch span_fits entry(span_input,payload_len) length()
+block entry(input:readbuf,v0:usize)
   v1:usize = const() {"value":242}
   v2:bool = compare.ge(v0,v1)
   v3:usize = const() {"value":1808}
@@ -103,7 +112,7 @@ block canonicality(ca_input:readbuf,ca_size:usize,ca_count:usize,ca_index:usize,
   v85:bool = compare.eq(ca_index,v84)
   v86:bool = compare.lt(ca_previous,ca_target)
   v87:bool = bool.or(v85,v86)
-  v88:bool = call(ca_input,ca_pos,ca_end) {"function":"f1"}
+  v88:bool = call(ca_input,ca_pos,ca_end) {"function":"ilf3_coefficients"}
   v89:bool = bool.and(ca_canonical,v87)
   v90:bool = bool.and(v89,v88)
   v91:usize = const() {"value":1}
@@ -134,8 +143,7 @@ block limit()
   v100:u32 = const() {"value":4}
   ret(v100)
 end
-
-fn f1(input:readbuf,start:usize,stop:usize) -> (bool) effects(read,trap) entry(entry)
+fn ilf3_coefficients(input:readbuf,start:usize,stop:usize) -> (bool) effects(read,trap) entry(entry)
 block entry(input:readbuf,start:usize,stop:usize)
   jump scan(input,start,stop)
 block scan(scan_input:readbuf,scan_pos:usize,scan_stop:usize)

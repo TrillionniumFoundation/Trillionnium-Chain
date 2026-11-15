@@ -24,6 +24,34 @@
           "sha256_work_store64"
         ]
       }
+    ],
+    "src/checkpoint/value_v2.hepta": [
+      {
+        "source": "src/crypto/sha256_arena.hepta",
+        "functions": [
+          "sha256_arena",
+          "sha256_padding_byte",
+          "sha256_rotr32",
+          "sha256_work_load64",
+          "sha256_work_store64"
+        ]
+      }
+    ],
+    "src/protocol/pnx1.hepta": [
+      {
+        "source": "src/protocol/ilf2.hepta",
+        "functions": [
+          "validate_ilf2",
+          "ilf2_coefficients"
+        ]
+      },
+      {
+        "source": "src/protocol/ilf3.hepta",
+        "functions": [
+          "validate_ilf3",
+          "ilf3_coefficients"
+        ]
+      }
     ]
   }
 }

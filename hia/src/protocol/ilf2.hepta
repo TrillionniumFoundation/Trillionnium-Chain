@@ -1,7 +1,16 @@
 hia-asm.v1 hepta.hia.program.v8 trnm_protocol_ilf2
-fn f0(input:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,trap) entry(entry)
-block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
-  v0:usize = buffer.len(input)
+fn f0(v0:readbuf,v1:mutbuf,v2:mutbuf) -> (u32) effects(read,trap) entry(b0)
+block b0(v0:readbuf,v1:mutbuf,v2:mutbuf)
+  v3:usize = buffer.len(v0)
+  v4:u32 = call(v0,v3) {"function":"validate_ilf2"}
+  ret(v4)
+end
+fn validate_ilf2(span_input:readbuf,payload_len:usize) -> (u32) effects(read,trap) entry(span)
+block span(span_input:readbuf,payload_len:usize)
+  span_capacity:usize = buffer.len(span_input)
+  span_fits:bool = compare.le(payload_len,span_capacity)
+  branch span_fits entry(span_input,payload_len) length()
+block entry(input:readbuf,v0:usize)
   v1:usize = const() {"value":242}
   v2:bool = compare.ge(v0,v1)
   branch v2 version(input,v0) length()
@@ -70,7 +79,7 @@ block extent(extent_input:readbuf,extent_size:usize,extent_rank:u8)
   branch v59 factors(extent_input,extent_size) length()
 block factors(factors_input:readbuf,factors_size:usize)
   v60:usize = const() {"value":242}
-  v61:bool = call(factors_input,v60,factors_size) {"function":"f1"}
+  v61:bool = call(factors_input,v60,factors_size) {"function":"ilf2_coefficients"}
   branch v61 ok() noncanonical()
 block ok()
   v62:u32 = const() {"value":0}
@@ -88,8 +97,7 @@ block limit()
   v66:u32 = const() {"value":4}
   ret(v66)
 end
-
-fn f1(input:readbuf,start:usize,stop:usize) -> (bool) effects(read,trap) entry(entry)
+fn ilf2_coefficients(input:readbuf,start:usize,stop:usize) -> (bool) effects(read,trap) entry(entry)
 block entry(input:readbuf,start:usize,stop:usize)
   jump scan(input,start,stop)
 block scan(scan_input:readbuf,scan_pos:usize,scan_stop:usize)

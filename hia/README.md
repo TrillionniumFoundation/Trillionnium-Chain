@@ -1,12 +1,14 @@
 # HIA native implementation
 
 This directory contains the HIA migration of Trillionnium-Chain. Its target is
-one complete HIA-native implementation. The current candidate contains **15
+one complete HIA-native implementation. The current candidate contains **17
 native source units**; the 26 existing Rust packages remain until their complete
 replacement is qualified. The authoritative sequence remains the
 [repository development plan](../docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md).
 [The migration inventory](../config/hia-migration-v1.json) accounts for every
 original package and every new HIA source file.
+The [audit report](AUDIT.md) records complete ownership, observed CI failures
+and the exact limits of the current replacement.
 
 ## Fixed sources and audit
 
@@ -38,6 +40,7 @@ new proof of work hardness or satisfy an unexecuted service campaign.
 | [ID](src/protocol/id.hepta), [hash text](src/protocol/hash.hepta) | Exact identifier alphabet/length and lowercase hash grammar | Complete byte alphabet and boundary controls |
 | [PNH1](src/protocol/pnh1.hepta), [PGH2](src/protocol/pgh2.hepta) | Fixed header grammar and original error order | Original independent header oracle and byte mutations |
 | [ILF2](src/protocol/ilf2.hepta), [ILF3](src/protocol/ilf3.hepta) | Complete bounded factor/evolution witness grammar | Original vectors, every coefficient position, truncation and error precedence |
+| [PNX1](src/protocol/pnx1.hepta) | Complete current envelope grammar, all 24 tags, funded contracts and nested witness validation | Independent byte specification, refusal precedence and original-Rust CI |
 | [SHA-256](src/crypto/sha256.hepta) | Hash inputs through 1 MiB | Known vectors, `hashlib`, padding, real unaligned pointers and canaries |
 | [SHA arena](src/crypto/sha256_arena.hepta) | One shared mutable arena for W1 hash input/output/work | Exact ranges, maximum length and no-write refusal |
 | [PoN hash](src/crypto/pon_hash.hepta) | Original tag and per-part length framing | Original wire oracle, task/noise/header domains and ambiguous concatenations |
@@ -46,6 +49,7 @@ new proof of work hardness or satisfy an unexecuted service campaign.
 | [W1 verification](src/work/verify.hepta) | Complete deterministic non-cancelling PNW1 relation | Independent scalar transcript and direct `AB` product, target/trace/product attacks |
 | [Replay](src/transport/replay.hepta) | Session/nonce/pending checks, ACK and pure successor proposals | Two native backends, original boundary vectors and Rust-reference CI |
 | [Closed round](src/verification/closed_round.hepta) | Exact evaluator policy over canonical UTF-8 containers | Full-width scores, all arrival orders, Unicode, 1 MiB and Rust-reference CI |
+| [Checkpoint V2](src/checkpoint/value_v2.hepta) | Canonical value construction/decoding, watermark, SHA binding and successor relation | Every record byte, truncation, field/error identity, full-width counters and original-Rust CI |
 
 The byte entries use `f0(readbuf, mutbuf, mutbuf) -> u32`. The scalar field
 module uses explicit scalar exports. All tested algorithms execute emitted
@@ -96,7 +100,8 @@ timeout or missing report remains an execution failure.
 ### Shared HIA source
 
 [components.json](components.json) explicitly selects five functions from the
-single `sha256_arena.hepta` source for the PoN hash and W1 components. Their
+single `sha256_arena.hepta` source for the PoN hash, W1 and checkpoint components.
+PNX1 explicitly includes the shared ILF2/ILF3 validators and coefficient scans. Their
 entry files therefore require package composition before admission. The driver
 checks each included source, joins only the named HIA functions and submits the
 complete program to the official Core verifier and native compiler. It refuses
@@ -106,21 +111,60 @@ is no second copied SHA helper in the W1 or PoN source files.
 
 ### Original Rust differential
 
-The test adapter directly imports the retained `trnm-transport` and
-`closed_round` modules. It does not reimplement their policies.
+The first test adapter directly imports the retained `trnm-transport` and
+`closed_round` modules. Two additional adapters link the unchanged original
+`trnm-protocol` and `trnm-checkpoint-types` crates with their locked dependencies.
+These adapters do not reimplement the policies they compare.
 
 ```bash
 rustc --edition=2021 -O hia/tests/rust_reference.rs -o /absolute/new/path/rust-reference
 export TRNM_HIA_RUST_REFERENCE=/absolute/new/path/rust-reference
+RUST_VALUE_TARGET=/absolute/new/path/rust-values
+cargo build --locked --manifest-path trillionnium/Cargo.toml \
+  -p trnm-protocol -p trnm-checkpoint-types --target-dir "$RUST_VALUE_TARGET"
+rustc --edition=2021 -O hia/tests/rust_protocol_reference.rs \
+  --extern trnm_protocol="$RUST_VALUE_TARGET/debug/libtrnm_protocol.rlib" \
+  -L dependency="$RUST_VALUE_TARGET/debug/deps" -o /absolute/new/path/rust-protocol
+rustc --edition=2021 -O hia/tests/rust_checkpoint_reference.rs \
+  --extern trnm_checkpoint_types="$RUST_VALUE_TARGET/debug/libtrnm_checkpoint_types.rlib" \
+  -L dependency="$RUST_VALUE_TARGET/debug/deps" -o /absolute/new/path/rust-checkpoint
+export TRNM_HIA_RUST_PROTOCOL_REFERENCE=/absolute/new/path/rust-protocol
+export TRNM_HIA_RUST_CHECKPOINT_REFERENCE=/absolute/new/path/rust-checkpoint
 python3 -B hia/tools/qualify.py --require-rust-oracle \
   --output /absolute/new/path/native-and-rust-results.json
 ```
 
-Without that environment variable, the local report explicitly records that
-the original Rust differential was not run. CI requires it, compiles the actual
+Without a corresponding environment variable, the local report explicitly
+records that original Rust differential as not run. CI requires all three, compiles the actual
 original modules and preserves the exact head's observations. The fixed
 `SourceOk` in the test fixture only exposes pure transport boundaries; source
 authentication is an independent integration obligation.
+
+## Transaction and checkpoint value contracts
+
+`pnx1.hepta` accepts the exact existing `PNX1` signed wire, including its opaque
+64-byte signature. It preserves outer Limit/Length/Version order, exact payload
+length, the complete 24-tag dispatch, nested ILF errors, then nonce and fee checks.
+Fixed payloads stay opaque wherever the original decoder only checks their size;
+decoding does not introduce signature or account authority. Codes 0–4 are the
+original wire results. Output remains unchanged. For tags 23/24, scratch must
+hold the payload; code 100 reports insufficient scratch before mutation. The
+validator copies exactly that payload prefix and uses explicit shared loans to
+the common ILF routines. The remainder of scratch stays unchanged.
+
+`checkpoint/value_v2.hepta` accepts a local request header
+`CPV2, version:u8(1), operation:u8, reserved:u16(0)` followed by the original
+record or fields. Operations 0–3 decode a 672-byte record, construct from its
+624 field bytes, check a predecessor/target pair, and construct a 104-byte
+watermark. All original integers and hash length prefixes use big-endian order.
+The HIA code builds the original 713-byte domain-separated SHA input itself.
+Success writes the canonical result and preserves output suffixes; all failure
+paths preserve output. Hash operations require 132,256 scratch bytes. The
+watermark-only operation requires no scratch. Codes 1–28 preserve original error
+and field identity; 100–103 report local envelope or capacity errors. The complete
+mapping and independent constructors are in [test_checkpoint.py](tests/test_checkpoint.py).
+No store trait, durable CAS, external freshness or actual node root is certified
+by successful value validation.
 
 ## W1 contracts
 
@@ -164,6 +208,14 @@ checks and 38 phases. The generated standalone ELF is byte-identical to the
 compiler used for these Chain components. The reports preserve the target,
 trusted dependencies and precise qualification scope.
 
+The first published candidate `893210a45b44742edfe2510fea1d92e9974b5f95` also passed
+the [native CI run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43735956757):
+72 tests, 21,593 actual native calls, no failures and no skips, including original
+Rust replay/round comparisons and 17 original Rust unit tests. The retained
+[CI report](qualification/native-ci.json) binds that exact tested source set.
+Later components must obtain their own differential results; this earlier run
+does not qualify later source changes.
+
 ## Tree cleanup and remaining integration
 
 607 obsolete checkout-repair files were removed from the active tree. Their
@@ -173,11 +225,29 @@ The original failure summaries and qualification are unchanged. The archive
 checker validates every original object and can return an indexed original
 without executing its historical helper scripts.
 
+A further 14 historical CI ZIPs (275,505,994 bytes) are indexed in the
+[sealed archive](../evidence/pon-business-gates-819309-final-20261107/ci-819/ORIGINAL_ZIP_ARCHIVE.json).
+Its reader preserves and validates all 810 original checksum entries, the
+original seal and all HOLD/FAIL counts. Both cleanup sets remove 621 current-tree
+copies totaling 403,944,723 original bytes; metadata and validation additions
+make the net reduction smaller.
+
 ```bash
 python3 scripts/ci/check_historical_archive.py --manifest \
   evidence/pon-learning-outcome-composition-20261111/CHECKOUT_VISIBILITY_ARCHIVE.json
 python3 hia/tools/check_migration.py
 ```
+
+The pinned HIA Core has a closed opcode/effect set and internal calls. Its
+standard selfhost executable provides bounded stdin/stdout, mmap and exit.
+Hepta's artifact publisher and release installer have real openat/fsync/rename
+adapters, authored as fixed ISA and packed into native ELF; those specialized
+adapters do not expose a general node filesystem/network/transaction API.
+The locked [opcode catalog](https://github.com/TrillionniumFoundation/Hepta/blob/f33d8da316de8fdf27b504371f1a5310997ff548/hepta/hia_opcodes.py),
+[support declaration](https://github.com/TrillionniumFoundation/Hepta/blob/f33d8da316de8fdf27b504371f1a5310997ff548/docs/HIA_SELFHOST_CORE_SUPPORT.json),
+and [artifact publication boundary](https://github.com/TrillionniumFoundation/Hepta/blob/f33d8da316de8fdf27b504371f1a5310997ff548/docs/HIA_ARTIFACT_PUBLICATION_NATIVE.md)
+define that distinction. The compiler cold gate did not execute every specialized
+file application gate and gives no socket, SQLite or node-lifecycle guarantee.
 
 The next integration obligations are general system I/O and capabilities,
 durable storage/recovery, complete PQ identity and transport, whole node/model

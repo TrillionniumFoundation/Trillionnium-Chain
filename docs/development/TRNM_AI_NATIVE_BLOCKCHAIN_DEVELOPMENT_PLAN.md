@@ -7,12 +7,21 @@ remain explicitly accounted for in the [HIA migration inventory](../../config/hi
 The [native source and reproduction guide](../../hia/README.md) describes the
 actual code and local ABIs. This section extends the sole development plan.
 
-Fifteen HIA source units now implement exact protocol grammars, SHA-256 and PoN
+Seventeen HIA source units now implement exact protocol grammars, SHA-256 and PoN
 hash framing, W1 field/matrix operations and the complete non-cancelling W1
-relation, pure replay transitions, and bounded UTF-8 evaluator-round decisions.
+relation, pure replay transitions, bounded UTF-8 evaluator-round decisions,
+the complete current 24-tag PNX1 envelope grammar, and checkpoint V2 canonical
+values, watermarks and successor checks.
 Native code is emitted by the fixed Hepta self-hosted compiler at `f33d8da3`;
 its original 180-second cold gate passed in 154.807339324 seconds. That compiler
 qualification remains separate from whole-Chain service qualification.
+
+The first published native candidate `893210a45b44742edfe2510fea1d92e9974b5f95`
+passed [native CI](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43735956757):
+72 tests, 21,593 actual native calls, no skips/failures, including original-Rust
+replay/round differentials. Each subsequent component needs a new source-bound
+qualification. The PNX1 and checkpoint adapters link the unchanged original
+protocol/checkpoint crates with the original Cargo lockfile for those comparisons.
 
 Proceed from these native kernels to explicit system I/O/capability support,
 the single durable node owner and recovery cuts, PQ identity/transport, full
@@ -26,6 +35,15 @@ work-cost, STARK/QROM and consensus-economic obligations remain open.
 The first cleanup removes 607 checkout-repair preparation files, with exact
 Git-object/SHA-256 recovery and original failure summaries retained in the
 [historical archive index](../../evidence/pon-learning-outcome-composition-20261111/CHECKOUT_VISIBILITY_ARCHIVE.json).
+The second cleanup removes 14 original CI ZIP copies (275,505,994 bytes) through
+an exact [sealed historical index](../../evidence/pon-business-gates-819309-final-20261107/ci-819/ORIGINAL_ZIP_ARCHIVE.json).
+Its reader still verifies all 810 original checksums and the unchanged seal and
+HOLD counts. Combined removed payloads total 621 paths and 403,944,723 bytes.
+The [audit](../../hia/AUDIT.md) records all 26 package owners, remaining archive
+consumers and actual original-CI failures. The missing distributed inventory
+entry introduced by the new migration config was regenerated with the original
+tool; original service deadline failures and unavailable historical artifacts
+retain their own failure identities.
 No legacy runtime package has yet been retired. New native CI executes pinned
 bootstrap, whole-program admission, raw machine-code cases and original-Rust
 policy differentials on the exact candidate, and retains both success and

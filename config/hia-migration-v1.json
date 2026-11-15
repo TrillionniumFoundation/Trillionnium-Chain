@@ -167,6 +167,27 @@
         "hia/tests/test_closed_round.py"
       ],
       "node_integration_complete": false
+    },
+    {
+      "id": "protocol/pnx1",
+      "source": "hia/src/protocol/pnx1.hepta",
+      "scope": "complete current PNX1 envelope byte grammar including all 24 payload tags; no signature or account authority",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_pnx1.py",
+        "hia/tests/test_pnx1_adversarial.py"
+      ],
+      "node_integration_complete": false
+    },
+    {
+      "id": "checkpoint/value_v2",
+      "source": "hia/src/checkpoint/value_v2.hepta",
+      "scope": "complete V2 checkpoint canonical value, SHA-256 binding, watermark and successor checks; no store/CAS authority",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_checkpoint.py"
+      ],
+      "node_integration_complete": false
     }
   ],
   "legacy_packages": [
@@ -238,7 +259,8 @@
         "protocol/pgh2",
         "protocol/ilf2",
         "protocol/ilf3",
-        "crypto/pon_hash"
+        "crypto/pon_hash",
+        "protocol/pnx1"
       ],
       "retirement_accepted": false
     },
@@ -318,8 +340,10 @@
       "package": "trnm-checkpoint-types",
       "module": "M03",
       "legacy_path": "trillionnium/crates/trnm-checkpoint-types",
-      "state": "not-ported",
-      "components": [],
+      "state": "partially-ported",
+      "components": [
+        "checkpoint/value_v2"
+      ],
       "retirement_accepted": false
     },
     {

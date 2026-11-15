@@ -32,8 +32,11 @@ ARM final import calls hit the original 30-second deadline; servers were stopped
 before lifetime expiry. Eight databases were read mode=ro, immutable=1 and
 query_only, with matching SHA256 before/after. No Node open or recovery ran.
 
-archives/ preserves all 14 original ZIP byte streams. Complete databases, large
-original reports and every other supplied member remain within those ZIPs.
+The 14 original ZIP byte streams are retained in reachable Git history and
+indexed by [ORIGINAL_ZIP_ARCHIVE.json](ORIGINAL_ZIP_ARCHIVE.json), including
+their exact paths, blob IDs, byte counts and SHA-256 digests. They are absent
+from the current checkout. Complete databases, large original reports and every
+other supplied member remain in those exact ZIP objects; no member was rewritten.
 artifacts/ additionally exposes original source/context/manifest/log records and
 independent readbacks. pinned-readers/ retains exact-819 source blob identities.
 readbacks/ preserves timing versions and scope. OBSERVER_NOTES.json retains
@@ -49,6 +52,41 @@ e70, d26 and 819 are separate captures, not a paired performance experiment.
 No native rerun, CI dispatch, source mutation, budget relaxation, TPS, COW,
 public-network or production-activation claim was made by this observer.
 
-Run sha256sum -c SHA256SUMS in this directory to verify the listed payload.
-SEAL.json records the checksum-list identity. No later observations are added
-to this fixed package after sealing.
+## Verify the original sealed observation
+
+SEAL.json, SHA256SUMS, FILES.json, ARTIFACT_INDEX.json, GATE_CORE.json and
+OBSERVER_NOTES.json remain byte-for-byte unchanged. Their paths and totals
+describe the original sealed logical package, including its original README,
+not the current physical layout. The archive index binds the original README
+and controls to commit `893210a45b44742edfe2510fea1d92e9974b5f95` and tree
+`a2d04b29621bb78504244471aacac3be3bc78d1d`. This README documents the storage
+change; it does not add or replace any observation.
+
+From the repository root, run:
+
+```sh
+python3 scripts/ci/check_sealed_ci_archive.py \
+  --manifest evidence/pon-business-gates-819309-final-20261107/ci-819/ORIGINAL_ZIP_ARCHIVE.json
+```
+
+The reader verifies all 810 original checksum entries, all 14 original GitHub
+artifact bindings, the original 309,875,945-byte sealed payload and its HOLD
+outcome. Only the indexed ZIPs and original README resolve from pinned Git
+objects. Every other original file must still exist with its original bytes;
+missing or changed retained evidence fails verification. The original seal and
+checksum list are verified unchanged, rather than regenerated around missing
+paths. Local history must contain the pinned objects; the reader does not fetch.
+
+To retrieve an exact original ZIP, use the generic reader with an indexed path:
+
+```sh
+python3 scripts/ci/check_historical_archive.py \
+  --manifest evidence/pon-business-gates-819309-final-20261107/ci-819/ORIGINAL_ZIP_ARCHIVE.json \
+  --cat evidence/pon-business-gates-819309-final-20261107/ci-819/archives/13585963261.zip \
+  > /tmp/13585963261.zip
+```
+
+The same `--cat` interface retrieves the original README or sealed controls
+listed in `historical_manifests`. Both readers perform byte-integrity checks
+only. They do not execute archived helpers, rerun native observations or change
+the service, History, public-network or production qualification.
