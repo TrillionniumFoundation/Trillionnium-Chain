@@ -23,6 +23,8 @@ mod historical_commitment;
 #[cfg(test)]
 mod historical_commitment_tests;
 mod history_page;
+#[cfg(test)]
+mod legacy_activation_tail_tests;
 mod legacy_admission_readback;
 #[cfg(test)]
 mod legacy_admission_root_tests;
@@ -6270,6 +6272,10 @@ impl Node {
         progress: &mut dyn FnMut() -> Result<()>,
         termination_cpu: Option<&crate::ingress::public_v3::ServiceMutationCpuCheckpoint>,
     ) -> Result<Hash> {
+        let tail_origin = self
+            .native_legacy_reorg_observation_enabled()
+            .then(|| self.authenticated_arithmetic.history.legacy_tail_origin())
+            .flatten();
         progress()?;
         self.settings
             .app
@@ -6283,7 +6289,7 @@ impl Node {
         self.continuous_activation_gate(target)?;
         self.mining_activation_gate(target)?;
         self.namespace()?;
-        self.resume_owned_reorg(&mut hook, progress, termination_cpu)?;
+        self.resume_owned_reorg(&mut hook, progress, termination_cpu, tail_origin.as_ref())?;
         let (old, g, next) = self.activation_selection(target)?;
         let Some(next) = next else {
             return Ok(old);
@@ -6439,7 +6445,7 @@ impl Node {
                     std::thread::sleep(std::time::Duration::from_millis(2));
                 }
             }
-            self.resume_intent_with_progress(&mut hook, progress)
+            self.resume_intent_with_progress(&mut hook, progress, tail_origin.as_ref())
         })();
         self.finish_or_cancel_reorg(&cancellation, outcome, &mut hook)
     }
@@ -6590,12 +6596,13 @@ impl Node {
         Ok(row)
     }
     fn resume_intent(&mut self, hook: &mut Option<&mut Hook<'_>>) -> Result<Hash> {
-        self.resume_intent_with_progress(hook, &mut || Ok(()))
+        self.resume_intent_with_progress(hook, &mut || Ok(()), None)
     }
     fn resume_intent_with_progress(
         &mut self,
         hook: &mut Option<&mut Hook<'_>>,
         progress: &mut dyn FnMut() -> Result<()>,
+        tail_origin: Option<&native_authenticated::LegacyTailOrigin>,
     ) -> Result<Hash> {
         progress()?;
         let Some((old, target, g, position, done)) = self.checked_reorg_intent()? else {
@@ -6604,6 +6611,7 @@ impl Node {
         if done != 0 {
             return Ok(self.active()?.0);
         }
+        let mut tail = tail_origin.map(native_authenticated::LegacyTailOrigin::begin);
         self.invalidate_commitment();
         let old = bytes32(old)?;
         let target = bytes32(target)?;
@@ -6654,18 +6662,42 @@ impl Node {
                 &format!("{}:{index}", if kind == 0 { "detach" } else { "attach" }),
             )?;
         }
+        native_authenticated::LegacyTailObservation::advance(
+            &mut tail,
+            native_authenticated::LegacyTailPhase::FinalState,
+        );
         let state = self.slot_state_with_progress(g, progress)?;
+        native_authenticated::LegacyTailObservation::advance(
+            &mut tail,
+            native_authenticated::LegacyTailPhase::FinalContinuity,
+        );
         progress()?;
         continuity_v1::check_state(&state, self.record(target)?.height, &self.settings.app)
             .map_err(|error| Error::from(error).local_integrity())?;
+        native_authenticated::LegacyTailObservation::advance(
+            &mut tail,
+            native_authenticated::LegacyTailPhase::FinalRoot,
+        );
         let actual_root = match self.legacy_persisted_root_arithmetic() {
             Some(arithmetic) => arithmetic.root(&state)?,
             None => self.settings.state_root(&state)?,
         };
         ensure(actual_root == self.record(target)?.root, "ROOT").map_err(Error::local_integrity)?;
+        native_authenticated::LegacyTailObservation::advance(
+            &mut tail,
+            native_authenticated::LegacyTailPhase::BeforePublication,
+        );
         progress()?;
         cut(hook, "before-publish")?;
+        native_authenticated::LegacyTailObservation::advance(
+            &mut tail,
+            native_authenticated::LegacyTailPhase::PublicationEntry,
+        );
         self.atomic_reorg_with_readback(progress, |progress, original_owner| {
+            native_authenticated::LegacyTailObservation::advance(
+                &mut tail,
+                native_authenticated::LegacyTailPhase::ExpectedSteps,
+            );
             let expected: Vec<(u64, u64, Hash)> = self
                 .db
                 .prepare("SELECT ordinal,kind,block FROM steps ORDER BY ordinal")?
@@ -6682,6 +6714,10 @@ impl Node {
                     Ok((ordinal, kind, bytes32(id)?))
                 })
                 .collect::<Result<_>>()?;
+            native_authenticated::LegacyTailObservation::advance(
+                &mut tail,
+                native_authenticated::LegacyTailPhase::PublicationWrites,
+            );
             ensure(
                 self.db.execute(
                     "UPDATE active SET tip=?,generation=?,state_slot=? WHERE singleton=1",
@@ -6690,6 +6726,10 @@ impl Node {
                 "STORAGE_WRITE",
             )
             .map_err(Error::local_integrity)?;
+            native_authenticated::LegacyTailObservation::advance(
+                &mut tail,
+                native_authenticated::LegacyTailPhase::PublicationEventWrites,
+            );
             ensure(
                 self.db.execute(
                     "INSERT INTO events SELECT ?,ordinal,kind,block FROM steps ORDER BY ordinal",
@@ -6705,16 +6745,36 @@ impl Node {
                 "STORAGE_WRITE",
             )
             .map_err(Error::local_integrity)?;
+            native_authenticated::LegacyTailObservation::advance(
+                &mut tail,
+                native_authenticated::LegacyTailPhase::PublicationLifecycle,
+            );
             self.finish_reorg_lifecycle(old, target, g)?;
             self.db.execute("DELETE FROM kv WHERE slot!=?", [g])?;
+            native_authenticated::LegacyTailObservation::advance(
+                &mut tail,
+                native_authenticated::LegacyTailPhase::PublicationPostWriteChecks,
+            );
             ensure(
                 self.active()? == (target, g) && self.slot()? == g,
                 "GENERATION",
             )
             .map_err(Error::local_integrity)?;
             self.check_reorg_row(old, target, g, count, 1)?;
+            native_authenticated::LegacyTailObservation::advance(
+                &mut tail,
+                native_authenticated::LegacyTailPhase::PublicationEventsCheck,
+            );
             self.check_events_with_progress(g, &expected, progress)?;
+            native_authenticated::LegacyTailObservation::advance(
+                &mut tail,
+                native_authenticated::LegacyTailPhase::PublicationReadback,
+            );
             let mut readback = self.reorg_post_write_readback(target, original_owner)?;
+            native_authenticated::LegacyTailObservation::advance(
+                &mut tail,
+                native_authenticated::LegacyTailPhase::PublicationStaging,
+            );
             {
                 let _stage = self.native_legacy_reorg_observation_enabled().then(|| {
                     self.authenticated_arithmetic
@@ -6729,9 +6789,18 @@ impl Node {
                     self.legacy_persisted_root_arithmetic(),
                 )?;
             }
+            native_authenticated::LegacyTailObservation::advance(
+                &mut tail,
+                native_authenticated::LegacyTailPhase::PublicationTail,
+            );
             Ok(readback)
         })?;
+        native_authenticated::LegacyTailObservation::advance(
+            &mut tail,
+            native_authenticated::LegacyTailPhase::AfterPublication,
+        );
         cut(hook, "published")?;
+        native_authenticated::LegacyTailObservation::complete(&mut tail);
         Ok(target)
     }
     fn recovery_target(&self) -> Result<Hash> {

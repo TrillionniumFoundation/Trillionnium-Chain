@@ -685,3 +685,442 @@ fn submit_replay_restart(control: SubmitControl) {
     drop(reopened);
     restarted.stop();
 }
+
+// Additional controls are separate from the retained 52/11 named CI rosters.
+// This entire file is loaded only by the existing #[cfg(test)] declaration.
+mod mutation_stage_regression {
+    use super::*;
+    use crate::pq_rollback_witness::{WitnessTransport, MAX_EXCHANGE};
+    use rusqlite::trace::{TraceEvent, TraceEventCodes};
+    use serde::Serialize;
+    use std::sync::{atomic::AtomicU8, Mutex};
+
+    #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
+    #[serde(rename_all = "snake_case")]
+    enum Case {
+        Success,
+        BeforeCurrent,
+        BeforeCas,
+        LostCas,
+        LateCas,
+    }
+    #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
+    #[serde(rename_all = "snake_case")]
+    enum Event {
+        Check(u8),
+        BeforeSend,
+        CurrentEnter,
+        CurrentReply,
+        ResourceStart,
+        ResourceEnd,
+        CasEnter,
+        CasReply,
+        ReceiptDiscarded,
+        LateReceiptGate,
+        CommitHook,
+        CommitProfile,
+        Rollback,
+    }
+    type Events = Arc<Mutex<Vec<Event>>>;
+    fn event(events: &Events, value: Event) {
+        let mut events = events.lock().unwrap();
+        assert!(events.len() < 32, "bounded fixture event capacity");
+        events.push(value);
+    }
+    fn wait_until(until: Instant) {
+        while Instant::now() < until {
+            thread::sleep(until.saturating_duration_since(Instant::now()));
+        }
+    }
+    struct Transport {
+        inner: ConnectedWitnessTransport,
+        mode: Arc<AtomicU8>,
+        outer: Arc<Mutex<Option<Instant>>>,
+        events: Events,
+    }
+    impl WitnessTransport for Transport {
+        fn exchange(&mut self, request: &[u8], until: Instant) -> Result<Vec<u8>> {
+            let cas = request.get(4) == Some(&2);
+            event(
+                &self.events,
+                if cas {
+                    Event::CasEnter
+                } else {
+                    Event::CurrentEnter
+                },
+            );
+            let reply = self.inner.exchange(request, until)?;
+            event(
+                &self.events,
+                if cas {
+                    Event::CasReply
+                } else {
+                    Event::CurrentReply
+                },
+            );
+            if cas && self.mode.load(Ordering::Acquire) == Case::LostCas as u8 {
+                event(&self.events, Event::ReceiptDiscarded);
+                return Err("LOST_CAS_REPLY".into());
+            }
+            if cas && self.mode.load(Ordering::Acquire) == Case::LateCas as u8 {
+                let outer = self.outer.lock().unwrap().unwrap();
+                // Hold only a real reply that arrived through the unchanged
+                // bounded Unix transport, not fabricated witness authority.
+                assert!(Instant::now() < outer);
+                event(&self.events, Event::LateReceiptGate);
+                wait_until(outer);
+            }
+            Ok(reply)
+        }
+    }
+    fn local_bytes(db: &Connection) -> u64 {
+        db.query_row("SELECT input_bytes FROM pq_network_resource_v2", [], |r| {
+            r.get(0)
+        })
+        .unwrap()
+    }
+    fn remote_checkpoint(db: &Connection) -> Checkpoint {
+        db.query_row(
+            "SELECT sequence,root FROM witness_v1 WHERE singleton=1",
+            [],
+            |r| {
+                let raw: Vec<u8> = r.get(1)?;
+                Ok(Checkpoint::new(r.get(0)?, raw.try_into().unwrap()).unwrap())
+            },
+        )
+        .unwrap()
+    }
+    fn row<'a>(snapshot: &'a serde_json::Value, kind: &str) -> &'a serde_json::Value {
+        let rows: Vec<_> = snapshot["records"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter(|r| r["kind"] == kind)
+            .collect();
+        assert_eq!(
+            rows.len(),
+            1,
+            "one original operation of each exercised kind"
+        );
+        rows[0]
+    }
+    fn completed_phase(record: &serde_json::Value, phase: &str) -> bool {
+        record["phases"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|p| p["phase"] == phase && p["samples"]["completed"] == 1)
+    }
+
+    fn run(case: Case, enabled: bool) -> (Vec<Event>, u8, String, u64, bool) {
+        assert_eq!(MAX_EXCHANGE, Duration::from_millis(250));
+        let directory = Arc::new(tempfile::tempdir().unwrap());
+        let genesis = ingress::now().unwrap() - 100;
+        let (settings, policy) = settings_and_policy(genesis);
+        let bind = binding(&policy);
+        let initial = initial_checkpoint(&policy, &bind).unwrap();
+        drop(
+            DurableWitness::register_new(
+                &directory.path().join("witness.sqlite"),
+                bind,
+                initial,
+                key(91),
+            )
+            .unwrap(),
+        );
+        let mut process = Process::start(&directory, genesis, initial);
+        let events: Events = Arc::new(Mutex::new(Vec::with_capacity(32)));
+        let mode = Arc::new(AtomicU8::new(Case::Success as u8));
+        let outer = Arc::new(Mutex::new(None));
+        let transport = Transport {
+            inner: ConnectedWitnessTransport::new(
+                UnixStream::connect(directory.path().join("witness.sock")).unwrap(),
+            ),
+            mode: mode.clone(),
+            outer: outer.clone(),
+            events: events.clone(),
+        };
+        let client = WitnessClient::new(binding(&policy), key(92), Box::new(transport)).unwrap();
+        let node_path = directory.path().join("node");
+        let mut node =
+            Node::create_with_pq_witness(&node_path, settings, 1, &policy, client).unwrap();
+        let local = Connection::open_with_flags(
+            node_path.join("native.sqlite"),
+            rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY,
+        )
+        .unwrap();
+        let remote = Connection::open_with_flags(
+            directory.path().join("witness.sqlite"),
+            rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY,
+        )
+        .unwrap();
+        let before = checkpoint(&node.db).unwrap();
+        let epoch = node.pq_network_epoch.load(Ordering::Acquire);
+        assert_ne!(epoch, 0);
+        events.lock().unwrap().clear();
+        mode.store(case as u8, Ordering::Release);
+
+        // Observe the actual original resource SQL; never execute substitute SQL.
+        // Profile means SQLite returned from the statement, not SQL acceptance.
+        // Drop keeps that span's Result explicitly unknown rather than inventing it.
+        let spans = Arc::new(Mutex::new(None));
+        let sql_spans = spans.clone();
+        let sql_events = events.clone();
+        node.db
+            .trace_v2(
+                TraceEventCodes::SQLITE_TRACE_STMT | TraceEventCodes::SQLITE_TRACE_PROFILE,
+                Some(move |trace: TraceEvent<'_>| match trace {
+                    TraceEvent::Stmt(_, sql)
+                        if sql.starts_with("UPDATE pq_network_resource_v2 SET connections=") =>
+                    {
+                        event(&sql_events, Event::ResourceStart);
+                        let op = test_observation::start(test_observation::Kind::ResourceUpdateSql);
+                        let phase = op
+                            .as_ref()
+                            .map(|o| o.phase(test_observation::Phase::ResourceUpdateSql));
+                        *sql_spans.lock().unwrap() = Some((op, phase));
+                    }
+                    TraceEvent::Profile(statement, _) => {
+                        let sql = statement.sql();
+                        if sql.starts_with("UPDATE pq_network_resource_v2 SET connections=") {
+                            event(&sql_events, Event::ResourceEnd);
+                            let (op, phase) = sql_spans.lock().unwrap().take().unwrap();
+                            drop(phase);
+                            drop(op);
+                        } else if sql == "COMMIT" {
+                            event(&sql_events, Event::CommitProfile);
+                        } else if sql == "ROLLBACK" {
+                            event(&sql_events, Event::Rollback);
+                        }
+                    }
+                    _ => {}
+                }),
+            )
+            .unwrap();
+        let commit_events = events.clone();
+        node.db
+            .commit_hook(Some(move || {
+                event(&commit_events, Event::CommitHook);
+                false
+            }))
+            .unwrap();
+        if matches!(case, Case::BeforeCurrent | Case::BeforeCas) {
+            let hook_events = events.clone();
+            let mut calls = 0;
+            node.pq_witness
+                .as_ref()
+                .unwrap()
+                .borrow_mut()
+                .fixture_before_send(Some(Box::new(move |until| {
+                    calls += 1;
+                    event(&hook_events, Event::BeforeSend);
+                    if (case == Case::BeforeCurrent && calls == 1)
+                        || (case == Case::BeforeCas && calls == 2)
+                    {
+                        wait_until(until);
+                    }
+                })));
+        }
+        let scope = enabled.then(test_observation::Scope::quiet);
+        let clocks = test_observation::clock_attempts();
+        // One fixed caller deadline, never renewed by Current, CAS, or the fixture.
+        let deadline = Instant::now() + Duration::from_secs(1);
+        *outer.lock().unwrap() = Some(deadline);
+        let mut checks = 0_u8;
+        let result =
+            node.charge_pq_ingress_with_check(&policy, false, 61, false, deadline, &mut || {
+                checks += 1;
+                event(&events, Event::Check(checks));
+                if checks == 5 {
+                    // A separate read-only connection observes COMMIT before the
+                    // original live-check result, including the deliberately late case.
+                    assert_eq!(local_bytes(&local), 61);
+                    assert_eq!(checkpoint(&local).unwrap(), remote_checkpoint(&remote));
+                    assert_eq!(checkpoint(&local).unwrap().sequence, before.sequence + 1);
+                }
+                crate::ingress::pq_network::canonical_tests::witness_fixture_tls_live_check(
+                    deadline,
+                )
+            });
+        let outer_elapsed = Instant::now() >= deadline;
+        let after_clocks = test_observation::clock_attempts();
+        if enabled {
+            assert!(after_clocks.0 > clocks.0 && after_clocks.1 > clocks.1);
+        } else {
+            assert_eq!(
+                after_clocks, clocks,
+                "no scope must read no diagnostic clocks"
+            );
+        }
+        assert!(spans.lock().unwrap().is_none());
+        node.db
+            .trace_v2(TraceEventCodes::empty(), None::<fn(TraceEvent<'_>)>)
+            .unwrap();
+        node.db.commit_hook(None::<fn() -> bool>).unwrap();
+        node.pq_witness
+            .as_ref()
+            .unwrap()
+            .borrow_mut()
+            .fixture_before_send(None);
+        let expected_error = match case {
+            Case::Success => None,
+            Case::BeforeCurrent | Case::BeforeCas => Some("PQ_WITNESS_DEADLINE"),
+            Case::LostCas => Some("LOST_CAS_REPLY"),
+            Case::LateCas => Some("PQ_NETWORK_DEADLINE"),
+        };
+        if case == Case::LateCas {
+            assert_eq!(
+                result.as_ref().unwrap_err().code(),
+                Some(crate::ErrorCode::PqNetworkDeadline)
+            );
+        }
+        if matches!(case, Case::BeforeCurrent | Case::BeforeCas) {
+            assert!(
+                !outer_elapsed,
+                "known pre-send exchange cap expires before the unchanged caller deadline"
+            );
+        }
+        let error = result.err().map(|e| e.to_string());
+        assert_eq!(error.as_deref(), expected_error);
+        let bytes = local_bytes(&node.db);
+        let committed = matches!(case, Case::Success | Case::LateCas);
+        assert_eq!(bytes, if committed { 61 } else { 0 });
+        assert_eq!(
+            checks,
+            match case {
+                Case::BeforeCurrent => 1,
+                Case::BeforeCas | Case::LostCas => 4,
+                _ => 5,
+            }
+        );
+        let available = node
+            .pq_witness
+            .as_ref()
+            .unwrap()
+            .borrow()
+            .available()
+            .is_ok();
+        assert_eq!(available, case != Case::LostCas);
+        assert_eq!(
+            node.pq_network_epoch.load(Ordering::Acquire),
+            if available { epoch } else { 0 }
+        );
+        if committed {
+            assert_eq!(checkpoint(&node.db).unwrap(), remote_checkpoint(&remote));
+        } else {
+            assert_eq!(checkpoint(&node.db).unwrap(), before);
+        }
+        assert_eq!(
+            remote_checkpoint(&remote).sequence,
+            before.sequence + u64::from(committed || case == Case::LostCas)
+        );
+        for db in [&local, &remote] {
+            assert_eq!(
+                db.query_row("PRAGMA integrity_check", [], |r| r.get::<_, String>(0))
+                    .unwrap(),
+                "ok"
+            );
+        }
+        let trace = events.lock().unwrap().clone();
+        let at = |e| trace.iter().position(|v| *v == e).unwrap();
+        if case != Case::BeforeCurrent {
+            assert!(at(Event::CurrentReply) < at(Event::ResourceStart));
+            assert!(at(Event::ResourceStart) < at(Event::ResourceEnd));
+            assert!(at(Event::ResourceEnd) < at(Event::Check(4)));
+        }
+        if matches!(case, Case::Success | Case::LateCas | Case::LostCas) {
+            assert!(at(Event::Check(4)) < at(Event::CasEnter));
+        }
+        if committed {
+            assert!(at(Event::CasReply) < at(Event::CommitHook));
+            assert!(at(Event::CommitHook) < at(Event::CommitProfile));
+            assert!(at(Event::CommitProfile) < at(Event::Check(5)));
+        }
+        if case == Case::LateCas {
+            assert!(outer_elapsed);
+            assert!(at(Event::LateReceiptGate) < at(Event::CommitHook));
+        }
+        let snapshot = scope.as_ref().map(test_observation::Scope::snapshot);
+        if let Some(s) = &snapshot {
+            assert_eq!(s["measurement_failures"], 0);
+            assert_eq!(s["records_overwritten"], 0);
+            assert_eq!(s["has_open_operations"], false);
+            let current = row(s, "client_current");
+            assert!(completed_phase(
+                current,
+                "request_sign_including_self_verify"
+            ));
+            assert_eq!(current["transport_entered"], case != Case::BeforeCurrent);
+            if case != Case::BeforeCurrent {
+                assert!(completed_phase(current, "client_reply_verify"));
+                let resource = row(s, "resource_update_sql");
+                assert!(resource["accepted"].is_null());
+                assert!(resource["wall_ns"].is_u64());
+                let cas = row(s, "client_cas");
+                assert!(completed_phase(cas, "request_sign_including_self_verify"));
+                assert_eq!(cas["transport_entered"], case != Case::BeforeCas);
+                assert_eq!(cas["matching_cas_receipt"], committed);
+                assert_eq!(row(s, "mutation_commit")["local_committed"], committed);
+                if committed {
+                    assert!(completed_phase(cas, "client_reply_verify"));
+                }
+            }
+            for r in s["records"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .filter(|r| matches!(r["kind"].as_str(), Some("client_current" | "client_cas")))
+            {
+                assert!(r["effective_remaining_ns"].as_u64().unwrap() <= 250_000_000);
+            }
+        }
+        eprintln!(
+            "TRNM_TLS_WITNESS_MUTATION_REGRESSION {}",
+            serde_json::json!({
+                "case":case,"observer_enabled":enabled,"checks":checks,"events":trace,"outer_deadline_elapsed":outer_elapsed,
+                "caller_clock_attempt_delta":[after_clocks.0-clocks.0,after_clocks.1-clocks.1],
+                "records":snapshot.as_ref().map(|s|&s["records"]),"phase_totals":snapshot.as_ref().map(|s|&s["phase_totals"]),
+                "resource_profile_result_is_unknown":true,"nested_times_are_not_additive":true,"qualification":false
+            })
+        );
+        drop(scope);
+        // A new operation on the same healthy client proves a pre-send refusal
+        // was not silently converted into a permanent outage. Never retry the
+        // failed operation or revive the uncertain client.
+        mode.store(Case::Success as u8, Ordering::Release);
+        if matches!(case, Case::BeforeCurrent | Case::BeforeCas) {
+            node.charge_pq_ingress(&policy, false, 1, false).unwrap();
+            assert_eq!(local_bytes(&node.db), 1);
+            assert_eq!(checkpoint(&node.db).unwrap(), remote_checkpoint(&remote));
+        }
+        if case == Case::LostCas {
+            assert_eq!(
+                node.charge_pq_ingress(&policy, false, 1, false)
+                    .unwrap_err()
+                    .to_string(),
+                "PQ_WITNESS_UNAVAILABLE"
+            );
+        }
+        drop(node);
+        drop(local);
+        drop(remote);
+        process.stop();
+        (trace, checks, error.unwrap_or_default(), bytes, available)
+    }
+    #[test]
+    fn real_current_resource_cas_stages_preserve_order_deadlines_and_failure_latching() {
+        for case in [
+            Case::Success,
+            Case::BeforeCurrent,
+            Case::BeforeCas,
+            Case::LostCas,
+            Case::LateCas,
+        ] {
+            assert_eq!(
+                run(case, false),
+                run(case, true),
+                "observation changed native fixture behavior at {case:?}"
+            );
+        }
+    }
+}

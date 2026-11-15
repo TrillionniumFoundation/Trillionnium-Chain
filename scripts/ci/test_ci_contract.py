@@ -795,6 +795,7 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
         # Independent inventory: removing a required command from the checker
         # must not silently remove that command's negative coverage as well.
         paths = (
+            'scripts/ci/test_legacy_activation_tail_diagnostic.py',
             'scripts/ci/test_pon_w1_cost_matrix_reader.py',
             'scripts/ci/test_throughput_cost_coverage.py',
             'scripts/ci/test_rust_source_tokens.py',

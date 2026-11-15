@@ -1328,6 +1328,14 @@ CODEQL_DIAGNOSTIC_READER_REQUIRED_PATHS = frozenset((
 ))
 NATIVE_REQUIRED_PATHS |= CODEQL_DIAGNOSTIC_READER_REQUIRED_PATHS
 
+# Explicit optional Legacy tail diagnostic closure; no acceptance authority.
+NATIVE_REQUIRED_PATHS |= frozenset((
+    'scripts/ci/test_legacy_activation_tail_diagnostic.py',
+    'trillionnium/crates/trnm-pon-node/src/store/legacy_activation_tail_tests.rs',
+    'trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/legacy_activation_tail.rs',
+    'trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/legacy_activation_tail/tests.rs',
+))
+
 def is_pq_source(parts: tuple[str, ...]) -> bool:
     """Recognize versioned pq3 modules, pq.rs, cell_pq and older prefixes."""
     return any(

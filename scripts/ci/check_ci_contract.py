@@ -238,6 +238,7 @@ CURRENT_READER_COMMANDS = (
     'python3 scripts/ci/test_pon_public_v3_policy_read.py',
     'python3 scripts/ci/test_llm_cell_handoff_deadline.py',
     'python3 scripts/test_llm_cell_release.py',
+    'python3 scripts/ci/test_legacy_activation_tail_diagnostic.py',
     'python3 scripts/ci/test_run_legacy_reorg_root_abba.py',
     'python3 -B scripts/ci/test_w1_factorial_native_gate.py',
     'python3 -B scripts/ci/test_prepare_artifact_upload.py',
@@ -971,6 +972,7 @@ PY
     python3 scripts/ci/test_pon_w1_rank_batch_reader_v5.py
     python3 scripts/ci/test_run_w1_rank_batch_v5.py
     python3 scripts/ci/test_pon_w1_zero_paired_lazy_v1.py
+    python3 scripts/ci/test_legacy_activation_tail_diagnostic.py
     python3 scripts/ci/test_run_legacy_reorg_root_abba.py
     python3 -B scripts/ci/test_w1_factorial_native_gate.py
     python3 -B scripts/ci/test_prepare_artifact_upload.py

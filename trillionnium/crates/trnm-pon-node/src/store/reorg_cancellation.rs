@@ -90,6 +90,7 @@ impl Node {
         hook: &mut Option<&mut Hook<'_>>,
         progress: &mut dyn FnMut() -> Result<()>,
         cpu: Option<&ServiceMutationCpuCheckpoint>,
+        tail_origin: Option<&native_authenticated::LegacyTailOrigin>,
     ) -> Result<Hash> {
         let pending: Option<(Vec<u8>, Vec<u8>, u64)> = self
             .db
@@ -106,7 +107,7 @@ impl Node {
             )
             .optional()?;
         let Some((old, target, generation)) = pending else {
-            return self.resume_intent_with_progress(hook, progress);
+            return self.resume_intent_with_progress(hook, progress, tail_origin);
         };
         let target = bytes32(target)?;
         // A new call's activation permit cannot authorize a different old
@@ -117,7 +118,7 @@ impl Node {
             self.reserve_reorg_cancellation(bytes32(old)?, target, generation, cpu)?;
         reservation.operation = Some(self.last_reorg_lifecycle()?.operation);
         self.check_reserved_reorg_lifecycle(&reservation, 0, None, "")?;
-        let outcome = self.resume_intent_with_progress(hook, progress);
+        let outcome = self.resume_intent_with_progress(hook, progress, tail_origin);
         self.finish_or_cancel_reorg(&reservation, outcome, hook)
     }
 

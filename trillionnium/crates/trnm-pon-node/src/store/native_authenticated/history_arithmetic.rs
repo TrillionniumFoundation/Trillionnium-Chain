@@ -21,6 +21,13 @@ use std::thread::{self, ThreadId};
 use std::time::Instant;
 use trnm_protocol::pon_wire::{Hash, Header};
 
+mod legacy_activation_tail;
+#[cfg(test)]
+pub(crate) use legacy_activation_tail::clock_reads as legacy_tail_clock_reads;
+pub(crate) use legacy_activation_tail::{
+    Observation as LegacyTailObservation, Origin as LegacyTailOrigin, Phase as LegacyTailPhase,
+};
+
 const MAX_ENTRIES: usize = 64;
 const MAX_POOL_CHARGE: usize = 4 * 1024 * 1024;
 // Covers the Arc allocation, entry/key, Vec slot and conservative allocator
@@ -155,10 +162,27 @@ pub(crate) struct HistoryArithmetic {
     stages: Arc<StageAccounting>,
     sql_commits: Arc<SqlCommitAccounting>,
     legacy_reorg_observation: Cell<bool>,
+    legacy_tail: RefCell<Option<Arc<legacy_activation_tail::Accounting>>>,
 }
 impl HistoryArithmetic {
     pub(crate) fn enable_legacy_reorg_observation(&self) {
         self.legacy_reorg_observation.set(true);
+        if let Ok(mut tail) = self.legacy_tail.try_borrow_mut() {
+            if tail.is_none() {
+                *tail = Some(Arc::default());
+            }
+        }
+    }
+    pub(crate) fn legacy_tail_origin(&self) -> Option<LegacyTailOrigin> {
+        if !self.legacy_reorg_observation.get() {
+            return None;
+        }
+        self.legacy_tail
+            .try_borrow()
+            .ok()?
+            .as_ref()
+            .cloned()
+            .map(LegacyTailOrigin::new)
     }
     pub(crate) fn legacy_reorg_observation_enabled(&self) -> bool {
         self.legacy_reorg_observation.get()
@@ -219,6 +243,7 @@ impl HistoryArithmetic {
             "counter_scope":"raw zero counters mean unentered; saturated or failed measurements are unavailable; compare only the same owner's monotone snapshots without reset",
             "interval_scope":"component intervals are not complete importer time; nested observations are not generally additive",
             "sql_commit":self.sql_commits.legacy_reorg_observation(),
+            "activation_tail":self.legacy_tail.try_borrow().ok().and_then(|tail|tail.as_ref().map(|a|a.snapshot())),
             "has_consensus_authority":false
         })
     }

@@ -1003,3 +1003,8 @@ fn classical_profile_keeps_legacy_protected_head_behavior() {
     peer.join().unwrap();
     assert_eq!(received.unwrap(), expected);
 }
+
+/// Test-only access to the unchanged live guard used by the real TLS BIO.
+pub(crate) fn witness_fixture_tls_live_check(deadline: Instant) -> Result<()> {
+    super::check_live_request(deadline, None)
+}

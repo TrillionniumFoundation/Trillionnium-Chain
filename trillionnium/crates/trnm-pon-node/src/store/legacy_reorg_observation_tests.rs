@@ -105,7 +105,7 @@ fn transfer(node: &Node, nonce: u64, recipient: u64) -> Vec<u8> {
     transaction.encode().unwrap()
 }
 
-fn fork_pair(control_path: &Path, observed_path: &Path) -> (Node, Node, Hash, u64) {
+pub(super) fn fork_pair(control_path: &Path, observed_path: &Path) -> (Node, Node, Hash, u64) {
     let settings = Settings::development(Some(1)).unwrap();
     let builder_directory = tempfile::tempdir().unwrap();
     let mut builder = Node::open(builder_directory.path(), settings.clone(), 2).unwrap();
@@ -188,7 +188,7 @@ fn activate_with_trace(
     (result, cuts, checkpoints)
 }
 
-fn lifecycle(node: &Node) -> (u64, u64, u64, Option<u64>, String) {
+pub(super) fn lifecycle(node: &Node) -> (u64, u64, u64, Option<u64>, String) {
     node.db
         .query_row(
             "SELECT reorg.done,reorg.cursor,reorg_lifecycle_v1.outcome,

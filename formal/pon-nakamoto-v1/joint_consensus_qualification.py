@@ -29,10 +29,13 @@ DEVNET = "config/pon/devnet-v1.json"
 MAX_JSON_BYTES = 262144
 MAX_SOURCE_BYTES = 2097152
 REVIEWED_NATIVE_COMMIT = "2d9baf313e54e49a4507c5057578e89ddbe7a1b6"
-# Independently anchored in the checker, after comparing all 23 source files to
-# the named Git commit. Editing source bytes and their JSON hashes alone cannot
-# preserve a claim about that reviewed source. A new anchor needs code review.
-REVIEWED_SOURCE_MAP_SHA256 = "5fd6aea2f2d1a6a3831853f54c8cc6e83cc8233cc61ab97a01a8e482749be674"
+# Historical revision anchors retain review lineage, not current source identity.
+# The reviewed map binds current candidate bytes, including uncommitted changes.
+# It does not establish exact git-show identity at an anchor or a candidate commit.
+# Source consistency does not authenticate provenance or grant qualification.
+# REVIEWED_NATIVE_COMMIT remains the historical anchor. This independent literal
+# binds the current 23-path map; changing it still requires code review.
+REVIEWED_SOURCE_MAP_SHA256 = "c054bb9b2f0c5ec695c8e999799d3df86dde068681a14eb52e2033fb4f4dda0e"
 
 # Deliberately a named scope, not a claim to cover every dependency or entrypoint.
 # Omission/addition requires code review; no CLI automatically repins a source.

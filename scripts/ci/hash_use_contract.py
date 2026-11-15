@@ -28,12 +28,16 @@ MAX_DEPTH = 64
 # Changing source or semantics requires a new review; inspect never regenerates.
 REVIEWED_SEMANTICS_SHA256 = "29189f8e96a255472577479d46204b2b403a1f8e27806da6aa616e417ced0b5b"
 # Preserve the 31-path/19-use semantics and original semantic review context.
-# At source checkpoint 7d8d4c59, six changed input identities were manually
-# reviewed against their prior 57b069ae bytes; the other 25 inputs are unchanged.
-# This literal binds that new reviewed map; inspect never regenerates it.
+# Historical checkpoint 7d8d4c59 reviewed six input identity changes against
+# 57b069ae, with 25 other inputs unchanged at that checkpoint.
+# Historical revision anchors retain review lineage, not current source identity.
+# The reviewed map binds current candidate bytes, including uncommitted changes.
+# It does not establish exact git-show identity at an anchor or a candidate commit.
+# Source consistency does not authenticate provenance or grant qualification.
+# This literal binds the current 31-path map; inspect never regenerates it.
 # New exported APIs remain outside these declared uses and do not acquire
 # whole-callgraph coverage. The selected upstream profile remains withdrawn.
-REVIEWED_SOURCE_MAP_SHA256 = "15a8d91e0b2c50908d17c6bb9743e8ef5a44927814e59354874d77d9654f9ee7"
+REVIEWED_SOURCE_MAP_SHA256 = "1c2aaecd1bd92ff8421c123db1da3fade3ef642ca60607e994d712de9c21b14f"
 
 USES = {
     "model-legacy-root": "model",

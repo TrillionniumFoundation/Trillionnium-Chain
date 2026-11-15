@@ -29,6 +29,7 @@ static LOG_REMAINING: AtomicUsize = AtomicUsize::new(MAX_PROCESS_LOG_BYTES);
 static LOG_LIMIT_REPORTED: AtomicBool = AtomicBool::new(false);
 thread_local! {
     static ACTIVE: RefCell<Option<Arc<Recorder>>> = const { RefCell::new(None) };
+    static CLOCK_ATTEMPTS: Cell<(u64, u64)> = const { Cell::new((0, 0)) };
 }
 
 #[derive(Clone, Copy, Debug, Serialize)]
@@ -45,6 +46,7 @@ pub(crate) enum Kind {
     TcpRequest,
     FixtureTransport,
     WitnessConnection,
+    ResourceUpdateSql,
 }
 #[derive(Clone, Copy, Debug, Serialize)]
 #[serde(rename_all = "snake_case")]
@@ -81,8 +83,9 @@ pub(crate) enum Phase {
     WitnessRead,
     WitnessHandle,
     WitnessWrite,
+    ResourceUpdateSql,
 }
-const PHASES: [Phase; 32] = [
+const PHASES: [Phase; 33] = [
     Phase::ClientEntry,
     Phase::ChallengeAndBody,
     Phase::RequestSignIncludingSelfVerify,
@@ -115,6 +118,7 @@ const PHASES: [Phase; 32] = [
     Phase::WitnessRead,
     Phase::WitnessHandle,
     Phase::WitnessWrite,
+    Phase::ResourceUpdateSql,
 ];
 #[derive(Clone, Copy)]
 pub(crate) enum Mark {
@@ -386,7 +390,7 @@ struct Row {
     effective_remaining_ns: Option<u64>,
     last_phase: Option<Phase>,
     marks: [bool; 7],
-    phases: [Totals; 32],
+    phases: [Totals; 33],
 }
 #[derive(Clone, Copy, Serialize)]
 struct Failure {
@@ -407,7 +411,7 @@ struct State {
     closed: u64,
     overwritten: u64,
     rows: [Option<Row>; MAX_RECORDS],
-    totals: [Totals; 32],
+    totals: [Totals; 33],
 }
 enum Sink {
     Stderr,
@@ -433,7 +437,7 @@ impl Recorder {
                 closed: 0,
                 overwritten: 0,
                 rows: [None; MAX_RECORDS],
-                totals: [Totals::default(); 32],
+                totals: [Totals::default(); 33],
             }),
             failed: AtomicU64::new(0),
             emitted: AtomicBool::new(false),
@@ -470,7 +474,7 @@ impl Recorder {
             self.fail();
             return json!({"schema":"pon-pq-test-phase-observation-v1","measurement_unavailable":true});
         };
-        let phases = |totals: &[Totals; 32]| {
+        let phases = |totals: &[Totals; 33]| {
             PHASES
                 .iter()
                 .zip(totals)
@@ -640,6 +644,13 @@ pub(crate) struct Scope {
     _same_thread: PhantomData<Rc<()>>,
 }
 impl Scope {
+    /// Quiet caller-thread regression scope; never installs a production observer.
+    pub(crate) fn quiet() -> Self {
+        Self::install(Recorder::new(Sink::Quiet), false)
+    }
+    pub(crate) fn snapshot(&self) -> Value {
+        self.recorder.snapshot()
+    }
     pub(crate) fn new() -> Self {
         Self::install(Recorder::new(Sink::Stderr), true)
     }
@@ -705,8 +716,33 @@ impl CpuStamp {
         thread_cpu_ns()?.checked_sub(self.ns)
     }
 }
+// Counters cover diagnostic clock attempts only, never native deadline clocks.
+// This entire module is cfg(test), including these caller-thread counters.
+pub(crate) fn clock_attempts() -> (u64, u64) {
+    CLOCK_ATTEMPTS.with(Cell::get)
+}
+fn diagnostic_now() -> Instant {
+    CLOCK_ATTEMPTS.with(|n| {
+        let (wall, cpu) = n.get();
+        n.set((wall.saturating_add(1), cpu));
+    });
+    Instant::now()
+}
+fn cpu_attempt() {
+    CLOCK_ATTEMPTS.with(|n| {
+        let (wall, cpu) = n.get();
+        n.set((wall, cpu.saturating_add(1)));
+    });
+}
+impl super::WitnessClient {
+    /// Reuses the existing pre-send test hook; absent from non-test builds.
+    pub(crate) fn fixture_before_send(&mut self, hook: Option<Box<dyn FnMut(Instant) + Send>>) {
+        self.before_send = hook;
+    }
+}
 #[cfg(target_os = "linux")]
 fn thread_cpu_ns() -> Option<u64> {
+    cpu_attempt();
     use rustix::time::{clock_gettime_dynamic, ClockId, DynamicClockId};
     let stamp = clock_gettime_dynamic(DynamicClockId::Known(ClockId::ThreadCPUTime)).ok()?;
     let sec = u64::try_from(stamp.tv_sec).ok()?;
@@ -718,6 +754,7 @@ fn thread_cpu_ns() -> Option<u64> {
 }
 #[cfg(not(target_os = "linux"))]
 fn thread_cpu_ns() -> Option<u64> {
+    cpu_attempt();
     None
 }
 fn nanos(duration: std::time::Duration) -> Option<u64> {
@@ -730,13 +767,13 @@ struct Interval {
 impl Interval {
     fn start() -> Self {
         Self {
-            wall: Instant::now(),
+            wall: diagnostic_now(),
             cpu: CpuStamp::start(),
         }
     }
     fn finish(self) -> (Option<u64>, Option<u64>) {
         (
-            Instant::now()
+            diagnostic_now()
                 .checked_duration_since(self.wall)
                 .and_then(nanos),
             self.cpu.and_then(CpuStamp::finish),
@@ -782,7 +819,7 @@ pub(crate) fn start(kind: Kind) -> Option<Operation> {
             effective_remaining_ns: None,
             last_phase: None,
             marks: [false; 7],
-            phases: [Totals::default(); 32],
+            phases: [Totals::default(); 33],
         });
     });
     Some(Operation {
@@ -831,7 +868,7 @@ impl Operation {
         }
     }
     pub(crate) fn deadlines(&self, original: Option<Instant>, effective: Instant) {
-        let now = Instant::now();
+        let now = diagnostic_now();
         self.recorder.update(|state| {
             if let Some(row) = Recorder::row(state, self.id) {
                 row.original_remaining_ns =

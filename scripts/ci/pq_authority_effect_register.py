@@ -26,8 +26,12 @@ SOURCE_REVISION = '5c04c60e463462d9df8884786e0d5bb32af08a64'
 PURPOSE = 'curated-source-consistency-only'
 MAX_BYTES = 1024 * 1024
 # SHA-256 of canonical {"source_revision": SOURCE_REVISION, "files": ...}.
-# Generated from git show at the exact revision, not from current-tree hashes.
-REVIEWED_SOURCE_LOCK_SHA256 = '3113f8e9cd6f8f72d190f55e84b97ab7b04da38cd3ddf86be9ab871fc4743528'
+# Historical revision anchors retain review lineage, not current source identity.
+# The reviewed map binds current candidate bytes, including uncommitted changes.
+# It does not establish exact git-show identity at an anchor or a candidate commit.
+# Source consistency does not authenticate provenance or grant qualification.
+# SOURCE_REVISION is the retained anchor; the lock also covers the current map.
+REVIEWED_SOURCE_LOCK_SHA256 = "b094411537c272446a3bd5e18c08fecf2c70af5e5abf513d1b27133f55d5161b"
 
 CRATES = 'trillionnium/crates/'
 TRANSFER = CRATES + 'trnm-types/src/transfer.rs'

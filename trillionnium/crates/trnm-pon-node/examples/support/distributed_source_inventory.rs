@@ -7736,6 +7736,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/src/store/legacy_activation_tail_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/legacy_activation_tail_tests.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/src/store/legacy_admission_readback.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -7838,6 +7845,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/legacy_activation_tail.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/legacy_activation_tail.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/legacy_activation_tail/tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/legacy_activation_tail/tests.rs"
         )),
     ),
     (

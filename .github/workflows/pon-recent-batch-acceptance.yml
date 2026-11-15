@@ -78,10 +78,10 @@ jobs:
           # The whole-file pin covers the opt-in owner census, integrated
           # admission/readback refinements, retained legacy replay-prefix cache,
           # CMH2 module export, current-parent clock guard and Q4 renewal advice.
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = d596dc6bab16698cd18bcc15bcbbe1fafedf603e
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = 7942a89b4395834183741df95a43872fa4db002c
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/history_page.rs)" = abb5f3193ee4d7f02633be4e3f6fdd3e1365a5e9
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs)" = c98c5333ab3609b30b11fd0a700917ce7f2a8999
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs)" = e99453b1abe6ce589f003be199b5553241cba398
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs)" = babaade9c1b7d7e8fceac68655f99efc8bd78cc4
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/task_observation.rs)" = 9f830268d71fcea84ceca7dc2469b9861f654d86
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_fixed_blob_tests.rs)" = 5e3769d3186026a7bac012be534f0d6cad5e362a
           test "$(git hash-object trillionnium/crates/trnm-pon-node/tests/authenticated_storage_cli.rs)" = 7301aeb3033913f080b23767bfca52a2bf76d45b
@@ -92,7 +92,7 @@ jobs:
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic.rs)" = 3fcbc873fcc89de208922e6ffd74361442797bed
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs)" = 74af81e2e181f6639dd1719a65d91c0ba5323c9b
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs)" = 0f611459c4c1c37488861ba36c82ba8302e40c4c
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs)" = 6540d88dc33064ab504607bfa9b7340d42a3c585
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs)" = 7c84174e62b4611fe20e9d2622cf585b1b2ce087
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/tests.rs)" = 27b6342619ee051c57944de88b4bbab33ff4627c
           # Retain R10 and the subsequent bounded 30-second client-import
           # observation under the original budgets, with an exact whole-file pin.

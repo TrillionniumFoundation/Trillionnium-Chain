@@ -87,7 +87,7 @@ class CurrentLifetimeObservationTests(unittest.TestCase):
         self.assertEqual(lock['historical_sha256'], '05cce83ab22c3085ff18ba8107b28bed70349fa56176784eab033897c282216c')
         self.assertEqual(lock['current_sha256'], '86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e')
         self.assertEqual(self.contract['sources'][7]['current_sha256'],
-                         '5918270368c61b420d26910dc5934714e1423f71c686b2d01f8d2e3ccceb990c')
+                         '9d79fd3c37db4a664d0a01b89e943276e07d2800cc64cb4986a1452ccf8fb820')
         self.assertEqual(self.contract['sources'][7]['historical_sha256'],
                          'b712a86b9997a098df5e8257f309d22445b2c749c9aa474457e958a0f65f5153')
 

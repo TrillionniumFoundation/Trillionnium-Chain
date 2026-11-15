@@ -21,7 +21,12 @@ use trnm_sqlite_io_boundary::TransactionScope;
 mod arithmetic_cache;
 pub(crate) use arithmetic_cache::ArithmeticCache;
 mod history_arithmetic;
-pub(crate) use history_arithmetic::{HistoryStage, SqlCommitSite, StageObservation};
+#[cfg(test)]
+pub(crate) use history_arithmetic::legacy_tail_clock_reads;
+pub(crate) use history_arithmetic::{
+    HistoryStage, LegacyTailObservation, LegacyTailOrigin, LegacyTailPhase, SqlCommitSite,
+    StageObservation,
+};
 mod post_write_readback;
 pub(crate) use post_write_readback::GraphAccess;
 pub(super) use post_write_readback::{readback_scope_error, PostWriteReadback};
