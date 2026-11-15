@@ -132,6 +132,62 @@ def corpus():
             for items,strategy,config,operation in rows]
 
 
+def cargo_link_inputs(raw, target_directory):
+    """Use only library filenames reported by this Cargo invocation.
+
+    Cargo may publish the selected rlib at the profile root while its metadata
+    and transitive dependencies live elsewhere. Do not infer a directory from
+    that one rlib, scan a cache, or silently choose between repeated externs.
+    """
+    target_directory = target_directory.resolve()
+    required = {'trnm_executor', 'trnm_types'}
+    library_kinds = {'lib', 'rlib', 'dylib', 'cdylib', 'staticlib', 'proc-macro'}
+    artifacts = {}
+    directories = set()
+    finished = False
+    for line in raw.splitlines():
+        event = json.loads(line)
+        if not isinstance(event, dict):
+            raise AssertionError('invalid Cargo JSON event')
+        if event.get('reason') == 'build-finished':
+            if finished or event.get('success') is not True:
+                raise AssertionError('Cargo did not report one successful build')
+            finished = True
+        if event.get('reason') != 'compiler-artifact':
+            continue
+        target = event.get('target')
+        if not isinstance(target, dict) or not isinstance(target.get('kind'), list):
+            raise AssertionError('invalid Cargo artifact target')
+        if not all(isinstance(kind, str) for kind in target['kind']):
+            raise AssertionError('invalid Cargo artifact kind')
+        if not library_kinds.intersection(target['kind']):
+            continue
+        name = target.get('name')
+        if not isinstance(name, str) or not name:
+            raise AssertionError('invalid Cargo library target name')
+        filenames = event.get('filenames')
+        if (not isinstance(filenames, list) or not filenames
+                or not all(isinstance(name, str) for name in filenames)
+                or len(filenames) != len(set(filenames))):
+            raise AssertionError('invalid or duplicate Cargo library filenames')
+        paths = []
+        for filename in filenames:
+            path = Path(filename)
+            if (not path.is_absolute() or str(path) != filename or '..' in path.parts
+                    or not path.is_relative_to(target_directory)):
+                raise AssertionError('Cargo library artifact outside this build target: '+filename)
+            paths.append(path)
+            directories.add(path.parent)
+        if name in required:
+            libraries = [path for path in paths if path.suffix == '.rlib']
+            if name in artifacts or len(libraries) != 1:
+                raise AssertionError('duplicate or ambiguous Cargo library artifact: '+name)
+            artifacts[name] = libraries[0]
+    if not finished or set(artifacts) != required:
+        raise AssertionError('Cargo did not identify both real libraries in a successful build')
+    return artifacts, sorted(directories, key=str)
+
+
 def compile_original(repository, work, cargo, rustc):
     command = [cargo,'build','--locked','--manifest-path',str(repository/'trillionnium/Cargo.toml'),
                '--package','trnm-executor','--lib','--target-dir',str(work/'target'),
@@ -141,22 +197,15 @@ def compile_original(repository, work, cargo, rustc):
     (work/'cargo-build.stderr').write_text(completed.stderr)
     if completed.returncode:
         raise RuntimeError('unchanged Cargo executor build failed; see '+str(work/'cargo-build.stderr'))
-    artifacts = {}
-    for line in completed.stdout.splitlines():
-        event = json.loads(line)
-        if event.get('reason') == 'compiler-artifact':
-            name = event['target']['name']
-            libraries = [path for path in event.get('filenames',[]) if path.endswith('.rlib')]
-            if name in {'trnm_executor','trnm_types'} and len(libraries) == 1:
-                artifacts[name] = Path(libraries[0])
-    if set(artifacts) != {'trnm_executor','trnm_types'}:
-        raise AssertionError('Cargo did not identify both real library artifacts')
+    artifacts, dependency_directories = cargo_link_inputs(completed.stdout, work/'target')
     executable = work/'executor-original'
     command = [rustc,'--edition=2021','-C','opt-level=1','-C','debug-assertions=yes',
                '-C','overflow-checks=yes',str(ADAPTER),'-o',str(executable)]
     for name,path in sorted(artifacts.items()):
         command.extend(['--extern',name+'='+str(path)])
-    command.extend(['-L','dependency='+str(artifacts['trnm_executor'].parent)])
+    for directory in dependency_directories:
+        command.extend(['-L','dependency='+str(directory)])
+    (work/'adapter-build.command.json').write_text(json.dumps(command,indent=2)+'\n')
     completed = subprocess.run(command,capture_output=True,text=True,timeout=120,check=False)
     (work/'adapter-build.stderr').write_text(completed.stderr)
     if completed.returncode:

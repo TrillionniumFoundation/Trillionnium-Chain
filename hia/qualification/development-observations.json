@@ -44,6 +44,29 @@
       "source_consistency_receipt": "pq-source-consistency.json"
     }
   ],
+  "fifth_candidate_executor_link_failure": {
+    "acceptance_checks_or_budgets_changed": false,
+    "adapter_rustc_build": "FAIL_E0463",
+    "cargo_original_library_build": "PASS",
+    "cause": "The qualifier supplied only the primary executor rlib parent as a dependency search directory. Actual Cargo JSON also reports transitive dependency artifacts under a different directory; rustc could not load trnm_executor or trnm_types.",
+    "introduced_by_this_migration": true,
+    "job_id": 132921478454,
+    "native_differential_calls": 0,
+    "old_stack_can_be_removed": false,
+    "original_execution": "NOT_RUN",
+    "original_scheduler_defect_reproduced_in_rust": false,
+    "production_activation": false,
+    "repair": "Derive all library dependency directories only from this successful Cargo invocation artifact filenames, reject missing or ambiguous required externs, and retain the exact rustc command.",
+    "report_sha256": "c313cfdfff9a9315cb2f3fbdfc011d8e05f80d061e486ae6cb990e55456dda82",
+    "resolution": "Candidate repair structurally tested; exact repaired-commit CI required.",
+    "source_commit": "d82dfe0a4b3b927eb876c812b306775f28ecb42e",
+    "source_tree": "b001a854782d367f40a84fd2463a80f6925e09ec",
+    "status": "FAIL",
+    "stderr_bytes": 622,
+    "stderr_sha256": "6f91c59db3ec9e3975990a4ce86e2aa98fe29b187ad0499f58ab01526062b636",
+    "whole_chain_native": false,
+    "workflow_run": 43749946614
+  },
   "fifth_candidate_local_combined_controls": {
     "command": "python3 -B -m unittest hia.tests.test_binary64 hia.tests.test_executor_schedule hia.tests.test_state_string hia.tests.test_state_value -v",
     "errors": 0,
@@ -74,12 +97,132 @@
     "whole_chain_native": false,
     "working_tree_dirty": true
   },
+  "fifth_candidate_native_ci": {
+    "all_five_original_rust_oracles_executed": true,
+    "artifact_bytes": 2289436,
+    "artifact_id": 14176171965,
+    "artifact_zip_sha256": "0d666e63c740344948d78c151af7e39f2ea4707abd09f4d2d68bcfb89cc90b07",
+    "errors": 0,
+    "failing_later_step": "Compare all scheduler strategies with the original Rust implementation",
+    "failures": 0,
+    "job_conclusion": "failure",
+    "job_id": 132921478454,
+    "later_sixth_batch_sources_qualified_by_this_run": false,
+    "native_calls": [
+      {
+        "backend": "direct",
+        "count": 1121,
+        "outcome": "returned"
+      },
+      {
+        "backend": "selfhost",
+        "count": 55763,
+        "outcome": "returned"
+      }
+    ],
+    "old_stack_can_be_removed": false,
+    "platform_report_sha256": "698d11f761d8ceeba7b07899652c4eb37c5119d4a641f686dc7b09219fe3fee6",
+    "production_activation": false,
+    "reactor_report_sha256": "66f029c0c3a0a4b69c975f7c19d7b7f04c27f9efc340bbde4490d29a35f8dce0",
+    "report_sha256": "e71d67d0e7f236b366755197a516c28e76d288be77474a4a5a2a0881fa9a5e7d",
+    "rust_oracles": {
+      "TRNM_HIA_RUST_CHECKPOINT_REFERENCE": {
+        "executable_sha256": "305d55b39b5ec1511e9ffc6915b0e16b363db61fd68814bb9ab467096f5bd7f1"
+      },
+      "TRNM_HIA_RUST_CRYPTO_REFERENCE": {
+        "executable_sha256": "8734701793a5139c2405d93c37ea0b6d7d9e4642d4b7311cc4896021305c7480"
+      },
+      "TRNM_HIA_RUST_PROTOCOL_REFERENCE": {
+        "executable_sha256": "d094b9adebafddae2362f1290b5add3ecfa2d03b65c1d740401ad560f7f40a04"
+      },
+      "TRNM_HIA_RUST_REFERENCE": {
+        "executable_sha256": "a13ddf1ea386e4653677dd7721148747a83f5b181735b384924b0901a02f7588"
+      },
+      "TRNM_HIA_RUST_STATE_REFERENCE": {
+        "executable_sha256": "bc61a2ad0c95b869e2a414c1bf6d5240b2229b7bf8f57d0eb6d923e5fad3e282"
+      }
+    },
+    "shared_runner_native_calls": 56884,
+    "skipped": 0,
+    "source_commit": "d82dfe0a4b3b927eb876c812b306775f28ecb42e",
+    "source_set_sha256": "86641ba807867e8dc4a9d6b62351716c8a7f1ffa7a60de27a7e89667984da42d",
+    "source_tree": "b001a854782d367f40a84fd2463a80f6925e09ec",
+    "status": "MAIN_QUALIFIER_PASS_JOB_FAIL",
+    "storage_report_sha256": "b3c592afef363fa83eff942e4392bfeef106993e0c901d645db03262f851910d",
+    "tests": 177,
+    "wall_seconds": 502.483024963,
+    "whole_chain_native": false,
+    "workflow_run": 43749946614
+  },
   "fifth_candidate_promotion_format_adjustment": {
     "after_sha256": "6103123b457d8523e1e2fc9e911b0c45184f6fe8b76e247b018c41473b02ded7",
     "before_sha256": "10e02b7b09b1977766df3f32e68f420c583ef6b2d36c98256292cfc2b9df8c58",
     "earlier_local_native_report_scope": "Still binds the original frozen overlay bytes; final candidate requires its own exact CI",
     "path": "hia/platform/transport_request/cases.py",
     "reason": "Remove an extra blank line at EOF required by the existing git diff --check gate"
+  },
+  "fifth_candidate_source_ci": {
+    "artifact_bytes": 7862,
+    "artifact_id": 14175828497,
+    "artifact_zip_sha256": "afbc1d9682603a76777a0ac451fb79b8de188bb1ebd5af3c4c69608356b33f72",
+    "current_work_or_service_acceptance": false,
+    "hosted_cost_original_checker_executed": true,
+    "job_id": 132921478549,
+    "old_stack_can_be_removed": false,
+    "pq_negative_log_sha256": "5dd3c49ee0d66fa835435ef75ba8dc8373f6646ef3fa96b9dc08ddb21bc3b021",
+    "pq_negative_tests": 113,
+    "pq_negative_wall_seconds": 536.656,
+    "pq_source_consistency": {
+      "canonical_default_provider_contract_checked": true,
+      "canonical_pnq2_contract_checked": true,
+      "continuous_npq6_combination_accepted": false,
+      "cryptographic_acceptance": false,
+      "exact_source_blobs": 2613,
+      "legacy_qtx1_optional_adapter_contract_checked": true,
+      "native_transfer_account_contract_checked": true,
+      "native_transport_contract_checked": true,
+      "node_activated": false,
+      "production_confidentiality_accepted": false,
+      "schema": "trnm-pq-cross-branch-check-v1",
+      "status": "HOLD_NO_GO",
+      "upstream_heads": 6,
+      "whole_native_authorization_migrated": false
+    },
+    "production_activation": false,
+    "public_readiness_original_checker_executed": true,
+    "source_commit": "d82dfe0a4b3b927eb876c812b306775f28ecb42e",
+    "source_tree": "b001a854782d367f40a84fd2463a80f6925e09ec",
+    "status": "PASS",
+    "whole_chain_native": false,
+    "workflow_run": 43749946614
+  },
+  "fifth_candidate_transport_ci": {
+    "artifact_bytes": 1505343,
+    "artifact_id": 14176197538,
+    "artifact_zip_sha256": "825db375cd7cbb1f01c3695d5ff808123e8b1afd80bc7e591c45603585b34de1",
+    "full_node_owner_integration": false,
+    "job_id": 132921478239,
+    "later_sixth_batch_sources_qualified_by_this_run": false,
+    "new_owner_container_cases_excluded": 8,
+    "old_stack_can_be_removed": false,
+    "original_executable_sha256": "0c5ac51c7f4b5fb28927cd240d3961e34d1d63b4cb18c8e64fbe144af480bddc",
+    "original_functions_byte_preserved": true,
+    "original_ingress_sha256": "b04d1c8a2812fb17f8fd7b58c42cd3c430c42babd6889ac89f5d558cd7d07f2f",
+    "original_node_differential_cases": 170,
+    "original_node_differential_failures": 0,
+    "original_node_unit_tests_passed": 6,
+    "production_activation": false,
+    "report_sha256": "62f9db3ec2529840de53fed9b0e3225715a3dd6a95e88746a78ad06ae3fd35c2",
+    "request_controls_failed": 0,
+    "request_controls_passed": 178,
+    "sha256_stream_controls_failed": 0,
+    "sha256_stream_controls_passed": 14,
+    "source_commit": "d82dfe0a4b3b927eb876c812b306775f28ecb42e",
+    "source_tree": "b001a854782d367f40a84fd2463a80f6925e09ec",
+    "status": "PASS",
+    "wall_seconds": 473.284641419,
+    "whole_chain_native": false,
+    "workflow_run": 43749946614
   },
   "fourth_candidate_native_ci": {
     "all_four_original_rust_oracles_executed": true,
