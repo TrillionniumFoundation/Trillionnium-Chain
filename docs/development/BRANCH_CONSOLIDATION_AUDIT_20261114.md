@@ -1087,3 +1087,108 @@ the prespecified protocol has SHA256
 `052e815b8acb5c57b4bff459d74084454d83334448e517ebfa73935d7aa03e12`.
 All original samples, limitations and the distinct original build-wrapper
 failure remain retained.
+
+
+### 2026-11-14 concurrent 4def source reconciliation
+
+The candidate moved after the 22:40 UTC snapshot while final publication
+checks were running. The fresh complete 908-name mapping differs only at
+`fix/chain-hepta-closure-candidate-20261109-481716`, from
+`5df7ae6f482157c5f7fdcbcd52222117a965053f` to
+`4defaa7cbc1de53b89e40311422eb8a9b977de19`. The other 907 entries,
+including protected main, retained their exact tips and protection values.
+This paginated observation remains non-atomic. Its complete mapping has
+SHA256 `6355d11e3ed9134d702fb90f062e592ef830392b52fc15ccf7c513475946f60b`.
+
+Publication of `7b051bebbf88e36ee418a16615c2200f06ee7be6` stopped at
+the fresh mapping comparison, before the push command. The original failure
+record has SHA256
+`c69629d9eff91e29de47c1ea4b4754ad6a26b0d7dde81684d6c8d00620dff6b9`.
+Neither its failure nor the prior successful source checks are relabelled.
+The exact 7b repository-truth lane finished earlier, at 23:14:04 UTC,
+with exit 0; its summary has SHA256
+`d8859fd8dd635ab0f184f14f1c980a13cbc4a4c914e0d029128fd174079b534d`.
+It applies only to 7b, not the new runtime source.
+
+Native object verification establishes this exact single-parent chain:
+
+| Commit | Selected change |
+| --- | --- |
+| `5eebe3ca8e27460b3426c89d846cf4a21cff4dd1` | Borrow Cookie fields for unsigned encoding |
+| `6193e8ba77a2a6516c1df86e8923c613be33d73d` | Bind current maps to that Cookie source |
+| `4defaa7cbc1de53b89e40311422eb8a9b977de19` | Add bounded Witness readiness hints and matching current bindings |
+
+Their common native prerequisite is 5df. The incoming tree is
+`413929c7df00b5bc2ca27b574f4dec7dbd336fff`. There are exactly seven
+modified mode-100644 paths, with no additions, deletions or renames.
+The non-thin incremental bundle contains 35 new objects, including those
+three commits; it is not a standalone archive. Its 252,410 original bytes
+have SHA256
+`87cd5ac16af419fc03c9d1f80b22b4c2e900f8f0ed99be4d02f738f728c22651`.
+Native commit bodies, complete trees, old/new source blobs and original
+command outputs are retained without rewriting their integer timestamps.
+
+**Runtime review.** The complete PublicV3 change and the complete named
+Cookie definition, methods, producer, validator and original/new controls
+were read. The borrowed unsigned view has the same twenty fields, types,
+order and string encoding; MAC and signature remain present empty-string
+fields. The exhaustive field match and two clone-oracle controls guard the
+current serialization choice. HMAC, signed domains, Cookie ID and validation
+checks remain unchanged. This review does not confer a fresh full-file
+reading on all untouched PublicV3 code.
+
+Both complete Witness bodies, all 21 unchanged control definitions and the
+used locked `nix 0.30.1` poll implementation were read. On Linux a full
+one-millisecond WouldBlock wait may wake on the same descriptor's readiness;
+fractional remaining waits and non-Linux behavior retain the sleep path.
+Readiness, HUP/error flags and EINTR confer no authority. The original
+nonblocking read/write, absolute deadline, full authentication, storage
+checks and matching late-CAS rules still decide the result. Earlier wakeup
+may save waiting or increase attempts and CPU work; no net performance
+benefit or repair of the old 250 ms failure is established.
+
+The independent runtime review
+`concurrent4def-runtime-two-complete-semantics-v1.json` has SHA256
+`233d47d2767ef0bf65f5885372b5da4de15bd73ee2a6257b660b2fe4a0069f05`.
+Its native proof has SHA256
+`fce6bc453f9d3566c946a79c74a0673a3392ac7694a1583fac8e96882ecf665f`.
+No tests were executed by that static review; author-reported targeted
+successes and the later pre-test storage stop remain unverified author
+claims in this audit.
+
+**Binding review.** Independent native reads verify all 21 current source
+digests. The correspondence changes only the two runtime digests and their
+canonical digest. The current composition changes two corresponding binding
+values; each Python reader changes exactly two hash literals with every
+other byte identical. The current map SHA256 is
+`c24b7cf2fe080b721362379ae5c6897fb324ec883a40b74bbf68d6a772ec4fd2`
+and its canonical source digest is
+`acd0fb898af21099239e1de16bc370cb3abeab7274414883740a1250d5742a0f`.
+Frozen V1 budget, V1 source lock and V2 composition remain byte-identical.
+The native binding summary has SHA256
+`a4b2a8fe9adc368938481b9698fe072d20c2f9f24ad22ad23becd26c6d0947af`.
+
+The reconciliation retains the complete 7b documentation and historical
+ancestry together with the selected incoming runtime and current bindings.
+Before this appendix's plan-pin update, their exact combined corpus blob is
+`ccf31104c18bf16cacbe6a82ced715492f4f51fe`, SHA256
+`22e6715e4cbb9ed06a0353d7ffe5651839e852c8a1f1c157c227e8c444d6de64`.
+Only the six incoming existing pins and the sole plan's subsequent pin change;
+the 2,606-pin and 2,510-required-path sets remain the same.
+
+**Remaining acceptance and publication.** The original hosted four-second
+confirmation and Witness failures, unavailable exact historical artifact and
+all false/null qualification fields remain intact. The composed committed
+source needs its own retained controls and required hosted checks. No
+changed budget, worker count, skipped gate, old pass or static performance
+argument is used as acceptance.
+
+The local annotated tag `archive/all-branches-20261114-7b051bebbf88`,
+object `087857a04fd00508b2e804ded6a4121a4c91772d`, preserves the
+earlier 7b checkpoint and its stated inventory only. It is not claimed to
+contain 4def or to have been published remotely. Preserve it without
+replacement. The final source and all newly observed tips require a fresh
+complete ancestry check and a separately verified remote annotated archive
+before the protected linear-main process and any branch cleanup. Main
+integration and the requested single-branch remote state remain pending at
+this entry.

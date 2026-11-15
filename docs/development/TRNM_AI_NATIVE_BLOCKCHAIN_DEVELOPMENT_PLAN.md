@@ -15628,3 +15628,56 @@ source and hosted head/prospective checks on the exact committed successor.
 The remaining acceptance failures, protected-main process, verified history
 preservation and fresh reference-cleanup checks stay explicit obligations.
 This file remains the sole development plan.
+
+
+### 2026-11-14 reconcile the concurrent 4def runtime successor
+
+The candidate advanced during final publication preparation from
+`5df7ae6f482157c5f7fdcbcd52222117a965053f` through the three native
+single-parent commits `5eebe3ca8e27460b3426c89d846cf4a21cff4dd1`,
+`6193e8ba77a2a6516c1df86e8923c613be33d73d` and
+`4defaa7cbc1de53b89e40311422eb8a9b977de19`. The complete fresh
+908-name inventory changed only this candidate; main and the other 907
+name/tip/protection mappings were unchanged. The attempted publication of
+local `7b051bebbf88e36ee418a16615c2200f06ee7be6` stopped at that
+comparison before any push. Preserve that original refusal and reconcile
+both histories through an ordinary merge.
+
+The seven changed paths comprise two runtime files, the current 21-source
+correspondence and composition, their two readers, and the corpus. The
+complete changed PublicV3 code and named Cookie producers, validators and
+controls were reviewed; both complete Witness bodies, all 21 existing
+Witness controls and the used locked poll implementation were reviewed.
+The Cookie view borrows the same twenty serialized fields in the same
+order and retains present empty-string MAC/signature fields. Witness uses
+readiness only to wake the original nonblocking I/O loop within its existing
+absolute deadline. Authentication, storage checks, late-CAS distinction and
+the 250 ms cap remain authoritative. These static findings support selecting
+the concurrent source; they do not establish a latency or CPU improvement.
+
+The current correspondence changes only the two runtime digests and their
+canonical 21-source digest. All 21 resulting native source bodies were
+independently hashed. The composition and two readers update only their
+current correspondence bindings; frozen V1 budget, V1 source lock and V2
+composition remain byte-identical. The corpus retains its 2,606 existing
+pins and 2,510 required paths, combining the six concurrent pins with this
+sole plan's new pin. No mathematical claim, path set or false/null
+qualification field changes.
+
+The exact `7b051bebbf88e36ee418a16615c2200f06ee7be6` repository-truth
+lane completed successfully at 23:14:04 UTC, before this reconciliation.
+That source-bound result is not a pass for the new runtime successor.
+The original failed hosted confirmations and Witness deadline remain failed,
+and the missing original historical artifact remains unavailable. Run the
+retained controls and current source/hosted gates on the exact committed
+successor without changing their deadlines, worker count or acceptance
+criteria. The author's unverified test claims and static review are not
+substitutes for those outcomes.
+
+The local annotated archive of the earlier 7b checkpoint is retained as that
+checkpoint only. It does not cover the later 4def tip or prove a remote tag
+exists. Before protected linear main integration and reference cleanup,
+verify a new complete remote inventory, the final combined ancestry and its
+separate remotely preserved annotated history archive. No remote deletion,
+protected-main exception, production activation or qualification is granted
+by this entry. This file remains the sole development plan.
