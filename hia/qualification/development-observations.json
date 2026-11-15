@@ -1,0 +1,29 @@
+{
+  "schema": "trnm.hia.development-observations.v1",
+  "baseline_commit": "59bd6ae4223caff6695dc9cf2ee2cdcdc6df5e88",
+  "failed_observations": [
+    {
+      "operation": "HeptaRuntime hia_describe manifest",
+      "result": "MCP request timed out",
+      "resolution": "Read the fixed official Hepta source and executed its local native compiler; the timed-out MCP request is not counted as discovery success."
+    },
+    {
+      "operation": "First M11 container-count corruption test",
+      "result": "One of thirteen tests failed: observed 102, expected 100",
+      "resolution": "Added a minimum encoded-capacity check for declared roster/vote counts; kept the original assertion and reran the complete suite."
+    },
+    {
+      "operation": "Initial full cold qualification preflight",
+      "result": "Required pinned source tests/test_hia_agent_data_json_native.py was missing in a sparse checkout; qualification did not start",
+      "resolution": "Materialized the exact original source set in an isolated checkout and ran the unmodified 180-second qualification and 3-second cleanup gate."
+    },
+    {
+      "operation": "Native builds during sparse-source materialization",
+      "result": "Tracked-source dirty checks refused builds; a timed-out checkout left one incomplete test file",
+      "resolution": "Restored only that exact Git blob, verified a clean pinned source tree, moved further cold work to an isolated checkout and reran native tests. No dirty guard was disabled."
+    }
+  ],
+  "preserved_preexisting_observations": "All original node, service, model-use, PQ, consensus and cross-architecture failures retain their own source identities and acceptance status.",
+  "whole_chain_native": false,
+  "old_stack_can_be_removed": false
+}

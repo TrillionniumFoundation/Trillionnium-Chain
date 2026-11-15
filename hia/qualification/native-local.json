@@ -1,0 +1,752 @@
+{
+  "additional_raw_abi_probes": "The crypto and closed-round suites also execute explicit native pointer/capacity probes; these are not included in the shared-runner counts.",
+  "builds": [
+    {
+      "artifact_sha256": "51bf95e0f75d5d809c23711dd6730abf80bbf63b9840150457faf0ff1d106f67",
+      "chain_migration": {
+        "backend": "selfhost",
+        "composed_source_sha256": "59a8334c55c10bb4dfc0284b714e0a19a9ea96ea67ed1f78f08ddcbcc0d2a6f2",
+        "core_sha256": "08ca27b791d9795f6e02905004202f1c58c00e019cde70ff53c6e29cd3781175",
+        "hosted_build_driver": true,
+        "inputs": [
+          {
+            "path": "src/verification/closed_round.hepta",
+            "sha256": "59a8334c55c10bb4dfc0284b714e0a19a9ea96ea67ed1f78f08ddcbcc0d2a6f2"
+          },
+          {
+            "path": "components.json",
+            "sha256": "9e0fd67762ef5c03be0500b1ee6f2ccfd58663745e862677ffe9a75654db1f59"
+          }
+        ],
+        "source_sha256": "59a8334c55c10bb4dfc0284b714e0a19a9ea96ea67ed1f78f08ddcbcc0d2a6f2",
+        "toolchain_repository": "TrillionniumFoundation/Hepta",
+        "toolchain_revision": "f33d8da316de8fdf27b504371f1a5310997ff548",
+        "whole_chain_native": false
+      },
+      "claims": {
+        "direct_machine_code": true,
+        "external_linker_used": true,
+        "fallback_used": false,
+        "python_emitter_used": false,
+        "self_hosted": true,
+        "whole_native_delivery_qualified": false
+      },
+      "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+      "exports": [
+        "f0"
+      ],
+      "object_sha256": "cf566575a36f371551f242eeb73af2d3cbcfd962aff347d4fe6f28a43c2c9d28",
+      "source": "hia/src/verification/closed_round.hepta"
+    },
+    {
+      "artifact_sha256": "b7094f6b56fc969698c795ad83e62bd183623ea067466b6c755136ec0107739f",
+      "chain_migration": {
+        "backend": "direct",
+        "composed_source_sha256": "59a8334c55c10bb4dfc0284b714e0a19a9ea96ea67ed1f78f08ddcbcc0d2a6f2",
+        "core_sha256": "08ca27b791d9795f6e02905004202f1c58c00e019cde70ff53c6e29cd3781175",
+        "hosted_build_driver": true,
+        "inputs": [
+          {
+            "path": "src/verification/closed_round.hepta",
+            "sha256": "59a8334c55c10bb4dfc0284b714e0a19a9ea96ea67ed1f78f08ddcbcc0d2a6f2"
+          },
+          {
+            "path": "components.json",
+            "sha256": "9e0fd67762ef5c03be0500b1ee6f2ccfd58663745e862677ffe9a75654db1f59"
+          }
+        ],
+        "source_sha256": "59a8334c55c10bb4dfc0284b714e0a19a9ea96ea67ed1f78f08ddcbcc0d2a6f2",
+        "toolchain_repository": "TrillionniumFoundation/Hepta",
+        "toolchain_revision": "f33d8da316de8fdf27b504371f1a5310997ff548",
+        "whole_chain_native": false
+      },
+      "claims": {
+        "assembler_used": false,
+        "backend_refinement_proved": false,
+        "c_codegen_used": false,
+        "direct_machine_code": true,
+        "external_linker_used": true,
+        "fallback_used": false,
+        "foreign_buffer_entrypoints_exposed": true,
+        "llvm_codegen_used": false,
+        "llvm_ir_used": false,
+        "native_execution_qualified": false,
+        "rust_codegen_used": false,
+        "rust_reference_required": false,
+        "self_hosted": false,
+        "source_ast_required": false,
+        "standalone_core_reverified": true,
+        "whole_language_soundness_proved": false
+      },
+      "compiler_sha256": null,
+      "exports": [
+        "f0"
+      ],
+      "object_sha256": "d0ec49808a5a3395c3f1e544781a5e06923af3c68ba7e1408152b85d6e02d474",
+      "source": "hia/src/verification/closed_round.hepta"
+    },
+    {
+      "artifact_sha256": "41898df7c18742be93de16fb232197b0b0d36678420fb971477cc6f8153b44a7",
+      "chain_migration": {
+        "backend": "selfhost",
+        "composed_source_sha256": "ca2e746e5e8ce4592cfbc2b593200617c4ec4fd6db82fc23ca2bfde847dbd6ff",
+        "core_sha256": "4764b551e271fb5983876c0a95f95533054928269b43a9ae1f63b763717374fc",
+        "hosted_build_driver": true,
+        "inputs": [
+          {
+            "path": "src/crypto/sha256.hepta",
+            "sha256": "ca2e746e5e8ce4592cfbc2b593200617c4ec4fd6db82fc23ca2bfde847dbd6ff"
+          },
+          {
+            "path": "components.json",
+            "sha256": "9e0fd67762ef5c03be0500b1ee6f2ccfd58663745e862677ffe9a75654db1f59"
+          }
+        ],
+        "source_sha256": "ca2e746e5e8ce4592cfbc2b593200617c4ec4fd6db82fc23ca2bfde847dbd6ff",
+        "toolchain_repository": "TrillionniumFoundation/Hepta",
+        "toolchain_revision": "f33d8da316de8fdf27b504371f1a5310997ff548",
+        "whole_chain_native": false
+      },
+      "claims": {
+        "direct_machine_code": true,
+        "external_linker_used": true,
+        "fallback_used": false,
+        "python_emitter_used": false,
+        "self_hosted": true,
+        "whole_native_delivery_qualified": false
+      },
+      "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+      "exports": [
+        "f0"
+      ],
+      "object_sha256": "9ec2ca0fe5f91b4409fc77aba3775a42a9cbf76d7a6639827c58a599e53fcabe",
+      "source": "hia/src/crypto/sha256.hepta"
+    },
+    {
+      "artifact_sha256": "42767f4ffc34a31c7e9a2df933240ff63993577657a016a37edf18997d070a73",
+      "chain_migration": {
+        "backend": "selfhost",
+        "composed_source_sha256": "201072727d86f6f55c1c45f0012b4d850fa4ebcd078ba5bad30c682a90be8694",
+        "core_sha256": "995375966f1c5f490cac14d117d1bd664028c6da25784af65fc7525673dacf3a",
+        "hosted_build_driver": true,
+        "inputs": [
+          {
+            "path": "src/crypto/sha256_arena.hepta",
+            "sha256": "201072727d86f6f55c1c45f0012b4d850fa4ebcd078ba5bad30c682a90be8694"
+          },
+          {
+            "path": "components.json",
+            "sha256": "9e0fd67762ef5c03be0500b1ee6f2ccfd58663745e862677ffe9a75654db1f59"
+          }
+        ],
+        "source_sha256": "201072727d86f6f55c1c45f0012b4d850fa4ebcd078ba5bad30c682a90be8694",
+        "toolchain_repository": "TrillionniumFoundation/Hepta",
+        "toolchain_revision": "f33d8da316de8fdf27b504371f1a5310997ff548",
+        "whole_chain_native": false
+      },
+      "claims": {
+        "direct_machine_code": true,
+        "external_linker_used": true,
+        "fallback_used": false,
+        "python_emitter_used": false,
+        "self_hosted": true,
+        "whole_native_delivery_qualified": false
+      },
+      "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+      "exports": [
+        "f0"
+      ],
+      "object_sha256": "49fcea5e9fc49c3b9acc3b77a5668f68201ee2966ba41792ae19628749dc20d7",
+      "source": "hia/src/crypto/sha256_arena.hepta"
+    },
+    {
+      "artifact_sha256": "c5ae677c408d366e85b9ec0cfff5b90b18a0e0ab84b50764d63ea08b9c316cc6",
+      "chain_migration": {
+        "backend": "selfhost",
+        "composed_source_sha256": "f825488d991712c7687302f80630aadf9cfba820cb5194616f1c4d72af3465d3",
+        "core_sha256": "d341af14e1eac4f9629e6e20d4b2a3d72b848e9b8eb35cea95b5f765717fbf0e",
+        "hosted_build_driver": true,
+        "inputs": [
+          {
+            "path": "src/crypto/pon_hash.hepta",
+            "sha256": "1812a7c38d5ef049eb84e43a8b23f7cd83dcec3c087fc19274e63c0e415d2f7d"
+          },
+          {
+            "path": "components.json",
+            "sha256": "9e0fd67762ef5c03be0500b1ee6f2ccfd58663745e862677ffe9a75654db1f59"
+          },
+          {
+            "path": "src/crypto/sha256_arena.hepta",
+            "sha256": "201072727d86f6f55c1c45f0012b4d850fa4ebcd078ba5bad30c682a90be8694"
+          }
+        ],
+        "source_sha256": "1812a7c38d5ef049eb84e43a8b23f7cd83dcec3c087fc19274e63c0e415d2f7d",
+        "toolchain_repository": "TrillionniumFoundation/Hepta",
+        "toolchain_revision": "f33d8da316de8fdf27b504371f1a5310997ff548",
+        "whole_chain_native": false
+      },
+      "claims": {
+        "direct_machine_code": true,
+        "external_linker_used": true,
+        "fallback_used": false,
+        "python_emitter_used": false,
+        "self_hosted": true,
+        "whole_native_delivery_qualified": false
+      },
+      "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+      "exports": [
+        "f0"
+      ],
+      "object_sha256": "db25c593cec73e4b3dffdc41aef08b70a8b552e9c20eb3a62db1d70fccde8756",
+      "source": "hia/src/crypto/pon_hash.hepta"
+    },
+    {
+      "artifact_sha256": "f19e8e58969c2a816bbe2c1d342fd2c471b26beddcca578f7a866fb2af599114",
+      "chain_migration": {
+        "backend": "selfhost",
+        "composed_source_sha256": "afd3c809db6d6f5dd90415eb6ffe772ace163fcc217ecaa1482128edfbb0103d",
+        "core_sha256": "5eeeb0b03ce446210292e4c99c82422c2e4079110be96c5cca9125c443daf477",
+        "hosted_build_driver": true,
+        "inputs": [
+          {
+            "path": "src/protocol/id.hepta",
+            "sha256": "afd3c809db6d6f5dd90415eb6ffe772ace163fcc217ecaa1482128edfbb0103d"
+          },
+          {
+            "path": "components.json",
+            "sha256": "9e0fd67762ef5c03be0500b1ee6f2ccfd58663745e862677ffe9a75654db1f59"
+          }
+        ],
+        "source_sha256": "afd3c809db6d6f5dd90415eb6ffe772ace163fcc217ecaa1482128edfbb0103d",
+        "toolchain_repository": "TrillionniumFoundation/Hepta",
+        "toolchain_revision": "f33d8da316de8fdf27b504371f1a5310997ff548",
+        "whole_chain_native": false
+      },
+      "claims": {
+        "direct_machine_code": true,
+        "external_linker_used": true,
+        "fallback_used": false,
+        "python_emitter_used": false,
+        "self_hosted": true,
+        "whole_native_delivery_qualified": false
+      },
+      "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+      "exports": [
+        "f0"
+      ],
+      "object_sha256": "43379f0bba3283d48891deb5a7d1488c06efdceda5b2a3137e1a57ec5c70bf3c",
+      "source": "hia/src/protocol/id.hepta"
+    },
+    {
+      "artifact_sha256": "82ca7ad59c09fdc2e98cda175b9b8ebdffc712db6516be952da8a9e3b5840626",
+      "chain_migration": {
+        "backend": "selfhost",
+        "composed_source_sha256": "8fd21a8dde23a0e911879ed603ebc1cf192fc858f5582c03bb88724b5a830758",
+        "core_sha256": "4aaabc7aa291ba04a04f5a3c8cc0e7049af928886d90e18a70a4b02d4f9a6d8b",
+        "hosted_build_driver": true,
+        "inputs": [
+          {
+            "path": "src/protocol/hash.hepta",
+            "sha256": "8fd21a8dde23a0e911879ed603ebc1cf192fc858f5582c03bb88724b5a830758"
+          },
+          {
+            "path": "components.json",
+            "sha256": "9e0fd67762ef5c03be0500b1ee6f2ccfd58663745e862677ffe9a75654db1f59"
+          }
+        ],
+        "source_sha256": "8fd21a8dde23a0e911879ed603ebc1cf192fc858f5582c03bb88724b5a830758",
+        "toolchain_repository": "TrillionniumFoundation/Hepta",
+        "toolchain_revision": "f33d8da316de8fdf27b504371f1a5310997ff548",
+        "whole_chain_native": false
+      },
+      "claims": {
+        "direct_machine_code": true,
+        "external_linker_used": true,
+        "fallback_used": false,
+        "python_emitter_used": false,
+        "self_hosted": true,
+        "whole_native_delivery_qualified": false
+      },
+      "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+      "exports": [
+        "f0"
+      ],
+      "object_sha256": "d5b3dca0fdde9c28ade7092eccac747c9d9508ffe83f2e28d605a673c18d210d",
+      "source": "hia/src/protocol/hash.hepta"
+    },
+    {
+      "artifact_sha256": "73635647a4cbb9a433116c110f9fe6f2b7e611ac60ce91acbc7653c19b7f4289",
+      "chain_migration": {
+        "backend": "selfhost",
+        "composed_source_sha256": "4e31ec23d9d13fbc92f15569c87065dbfccd7ed7240203c2a6786c59d3f1c38b",
+        "core_sha256": "f7a736e03e6f320354ed8ae7150b7ad19f5f5b7cb8427cbc8c356048ba25143d",
+        "hosted_build_driver": true,
+        "inputs": [
+          {
+            "path": "src/protocol/pnh1.hepta",
+            "sha256": "4e31ec23d9d13fbc92f15569c87065dbfccd7ed7240203c2a6786c59d3f1c38b"
+          },
+          {
+            "path": "components.json",
+            "sha256": "9e0fd67762ef5c03be0500b1ee6f2ccfd58663745e862677ffe9a75654db1f59"
+          }
+        ],
+        "source_sha256": "4e31ec23d9d13fbc92f15569c87065dbfccd7ed7240203c2a6786c59d3f1c38b",
+        "toolchain_repository": "TrillionniumFoundation/Hepta",
+        "toolchain_revision": "f33d8da316de8fdf27b504371f1a5310997ff548",
+        "whole_chain_native": false
+      },
+      "claims": {
+        "direct_machine_code": true,
+        "external_linker_used": true,
+        "fallback_used": false,
+        "python_emitter_used": false,
+        "self_hosted": true,
+        "whole_native_delivery_qualified": false
+      },
+      "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+      "exports": [
+        "f0"
+      ],
+      "object_sha256": "28212dce8a6aa163c3569f46b419f934dc7ccf2f673f126a1b796086b477130b",
+      "source": "hia/src/protocol/pnh1.hepta"
+    },
+    {
+      "artifact_sha256": "d79f25157d5d37efa41676630b4bf06a18c771b2c27b75ecda86ffb211ab0b7a",
+      "chain_migration": {
+        "backend": "selfhost",
+        "composed_source_sha256": "9289d6a8b50fee4ace4385a320ae72541f78df3d3a82fee4dec6b4fce9a4c5e2",
+        "core_sha256": "01104ccba90d2f4f3969186088080caf7466065ca87e9452c4fecc4885566790",
+        "hosted_build_driver": true,
+        "inputs": [
+          {
+            "path": "src/protocol/pgh2.hepta",
+            "sha256": "9289d6a8b50fee4ace4385a320ae72541f78df3d3a82fee4dec6b4fce9a4c5e2"
+          },
+          {
+            "path": "components.json",
+            "sha256": "9e0fd67762ef5c03be0500b1ee6f2ccfd58663745e862677ffe9a75654db1f59"
+          }
+        ],
+        "source_sha256": "9289d6a8b50fee4ace4385a320ae72541f78df3d3a82fee4dec6b4fce9a4c5e2",
+        "toolchain_repository": "TrillionniumFoundation/Hepta",
+        "toolchain_revision": "f33d8da316de8fdf27b504371f1a5310997ff548",
+        "whole_chain_native": false
+      },
+      "claims": {
+        "direct_machine_code": true,
+        "external_linker_used": true,
+        "fallback_used": false,
+        "python_emitter_used": false,
+        "self_hosted": true,
+        "whole_native_delivery_qualified": false
+      },
+      "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+      "exports": [
+        "f0"
+      ],
+      "object_sha256": "951b16bea46f068f0335f0f2e0e5d65a2d2f03ba98afb712b65020818476c52d",
+      "source": "hia/src/protocol/pgh2.hepta"
+    },
+    {
+      "artifact_sha256": "74f56fcb4f2abd59d8493794b099c902d74edc64456ee47d3334e0ee0872e858",
+      "chain_migration": {
+        "backend": "selfhost",
+        "composed_source_sha256": "3722d3ce7e7592e806361864803fb7ad3d15c1878812d18dc56ded713956e4d5",
+        "core_sha256": "251f75ddba09ac1044e8e3c72763573e089219f9ed3587aacfebb053b83aa97e",
+        "hosted_build_driver": true,
+        "inputs": [
+          {
+            "path": "src/protocol/ilf2.hepta",
+            "sha256": "3722d3ce7e7592e806361864803fb7ad3d15c1878812d18dc56ded713956e4d5"
+          },
+          {
+            "path": "components.json",
+            "sha256": "9e0fd67762ef5c03be0500b1ee6f2ccfd58663745e862677ffe9a75654db1f59"
+          }
+        ],
+        "source_sha256": "3722d3ce7e7592e806361864803fb7ad3d15c1878812d18dc56ded713956e4d5",
+        "toolchain_repository": "TrillionniumFoundation/Hepta",
+        "toolchain_revision": "f33d8da316de8fdf27b504371f1a5310997ff548",
+        "whole_chain_native": false
+      },
+      "claims": {
+        "direct_machine_code": true,
+        "external_linker_used": true,
+        "fallback_used": false,
+        "python_emitter_used": false,
+        "self_hosted": true,
+        "whole_native_delivery_qualified": false
+      },
+      "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+      "exports": [
+        "f0"
+      ],
+      "object_sha256": "0216699fe64a3ac869cbc902f8a45930dabf9f9f074d8704a34de4208579bcd2",
+      "source": "hia/src/protocol/ilf2.hepta"
+    },
+    {
+      "artifact_sha256": "455edff2dacbb84003b7c4d789faaf3b7f0ba6034359976cdfd404e59f5f1857",
+      "chain_migration": {
+        "backend": "selfhost",
+        "composed_source_sha256": "da9e7393821ce5707eb3a454688581d636bc71f42287f5627ea74e77eb664704",
+        "core_sha256": "d72e474b62c0d43944a1c338cc6a58b33e1556e160023bf123ca26b079cfbbe5",
+        "hosted_build_driver": true,
+        "inputs": [
+          {
+            "path": "src/protocol/ilf3.hepta",
+            "sha256": "da9e7393821ce5707eb3a454688581d636bc71f42287f5627ea74e77eb664704"
+          },
+          {
+            "path": "components.json",
+            "sha256": "9e0fd67762ef5c03be0500b1ee6f2ccfd58663745e862677ffe9a75654db1f59"
+          }
+        ],
+        "source_sha256": "da9e7393821ce5707eb3a454688581d636bc71f42287f5627ea74e77eb664704",
+        "toolchain_repository": "TrillionniumFoundation/Hepta",
+        "toolchain_revision": "f33d8da316de8fdf27b504371f1a5310997ff548",
+        "whole_chain_native": false
+      },
+      "claims": {
+        "direct_machine_code": true,
+        "external_linker_used": true,
+        "fallback_used": false,
+        "python_emitter_used": false,
+        "self_hosted": true,
+        "whole_native_delivery_qualified": false
+      },
+      "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+      "exports": [
+        "f0"
+      ],
+      "object_sha256": "e0279b723cb211e4f296614ead4bf4e2011c86ea2e56b982343e28b50deeff1e",
+      "source": "hia/src/protocol/ilf3.hepta"
+    },
+    {
+      "artifact_sha256": "074441d470dbfc8fc59ecc6ebba75442fed47f5d245552d7308dd9b8273e07b9",
+      "chain_migration": {
+        "backend": "selfhost",
+        "composed_source_sha256": "59f37cea99a2e14b1832a12c932384b06f7461c55da5fbcfb2034e1d662cd283",
+        "core_sha256": "2828f717c68a5703f6cca716753b3cf5e4fb07999435f75789a3ae4a803208ba",
+        "hosted_build_driver": true,
+        "inputs": [
+          {
+            "path": "src/transport/replay.hepta",
+            "sha256": "59f37cea99a2e14b1832a12c932384b06f7461c55da5fbcfb2034e1d662cd283"
+          },
+          {
+            "path": "components.json",
+            "sha256": "9e0fd67762ef5c03be0500b1ee6f2ccfd58663745e862677ffe9a75654db1f59"
+          }
+        ],
+        "source_sha256": "59f37cea99a2e14b1832a12c932384b06f7461c55da5fbcfb2034e1d662cd283",
+        "toolchain_repository": "TrillionniumFoundation/Hepta",
+        "toolchain_revision": "f33d8da316de8fdf27b504371f1a5310997ff548",
+        "whole_chain_native": false
+      },
+      "claims": {
+        "direct_machine_code": true,
+        "external_linker_used": true,
+        "fallback_used": false,
+        "python_emitter_used": false,
+        "self_hosted": true,
+        "whole_native_delivery_qualified": false
+      },
+      "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+      "exports": [
+        "f0"
+      ],
+      "object_sha256": "10068eabaf1485a4366935ea754de2cc74dd2e4f82b9560348d72bcaa55e0f70",
+      "source": "hia/src/transport/replay.hepta"
+    },
+    {
+      "artifact_sha256": "b5983558b7d8a446a2cd15ea86d899a1ecd3aaaf3cfbd72e6c4445c2380d8ff2",
+      "chain_migration": {
+        "backend": "direct",
+        "composed_source_sha256": "59f37cea99a2e14b1832a12c932384b06f7461c55da5fbcfb2034e1d662cd283",
+        "core_sha256": "2828f717c68a5703f6cca716753b3cf5e4fb07999435f75789a3ae4a803208ba",
+        "hosted_build_driver": true,
+        "inputs": [
+          {
+            "path": "src/transport/replay.hepta",
+            "sha256": "59f37cea99a2e14b1832a12c932384b06f7461c55da5fbcfb2034e1d662cd283"
+          },
+          {
+            "path": "components.json",
+            "sha256": "9e0fd67762ef5c03be0500b1ee6f2ccfd58663745e862677ffe9a75654db1f59"
+          }
+        ],
+        "source_sha256": "59f37cea99a2e14b1832a12c932384b06f7461c55da5fbcfb2034e1d662cd283",
+        "toolchain_repository": "TrillionniumFoundation/Hepta",
+        "toolchain_revision": "f33d8da316de8fdf27b504371f1a5310997ff548",
+        "whole_chain_native": false
+      },
+      "claims": {
+        "assembler_used": false,
+        "backend_refinement_proved": false,
+        "c_codegen_used": false,
+        "direct_machine_code": true,
+        "external_linker_used": true,
+        "fallback_used": false,
+        "foreign_buffer_entrypoints_exposed": true,
+        "llvm_codegen_used": false,
+        "llvm_ir_used": false,
+        "native_execution_qualified": false,
+        "rust_codegen_used": false,
+        "rust_reference_required": false,
+        "self_hosted": false,
+        "source_ast_required": false,
+        "standalone_core_reverified": true,
+        "whole_language_soundness_proved": false
+      },
+      "compiler_sha256": null,
+      "exports": [
+        "f0"
+      ],
+      "object_sha256": "17a8d363484fa82e540b1f4dc6ee0f9f740796b477b6be9ee64f2a230eb5bc5f",
+      "source": "hia/src/transport/replay.hepta"
+    },
+    {
+      "artifact_sha256": "8493818d5adaa3972318521be572dacd458c9396473ed9bda6b040622226fb13",
+      "chain_migration": {
+        "backend": "selfhost",
+        "composed_source_sha256": "377ccbd44c547e7c99033818d69edce53b336b88c3300e24243e52af8b9d0856",
+        "core_sha256": "2b030f6a93971ed65fbafdb396d5fe369557641034ff9b2e49e207100cfc0194",
+        "hosted_build_driver": true,
+        "inputs": [
+          {
+            "path": "src/work/verify.hepta",
+            "sha256": "7f3d088b2bf3f8a275721d95a6bcb43da8e24800d3465b7ecb6208d567dc9ba1"
+          },
+          {
+            "path": "components.json",
+            "sha256": "9e0fd67762ef5c03be0500b1ee6f2ccfd58663745e862677ffe9a75654db1f59"
+          },
+          {
+            "path": "src/crypto/sha256_arena.hepta",
+            "sha256": "201072727d86f6f55c1c45f0012b4d850fa4ebcd078ba5bad30c682a90be8694"
+          }
+        ],
+        "source_sha256": "7f3d088b2bf3f8a275721d95a6bcb43da8e24800d3465b7ecb6208d567dc9ba1",
+        "toolchain_repository": "TrillionniumFoundation/Hepta",
+        "toolchain_revision": "f33d8da316de8fdf27b504371f1a5310997ff548",
+        "whole_chain_native": false
+      },
+      "claims": {
+        "direct_machine_code": true,
+        "external_linker_used": true,
+        "fallback_used": false,
+        "python_emitter_used": false,
+        "self_hosted": true,
+        "whole_native_delivery_qualified": false
+      },
+      "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+      "exports": [
+        "f0"
+      ],
+      "object_sha256": "077b7c010f15587516e8c028c5c88a426e8af13efa80619a5db1f2129e30f120",
+      "source": "hia/src/work/verify.hepta"
+    },
+    {
+      "artifact_sha256": "50d4494113c878b9c8894aad40db42c4296445ade0f1a3c648dd700ddb8249b3",
+      "chain_migration": {
+        "backend": "selfhost",
+        "composed_source_sha256": "3bdb4aed27533722483d2d5476d0db676e5645ca0499c74a3246dbd464a2cd88",
+        "core_sha256": "58ff8af263c755eb1d8279e88ccc9b01ee018dded7ca1fb10a130bc83cde34fd",
+        "hosted_build_driver": true,
+        "inputs": [
+          {
+            "path": "src/work/encoding.hepta",
+            "sha256": "3bdb4aed27533722483d2d5476d0db676e5645ca0499c74a3246dbd464a2cd88"
+          },
+          {
+            "path": "components.json",
+            "sha256": "9e0fd67762ef5c03be0500b1ee6f2ccfd58663745e862677ffe9a75654db1f59"
+          }
+        ],
+        "source_sha256": "3bdb4aed27533722483d2d5476d0db676e5645ca0499c74a3246dbd464a2cd88",
+        "toolchain_repository": "TrillionniumFoundation/Hepta",
+        "toolchain_revision": "f33d8da316de8fdf27b504371f1a5310997ff548",
+        "whole_chain_native": false
+      },
+      "claims": {
+        "direct_machine_code": true,
+        "external_linker_used": true,
+        "fallback_used": false,
+        "python_emitter_used": false,
+        "self_hosted": true,
+        "whole_native_delivery_qualified": false
+      },
+      "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+      "exports": [
+        "f0"
+      ],
+      "object_sha256": "e940b0bd7f55cb5f88f6438c9b058220581d63db66bdc58d9f0db17579700743",
+      "source": "hia/src/work/encoding.hepta"
+    },
+    {
+      "artifact_sha256": "e674e847846f9475761e097e2f132dff270284bddc5162a047a0d6797976e46c",
+      "chain_migration": {
+        "backend": "selfhost",
+        "composed_source_sha256": "228f0941ee389bb29de14ee6d36f28cec36ced5f55e74bfbeb9e773abc3ce941",
+        "core_sha256": "a4d2f6021f0d549c96ade4624d2c5370cf3e02677257b91efabef496f97a5be5",
+        "hosted_build_driver": true,
+        "inputs": [
+          {
+            "path": "src/work/field.hepta",
+            "sha256": "228f0941ee389bb29de14ee6d36f28cec36ced5f55e74bfbeb9e773abc3ce941"
+          },
+          {
+            "path": "components.json",
+            "sha256": "9e0fd67762ef5c03be0500b1ee6f2ccfd58663745e862677ffe9a75654db1f59"
+          }
+        ],
+        "source_sha256": "228f0941ee389bb29de14ee6d36f28cec36ced5f55e74bfbeb9e773abc3ce941",
+        "toolchain_repository": "TrillionniumFoundation/Hepta",
+        "toolchain_revision": "f33d8da316de8fdf27b504371f1a5310997ff548",
+        "whole_chain_native": false
+      },
+      "claims": {
+        "direct_machine_code": true,
+        "external_linker_used": true,
+        "fallback_used": false,
+        "python_emitter_used": false,
+        "self_hosted": true,
+        "whole_native_delivery_qualified": false
+      },
+      "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+      "exports": [
+        "f0",
+        "f1",
+        "f2",
+        "f3"
+      ],
+      "object_sha256": "5f3557fce8afbab7cbcdd1bf6c381dbf56e6d684ff3545e854665d5f3e99a9ac",
+      "source": "hia/src/work/field.hepta"
+    },
+    {
+      "artifact_sha256": "88272d0f015d811e0734c35e334cfcdf862f2fb907a224627aa60acbbd460ac6",
+      "chain_migration": {
+        "backend": "selfhost",
+        "composed_source_sha256": "3819ac9ba452f4a1d8a88d71a4a5acb0d036dfc0e661ef4a10470c1b5019e610",
+        "core_sha256": "033fcb07bb2072da2566361c12f88d453c4880082598093220a7ed77d2953d9f",
+        "hosted_build_driver": true,
+        "inputs": [
+          {
+            "path": "src/work/matrix.hepta",
+            "sha256": "3819ac9ba452f4a1d8a88d71a4a5acb0d036dfc0e661ef4a10470c1b5019e610"
+          },
+          {
+            "path": "components.json",
+            "sha256": "9e0fd67762ef5c03be0500b1ee6f2ccfd58663745e862677ffe9a75654db1f59"
+          }
+        ],
+        "source_sha256": "3819ac9ba452f4a1d8a88d71a4a5acb0d036dfc0e661ef4a10470c1b5019e610",
+        "toolchain_repository": "TrillionniumFoundation/Hepta",
+        "toolchain_revision": "f33d8da316de8fdf27b504371f1a5310997ff548",
+        "whole_chain_native": false
+      },
+      "claims": {
+        "direct_machine_code": true,
+        "external_linker_used": true,
+        "fallback_used": false,
+        "python_emitter_used": false,
+        "self_hosted": true,
+        "whole_native_delivery_qualified": false
+      },
+      "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+      "exports": [
+        "f0"
+      ],
+      "object_sha256": "e3c4fb1a9043a5b9a72687b062927e74199b7fef8f08efdb4dc8ab3327a5043d",
+      "source": "hia/src/work/matrix.hepta"
+    }
+  ],
+  "native_calls_through_shared_runner": [
+    {
+      "backend": "direct",
+      "count": 1074,
+      "outcome": "returned"
+    },
+    {
+      "backend": "selfhost",
+      "count": 17948,
+      "outcome": "returned"
+    }
+  ],
+  "observed_at": "2026-11-15T16:28:13.578026+00:00",
+  "old_stack_can_be_removed": false,
+  "production_activation": false,
+  "retained_compiler_binding_sha256": "06d76a266bfe06b9cbef4bc4d58cc956e1e9fb94d1ae992e2338834572a67636",
+  "rust_reference": null,
+  "schema": "trnm.hia.native-qualification.v1",
+  "selfhost_compiler_matches_cold_qualified_image": true,
+  "source_commit_observed": "59bd6ae4223caff6695dc9cf2ee2cdcdc6df5e88",
+  "source_inputs": {
+    "formal/pon-nakamoto-v1/contract_wire.py": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6",
+    "formal/pon-nakamoto-v1/vectors/header-short.bin": "e55f9ea7142e25ced369034404ec6497b1c6b669119808a1961fbd04f45ad55f",
+    "formal/pon-nakamoto-v1/vectors/header-trailing.bin": "ac95ac689a744fe82a0b288667fc63069bd5e5ca0bab5489e9bfa187b61acc6e",
+    "formal/pon-nakamoto-v1/vectors/header-version.bin": "20326f4dbe84c995dbe17f5586ceed9824a4cb8621f292e8d42a65bf3b1a5ec1",
+    "formal/pon-nakamoto-v1/vectors/header.bin": "af1eb43700a2ac269c7360e21acd6be5f21f9d7e0400b4a62e07f4ee6b12e71b",
+    "formal/pon-nakamoto-v1/vectors/model-evolution-v5.json": "c572fea49b7ea4c1beee64623c499fe2565ab462bfe431747aeaea0dc27db1e5",
+    "hia/components.json": "9e0fd67762ef5c03be0500b1ee6f2ccfd58663745e862677ffe9a75654db1f59",
+    "hia/qualification/compiler-binding.json": "06d76a266bfe06b9cbef4bc4d58cc956e1e9fb94d1ae992e2338834572a67636",
+    "hia/src/crypto/pon_hash.hepta": "1812a7c38d5ef049eb84e43a8b23f7cd83dcec3c087fc19274e63c0e415d2f7d",
+    "hia/src/crypto/sha256.hepta": "ca2e746e5e8ce4592cfbc2b593200617c4ec4fd6db82fc23ca2bfde847dbd6ff",
+    "hia/src/crypto/sha256_arena.hepta": "201072727d86f6f55c1c45f0012b4d850fa4ebcd078ba5bad30c682a90be8694",
+    "hia/src/protocol/hash.hepta": "8fd21a8dde23a0e911879ed603ebc1cf192fc858f5582c03bb88724b5a830758",
+    "hia/src/protocol/id.hepta": "afd3c809db6d6f5dd90415eb6ffe772ace163fcc217ecaa1482128edfbb0103d",
+    "hia/src/protocol/ilf2.hepta": "3722d3ce7e7592e806361864803fb7ad3d15c1878812d18dc56ded713956e4d5",
+    "hia/src/protocol/ilf3.hepta": "da9e7393821ce5707eb3a454688581d636bc71f42287f5627ea74e77eb664704",
+    "hia/src/protocol/pgh2.hepta": "9289d6a8b50fee4ace4385a320ae72541f78df3d3a82fee4dec6b4fce9a4c5e2",
+    "hia/src/protocol/pnh1.hepta": "4e31ec23d9d13fbc92f15569c87065dbfccd7ed7240203c2a6786c59d3f1c38b",
+    "hia/src/transport/replay.hepta": "59f37cea99a2e14b1832a12c932384b06f7461c55da5fbcfb2034e1d662cd283",
+    "hia/src/verification/closed_round.hepta": "59a8334c55c10bb4dfc0284b714e0a19a9ea96ea67ed1f78f08ddcbcc0d2a6f2",
+    "hia/src/work/encoding.hepta": "3bdb4aed27533722483d2d5476d0db676e5645ca0499c74a3246dbd464a2cd88",
+    "hia/src/work/field.hepta": "228f0941ee389bb29de14ee6d36f28cec36ced5f55e74bfbeb9e773abc3ce941",
+    "hia/src/work/matrix.hepta": "3819ac9ba452f4a1d8a88d71a4a5acb0d036dfc0e661ef4a10470c1b5019e610",
+    "hia/src/work/verify.hepta": "7f3d088b2bf3f8a275721d95a6bcb43da8e24800d3465b7ecb6208d567dc9ba1",
+    "hia/tests/__init__.py": "ee993341b42b684a9bdfb9df86302b0c52c39b7350aed8d10270c9106a804c30",
+    "hia/tests/native_support.py": "4a33699d23abdf78a8eda8b7890399506965086527631f2ad67af69913f0d9d4",
+    "hia/tests/rust_reference.rs": "93c3bd28a5e46597aab5790ccd41fdb5adb81b26de7a9fa8b8b30de7e2cd2fef",
+    "hia/tests/test_closed_round.py": "945571dd971c66aa8aaf1441967c29f2823a8f8c6cb1a9cd54774b8c0e08e149",
+    "hia/tests/test_composition.py": "eaae23af81c93629de58e78c9cd3c669d410f84be008ff07ecc64a56b66556d8",
+    "hia/tests/test_crypto.py": "51cd3023ea274ff29dd1d2139e1eeb5fa38e074318117cdea554394eab8a0859",
+    "hia/tests/test_protocol.py": "ce9b6a4b773f06546d6871c70c7e399d2a8632bb4ef891f2e91371f5711df1ff",
+    "hia/tests/test_replay.py": "174c7778ae358b342da0fe3bc1907cb3fe7ca2ac1f06414ebc9f33601e16135d",
+    "hia/tests/test_rust_differential.py": "ef64e74a1f8192f1515f4371193e37839b8b2319a7355a706b844fc2fddf396a",
+    "hia/tests/test_verifier.py": "9b029cb8a5610093d4f18e4e3e4668043255076961ef2b65203d8427a59335d2",
+    "hia/tests/test_work.py": "30adde9a94f6abb71ca56a4ad4be2e00aa99bc8d065b0e41f217a97e73add171",
+    "hia/toolchain.lock.json": "8aaacde67240008f4a241bdde99683dd360d648fa68ac84ab5b04461a16adc71",
+    "hia/tools/bootstrap.py": "75fded24aa81a9b421bfdacaabe9942bf4208c674060bae2bdeec32d9417d437",
+    "hia/tools/build.py": "c5a11c7d3edc528479c4f6e5069685f07297bef28f54c431ca221f90b669b7c4",
+    "hia/tools/check_migration.py": "e5bc51c80f753f7b4b34958766e294c7cd0192daaf04b32e2309c69788d13ff1",
+    "hia/tools/qualify.py": "a41d29b12d123da9194caa9507d9b5cc0f0f71f517239543c36a54251b38c159",
+    "hia/tools/toolchain.py": "98bf6bf2d33a0569af2ab584f9dc19edaab2884e949dde5f777a84ac1300741d",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": "7af17da8488782bf403275b5fd401ad469dd460fd0ecda38a0edb4e714c5494e",
+    "trillionnium/crates/trnm-protocol/src/integer_evolution_v3.rs": "b16311bcbff7af586641931e1980e6886df6543fc6700251c3b44ec8a9adc305",
+    "trillionnium/crates/trnm-protocol/src/integer_factor_v2.rs": "2300d2683378211e4e6d9e1720a6869eb2f1d30d35666f810cb6876613dccc38",
+    "trillionnium/crates/trnm-protocol/src/pon_wire.rs": "ee443e739da946fc023f119e7f3b882f373b3787820295b29b182ef0ee3ef83b",
+    "trillionnium/crates/trnm-transport/src/lib.rs": "5371b0809546dff63bc1918e62a3b6fb0766c30c6758ad68b30d659f02739909",
+    "trillionnium/crates/trnm-transport/src/proof_admission.rs": "0b1e848c410be79e6cacf297099757de42e7d21ac92d7e11c4ccfcf3b60e81e3",
+    "trillionnium/crates/trnm-verification-profiles/src/closed_round.rs": "472c2da36fc475c0a7e02f256e1e3ea932ac20a5062755e79613eb7f77aac730"
+  },
+  "source_set_sha256": "9ee6a299cb21b6cb6620e0fc0af2cf1de3b3320ecf40caa22abf351845a3d63b",
+  "source_unchanged_during_tests": true,
+  "status": "PASS_WITH_SKIPS",
+  "tests": {
+    "errors": [],
+    "failures": [],
+    "run": 66,
+    "skipped": [
+      [
+        "setUpClass (hia.tests.test_rust_differential.OriginalRustDifferentialTests)",
+        "NOT_RUN: TRNM_HIA_RUST_REFERENCE is not configured; the original Rust/native HIA differential has not executed"
+      ]
+    ]
+  },
+  "upstream_cold_gate_executed_in_this_run": false,
+  "wall_seconds": 45.81512417200065,
+  "whole_chain_native": false,
+  "working_tree_dirty": true
+}

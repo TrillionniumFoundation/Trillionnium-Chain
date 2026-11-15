@@ -1,0 +1,29 @@
+{
+  "schema": "trnm.hia.component-includes.v1",
+  "includes": {
+    "src/crypto/pon_hash.hepta": [
+      {
+        "source": "src/crypto/sha256_arena.hepta",
+        "functions": [
+          "sha256_arena",
+          "sha256_padding_byte",
+          "sha256_rotr32",
+          "sha256_work_load64",
+          "sha256_work_store64"
+        ]
+      }
+    ],
+    "src/work/verify.hepta": [
+      {
+        "source": "src/crypto/sha256_arena.hepta",
+        "functions": [
+          "sha256_arena",
+          "sha256_padding_byte",
+          "sha256_rotr32",
+          "sha256_work_load64",
+          "sha256_work_store64"
+        ]
+      }
+    ]
+  }
+}

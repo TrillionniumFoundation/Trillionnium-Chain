@@ -1,3 +1,37 @@
+## HIA native rewrite, 2026-11-15 America/New_York — IN PROGRESS
+
+The owner now requires a complete HIA-native Trillionnium-Chain and retirement
+of the previous implementation after equivalent replacement. The consolidated
+baseline is `59bd6ae4223caff6695dc9cf2ee2cdcdc6df5e88`; all 26 retained packages
+remain explicitly accounted for in the [HIA migration inventory](../../config/hia-migration-v1.json).
+The [native source and reproduction guide](../../hia/README.md) describes the
+actual code and local ABIs. This section extends the sole development plan.
+
+Fifteen HIA source units now implement exact protocol grammars, SHA-256 and PoN
+hash framing, W1 field/matrix operations and the complete non-cancelling W1
+relation, pure replay transitions, and bounded UTF-8 evaluator-round decisions.
+Native code is emitted by the fixed Hepta self-hosted compiler at `f33d8da3`;
+its original 180-second cold gate passed in 154.807339324 seconds. That compiler
+qualification remains separate from whole-Chain service qualification.
+
+Proceed from these native kernels to explicit system I/O/capability support,
+the single durable node owner and recovery cuts, PQ identity/transport, full
+transaction/model workflows, and the original service/cross-target gates.
+Preserve the original signed byte domains, error precedence, monotonic local
+recovery and revocation state, missing-evaluation semantics, and independent
+Adopt/NoUpdate evidence throughout. Each migrated package needs its full native
+integration and original acceptance evidence before retirement. The existing
+work-cost, STARK/QROM and consensus-economic obligations remain open.
+
+The first cleanup removes 607 checkout-repair preparation files, with exact
+Git-object/SHA-256 recovery and original failure summaries retained in the
+[historical archive index](../../evidence/pon-learning-outcome-composition-20261111/CHECKOUT_VISIBILITY_ARCHIVE.json).
+No legacy runtime package has yet been retired. New native CI executes pinned
+bootstrap, whole-program admission, raw machine-code cases and original-Rust
+policy differentials on the exact candidate, and retains both success and
+failure observations. Do not infer full native node completion from this kernel
+increment or from the earlier branch consolidation.
+
 
 **PoN and learning-outcome composition, 2026-11-11 America/New_York — HOLD:**
 

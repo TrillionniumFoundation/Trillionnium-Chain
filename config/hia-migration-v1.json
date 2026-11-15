@@ -1,0 +1,450 @@
+{
+  "schema": "trnm.hia.migration.v1",
+  "baseline_commit": "59bd6ae4223caff6695dc9cf2ee2cdcdc6df5e88",
+  "baseline_toolchain": "f33d8da316de8fdf27b504371f1a5310997ff548",
+  "status": "IN_PROGRESS",
+  "goal": "A single complete HIA-native Trillionnium-Chain implementation and a cleaned final tree",
+  "whole_chain_native": false,
+  "old_stack_can_be_removed": false,
+  "production_activation": false,
+  "baseline_audit": {
+    "tracked_files": 41834,
+    "tracked_bytes": 3999565648,
+    "evidence_files": 36222,
+    "evidence_bytes": 3804721963,
+    "rust_workspace_packages": 26,
+    "workspace_rust_files": 1621,
+    "workspace_rust_physical_lines_including_tests": 702001,
+    "scope": "whole tracked-tree inventory, all package/dependency ownership, targeted semantic audit; not a claim that all historical evidence has passed"
+  },
+  "components": [
+    {
+      "id": "protocol/id",
+      "source": "hia/src/protocol/id.hepta",
+      "scope": "ASCII identifier validation",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_protocol.py"
+      ],
+      "node_integration_complete": false
+    },
+    {
+      "id": "protocol/hash",
+      "source": "hia/src/protocol/hash.hepta",
+      "scope": "lowercase hexadecimal hash text validation",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_protocol.py"
+      ],
+      "node_integration_complete": false
+    },
+    {
+      "id": "protocol/pnh1",
+      "source": "hia/src/protocol/pnh1.hepta",
+      "scope": "PNH1 fixed header validation",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_protocol.py"
+      ],
+      "node_integration_complete": false
+    },
+    {
+      "id": "protocol/pgh2",
+      "source": "hia/src/protocol/pgh2.hepta",
+      "scope": "PGH2 fixed header validation",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_protocol.py"
+      ],
+      "node_integration_complete": false
+    },
+    {
+      "id": "protocol/ilf2",
+      "source": "hia/src/protocol/ilf2.hepta",
+      "scope": "complete ILF2 factor witness byte grammar",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_protocol.py"
+      ],
+      "node_integration_complete": false
+    },
+    {
+      "id": "protocol/ilf3",
+      "source": "hia/src/protocol/ilf3.hepta",
+      "scope": "complete ILF3 evolution witness byte grammar",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_protocol.py"
+      ],
+      "node_integration_complete": false
+    },
+    {
+      "id": "crypto/sha256",
+      "source": "hia/src/crypto/sha256.hepta",
+      "scope": "SHA-256 for at most 1 MiB input",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_crypto.py"
+      ],
+      "node_integration_complete": false
+    },
+    {
+      "id": "crypto/sha256_arena",
+      "source": "hia/src/crypto/sha256_arena.hepta",
+      "scope": "shared single-arena SHA-256 implementation",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_crypto.py"
+      ],
+      "node_integration_complete": false
+    },
+    {
+      "id": "crypto/pon_hash",
+      "source": "hia/src/crypto/pon_hash.hepta",
+      "scope": "original PoN domain and length-prefix hash framing",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_crypto.py"
+      ],
+      "node_integration_complete": false
+    },
+    {
+      "id": "work/encoding",
+      "source": "hia/src/work/encoding.hepta",
+      "scope": "PNW1 canonical proof encoding precheck",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_work.py"
+      ],
+      "node_integration_complete": false
+    },
+    {
+      "id": "work/field",
+      "source": "hia/src/work/field.hepta",
+      "scope": "exact W1 finite-field arithmetic",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_work.py"
+      ],
+      "node_integration_complete": false
+    },
+    {
+      "id": "work/matrix",
+      "source": "hia/src/work/matrix.hepta",
+      "scope": "bounded canonical W1 matrix multiplication",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_work.py"
+      ],
+      "node_integration_complete": false
+    },
+    {
+      "id": "work/verify",
+      "source": "hia/src/work/verify.hepta",
+      "scope": "complete deterministic non-cancelling PNW1 relation kernel",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_verifier.py"
+      ],
+      "node_integration_complete": false
+    },
+    {
+      "id": "transport/replay",
+      "source": "hia/src/transport/replay.hepta",
+      "scope": "pure replay/session/nonce checks and successor proposals",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_replay.py"
+      ],
+      "node_integration_complete": false
+    },
+    {
+      "id": "verification/closed_round",
+      "source": "hia/src/verification/closed_round.hepta",
+      "scope": "complete evaluator-round policy on a bounded canonical UTF-8 container ABI",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_closed_round.py"
+      ],
+      "node_integration_complete": false
+    }
+  ],
+  "legacy_packages": [
+    {
+      "package": "trnm-types",
+      "module": "M00",
+      "legacy_path": "trillionnium/crates/trnm-types",
+      "state": "not-ported",
+      "components": [],
+      "retirement_accepted": false
+    },
+    {
+      "package": "trnm-executor",
+      "module": "M06",
+      "legacy_path": "trillionnium/crates/trnm-executor",
+      "state": "not-ported",
+      "components": [],
+      "retirement_accepted": false
+    },
+    {
+      "package": "trnm-bench",
+      "module": "M17",
+      "legacy_path": "trillionnium/crates/trnm-bench",
+      "state": "not-ported",
+      "components": [],
+      "retirement_accepted": false
+    },
+    {
+      "package": "trnm-mempool",
+      "module": "M05",
+      "legacy_path": "trillionnium/crates/trnm-mempool",
+      "state": "not-ported",
+      "components": [],
+      "retirement_accepted": false
+    },
+    {
+      "package": "trnm-worker-agent",
+      "module": "M10",
+      "legacy_path": "trillionnium/crates/trnm-worker-agent",
+      "state": "not-ported",
+      "components": [],
+      "retirement_accepted": false
+    },
+    {
+      "package": "trnm-oracle",
+      "module": "M11",
+      "legacy_path": "trillionnium/crates/trnm-oracle",
+      "state": "not-ported",
+      "components": [],
+      "retirement_accepted": false
+    },
+    {
+      "package": "trnm-research-protocol",
+      "module": "M10",
+      "legacy_path": "trillionnium/crates/trnm-research-protocol",
+      "state": "not-ported",
+      "components": [],
+      "retirement_accepted": false
+    },
+    {
+      "package": "trnm-protocol",
+      "module": "M00",
+      "legacy_path": "trillionnium/crates/trnm-protocol",
+      "state": "partially-ported",
+      "components": [
+        "protocol/id",
+        "protocol/hash",
+        "protocol/pnh1",
+        "protocol/pgh2",
+        "protocol/ilf2",
+        "protocol/ilf3",
+        "crypto/pon_hash"
+      ],
+      "retirement_accepted": false
+    },
+    {
+      "package": "trnm-peer-lease",
+      "module": "M04",
+      "legacy_path": "trillionnium/crates/trnm-peer-lease",
+      "state": "not-ported",
+      "components": [],
+      "retirement_accepted": false
+    },
+    {
+      "package": "trnm-data-availability",
+      "module": "M09",
+      "legacy_path": "trillionnium/crates/trnm-data-availability",
+      "state": "not-ported",
+      "components": [],
+      "retirement_accepted": false
+    },
+    {
+      "package": "trnm-task-kernel",
+      "module": "M10",
+      "legacy_path": "trillionnium/crates/trnm-task-kernel",
+      "state": "not-ported",
+      "components": [],
+      "retirement_accepted": false
+    },
+    {
+      "package": "trnm-mvcc-fee",
+      "module": "M06",
+      "legacy_path": "trillionnium/crates/trnm-mvcc-fee",
+      "state": "not-ported",
+      "components": [],
+      "retirement_accepted": false
+    },
+    {
+      "package": "trnm-service-settlement",
+      "module": "M12",
+      "legacy_path": "trillionnium/crates/trnm-service-settlement",
+      "state": "not-ported",
+      "components": [],
+      "retirement_accepted": false
+    },
+    {
+      "package": "trnm-control-plane",
+      "module": "M16",
+      "legacy_path": "trillionnium/crates/trnm-control-plane",
+      "state": "not-ported",
+      "components": [],
+      "retirement_accepted": false
+    },
+    {
+      "package": "trnm-state-import",
+      "module": "M13",
+      "legacy_path": "trillionnium/crates/trnm-state-import",
+      "state": "not-ported",
+      "components": [],
+      "retirement_accepted": false
+    },
+    {
+      "package": "trnm-release-bundle",
+      "module": "M15",
+      "legacy_path": "trillionnium/crates/trnm-release-bundle",
+      "state": "not-ported",
+      "components": [],
+      "retirement_accepted": false
+    },
+    {
+      "package": "trnm-checkpoint-store",
+      "module": "M03",
+      "legacy_path": "trillionnium/crates/trnm-checkpoint-store",
+      "state": "not-ported",
+      "components": [],
+      "retirement_accepted": false
+    },
+    {
+      "package": "trnm-checkpoint-types",
+      "module": "M03",
+      "legacy_path": "trillionnium/crates/trnm-checkpoint-types",
+      "state": "not-ported",
+      "components": [],
+      "retirement_accepted": false
+    },
+    {
+      "package": "trnm-crypto-primitives",
+      "module": "M01",
+      "legacy_path": "trillionnium/crates/trnm-crypto-primitives",
+      "state": "partially-ported",
+      "components": [
+        "work/encoding",
+        "work/field",
+        "work/matrix",
+        "work/verify",
+        "crypto/sha256",
+        "crypto/sha256_arena"
+      ],
+      "retirement_accepted": false
+    },
+    {
+      "package": "trnm-verification-profiles",
+      "module": "M11",
+      "legacy_path": "trillionnium/crates/trnm-verification-profiles",
+      "state": "partially-ported",
+      "components": [
+        "verification/closed_round"
+      ],
+      "retirement_accepted": false
+    },
+    {
+      "package": "trnm-transport",
+      "module": "M04",
+      "legacy_path": "trillionnium/crates/trnm-transport",
+      "state": "partially-ported",
+      "components": [
+        "transport/replay"
+      ],
+      "retirement_accepted": false
+    },
+    {
+      "package": "trnm-audit-events",
+      "module": "M17",
+      "legacy_path": "trillionnium/crates/trnm-audit-events",
+      "state": "not-ported",
+      "components": [],
+      "retirement_accepted": false
+    },
+    {
+      "package": "trnm-governance-guard",
+      "module": "M01",
+      "legacy_path": "trillionnium/crates/trnm-governance-guard",
+      "state": "not-ported",
+      "components": [],
+      "retirement_accepted": false
+    },
+    {
+      "package": "trnm-escrow-vault",
+      "module": "M12",
+      "legacy_path": "trillionnium/crates/trnm-escrow-vault",
+      "state": "not-ported",
+      "components": [],
+      "retirement_accepted": false
+    },
+    {
+      "package": "trnm-pon-node",
+      "module": "M15",
+      "legacy_path": "trillionnium/crates/trnm-pon-node",
+      "state": "not-ported",
+      "components": [],
+      "retirement_accepted": false
+    },
+    {
+      "package": "trnm-sqlite-io-boundary",
+      "module": "M15",
+      "legacy_path": "trillionnium/crates/trnm-sqlite-io-boundary",
+      "state": "not-ported",
+      "components": [],
+      "retirement_accepted": false
+    }
+  ],
+  "blocking_gates": [
+    {
+      "id": "system-io",
+      "state": "OPEN",
+      "obligation": "HIA v8 general filesystem/network/process syscall and host capability boundary"
+    },
+    {
+      "id": "persistent-node",
+      "state": "OPEN",
+      "obligation": "single durable Node owner, SQLite semantics, crash cuts, rollback floor and reorg"
+    },
+    {
+      "id": "cryptography",
+      "state": "OPEN",
+      "obligation": "complete PQ signatures, authenticated TLS/identity and signature-domain parity"
+    },
+    {
+      "id": "node-integration",
+      "state": "OPEN",
+      "obligation": "full transaction/application flow, mempool, cancellation, private authority types and end-to-end use"
+    },
+    {
+      "id": "service-budget",
+      "state": "OPEN",
+      "obligation": "original 0.25 CPU / 2 GiB / zero-swap / 256 PID / 4-second / 16-request acceptance"
+    },
+    {
+      "id": "cross-target",
+      "state": "OPEN",
+      "obligation": "original architecture/OS support and exact artifact qualification"
+    },
+    {
+      "id": "model-loop",
+      "state": "OPEN",
+      "obligation": "actual train, independent evaluation, Adopt/NoUpdate, subsequent task and cold recovery"
+    },
+    {
+      "id": "consensus-research",
+      "state": "OPEN",
+      "obligation": "original work-cost, public consensus, STARK/QROM and economic qualification"
+    },
+    {
+      "id": "retirement",
+      "state": "OPEN",
+      "obligation": "equivalent complete replacement of all 26 retained Rust packages and their indispensable tools"
+    }
+  ],
+  "historical_failures_preserved": true,
+  "history_archive": "evidence/pon-learning-outcome-composition-20261111/CHECKOUT_VISIBILITY_ARCHIVE.json"
+}
