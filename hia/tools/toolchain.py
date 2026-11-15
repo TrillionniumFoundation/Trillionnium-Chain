@@ -79,8 +79,10 @@ def compose_source(source: Path) -> tuple[bytes, list[tuple[Path, bytes]]]:
     """Compose only explicitly named HIA functions, then let Core verify them.
 
     This build step does not synthesize instructions, infer missing callees,
-    execute includes, or substitute a host-language implementation. Included
-    programs must themselves pass the pinned upstream Core verifier.
+    execute includes, or substitute a host-language implementation. Each
+    included component must independently pass Core with its own explicit
+    declarations. Only its original functions can be selected: its imported
+    helpers are neither implicitly copied nor re-exported to the caller.
     """
     from hepta.hia_agent_assembly import assemble_program
     source = source.absolute()
@@ -98,37 +100,63 @@ def compose_source(source: Path) -> tuple[bytes, list[tuple[Path, bytes]]]:
         raise ValueError("Unsupported component manifest")
     for key in manifest["includes"]:
         _source_path(key)
-    inputs = [(source, entry), (manifest_path, manifest_bytes)]
-    blocks = [entry.rstrip() + b"\n"]
-    entry_names = re.findall(rb"(?m)^fn ([A-Za-z_][A-Za-z_0-9]*)\(", entry)
-    names = {name.decode() for name in entry_names}
-    rows = manifest["includes"].get(relative, [])
-    if not isinstance(rows, list):
-        raise ValueError("HIA includes must be an explicit list")
-    for row in rows:
-        if (not isinstance(row, dict) or set(row) != {"source", "functions"}
-                or not isinstance(row["functions"], list) or not row["functions"]
-                or any(not isinstance(name, str) for name in row["functions"])):
-            raise ValueError("Malformed HIA include")
-        dependency = _source_path(row["source"])
-        if dependency == source or row["source"] in manifest["includes"]:
-            raise ValueError("Recursive/transitive HIA includes are not admitted")
-        raw = dependency.read_bytes()
-        checked = assemble_program(raw)
-        defined = {fn["name"] for fn in checked.as_dict()["functions"]}
-        # Function blocks use the official assembler's line grammar. The
-        # dependency has already passed that parser, including its limits.
-        available = {match.group(1).decode(): match.group(0)
-            for match in re.finditer(rb"(?ms)^fn ([A-Za-z_][A-Za-z_0-9]*)\([^\n]*\n.*?^end(?:\n|$)", raw)}
-        if set(available) != defined:
-            raise ValueError("Dependency function boundaries differ from Core")
-        for name in row["functions"]:
-            if name not in available or name in names:
-                raise ValueError("Unknown or duplicate included function: " + name)
-            names.add(name)
-            blocks.append(available[name].rstrip() + b"\n")
-        inputs.append((dependency, raw))
-    return b"".join(blocks), inputs
+    # Capture every source used for either independent admission or the final
+    # caller exactly once. build_native rechecks all these bytes after emission.
+    captured = {source: entry, manifest_path: manifest_bytes}
+    admitted = {}
+
+    def captured_source(path):
+        if path not in captured:
+            captured[path] = path.read_bytes()
+        return captured[path]
+
+    def owned_functions(raw):
+        declarations = [name.decode() for name in
+            re.findall(rb"(?m)^fn ([A-Za-z_][A-Za-z_0-9]*)\(", raw)]
+        matches = list(re.finditer(
+            rb"(?ms)^fn ([A-Za-z_][A-Za-z_0-9]*)\([^\n]*\n.*?^end(?:\n|$)", raw))
+        available = {match.group(1).decode(): match.group(0) for match in matches}
+        if (len(declarations) != len(set(declarations))
+                or len(matches) != len(available) or set(available) != set(declarations)):
+            raise ValueError("Dependency function boundaries are ambiguous")
+        return available
+
+    def compose_component(name, ancestry):
+        if name in ancestry:
+            raise ValueError("Cyclic HIA component declarations are not admitted")
+        path = _source_path(name)
+        raw = captured_source(path)
+        own = owned_functions(raw)
+        names = set(own)
+        blocks = [raw.rstrip() + b"\n"]
+        rows = manifest["includes"].get(name, [])
+        if not isinstance(rows, list):
+            raise ValueError("HIA includes must be an explicit list")
+        for row in rows:
+            if (not isinstance(row, dict) or set(row) != {"source", "functions"}
+                    or not isinstance(row["functions"], list) or not row["functions"]
+                    or any(not isinstance(value, str) for value in row["functions"])):
+                raise ValueError("Malformed HIA include")
+            dependency = _source_path(row["source"])
+            if row["source"] in (*ancestry, name):
+                raise ValueError("Cyclic HIA component declarations are not admitted")
+            if dependency not in admitted:
+                independent, available = compose_component(row["source"], (*ancestry, name))
+                checked = assemble_program(independent)
+                defined = {fn["name"] for fn in checked.as_dict()["functions"]}
+                if not set(available) <= defined:
+                    raise ValueError("Dependency function boundaries differ from Core")
+                admitted[dependency] = available
+            available = admitted[dependency]
+            for function in row["functions"]:
+                if function not in available or function in names:
+                    raise ValueError("Unknown or duplicate included function: " + function)
+                names.add(function)
+                blocks.append(available[function].rstrip() + b"\n")
+        return b"".join(blocks), own
+
+    combined, _ = compose_component(relative, ())
+    return combined, list(captured.items())
 
 
 def checked_source(source: Path):

@@ -1,8 +1,8 @@
 # HIA native implementation
 
 This directory contains the HIA migration of Trillionnium-Chain. Its target is
-one complete HIA-native implementation. The current candidate contains **27
-kernel units and four native foundations**, accounting for all **36 HIA source
+one complete HIA-native implementation. The current candidate contains **36
+kernel units and seven native foundations**, accounting for all **51 HIA source
 files**. The 26 existing Rust packages remain until their complete replacement
 is qualified. The authoritative sequence remains the
 [repository development plan](../docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md).
@@ -29,7 +29,8 @@ these counts do not describe 26 independent final implementations.
 
 The ownership audit covers the entire tracked tree, the Cargo graph and all
 18 long-lived modules. Semantic work in this increment concentrates on exact
-wire parsing, integer work, hashing, replay and evaluator decisions. Existing
+wire parsing, integer work, hashing, replay, complete classical response codecs,
+Settings construction, typed Delta semantics and native persistence. Existing
 service, model-use, consensus-security and cross-architecture failures retain
 their original status. Rewriting a deterministic function does not establish a
 new proof of work hardness or satisfy an unexecuted service campaign.
@@ -59,6 +60,11 @@ new proof of work hardness or satisfy an unexecuted service campaign.
 | [State String and Value](STATE_VALUE.md) | ASCII string codec and iterative typed Value construction, sorted last-wins objects, M06 grammar and canonical serialization | 1,518 native controls including a 7,280-level array; finite constructor profile and complete-State gate remain distinct |
 | [Incremental SHA256](src/crypto/sha256_stream.hepta) | One continuous context, all compression blocks and one final padding | Fourteen controls through 2 MiB + 1,024 bytes |
 | [Authenticated request](platform/transport_request/README.md) | All five classical request variants, complete 2 MiB frame and strict authentication equation | 178 native controls, complete payload mutation, original-default serde behavior and mandatory private original-Node oracle |
+
+| [Shared JSON primitives](src/codec/json_primitives.hepta) | Single UTF-8, string and integer primitive closure, independently admitted before selection | 1,518 extraction controls; caller dependencies remain explicit |
+| [JSON number](src/codec/json_number.hepta), [Value wire](src/codec/json_value_wire.hepta), [Value encoder](src/codec/json_value_encode.hepta) | Exact original-default serde number parsing/formatting, Unicode, complete Value construction and response serialization | 6,955 number, 3,546 Value parse and 372 Value encode controls; original Rust required in dedicated CI |
+| [Ed25519 signing](src/crypto/ed25519_sign.hepta), [response verification](src/transport/authenticated_response.hepta), [signed response](src/transport/signed_response.hepta) | Complete classical response domains, signature production and strict verification | 73 signing, 33 producer and 125 verifier controls; producer uses a guarded private stack |
+| [Settings development](src/node/README.md), [compact state root](src/protocol/state_root_compact.hepta) | Actual default configuration, four development keys, seven genesis rows and dynamically computed roots | 16 integrated tests, 102 shared-runner and 14 raw-pointer calls; 30 original-Rust cases required in CI |
 
 The [cryptography guide](CRYPTO.md) specifies the SHA-512 and Ed25519 ABIs,
 error order, arithmetic bounds and remaining key-ownership limitations. The
@@ -119,14 +125,21 @@ timeout or missing report remains an execution failure.
 
 ### Shared HIA source
 
-[components.json](components.json) explicitly selects five functions from the
-single `sha256_arena.hepta` source for the PoN hash, W1, checkpoint, state-root
-and storage-owner components.
+[components.json](components.json) selects named functions from single canonical
+SHA, Ed25519, binary64, JSON and state-root sources. Storage v2 selects the existing
+state-root SHA compression functions through its independently verified framing
+component. There are no copied crypto or JSON helper implementations.
 PNX1 explicitly includes the shared ILF2/ILF3 validators and coefficient scans. Their
 entry files therefore require package composition before admission. The driver
 checks each included source, joins only the named HIA functions and submits the
 complete program to the official Core verifier and native compiler. It refuses
-unknown names, duplicate symbols, traversal, symlinks and recursive includes.
+unknown names, duplicate symbols, traversal, symlinks and dependency cycles.
+An included component may declare its own explicit dependencies. Core must
+validate that entire component independently, even functions the caller does
+not select. Only functions defined in the component's own source can be
+selected; its imported helpers are not re-exported. The caller must still name
+every helper in its own flat closure. Every source used for either independent
+validation or final emission is captured and rechecked after compilation.
 Sources are restricted to the explicit `src/`, `platform/` and `storage/` roots.
 The separate migration inventory rejects any unaccounted HIA source, duplicate
 owner, missing source or premature foundation-retirement claim.
@@ -243,6 +256,32 @@ disabled. Original progress callbacks, receiver cache/owner integration, resourc
 admission and the private `VerifiedWork` construction remain with the retained
 runtime. These interfaces need their own HIA implementations and service tests.
 
+## Sixth candidate integration evidence
+
+The current source increment has separate local evidence and requires its own
+exact committed CI. [Complete response observations](qualification/transport-response-observations.json)
+record 11,420 passing native controls. The full response producer uses the
+[private stack](platform/private_stack/README.md); a real seccomp-denied `munmap`
+after signing caused exit 70 and zero stdout. Its 11 standalone controls retain
+the actual bare signer erasure failure: scalar secret bytes remained in compiler
+stack spill slots even after the explicit work arena was cleared. Guarded normal
+returns wipe the complete 1 MiB private stack and unmap it. Neither this repair
+nor conservative SSA analysis establishes whole-key custody or machine-code
+constant-time behavior.
+
+[Settings observations](qualification/settings-development.json) retain the
+16 integrated tests and two rejected compiler attempts. The
+[typed Delta caller](platform/node_delta/README.md) passed 8,551 controls,
+including a 65,536-row State and a 131,072-key Delta union. Its typed tape
+constructor finishes validation before the first progress call; physical stored
+row materialization and cancellation remain separate owner obligations.
+
+The response, Settings and Delta jobs require actual original Rust execution
+(10,990 response comparisons plus six original tests, 30 Settings cases and
+423 Delta cases). These were NOT_RUN locally because Rust is unavailable; the
+workflow refuses to substitute a host-side reimplementation. Earlier CI below
+qualifies only its recorded source set.
+
 ## Retained compiler qualification
 
 [compiler-binding.json](qualification/compiler-binding.json) binds the original
@@ -253,44 +292,50 @@ checks and 38 phases. The generated standalone ELF is byte-identical to the
 compiler used for these Chain components. The reports preserve the target,
 trusted dependencies and precise qualification scope.
 
-The fourth repaired candidate `96a0846e383745f88e033c7db2abc0611f1dae63`
-passed both jobs in [run 43746877132](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43746877132):
-160 tests, 36,222 shared-runner native calls, no failures, errors or skips.
-All four then-existing original Rust adapters and 17 original unit tests ran.
-The [exact CI report](qualification/native-ci.json) binds source set
-`b4a657cc76c97a022ae31742c98ad573a45b94edb8fea00c36b527891c708d3b`;
-its SHA-256 is `adcef71fe36e416df0f467adb01679f0a2d1e567bd49e07f12ae03051d9d9214`.
-Artifact `14175470420` has ZIP SHA-256
-`8a851c22165189224c00b00fea2fa7ee8279323ef6de26d56712dc0a96d9fb03`.
-That run also passed 25 finite OS controls, 49 reactor controls with 13 native
+The fifth repaired candidate `4cc0464ff9632f2a493cb76d5b8b51eaad332dac`
+passed all three HIA jobs in [run 43751782144](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43751782144):
+189 tests, 56,884 shared-runner native calls, no failures, errors or skips.
+All five original Rust adapters actually executed. The [exact CI report](qualification/native-ci.json)
+binds source set `fe94efedc30dba67e3c89cf95b17a7135d29f7b6dc9bd29ffa290dd519ba337c`;
+its SHA-256 is `d665e6ac67d8613e89d62045dfcbaa497b2525df0114f3c22e8081eabb511400`.
+Native artifact `14176927252` has ZIP SHA-256
+`71191d0e6458d00c442b4effa29a4697f78deb7caf03f051228f8d17f2fe331a`.
+The run also passed 25 finite OS controls, 49 reactor controls with 13 native
 contracts, and 48 storage controls with 14 native entry contracts. Actual syscall
-traces were captured. The separate state-root maximum-count child made 86 raw
-ABI calls, outside the shared-runner count. The source job passed the original
-historical readers and all 113 PQ negative tests in 546.161 seconds.
+traces were captured. These finite results do not close whole-Node integration.
 
-The earlier fourth candidate failed at the direct storage script import before
-storage, Rust or kernel execution. Both CLI entrypoints now bind their repository
-root and are tested from a fresh directory without ambient Python path variables.
-The third candidate's three ignored stderr logs and the fixed import failure
-remain recorded in [development observations](qualification/development-observations.json).
-Neither repair altered the native storage ELF or an original service budget.
+The [original executor report](qualification/executor-original-ci.json) records
+5,274 actual original-Rust/native comparisons, with status
+`PASS_WITH_EXPLICIT_ORIGINAL_SAFETY_DEFECT`. The unchanged original implementation
+produced 131 unsafe schedules; all 181 intentional differences and 27 expected
+version-skew panics remain explicit. The separate 122 differences in the earlier
+source-derived model corpus remain labeled as model observations. The HIA
+correction retains the maximum reader dependency and every native result must
+satisfy the independent conflict graph. This executor belongs to the full
+26-package repository scope and is outside the normal Node dependency closure.
 
-The current scheduler, String/Value and authenticated-request additions are
-later sources. Their local reports explicitly mark original Rust execution as
-NOT_RUN. CI now requires five shared-suite original Rust adapters, a separate
-real executor comparison, and a separate complete-request/original-Node job.
-The request's 30-second outer test budget does not qualify the original request
-read deadline or service response budget. Full 2 MiB submit and dense 69,878-query
-ConfirmMany took 5.171449401 and 6.773873071 seconds locally.
+The complete request job passed 178 native request controls, 14 incremental SHA
+controls, 170 actual original-Node differential cases and six original tests.
+Eight new owner-container cases are explicitly excluded from the Rust oracle.
+The source job passed historical readers and all 113 PQ negative tests in
+419.167 seconds. PQ remains `HOLD_NO_GO`. Neither source consistency nor a
+request fixture's 30-second outer budget qualifies original service acceptance.
+The earlier full 2 MiB submit and dense 69,878-query ConfirmMany observations
+remain 5.171449401 and 6.773873071 seconds; their original service gates are open.
 
-The scheduler's source-derived old model can place a later reader and writer in
-one conflicting group because it overwrites a higher reader dependency with a
-lower group. HIA retains the maximum dependency. The report preserves 122
-intentional old-model differences and requires every native result to satisfy an
-independent conflict graph. The unchanged original Rust library is the mandatory
-CI oracle; source analysis alone is not described as an executed Rust failure.
-This executor belongs to the full 26-package repository scope and is outside the
-normal Node dependency closure.
+The fifth initial candidate passed its main 177-test suite but failed the later
+executor adapter link with E0463 before original executor execution. The
+[repair report](qualification/executor-original-linking-fix.json) retains the
+actual Cargo JSON and failure. Dependency directories now come from that
+successful invocation's library artifacts, and required externs must be unique.
+Twelve controls and the exact repaired-head real Rust comparison verify the fix.
+The prior storage CLI import failure and three missing retained stderr logs
+remain in [development observations](qualification/development-observations.json).
+None of these repairs changed original algorithm sources, corpus or service budgets.
+
+All sixth-batch sources have distinct local source bindings. The exact published
+fifth-head CI results above do not qualify these later edits. Their original Rust
+and owner-integration results remain separately reported until actually executed.
 
 ## Tree cleanup and remaining integration
 
@@ -334,7 +379,24 @@ fixed by unconditional read-only dispatch; the retained repository receipt was
 unchanged. [The observation](qualification/hosted-cost-cleanup.json) preserves
 that failure and the final complete PASS. Original ZIP bytes and current native
 work/service acceptance are not inferred from this historical byte verification.
-All six sets remove **1,555 payload copies / 1,312,946,846 original bytes**;
+The [D26 SQLite archive](../evidence/pon-business-gates-readback-20261107/D26_SQLITE_ARCHIVE.json)
+removes eight compressed snapshots (176,597,049 bytes). Its reader checks the
+complete 617-file original package, all 614 prepared files, 232 gzip streams and
+their 1,992,917,425 decoded bytes, the exact preparation plan and original seal.
+All 609 other original files remain unchanged. This is byte preservation;
+neither SQLite nor the historical Node is started by the reader.
+The [W1 complete-work archive](../evidence/pon-w1-complete-work-20261101/W1_COMPLETE_ARCHIVE.json)
+removes 59 containers (138,750,512 bytes) and retains 91 small records with their
+exact original blobs, including ten explicitly tracked logs. Its private
+172-file original view executes the unchanged verifier over all 170 FILE_INDEX
+entries, 171 SHA256SUMS entries and 60 archives containing 4,960 members
+(4,463,919,709 decoded bytes). The root validation archive remains. The original
+and archived views produce the same original observation; 15 negative controls
+include an actual original-verifier member failure and missing-index CLI cases.
+The [D26](qualification/d26-sqlite-cleanup.json) and
+[W1](qualification/w1-complete-cleanup.json) reports retain all failure/HOLD
+observations and the independent integration replays.
+All eight sets remove **1,622 payload copies / 1,628,294,407 original bytes**;
 new metadata, code and retained receipts make the net tree reduction smaller.
 No original startup UNKNOWN, failure, or qualification HOLD is rewritten.
 
@@ -355,22 +417,32 @@ and [artifact publication boundary](https://github.com/TrillionniumFoundation/He
 define that distinction. The compiler cold gate did not execute every specialized
 file application gate and gives no socket, SQLite or node-lifecycle guarantee.
 
-The four native foundations have separate contracts and qualification:
+The seven native foundations have separate contracts and qualification:
 
 | Foundation | Native behavior | Remaining integration |
 | --- | --- | --- |
 | [Linux OS fixture](platform/README.md) | Real file publication, fsync, loopback TCP, epoll, clock and random operations through an HIA-emitted adapter | Finite fixture; its blocking-call deadline failure remains |
 | [Stream reactor](platform/reactor/README.md) | Connected FIFO/stream capabilities, generations, readiness, absolute deadline, partial-progress cursors and cancellation with explicit caller entrypoints | Node framing, admission, ownership and full transport integration; regular-file/fsync deadlines are outside its admitted descriptor class |
-| [Transaction owner](storage/README.md) | Private directory FD, process lock, immutable hash-linked transactions, atomic HEAD, fsync, reopen validation and exact payload readback | Typed Node reducers, replay/outbox/reorg, original initialization recovery, external anti-rollback witness, complete payload/lifetime limits and service qualification |
-| [Request qualification caller](platform/transport_request/README.md) | Native framing and incremental-hash fixture around the complete classical request kernel | Private Settings/session owner, socket/reactor connection, replay/outbox, response codec, signing-key custody and PQ |
+| [Transaction owner](storage/README.md) | Fresh-v2 private directory FD, lock, immutable hash-linked transactions, atomic HEAD, fsync and streamed exact readback through the complete original State byte extent | Typed Node reducers, replay/outbox/reorg, original initialization recovery, external anti-rollback witness and service qualification |
+| [Request qualification caller](platform/transport_request/README.md) | Native framing and incremental-hash fixture around the complete classical request kernel | Private Settings/session owner, socket/reactor connection, replay/outbox, signing-key custody and PQ |
+| [Typed Delta](platform/node_delta/README.md) | Complete typed collection, exact Option/byte comparisons, ordered writes and original progress/error sequencing | Real stored-row decoding, transaction authority, durable Node commit and peer ACK |
+| [Private stack](platform/private_stack/README.md) | Two guard pages, dedicated native call stack, full ordinary-return wipe, unmap and explicit cleanup failure | Caller seed lifetime, asynchronous termination, complete key owner and machine-code timing proof |
+| [Response qualification caller](platform/transport_response/README.md) | Variable-length output, redzones, complete signed response and actual cleanup-error publication refusal | Private connection, replay commit and terminal response authority |
 
 The reactor and transaction owner are actual native implementations generated
 through the pinned HIA compiler. The literal ISA adapters remain separately
 trusted boundaries; Core verifies their HIA emitters rather than proving every
 emitted syscall effect. Hosted builders and independent test oracles are
-explicitly retained. The storage profile currently accepts 16 MiB per atomic
-payload and 4,096 retained commits; those bounds do not cover the original full
-State or a long-lived node. A missing COMMIT ACK never proves rollback: the
+explicitly retained. The fresh-v2 storage format removes the former 16 MiB and
+4,096-commit limits. It checks the actual signed file-offset bound and refuses
+sequence exhaustion. The 52 physical controls include a 279,445,512-byte State
+extent with commit/close/reopen/full readback and 4,105 real retained commits;
+170 function controls and two fresh CLI starts also passed. The parent rebuild
+produced the exact same ELF as that physical run. These observations do not
+qualify typed State grammar, original service latency or physical power loss.
+The initial slow capacity run remains FAIL; shared native compression passed
+under the same 180-second test controller. Its current local syscall trace is
+UNKNOWN because ptrace was denied. A missing COMMIT ACK never proves rollback: the
 caller must reopen and compare HEAD, including after a durable commit whose
 ACK encountered EPIPE.
 

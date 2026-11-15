@@ -1,0 +1,374 @@
+{
+  "compiler_revision": "f33d8da316de8fdf27b504371f1a5310997ff548",
+  "compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+  "constructor_scan_copy_before_first_progress": true,
+  "current_sources": {
+    "hia/components.json": {
+      "bytes": 882,
+      "sha256": "424e27e20bac0178784c97e9628b9493b2a73ead1014c9b001db20f03fdbd27a"
+    },
+    "hia/platform/build.py": {
+      "bytes": 11808,
+      "sha256": "b99abc5b06230d186b45dab86af4124246515de4a294531c69d83747e8a05129"
+    },
+    "hia/platform/node_delta/README.md": {
+      "bytes": 14065,
+      "sha256": "45d5c3254e514d4b6526a3b96fdedf7d4f7f44868e9856197b6fefe9864f2885"
+    },
+    "hia/platform/node_delta/abi.json": {
+      "bytes": 4714,
+      "sha256": "e44a564e6c95148b6ab93cf0984d28043bba5278ca9b69f8d03600e0ce63e353"
+    },
+    "hia/platform/node_delta/delta_fixture.hepta": {
+      "bytes": 25930,
+      "sha256": "ab766a2f5e2804962850c9ac89c197ea295c822957544cf55b52c2043a5c44c1"
+    },
+    "hia/platform/node_delta/delta_owner.hepta": {
+      "bytes": 45415,
+      "sha256": "c540ab0e2c17926a4f20b813b89f0645a47275d3fe09b43ce38affaaef119473"
+    },
+    "hia/platform/node_delta/native_support.py": {
+      "bytes": 7841,
+      "sha256": "b4833e7594228a06e3402ab6ed5b5bda6be93beb89c266a36abbc86b970b7bf1"
+    },
+    "hia/platform/node_delta/qualify.py": {
+      "bytes": 5052,
+      "sha256": "a63269046ce6c30712d34e5a71f808e570496cf52ef548a0d06e27f7c749e571"
+    },
+    "hia/platform/node_delta/rust_delta_oracle.py": {
+      "bytes": 12529,
+      "sha256": "64124b76f849d89a9d032c2affbe496927adb03d2c8fe48fd6474fc575a7b3bd"
+    },
+    "hia/platform/node_delta/rust_delta_reference.rs": {
+      "bytes": 8110,
+      "sha256": "ca92aa4280962970541d85bfc559327cd6a0bbb52c8fdfaf27f77e807b59fa9b"
+    },
+    "hia/platform/node_delta/test_delta.py": {
+      "bytes": 7118,
+      "sha256": "8825b764489854c8fc782132e2db85f274f8e05510b277d9487879d14ca0ce71"
+    },
+    "hia/platform/node_delta/test_delta_contracts.py": {
+      "bytes": 5384,
+      "sha256": "cedd48fd6b4f50322050ee00417ba6d9c57ef02f82b1973f662d3b79abbda7b9"
+    },
+    "hia/platform/node_delta/test_delta_wide.py": {
+      "bytes": 3297,
+      "sha256": "160470d6d069966e5e95ce66049cc5f148875a445b647aff623e9daad7aba148"
+    },
+    "hia/platform/transport_request/rust_oracle.py": {
+      "bytes": 12311,
+      "sha256": "0d82513242e908012cb7e993cfb51e18310e092f4d2f69a89ebfd9463a13b5dc"
+    },
+    "hia/qualification/compiler-binding.json": {
+      "bytes": 878,
+      "sha256": "06d76a266bfe06b9cbef4bc4d58cc956e1e9fb94d1ae992e2338834572a67636"
+    },
+    "hia/src/codec/json_primitives.hepta": {
+      "bytes": 8258,
+      "sha256": "63d136da127f7b2dd619535712c2eeb43bf0dbfb4e69be245a626d5bdecf915f"
+    },
+    "hia/tests/native_support.py": {
+      "bytes": 9793,
+      "sha256": "4a33699d23abdf78a8eda8b7890399506965086527631f2ad67af69913f0d9d4"
+    },
+    "hia/toolchain.lock.json": {
+      "bytes": 221,
+      "sha256": "8aaacde67240008f4a241bdde99683dd360d648fa68ac84ab5b04461a16adc71"
+    },
+    "hia/tools/toolchain.py": {
+      "bytes": 14157,
+      "sha256": "f3ece6aea673beeb8dbc52f92d93f8c4a96fc73203381437f21116a53b421057"
+    }
+  },
+  "full_report": {
+    "path": "/workspace/scratch/dfc64d0acfc2/node-owner-next/qualification-final-bound/report.json",
+    "sha256": "824f7efcf307c2533638f8bda2b147928c7ac746899802daf725f31440f7bcc2"
+  },
+  "maximum_complete_state_byte_extent_qualified": false,
+  "native_builds": {
+    "caller-extents": {
+      "borrowed_test_extent_bytes": 8388608,
+      "composed_source_sha256": "dd089dd091d66a1930361be298a3442ae3bf3d10205fac074b0d4bc087224b75",
+      "library_sha256": "2240d475e72e59849ed056a9dcd5c0421fb09a1bbdbc1ad2b5872bd981dfe0e1",
+      "native_object_sha256": "524e4b27a428b7b154d28102900a64347de8899f57f057c7445a7686b4ed4281",
+      "official_composer_and_builder": true,
+      "source_root_guard_redefined": false,
+      "source_sha256": "ab766a2f5e2804962850c9ac89c197ea295c822957544cf55b52c2043a5c44c1"
+    },
+    "contracts": {
+      "borrowed_test_extent_bytes": 8388608,
+      "composed_source_sha256": "95ccb412589c00dc2499fdb9464957766389f1da404ff82c9f59bbff76372135",
+      "library_sha256": "c4d9bb4e5d916472b3f0876c98e264f487cd3af84d5441ae18ceb5f9828c008d",
+      "native_object_sha256": "ce30b8de6a5918f2edd1b21e13a6311b77c686781e0eb84d8d3740f0c3aa8ad6",
+      "official_composer_and_builder": true,
+      "source_root_guard_redefined": false,
+      "source_sha256": "c540ab0e2c17926a4f20b813b89f0645a47275d3fe09b43ce38affaaef119473"
+    },
+    "relations": {
+      "borrowed_test_extent_bytes": 8388608,
+      "composed_source_sha256": "dd089dd091d66a1930361be298a3442ae3bf3d10205fac074b0d4bc087224b75",
+      "library_sha256": "2240d475e72e59849ed056a9dcd5c0421fb09a1bbdbc1ad2b5872bd981dfe0e1",
+      "native_object_sha256": "524e4b27a428b7b154d28102900a64347de8899f57f057c7445a7686b4ed4281",
+      "official_composer_and_builder": true,
+      "source_root_guard_redefined": false,
+      "source_sha256": "ab766a2f5e2804962850c9ac89c197ea295c822957544cf55b52c2043a5c44c1"
+    }
+  },
+  "native_controls": 8551,
+  "native_durable_transaction_integration_qualified": false,
+  "native_groups": {
+    "caller_extent_controls": 2,
+    "independent_relational_transactions": 8372,
+    "message_and_constructor_contracts": 177
+  },
+  "original_cpu_or_input_acquisition_budget_qualified": false,
+  "original_rust": {
+    "missing_tools": [
+      "cargo",
+      "rustc"
+    ],
+    "required_in_ci": true,
+    "selected_corpus_cases": 423,
+    "status": "NOT_RUN"
+  },
+  "original_service_budget_qualified": false,
+  "parent_integrated_qualification": {
+    "full_report_sha256": "a00dd1efb53c978cb61592c040ac1e44d6befca0611e6bb47c931bead3c57688",
+    "native_controls": 8551,
+    "original_rust": "NOT_RUN",
+    "production_activation": false,
+    "reports": {
+      "caller-extents": {
+        "controls": 2,
+        "report": "/workspace/scratch/dfc64d0acfc2/node-delta-root-qualification/caller-extents/report.json",
+        "sha256": "435f17f99d522d5e98037191fffeb0e8f2da86c3e3a7118c37e0e84ee86fb226",
+        "status": "PASS"
+      },
+      "contracts": {
+        "controls": 177,
+        "report": "/workspace/scratch/dfc64d0acfc2/node-delta-root-qualification/contracts/report.json",
+        "sha256": "c14f7859de6cbf2f5de1f8302770cdcdc8e1c05506746c37cac37155c50733cf",
+        "status": "PASS"
+      },
+      "original-rust": {
+        "report": "/workspace/scratch/dfc64d0acfc2/node-delta-root-qualification/original-rust/report.json",
+        "selected_cases": 423,
+        "sha256": "0218534783f7da1c65ab8a9e5a3e300cda6c0766b1e13e507e9fe17b785952c2",
+        "status": "NOT_RUN"
+      },
+      "relations": {
+        "controls": 8372,
+        "report": "/workspace/scratch/dfc64d0acfc2/node-delta-root-qualification/relations/report.json",
+        "sha256": "3618c82ed7971cbfb612507f2e12c088bb6c0897d61d00815f7ab31fbe40b043",
+        "status": "PASS"
+      }
+    },
+    "source_inputs_stable": true,
+    "sources": {
+      "hia/components.json": {
+        "bytes": 6089,
+        "sha256": "32add2818143f77bc286f56cbcb354199536136406058e9f156033277d09b585"
+      },
+      "hia/platform/build.py": {
+        "bytes": 11808,
+        "sha256": "b99abc5b06230d186b45dab86af4124246515de4a294531c69d83747e8a05129"
+      },
+      "hia/platform/node_delta/README.md": {
+        "bytes": 14065,
+        "sha256": "45d5c3254e514d4b6526a3b96fdedf7d4f7f44868e9856197b6fefe9864f2885"
+      },
+      "hia/platform/node_delta/abi.json": {
+        "bytes": 4714,
+        "sha256": "e44a564e6c95148b6ab93cf0984d28043bba5278ca9b69f8d03600e0ce63e353"
+      },
+      "hia/platform/node_delta/delta_fixture.hepta": {
+        "bytes": 25930,
+        "sha256": "ab766a2f5e2804962850c9ac89c197ea295c822957544cf55b52c2043a5c44c1"
+      },
+      "hia/platform/node_delta/delta_owner.hepta": {
+        "bytes": 45415,
+        "sha256": "c540ab0e2c17926a4f20b813b89f0645a47275d3fe09b43ce38affaaef119473"
+      },
+      "hia/platform/node_delta/native_support.py": {
+        "bytes": 7841,
+        "sha256": "b4833e7594228a06e3402ab6ed5b5bda6be93beb89c266a36abbc86b970b7bf1"
+      },
+      "hia/platform/node_delta/qualify.py": {
+        "bytes": 5052,
+        "sha256": "a63269046ce6c30712d34e5a71f808e570496cf52ef548a0d06e27f7c749e571"
+      },
+      "hia/platform/node_delta/rust_delta_oracle.py": {
+        "bytes": 12529,
+        "sha256": "64124b76f849d89a9d032c2affbe496927adb03d2c8fe48fd6474fc575a7b3bd"
+      },
+      "hia/platform/node_delta/rust_delta_reference.rs": {
+        "bytes": 8110,
+        "sha256": "ca92aa4280962970541d85bfc559327cd6a0bbb52c8fdfaf27f77e807b59fa9b"
+      },
+      "hia/platform/node_delta/test_delta.py": {
+        "bytes": 7118,
+        "sha256": "8825b764489854c8fc782132e2db85f274f8e05510b277d9487879d14ca0ce71"
+      },
+      "hia/platform/node_delta/test_delta_contracts.py": {
+        "bytes": 5384,
+        "sha256": "cedd48fd6b4f50322050ee00417ba6d9c57ef02f82b1973f662d3b79abbda7b9"
+      },
+      "hia/platform/node_delta/test_delta_wide.py": {
+        "bytes": 3297,
+        "sha256": "160470d6d069966e5e95ce66049cc5f148875a445b647aff623e9daad7aba148"
+      },
+      "hia/platform/transport_request/rust_oracle.py": {
+        "bytes": 12311,
+        "sha256": "0d82513242e908012cb7e993cfb51e18310e092f4d2f69a89ebfd9463a13b5dc"
+      },
+      "hia/qualification/compiler-binding.json": {
+        "bytes": 878,
+        "sha256": "06d76a266bfe06b9cbef4bc4d58cc956e1e9fb94d1ae992e2338834572a67636"
+      },
+      "hia/src/codec/json_primitives.hepta": {
+        "bytes": 8258,
+        "sha256": "63d136da127f7b2dd619535712c2eeb43bf0dbfb4e69be245a626d5bdecf915f"
+      },
+      "hia/tests/native_support.py": {
+        "bytes": 9793,
+        "sha256": "4a33699d23abdf78a8eda8b7890399506965086527631f2ad67af69913f0d9d4"
+      },
+      "hia/toolchain.lock.json": {
+        "bytes": 221,
+        "sha256": "8aaacde67240008f4a241bdde99683dd360d648fa68ac84ab5b04461a16adc71"
+      },
+      "hia/tools/toolchain.py": {
+        "bytes": 14157,
+        "sha256": "f3ece6aea673beeb8dbc52f92d93f8c4a96fc73203381437f21116a53b421057"
+      }
+    },
+    "stages": [
+      {
+        "argv": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-B",
+          "/workspace/scratch/dfc64d0acfc2/Trillionnium-Chain/hia/platform/node_delta/test_delta.py"
+        ],
+        "cleanup": null,
+        "cleanup_limit_seconds": 3,
+        "cwd": "/workspace/scratch/dfc64d0acfc2/Trillionnium-Chain",
+        "elapsed_ns": 6692508239,
+        "exit_code": 0,
+        "stderr_bytes": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_bytes": 138,
+        "stdout_sha256": "663226171f3b87cb2d32ed59704512e39a196b463b4c0c25c3d7ed5a42fc845d",
+        "timed_out": false,
+        "wall_limit_seconds": 180
+      },
+      {
+        "argv": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-B",
+          "/workspace/scratch/dfc64d0acfc2/Trillionnium-Chain/hia/platform/node_delta/test_delta_contracts.py"
+        ],
+        "cleanup": null,
+        "cleanup_limit_seconds": 3,
+        "cwd": "/workspace/scratch/dfc64d0acfc2/Trillionnium-Chain",
+        "elapsed_ns": 8905044084,
+        "exit_code": 0,
+        "stderr_bytes": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_bytes": 133,
+        "stdout_sha256": "712090ce99c9a821bf7c9ed489a29e18671432f5cabfefa2d49b7d23e8fa00dd",
+        "timed_out": false,
+        "wall_limit_seconds": 180
+      },
+      {
+        "argv": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-B",
+          "/workspace/scratch/dfc64d0acfc2/Trillionnium-Chain/hia/platform/node_delta/test_delta_wide.py"
+        ],
+        "cleanup": null,
+        "cleanup_limit_seconds": 3,
+        "cwd": "/workspace/scratch/dfc64d0acfc2/Trillionnium-Chain",
+        "elapsed_ns": 6292381135,
+        "exit_code": 0,
+        "stderr_bytes": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_bytes": 1153,
+        "stdout_sha256": "4abe627f201d966b8e51ad265ffb94351954d837590fbdc672cd3ac4c42638bc",
+        "timed_out": false,
+        "wall_limit_seconds": 180
+      },
+      {
+        "argv": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-B",
+          "/workspace/scratch/dfc64d0acfc2/Trillionnium-Chain/hia/platform/node_delta/rust_delta_oracle.py",
+          "--repository",
+          "/workspace/scratch/dfc64d0acfc2/Trillionnium-Chain",
+          "--output",
+          "/workspace/scratch/dfc64d0acfc2/node-delta-root-qualification/original-rust"
+        ],
+        "cleanup": null,
+        "cleanup_limit_seconds": 3,
+        "cwd": "/workspace/scratch/dfc64d0acfc2/Trillionnium-Chain",
+        "elapsed_ns": 264813219,
+        "exit_code": 0,
+        "stderr_bytes": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_bytes": 160,
+        "stdout_sha256": "35bc93d68b7df97b9b16f55beca24961b39b80ddaad06f8c456e827aa78c01cd",
+        "timed_out": false,
+        "wall_limit_seconds": 1000
+      }
+    ],
+    "status": "NATIVE_PASS_ORIGINAL_NOT_RUN",
+    "whole_chain_native": false
+  },
+  "physical_sql_materialization_retired": false,
+  "process_artifacts_promoted": false,
+  "reports": {
+    "caller-extents": {
+      "controls": 2,
+      "report": "/workspace/scratch/dfc64d0acfc2/node-owner-next/qualification-final-bound/caller-extents/report.json",
+      "sha256": "e13164d12c01ee91bccf5b5339647dda3048175e41f29975162bf1cb3006685b",
+      "status": "PASS"
+    },
+    "contracts": {
+      "controls": 177,
+      "report": "/workspace/scratch/dfc64d0acfc2/node-owner-next/qualification-final-bound/contracts/report.json",
+      "sha256": "89d9b9311b633ef4facd8d314069121c63b24ca6249a92365c1e085f51127237",
+      "status": "PASS"
+    },
+    "original-rust": {
+      "report": "/workspace/scratch/dfc64d0acfc2/node-owner-next/qualification-final-bound/original-rust/report.json",
+      "selected_cases": 423,
+      "sha256": "d60ed188f3bbabbfe4ebf43efc44a1821695bd63cfcefe2d84704d1f86059e28",
+      "status": "NOT_RUN"
+    },
+    "relations": {
+      "controls": 8372,
+      "report": "/workspace/scratch/dfc64d0acfc2/node-owner-next/qualification-final-bound/relations/report.json",
+      "sha256": "a8fc02c189cf0d3a1333ad6b34a0ba8900afdb848c3f99ec4df4f2c96c604d98",
+      "status": "PASS"
+    }
+  },
+  "schema": "trnm.hia.node-delta-development-observations.v1",
+  "scope": "Original Legacy typed Delta vector staging and native transaction fixture; no complete Node or persistence integration",
+  "source_inputs_stable": true,
+  "sql_conversion_error_order_qualified": false,
+  "startup_unit_tests": {
+    "cleared_environment": [
+      "PYTHONPATH",
+      "PYTHONHOME"
+    ],
+    "exit_code": 0,
+    "scope": "fresh-cwd absolute-script --help; no native corpus duplicate",
+    "source_sha256": "39546bcbc0a3d3b7de6e2c108963ceb1fa2fdfc6c8852cda282a61f973869b30",
+    "status": "PASS",
+    "stderr_sha256": "724cc8ad4ab42c7e1e9f9ffbe233f5bd5eaec66539ffc3d9f91bbdf6d0e9e3dd",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "tests": 2
+  },
+  "status": "NATIVE_PASS_ORIGINAL_NOT_RUN",
+  "terminal_peer_ack_qualified": false,
+  "whole_state_validation_and_continuity_qualified": false
+}

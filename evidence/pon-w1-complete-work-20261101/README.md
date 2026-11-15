@@ -22,7 +22,7 @@ Each run contains four cost lanes per family: x64 and ARM64, each on the head an
 | Default FullLimb, `8327719e` | 8 `success` | 12 `PASS` captures retained | 2 `failure` | `failure` |
 | CI binding follow-up, `7c5caf5b` | 8 `success` | 12 `PASS` captures retained | 2 `failure` | `failure` |
 
-The twelve captures are four original false-trace campaigns, four explicit full-limb false-trace campaigns, and four complete legal-strategy campaigns. They are not twelve successful jobs. In the initial run, the campaign steps still executed and retained native output after formatting failed; other controls were skipped. The two service failures were actual executed business-target failures, separate from formatting. Later repairs preserve those earlier failures and do not relabel the initial workflow as successful. See the [initial](run-41297071118/workflow-jobs.json), [formatting-fix](run-41297714882/workflow-jobs.json), [default-switch](run-41298626837/workflow-jobs.json), and [final follow-up](run-41299973417/workflow-jobs.json) job records.
+The twelve captures are four original false-trace campaigns, four explicit full-limb false-trace campaigns, and four complete legal-strategy campaigns. They are not twelve successful jobs. In the initial run, the campaign steps still executed and retained native output after formatting failed; other controls were skipped. The two service failures were actual executed business-target failures, separate from formatting. Later repairs preserve those earlier failures and do not relabel the initial workflow as successful. See the [initial](retained-run-41297071118/workflow-jobs.json), [formatting-fix](retained-run-41297714882/workflow-jobs.json), [default-switch](retained-run-41298626837/workflow-jobs.json), and [final follow-up](retained-run-41299973417/workflow-jobs.json) job records.
 
 The [recorded final-head workflow snapshot](final-workflow-snapshot.json), observed at **11:27:26 UTC on 1 November 2026**, does **not show a passing full required workspace**. Required/priority runs remain in progress; W1, the original native campaign and CodeQL export include failures. The finality reference run succeeds after one unchanged-source retry of an installation failure. The [earlier 11:17:41 snapshot](workflow-snapshot-111741.json) remains retained. Targeted package tests, examples, and lint commands do not establish all required workspace gates. No merge or deployment qualification follows from the eight successful cost jobs.
 
@@ -32,7 +32,7 @@ The fourth commit changes only `.github/workflows/pon-recent-batch-acceptance.ym
 
 The W1 workflow now also triggers on that related source-binding workflow, and each legal lane captures its own locked Cargo metadata graph. The first three runs' missing legal metadata graphs stay missing in their records. The fourth run must provide eight actual graphs rather than manufacturing earlier evidence. New execution is bound to `7c5caf5bce1396976808a0f504c4163fbc1aed44` and its actual prospective merge.
 
-The earlier `8327719e` recent-batch run failed before compiling because of those stale pins. Its separate original native campaign executed all nine 30-second phases and failed its original finite confirmation target, including the no-attack baselines. Four failed required-baseline lanes built successfully and reported `CONFIRMATION_TARGET` after their scoped native checks passed. These service observations do not establish a kernel regression or improvement without a suitable control; they remain failures. Full-project results are never inferred from the targeted W1 cost matrix. The [separate-workflow triage report](other-ci-8327719/triage-report.json), [Chinese conclusion](other-ci-8327719/conclusion.zh.txt), and [retained capture index](other-ci-8327719/RETAINED_CAPTURE_INDEX.json) preserve nine complete failing job logs and all 2,202 members of five additional artifacts. Original ZIP container bytes are excluded; their observed hashes and every retained member hash remain recorded.
+The earlier `8327719e` recent-batch run failed before compiling because of those stale pins. Its separate original native campaign executed all nine 30-second phases and failed its original finite confirmation target, including the no-attack baselines. Four failed required-baseline lanes built successfully and reported `CONFIRMATION_TARGET` after their scoped native checks passed. These service observations do not establish a kernel regression or improvement without a suitable control; they remain failures. Full-project results are never inferred from the targeted W1 cost matrix. The [separate-workflow triage report](retained-other-ci-8327719/triage-report.json), [Chinese conclusion](retained-other-ci-8327719/conclusion.zh.txt), and [retained capture index](retained-other-ci-8327719/RETAINED_CAPTURE_INDEX.json) preserve nine complete failing job logs and all 2,202 members of five additional artifacts. Original ZIP container bytes are excluded; their observed hashes and every retained member hash remain recorded.
 
 ### Finality installation failure and single retry
 
@@ -44,17 +44,17 @@ The [two-attempt triage report](finality-install-retry/triage-report.json) and [
 
 The separate [CodeQL export run 41299973434](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41299973434) fails its original 1,200-second completion gate. Across 39 retained polls, the head and prospective-merge check responses contain no check runs, and the PR analysis responses contain no analyses. Its source checks and sixteen exporter controls pass; its receipt still correctly records `complete=false`. This is an incomplete exact-source analysis export, not evidence of a reported vulnerability, a successful security scan, a compiler failure or a service measurement. The retained receipts do not establish why the upstream analyses or checks are absent. No gate, timeout or source was changed, and this exporter was not retried.
 
-The [CodeQL triage report](codeql-export/triage-report.json) preserves this boundary. Its [capture index](codeql-export/RETAINED_CAPTURE_INDEX.json) binds all 205 original artifact members, including the polling records and incomplete receipt, plus the separately retained full failed-job log, metadata and exact workflow/exporter source. Original ZIP container bytes are excluded and their measured digest is retained. This failure remains a separate blocker to claiming complete security-analysis evidence.
+The [CodeQL triage report](retained-codeql-export/triage-report.json) preserves this boundary. Its [capture index](retained-codeql-export/RETAINED_CAPTURE_INDEX.json) binds all 205 original artifact members, including the polling records and incomplete receipt, plus the separately retained full failed-job log, metadata and exact workflow/exporter source. Original ZIP container bytes are excluded and their measured digest is retained. This failure remains a separate blocker to claiming complete security-analysis evidence.
 
 ## Final exact-source observations
 
-The [final native log readback](run-41299973417/native-log-readback.json) again records 101 W1 tests, six fuzz semantic tests and three historical rejection-example tests in every false-trace lane, plus six legal-example tests in every legal lane. Formatting and the corresponding strict Clippy commands pass. The [final provenance report](run-41299973417/provenance-report.json) independently verifies all eight original cost ZIPs, twelve exact-reader results, and **eight actual retained Cargo metadata graphs**. Each graph has 174 resolved packages and 26 workspace members; two raw graph hashes reflect job path differences. Every graph is checked against the exact lockfile and the measured target.
+The [final native log readback](retained-run-41299973417/native-log-readback.json) again records 101 W1 tests, six fuzz semantic tests and three historical rejection-example tests in every false-trace lane, plus six legal-example tests in every legal lane. Formatting and the corresponding strict Clippy commands pass. The [final provenance report](retained-run-41299973417/provenance-report.json) independently verifies all eight original cost ZIPs, twelve exact-reader results, and **eight actual retained Cargo metadata graphs**. Each graph has 174 resolved packages and 26 workspace members; two raw graph hashes reflect job path differences. Every graph is checked against the exact lockfile and the measured target.
 
-The repaired [recent-batch run 41299973392](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41299973392) succeeds in all four head/merge × x64/ARM64 lanes. Its [native log readback](recent-ci-repair/native-log-readback.json) confirms the two updated source pins, all 21 query tests, subsequent native controls, `trnm-pon-node --all-targets --all-features -- -D warnings`, and source rechecks. Original ignored fields and reprinted/subprocess summaries remain visible; no fabricated independent-test total is produced. [The retained log index](recent-ci-repair/READBACK_INDEX.json) covers complete logs and API metadata, not the contents of this separate workflow's artifact ZIPs.
+The repaired [recent-batch run 41299973392](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41299973392) succeeds in all four head/merge × x64/ARM64 lanes. Its [native log readback](retained-recent-ci-repair/native-log-readback.json) confirms the two updated source pins, all 21 query tests, subsequent native controls, `trnm-pon-node --all-targets --all-features -- -D warnings`, and source rechecks. Original ignored fields and reprinted/subprocess summaries remain visible; no fabricated independent-test total is produced. [The retained log index](retained-recent-ci-repair/READBACK_INDEX.json) covers complete logs and API metadata, not the contents of this separate workflow's artifact ZIPs.
 
 ### Final rejection economics and legal-strategy result
 
-The [final performance summary](run-41299973417/performance-summary.json) and [integer rejection-ratio record](run-41299973417/default-production-rejection-ratios.json) retain 103,808 native verifier calls, zero semantic alerts, 200,136 paid legal attempts, and 4,584 false-trace hash attempts. Repeated prefixes and proofs are not independent observations. The two modes below remain separate timed campaigns, each using its own complete attacker-cost denominator and the default `production` column:
+The [final performance summary](retained-run-41299973417/performance-summary.json) and [integer rejection-ratio record](retained-run-41299973417/default-production-rejection-ratios.json) retain 103,808 native verifier calls, zero semantic alerts, 200,136 paid legal attempts, and 4,584 false-trace hash attempts. Repeated prefixes and proofs are not independent observations. The two modes below remain separate timed campaigns, each using its own complete attacker-cost denominator and the default `production` column:
 
 | Final-source mode | x64 head | x64 merge | ARM64 head | ARM64 merge |
 | --- | ---: | ---: | ---: | ---: |
@@ -67,7 +67,7 @@ The frozen dispatcher costs 6.639830%, 2.370382%, 3.690606%, and 3.701070% more 
 
 ### Final original-resource service result
 
-The [final service report](run-41299973417/service-report.json), [Chinese conclusion](run-41299973417/service-conclusion.zh.txt), and [comparison to the default-switch run](run-41299973417/comparison-to-8327.json) independently replay the exact `7c5` readers. Both retained native binaries hash to `5c95269910f98cb10ec026070ac30a4f4c25d804707766c8950946e31af34529`, identical to the measured default-switch binaries. Equal binaries do not make different hosts into a causal timing control.
+The [final service report](retained-run-41299973417/service-report.json), [Chinese conclusion](retained-run-41299973417/service-conclusion.zh.txt), and [comparison to the default-switch run](retained-run-41299973417/comparison-to-8327.json) independently replay the exact `7c5` readers. Both retained native binaries hash to `5c95269910f98cb10ec026070ac30a4f4c25d804707766c8950946e31af34529`, identical to the measured default-switch binaries. Equal binaries do not make different hosts into a causal timing control.
 
 | Final lane / fixture | Baseline depth-six confirmation | Pressure seventh honest ACK | Received Transcript refusals | Pressure independent confirmations |
 | --- | ---: | ---: | ---: | ---: |
@@ -80,7 +80,7 @@ Every pressure receiver accepts all seven honest blocks and stores no attack inp
 
 ## Native checks on the default-switch source
 
-The [default-switch native log readback](run-41298626837/native-log-readback.json) matches actual test-result lines to their executing targets and retained log hashes. It records the following counts in each applicable lane, with zero failed or ignored tests:
+The [default-switch native log readback](retained-run-41298626837/native-log-readback.json) matches actual test-result lines to their executing targets and retained log hashes. It records the following counts in each applicable lane, with zero failed or ignored tests:
 
 | Scope | Tests per lane | Additional gate |
 | --- | ---: | --- |
@@ -89,9 +89,9 @@ The [default-switch native log readback](run-41298626837/native-log-readback.jso
 | Historical `pon_rejection_cost` example, same lanes | 3 | Strict example Clippy |
 | `pon_w1_legal_strategy_v1`, four legal lanes | 6 | Strict legal-example Clippy |
 
-The legal example's six tests comprise **four legal-strategy tests and two shared material tests**. Reporting four would omit executed tests; reporting six newly added legal tests would misdescribe their scope. Formatting also passes. The [preceding native readback](run-41297714882/native-log-readback.json) records its own 101/6/6 gates; the additional three-test historical-example gate belongs to the default-switch and final follow-up runs.
+The legal example's six tests comprise **four legal-strategy tests and two shared material tests**. Reporting four would omit executed tests; reporting six newly added legal tests would misdescribe their scope. Formatting also passes. The [preceding native readback](retained-run-41297714882/native-log-readback.json) records its own 101/6/6 gates; the additional three-test historical-example gate belongs to the default-switch and final follow-up runs.
 
-Runners retain exact source checks, locked Cargo inputs, build/profile evidence, ELF architecture, and binary hashes before and after execution, including the retained executable. In the first three runs, four false-trace jobs retain complete Cargo metadata graphs but the four legal jobs do not retain separate metadata graphs. Their exact source, locked commands, configuration, compiler and dependency build output are checked; missing original graphs are not reconstructed as captured evidence. The legal campaign requires all 30 fixed shards and preserves each shard's streams and failures. Its 300-second per-shard limit remains unchanged; a failed shard does not erase later observations or permit an incomplete grid to pass. These controls establish retained-record consistency, not independently trustworthy clocks or universal hardware behavior. The [default-switch provenance report](run-41298626837/provenance-report.json) records that distinction.
+Runners retain exact source checks, locked Cargo inputs, build/profile evidence, ELF architecture, and binary hashes before and after execution, including the retained executable. In the first three runs, four false-trace jobs retain complete Cargo metadata graphs but the four legal jobs do not retain separate metadata graphs. Their exact source, locked commands, configuration, compiler and dependency build output are checked; missing original graphs are not reconstructed as captured evidence. The legal campaign requires all 30 fixed shards and preserves each shard's streams and failures. Its 300-second per-shard limit remains unchanged; a failed shard does not erase later observations or permit an incomplete grid to pass. These controls establish retained-record consistency, not independently trustworthy clocks or universal hardware behavior. The [default-switch provenance report](retained-run-41298626837/provenance-report.json) records that distinction.
 
 ## Implementation meaning and preserved comparisons
 
@@ -99,13 +99,13 @@ FullLimb extends exact limb arithmetic through the complete verifier. It retains
 
 The historical `pon-work-rejection-cost-v1` diagnostic keeps its `production-transposed` meaning through explicit `verify_transposed` and `verify_transposed_with_progress` APIs. Its schema and denominator remain fixed. In source-bound newer reports, `production` means the default verifier at the measured source: Transposed in the first two runs, FullLimb in the third and fourth runs. On both `8327719e` and `7c5caf5b`, **`production` and `full-limb-experimental` execute the same kernel**. Differences between those labels cannot be advertised as an additional algorithmic speedup. Prepared producer selection and the opt-in arithmetic-fact cache's explicitly transposed arithmetic remain separate paths.
 
-The initial [performance readback](run-41297071118/performance-readback.tar.xz) retains a counterexample to any uniformly-fastest claim: on its Intel x64 head, complete-limb aggregate CPU for legal acceptance and late product rejection was about **3.8% higher than the older transcript-only limb path**. Complete limb nevertheless used less aggregate CPU than that run's default Transposed verifier. Its whole-lane receiver rejection CPU divided by complete measured attacker CPU was approximately **19.2–22.0**; the corresponding per-material range was approximately 18–26. Those are different aggregations.
+The initial [performance readback](W1_COMPLETE_ARCHIVE.json) retains a counterexample to any uniformly-fastest claim: on its Intel x64 head, complete-limb aggregate CPU for legal acceptance and late product rejection was about **3.8% higher than the older transcript-only limb path**. Complete limb nevertheless used less aggregate CPU than that run's default Transposed verifier. Its whole-lane receiver rejection CPU divided by complete measured attacker CPU was approximately **19.2–22.0**; the corresponding per-material range was approximately 18–26. Those are different aggregations.
 
-The [e885 performance summary](run-41297714882/performance-summary.json) reports complete-limb false-trace CPU savings of approximately **9.19–18.99% against Transposed**, with whole-lane rejection/attacker ratios of approximately **18.78–21.21**. Four cohorts remained slower than the older limb path. The frozen public dispatcher used approximately **1.69–3.68% more aggregate CPU than prepared-generic in all four legal lanes**. This is a retained negative strategy result, not a reason to select a faster sample after observing its timing.
+The [e885 performance summary](retained-run-41297714882/performance-summary.json) reports complete-limb false-trace CPU savings of approximately **9.19–18.99% against Transposed**, with whole-lane rejection/attacker ratios of approximately **18.78–21.21**. Four cohorts remained slower than the older limb path. The frozen public dispatcher used approximately **1.69–3.68% more aggregate CPU than prepared-generic in all four legal lanes**. This is a retained negative strategy result, not a reason to select a faster sample after observing its timing.
 
-The default-switch run's source-specific cost record is its [performance summary](run-41298626837/performance-summary.json). It retains 103,808 complete verifier calls, zero semantic alerts, 200,136 charged legal-strategy attempts, and 4,584 false-trace hash attempts across twelve captures. These are executed counts, not independent sample counts. The dispatcher costs 1.66–3.70% more CPU in the four complete legal-lane aggregates. Six cohorts favor old limb over the default entry and eight favor it over the explicit full-limb entry; all fourteen negative positions remain in the record.
+The default-switch run's source-specific cost record is its [performance summary](retained-run-41298626837/performance-summary.json). It retains 103,808 complete verifier calls, zero semantic alerts, 200,136 charged legal-strategy attempts, and 4,584 false-trace hash attempts across twelve captures. These are executed counts, not independent sample counts. The dispatcher costs 1.66–3.70% more CPU in the four complete legal-lane aggregates. Six cohorts favor old limb over the default entry and eight favor it over the explicit full-limb entry; all fourteen negative positions remain in the record.
 
-The [default-production rejection ratios](run-41298626837/default-production-rejection-ratios.json) use the `production` column and complete integer CPU sums. The four-path and five-path modes are separate measurements with separate denominators:
+The [default-production rejection ratios](retained-run-41298626837/default-production-rejection-ratios.json) use the `production` column and complete integer CPU sums. The four-path and five-path modes are separate measurements with separate denominators:
 
 | Default-switch mode | x64 head | x64 merge | ARM64 head | ARM64 merge |
 | --- | ---: | ---: | ---: | ---: |
@@ -124,7 +124,7 @@ There are **two legal samples per fixed class × target × horizon shard, below 
 
 ## Default-switch service failures under the original envelope
 
-The [default-switch service conclusion](run-41298626837/service-conclusion.zh.txt), [structured report](run-41298626837/service-report.json), and [complete readback](run-41298626837/service-readback.tar.xz) retain four scenarios: original repeated-packet and fresh-challenge traffic, on head and prospective merge. Default FullLimb actually executes in public Submit and independent History verification. These fixtures use `PublicServer::new` without arithmetic-fact or rejection caches.
+The [default-switch service conclusion](retained-run-41298626837/service-conclusion.zh.txt), [structured report](retained-run-41298626837/service-report.json), and [complete readback](W1_COMPLETE_ARCHIVE.json) retain four scenarios: original repeated-packet and fresh-challenge traffic, on head and prospective merge. Default FullLimb actually executes in public Submit and independent History verification. These fixtures use `PublicServer::new` without arithmetic-fact or rejection caches.
 
 All four baselines reach independent active height 7 and confirmation depth 6 within the original four-second window. Under pressure, **all four independent clients record zero confirmations**. The receiver accepts the seven legal business blocks and reaches height 7 with cumulative work 14; attack packets are not stored. ACKs, receiver state, independently stored blocks, independently active height, and confirmation are distinct outcomes.
 
@@ -152,9 +152,9 @@ Targets derive from actual branch ancestors. The arithmetic does not show that a
 
 ## Archive layout and verification
 
-The [initial](run-41297071118/CAPTURE_INDEX.json), [formatting-fix](run-41297714882/CAPTURE_INDEX.json), [default-switch](run-41298626837/CAPTURE_INDEX.json), and [final](run-41299973417/CAPTURE_INDEX.json) capture indexes map every original artifact to `artifact-<id>-contents.tar.xz`. **All artifact file members are retained**, including failed captures, streams, manifests, and binaries. The original ZIP containers are not included. Their observed hashes and sizes are recorded separately; extraction and recompression do not reproduce the original ZIP hash.
+The [initial](retained-run-41297071118/CAPTURE_INDEX.json), [formatting-fix](retained-run-41297714882/CAPTURE_INDEX.json), [default-switch](retained-run-41298626837/CAPTURE_INDEX.json), and [final](retained-run-41299973417/CAPTURE_INDEX.json) capture indexes map every original artifact to `artifact-<id>-contents.tar.xz`. **All artifact file members remain recoverable as exact historical Git bytes**, including failed captures, streams, manifests, and binaries. The original ZIP containers are not included. Their observed hashes and sizes are recorded separately; extraction and recompression do not reproduce the original ZIP hash.
 
-Every run directory contains `workflow-jobs.json`, `workflow-artifacts.json`, `workflow-job-logs.tar.xz`, `performance-readback.tar.xz`, `service-readback.tar.xz`, `service-conclusion.zh.txt`, and `service-report.json`. The three later runs additionally expose `performance-summary.json`, `provenance-report.json`, and `native-log-readback.json`. Archive member manifests in `READBACK_INDEX.json` preserve the derived readbacks separately from native captures. Root-level [validation](validation.tar.xz) and `VALIDATION_INDEX.json` retain supporting checks.
+Each original run directory contained `workflow-jobs.json`, `workflow-artifacts.json`, `workflow-job-logs.tar.xz`, `performance-readback.tar.xz`, `service-readback.tar.xz`, `service-conclusion.zh.txt`, and `service-report.json`. The three later runs additionally exposed `performance-summary.json`, `provenance-report.json`, and `native-log-readback.json`. Archive member manifests in `READBACK_INDEX.json` preserve the derived readbacks separately from native captures. Root-level [validation](validation.tar.xz) and `VALIDATION_INDEX.json` retain supporting checks.
 
 Run the included verifier from this directory:
 
@@ -162,4 +162,48 @@ Run the included verifier from this directory:
 python3 verify_archives.py .
 ```
 
-[FILE_INDEX.json](FILE_INDEX.json) and [SHA256SUMS](SHA256SUMS) bind the published files. [verify_archives.py](verify_archives.py) checks their identities, opens the archives, and verifies complete member sets, sizes, and hashes. It performs no native W1 execution. Matching bytes preserve the evidence and its failures; they do not convert finite observations into work-hardness, service, workspace, or activation acceptance.
+[FILE_INDEX.json](FILE_INDEX.json) and [SHA256SUMS](SHA256SUMS) seal the complete original 172-file layout. Their original bytes are unchanged. The current [verify_archives.py](verify_archives.py) entry point always reconstructs that exact layout in a temporary private directory and executes the original verifier from its pinned Git blob. That unchanged verifier checks all 170 indexed files, all 171 SHA256SUMS entries, and every archive member; the current README and dispatch entry point are restored to their original bytes in that private view. It performs no native W1 execution. Matching bytes preserve the evidence and its failures; they do not convert finite observations into work-hardness, service, workspace, or activation acceptance.
+
+
+## Historical storage and exact original verification
+
+[W1_COMPLETE_ARCHIVE.json](W1_COMPLETE_ARCHIVE.json) records seven complete
+historical scopes at commit `893210a45b44742edfe2510fea1d92e9974b5f95`, tree
+`a2d04b29621bb78504244471aacac3be3bc78d1d`. The 59 TAR/XZ containers total
+138,750,512 bytes. Their original Git blobs, modes, sizes, and SHA-256 values are
+required; there is no network fallback or missing-file skip. All 91 small records
+remain byte-identical under `retained-<original-scope>/`, including failed-job
+logs, source pins, service failures, and the incomplete CodeQL receipt.
+The root `validation.tar.xz` remains a current file. Existing historical records
+that name an original path resolve through the index's explicit
+`archive_path` to retained-copy mapping.
+
+The full original verification still covers 60 archives, 4,960 members, and
+4,463,919,709 uncompressed member bytes. Archive members are streamed for their
+hashes without extraction; only the 172 original top-level package files are
+materialized in the private view. The original READMEs, manifests, checksums,
+and validation records are neither refreshed nor re-signed. Every current small
+file and the new index must be tracked with its exact staged blob and mode, so
+ignored logs and empty files cannot silently disappear from publication.
+
+The direct repository entry point is equivalent to the package CLI above:
+
+```sh
+python3 scripts/ci/check_w1_complete_archive.py \
+  --manifest evidence/pon-w1-complete-work-20261101/W1_COMPLETE_ARCHIVE.json
+```
+
+To retrieve an exact historical archive without running its contents:
+
+```sh
+python3 scripts/ci/check_historical_archive.py \
+  --manifest evidence/pon-w1-complete-work-20261101/W1_COMPLETE_ARCHIVE.json \
+  --cat evidence/pon-w1-complete-work-20261101/run-41297071118/performance-readback.tar.xz \
+  > /absolute/new/replay/performance-readback.tar.xz
+```
+
+The original four W1 workflow failures, all unsuccessful service experiments,
+and the incomplete CodeQL export remain historical failures. This storage
+verification executes no native W1 test, recreates no original ZIP container,
+and grants no work-hardness, service, security-analysis, whole-workspace, or
+production qualification.

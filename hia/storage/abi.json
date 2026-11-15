@@ -1,5 +1,5 @@
 {
-  "schema": "trnm.hia.storage-owner-abi.v1",
+  "schema": "trnm.hia.storage-owner-abi.v2",
   "target": "x86_64-linux-gnu",
   "runtime": "HIA policy plus HIA-emitted static Linux adapter; no libc, SQLite, Rust, or Python runtime",
   "policy": {
@@ -24,7 +24,7 @@
   "bootstrap": {
     "bytes": 80,
     "fields": [
-      "magic HIAST001 (8)",
+      "magic HIAST002 (8)",
       "inherited directory FD (8)",
       "mode: 1 fresh, 2 existing (8)",
       "expected context (32)",
@@ -38,7 +38,7 @@
   "request": {
     "bytes": 64,
     "fields": [
-      "magic HIACMD01 (8)",
+      "magic HIACMD02 (8)",
       "operation (8)",
       "payload byte count (8)",
       "expected sequence (8)",
@@ -53,7 +53,7 @@
   "response": {
     "bytes": 64,
     "fields": [
-      "magic HIARSP01 (8)",
+      "magic HIARSP02 (8)",
       "kind (8)",
       "sequence (8)",
       "payload length (8)",
@@ -67,11 +67,19 @@
     "close": "Successful close produces process exit 0, without another response."
   },
   "limits": {
-    "payload_max_bytes": 16777216,
-    "commits_max": 4096,
+    "payload_max_bytes": 9223372036854775679,
+    "commits_max": 18446744073709551615,
     "chunk_bytes": 32768,
     "full_node_state_limit_covered": false,
-    "compaction_implemented": false
+    "compaction_implemented": false,
+    "bounds_basis": "Checked Linux signed off_t for header+payload and monotonic u64 sequence, not a finite 16 MiB/4096 profile.",
+    "actual_full_classical_state_payload_bytes": 279445512,
+    "actual_commits_beyond_old_ceiling": 4105,
+    "full_address_space_or_u64_history_physically_qualified": false,
+    "native_address_space_limit_in_capacity_test_bytes": 2147483648,
+    "test_controller_io_wait_seconds": 180,
+    "original_service_budget_qualified": false,
+    "full_classical_state_byte_extent_covered": true
   },
   "namespace": {
     "directory_mode": "0700",
@@ -95,17 +103,17 @@
   "format_record": {
     "bytes": 64,
     "fields": [
-      "HIAFMT01 (8)",
+      "HIAFMT02 (8)",
       "context (32)",
-      "payload max=16777216 (8)",
-      "commit max=4096 (8)",
+      "payload max=9223372036854775679 (8)",
+      "sequence max=18446744073709551615 (8)",
       "chunk bytes=32768 (8)"
     ]
   },
   "head_and_transaction_header": {
     "bytes": 128,
     "fields": [
-      "HIAHD001 (8)",
+      "HIAHD002 (8)",
       "sequence (8)",
       "payload length (8)",
       "context (32)",
@@ -117,11 +125,24 @@
     "genesis": "sequence=0, payload length=0, previous digest all zero; no transaction file"
   },
   "hashes": {
-    "algorithm": "SHA-256, canonical HIA arena helper included exactly once",
-    "genesis": "SHA256(ASCII HIAGEN01 || context32)",
-    "start": "SHA256(ASCII HIAHASH1 || context32 || sequence_u64le || payload_length_u64le || previous_digest32)",
-    "chunk": "Starting from start, for each fixed 32768-byte chunk (last may be smaller), SHA256(ASCII HIAHASH2 || prior_hash32 || chunk_length_u64le || exact_chunk). Empty payload retains start.",
-    "qualification": "Storage-domain chunk chain; not a claim that the commit digest is plain SHA256(payload) or a protocol state root."
+    "algorithm": "SHA-256 with exact storage framing and explicit reuse of the canonical state_root SHA compression functions; no duplicated compression algorithm.",
+    "genesis": "SHA256(ASCII HIASV2G0 || context32)",
+    "start": "SHA256(ASCII HIASV2H0 || context32 || sequence_u64le || payload_length_u64le || previous_digest32)",
+    "chunk": "Starting from start, for each fixed 32768-byte chunk (last may be smaller), SHA256(ASCII HIASV2H1 || prior_hash32 || chunk_length_u64le || exact_chunk). Empty payload retains start.",
+    "qualification": "Storage-domain chunk chain; not a claim that the commit digest is plain SHA256(payload) or a protocol state root.",
+    "arena_contract": {
+      "source": "storage/sha256_framing.hepta",
+      "function": "storage_sha256(mutbuf,u64)->u32",
+      "message_offset": 65536,
+      "message_bytes_max": 32816,
+      "digest_offset": 131136,
+      "digest_bytes": 32,
+      "scratch_bytes_min": 132256,
+      "private_compression_bytes": "[128,192) and [256,512)",
+      "success": 32,
+      "capacity_refusal": 100,
+      "preflight_before_writes": true
+    }
   },
   "commit": [
     "remove only next unreferenced transaction/temp names",
@@ -215,13 +236,21 @@
   ],
   "remaining": [
     "typed Node reducers and runtime integration",
-    "full State bound and compaction",
     "external anti-rollback authority",
     "physical power-loss qualification",
     "regular-file/fsync hard deadline",
     "cross-target qualification",
     "complete filesystem fault model",
-    "private identity signing and secret ownership"
+    "private identity signing and secret ownership",
+    "typed complete State integration and validation order",
+    "reference-aware history compaction",
+    "physical off_t maximum and UINT64_MAX transaction count"
   ],
-  "qualification_entry": "The complete process/filesystem qualification is the mandatory independent hia.tools.qualify_storage CLI; native unit tests cover buffer shapes and emitted open-command contracts without repeating that complete gate."
+  "qualification_entry": "The complete process/filesystem qualification is the mandatory independent hia.tools.qualify_storage CLI; native unit tests cover buffer shapes and emitted open-command contracts without repeating that complete gate.",
+  "version_transition": {
+    "version": 2,
+    "old_version_1": "refused without import or rewrite",
+    "old_sqlite": "refused",
+    "fresh_namespace_required": true
+  }
 }

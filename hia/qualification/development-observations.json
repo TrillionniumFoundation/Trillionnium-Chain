@@ -58,7 +58,7 @@
     "production_activation": false,
     "repair": "Derive all library dependency directories only from this successful Cargo invocation artifact filenames, reject missing or ambiguous required externs, and retain the exact rustc command.",
     "report_sha256": "c313cfdfff9a9315cb2f3fbdfc011d8e05f80d061e486ae6cb990e55456dda82",
-    "resolution": "Candidate repair structurally tested; exact repaired-commit CI required.",
+    "resolution": "Exact repaired commit 4cc0464ff9632f2a493cb76d5b8b51eaad332dac passed run 43751782144, including 5274 actual original-Rust/native comparisons. The original failed run remains FAIL and is not reclassified.",
     "source_commit": "d82dfe0a4b3b927eb876c812b306775f28ecb42e",
     "source_tree": "b001a854782d367f40a84fd2463a80f6925e09ec",
     "status": "FAIL",
@@ -223,6 +223,139 @@
     "wall_seconds": 473.284641419,
     "whole_chain_native": false,
     "workflow_run": 43749946614
+  },
+  "fifth_repaired_candidate_native_ci": {
+    "all_five_original_rust_oracles_executed": true,
+    "artifact_bytes": 5145184,
+    "artifact_id": 14176927252,
+    "artifact_zip_sha256": "71191d0e6458d00c442b4effa29a4697f78deb7caf03f051228f8d17f2fe331a",
+    "errors": 0,
+    "executor_original_expected_version_panics": 27,
+    "executor_original_intentional_differences": 181,
+    "executor_original_native_calls": 5274,
+    "executor_original_report": "executor-original-ci.json",
+    "executor_original_report_sha256": "3d8d147aca3c97f3df2c67119eca946a13450abf3bfb631c72e7ba63f1dc7ff6",
+    "executor_original_status": "PASS_WITH_EXPLICIT_ORIGINAL_SAFETY_DEFECT",
+    "executor_original_unsafe_cases": 131,
+    "executor_original_wall_seconds": 19.230891337000003,
+    "failures": 0,
+    "finite_os_controls": 25,
+    "job_conclusion": "success",
+    "job_id": 132927126875,
+    "later_sixth_batch_sources_qualified_by_this_run": false,
+    "native_calls": [
+      {
+        "backend": "direct",
+        "count": 1121,
+        "outcome": "returned"
+      },
+      {
+        "backend": "selfhost",
+        "count": 55763,
+        "outcome": "returned"
+      }
+    ],
+    "old_stack_can_be_removed": false,
+    "platform_report_sha256": "5e643777ee278f52ed9efbfd2ac7cc70a545cdc1b8148e7e81e0195e1944cf5f",
+    "production_activation": false,
+    "reactor_report_sha256": "b37c00ad862a82587256cfb5dc1b29060ae94f96c00ffbc6f3ae098df19d3fcf",
+    "report_sha256": "d665e6ac67d8613e89d62045dfcbaa497b2525df0114f3c22e8081eabb511400",
+    "rust_oracles": {
+      "TRNM_HIA_RUST_CHECKPOINT_REFERENCE": {
+        "executable_sha256": "305d55b39b5ec1511e9ffc6915b0e16b363db61fd68814bb9ab467096f5bd7f1"
+      },
+      "TRNM_HIA_RUST_CRYPTO_REFERENCE": {
+        "executable_sha256": "8734701793a5139c2405d93c37ea0b6d7d9e4642d4b7311cc4896021305c7480"
+      },
+      "TRNM_HIA_RUST_PROTOCOL_REFERENCE": {
+        "executable_sha256": "d094b9adebafddae2362f1290b5add3ecfa2d03b65c1d740401ad560f7f40a04"
+      },
+      "TRNM_HIA_RUST_REFERENCE": {
+        "executable_sha256": "a13ddf1ea386e4653677dd7721148747a83f5b181735b384924b0901a02f7588"
+      },
+      "TRNM_HIA_RUST_STATE_REFERENCE": {
+        "executable_sha256": "bc61a2ad0c95b869e2a414c1bf6d5240b2229b7bf8f57d0eb6d923e5fad3e282"
+      }
+    },
+    "shared_runner_native_calls": 56884,
+    "skipped": 0,
+    "source_commit": "4cc0464ff9632f2a493cb76d5b8b51eaad332dac",
+    "source_set_sha256": "fe94efedc30dba67e3c89cf95b17a7135d29f7b6dc9bd29ffa290dd519ba337c",
+    "source_tree": "be3fa728b7bd473faf13c60a4538f385fde30264",
+    "status": "PASS",
+    "storage_native_contracts": 14,
+    "storage_os_controls": 48,
+    "storage_report_sha256": "7b8197fa543042be920dee04ae2df21f3af7db88e7cec2d117a53c30dfe9d339",
+    "stream_reactor_controls": 49,
+    "stream_reactor_native_contracts": 13,
+    "tests": 189,
+    "wall_seconds": 367.77274564500004,
+    "whole_chain_native": false,
+    "workflow_run": 43751782144
+  },
+  "fifth_repaired_candidate_source_ci": {
+    "artifact_bytes": 7867,
+    "artifact_id": 14176604866,
+    "artifact_zip_sha256": "29426455f5b0d461998bbceb6e0b64167437933384527c1a157ce6e84f8ebf0d",
+    "current_work_or_service_acceptance": false,
+    "hosted_cost_original_checker_executed": true,
+    "job_id": 132927127020,
+    "later_sixth_batch_sources_qualified_by_this_run": false,
+    "old_stack_can_be_removed": false,
+    "pq_negative_log_sha256": "b874d80ccd2977e9ef898e78cb4b88e068f5a2538308f4c34d4a7a64303b9ce3",
+    "pq_negative_tests": 113,
+    "pq_negative_wall_seconds": 419.167,
+    "pq_source_consistency": {
+      "canonical_default_provider_contract_checked": true,
+      "canonical_pnq2_contract_checked": true,
+      "continuous_npq6_combination_accepted": false,
+      "cryptographic_acceptance": false,
+      "exact_source_blobs": 2613,
+      "legacy_qtx1_optional_adapter_contract_checked": true,
+      "native_transfer_account_contract_checked": true,
+      "native_transport_contract_checked": true,
+      "node_activated": false,
+      "production_confidentiality_accepted": false,
+      "schema": "trnm-pq-cross-branch-check-v1",
+      "status": "HOLD_NO_GO",
+      "upstream_heads": 6,
+      "whole_native_authorization_migrated": false
+    },
+    "production_activation": false,
+    "public_readiness_original_checker_executed": true,
+    "source_commit": "4cc0464ff9632f2a493cb76d5b8b51eaad332dac",
+    "source_tree": "be3fa728b7bd473faf13c60a4538f385fde30264",
+    "status": "PASS",
+    "whole_chain_native": false,
+    "workflow_run": 43751782144
+  },
+  "fifth_repaired_candidate_transport_ci": {
+    "artifact_bytes": 1505368,
+    "artifact_id": 14176668998,
+    "artifact_zip_sha256": "2589e6fcfcd229144c5159b241e474579545d3f813bd07f1cbecc431946bd34c",
+    "full_node_owner_integration": false,
+    "job_id": 132927127200,
+    "later_sixth_batch_sources_qualified_by_this_run": false,
+    "new_owner_container_cases_excluded": 8,
+    "old_stack_can_be_removed": false,
+    "original_executable_sha256": "0c5ac51c7f4b5fb28927cd240d3961e34d1d63b4cb18c8e64fbe144af480bddc",
+    "original_functions_byte_preserved": true,
+    "original_ingress_sha256": "b04d1c8a2812fb17f8fd7b58c42cd3c430c42babd6889ac89f5d558cd7d07f2f",
+    "original_node_differential_cases": 170,
+    "original_node_differential_failures": 0,
+    "original_node_unit_tests_passed": 6,
+    "production_activation": false,
+    "report_sha256": "56b5798ffe8c471566f84ac7f30a3cbe5f98416a4bea9bbcd3f594a54e293696",
+    "request_controls_failed": 0,
+    "request_controls_passed": 178,
+    "sha256_stream_controls_failed": 0,
+    "sha256_stream_controls_passed": 14,
+    "source_commit": "4cc0464ff9632f2a493cb76d5b8b51eaad332dac",
+    "source_tree": "be3fa728b7bd473faf13c60a4538f385fde30264",
+    "status": "PASS",
+    "wall_seconds": 470.657159024,
+    "whole_chain_native": false,
+    "workflow_run": 43751782144
   },
   "fourth_candidate_native_ci": {
     "all_four_original_rust_oracles_executed": true,
@@ -476,6 +609,44 @@
   },
   "preserved_preexisting_observations": "All original node, service, model-use, PQ, consensus and cross-architecture failures retain their own source identities and acceptance status.",
   "schema": "trnm.hia.development-observations.v1",
+  "sixth_candidate_cleanup_integration": {
+    "completed_archive_sets": 8,
+    "d26_report": "d26-sqlite-cleanup.json",
+    "history_rewritten": false,
+    "original_payload_bytes_removed_in_this_batch": 315347561,
+    "original_qualification_changed": false,
+    "payloads_removed_in_this_batch": 67,
+    "production_activation": false,
+    "status": "LOCAL_ORIGINAL_READERS_PASS_CI_PENDING",
+    "total_original_payload_bytes_removed": 1628294407,
+    "total_original_payload_files_removed": 1622,
+    "w1_report": "w1-complete-cleanup.json",
+    "whole_chain_native": false
+  },
+  "sixth_candidate_explicit_component_composition": {
+    "checks": 23,
+    "complete_inventory_checks": 5,
+    "composition_checks": 18,
+    "emission_rechecks_admission_only_sources": true,
+    "full_node_integration": false,
+    "implicit_callee_resolution": false,
+    "imported_helpers_reexported": false,
+    "independent_complete_dependency_core_validation": true,
+    "native_compiler_sha256": "87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54",
+    "resource_bounds_changed": false,
+    "source_inputs": {
+      "hia/components.json": "190d6356c83198231c2772c8b32158078df075ee6ca946d4d99669ce3d3e6067",
+      "hia/src/codec/json_primitives.hepta": "63d136da127f7b2dd619535712c2eeb43bf0dbfb4e69be245a626d5bdecf915f",
+      "hia/src/state/json_value.hepta": "8bd1366dbc5e83461b12c1e1c6387356bf31ef5792268381993dc70aa3e668aa",
+      "hia/tests/test_composition.py": "cbc74c96036bde0ade3a5bf291f137aa6c649f0062a00746a22c581b24ecee3d",
+      "hia/tools/toolchain.py": "f3ece6aea673beeb8dbc52f92d93f8c4a96fc73203381437f21116a53b421057"
+    },
+    "source_inputs_stable": true,
+    "status": "PASS",
+    "test_output_sha256": "d5f9563f0733c89b2eada30daea1a25f98ce7fbc53c16c8f18137ca5059f8fd9",
+    "wall_seconds": 0.21708048499931465,
+    "whole_chain_native": false
+  },
   "third_candidate_archive_publication_failure": {
     "checker": "scripts/ci/check_pq_triage_archive.py",
     "failed_step": "Verify removed preparation files and retained failures",

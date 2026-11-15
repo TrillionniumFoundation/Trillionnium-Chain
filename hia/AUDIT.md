@@ -9,9 +9,9 @@ the implemented components listed in [the native guide](README.md). This is not
 a claim that every one of the 702,001 retained Rust physical lines was manually
 reviewed, or that every historical campaign passed.
 
-**The full replacement is incomplete.** Twenty-seven kernel units and four native
-foundations account for all 36 current HIA source files. Native connected-stream
-I/O and a finite transaction owner now exist, but no whole original package has
+**The full replacement is incomplete.** Thirty-six kernel units and seven native
+foundations account for all 51 current HIA source files. Native connected-stream
+I/O, complete classical response codecs, Settings and streaming persistence exist, but no whole original package has
 an accepted retirement witness. There is no complete HIA node executable,
 typed branch/replay/outbox owner or complete native identity/signing stack. The
 nine integration/qualification gates remain open.
@@ -48,24 +48,24 @@ named kernels are implemented; it never means the package can be removed.
 | [trnm-worker-agent](../trillionnium/crates/trnm-worker-agent) | M10 | Unported | Bounded real child process, task workflow and evidence adapters; not a miner. |
 | [trnm-oracle](../trillionnium/crates/trnm-oracle) | M11 | Unported | Application evidence aggregation, not ledger quorum or voting. |
 | [trnm-research-protocol](../trillionnium/crates/trnm-research-protocol) | M10 | Unported | Contribution/evaluation/lineage contracts independent of ledger consensus. |
-| [trnm-protocol](../trillionnium/crates/trnm-protocol) | M00 | Partial: `protocol/id`, `protocol/hash`, `protocol/pnh1`, `protocol/pgh2`, `protocol/ilf2`, `protocol/ilf3`, `crypto/pon_hash`, `protocol/pnx1`, `protocol/state-root` | Canonical transaction/fee contracts and explicitly selected bounded ILF2/tag23 and ILF3/tag24 witness codecs; complete ILM2/ILM3 decoding and actual parent loading belong to M06; no admission authority. |
+| [trnm-protocol](../trillionnium/crates/trnm-protocol) | M00 | Partial: `protocol/id`, `protocol/hash`, `protocol/pnh1`, `protocol/pgh2`, `protocol/ilf2`, `protocol/ilf3`, `crypto/pon_hash`, `protocol/pnx1`, `protocol/state-root`, `protocol/state-root-compact` | Canonical transaction/fee contracts and explicitly selected bounded ILF2/tag23 and ILF3/tag24 witness codecs; complete ILM2/ILM3 decoding and actual parent loading belong to M06; no admission authority. |
 | [trnm-peer-lease](../trillionnium/crates/trnm-peer-lease) | M04 | Unported | Cross-process scope/generation fencing, append-only replay and bounded Unix transport. |
 | [trnm-data-availability](../trillionnium/crates/trnm-data-availability) | M09 | Unported | Signed storage responsibility and retention plus a separate TCM1/TCQ1/TCS1 configured-peer cell byte cache with pinned identity, bounded TCP repair and complete no-replace materialization; no block consensus or model-use authority. |
 | [trnm-task-kernel](../trillionnium/crates/trnm-task-kernel) | M10 | Unported | Task/lease/capability/escrow local kernel; monotonic local sequence is not chain finality. |
-| [trnm-mvcc-fee](../trillionnium/crates/trnm-mvcc-fee) | M06 | Partial: `state/json_string`, `state/json_value` | Deterministic ordered execution, fee deltas, checked derived commitments, explicit revision12 mandatory-capacity continuity, revision13 native model evidence, revision14 composition and revision16 bounded base/router/expert/mask updates with optional owner-pinned pre-genesis task windows; State publication remains with the Node owner. |
+| [trnm-mvcc-fee](../trillionnium/crates/trnm-mvcc-fee) | M06 | Partial: `state/json_string`, `state/json_value`, `codec/json_primitives`, `codec/json-number`, `codec/json-value-wire`, `codec/json-value-encode` | Deterministic ordered execution, fee deltas, checked derived commitments, explicit revision12 mandatory-capacity continuity, revision13 native model evidence, revision14 composition and revision16 bounded base/router/expert/mask updates with optional owner-pinned pre-genesis task windows; State publication remains with the Node owner. |
 | [trnm-service-settlement](../trillionnium/crates/trnm-service-settlement) | M12 | Unported | Bilateral usage/escrow conservation; no consumption-derived voting power. |
 | [trnm-control-plane](../trillionnium/crates/trnm-control-plane) | M16 | Unported | Observer/planner/guard only; does not grant consensus authority. |
 | [trnm-state-import](../trillionnium/crates/trnm-state-import) | M13 | Unported | Bounded independently admitted export/import and root checks; no old proof decoder. |
 | [trnm-release-bundle](../trillionnium/crates/trnm-release-bundle) | M15 | Unported | Build/SBOM/provenance contracts independent of consensus. |
 | [trnm-checkpoint-store](../trillionnium/crates/trnm-checkpoint-store) | M03 | Unported | Independent exact CAS and durable Unix service; generalized owner frontier only. |
 | [trnm-checkpoint-types](../trillionnium/crates/trnm-checkpoint-types) | M03 | Partial: `checkpoint/value_v2` | Extract canonical checkpoint/CAS record; remove safety-vote and validator types. |
-| [trnm-crypto-primitives](../trillionnium/crates/trnm-crypto-primitives) | M01 | Partial: `work/encoding`, `work/field`, `work/matrix`, `work/verify`, `crypto/sha256`, `crypto/sha256_arena`, `crypto/sha512_arena`, `crypto/ed25519_group`, `crypto/ed25519_verify`, `crypto/sha256_stream` | Strict identity and exact experimental W1 verification, optimized production kernel plus scalar reference and structural producer comparisons; no work-hardness qualification. |
+| [trnm-crypto-primitives](../trillionnium/crates/trnm-crypto-primitives) | M01 | Partial: `work/encoding`, `work/field`, `work/matrix`, `work/verify`, `crypto/sha256`, `crypto/sha256_arena`, `crypto/sha512_arena`, `crypto/ed25519_group`, `crypto/ed25519_verify`, `crypto/sha256_stream`, `crypto/ed25519-sign` | Strict identity and exact experimental W1 verification, optimized production kernel plus scalar reference and structural producer comparisons; no work-hardness qualification. |
 | [trnm-verification-profiles](../trillionnium/crates/trnm-verification-profiles) | M11 | Partial: `verification/closed_round` | Reusable evaluation/profile contracts and exact bounded integer BA normal form; no stake-quorum backend, model-parent authentication or general functional-equivalence authority. |
 | [trnm-transport](../trillionnium/crates/trnm-transport) | M04 | Partial: `transport/replay` | Extract generation-bound authenticated frame admission; delete pacemaker and node scaffold. |
 | [trnm-audit-events](../trillionnium/crates/trnm-audit-events) | M17 | Unported | Normalized local audit event data; no consensus or durable owner. |
 | [trnm-governance-guard](../trillionnium/crates/trnm-governance-guard) | M01 | Unported | Local proposal/timelock, role separation and optimistic version checks; no network governance authority. |
 | [trnm-escrow-vault](../trillionnium/crates/trnm-escrow-vault) | M12 | Unported | Pure in-memory escrow conservation reference; no second production ledger or durability claim. |
-| [trnm-pon-node](../trillionnium/crates/trnm-pon-node) | M15 | Partial: `transport/authenticated_request` | Native development composition with a single branch/replay/outbox SQLite owner, explicit maintenance choice, bounded public entrypoints, typed local error identity, checked history projections, explicit revision16 model/task-window CLI context binding, and optional fresh PQ transport-only ownership; account/task/install authorization is not PQ-migrated and no publicly qualified deployment is claimed. |
+| [trnm-pon-node](../trillionnium/crates/trnm-pon-node) | M15 | Partial: `transport/authenticated_request`, `codec/json-number`, `codec/json-value-wire`, `codec/json-value-encode`, `transport/authenticated-response`, `transport/signed-response`, `node/settings-development` | Native development composition with a single branch/replay/outbox SQLite owner, explicit maintenance choice, bounded public entrypoints, typed local error identity, checked history projections, explicit revision16 model/task-window CLI context binding, and optional fresh PQ transport-only ownership; account/task/install authorization is not PQ-migrated and no publicly qualified deployment is claimed. |
 | [trnm-sqlite-io-boundary](../trillionnium/crates/trnm-sqlite-io-boundary) | M15 | Unported | Reused process-owned native SQLite boundary and executed-mutation transaction observer from c165; bounds History graph readback reuse to the same immediate transaction and fixed SQLite build. It adds no consensus or deployment authority. |
 
 ## Native toolchain boundary
@@ -94,9 +94,12 @@ The reactor admits connected FIFOs/streams and uses epoll, monotonic absolute
 deadlines, cancellation and private generation/rights slots. It does not admit
 ordinary files or certify a hard fsync deadline. The transaction owner performs
 actual locking, immutable transaction publication, HEAD replacement and sync,
-then validates persisted data on reopen. Its 16 MiB / 4,096-commit profile and
-fail-closed interrupted initialization do not replace the original Node's full
-capacity, typed state transitions or initialization recovery.
+then validates persisted data on reopen. The fresh-v2 format has executed the
+complete 279,445,512-byte original State extent and 4,105 commits, with checked
+file-offset and sequence exhaustion limits. It passed 52 physical controls and
+170 native function controls. The exact parent rebuild matches that ELF. Typed
+state transitions, interrupted initialization recovery and original service
+latency remain unqualified; the local trace is UNKNOWN after ptrace denial.
 
 The [state-root implementation](STATE.md) matched an independent bottom-up oracle
 at 65,536 actual entries in 299.705821145 seconds in exact `96a0846` CI. The prior
@@ -116,29 +119,40 @@ inferred from the compiler fixed point.
 
 ## Observed integration failures
 
-The fourth repaired candidate `96a0846e383745f88e033c7db2abc0611f1dae63` passed
-[both HIA jobs](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43746877132):
-160 tests, 36,222 shared-runner native calls, zero skips, failures or errors.
-All four then-existing original Rust adapters and 17 original Rust tests ran.
-The [exact report](qualification/native-ci.json) binds only that source set.
-OS 25/25, reactor 49/49 plus 13 native contracts, and storage 48/48 plus 14 native
-contracts passed; actual traces were captured. State-root's separate 86 raw
-calls include the complete 65,536-row case. The source job passed 113 original
-PQ negative tests and the full historical readers.
+The fifth repaired candidate `4cc0464ff9632f2a493cb76d5b8b51eaad332dac` passed
+[all three HIA jobs](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43751782144):
+189 tests, 56,884 shared-runner native calls, zero skips, failures or errors.
+All five original Rust adapters ran. The [exact report](qualification/native-ci.json)
+binds only that source set. OS 25/25, reactor 49/49 plus 13 native contracts,
+and storage 48/48 plus 14 native contracts passed, with actual traces captured.
+The complete-request job also passed 178 native request controls, 14 stream SHA
+controls, 170 actual original-Node comparisons and six original tests. The source
+job passed all 113 PQ negative tests and full historical readers; PQ stays HOLD.
 
-Later scheduler, typed Value and full request sources require their own exact
-CI. Their reports distinguish real native execution from original Rust NOT_RUN.
-The source-derived scheduler reader-group regression is repaired in HIA while
-retaining the original library as an independent oracle. The seven-strategy
-port is repository work outside the normal Node dependency closure. The Value
-profile is explicitly finite; complete-State grammar-before-limit order is open.
-The full request executes strict signature verification over the complete domain,
-but private owner integration and original service budgets remain open.
+The separate [actual executor comparison](qualification/executor-original-ci.json)
+ran 5,274 cases against the unchanged original Rust library. It recorded 131
+unsafe original results, 181 intentional differences and 27 expected version-skew
+panics. HIA preserves the maximum reader dependency and satisfies the independent
+conflict graph. Its status explicitly retains the original safety defect rather
+than asserting identical unsafe behavior. This crate is outside the normal Node
+dependency closure. Earlier source-derived model observations remain distinct.
+
+Later sixth-batch sources require their own exact committed qualification.
+Locally, complete response passed 11,420 controls, typed Delta passed 8,551,
+Settings passed 16 tests (102 shared-runner plus 14 raw-pointer calls), and the
+private-stack repair passed its 11 explicit observations. The bare signer spill
+failure and slow storage attempt remain recorded failures. The integrated
+response producer actually refused publication after denied cleanup. Original
+Rust for these additions remains NOT_RUN until the dedicated mandatory CI jobs.
+Typed Value construction and complete-State ownership remain distinct; complete
+private owners and the original service budgets remain open. Earlier maximum-count state-root evidence stays bound to
+its exact fourth candidate and does not imply a later full-State owner pass.
 
 The complete original CI also exposed these distinct outcomes:
 
 | Finding | Classification and action |
 | --- | --- |
+| Fifth executor adapter could not link transitive dependencies | Run `43749946614` passed the main suite but failed with E0463 before original executor execution. Exact Cargo-event library directories and twelve controls were added in `4cc0464`; run `43751782144` actually executed all 5,274 original/native comparisons. The failed run remains FAIL. |
 | Fourth storage CLI startup failed without ambient Python path | Run `43746152828` failed with `ModuleNotFoundError` before storage/Rust/kernel tests. Explicit repository-root imports and fresh-cwd regressions were added in `96a0846`; exact run `43746877132` passed. |
 | Hosted-cost missing-index dispatch could overwrite an old receipt in a copied candidate | Independent temporary-view reproduction found the prepublication fallback. Current CLI always uses the read-only checker; both missing and dangling index paths return 2 without modifying retained bytes. The actual failure is retained. |
 | Three original retained stderr logs were absent from the third published tree | Introduced by ignored-file staging. The unchanged PQ archive reader failed in run `43741641815`; exact original bytes were explicitly tracked in `79fc1d4`, whose run `43741974022` passed. The failure and repair remain visible. |
@@ -159,8 +173,9 @@ and native unit tests do not turn a failed business confirmation into a pass.
 
 The current tree removes 607 obsolete checkout-repair files, 14 sealed CI ZIPs,
 13 joint-resource archives, four large PQ triage streams, 885 public-readiness
-pre-correction payloads and 32 hosted-cost containers/shards: **1,555 removed
-copies totaling 1,312,946,846 original bytes**. All remain recoverable by exact historical Git object with original
+pre-correction payloads, 32 hosted-cost containers/shards, eight D26 compressed
+SQLite snapshots and 59 W1 complete-work containers: **1,622 removed copies
+totaling 1,628,294,407 original bytes**. All remain recoverable by exact historical Git object with original
 SHA-256/size bindings. The PQ capture's other 29 smaller records remain as
 byte-identical current copies in its retained directory. This cleans current-tree
 copies; Git history is not rewritten.
@@ -171,6 +186,8 @@ copies; Git history is not rewritten.
 - [PQ triage capture](../evidence/pq-authority-preflight-20261108-9d315/NATIVE_TRIAGE_ARCHIVE.json)
 - [Public-readiness pre-correction archive](../evidence/pon-public-readiness-v1/PRE_CORRECTION_ARCHIVE.json)
 - [Hosted-cost archive](../evidence/pon-work-security-eight-samples-20261101/HOSTED_COST_ARCHIVE.json)
+- [D26 SQLite archive](../evidence/pon-business-gates-readback-20261107/D26_SQLITE_ARCHIVE.json)
+- [W1 complete-work archive](../evidence/pon-w1-complete-work-20261101/W1_COMPLETE_ARCHIVE.json)
 
 The sealed reader still checks all 810 original checksum entries and the exact
 original seal, source observations and HOLD/FAIL counts. Missing or changed
@@ -193,24 +210,30 @@ records and the original receipt remain unchanged. Its 16 negative tests and
 actual prepublication dispatch failure are preserved in
 [the report](qualification/hosted-cost-cleanup.json).
 
-The remaining large archive candidates identified by this inventory total
-315,364,273 bytes in 68 large files. Their exact historical readers and
-retained small records must be qualified before current copies are removed:
+The D26 reader validates the full 617-file original package, all 614 prepared
+files and 232 gzip streams against their stored and decoded hashes, complete
+tails and preparation-plan bindings. It preserves all 609 other original files.
+The original and archived reader observations agree; 15 negative controls pass.
+It does not open SQLite, recover a Node or promote historical HOLD fields.
 
-| Candidate | Files / bytes | Existing obligation |
-| --- | ---: | --- |
-| Historical CI SQLite snapshots | 8 / 176,597,049 | Preserve compressed/uncompressed hashes and immutable readback; no Node recovery |
-| Complete-work original containers | 60 / 138,767,224 | Preserve FILE_INDEX, CAPTURE_INDEX and all archive member checks |
+The W1 reader executes its unchanged original verifier in the complete 172-file
+view, checking all 170 FILE_INDEX rows, 171 SHA256SUMS entries and 60 archives:
+4,960 members / 4,463,919,709 decoded bytes. All 91 small records remain exact
+retained copies, including ten logs explicitly added despite ignore rules.
+The original and archived observations agree, and 15 negative controls pass,
+including a genuine original-member verification failure. The 16,712-byte root
+validation archive remains an unchanged required input. The four historical W1
+service failures and incomplete CodeQL result retain their original identities.
 
 The current PQ corpus pins 1,177 evidence files totaling 183,286,178 bytes across
 46 packages; its validator actually reads those bytes. Other Rust tests embed
 specific evidence with `include_str!`. A historical-object resolver must preserve
 those readers' exact contracts before their current-tree inputs can be removed.
 The audit checked Git object existence/type/size for the candidate set; complete
-new SHA-256 archive manifests have been made for the six completed sets. The
-remaining candidate objects have also been compared against their actual Git
-blobs and SHA-256 values, but that read-only inventory alone does not authorize
-a weaker reader or deletion of a required retained record.
+new SHA-256 archive manifests have been made for all eight completed sets.
+Exact readers, complete original denominators and retained small records remain
+mandatory; an inventory alone does not justify a weaker reader or deletion of
+a required retained record.
 
 ## Retirement decision
 

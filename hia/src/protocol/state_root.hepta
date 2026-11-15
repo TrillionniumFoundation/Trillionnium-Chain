@@ -1,6 +1,12 @@
 hia-asm.v1 hepta.hia.program.v8 trnm_state_root_v1
 fn f0(input:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
 block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
+  result:u32 = call(input,output,scratch) {"function":"state_root"}
+  ret(result)
+end
+
+fn state_root(input:readbuf,output:mutbuf,scratch:mutbuf) -> (u32) effects(read,write,trap) entry(entry)
+block entry(input:readbuf,output:mutbuf,scratch:mutbuf)
   v0:usize = buffer.len(input)
   v1:usize = const() {"value":8}
   v2:bool = compare.ge(v0,v1)

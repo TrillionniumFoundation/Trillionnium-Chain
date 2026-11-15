@@ -11,6 +11,15 @@ checks belong to the corresponding execution and persistent owners. In
 particular, M06 validates every value before applying the state count and wire
 limits; a caller must preserve that complete grammar pass.
 
+The public `f0` entry now forwards to the named `state_root` function so an
+owner can explicitly include the complete byte relation without copying its
+body or colliding with its own `f0`. The original body and all helpers are
+unchanged apart from that function name. The [extraction report](qualification/state-root-entry-extraction.json)
+records 165 native calls through the forwarded entry, both selected backends,
+and the separately unexecuted local Rust comparison. Earlier maximum-count
+qualification remains bound to its original source; it is not reused as a new
+wrapper's exact-source maximum-count run.
+
 ## Input and result
 
 The only public entry is `f0(readbuf, mutbuf, mutbuf) -> u32`, with three valid,

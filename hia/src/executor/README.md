@@ -54,6 +54,16 @@ model, and comparing native results with the repaired model. Its result is
 explicitly `PASS_WITH_EXPLICIT_ORIGINAL_SAFETY_DEFECT`, preserving original
 failures rather than claiming original safety or whole-project acceptance.
 
+The exact published repair `4cc0464ff9632f2a493cb76d5b8b51eaad332dac`
+actually executed 5,274 original-Rust/native cases in
+[run 43751782144](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43751782144).
+The [complete report](../../qualification/executor-original-ci.json) records 181
+intentional reader-high-water differences, including 131 unsafe original cases,
+and 27 expected original version-skew panics. These are actual Rust observations;
+the earlier 122 differences belong to a different source-derived model corpus.
+The prior adapter-link failure, exact Cargo-artifact discovery repair and twelve
+regression controls remain in [the repair report](../../qualification/executor-original-linking-fix.json).
+
 ## Entry and ownership
 
 The only export is `f0(readbuf input, mutbuf output, mutbuf scratch) -> u32`.

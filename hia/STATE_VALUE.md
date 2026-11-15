@@ -130,8 +130,11 @@ must not be relabeled as an original M06 grammar or wire error.
 
 `components.json` explicitly includes `json_short_escape`,
 `json_ascii_measure` and `json_ascii_encode` from `src/state/json_string.hepta`.
-The generic file carries no duplicate String algorithm. The regular repository
-builder captures both files and the include declaration, verifies the closed
+The byte-identical UTF-8 and integer helpers now live once in
+`src/codec/json_primitives.hepta`; this component explicitly selects
+`value_utf8`, `value_integer_size`, `value_word` and `value_integer_write`.
+The generic file carries no duplicate String or shared primitive algorithm.
+The regular repository builder captures all three sources and the include declaration, verifies the closed
 program through the pinned Core assembler, and selects the fixed native
 compiler's official `selfhost_elf` output profile. Neither source requires a
 source-path guard exception, a generator at build time or a host emitter fallback.

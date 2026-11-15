@@ -57,6 +57,106 @@ class CompositionTests(unittest.TestCase):
         self.assertEqual([p.name for p, _ in inputs], ["entry.hepta", "components.json", "dependency.hepta"])
         self.assertTrue(wire.endswith(GOOD[GOOD.index(b"fn helper"):]))
 
+    def nested_component(self):
+        component = ENTRY.replace(b"fn f0(", b"fn middle(")
+        (self.root / "src/component.hepta").write_bytes(component)
+        (self.root / "src/entry.hepta").write_bytes(
+            ENTRY.replace(b'"function":"helper"', b'"function":"middle"'))
+        self.manifest["includes"]["src/component.hepta"] = [
+            {"source": "src/dependency.hepta", "functions": ["helper"]}]
+        self.manifest["includes"]["src/entry.hepta"] = [
+            {"source": "src/component.hepta", "functions": ["middle"]},
+            {"source": "src/dependency.hepta", "functions": ["helper"]}]
+        self.save()
+
+    def test_component_is_independently_admitted_but_caller_still_names_every_function(self):
+        from hepta.hia_agent_assembly import assemble_program
+        self.nested_component()
+        wire, inputs = self.compose()
+        checked = assemble_program(wire)
+        self.assertEqual([fn["name"] for fn in checked.as_dict()["functions"]],
+                         ["f0", "middle", "helper"])
+        self.assertEqual([p.name for p, _ in inputs],
+                         ["entry.hepta", "components.json", "component.hepta", "dependency.hepta"])
+        self.assertEqual(inputs[-1][1], GOOD)
+
+    def test_nested_admission_does_not_supply_a_missing_caller_callee(self):
+        from hepta.hia_agent_assembly import assemble_program
+        self.nested_component()
+        self.manifest["includes"]["src/entry.hepta"].pop()
+        self.save()
+        wire, inputs = self.compose()
+        self.assertIn(self.root / "src/dependency.hepta", [p for p, _ in inputs])
+        self.assertNotIn(b"fn helper(", wire)
+        with self.assertRaises(ValueError):
+            assemble_program(wire)
+
+    def test_imported_functions_cannot_be_selected_as_component_owned_exports(self):
+        self.nested_component()
+        self.manifest["includes"]["src/entry.hepta"] = [
+            {"source": "src/component.hepta", "functions": ["middle", "helper"]}]
+        self.save()
+        with self.assertRaisesRegex(ValueError, "Unknown or duplicate"):
+            self.compose()
+
+    def test_even_unselected_component_functions_must_pass_original_core(self):
+        self.nested_component()
+        path = self.root / "src/component.hepta"
+        path.write_bytes(path.read_bytes() + GOOD[GOOD.index(b"fn helper("):]
+                         .replace(b"fn helper(", b"fn unused(").replace(b"ret(v0)", b"ret(missing)"))
+        with self.assertRaises(ValueError):
+            self.compose()
+
+    def test_nested_source_cannot_change_its_declared_callee_contract(self):
+        self.nested_component()
+        (self.root / "src/dependency.hepta").write_bytes(
+            GOOD.replace(b"u32", b"u64"))
+        with self.assertRaises(ValueError):
+            self.compose()
+
+    def test_nested_declarations_keep_path_symlink_and_cycle_refusals(self):
+        self.nested_component()
+        (self.root / "src/alias.hepta").symlink_to(self.root / "src/dependency.hepta")
+        for source in ("src/../src/dependency.hepta", "src/alias.hepta", "src/entry.hepta"):
+            with self.subTest(source=source):
+                self.manifest["includes"]["src/component.hepta"] = [
+                    {"source": source, "functions": ["helper"]}]
+                self.save()
+                with self.assertRaises(ValueError):
+                    self.compose()
+
+    def test_duplicate_symbol_is_not_hidden_by_independent_component_admission(self):
+        self.nested_component()
+        self.manifest["includes"]["src/entry.hepta"].append(
+            {"source": "src/dependency.hepta", "functions": ["helper"]})
+        self.save()
+        with self.assertRaisesRegex(ValueError, "Unknown or duplicate"):
+            self.compose()
+
+    def test_build_rechecks_a_source_used_only_for_dependency_admission(self):
+        from hepta.hia_program_native import build_program_machine
+        self.nested_component()
+        # Middle's unselected function needs helper for independent admission;
+        # the caller itself selects an identity function and no helper bytes.
+        component = self.root / "src/component.hepta"
+        component.write_bytes(component.read_bytes() + GOOD[GOOD.index(b"fn helper("):]
+                              .replace(b"fn helper(", b"fn identity("))
+        (self.root / "src/entry.hepta").write_bytes(
+            ENTRY.replace(b'"function":"helper"', b'"function":"identity"'))
+        self.manifest["includes"]["src/entry.hepta"] = [
+            {"source": "src/component.hepta", "functions": ["identity"]}]
+        self.save()
+
+        def emit_then_change(*args, **kwargs):
+            result = build_program_machine(*args, **kwargs)
+            (self.root / "src/dependency.hepta").write_bytes(GOOD + b"\n")
+            return result
+
+        with patch("hepta.hia_program_native.build_program_machine", side_effect=emit_then_change):
+            with self.assertRaisesRegex(ValueError, "changed during build"):
+                toolchain.build_native(self.root / "src/entry.hepta",
+                    self.root / "candidate.o", backend="direct", kind="object")
+
     def test_unknown_duplicate_and_colliding_functions_refused(self):
         for names in (["absent"], ["helper", "helper"], ["f0"]):
             self.manifest["includes"]["src/entry.hepta"][0]["functions"] = names

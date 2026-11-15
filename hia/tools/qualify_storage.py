@@ -34,27 +34,27 @@ U64_MAX = (1 << 64) - 1
 CONTEXT = hashlib.sha256(b"native-HIA-storage-qualification-context-v1").digest()
 RECORD = struct.Struct("<8sQQQ32s")
 BOOT = struct.Struct("<8sQQ32sQQQ")
-MAX_PAYLOAD = 16 * 1024 * 1024
+MAX_PAYLOAD = (1 << 63) - 1 - 128
 CHUNK = 32768
 TIMEOUT = 30.0
 CLEANUP = 3.0
 
 
 def genesis(context: bytes = CONTEXT) -> bytes:
-    return hashlib.sha256(b"HIAGEN01" + context).digest()
+    return hashlib.sha256(b"HIASV2G0" + context).digest()
 
 
 def committed(sequence: int, payload: bytes, previous: bytes, context: bytes = CONTEXT) -> bytes:
-    value = hashlib.sha256(b"HIAHASH1" + context + struct.pack("<QQ", sequence, len(payload)) + previous).digest()
+    value = hashlib.sha256(b"HIASV2H0" + context + struct.pack("<QQ", sequence, len(payload)) + previous).digest()
     for start in range(0, len(payload), CHUNK):
         part = payload[start:start + CHUNK]
-        value = hashlib.sha256(b"HIAHASH2" + value + struct.pack("<Q", len(part)) + part).digest()
+        value = hashlib.sha256(b"HIASV2H1" + value + struct.pack("<Q", len(part)) + part).digest()
     return value
 
 
 def decode_response(raw: bytes) -> dict:
     magic, kind, sequence, length, value = RECORD.unpack(raw)
-    if magic != b"HIARSP01" or kind not in (0, 1, 2):
+    if magic != b"HIARSP02" or kind not in (0, 1, 2):
         raise ValueError("Invalid native response")
     return {"kind": kind, "sequence": sequence, "length": length, "digest": value}
 
@@ -62,17 +62,17 @@ def decode_response(raw: bytes) -> dict:
 def disk_chain(directory: Path, context: bytes = CONTEXT) -> dict:
     """Independent complete on-disk oracle, using hashlib and fixed encoding."""
     fmt = (directory / "FORMAT").read_bytes()
-    assert fmt == b"HIAFMT01" + context + struct.pack("<QQQ", MAX_PAYLOAD, 4096, CHUNK)
+    assert fmt == b"HIAFMT02" + context + struct.pack("<QQQ", MAX_PAYLOAD, U64_MAX, CHUNK)
     head = (directory / "HEAD").read_bytes()
-    assert len(head) == 128 and head[:8] == b"HIAHD001" and head[24:56] == context and head[120:] == bytes(8)
+    assert len(head) == 128 and head[:8] == b"HIAHD002" and head[24:56] == context and head[120:] == bytes(8)
     sequence, length = struct.unpack_from("<QQ", head, 8)
-    assert sequence <= 4096 and length <= MAX_PAYLOAD
+    assert sequence <= U64_MAX and length <= MAX_PAYLOAD
     previous = genesis(context)
     latest = b""
     for index in range(1, sequence + 1):
         raw = (directory / f"txn.{index:016x}").read_bytes()
         header, payload = raw[:128], raw[128:]
-        assert len(header) == 128 and header[:8] == b"HIAHD001"
+        assert len(header) == 128 and header[:8] == b"HIAHD002"
         number, count = struct.unpack_from("<QQ", header, 8)
         assert number == index and count == len(payload) and count <= MAX_PAYLOAD
         assert header[24:56] == context and header[88:120] == previous and header[120:] == bytes(8)
@@ -126,7 +126,7 @@ class Session:
         finally:
             for fd in held:
                 os.close(fd)
-        self.bootstrap = BOOT.pack(b"HIAST001", directory_fd, mode, context, notify_write, go_read, 0)
+        self.bootstrap = BOOT.pack(b"HIAST002", directory_fd, mode, context, notify_write, go_read, 0)
         self.file_limit = file_limit
         os.set_blocking(self.process.stdin.fileno(), False)
         if bootstrap:
@@ -206,7 +206,7 @@ class Session:
         assert self.current is not None
         seq = self.current["sequence"] if sequence is None else sequence
         expected = self.current["digest"] if value is None else value
-        self.write(RECORD.pack(b"HIACMD01", operation, len(payload) if declared is None else declared, seq, expected))
+        self.write(RECORD.pack(b"HIACMD02", operation, len(payload) if declared is None else declared, seq, expected))
         if payload:
             self.write(payload)
 
@@ -303,6 +303,203 @@ class Session:
         raise TimeoutError("Actual native blocked read not observed")
 
 
+def full_state_chunks():
+    pending=bytearray(b'SRV1'+struct.pack('<I',65536))
+    value=b'"'+b'a'*4094+b'"'
+    for index in range(65536):
+        key=b'a'*152+f'{index:08x}'.encode()
+        pending.extend(struct.pack('<II',160,4096)+key+value)
+        while len(pending)>=CHUNK:
+            yield bytes(pending[:CHUNK])
+            del pending[:CHUNK]
+    if pending:
+        yield bytes(pending)
+
+class StreamingSession:
+    def __init__(self,image,directory,evidence,mode):
+        self.evidence=evidence;evidence.mkdir(mode=0o700)
+        self.in_hash=hashlib.sha256();self.out_hash=hashlib.sha256()
+        self.in_bytes=self.out_bytes=0;self.maximum_rss_kib=0
+        self.start=time.monotonic_ns();self.current=None;self.finished=False
+        self.image_sha=hashlib.sha256(image).hexdigest()
+        executable=sealed_executable(image,'full-state-store-owner')
+        capability=os.open(directory,os.O_RDONLY|os.O_DIRECTORY|os.O_NOFOLLOW)
+        def limits():
+            resource.setrlimit(resource.RLIMIT_AS,(2<<30,2<<30))
+            resource.setrlimit(resource.RLIMIT_CORE,(0,0))
+        try:
+            self.process=subprocess.Popen(['/proc/self/fd/'+str(executable)],
+                stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE,
+                pass_fds=(executable,capability),cwd=evidence,env={'PATH':''},
+                start_new_session=True,umask=0o077,bufsize=0,preexec_fn=limits)
+        finally:
+            os.close(executable);os.close(capability)
+        os.set_blocking(self.process.stdin.fileno(),False)
+        try:
+            self.write(struct.pack('<8sQQ32sQQQ',b'HIAST002',capability,mode,CONTEXT,U64_MAX,U64_MAX,0))
+            self.current=self.response()
+            assert self.current[0]==0
+        except BaseException:
+            self.abort()
+            raise
+
+    def sample(self):
+        try:
+            for line in Path(f'/proc/{self.process.pid}/status').read_text().splitlines():
+                if line.startswith(('VmRSS:','VmHWM:')):
+                    self.maximum_rss_kib=max(self.maximum_rss_kib,int(line.split()[1]))
+        except FileNotFoundError:
+            pass
+
+    def write(self,raw):
+        end=time.monotonic()+180;at=0
+        while at<len(raw):
+            remaining=end-time.monotonic()
+            if remaining<=0 or not select.select([], [self.process.stdin], [], max(0,remaining))[1]:
+                raise TimeoutError('capacity-test input controller deadline')
+            try: count=os.write(self.process.stdin.fileno(),raw[at:at+65536])
+            except (BlockingIOError,InterruptedError): continue
+            if count<=0: raise OSError('capacity-test input made no progress')
+            self.in_hash.update(raw[at:at+count]);self.in_bytes+=count;at+=count
+
+    def read(self,count):
+        result=bytearray();end=time.monotonic()+180
+        while len(result)<count:
+            remaining=end-time.monotonic()
+            if remaining<=0 or not select.select([self.process.stdout], [], [], max(0,remaining))[0]:
+                raise TimeoutError('capacity-test output controller deadline')
+            try: part=os.read(self.process.stdout.fileno(),count-len(result))
+            except InterruptedError: continue
+            if not part: raise EOFError(f'native owner ended after {len(result)}/{count}')
+            result.extend(part);self.out_hash.update(part);self.out_bytes+=len(part)
+        return bytes(result)
+
+    def response(self):
+        magic,kind,sequence,length,digest=struct.unpack('<8sQQQ32s',self.read(64))
+        assert magic==b'HIARSP02'
+        self.sample()
+        return kind,sequence,length,digest
+
+    def request(self,operation,length=0):
+        _,sequence,_,digest=self.current
+        self.write(struct.pack('<8sQQQ32s',b'HIACMD02',operation,length,sequence,digest))
+
+    def commit_stream(self,length,chunks):
+        old=self.current;expected=hashlib.sha256(b"HIASV2H0"+CONTEXT+struct.pack("<QQ",old[1]+1,length)+old[3]).digest();seen=0;plain=hashlib.sha256()
+        self.request(1,length)
+        for part in chunks:
+            assert 0<len(part)<=CHUNK
+            self.write(part);plain.update(part);seen+=len(part)
+            expected=hashlib.sha256(b'HIASV2H1'+expected+struct.pack('<Q',len(part))+part).digest()
+            if seen%(32<<20)<CHUNK:
+                self.sample();print('native full-State bytes written',seen,flush=True)
+        assert seen==length
+        actual=self.response()
+        assert actual==(1,old[1]+1,length,expected),(actual,expected)
+        self.current=actual
+        return {'sequence':actual[1],'bytes':length,'storage_digest':expected.hex(),
+                'plain_sha256':plain.hexdigest()}
+
+    def get_stream(self,chunks):
+        self.request(2)
+        result=self.response();assert result==(2,*self.current[1:])
+        count=0;plain=hashlib.sha256()
+        for expected in chunks:
+            actual=self.read(len(expected));assert actual==expected
+            count+=len(actual);plain.update(actual)
+            if count%(32<<20)<CHUNK:self.sample()
+        assert count==result[2]
+        return {'bytes':count,'plain_sha256':plain.hexdigest()}
+
+    def close(self):
+        self.request(3)
+        return self.finish(0)
+
+    def finish(self,want=None):
+        if self.finished:return self.row
+        self.sample()
+        self.process.stdin.close();self.process.stdin=None
+        cleanup=None
+        try: extra,error=self.process.communicate(timeout=3)
+        except subprocess.TimeoutExpired:
+            try:os.killpg(self.process.pid,signal.SIGKILL);action='sent'
+            except ProcessLookupError:action='already_exited'
+            extra,error=self.process.communicate(timeout=3)
+            cleanup={'signal':'SIGKILL','outcome':action,'complete':self.process.returncode is not None}
+        self.out_hash.update(extra);self.out_bytes+=len(extra)
+        (self.evidence/'stderr.raw').write_bytes(error)
+        self.row={'exit_code':self.process.returncode,'cleanup':cleanup,'image_sha256':self.image_sha,
+            'stdin_bytes':self.in_bytes,'stdin_sha256':self.in_hash.hexdigest(),
+            'stdout_bytes':self.out_bytes,'stdout_sha256':self.out_hash.hexdigest(),
+            'stderr_bytes':len(error),'stderr_sha256':digest(error),
+            'address_space_limit_bytes':2<<30,'observed_maximum_rss_kib':self.maximum_rss_kib,
+            'elapsed_ns':time.monotonic_ns()-self.start,
+            'test_io_controller_seconds':180,'production_service_budget_qualified':False}
+        (self.evidence/'process.json').write_text(json.dumps(self.row,sort_keys=True,indent=2)+'\n')
+        self.finished=True
+        if want is not None:assert self.process.returncode==want and not error and not extra,self.row
+        return self.row
+
+    def abort(self):
+        if not self.finished:
+            try:os.killpg(self.process.pid,signal.SIGKILL)
+            except ProcessLookupError:pass
+            self.finish()
+
+
+def full_state_capacity(image: bytes, root: Path) -> dict:
+    directory=root/'namespace';directory.mkdir(mode=0o700)
+    active=None
+    try:
+        active=StreamingSession(image,directory,root/'create',1)
+        assert active.current==(0,0,0,genesis())
+        length=65536*(8+160+4096)+8
+        committed_row=active.commit_stream(length,full_state_chunks())
+        created=active.close();active=None
+        actual_header=(directory/'HEAD').read_bytes()
+        assert actual_header[:8]==b'HIAHD002'
+        assert struct.unpack_from('<QQ',actual_header,8)==(1,length)
+        assert actual_header[56:88]==bytes.fromhex(committed_row['storage_digest'])
+        assert (directory/'txn.0000000000000001').stat().st_size==length+128
+        active=StreamingSession(image,directory,root/'reopen',2)
+        assert active.current[1:]==(1,length,bytes.fromhex(committed_row['storage_digest']))
+        readback=active.get_stream(full_state_chunks())
+        assert readback['plain_sha256']==committed_row['plain_sha256']
+        reopened=active.close();active=None
+        return {'rows':65536,'key_bytes':160,'canonical_value_bytes':4096,
+                'commit':committed_row,'readback':readback,'processes':[created,reopened],
+                'input_output_buffered_whole':False,'maximum_test_controller_wait_seconds':180,
+                'original_service_budget_qualified':False,
+                'scope':'actual exact payload bytes, not complete State grammar/root qualification'}
+    finally:
+        if active is not None:active.abort()
+
+
+def complete_history_capacity(image: bytes, root: Path) -> dict:
+    directory=root/'namespace';directory.mkdir(mode=0o700)
+    active=None
+    try:
+        active=StreamingSession(image,directory,root/'create',1)
+        expected=genesis()
+        for sequence in range(1,4106):
+            result=active.commit_stream(0,())
+            expected=committed(sequence,b'',expected)
+            assert result['storage_digest']==expected.hex()
+        created=active.close();active=None
+        active=StreamingSession(image,directory,root/'reopen',2)
+        assert active.current==(0,4105,0,expected)
+        assert active.get_stream(())['bytes']==0
+        reopened=active.close();active=None
+        names=[p.name for p in directory.iterdir() if p.name.startswith('txn.')]
+        assert len(names)==4105 and all(not name.endswith('.tmp') for name in names)
+        assert disk_chain(directory)['sequence']==4105
+        return {'actual_committed_transactions':4105,'actual_retained_transaction_files':len(names),
+                'reopened_sequence':4105,'storage_digest':expected.hex(),'processes':[created,reopened],
+                'history_materialized_in_native_memory':False,'physical_UINT64_MAX_history_qualified':False}
+    finally:
+        if active is not None:active.abort()
+
+
 class Qualification:
     def __init__(self, output: Path):
         if not __debug__:
@@ -383,7 +580,7 @@ class Qualification:
                 "pre_crash_ack_digest": prior["digest"].hex()}
 
     def run(self) -> dict:
-        for length in (0, 1, 32767, 32768, 32769, 2 * 1024 * 1024, MAX_PAYLOAD):
+        for length in (0, 1, 32767, 32768, 32769, 2 * 1024 * 1024, 16 * 1024 * 1024):
             payload = (bytes(range(256)) * ((length + 255) // 256))[:length]
             self.case("roundtrip-" + str(length), lambda root, payload=payload: self.roundtrip(root, payload))
 
@@ -525,7 +722,7 @@ class Qualification:
                 owner.ready()
                 if part == "sequence": owner.request(1, sequence=2, declared=1)
                 elif part == "digest": owner.request(1, value=bytes(32), declared=1)
-                else: owner.request(1, declared=U64_MAX)
+                else: owner.request(1, declared=MAX_PAYLOAD + 1)
                 owner.finish(68 if part == "capacity" else 69)
             assert (directory / "HEAD").read_bytes() == before
         for part in ("sequence", "digest", "capacity"):
@@ -613,19 +810,48 @@ class Qualification:
             return {"actual_signal": "SIGUSR1", "actual_handler_observed": True, "continued_native_read": True}
         self.case("actual-eintr", interrupted)
 
+        def old_namespace(root):
+            directory = root / "namespace"; directory.mkdir(mode=0o700)
+            old_genesis = hashlib.sha256(b"HIAGEN01" + CONTEXT).digest()
+            old_head = b"HIAHD001" + struct.pack("<QQ", 0, 0) + CONTEXT + old_genesis + bytes(40)
+            old_format = b"HIAFMT01" + CONTEXT + struct.pack("<QQQ", 16 * 1024 * 1024, 4096, CHUNK)
+            for name, raw in (("owner.lock", b""), ("HEAD", old_head), ("FORMAT", old_format)):
+                path = directory / name; path.write_bytes(raw); path.chmod(0o600)
+            before = {p.name: p.read_bytes() for p in directory.iterdir()}
+            with Session(self.image, directory, root / "existing-refused", mode=2) as owner:
+                owner.finish(66)
+            assert {p.name: p.read_bytes() for p in directory.iterdir()} == before
+            return {"old_namespace": "exact v1 genesis format", "implicit_upgrade": False,
+                    "existing_bytes_unchanged": True}
+        self.case("reject-old-v1-namespace", old_namespace)
+
+        def old_bootstrap(root):
+            directory = root / "namespace"; directory.mkdir(mode=0o700)
+            with Session(self.image, directory, root / "old-wire-refused", mode=1, bootstrap=False) as owner:
+                owner.write(b"HIAST001" + owner.bootstrap[8:])
+                owner.finish(64)
+            assert not list(directory.iterdir())
+            return {"old_bootstrap_refused_before_namespace_mutation": True}
+        self.case("reject-old-v1-bootstrap", old_bootstrap)
+
+        self.case("complete-original-State-wire-extent",
+                  lambda root: full_state_capacity(self.image, root))
+        self.case("past-artificial-4096-history-cap",
+                  lambda root: complete_history_capacity(self.image, root))
+
         self.builder.check_pin()
         trace = self.trace()
         self.builder.check_pin()
-        report = {"schema": "trnm.hia.storage-qualification.v1",
+        report = {"schema": "trnm.hia.storage-qualification.v2",
                   "status": "PASS" if all(row["status"] == "PASS" for row in self.results) else "FAIL",
-                  "scope": "bounded generic transaction payload StoreOwner; not typed Node integration",
+                  "scope": "streaming generic transaction payload StoreOwner, including full classical State byte extent; not typed Node integration",
                   "build": self.build, "controls": self.results,
                   "passed": sum(row["status"] == "PASS" for row in self.results), "total": len(self.results),
                   "syscall_trace": trace,
                   "not_qualified": ["physical power loss", "regular-file/fsync hard deadline", "ENOSPC", "filesystem EIO",
                                     "network filesystems", "hostile same-UID mutation", "whole-directory rollback",
-                                    "4096-commit exhaustion", "automatic incomplete initialization repair", "compaction", "full State limit", "whole Node", "cross-target", "original service budget"],
-                  "runtime_proxy": False, "old_stack_retirement_authorized": False}
+                                    "physical UINT64_MAX history", "automatic incomplete initialization repair", "compaction", "typed whole State", "whole Node", "cross-target", "original service budget"],
+                  "runtime_proxy": False, "old_stack_retirement_authorized": False, "source_inputs_stable": True}
         write_json(self.output / "report.json", report)
         return report
 
@@ -639,8 +865,8 @@ class Qualification:
         directory = root / "namespace"; directory.mkdir(mode=0o700)
         d = os.open(directory, os.O_RDONLY | os.O_DIRECTORY)
         f = sealed_executable(self.image, "storage-trace")
-        raw = BOOT.pack(b"HIAST001", d, 1, CONTEXT, U64_MAX, U64_MAX, 0)
-        raw += RECORD.pack(b"HIACMD01", 3, 0, 0, genesis())
+        raw = BOOT.pack(b"HIAST002", d, 1, CONTEXT, U64_MAX, U64_MAX, 0)
+        raw += RECORD.pack(b"HIACMD02", 3, 0, 0, genesis())
         try:
             process = subprocess.Popen([tool, "-f", "-qq", "-o", str(root / "trace.txt"), "/proc/self/fd/" + str(f)],
                 stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, pass_fds=(d, f),

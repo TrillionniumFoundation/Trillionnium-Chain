@@ -2,125 +2,156 @@
 
 The owner requires a complete HIA-native Trillionnium-Chain and retirement of
 the previous implementation after equivalent replacement. The consolidated
-baseline is `59bd6ae4223caff6695dc9cf2ee2cdcdc6df5e88`; all 26 retained packages
+baseline is `59bd6ae4223caff6695dc9cf2ee2cdcdc6df5e88`. All 26 retained packages
 remain accounted for in the [HIA migration inventory](../../config/hia-migration-v1.json).
-The [native guide](../../hia/README.md) specifies the current source and local
-ABIs. This section extends the sole development plan; the historical plan below
-is retained verbatim.
+The [native guide](../../hia/README.md) and [audit](../../hia/AUDIT.md) bind actual
+coverage and failures. This is the sole plan; its historical suffix is unchanged.
 
-Twenty-seven kernel units implement exact protocol grammars, SHA-256/SHA-512,
-PoN framing, strict public Ed25519, the non-cancelling W1 relation, replay
-proposals, evaluator decisions, PNX1, checkpoint V2 and the sparse state root.
-Four native foundations cover a finite OS fixture, a connected-stream reactor,
-a finite transaction owner and a complete-request native qualification caller. The inventory accounts for all 36 HIA source
-files, rejects unowned/duplicate/missing sources and keeps retirement false.
-Native code is emitted by Hepta at `f33d8da316de8fdf27b504371f1a5310997ff548`.
-Its original 180-second cold gate passed in 154.807339324 seconds; this does not
-qualify whole-Chain service behavior.
+The sixth candidate contains 36 kernel units and seven native foundations,
+accounting for all 51 HIA source files. They cover exact protocol grammars,
+SHA-256/SHA-512, strict classical Ed25519, the non-cancelling W1 relation, replay
+proposals, evaluator decisions, PNX1, checkpoint V2, state roots, binary64,
+conflict scheduling, shared JSON/Value codecs, complete classical request and
+response kernels, and actual default Settings/genesis construction. Native
+foundations implement finite OS fixtures, connected-stream readiness, streaming
+transaction persistence, typed Delta behavior, guarded private stacks and native
+request/response qualification callers. This is not a complete Node. No original
+package has an accepted retirement witness; all nine replacement gates remain OPEN.
 
-The fourth repaired candidate `96a0846e383745f88e033c7db2abc0611f1dae63` passed
-[both mandatory CI jobs](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43746877132):
-160 tests, 36,222 shared-runner native calls, no errors, failures or skips; all
-four then-existing original Rust adapters and 17 original unit tests executed.
-OS 25/25, reactor 49/49 plus 13 native contracts, and storage 48/48 plus 14 native
-contracts passed with actual traces. The separate 65,536-row state-root child
-made 86 raw calls and matched the independent oracle in 299.705821145 seconds.
-That maximum-count case used short values and does not meet or alter the
-original four-second service acceptance. Preserve the earlier 353.568397442-second
-local result, rejected compiler optimization and distinct source bindings.
+The pinned Hepta revision is `f33d8da316de8fdf27b504371f1a5310997ff548`.
+Compiler SHA-256 is `87c247e4d1c3c9a449d2947fd4227fdc186d519bffd203a04cafce7861a4ed54`.
+Its original 180-second cold gate passed in 154.807339324 seconds with the original
+three-second cleanup allowance. Preserve the fixed native profile (128 functions,
+1,536 blocks, 8,192 operations and 2,048 SSA values per function). Whole-program
+composition independently verifies each declared component, including unselected
+functions, selects only its own named functions, requires explicit flat helper
+closure, and rechecks every captured input. It never raises compiler limits or
+silently falls back to a hosted implementation.
 
-The third batch's ignored stderr files and fourth batch's direct storage import
-failure remain retained. Exact original logs were tracked, and both storage CLI
-entrypoints now work without ambient Python path variables. The exact fourth
-source job also passed all 113 PQ negative tests and historical reader gates.
+### Exact published evidence and current additions
 
-The current additions are later sources: shared binary64 and all seven conflict
-scheduling strategies, ASCII String and typed Value codecs, true incremental
-SHA256 and full five-variant classical request authentication through a 2 MiB
-body. The executor retains the maximum reader-group dependency to repair a
-source-derived unsafe original grouping; all 122 intentional model differences
-are preserved and the unchanged original library must execute in CI. This
-executor is outside the ordinary Node closure and does not close Node execution.
+The fifth repaired head `4cc0464ff9632f2a493cb76d5b8b51eaad332dac` passed
+[all three HIA CI jobs](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43751782144):
+189 tests, 56,884 shared-runner calls, zero skips/errors/failures and all five
+actual original Rust adapters. OS 25/25, reactor 49/49 plus 13 native contracts,
+and storage 48/48 plus 14 contracts passed with real traces. Complete request
+passed 178 controls, 14 stream-hash controls, 170 original-Node comparisons and
+six original tests. Source checks passed the historical readers and all 113 PQ
+negative controls; PQ remains HOLD_NO_GO.
 
-The [Value profile](../../hia/STATE_VALUE.md) admits 65,536 tape bytes / 8,192
-nodes, with actual sorting/last-wins and full winning-Value grammar. Its 1,518
-native controls include a 7,280-level array. These bounds are local capacity,
-not substituted M06 limits; complete State, JSON text parsing and global error
-order remain open. [Full request controls](../../hia/platform/transport_request/README.md)
-passed 178 cases plus 14 incremental-hash controls locally. A complete 2 MiB
-submit took 5.171449401 seconds; dense ConfirmMany took 6.773873071 seconds.
-The outer 30-second test budget does not qualify original transport/service
-budgets. Original Rust for these new components remains NOT_RUN until CI.
+The original executor actually ran 5,274 cases. Its retained report records
+131 unsafe original schedules, 181 intentional differences and 27 expected
+version-skew panics. HIA retains the maximum reader-group dependency and passes
+the independent conflict graph. These actual results are distinct from earlier
+source-model observations (122 differences, 88 unsafe). The earlier `d82dfe0`
+E0463 linking failure remains FAIL; exact Cargo-event library search paths and
+12 controls enabled the actual repaired run. This executor is outside the
+ordinary Node dependency closure and does not establish Node execution.
 
-The next integration sequence follows actual Node dependencies. The Node
-directly owns a `rusqlite::Connection` in `Node.db` (`store.rs`) for branch,
-replay and outbox state. `TransactionScope` observes SQLite operations; the
-optional `OwnedConnection` wrapper is not this owner. Checkpoint-types/store
-are outside the ordinary Node dependency closure. A checkpoint-value port cannot
-retire the Node store.
+Current sixth-source observations are separate from that published CI:
 
-The [stream reactor](../../hia/platform/reactor/README.md) supplies explicit
-HIA start/tick/submit/close entrypoints, private generation/rights slots,
-partial-progress cursors, absolute deadlines, cancellation and epoll over
-admitted connected FIFO/stream descriptors. Preserve partial syscall effects
-and terminal ownership on every error. Extend this finite interface to original
-transport framing, authentication, payload limits and Node lifetimes. Ordinary
-file/fsync hard deadlines are not established by stream readiness.
+* Complete response: 11,420 native controls, including full default-serde number
+  and Unicode Value behavior, response encoding, signing and verification. The
+  guarded complete producer actually stopped with exit 70 and zero stdout when
+  seccomp denied `munmap` after signing. Original Rust for the 10,990 response
+  comparisons and six original tests is locally NOT_RUN and mandatory in CI.
+* Private stack: 11 observations preserve the actual bare signer failure (secret
+  byte spills remained on the caller stack after the work arena was zeroed).
+  The HIA-emitted wrapper uses two guard pages, wipes the whole 1 MiB private
+  stack on ordinary return, unmaps it and reports cleanup failures. The input
+  seed, trap/async termination, whole key lifecycle and machine-code constant-time
+  proof remain separate obligations. Conservative SSA checks are not that proof.
+* Settings: 16 integrated tests, 102 shared-runner and 14 raw-pointer calls passed.
+  Four development keys, seven genesis rows and all roots are computed in native
+  HIA. None versus Some(1800000000), original config ordering and u64 bounds are
+  explicit. Two rejected compiler attempts remain recorded. The 30 actual
+  original-Rust cases are mandatory in CI and locally NOT_RUN.
+* Typed Delta: 8,551 controls passed, including the actual 65,536-row State and
+  131,072-key union. Typed collection, Option/byte equality, key ordering and
+  progress/write failure semantics are implemented. Constructor validation
+  precedes progress; physical SQL row materialization and durable Node commit
+  have not been claimed. The 423 original-Rust comparisons remain mandatory.
+* Storage v2: 52 physical controls and 170 native function controls plus two fresh
+  CLI starts passed. Actual commit/close/reopen/readback handled 279,445,512 bytes
+  and 4,105 real retained transactions. The exact parent rebuild reproduces ELF
+  `b590b597d9429579784549d8f2f88be272704f197c071601d8278c4e54926445`.
+  The new format removes the artificial 16 MiB/4,096 limits, checks actual off_t
+  addressing and u64 sequence exhaustion, and rejects old-v1 namespaces unchanged.
+  The initial slow hash run timed out; the shared compression repair passed the
+  unchanged 180-second test controller. Current local trace is UNKNOWN after
+  ptrace refusal. Typed State and original service latency remain OPEN.
 
-The [transaction owner](../../hia/storage/README.md) owns an explicit private
-directory FD, real flock, immutable hash-linked transaction files and atomic
-HEAD publication. It streams bounded chunks, syncs before ACK and validates
-persisted history on reopen. Its current 16 MiB payload / 4,096-commit profile,
-interrupted-initialization refusal and raw payload API do not satisfy full Node
-capacity, recovery or typed transactions. Missing COMMIT ACK is an uncertain
-outcome even after an ordinary I/O error; reopen and compare HEAD. Preserve
-actual crash-cut, short-I/O, signal, corruption and special-file observations.
-The HIA-emitted literal ISA adapters remain an explicit trusted boundary.
+The original full-count state-root execution remains bound to exact `96a0846`
+CI: 65,536 rows, 86 raw calls, 299.705821145 seconds; preserve the earlier
+353.568397442-second local run. Those cases used short values. The later named
+state_root entry extraction passed 165 native calls with the original body and
+helpers unchanged; the old maximum-count run is not relabelled as a new-source
+performance pass. The original four-second service acceptance remains unchanged.
 
-Continue with the single typed branch/delta/ancestry owner, reorg staging and
-recovery, replay begin/dispatch/finish with exact pending retries, durable exact
-wire outbox, and local-pool handoff. External freshness-witness CAS remains a
-separate boundary; once it succeeds the matching local commit must still be
-attempted even after cancellation. Never relabel replay as exactly-once.
-All new disk formats use a fresh namespace; deployed stores and keys are outside
-this migration. Complete private signing-key ownership, zeroization and PQ
-algorithms separately from public signature verification.
+### Remaining owner integration
 
-Preserve original signed domains, error order, monotonic recovery/revocation,
-missing-evaluation semantics and independent Adopt/NoUpdate evidence. Each
-package needs complete native integration and original acceptance evidence
-before retirement. Full transaction/model workflows, original service budgets,
-cross-target behavior, work-cost, STARK/QROM and consensus-economic obligations
-remain open. The old [finite Linux fixture](../../hia/platform/README.md) keeps
-its actual blocked-syscall deadline failure and unavailable-trace observation;
-clock checks after return do not prove bounded blocking I/O.
+Follow actual Node dependencies. `Node.db` directly owns `rusqlite::Connection`
+in store.rs; `TransactionScope` observes operations, and the optional wrapper is
+not the Node owner. Implement one typed StoredState/branch/Delta/ancestry owner,
+reorg staging, exact recovery, authenticated replay begin/dispatch/finish and
+durable exact response outbox. Preserve original stored-row dimension checks
+before SQL conversion, every-256-row progress, complete collection before staged
+mutation, continuity before M06 grammar, then wire/root limits. Full stored
+State and Delta union must stream through bounded pages and private FD locators.
+A missing COMMIT ACK is uncertain even after durable success; reopen and compare
+HEAD. Do not infer rollback from EPIPE, cleanup refusal or process death.
 
-Six exact historical-reader cleanups remove 1,555 duplicate payload copies,
-totaling 1,312,946,846 original bytes. They cover 607 checkout preparations,
-14 sealed CI ZIPs, 13 joint-resource archives, four PQ triage streams, 885
-public-readiness pre-correction payloads and 32 hosted-cost containers/shards.
-The PQ capture retains 29 smaller records unchanged. The public-readiness
-reader executes the original semantic checker with all 1,334 entries and source
-bindings. The hosted-cost reader reconstructs the exact 210-file view, executes
-the original checker and verifies 208 entries, 12 archives/32 parts and 808
-members totaling 3,762,781,104 uncompressed bytes. Its five retained small
-records stay unchanged. Preserve the independently reproduced prepublication
-missing-index receipt-overwrite failure and the unconditional read-only fix.
-No cleanup promotes HOLD/FAIL or public/native readiness. Exact Git history,
-current-source tests and required evidence remain. The [audit](../../hia/AUDIT.md)
-records all owners, remaining archive obligations and unavailable artifacts.
+Complete original M06 transaction semantics, including every optional evaluation,
+lifecycle, factor/evolution and model-source path. Shared Value/query/update
+kernels must retain Unicode, missing versus null, original Number equality and
+all untouched fields. Source-level parsing alone cannot retire execution.
 
-Refresh only current PQ source pins changed by this migration: the sole-plan
-prefix, the regenerated inventory entry and public-readiness CLI dispatch.
-Keep all unrelated source pins, all 1,177 evidence pins and all false/HOLD fields.
-The unchanged source checker and all 113 original negative tests are mandatory.
-Native CI separately requires the pinned bootstrap, whole-program admission,
-raw machine-code controls, full state count, reactor, storage and all five
-original-Rust adapters, plus actual original-executor and original-Node request
-comparisons on the exact candidate. Historical/source checks run in
-a parallel job so neither gate is dropped for time. No legacy runtime package
-has been retired; all nine full-replacement gates remain open.
+Complete private classical key/Settings/connection/replay ownership. Actual
+O_NOFOLLOW file checks and strict seed decoding, real verification, native
+signing, original loopback admission, absolute deadlines, cancellation and
+multichunk full-frame transfer must belong to one private event chain. Neither
+wire data nor a test harness may provide authorization, terminality or invented
+syscall completion. Local operation/revocation history must not rewind with
+chain reorganization. PQ identity, account/install authorization and secrecy
+remain distinct and retain their existing acceptance state.
 
+Use one shared native multi-image dispatcher to compose the fixed-size compiled
+HIA modules. HIA reducers own business sequencing. The native boundary checks
+fixed module identities, private arena ownership and explicit borrows, overflow,
+disjointness, generation and outstanding call sequence, then invokes the actual
+captured machine code. Child I/O must resume through the real OS event chain.
+Do not create a second copied helper tree or host-language business dispatcher.
+This integration is ongoing, not an implemented capability claimed by this batch.
+
+The original service resource/deadline profile, cross-target behavior, complete
+model workflows, work-cost, STARK/QROM and consensus-economic obligations remain
+open. Ordinary-file/fsync hard deadlines are not established by epoll or a clock
+check after a blocking return. All new stored/signed formats require fresh
+namespaces. Deployed data, keys, services and other repositories are out of scope.
+
+### Cleanup and final qualification
+
+Eight exact historical-reader cleanups now remove 1,622 duplicate payload copies,
+totaling 1,628,294,407 original bytes: 607 checkout preparations, 14 sealed CI ZIPs,
+13 joint-resource archives, four PQ triage streams, 885 public-readiness payloads,
+32 hosted-cost containers/shards, eight D26 compressed SQLite snapshots and 59
+W1 complete-work containers. The last two groups remove 315,347,561 bytes. W1
+moves 91 smaller records byte-for-byte, including ten explicitly tracked logs.
+Original semantic readers, negative controls, exact Git identities and actual
+FAIL/HOLD conclusions remain. No archive rewrite certifies service, model or PQ
+readiness. Git history is the recovery source; do not rewrite or force-push it.
+
+Refresh only the current sole-plan blob pin for this increment. Preserve all
+other 2,612 source pins, all 1,177 evidence pins and all false/HOLD fields. Keep
+the original source checker, distributed inventory, repository links, cleanup
+readers and PQ negative suite. Six exact-source CI jobs cover source/archive,
+components/platform/storage, original request, original Delta, complete response
+and original Settings. All actual Rust comparisons are required; missing tools
+are a refusal, not a pass. Preserve earlier ignored-log, direct-import, receipt-
+overwrite, compiler-capacity, signer-erasure and deadline failures with their
+exact scopes. Full retirement requires actual complete replacement and accepted
+original behavior on the final source; it remains unauthorized by the current
+migration evidence.
 
 **PoN and learning-outcome composition, 2026-11-11 America/New_York — HOLD:**
 

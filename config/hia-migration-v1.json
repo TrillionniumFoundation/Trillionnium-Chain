@@ -292,6 +292,100 @@
         "hia/tools/qualify_transport.py"
       ],
       "node_integration_complete": false
+    },
+    {
+      "id": "codec/json_primitives",
+      "source": "hia/src/codec/json_primitives.hepta",
+      "scope": "Single canonical borrowed-region UTF8 validation and exact integer/token output helpers, extracted byte-identically from qualified typed Value; private helper preconditions remain explicit",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_state_string.py",
+        "hia/tests/test_state_value.py"
+      ],
+      "node_integration_complete": false
+    },
+    {
+      "id": "codec/json-number",
+      "source": "hia/src/codec/json_number.hepta",
+      "scope": "Full original-default serde JSON finite number parsing and shortest binary64 formatting through the frame bound",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tools/qualify_response.py"
+      ],
+      "node_integration_complete": false
+    },
+    {
+      "id": "codec/json-value-wire",
+      "source": "hia/src/codec/json_value_wire.hepta",
+      "scope": "Complete Unicode finite-number Value JSON syntax and canonicality, preserving syntax-before-noncanonical order",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tools/qualify_response.py"
+      ],
+      "node_integration_complete": false
+    },
+    {
+      "id": "codec/json-value-encode",
+      "source": "hia/src/codec/json_value_encode.hepta",
+      "scope": "Complete typed Value canonical JSON encoding with original nesting and 2 MiB frame bounds",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tools/qualify_response.py"
+      ],
+      "node_integration_complete": false
+    },
+    {
+      "id": "crypto/ed25519-sign",
+      "source": "hia/src/crypto/ed25519_sign.hepta",
+      "scope": "Seed32/digest32 Ed25519 mathematical signing and public derivation; raw compiler-stack erasure defect retained and separate guarded caller required",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tools/qualify_response.py",
+        "hia/platform/private_stack/qualify.py"
+      ],
+      "node_integration_complete": false
+    },
+    {
+      "id": "transport/authenticated-response",
+      "source": "hia/src/transport/authenticated_response.hepta",
+      "scope": "Complete classical authenticated response frame/Value/context/signature relation; private peer and connection authority remain separate",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tools/qualify_response.py"
+      ],
+      "node_integration_complete": false
+    },
+    {
+      "id": "transport/signed-response",
+      "source": "hia/src/transport/signed_response.hepta",
+      "scope": "Native typed Value canonical signed response generation with frame limits; terminal commit authority remains with the Node owner",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tools/qualify_response.py"
+      ],
+      "node_integration_complete": false
+    },
+    {
+      "id": "protocol/state-root-compact",
+      "source": "hia/src/protocol/state_root_compact.hepta",
+      "scope": "General complete SRV1 sparse root using shared SHA arena within fixed composition limits; maximum-count performance not qualified by Settings tests",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_node_settings.py"
+      ],
+      "node_integration_complete": false
+    },
+    {
+      "id": "node/settings-development",
+      "source": "hia/src/node/settings_development.hepta",
+      "scope": "Complete public Settings::development(Option<u64>) default Config, maintenance task, accounts, roots and genesis; other constructors and CLI remain open",
+      "state": "native-kernel-implemented",
+      "tests": [
+        "hia/tests/test_node_settings.py",
+        "hia/tests/test_node_settings_memory.py",
+        "hia/tools/qualify_settings_original.py"
+      ],
+      "node_integration_complete": false
     }
   ],
   "legacy_packages": [
@@ -368,7 +462,8 @@
         "protocol/ilf3",
         "crypto/pon_hash",
         "protocol/pnx1",
-        "protocol/state-root"
+        "protocol/state-root",
+        "protocol/state-root-compact"
       ],
       "retirement_accepted": false
     },
@@ -403,7 +498,11 @@
       "state": "partially-ported",
       "components": [
         "state/json_string",
-        "state/json_value"
+        "state/json_value",
+        "codec/json_primitives",
+        "codec/json-number",
+        "codec/json-value-wire",
+        "codec/json-value-encode"
       ],
       "retirement_accepted": false
     },
@@ -472,7 +571,8 @@
         "crypto/sha512_arena",
         "crypto/ed25519_group",
         "crypto/ed25519_verify",
-        "crypto/sha256_stream"
+        "crypto/sha256_stream",
+        "crypto/ed25519-sign"
       ],
       "retirement_accepted": false
     },
@@ -526,7 +626,13 @@
       "legacy_path": "trillionnium/crates/trnm-pon-node",
       "state": "partially-ported",
       "components": [
-        "transport/authenticated_request"
+        "transport/authenticated_request",
+        "codec/json-number",
+        "codec/json-value-wire",
+        "codec/json-value-encode",
+        "transport/authenticated-response",
+        "transport/signed-response",
+        "node/settings-development"
       ],
       "retirement_accepted": false
     },
@@ -624,9 +730,10 @@
       "id": "storage/transaction-owner",
       "sources": [
         "hia/storage/owner_policy.hepta",
-        "hia/storage/linux_adapter_emitter.hepta"
+        "hia/storage/linux_adapter_emitter.hepta",
+        "hia/storage/sha256_framing.hepta"
       ],
-      "scope": "finite fresh-namespace native transaction owner with exact payload recovery and atomic HEAD; typed Node reducers and original full-state capacity remain open",
+      "scope": "Fresh-v2 streaming immutable transactions, actual directory FD/lock/CAS/fsync/reopen, full 279445512-byte State extent and 4105 commits; checked off_t payload and u64 sequence limits; typed Node and original service budget remain OPEN",
       "tests": [
         "hia/tools/qualify_storage.py",
         "hia/tests/test_storage_native.py"
@@ -642,6 +749,45 @@
       "scope": "Native request and incremental-hash qualification caller; no connection, Settings, private key or Node authority",
       "tests": [
         "hia/tools/qualify_transport.py"
+      ],
+      "node_integration_complete": false,
+      "retirement_accepted": false
+    },
+    {
+      "id": "platform/node-delta",
+      "sources": [
+        "hia/platform/node_delta/delta_owner.hepta",
+        "hia/platform/node_delta/delta_fixture.hepta"
+      ],
+      "scope": "Typed ordinary Node Delta command actor and native transactional fixture; original read/compare/write/progress semantics for admitted typed tapes, while physical SQL materialization, whole-State, durable commit, cancellation ownership and peer ACK remain open",
+      "tests": [
+        "hia/platform/node_delta/qualify.py",
+        "hia/tests/test_node_delta_cli.py"
+      ],
+      "node_integration_complete": false,
+      "retirement_accepted": false
+    },
+    {
+      "id": "platform/private-stack",
+      "sources": [
+        "hia/platform/private_stack/linux_emitter.hepta"
+      ],
+      "scope": "Native Linux guarded private stack with ordinary-return wiping and explicit cleanup failures; caller seed lifetime, asynchronous termination and complete Node key owner remain open",
+      "tests": [
+        "hia/platform/private_stack/qualify.py"
+      ],
+      "node_integration_complete": false,
+      "retirement_accepted": false
+    },
+    {
+      "id": "platform/transport-response-caller",
+      "sources": [
+        "hia/platform/transport_response/linux_value_fixture_emitter.hepta",
+        "hia/platform/transport_response/fixture_contract.hepta"
+      ],
+      "scope": "Variable-length native response/Value caller with output redzones and explicit failure publication rules; no peer, replay or terminal commit authority",
+      "tests": [
+        "hia/tools/qualify_response.py"
       ],
       "node_integration_complete": false,
       "retirement_accepted": false
