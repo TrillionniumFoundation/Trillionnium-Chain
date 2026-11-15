@@ -1,8 +1,8 @@
 # HIA native implementation
 
 This directory contains the HIA migration of Trillionnium-Chain. Its target is
-one complete HIA-native implementation. The current candidate contains **36
-kernel units and seven native foundations**, accounting for all **51 HIA source
+one complete HIA-native implementation. The current candidate contains **37
+kernel units and seven native foundations**, accounting for all **52 HIA source
 files**. The 26 existing Rust packages remain until their complete replacement
 is qualified. The authoritative sequence remains the
 [repository development plan](../docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md).
@@ -34,6 +34,17 @@ Settings construction, typed Delta semantics and native persistence. Existing
 service, model-use, consensus-security and cross-architecture failures retain
 their original status. Rewriting a deterministic function does not establish a
 new proof of work hardness or satisfy an unexecuted service campaign.
+
+## Independent M05 queue decision candidate
+
+The M05 [lane quota/fairness HIA kernel](src/mempool/lane_quota.hepta) emits
+native decisions for total admission headroom, reserved critical slots,
+normal-lane spillover, last-slot borrowing and priority fairness. The separate
+[finite-ABI and original Rust differential contract](MEMPOOL.md) is a candidate
+qualification, not a completed admission, mempool, persistent queue or Node
+owner. Its tests compile the unchanged original Rust modules and refuse missing
+native execution. Before exact-head CI finishes, native qualification is
+**NOT_RUN**, rather than an inferred PASS.
 
 ## Implemented native components
 

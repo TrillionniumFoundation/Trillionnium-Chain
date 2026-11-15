@@ -386,6 +386,16 @@
         "hia/tools/qualify_settings_original.py"
       ],
       "node_integration_complete": false
+    },
+    {
+      "id": "mempool/lane_quota",
+      "source": "hia/src/mempool/lane_quota.hepta",
+      "scope": "Original M05 lane global capacity, critical reserve, bounded borrowing and prefer-normal fairness decisions on supplied counts; does not implement admission caches, queue mutation, nonce reservation or persistent Node authority",
+      "state": "native-candidate-awaiting-qualification",
+      "tests": [
+        "hia/tests/test_mempool_quota.py"
+      ],
+      "node_integration_complete": false
     }
   ],
   "legacy_packages": [
@@ -420,8 +430,10 @@
       "package": "trnm-mempool",
       "module": "M05",
       "legacy_path": "trillionnium/crates/trnm-mempool",
-      "state": "not-ported",
-      "components": [],
+      "state": "partially-ported",
+      "components": [
+        "mempool/lane_quota"
+      ],
       "retirement_accepted": false
     },
     {

@@ -1,3 +1,34 @@
+## HIA M05 queue admission quota/fairness candidate — 2026-11-15 UTC
+
+The sole integration lane has an independent **M05 pure native HIA candidate**
+at `hia/src/mempool/lane_quota.hepta`, with documented caller descriptor,
+original-Rust source adapter and strict differential suite. It implements
+five original `trnm-mempool` capacity, reserve/borrow and readiness-fairness
+decisions, not a queue/state/nonce owner or the complete M05 package.
+`hia/tests/rust_mempool_quota_reference.rs` imports both original
+`lane_quota.rs` and `lane_fairness.rs` verbatim through Rust's `#[path]`
+module mechanism. The native candidate and original-source/runner tests are
+included in the next exact-head HIA qualification.
+
+A separate, isolated local `rustc` run of the original methods succeeded
+and matched 1,345 independent caller-model queries with no mismatch.
+**The HIA native-code execution remains NOT_RUN until actual exact-head CI
+qualification.** No previous head's results are carried forward to this new
+source; a CI failure, UNKNOWN, or NOT_RUN is retained verbatim.
+
+This integration adds one kernel to the 36-kernel/7-foundation checkpoint
+(37 candidate kernels, 7 foundations, 52 HIA files), but no original package
+retirement. All 26 Rust packages remain; all nine migration gates remain OPEN,
+including persistent Node, cryptography/private-key owner, full request/response
+and model/consensus/service budgets. Runtime branch/reorg, State transaction
+owner, native PQ and the secret-stack boundary remain independent active work.
+The earlier M05 package's cached-dedup recovery, admission queue mutation,
+nonce reservation, cold handoff and full Node integration are still missing.
+
+The existing development-plan history below is retained byte-for-byte.
+
+---
+
 ## HIA native rewrite, 2026-11-15 UTC — IN PROGRESS
 
 The owner requires a complete HIA-native Trillionnium-Chain and retirement of

@@ -9,8 +9,8 @@ the implemented components listed in [the native guide](README.md). This is not
 a claim that every one of the 702,001 retained Rust physical lines was manually
 reviewed, or that every historical campaign passed.
 
-**The full replacement is incomplete.** Thirty-six kernel units and seven native
-foundations account for all 51 current HIA source files. Native connected-stream
+**The full replacement is incomplete.** Thirty-seven kernel units and seven native
+foundations account for all 52 candidate HIA source files. Native connected-stream
 I/O, complete classical response codecs, Settings and streaming persistence exist, but no whole original package has
 an accepted retirement witness. There is no complete HIA node executable,
 typed branch/replay/outbox owner or complete native identity/signing stack. The
@@ -44,7 +44,7 @@ named kernels are implemented; it never means the package can be removed.
 | [trnm-types](../trillionnium/crates/trnm-types) | M00 | Unported | Shared task/identity/transcript/transaction data; delete consumption-consensus governance controls. |
 | [trnm-executor](../trillionnium/crates/trnm-executor) | M06 | Partial: `executor/schedule`, `math/binary64` | Deterministic conflict scheduling independent of consensus. |
 | [trnm-bench](../trillionnium/crates/trnm-bench) | M17 | Unported | Retained executor microbenchmark; not ledger throughput. |
-| [trnm-mempool](../trillionnium/crates/trnm-mempool) | M05 | Unported | Bounded admission, nonce reservations and durable handoff independent of BFT. |
+| [trnm-mempool](../trillionnium/crates/trnm-mempool) | M05 | Partial: `mempool/lane_quota` pure predicates; native CI pending | Bounded admission, nonce reservations and durable handoff independent of BFT. |
 | [trnm-worker-agent](../trillionnium/crates/trnm-worker-agent) | M10 | Unported | Bounded real child process, task workflow and evidence adapters; not a miner. |
 | [trnm-oracle](../trillionnium/crates/trnm-oracle) | M11 | Unported | Application evidence aggregation, not ledger quorum or voting. |
 | [trnm-research-protocol](../trillionnium/crates/trnm-research-protocol) | M10 | Unported | Contribution/evaluation/lineage contracts independent of ledger consensus. |
@@ -234,6 +234,20 @@ new SHA-256 archive manifests have been made for all eight completed sets.
 Exact readers, complete original denominators and retained small records remain
 mandatory; an inventory alone does not justify a weaker reader or deletion of
 a required retained record.
+
+## M05 lane admission source boundary
+
+A new bounded HIA quota/fairness decision kernel encodes the original
+`trnm-mempool` critical-reserve, borrowing and prefer-normal predicates. It
+does not read authoritative queues, repair stale deduplication caches, reserve a
+nonce, enqueue/dequeue a transaction, enforce admission locks or commit an
+outbox. The [isolated M05 protocol](MEMPOOL.md) uses an original-Rust adapter
+that includes `lane_quota.rs` and `lane_fairness.rs` unchanged, rather than
+replicating their logic in a handwritten Rust oracle. A preliminary local run
+checked 1,345 caller-model/actual-original-Rust cases. HIA native and full
+original 26-package differential are **NOT_RUN** for this new source until CI
+provides exact source/artifact evidence; no source-only verification changes a
+migration gate.
 
 ## Retirement decision
 

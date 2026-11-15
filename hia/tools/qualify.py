@@ -61,6 +61,10 @@ def sources():
         "formal/pon-nakamoto-v1/vectors/header-version.bin",
         "formal/pon-nakamoto-v1/vectors/header-trailing.bin",
         "formal/pon-nakamoto-v1/vectors/model-evolution-v5.json")]
+    # M05: bind the exact original implementation files compiled by the
+    # independent quota/fairness source adapter, not only its wrapper.
+    paths += [ROOT / "trillionnium/crates/trnm-mempool/src/lane_quota.rs",
+              ROOT / "trillionnium/crates/trnm-mempool/src/lane_fairness.rs"]
     return {p.relative_to(ROOT).as_posix(): digest(p.read_bytes()) for p in sorted(paths)}
 
 
